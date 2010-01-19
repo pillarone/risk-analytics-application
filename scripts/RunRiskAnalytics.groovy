@@ -24,7 +24,8 @@ target(pirat: "The application start target") {
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
         new GroovyShell(app.classLoader).evaluate '''
             import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher
-            new BootStrap().init(null)
+            new CoreBootStrap().init(null)
+            new ApplicationBootStrap().init(null)
             P1RATStandaloneLauncher.start()
         '''
     } catch (Exception e) {

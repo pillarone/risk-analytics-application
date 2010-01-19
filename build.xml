@@ -1,0 +1,120 @@
+<project name="RiskAnalyticsCore" default="cruise">
+
+    <property environment="env"/>
+    <property name="GRAILS_HOME" value="../grails"/>
+    <import file="${GRAILS_HOME}/src/grails/grails-macros.xml"/>
+
+    <property file="application.properties"/>
+
+    <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}/"/>
+    <property name="classes.prod.dir" value="${build.prod.dir}/classes"/>
+    <property name="resources.prod.dir" value="src/java"/>
+
+    <property name="dist.dir" value="dist"/>
+    <property name="target.dir" value="target"/>
+    <property name="webapp.lib.dir" value="web-app/lib"/>
+    <property name="ulcPlugIn.webapp.lib.dir" value="${build.prod.dir}/plugins/ulc-2008-u1/web-app/lib"/>
+
+    <condition property="grails" value="${GRAILS_HOME}/bin/grails.bat">
+        <os family="windows"/>
+    </condition>
+    <property name="grails" value="${GRAILS_HOME}/bin/grails"/>
+
+    <tstamp>
+        <format property="build-timestamp" pattern="dd.MM.yyyy HH:mm"/>
+    </tstamp>
+
+    <target name="init">
+        <echo message="GRAILS_HOME: ${GRAILS_HOME}"/>
+        <echo message="app.name: ${app.name}"/>
+        <echo message="classes: ${classes.prod.dir}"/>
+        <echo message="user.language: ${user.language}, user.country: ${user.country}"/>
+    </target>
+
+    <target name="cruise" depends="clean,compile,test,jar-client"
+            description="to be started by the CruiseControl build server"/>
+
+
+    <target name="clean" depends="init" description="--> Cleans a Grails application">
+        <delete dir="${dist.dir}"/>
+
+        <mkdir dir="${dist.dir}"/>
+        <grails command="clean"/>
+        <delete verbose="true">
+            <fileset dir="." includes="*Db.script"/>
+            <fileset dir="." includes="**Db.properties"/>
+            <fileset dir="." includes="*.tsl"/>
+            <fileset dir="." includes="*.log"/>
+        </delete>
+    </target>
+
+
+    <target name="compile" depends="init" description="--> Compiles a Grails application">
+        <grails command="compile" jvmargs="-Xmx1024m -XX:MaxPermSize=512m"/>
+    </target>
+
+
+    <target name="stats" depends="init" description="--> grails stats">
+        <grails command="stats"/>
+    </target>
+
+
+    <target name="test" depends="init" description="--> Run a Grails applications unit tests">
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="test-app"/>
+            <!--<arg value="-coverage"/>-->
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+            <env key="JAVA_OPTS"
+                 value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
+        </exec>
+        <copy todir="${dist.dir}">
+            <fileset dir="target" includes="test-reports/"/>
+        </copy>
+    </target>
+
+    <target name="jar-client" description="--> Create clientside jar files">
+        <mkdir dir="${webapp.lib.dir}"/>
+        <delete dir="${webapp.lib.dir}">
+            <include name="${app.name}*.jar"/>
+        </delete>
+
+
+        <jar jarfile="${webapp.lib.dir}/${app.name}-extensions-client.jar">
+            <fileset dir="${classes.prod.dir}" includes="com/canoo/ulc/**/client/**"/>
+            <fileset dir="${resources.prod.dir}" includes="**/close-*.png"/>
+        </jar>
+
+        <jar jarfile="${webapp.lib.dir}/${app.name}-client.jar">
+            <fileset dir="${classes.prod.dir}" includes="org/pillarone/riskanalytics/application/client/**"/>
+            <fileset dir="${classes.prod.dir}"
+                     includes="org/pillarone/riskanalytics/application/environment/shared/**"/>
+            <fileset dir="${resources.prod.dir}" includes="*.png"/>
+        </jar>
+
+        <jar jarfile="${webapp.lib.dir}/${app.name}-jnlp-client.jar">
+            <fileset dir="${classes.prod.dir}" includes="org/pillarone/riskanalytics/application/environment/jnlp/**"/>
+        </jar>
+
+        <jar jarfile="${webapp.lib.dir}/${app.name}-applet-client.jar">
+            <fileset dir="${classes.prod.dir}"
+                     includes="org/pillarone/riskanalytics/application/environment/applet/**"/>
+        </jar>
+
+        <signjar alias="canoodev" keystore="canoodev.keystore" storepass=".canoo42" lazy="false">
+            <fileset dir="${webapp.lib.dir}" includes="${app.name}*.jar"/>
+            <fileset dir="${ulcPlugIn.webapp.lib.dir}" includes="**/*.jar"/>
+        </signjar>
+    </target>
+
+    <target name="release-plugin" depends="cruise" description="Releases the plugin in our P1 plugin repository">
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="release-plugin"/>
+            <arg value="&quot;-repository=pillarone&quot;"/>
+            <arg value="-zipOnly"/>
+            <arg value="-skipDocs"/>
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+        </exec>
+    </target>
+
+
+</project>

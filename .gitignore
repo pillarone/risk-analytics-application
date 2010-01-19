@@ -1,5 +1,7 @@
 target/*
+dist/*
 web-app/plugins/*
+web-app/lib/*.jar
 *.zip
-stacktrace.log
+*.log
 .idea/workspace.xml
