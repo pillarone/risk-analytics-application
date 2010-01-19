@@ -1,0 +1,48 @@
+package org.pillarone.riskanalytics.application.ui.main.action
+
+import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.lang.StringUtils
+import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
+import org.pillarone.riskanalytics.application.ui.base.view.DynamicComponentNameDialog
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.components.Component
+
+class AddDynamicSubComponent extends ResourceBasedAction {
+
+    def tree
+
+    public AddDynamicSubComponent(def tree) {
+        super("AddDynamicSubComponent")
+        this.tree = tree
+    }
+
+    public void doActionPerformed(ActionEvent event) {
+        DynamicComposedComponentTableTreeNode node = tree.selectedPath.lastPathComponent
+        DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree))
+        dialog.title = UIUtils.getText(this.class, "newDynamicSubComponent") + ": " + (node ? node.getDisplayName() : "dynamic component")
+        dialog.okAction = {
+            Component component = node.component.createDefaultSubComponent()
+            String name = dialog.nameInput.text.trim()
+            name = ComponentUtils.getSubComponentName(name)
+
+            if (name.length() == 0 || !StringUtils.isAlphanumericSpace(name)) {
+                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "IllegalSubComponentName")
+                alert.show()
+                return
+            }
+            try {
+                component.name = name
+                tree.model.addComponentNode(node, component)
+            } catch (IllegalArgumentException e) {
+                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
+                alert.show()
+            }
+        }
+        dialog.show()
+    }
+}
