@@ -14,8 +14,6 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
@@ -35,6 +33,8 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.SimulationConf
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
@@ -144,9 +144,9 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     private def initMenuBar() {
         refreshAction = new RefreshAction(model)
-        exportAllNewestVersionAction = new ExportAllAction(this,model, true)
+        exportAllNewestVersionAction = new ExportAllAction(this, model, true)
         exportAllAction = new ExportAllAction(this, model, false)
-        importAllAction = new ImportAllAction(this, model,"ImportAllParameterizations")
+        importAllAction = new ImportAllAction(this, model, "ImportAllParameterizations")
         saveAction = new SaveAction(model)
         settingsAction = new ShowUserSettingsAction(this)
         runAction = new SimulationAction(selectionTree, model)
@@ -514,8 +514,31 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             ULCComponent currentComponent = modelCardContent.getComponentAt(closingIndex)
             def item = openItems[currentComponent]
             def modelForItem = openModels[currentComponent]
-            modelCardContent.removeTabAt closingIndex
-            model.closeItem(modelForItem, item)
+            if (item.isChanged()) {
+                boolean closeTab = true
+                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
+                alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+                    def value = windowEvent.source.value
+                    if (value.equals(alert.firstButtonLabel)) {
+                        item.save()
+                    } else if (value.equals(alert.thirdButtonLabel)) {
+                        modelCardContent.setSelectedIndex closingIndex
+                        closeTab = false
+                    } else {
+                        item.unload()
+                    }
+                    if (closeTab) {
+                        modelCardContent.removeTabAt closingIndex
+                        model.closeItem(modelForItem, item)
+                    }
+
+                }] as IWindowListener)
+                alert.show()
+            }
+            if (!item.isChanged()) {
+                modelCardContent.removeTabAt closingIndex
+                model.closeItem(modelForItem, item)
+            }
         }] as ITabListener)
 
         Closure syncCurrentItem = {e -> selectCurrentItemFromTab(e.source)}
@@ -565,10 +588,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (item == null) {
             return
         } else {
-            if (item.isChanged()) {
-                openUnsavedChangedAlert(item)
-            }
-
             if ((modelPane.getNames() as List).contains(model.name)) {
                 ULCDetachableTabbedPane modelCardContent = modelPane.getComponentAt(model.name)
                 int tabIndex = getTabIndexForName(modelCardContent, createTabTitleForItem(item, model))
@@ -590,19 +609,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             item.removeModellingItemChangeListener(this)
         }
 
-    }
-
-    void openUnsavedChangedAlert(Object item) {
-        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
-        alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
-            def value = windowEvent.source.value
-            if (value.equals(alert.firstButtonLabel)) {
-                item.save()
-            }
-            //model.unloadParameterViewModel(item)
-            item.unload()
-        }] as IWindowListener)
-        alert.show()
     }
 
     void openAboutDialog() {
