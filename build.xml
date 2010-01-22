@@ -6,14 +6,15 @@
 
     <property file="application.properties"/>
 
-    <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}/"/>
+    <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}"/>
+    <property name="plugin.dir" value="${build.prod.dir}/plugins"/>
     <property name="classes.prod.dir" value="${build.prod.dir}/classes"/>
     <property name="resources.prod.dir" value="src/java"/>
 
     <property name="dist.dir" value="dist"/>
     <property name="target.dir" value="target"/>
     <property name="webapp.lib.dir" value="web-app/lib"/>
-    <property name="ulcPlugIn.webapp.lib.dir" value="${build.prod.dir}/plugins/ulc-2008-u1/web-app/lib"/>
+    <property name="ulcPlugIn.webapp.lib.dir" value="${plugin.dir}/ulc-2008-u1/web-app/lib"/>
 
     <condition property="grails" value="${GRAILS_HOME}/bin/grails.bat">
         <os family="windows"/>
@@ -45,6 +46,13 @@
             <fileset dir="." includes="**Db.properties"/>
             <fileset dir="." includes="*.tsl"/>
             <fileset dir="." includes="*.log"/>
+        </delete>
+    </target>
+
+    <target name="clean-plugins"
+            description="Removes all plugins files from the plugin dir. Useful for build servers to avoid grails trying to uninstall an old plugin after an upgrade.">
+        <delete includeemptydirs="true">
+            <fileset dir="${plugin.dir}" includes="**/*"/>
         </delete>
     </target>
 
