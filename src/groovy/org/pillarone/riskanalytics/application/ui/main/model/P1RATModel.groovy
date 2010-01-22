@@ -7,7 +7,7 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tree.ITreeNode
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
-import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
@@ -24,14 +24,10 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.application.ui.simulation.model.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -271,7 +267,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         closeItems(selectedModel, modellingItems)
         selectionTreeModel.removeAllGroupNodeChildren(itemGroupNode)
         try {
-            for (ModellingItem modellingItem : modellingItems) {
+            for (ModellingItem modellingItem: modellingItems) {
                 ModellingItemFactory.remove(modellingItem)
                 modellingItem.delete()
             }//for
@@ -375,13 +371,15 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         //in case hibernate collections are accessed by the simulation at the same time
         synchronized (item) {
             if (value.equals(firstButtonValue)) {
+                ModellingItem modellingItem
                 item.daoClass.withTransaction {status ->
                     item.load()
-                    ModellingItem modellingItem = ModellingItemFactory.incrementVersion(item)
+                    modellingItem = ModellingItemFactory.incrementVersion(item)
+                    modellingItem.id = null
                     fireModelChanged()
-                    notifyOpenDetailView(model, modellingItem)
                     selectionTreeModel.addNodeForItem(modellingItem)
                 }
+                openItem(model, modellingItem)
             } else if (value.equals(secondButtonValue)) {
                 item.daoClass.withTransaction {status ->
                     item.load()
