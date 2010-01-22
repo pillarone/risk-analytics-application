@@ -1,20 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.parameterization
 
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
-import org.pillarone.riskanalytics.core.parameterization.SimpleConstraint
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
-import org.pillarone.riskanalytics.core.parameterization.MatrixMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.TableMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxTableMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.pillarone.riskanalytics.core.parameterization.MatrixMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
+import org.pillarone.riskanalytics.core.parameterization.SimpleConstraint
+import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.TableMultiDimensionalParameter
 
 class MultiDimensionalParameterTests extends GroovyTestCase {
 
@@ -226,7 +226,8 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
                 "[4,5,6]\n" +
                 "]\n" +
                 "\"\"\"\n" +
-                ",[\"row1\",\"row2\"], org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory.getConstraints('SIMPLE_CONSTRAINT'))"
+                ",[\"row1\",\"row2\"], org.pillarone.modelling.parameterization.ConstraintsFactory.getConstraints('SIMPLE_CONSTRAINT'))"
+        //TODO: temp. fix because of bug in core.. this test should be moved to core where possible
         assertEquals output, param.toString()
     }
 
