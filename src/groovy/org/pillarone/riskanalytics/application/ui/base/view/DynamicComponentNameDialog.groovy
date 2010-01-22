@@ -9,14 +9,16 @@ class DynamicComponentNameDialog {
     private ULCWindow parent
     private ULCDialog dialog
     ULCTextField nameInput
+    String nameValue
     private ULCButton okButton
     private ULCButton cancelButton
 
     Closure okAction
     String title
 
-    public DynamicComponentNameDialog(ULCWindow parent) {
+    public DynamicComponentNameDialog(ULCWindow parent, String nameValue) {
         this.parent = parent
+        this.nameValue = nameValue
         initComponents()
         layoutComponents()
         attachListeners()
@@ -27,6 +29,7 @@ class DynamicComponentNameDialog {
         dialog.name = 'renameDialog'
         nameInput = new ULCTextField()
         nameInput.name = 'newName'
+        nameInput.value = nameValue
         okButton = new ULCButton("Ok")
         okButton.name = 'okButton'
         okButton.enabler = nameInput

@@ -17,63 +17,51 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
  */
 
-public class TreeNodeDuplicator extends ResourceBasedAction {
-
-    def tree
+public class TreeNodeDuplicator extends TreeNodeAction {
 
 
-    public TreeNodeDuplicator(def tree) {
-        super("Duplicate");
-        this.tree = tree
+    public TreeNodeDuplicator(def tree, ParameterViewModel model) {
+        super(tree, model, "Duplicate");
     }
 
 
-    public void doActionPerformed(ActionEvent event) {
-        ITableTreeNode node = tree.selectedPath.lastPathComponent
-        Component component = node.component.clone()
-        component.name = component.name + "Copy"
+    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+        String oldPath = "${node.parent.name}:${node.name}"
+        String newPath = "${node.parent.name}:$newName"
+        ParameterHolderFactory.duplicateParameters(model.builder.item, oldPath, newPath)
+        Component component = node.parent.component.createDefaultSubComponent()
+        component.name = newName
         tree.model.addComponentNode(node.parent, component)
     }
+}
 
+public class TreeNodeRename extends TreeNodeAction {
+
+    public TreeNodeRename(def tree, ParameterViewModel model) {
+        super(tree, model, "RenameNode");
+    }
+
+    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+        String oldPath = "${node.parent.name}:${node.name}"
+        String newPath = "${node.parent.name}:$newName"
+        ParameterHolderFactory.renameParameter(model.builder.item, oldPath, newPath)
+        Component component = node.parent.component.createDefaultSubComponent()
+        component.name = newName
+        tree.model.addComponentNode(node.parent, component)
+        tree.model.removeComponentNode(node)
+    }
 
 }
 
-public class TreeNodeRename extends ResourceBasedAction {
+abstract class TreeNodeAction extends ResourceBasedAction {
 
     def tree
     ParameterViewModel model
 
-    public TreeNodeRename(def tree, ParameterViewModel model) {
-        super("RenameNode");
+    public TreeNodeAction(def tree, ParameterViewModel model, String actionName) {
+        super(actionName)
         this.tree = tree
         this.model = model
-    }
-
-
-    public void doActionPerformed(ActionEvent event) {
-        ITableTreeNode node = tree.selectedPath.lastPathComponent
-        DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree), node?.displayName)
-        dialog.title = UIUtils.getText(this.class, "title") + ":"
-        dialog.okAction = {
-            try {
-                String newName = dialog.nameInput.text.trim()
-
-                newName = ComponentUtils.getSubComponentName(newName)
-                if (validate(newName)) {
-                    String oldPath = "${node.parent.name}:${node.name}"
-                    String newPath = "${node.parent.name}:$newName"
-                    ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath)
-                    Component component = node.parent.component.createDefaultSubComponent()
-                    component.name = newName
-                    tree.model.addComponentNode(node.parent, component)
-                    tree.model.removeComponentNode(node)
-                }
-            } catch (IllegalArgumentException e) {
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
-                alert.show()
-            }
-        }
-        dialog.show()
     }
 
     private boolean validate(String name) {
@@ -85,5 +73,25 @@ public class TreeNodeRename extends ResourceBasedAction {
         return true
     }
 
+    public void doActionPerformed(ActionEvent event) {
+        ITableTreeNode node = tree.selectedPath.lastPathComponent
+        DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree), node?.displayName)
+        dialog.title = UIUtils.getText(this.class, "title") + ":"
+        dialog.okAction = {
+            try {
+                String newName = dialog.nameInput.text.trim()
 
+                newName = ComponentUtils.getSubComponentName(newName)
+                if (validate(newName)) {
+                    doAction(newName, model, node, tree)
+                }
+            } catch (IllegalArgumentException e) {
+                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
+                alert.show()
+            }
+        }
+        dialog.show()
+    }
+
+    abstract void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree)
 }
