@@ -1,9 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-
-import org.pillarone.riskanalytics.core.packets.MultiValuePacket
-import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.TreeBuilder
@@ -11,8 +8,10 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.packets.MultiValuePacket
 import org.pillarone.riskanalytics.core.packets.Packet
 import org.pillarone.riskanalytics.core.packets.PacketList
+import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -61,7 +60,6 @@ class ResultTreeBuilder extends TreeBuilder {
 
 //        List sortedPropertyKeys = collectProperties(component, 'out')
 //        sortedPropertyKeys.addAll(collectProperties(component, 'sub'))
-        //todo fja PMO-612 after integration of SimulationEngine
         List sortedPropertyKeys = collectProperties(component, 'sub')
         sortedPropertyKeys.addAll(collectProperties(component, 'out'))
         sortedPropertyKeys.each {String key ->
@@ -91,20 +89,20 @@ class ResultTreeBuilder extends TreeBuilder {
     }
 
     private static final Map primitiveToWrapper = [
-        (Double.TYPE): Double,
-        (Integer.TYPE): Integer
+            (Double.TYPE): Double,
+            (Integer.TYPE): Integer
     ]
 
     List createValueNodes(MultiValuePacket valueTypeInstance) {
         List propertyList = []
-        for (String fieldName : valueTypeInstance.getFieldNames()) {
+        for (String fieldName: valueTypeInstance.getFieldNames()) {
             propertyList.add(new ResultTableTreeNode(fieldName))
         }
         propertyList
     }
 
     List createValueNodes(SingleValuePacket valueTypeInstance) {
-        [new ResultTableTreeNode(valueTypeInstance.valueLabel,Packet.class )]
+        [new ResultTableTreeNode(valueTypeInstance.valueLabel, Packet.class)]
     }
 
 

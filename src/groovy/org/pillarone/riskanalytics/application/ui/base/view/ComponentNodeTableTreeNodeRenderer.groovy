@@ -9,14 +9,12 @@ import com.ulcjava.base.application.util.Color
 import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
+import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeDuplicator
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -44,7 +42,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         //todo remove the context menu item as long as the functionality is not available.
 //        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
 //        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree)))
-//        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree)))
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
 

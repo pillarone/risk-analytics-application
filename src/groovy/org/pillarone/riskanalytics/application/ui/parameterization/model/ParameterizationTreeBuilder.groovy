@@ -2,16 +2,12 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.lang.reflect.Field
-import org.pillarone.riskanalytics.core.parameter.Parameter
-import org.pillarone.riskanalytics.core.parameter.ParameterEntry
-import org.pillarone.riskanalytics.core.parameter.ParameterObjectParameter
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
@@ -152,7 +148,8 @@ class ParameterizationTreeBuilder {
             if (name.startsWith('sub')) {
                 addParameterValueNodes(componentNodes[value])
             } else if (name.startsWith('parm')) {
-                List p = item.getParameters("${componentNode.path}:$name".toString())
+                def cNodePath = getPathValue("${componentNode.path}:$name".toString())
+                List p = item.getParameters(cNodePath)
                 if (!p.empty) {
                     componentNode.add(ParameterizationNodeFactory.getNode(p, model))
                 } else {
@@ -169,6 +166,12 @@ class ParameterizationTreeBuilder {
         }
     }
 
+    String getPathValue(String path) {
+        if (path && path.startsWith(model.name))
+            return path.substring(model.name.length() + 1)
+        return path
+    }
+
     private String buildParameterPath(ComponentTableTreeNode node) {
         StringBuffer buffer = new StringBuffer(node.name)
         ITableTreeNode currentNode = node.parent
@@ -180,6 +183,7 @@ class ParameterizationTreeBuilder {
     }
 
     //TODO: is this sufficient? probably not enough for nested dynamic components
+
     public void removeParameterFromNodes(SimpleTableTreeNode node) {
         node.childCount.times {
             def subNode = node.getChildAt(it)
