@@ -167,6 +167,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
+    void refreshBatchNode() {
+        ExceptionSafe.protect {
+            selectionTreeModel.refreshBatchNode()
+        }
+    }
+
+
     void save() {
         saveItem(currentItem)
         updateViewModelsMap()

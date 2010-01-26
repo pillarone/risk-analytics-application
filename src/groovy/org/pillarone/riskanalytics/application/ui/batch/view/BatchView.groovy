@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -8,13 +10,12 @@ import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
-
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
 /**
  * @author fouad jaada
@@ -26,6 +27,7 @@ public class BatchView extends NewBatchView {
     BatchRun batchRun
     BatchDataTableModel batchDataTableModel
     ULCButton runBatch
+    ULCButton saveButton
 
 
     public BatchView(P1RATModel model, BatchRun batchRun) {
@@ -40,6 +42,7 @@ public class BatchView extends NewBatchView {
         super.initComponents()
         batchNameTextField.setText(batchRun.name)
         comment.setText(batchRun.comment)
+        executionTimeSpinner.setValue(batchRun.executionTime)
     }
 
 
@@ -76,12 +79,17 @@ public class BatchView extends NewBatchView {
     }
 
     public ULCBoxPane getButtonsPane() {
+        saveButton = new ULCButton(UIUtils.getText(this.class, "Save"))
+        saveButton.setPreferredSize(dimension)
+
         runBatch = new ULCButton(UIUtils.getText(this.class, "RunBatch"))
         runBatch.setPreferredSize(dimension)
+
 
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
 
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(runBatch, 0, 8, 0, 8))
+        buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(saveButton, 0, 8, 0, 8))
         buttonPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         return buttonPane
     }
@@ -89,7 +97,31 @@ public class BatchView extends NewBatchView {
     protected void attachListeners() {
         runBatch.addActionListener([actionPerformed: {ActionEvent evt ->
             BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
-            BatchRunner.getService().runBatch(batchToRun)
+            if (!batchToRun.executed) {
+                BatchRunner.getService().runBatch(batchToRun)
+            } else {
+                new I18NAlert("BatchAlreadyExecuted").show()
+            }
+        }] as IActionListener)
+
+        saveButton.addActionListener([actionPerformed: {ActionEvent evt ->
+            String newName = batchNameTextField.getValue()
+            String oldName = batchDataTableModel.batchRun.name
+            if (oldName.equals(newName) || validate(newName)) {
+                BatchRun.withTransaction {
+                    BatchRun batch = BatchRun.findByName(oldName)
+                    if (batch) {
+                        batch.name = newName
+                        batch.executionTime = executionTimeSpinner.getValue()
+                        batch.comment = comment.getText()
+                        batch.save()
+                        if (!batch.name.equals(oldName))
+                            model.refreshBatchNode()
+                    }
+                }
+            } else {
+                new I18NAlert("BatchNotValidName").show()
+            }
         }] as IActionListener)
     }
 
@@ -109,7 +141,7 @@ class NewBatchView {
     ULCButton cancelButton
     final Dimension dimension = new Dimension(140, 20)
 
-    protected P1RATModel model
+    P1RATModel model
 
     public NewBatchView() {
     }
@@ -127,13 +159,13 @@ class NewBatchView {
         batchNameLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Name"))
         batchNameTextField = new ULCTextField()
         batchNameTextField.setPreferredSize(new Dimension(145, 20))
-        executionTimeLabel = new ULCLabel(UIUtils.getText(NewBatchView.class,"ExecutionTime"))
+        executionTimeLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "ExecutionTime"))
         ULCSpinnerDateModel dateSpinnerModel = new ULCSpinnerDateModel()
         executionTimeSpinner = new ULCSpinner(dateSpinnerModel)
         executionTimeSpinner.setPreferredSize(new Dimension(145, 20))
         executionTimeSpinner.setEditor(new ULCDateEditor(executionTimeSpinner, FastDateFormat.getDateTimeInstance(FastDateFormat.SHORT, FastDateFormat.SHORT, UIUtils.getClientLocale()).pattern))
 
-        commentLabel = new ULCLabel(UIUtils.getText(NewBatchView.class,"Comment"))
+        commentLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Comment"))
         comment = new ULCTextArea(4, 50)
         comment.lineWrap = true
         comment.wrapStyleWord = true
@@ -150,20 +182,26 @@ class NewBatchView {
     protected void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
             String batchName = batchNameTextField.getValue()
-            if (StringUtils.isNotEmpty(batchName) && StringUtils.isNotBlank(batchName)) {
+            if (validate(batchName)) {
                 BatchRun.withTransaction {
                     mapToDao().save()
                 }
                 BatchRun item = BatchRun.findByName(batchName)
                 if (item)
                     model.addItem(item)
+            } else {
+                new I18NAlert("BatchNotValidName").show()
             }
         }] as IActionListener)
     }
 
+    protected boolean validate(String batchName) {
+        return StringUtils.isNotEmpty(batchName) && StringUtils.isNotBlank(batchName) && BatchRun.findByName(batchName) == null
+    }
+
 
     protected ULCBoxPane getParameterSectionPane() {
-        ULCBoxPane parameterSection = boxLayout(UIUtils.getText(NewBatchView.class,"BatchConfig") + ":") {ULCBoxPane box ->
+        ULCBoxPane parameterSection = boxLayout(UIUtils.getText(NewBatchView.class, "BatchConfig") + ":") {ULCBoxPane box ->
             ULCBoxPane content = new ULCBoxPane(3, 3)
 
             content.add(ULCBoxPane.BOX_LEFT_CENTER, batchNameLabel)
@@ -172,7 +210,7 @@ class NewBatchView {
             content.add(ULCBoxPane.BOX_LEFT_CENTER, executionTimeLabel)
             content.add(2, ULCBoxPane.BOX_LEFT_TOP, spaceAround(executionTimeSpinner, 2, 10, 0, 0))
 
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewBatchView.class,"Comment") + ":"))
+            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewBatchView.class, "Comment") + ":"))
             content.add(2, ULCBoxPane.BOX_LEFT_TOP, spaceAround(comment, 2, 10, 0, 0))
 
             box.add ULCBoxPane.BOX_LEFT_TOP, content
@@ -181,7 +219,7 @@ class NewBatchView {
     }
 
     ULCBoxPane getButtonsPane() {
-        addButton = new ULCButton(UIUtils.getText(NewBatchView.class,"Add"))
+        addButton = new ULCButton(UIUtils.getText(NewBatchView.class, "Add"))
 
         addButton.setPreferredSize(dimension)
 
