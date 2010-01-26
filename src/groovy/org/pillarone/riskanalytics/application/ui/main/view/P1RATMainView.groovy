@@ -514,7 +514,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             ULCComponent currentComponent = modelCardContent.getComponentAt(closingIndex)
             def item = openItems[currentComponent]
             def modelForItem = openModels[currentComponent]
-            if (item.isChanged()) {
+            if (!(item instanceof BatchRun) && item.isChanged()) {
                 boolean closeTab = true
                 ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
                 alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
@@ -535,7 +535,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                 }] as IWindowListener)
                 alert.show()
             }
-            if (!item.isChanged()) {
+            if ((item instanceof BatchRun) || !item.isChanged()) {
                 modelCardContent.removeTabAt closingIndex
                 model.closeItem(modelForItem, item)
             }
