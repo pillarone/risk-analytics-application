@@ -1,12 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+
 import com.ulcjava.base.application.ULCTree
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.BatchRun
 
 /**
  * @author fouad jaada
@@ -49,10 +50,14 @@ public class RunBatchAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        def item = getSelectedItem()
-        if (item != null) {
-            item = BatchRun.findByName(item.name)
-            BatchRunner.getService().runBatch(item)
+        def batchToRun = getSelectedItem()
+        if (batchToRun != null) {
+            batchToRun = BatchRun.findByName(batchToRun.name)
+            if (!batchToRun.executed) {
+                BatchRunner.getService().runBatch(batchToRun)
+            } else {
+                new I18NAlert("BatchAlreadyExecuted").show()
+            }
         }
     }
 
