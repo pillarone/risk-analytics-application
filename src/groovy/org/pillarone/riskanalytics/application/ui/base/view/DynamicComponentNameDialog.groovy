@@ -16,6 +16,13 @@ class DynamicComponentNameDialog {
     Closure okAction
     String title
 
+    public DynamicComponentNameDialog(ULCWindow parent) {
+        this.parent = parent
+        initComponents()
+        layoutComponents()
+        attachListeners()
+    }
+
     public DynamicComponentNameDialog(ULCWindow parent, String nameValue) {
         this.parent = parent
         this.nameValue = nameValue
