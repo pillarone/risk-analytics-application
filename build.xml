@@ -80,6 +80,25 @@
         </copy>
     </target>
 
+    <target name="standalone-compile" depends="init" description="--> Run a Grails applications unit tests">
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="jar -destination=out/production/RiskAnalyticsApplication"/>
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+            <env key="JAVA_OPTS"
+                 value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
+        </exec>
+    </target>
+
+    <target name="standalone-jar" depends="init" description="--> Run a Grails applications unit tests">
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="jar -destination=out/production/RiskAnalyticsApplication -mainClass=org.pillarone.riskanalytics.application.Main"/>
+            <arg value="-buildJar"/>
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+            <env key="JAVA_OPTS"
+                 value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
+        </exec>
+    </target>
+
     <target name="jar-client" description="--> Create clientside jar files">
         <mkdir dir="${webapp.lib.dir}"/>
         <delete dir="${webapp.lib.dir}">
