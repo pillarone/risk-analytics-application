@@ -24,8 +24,20 @@ target(pirat: "The application start target") {
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
         new GroovyShell(app.classLoader).evaluate '''
             import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher
-            new CoreBootStrap().init(null)
-            new ApplicationBootStrap().init(null)
+            import org.codehaus.groovy.grails.commons.GrailsClass
+            import org.codehaus.groovy.grails.commons.GrailsBootstrapClass
+            import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler
+            import org.codehaus.groovy.grails.commons.ApplicationHolder
+
+            GrailsClass[] bootstraps =  ApplicationHolder.application.getArtefacts(BootstrapArtefactHandler.TYPE);
+            for (GrailsClass bootstrap : bootstraps) {
+                final GrailsBootstrapClass bootstrapClass = (GrailsBootstrapClass) bootstrap;
+                //Quartz bootstrap needs a servlet context
+                if(!bootstrapClass.clazz.simpleName.startsWith("Quartz")) {
+                    bootstrapClass.callInit(null);
+                }
+            }
+
             P1RATStandaloneLauncher.start()
         '''
     } catch (Exception e) {
