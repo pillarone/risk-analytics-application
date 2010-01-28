@@ -1,22 +1,14 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ModelItem
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.ItemComparator
-import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.simulation.item.ConfigObjectBasedModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class ModellingItemFactory {
 
@@ -48,7 +40,7 @@ class ModellingItemFactory {
 
     static List getParameterizationsForModel(Class modelClass) {
         ParameterizationDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it)
+            getItem(it, modelClass)
         }
     }
 
@@ -211,7 +203,7 @@ class ModellingItemFactory {
 
     static List getResultConfigurationsForModel(Class modelClass) {
         ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it)
+            getItem(it, modelClass)
         }
     }
 
@@ -370,14 +362,15 @@ class ModellingItemFactory {
         return item
     }
 
-    private static ModellingItem getItem(ParameterizationDAO dao) {
+    private static ModellingItem getItem(ParameterizationDAO dao, Class modelClass = null) {
         Parameterization item = getItemInstances()[key(Parameterization, dao.id)]
         if (!item) {
             item = new Parameterization(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
-            // todo fja load a parameters as lazy
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
+            if (modelClass != null)
+                item.modelClass = modelClass
             getItemInstances()[key(Parameterization, dao.id)] = item
         }
         item
@@ -393,11 +386,13 @@ class ModellingItemFactory {
         item
     }
 
-    private static ModellingItem getItem(ResultConfigurationDAO dao) {
+    private static ModellingItem getItem(ResultConfigurationDAO dao, Class modelClass = null) {
         ResultConfiguration item = getItemInstances()[key(ResultConfiguration, dao.id)]
         if (!item) {
             item = new ResultConfiguration(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
+            if (modelClass != null)
+                item.modelClass = modelClass
             getItemInstances()[key(ResultConfiguration, dao.id)] = item
         }
         item
