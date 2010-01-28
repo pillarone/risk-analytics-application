@@ -1,3 +1,6 @@
+import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
+import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
     def version = "0.4.5"
@@ -34,7 +37,7 @@ ULC view
     }
 
     def doWithApplicationContext = {applicationContext ->
-        // TODO Implement post initialization spring config (optional)
+        ConstraintsFactory.registerConstraint(new LinePercentage())
     }
 
     def onChange = {event ->

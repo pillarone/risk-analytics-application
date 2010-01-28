@@ -3,14 +3,10 @@ import grails.util.Environment
 import org.pillarone.riskanalytics.application.user.ApplicationUser
 import org.pillarone.riskanalytics.application.jobs.JobScheduler
 import org.springframework.transaction.TransactionStatus
-import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
-import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 
 class ApplicationBootStrap {
 
     def init = {servletContext ->
-
-        ConstraintsFactory.registerConstraint(new LinePercentage())
 
         ApplicationUser.withTransaction {TransactionStatus status ->
             if (ApplicationUser.countByUsername("testUser") == 0) {
