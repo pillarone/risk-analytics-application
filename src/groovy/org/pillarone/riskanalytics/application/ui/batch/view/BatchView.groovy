@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-
+import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -12,9 +11,12 @@ import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneGuiHelper
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import com.ulcjava.base.application.*
 
 /**
@@ -30,9 +32,10 @@ public class BatchView extends NewBatchView {
     ULCButton saveButton
 
 
-    public BatchView(P1RATModel model, BatchRun batchRun) {
+    public BatchView(P1RATModel model, BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
         this.model = model
         this.batchRun = batchRun
+        this.tabbedPane = tabbedPane
         initComponents()
         layoutComponents()
         attachListeners()
@@ -115,14 +118,20 @@ public class BatchView extends NewBatchView {
                         batch.executionTime = executionTimeSpinner.getValue()
                         batch.comment = comment.getText()
                         batch.save()
-                        if (!batch.name.equals(oldName))
-                            model.refreshBatchNode()
+                        if (!batch.name.equals(oldName)) {
+                            updateGui(batch, oldName)
+                        }
                     }
                 }
             } else {
                 new I18NAlert("BatchNotValidName").show()
             }
         }] as IActionListener)
+    }
+
+    protected void updateGui(BatchRun batchRun, String oldName) {
+        model.refreshBatchNode()
+        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
     }
 
 
@@ -142,12 +151,14 @@ class NewBatchView {
     final Dimension dimension = new Dimension(140, 20)
 
     P1RATModel model
+    ULCDetachableTabbedPane tabbedPane
 
     public NewBatchView() {
     }
 
-    public NewBatchView(P1RATModel model) {
+    public NewBatchView(P1RATModel model, ULCDetachableTabbedPane tabbedPane) {
         this.model = model
+        this.tabbedPane = tabbedPane
         initComponents()
         layoutComponents()
         attachListeners()
@@ -188,7 +199,7 @@ class NewBatchView {
                 }
                 BatchRun item = BatchRun.findByName(batchName)
                 if (item)
-                    model.addItem(item)
+                    updateGui(item, LocaleResources.getString("RiskAnalyticsMainView.CreateNewBatch"))
             } else {
                 new I18NAlert("BatchNotValidName").show()
             }
@@ -199,6 +210,10 @@ class NewBatchView {
         return StringUtils.isNotEmpty(batchName) && StringUtils.isNotBlank(batchName) && BatchRun.findByName(batchName) == null
     }
 
+    protected void updateGui(BatchRun batchRun, String oldName) {
+        model.addItem(batchRun)
+        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
+    }
 
     protected ULCBoxPane getParameterSectionPane() {
         ULCBoxPane parameterSection = boxLayout(UIUtils.getText(NewBatchView.class, "BatchConfig") + ":") {ULCBoxPane box ->

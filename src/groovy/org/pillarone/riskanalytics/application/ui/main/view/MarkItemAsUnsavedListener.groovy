@@ -29,15 +29,23 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     }
 
     private void updateUnsavedTabbedPaneTitle(ModellingItem item) {
-        String newTitle = "$item.name v${item.versionNumber.toString()}"
-        int index = getTabIndexForName(tabbedPane, newTitle)
+        String title = "$item.name v${item.versionNumber.toString()}"
+        String newTitle = title
         if (item.isChanged()) {
-            newTitle = "${newTitle} *"
+            newTitle += " *"
         }
+        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title, newTitle)
+    }
+}
+
+class TabbedPaneGuiHelper {
+
+    public static void updateTabbedPaneTitle(ULCCloseableTabbedPane tabbedPane, String oldTitle, String newTitle) {
+        int index = getTabIndexForName(tabbedPane, oldTitle)
         if (index >= 0) {
             tabbedPane.setTitleAt(index, newTitle)
         } else {
-            int frameId = tabbedPane.findFrameID("$item.name v${item.versionNumber.toString()}")
+            int frameId = tabbedPane.findFrameID(oldTitle)
             if (frameId > 0) {
                 ULCCloseableTabbedPane dependantTabbedPane = tabbedPane.getDependantTabbedPane(frameId - 1)
                 dependantTabbedPane.setTitleAt(0, newTitle)
@@ -45,8 +53,7 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
         }
     }
 
-
-    private int getTabIndexForName(ULCTabbedPane tabbedPane, String tabTitle) {
+    private static int getTabIndexForName(ULCTabbedPane tabbedPane, String tabTitle) {
         int tabIndex = -1
         tabbedPane.tabCount.times {
             if (tabbedPane?.getTitleAt(it)?.startsWith(tabTitle)) {
