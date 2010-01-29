@@ -14,7 +14,13 @@ public class Main {
     public static void main(String args[]) {
         System.out.println("Starting RiskAnalytics");
         try {
-            System.setProperty("grails.env", "dev");
+            String environment = System.getProperty("grails.env");
+            if (environment == null) {
+                environment = "dev";
+                System.setProperty("grails.env", environment);
+
+            }
+            System.out.println("Starting with environment " + environment);
             ExpandoMetaClass.enableGlobally();
 
             System.out.println("Loading grails..");
