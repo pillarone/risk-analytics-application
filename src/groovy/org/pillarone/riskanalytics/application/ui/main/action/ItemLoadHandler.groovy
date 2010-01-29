@@ -4,18 +4,18 @@ import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileLoadHandler
-import org.pillarone.riskanalytics.core.parameterization.ParameterizationImportError
+import org.apache.commons.lang.StringUtils
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ParameterizationImportError
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.apache.commons.logging.LogFactory
-import org.apache.commons.logging.Log
-import org.pillarone.riskanalytics.core.util.PropertiesUtils
-import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -70,6 +70,7 @@ class ItemLoadHandler implements IFileLoadHandler {
                     }
 
                 } catch (Throwable e) {
+                    LOG.error "error by loading $itemName"
                     throw new ParameterizationImportError(e)
                 } finally {
                     importAction.ancestor?.cursor = Cursor.DEFAULT_CURSOR
