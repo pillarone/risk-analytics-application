@@ -17,32 +17,43 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     }
 
     public void itemChanged(ResultConfiguration item) {
-        String newTitle = "$item.name v${item.versionNumber.toString()}"
-        int index = getTabIndexForName(tabbedPane, newTitle)
-        if (item.isChanged()) {
-            newTitle = "${newTitle} *"
-        }
-        if (index >= 0) {
-            tabbedPane.setTitleAt(index, newTitle)
-        }
+        updateUnsavedTabbedPaneTitle(item)
     }
 
+
     public void itemChanged(Parameterization item) {
-        String newTitle = "$item.name v${item.versionNumber.toString()}"
-        int index = getTabIndexForName(tabbedPane, newTitle)
-        if (item.isChanged()) {
-            newTitle = "${newTitle} *"
-        }
-        if (index >= 0) {
-            tabbedPane.setTitleAt(index, newTitle)
-        }
+        updateUnsavedTabbedPaneTitle(item)
     }
 
     public void itemChanged(ModellingItem item) {
-
     }
 
-    private int getTabIndexForName(ULCTabbedPane tabbedPane, String tabTitle) {
+    private void updateUnsavedTabbedPaneTitle(ModellingItem item) {
+        String title = "$item.name v${item.versionNumber.toString()}"
+        String newTitle = title
+        if (item.isChanged()) {
+            newTitle += " *"
+        }
+        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title, newTitle)
+    }
+}
+
+class TabbedPaneGuiHelper {
+
+    public static void updateTabbedPaneTitle(ULCCloseableTabbedPane tabbedPane, String oldTitle, String newTitle) {
+        int index = getTabIndexForName(tabbedPane, oldTitle)
+        if (index >= 0) {
+            tabbedPane.setTitleAt(index, newTitle)
+        } else {
+            int frameId = tabbedPane.findFrameID(oldTitle)
+            if (frameId > 0) {
+                ULCCloseableTabbedPane dependantTabbedPane = tabbedPane.getDependantTabbedPane(frameId - 1)
+                dependantTabbedPane.setTitleAt(0, newTitle)
+            }
+        }
+    }
+
+    private static int getTabIndexForName(ULCTabbedPane tabbedPane, String tabTitle) {
         int tabIndex = -1
         tabbedPane.tabCount.times {
             if (tabbedPane?.getTitleAt(it)?.startsWith(tabTitle)) {

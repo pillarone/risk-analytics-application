@@ -266,8 +266,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         return view.content
     }
 
-    protected ULCComponent createDetailView(BatchRun batchRun) {
-        return batchRun.id != null ? new BatchView(this.model, batchRun).content : new NewBatchView(this.model).content
+    protected ULCComponent createDetailView(BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
+        return batchRun.id != null ? new BatchView(this.model, batchRun, tabbedPane).content : new NewBatchView(this.model, tabbedPane).content
     }
 
 
@@ -345,7 +345,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (tabExists(tabbedPane, title)) {
             selectTab(tabbedPane, title)
         } else {
-            Object detailView = createDetailView(batchRun)
+            Object detailView = createDetailView(batchRun, tabbedPane)
             openItems[detailView] = batchRun
             tabbedPane.addTab(title, UIUtils.getIcon("runsimulation-active.png"), detailView)
             int tabIndex = tabbedPane.tabCount - 1
