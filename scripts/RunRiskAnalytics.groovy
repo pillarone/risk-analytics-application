@@ -2,8 +2,8 @@ import grails.util.GrailsUtil
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.context.ApplicationContext
 
-Ant.property(environment: "env")
-grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
+ant.property(environment: "env")
+grailsHome = ant.antProject.properties."env.GRAILS_HOME"
 
 System.setProperty(GrailsApplication.WORK_DIR, ".")
 
@@ -17,8 +17,6 @@ target('default': "Load the Grails interactive Swing console") {
 
 target(pirat: "The application start target") {
 
-    classLoader = new URLClassLoader([classesDir.toURL()] as URL[], rootLoader)
-    Thread.currentThread().setContextClassLoader(classLoader)
     try {
         ApplicationContext ctx = GrailsUtil.bootstrapGrailsFromClassPath();
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
