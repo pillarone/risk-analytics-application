@@ -19,7 +19,7 @@
 <div class="dialog" style="margin-left:20px;width:60%;">
   <ul>
     <li><a href="application.gsp">in your browser (as an applet)</a></li>
-    <li><a href="RiskAnalytics.jnlp">like a desktop application (using webstart)</a><br></li>
+    <li><a href="webstart.jsp">like a desktop application (using webstart)</a><br></li>
   </ul>
 
 </div>
