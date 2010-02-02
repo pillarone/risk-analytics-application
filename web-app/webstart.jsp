@@ -44,10 +44,10 @@
 
     <resources>
         <j2se version="1.5+"/>
-        <jar href="./plugins/ulc-2008-u1/lib/ulc-jnlp-client.jar"/>
-        <jar href="./plugins/ulc-2008-u1/lib/ulc-base-client.jar"/>
-        <jar href="./plugins/ulc-2008-u1/lib/ulc-servlet-client.jar"/>
-        <jar href="./plugins/ulc-2008-u1/lib/ulc-base-trusted.jar"/>
+        <jar href="./plugins/ulc-2008-u4/lib/ulc-jnlp-client.jar"/>
+        <jar href="./plugins/ulc-2008-u4/lib/ulc-base-client.jar"/>
+        <jar href="./plugins/ulc-2008-u4/lib/ulc-servlet-client.jar"/>
+        <jar href="./plugins/ulc-2008-u4/lib/ulc-base-trusted.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-jnlp-client.jar" main="true"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-extensions-client.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-client.jar"/>

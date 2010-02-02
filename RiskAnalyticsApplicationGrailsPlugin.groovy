@@ -8,7 +8,8 @@ class RiskAnalyticsApplicationGrailsPlugin {
     def grailsVersion = "1.2.0 > *"
     // the other plugins this plugin depends on
     def dependsOn = [
-            "riskAnalyticsCore": "0.4.5 > *"
+            "riskAnalyticsCore": "0.4.5 > *",
+            "ulc": "2008 > *"
     ]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
