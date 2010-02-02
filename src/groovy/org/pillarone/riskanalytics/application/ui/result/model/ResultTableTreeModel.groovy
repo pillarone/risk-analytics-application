@@ -11,11 +11,13 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.PostSimulationCalculationAccessor
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
+import java.text.SimpleDateFormat
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -28,6 +30,8 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     boolean usesDeterministicModel
     ULCNumberDataType numberDataType
 
+    private List<String> periodLabels = []
+
     protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, IFunction mean) {
         this.rootNode = rootNode
         this.simulationRun = simulationRun
@@ -37,7 +41,26 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
             functions << mean
         }
         columnCount = 1 + simulationRun.periodCount
+        //TODO: is this still used despite of DRTTM?
         usesDeterministicModel = DeterministicModel.isAssignableFrom(parameterization.modelClass)
+
+        initPeriodLabels()
+    }
+
+
+    private void initPeriodLabels() {
+        Model model = parameterization.modelClass.newInstance()
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy")
+        IPeriodCounter periodCounter = model.createPeriodCounter(simulationRun.beginOfFirstPeriod)
+        if (periodCounter != null) {
+            periodCounter.reset()
+            simulationRun.periodCount.times {
+                periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
+                periodCounter.next()
+            }
+        } else {
+            periodLabels = parameterization.getPeriodLabels()
+        }
     }
 
     public String getColumnName(int i) {
@@ -46,7 +69,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
             int periodIndex = (i - 1) % simulationRun.periodCount
             name = functions[i].getName(periodIndex)
             if (i > 0) {
-                String periodLabel = parameterization.getPeriodLabel(periodIndex)
+                String periodLabel = periodLabels.get(periodIndex)
                 name = name + " " + periodLabel
             }
         }

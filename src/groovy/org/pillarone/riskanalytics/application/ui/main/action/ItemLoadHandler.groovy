@@ -24,6 +24,7 @@ class ItemLoadHandler implements IFileLoadHandler {
     ImportAction importAction
     boolean withVersionNumber = false
     def node
+    final static String DEFAULT_VERSION = "0.4.2"
 
     Log LOG = LogFactory.getLog(ItemLoadHandler)
 
@@ -139,6 +140,8 @@ class ItemLoadHandler implements IFileLoadHandler {
         String pVersion = getVersion(lines)
         if (pVersion) {
             properties = new PropertiesUtils().getProperties("/parameterization_${pVersion}_${appVersion}.properties")
+        } else {
+            properties = new PropertiesUtils().getProperties("/parameterization_${DEFAULT_VERSION}_${appVersion}.properties")
         }
         return properties
     }

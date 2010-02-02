@@ -57,16 +57,15 @@ class ModellingItemFactory {
         parameterizationNames.each {
             String name = it
             criteria = ParameterizationDAO.createCriteria()
-            def highestVesion = criteria.list {
+            def parameterizations = criteria.list {
                 eq('modelClassName', modelClass.name)
                 eq('name', name)
-                projections {
-                    max('itemVersion')
-                }
+                order("itemVersion", "desc")
             }
-            result << ParameterizationDAO.findByNameAndItemVersion(name, highestVesion[0])
+            if (parameterizations.size() > 0)
+                result << parameterizations.get(0)
         }
-        result.collect {getItem(it)}
+        result.collect {getItem(it, modelClass)}
     }
 
     static ModellingItem getNewestModelItem(String modelName) {
