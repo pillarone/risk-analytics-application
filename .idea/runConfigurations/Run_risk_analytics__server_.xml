@@ -4,7 +4,7 @@
     <setting name="vmparams" value="-Xmx512m -XX:MaxPermSize=256m -Duser.language=en" />
     <setting name="cmdLine" value="run-app" />
     <setting name="depsClasspath" value="true" />
-    <setting name="launchBrowser" value="true" />
+    <setting name="launchBrowser" value="false" />
     <RunnerSettings RunnerId="Profile ">
       <option name="myExternalizedOptions" value="&#13;&#10;snapshots-dir=&#13;&#10;additional-options2=onexit\=snapshot&#13;&#10;" />
     </RunnerSettings>

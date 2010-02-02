@@ -60,5 +60,23 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         assertEquals "Wrong columnName for col 3", "Mean 01.01.2011", model.getColumnName(3)
     }
 
+    void testSimpleLabels() {
+        Parameterization parameterization = new Parameterization("name")
+        parameterization.modelClass = CoreModel
+        parameterization.periodLabels = []
+
+        SimpleTableTreeNode root = new SimpleTableTreeNode("root")
+        SimpleTableTreeNode child = new SimpleTableTreeNode("child")
+        SimpleTableTreeNode grandChild = new SimpleTableTreeNode("grandChild")
+        root.add(child)
+        child.add(grandChild)
+        ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean())
+
+        assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
+        assertEquals "Wrong columnName for col 1", "Mean P0", model.getColumnName(1)
+        assertEquals "Wrong columnName for col 2", "Mean P1", model.getColumnName(2)
+        assertEquals "Wrong columnName for col 3", "Mean P2", model.getColumnName(3)
+    }
+
 }
 

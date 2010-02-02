@@ -58,8 +58,12 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
                 periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
                 periodCounter.next()
             }
-        } else {
+        } else if(!parameterization.periodLabels.empty){
             periodLabels = parameterization.getPeriodLabels()
+        } else {
+            simulationRun.periodCount.times { int i ->
+                periodLabels << "P$i"
+            }
         }
     }
 
