@@ -41,8 +41,8 @@ class ResultViewModelTests extends GroovyTestCase {
         StubFor parameterization = new StubFor(Parameterization)
         parameterization.demand.load {->}
         parameterization.demand.setName {a ->}
-        parameterization.demand.getPeriodLabel {index -> return null}
-        parameterization.demand.getModelClass {index -> return model.class}
+        parameterization.demand.getModelClass(2..2) {index -> return model.class}
+        parameterization.demand.getPeriodLabels {-> return []}
 
         resultAccessor.use {
             structure.use {

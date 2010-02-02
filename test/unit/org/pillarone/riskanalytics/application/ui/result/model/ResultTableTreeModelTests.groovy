@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.application.dataaccess.function.Mean
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.example.model.ExtendedCoreModel
 
 class ResultTableTreeModelTests extends GroovyTestCase {
 
@@ -42,4 +43,22 @@ class ResultTableTreeModelTests extends GroovyTestCase {
 
     }
 
+    void testPeriodCounterLabels() {
+        Parameterization parameterization = new Parameterization("name")
+        parameterization.modelClass = ExtendedCoreModel
+
+        SimpleTableTreeNode root = new SimpleTableTreeNode("root")
+        SimpleTableTreeNode child = new SimpleTableTreeNode("child")
+        SimpleTableTreeNode grandChild = new SimpleTableTreeNode("grandChild")
+        root.add(child)
+        child.add(grandChild)
+        ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean())
+
+        assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
+        assertEquals "Wrong columnName for col 1", "Mean 01.01.2009", model.getColumnName(1)
+        assertEquals "Wrong columnName for col 2", "Mean 01.01.2010", model.getColumnName(2)
+        assertEquals "Wrong columnName for col 3", "Mean 01.01.2011", model.getColumnName(3)
+    }
+
 }
+
