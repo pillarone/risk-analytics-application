@@ -192,9 +192,9 @@ public class JEstimator {
         List<List<Double>> cdf = new ArrayList<List<Double>>();
         Map keyFigures = (Map) ApplicationHolder.getApplication().getConfig().getProperty("keyFiguresToCalculate");
         List<BigDecimal> yValues = (List) keyFigures.get(PostSimulationCalculation.PERCENTILE);
-        List<BigDecimal> xValues = PostSimulationCalculationAccessor.getPercentiles(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
+        List xValues = PostSimulationCalculationAccessor.getPercentiles(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
         for (int i = 0; i < xValues.size(); i++) {
-            addXYValues(cdf, xValues.get(i).doubleValue(), yValues.get(i).doubleValue() / 100.0);
+            addXYValues(cdf, (Double)xValues.get(i), yValues.get(i).doubleValue() / 100.0);
         }
         return cdf;
     }
@@ -202,11 +202,11 @@ public class JEstimator {
     public static List getPDF(SimulationRun simulationRun, ResultTableTreeNode node, int periodIndex) {
         List<List<Double>> pdf = new ArrayList<List<Double>>();
         List values = PostSimulationCalculationAccessor.getPDFValues(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
-        if(values == null)
-           return new ArrayList();
-        for (Iterator iter= values.iterator() ; iter.hasNext() ;){
-            Map map = (Map)iter.next();
-            addXYValues(pdf, ((BigDecimal)map.get("keyFigureParameter")).doubleValue(),((BigDecimal) map.get("result")).doubleValue()/1000.0);
+        if (values == null)
+            return new ArrayList();
+        for (Iterator iter = values.iterator(); iter.hasNext();) {
+            Map map = (Map) iter.next();
+            addXYValues(pdf, ((BigDecimal) map.get("keyFigureParameter")).doubleValue(), ((Double) map.get("result")) / 1000.0);
         }
         return pdf;
     }
