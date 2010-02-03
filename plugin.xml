@@ -1,4 +1,4 @@
-<plugin name='risk-analytics-application' version='0.4.5' grailsVersion='1.2.0 &gt; *'>
+<plugin name='risk-analytics-application' version='0.4.9' grailsVersion='1.2.0 &gt; *'>
   <author>Intuitive Collaboration GmbH</author>
   <authorEmail>info@pillarone.org</authorEmail>
   <title>RiskAnalytics application</title>
@@ -16,10 +16,8 @@ ULC view
     <resource>org.pillarone.riskanalytics.application.user.UserSettings</resource>
   </resources>
   <dependencies>
-    <plugin name='jasper' version='0.9.5-riskanalytics' />
-    <plugin name='jetty' version='1.2-SNAPSHOT' />
-    <plugin name='ulc' version='2008-u1' />
-    <plugin name='riskAnalyticsCore' version='0.4.5.1' />
+    <plugin name='riskAnalyticsCore' version='0.4.9.1 &gt; *' />
+    <plugin name='ulc' version='2008 &gt; *' />
     <resolvers>
       <resolver type='grailsPlugins' name='grailsPlugins' />
       <resolver type='mavenLocal' />
