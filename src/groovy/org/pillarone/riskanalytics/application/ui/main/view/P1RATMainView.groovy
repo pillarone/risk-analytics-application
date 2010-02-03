@@ -557,7 +557,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     private boolean isChanged(item) {
-        return item && item.properties.containsKey("isChanged") && item.isChanged()
+        return item && item.properties.containsKey("changed") && item.isChanged()
     }
 
     private void selectCurrentItemFromTab(ULCCloseableTabbedPane modelCardContent) {
