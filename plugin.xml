@@ -1,4 +1,4 @@
-<plugin name='risk-analytics-application' version='0.4.9' grailsVersion='1.2.0 &gt; *'>
+<plugin name='risk-analytics-application' version='0.4.9.1' grailsVersion='1.2.0 &gt; *'>
   <author>Intuitive Collaboration GmbH</author>
   <authorEmail>info@pillarone.org</authorEmail>
   <title>RiskAnalytics application</title>
@@ -18,6 +18,7 @@ ULC view
   <dependencies>
     <plugin name='riskAnalyticsCore' version='0.4.9.1 &gt; *' />
     <plugin name='ulc' version='2008 &gt; *' />
+    <plugin name='jasper' version='0.9.5-riskanalytics' />
     <resolvers>
       <resolver type='grailsPlugins' name='grailsPlugins' />
       <resolver type='mavenLocal' />
