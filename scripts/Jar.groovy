@@ -1,13 +1,18 @@
 includeTargets << grailsScript("_GrailsWar")
-includeTargets << grailsScript("_GrailsPackage")
 
 stagingDir = null
 
 target(jarMain: '''
 Compiles a grails application and moves the output to the specified directory and optionally creates
-a JAR file.
+a JAR file or a runnable .cmd file.
 The directory is structured in a way that a grails application can locally be run without
 the need for a grails executable. Web Content (i.e. views) is not completely included.
+
+Options:
+-destination (required): target directory for the compiled output
+-buildJar (optional): Creates a jar file of the project
+-buildClasses (optional): Creates a directory which contains all output and a .cmd file to start the project
+-mainClass (required for buildJar and buildClasses): main class to start
 ''') {
     depends(parseArguments, packageApp)
 
@@ -18,10 +23,12 @@ the need for a grails executable. Web Content (i.e. views) is not completely inc
 
     ant.mkdir(dir: stagingDir)
 
+    //copy applicationContext.xml from the project to the target directory
     ant.copy(todir: stagingDir, overwrite: true) {
         fileset(dir: "${basedir}/web-app/WEB-INF", includes: "applicationContext.xml")
     }
 
+    //copy the compiler output to the target directory
     ant.copy(todir: "${stagingDir}") {
         fileset(dir: classesDirPath) {
             exclude(name: "hibernate")
@@ -32,41 +39,87 @@ the need for a grails executable. Web Content (i.e. views) is not completely inc
         fileset(dir: resourcesDirPath, includes: "**/*")
     }
 
+    //Create a grails.xml file which is necessary to create a plugin manager (using _GrailsWar.groovy)
     ant.mkdir(dir: "${stagingDir}/WEB-INF")
     createDescriptor()
 
+    //Project ready to run in stagingDir, optionally create a jar or cmd file to run the application
     if (argsMap.buildJar) {
-
-        String mainClass = argsMap.mainClass
-        if (!mainClass) return
-
-        String jarTarget = "${projectTargetDir}/jar"
-
-        def externalLibsTarget = "${jarTarget}/lib"
-        ant.mkdir(dir: externalLibsTarget)
-        ant.copy(todir: externalLibsTarget, flatten: true) {
-            fileset(dir: './lib', includes: '*.jar')
-            fileset(dir: pluginsDirPath, includes: '**/lib/*.jar')
-            fileset(dir: grailsHome, includes: 'lib/*.jar dist/*.jar')
-        }
-        StringBuilder classPath = new StringBuilder()
-        new File(externalLibsTarget).eachFileRecurse {File file ->
-            classPath << "lib/${file.name} "
-        }
-        String manifestTarget = "${jarTarget}/MANIFEST.MF"
-        ant.manifest(file: manifestTarget) {
-            attribute(name: "Main-Class", value: mainClass)
-            attribute(name: "Class-Path", value: classPath.toString())
-            section(name: "Grails Application") {
-                attribute(name: "Implementation-Title", value: "${grailsAppName}")
-                attribute(name: "Implementation-Version", value: "${metadata.getApplicationVersion()}")
-                attribute(name: "Grails-Version", value: "${metadata.getGrailsVersion()}")
-            }
-        }
-        ant.jar(destfile: "${jarTarget}/${grailsAppName}.jar", basedir: stagingDir, manifest: manifestTarget)
-        ant.delete(file: manifestTarget)
+        buildJar()
+    }
+    if (argsMap.buildClasses) {
+        createRunnableFiles()
     }
 
+}
+
+//Creates an executable jar file including manifest
+private void buildJar() {
+    String mainClass = argsMap.mainClass
+    if (!mainClass) throw new RuntimeException("no main class set")
+
+    String jarTarget = "${projectTargetDir}/jar"
+    ant.mkdir(dir: jarTarget)
+
+    ant.delete(includeemptydirs: "true") {
+        fileset(dir: jarTarget, includes: "**/*")
+    }
+
+    List classPath = copyLibraries(jarTarget)
+
+    String manifestTarget = "${jarTarget}/MANIFEST.MF"
+    ant.manifest(file: manifestTarget) {
+        attribute(name: "Main-Class", value: mainClass)
+        attribute(name: "Class-Path", value: classPath.join(" "))
+        section(name: "Grails Application") {
+            attribute(name: "Implementation-Title", value: "${grailsAppName}")
+            attribute(name: "Implementation-Version", value: "${metadata.getApplicationVersion()}")
+            attribute(name: "Grails-Version", value: "${metadata.getGrailsVersion()}")
+        }
+    }
+    ant.jar(destfile: "${jarTarget}/${grailsAppName}.jar", basedir: stagingDir, manifest: manifestTarget)
+    ant.delete(file: manifestTarget)
+}
+
+//Copies all classes & resources to a directory and creates a .cmd file which starts the appplication
+private void createRunnableFiles() {
+    String mainClass = argsMap.mainClass
+    if (!mainClass) throw new RuntimeException("no main class set")
+
+    String target = "${projectTargetDir}/runner"
+    ant.mkdir(dir: target)
+
+    ant.delete(includeemptydirs: "true") {
+        fileset(dir: target, includes: "**/*")
+    }
+
+    List classPath = copyLibraries(target)
+
+    String jvmArgs = "-Xmx1024m -XX:MaxPermSize=512m -Duser.language=en"
+
+    String cmd = "java $jvmArgs -classpath \"./classes;${classPath.join(";")}\" $mainClass"
+    ant.echo(file: "${target}/Run${grailsAppName}.cmd", message: cmd.toString())
+    ant.copy(todir: "${target}/classes") {
+        fileset(dir: stagingDir)
+    }
+}
+
+//Copies all external libraries required by this project (inclusive plugin & grails libs) to the target dir
+//Returns a list of all relative paths (may be used for building classpaths
+private List copyLibraries(String target) {
+
+    def externalLibsTarget = "${target}/lib"
+    ant.mkdir(dir: externalLibsTarget)
+    ant.copy(todir: externalLibsTarget, flatten: true) {
+        fileset(dir: './lib', includes: '*.jar')
+        fileset(dir: pluginsDirPath, includes: '**/lib/*.jar')
+        fileset(dir: grailsHome, includes: 'lib/*.jar dist/*.jar')
+    }
+    List classPath = []
+    new File(externalLibsTarget).eachFileRecurse {File file ->
+        classPath << "lib/${file.name}"
+    }
+    return classPath
 }
 
 setDefaultTarget('jarMain')

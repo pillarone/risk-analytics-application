@@ -3,13 +3,14 @@ import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "0.4.9"
+    def version = "0.4.9.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2.0 > *"
     // the other plugins this plugin depends on
     def dependsOn = [
             "riskAnalyticsCore": "0.4.9.1 > *",
-            "ulc": "2008 > *"
+            "ulc": "2008 > *",
+            "jasper": "0.9.5-riskanalytics"
     ]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
