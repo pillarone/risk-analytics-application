@@ -290,6 +290,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         item.daoClass.withTransaction {status ->
             item.load()
             ModellingItem modellingItem = ModellingItemFactory.incrementVersion(item)
+            modellingItem.id = null
             fireModelChanged()
             selectionTreeModel.addNodeForItem(modellingItem)
             if (openNewVersion) {

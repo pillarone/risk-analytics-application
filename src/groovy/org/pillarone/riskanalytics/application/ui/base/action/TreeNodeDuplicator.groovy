@@ -44,7 +44,7 @@ public class TreeNodeRename extends TreeNodeAction {
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
         String oldPath = "${node.parent.name}:${node.name}"
         String newPath = "${node.parent.name}:$newName"
-        ParameterHolderFactory.renameParameter(model.builder.item, oldPath, newPath)
+        ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
         tree.model.addComponentNode(node.parent, component)

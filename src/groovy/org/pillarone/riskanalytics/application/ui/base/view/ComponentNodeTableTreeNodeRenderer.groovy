@@ -19,13 +19,18 @@ import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
-    private ULCPopupMenu addDynamicNodeMenu
-    private ULCPopupMenu removeDynamicNodeMenu
-    private ULCPopupMenu expandTreeMenu
-    private ULCPopupMenu expandTreeMenuWithHelp
+    protected ULCPopupMenu addDynamicNodeMenu
+    protected ULCPopupMenu removeDynamicNodeMenu
+    protected ULCPopupMenu expandTreeMenu
+    protected ULCPopupMenu expandTreeMenuWithHelp
 
 
     public ComponentNodeTableTreeNodeRenderer(tree, model) {
+        addContextMenu(tree, model)
+
+    }
+
+    protected ULCMenuItem addContextMenu(tree, model) {
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
         addDynamicNodeMenu = new ULCPopupMenu()
@@ -58,7 +63,6 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 //        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         //expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(help))
-
     }
 
 
@@ -94,6 +98,35 @@ class CompareComponentNodeTableTreeNodeRenderer extends ComponentNodeTableTreeNo
     public CompareComponentNodeTableTreeNodeRenderer(tree, model) {
         super(tree, model)
     }
+
+    protected ULCMenuItem addContextMenu(Object tree, Object model) {
+        OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
+
+        addDynamicNodeMenu = new ULCPopupMenu()
+        addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+
+        addDynamicNodeMenu.addSeparator()
+        addDynamicNodeMenu.add(new ULCMenuItem(help))
+        addDynamicNodeMenu.name = "popup.expand"
+
+        removeDynamicNodeMenu = new ULCPopupMenu()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(help))
+
+        expandTreeMenu = new ULCPopupMenu()
+        expandTreeMenu.name = "popup.expand"
+        expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+
+        expandTreeMenuWithHelp = new ULCPopupMenu()
+        expandTreeMenuWithHelp.name = "popup.expand"
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
+
+        expandTreeMenuWithHelp.add(new ULCMenuItem(help))
+    }
+
+
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setBackground(tableTree, node)
