@@ -9,7 +9,8 @@ class RiskAnalyticsApplicationGrailsPlugin {
     // the other plugins this plugin depends on
     def dependsOn = [
             "riskAnalyticsCore": "0.4.9.1 > *",
-            "ulc": "2008 > *"
+            "ulc": "2008 > *",
+            "jasper": "0.9.5-riskanalytics"
     ]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
