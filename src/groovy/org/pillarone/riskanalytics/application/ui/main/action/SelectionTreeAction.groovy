@@ -1,11 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.IAction
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCTree
-import com.ulcjava.base.application.ULCWindow
-import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
@@ -16,11 +10,9 @@ import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import java.text.SimpleDateFormat
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
@@ -28,24 +20,21 @@ import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.DefaultParameterizationDialog
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
-
+import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
+import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
-import org.pillarone.riskanalytics.core.simulation.item.ConfigObjectBasedModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
-import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.springframework.transaction.TransactionStatus
-import org.apache.commons.logging.LogFactory
-import org.apache.commons.logging.Log
+import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -699,6 +688,10 @@ class ImportAction extends SelectionTreeAction {
         config.dialogTitle = getDialogTitle(node)
         config.dialogType = FileChooserConfig.OPEN_DIALOG
         config.setFileSelectionMode(FileChooserConfig.FILES_ONLY)
+        def ext = new String[1]
+        ext[0] = "groovy"
+        config.addFileFilterConfig(new FileChooserConfig.FileFilterConfig(ext, "description (*.groovy)"));
+        config.setAcceptAllFileFilterUsed(false)
         return config
     }
 
