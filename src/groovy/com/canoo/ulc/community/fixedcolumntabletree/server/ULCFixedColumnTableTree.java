@@ -32,6 +32,7 @@ import java.util.List;
 public class ULCFixedColumnTableTree extends ULCScrollPane {
 
     List fOverallTreeSelectionListener = new ArrayList();
+    final static int ROW_HEIGHT = 18;
 
     /**
      * <p>Creates a new  ULCFixedColumnTableTree element using the model, the first scrollable column,
@@ -73,7 +74,9 @@ public class ULCFixedColumnTableTree extends ULCScrollPane {
             }
         }
         rowHeader.setAutoResizeMode(ULCTableTree.AUTO_RESIZE_OFF);
+        rowHeader.setRowHeight(ROW_HEIGHT);
         viewPort.setAutoResizeMode(ULCTableTree.AUTO_RESIZE_OFF);
+        viewPort.setRowHeight(ROW_HEIGHT);
         rowHeader.setCellSelectionEnabled(false);
         viewPort.setCellSelectionEnabled(false);
         rowHeader.setRowSelectionAllowed(true);
@@ -195,6 +198,7 @@ public class ULCFixedColumnTableTree extends ULCScrollPane {
     /*
     *  Not an API method, bacause can be called only before uploading.
     */
+
     public void expandAll() {
         ULCTableTree rowView = (ULCTableTree) getRowHeaderView();
         expand(rowView);
