@@ -1,46 +1,40 @@
 package org.pillarone.riskanalytics.application;
 
 import grails.util.GrailsUtil;
-import groovy.lang.Closure;
 import groovy.lang.ExpandoMetaClass;
-import org.apache.log4j.LogManager;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler;
-import org.codehaus.groovy.grails.commons.ConfigurationHolder;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
 import org.codehaus.groovy.grails.commons.GrailsClass;
-import org.codehaus.groovy.grails.plugins.logging.Log4jConfig;
+import org.pillarone.riskanalytics.application.initialization.StandaloneConfigLoader;
 import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher;
 import org.springframework.context.ApplicationContext;
 
 public class Main {
 
+    private static Log LOG = LogFactory.getLog(Main.class);
+
     public static void main(String args[]) {
-        System.out.println("Starting RiskAnalytics");
         try {
             String environment = System.getProperty("grails.env");
             if (environment == null) {
-                environment = "dev";
+                environment = "development";
                 System.setProperty("grails.env", environment);
 
             }
-            System.out.println("Starting with environment " + environment);
+            StandaloneConfigLoader.loadLog4JConfig(environment);
+
+            LOG.info("Starting RiskAnalytics with environment " + environment);
             ExpandoMetaClass.enableGlobally();
 
-            System.out.println("Loading grails..");
+            LOG.info("Loading grails..");
 
             ApplicationContext ctx = GrailsUtil.bootstrapGrailsFromClassPath();
             GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
 
-            System.out.println("Executing bootstraps..");
-
-            Object loggingConfig = ConfigurationHolder.getConfig().get("log4j");
-            LogManager.resetConfiguration();
-            if (loggingConfig instanceof Closure) {
-                new Log4jConfig().configure((Closure) loggingConfig);
-            } else {
-                new Log4jConfig().configure();
-            }
+            LOG.info("Executing bootstraps..");
 
             GrailsClass[] bootstraps = app.getArtefacts(BootstrapArtefactHandler.TYPE);
             for (GrailsClass bootstrap : bootstraps) {
@@ -51,11 +45,11 @@ public class Main {
                 }
             }
 
-            System.out.println("Loading user interface..");
+            LOG.info("Loading user interface..");
 
             P1RATStandaloneLauncher.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.fatal("Startup failed", e);
         }
     }
 }
