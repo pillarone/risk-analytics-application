@@ -66,6 +66,9 @@ public class Main {
             }
         } catch (Exception e) {
             LOG.fatal("Startup failed", e);
+            if (databaseSupport != null) {
+                databaseSupport.stopDatabase();
+            }
         }
     }
 }
