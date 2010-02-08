@@ -53,6 +53,20 @@ Options:
 
 }
 
+target(createStarterFile: '''
+Creates starter files
+''') {
+    String mainClass = argsMap.mainClass
+    String env = argsMap.env
+
+    String target = "${projectTargetDir}/runner"
+    List classPath = getRelativeClassPaths("$target/lib")
+    String jvmArgs = "-Xmx1024m -XX:MaxPermSize=512m -Duser.language=en -Dgrails.env=$env"
+
+    String cmd = "java $jvmArgs -classpath \"./classes;${classPath.join(";")}\" $mainClass"
+    ant.echo(file: "${target}/Run${grailsAppName}${env}.cmd", message: cmd.toString())
+}
+
 //Creates an executable jar file including manifest
 private void buildJar() {
     String mainClass = argsMap.mainClass
@@ -65,7 +79,8 @@ private void buildJar() {
         fileset(dir: jarTarget, includes: "**/*")
     }
 
-    List classPath = copyLibraries(jarTarget)
+    copyLibraries(jarTarget)
+    List classPath = getRelativeClassPaths("$jarTarget/lib")
 
     String manifestTarget = "${jarTarget}/MANIFEST.MF"
     ant.manifest(file: manifestTarget) {
@@ -93,19 +108,13 @@ private void createRunnableFiles() {
         fileset(dir: target, includes: "**/*")
     }
 
-    List classPath = copyLibraries(target)
-
-    String jvmArgs = "-Xmx1024m -XX:MaxPermSize=512m -Duser.language=en"
-
-    String cmd = "java $jvmArgs -classpath \"./classes;${classPath.join(";")}\" $mainClass"
-    ant.echo(file: "${target}/Run${grailsAppName}.cmd", message: cmd.toString())
+    copyLibraries(target)
     ant.copy(todir: "${target}/classes") {
         fileset(dir: stagingDir)
     }
 }
 
 //Copies all external libraries required by this project (inclusive plugin & grails libs) to the target dir
-//Returns a list of all relative paths (may be used for building classpaths
 private List copyLibraries(String target) {
 
     def externalLibsTarget = "${target}/lib"
@@ -115,8 +124,12 @@ private List copyLibraries(String target) {
         fileset(dir: pluginsDirPath, includes: '**/lib/*.jar')
         fileset(dir: grailsHome, includes: 'lib/*.jar dist/*.jar')
     }
+}
+
+//Returns a list of all relative paths (may be used for building classpaths
+private List getRelativeClassPaths(String externalLibsTarget) {
     List classPath = []
-    new File(externalLibsTarget).eachFileRecurse {File file ->
+    new File(externalLibsTarget).eachFileRecurse { File file ->
         classPath << "lib/${file.name}"
     }
     return classPath
