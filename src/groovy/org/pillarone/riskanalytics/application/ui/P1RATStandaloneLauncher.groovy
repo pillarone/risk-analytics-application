@@ -13,10 +13,19 @@ class P1RATStandaloneLauncher {
     }
 
     static void start() {
+        start(null)
+    }
+
+    static void start(ISessionStateListener customSessionStateListener) {
         P1RATStandaloneRunner runner = runApp()
+        UISession clientSession = runner.getClientSession()
+
+        if (customSessionStateListener != null) {
+            clientSession.addSessionStateListener(customSessionStateListener)
+        }
 
         StandaloneSessionStateListener listener = new StandaloneSessionStateListener()
-        runner.getClientSession().addSessionStateListener(listener)
+        clientSession.addSessionStateListener(listener)
         synchronized (listener) {
             listener.wait()
         }

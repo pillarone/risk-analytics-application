@@ -3,13 +3,13 @@ package org.pillarone.riskanalytics.application.ui.batch.action
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.event.ActionEvent
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.simulation.action.MaxIterationsAlert
 import org.pillarone.riskanalytics.application.ui.simulation.action.RunSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.core.output.batch.OutputStrategyFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.batch.OutputStrategyFactory
 
 /**
  * @author fouad jaada
@@ -41,13 +41,15 @@ public class AddToBatchAction extends RunSimulationAction {
                 if (!batchRun) {
                     Object newBatchRunName = model.itemsComboBoxModel.getSelectedItem()
                     batchRun = new BatchRun(name: newBatchRunName, executionTime: new Date())
-                    batchRun.save()
+                    BatchRun.withTransaction {
+                        batchRun.save()
+                    }
                     updateModels(batchRun)
                 }
-                model.addToBatch(batchRun, OutputStrategyFactory.getEnum( model.outputStrategyComboBoxModel.getStrategy().class))
-                model.batchAdded(UIUtils.getText(this.class,"succes" ), false  )
-            } catch (Exception  ex) {
-                model.batchAdded(UIUtils.getText(this.class,"error" ), true  )
+                model.addToBatch(batchRun, OutputStrategyFactory.getEnum(model.outputStrategyComboBoxModel.getStrategy().class))
+                model.batchAdded(UIUtils.getText(this.class, "succes"), false)
+            } catch (Exception ex) {
+                model.batchAdded(UIUtils.getText(this.class, "error"), true)
             }
 
         }

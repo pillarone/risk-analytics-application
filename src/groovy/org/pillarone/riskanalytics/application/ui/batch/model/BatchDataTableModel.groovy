@@ -3,10 +3,11 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 import com.ulcjava.base.application.event.ITableModelListener
 import com.ulcjava.base.application.event.TableModelEvent
 import com.ulcjava.base.application.table.ITableModel
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.SimulationState
 
 /**
  * @author fouad jaada
@@ -31,7 +32,7 @@ public class BatchDataTableModel implements ITableModel {
         BatchRun.withTransaction {
             batchRun = BatchRun.findByName(batchRun.name)
             this.columnHeaders = [UIUtils.getText(this.class, "Name"), UIUtils.getText(this.class, "Model"), UIUtils.getText(this.class, "Parameterization"), UIUtils.getText(this.class, "SimulationTemplate"), UIUtils.getText(this.class, "PeriodCountIterations"), UIUtils.getText(this.class, "Strategy")]
-            batchRun.batchRunService.getSimulationRuns(batchRun).eachWithIndex {BatchRunSimulationRun brSr, int index ->
+            BatchRunSimulationRun.findAllByBatchRunAndSimulationState(batchRun, SimulationState.NOT_RUNNING, [sort: "priority", order: "asc"]).eachWithIndex {BatchRunSimulationRun brSr, int index ->
                 List list = new ArrayList()
                 list << brSr.simulationRun.name
                 int ptIndex = brSr.simulationRun.model.lastIndexOf(".")

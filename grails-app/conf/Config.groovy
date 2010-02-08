@@ -38,19 +38,7 @@ environments {
 
         ExceptionSafeOut = System.out
         log4j = {
-            info 'org.pillarone.riskanalytics.core.output',
-                    'org.pillarone.riskanalytics.core.components',
-                    'org.pillarone.riskanalytics.core.simulation',
-                    'org.pillarone.modelling.fileimport',
-                    'org.pillarone.modelling.domain',
-                    'org.pillarone.modelling.packets',
-                    'org.pillarone.riskanalytics.core.simulation.engine',
-                    'org.pillarone.riskanalytics.core.parameterization'
-
-            debug 'org.pillarone.modelling.output',
-                    'org.pillarone.modelling.packets.life.UnitLinkedLifeReinsuranceContract'
-
-            warn()
+            info 'org.pillarone.riskanalytics'
         }
         keyFiguresToCalculate = [
                 'stdev': true,
@@ -80,16 +68,7 @@ environments {
                 'tvar': [99, 99.5],
         ]
         log4j = {
-            info 'org.pillarone.riskanalytics.core.output',
-                    'org.pillarone.riskanalytics.core.components',
-                    'org.pillarone.riskanalytics.core.simulation',
-                    'org.pillarone.modelling.fileimport',
-                    'org.pillarone.modelling.domain',
-                    'org.pillarone.modelling.packets',
-                    'org.pillarone.riskanalytics.core.parameterization',
-                    'org.pillarone.application.jobs.JobScheduler',
-                    'org.pillarone.riskanalytics.core.simulation.engine',
-                    'org.pillarone.application.jobs.BatchRunner'
+            info 'org.pillarone.riskanalytics'
         }
     }
     mysql {
@@ -105,25 +84,7 @@ environments {
                 error 'stdout', 'file'
                 additivity = false
             }
-            info 'org.pillarone.riskanalytics.core.output',
-                    'org.pillarone.riskanalytics.core.components',
-                    'org.pillarone.riskanalytics.core.simulation',
-                    'org.pillarone.modelling.fileimport',
-                    'org.pillarone.modelling.domain',
-                    'org.pillarone.modelling.packets',
-                    'org.pillarone.riskanalytics.core.parameterization',
-                    'org.pillarone.application.jobs.JobScheduler',
-                    'org.pillarone.riskanalytics.core.simulation.engine',
-                    'org.pillarone.application.jobs.BatchRunner',
-                    'org.pillarone.modelling.ui.main.action.ImportAllAction',
-                    'org.pillarone.modelling.ui.main.action.ItemLoadHandler'
-
-            debug 'org.pillarone.modelling.output',
-                    //'org.pillarone.modelling.domain.life.accounting.Account'
-                    //'org.pillarone.modelling.packets.life.UnitLinkedLifeReinsuranceContract',
-                    //'org.pillarone.modelling.fileimport'
-
-                    warn()
+            info 'org.pillarone.riskanalytics'
         }
         keyFiguresToCalculate = [
                 'stdev': true,
