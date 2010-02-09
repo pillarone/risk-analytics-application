@@ -61,10 +61,11 @@ Creates starter files
 
     String target = "${projectTargetDir}/runner"
     List classPath = getRelativeClassPaths("$target/lib")
-    String jvmArgs = "-Xmx1024m -XX:MaxPermSize=512m -Duser.language=en -Dgrails.env=$env"
+    String jvmArgs = "-Xmx1024m -XX:MaxPermSize=512m -Dgrails.env=$env"
 
     String cmd = "java $jvmArgs -classpath \"./classes;${classPath.join(";")}\" $mainClass"
     ant.echo(file: "${target}/Run${grailsAppName}${env}.cmd", message: cmd.toString())
+    ant.echo(file: "${target}/Run${grailsAppName}${env}.sh", message: cmd.toString())
 }
 
 //Creates an executable jar file including manifest
