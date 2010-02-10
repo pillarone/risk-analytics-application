@@ -52,7 +52,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
             path2 = new PathMapping(pathName: 'testPath2').save()
         }
 
-        field = FieldMapping.findByFieldName('ultimate')
+        field = FieldMapping.findByFieldName('Ultimate')
         if (field == null) {
             field = new FieldMapping(fieldName: 'ultimate').save()
         }
@@ -288,10 +288,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals simulationRun.iterations, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(2)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "test path1 / Ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "test path2 / Ultimate P0", model.resultTableModel.getColumnName(2)
+        assertEquals "test path1 / Ultimate P1", model.resultTableModel.getColumnName(3)
+        assertEquals "test path2 / Ultimate P1", model.resultTableModel.getColumnName(4)
 
         assertEquals 0, model.resultTableModel.getValueAt(0, 0)
         assertEquals 1, model.resultTableModel.getValueAt(0, 1)
@@ -311,10 +311,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals simulationRun.iterations, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(2)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "test path1 / Ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "test path1 / Ultimate P1", model.resultTableModel.getColumnName(2)
+        assertEquals "test path2 / Ultimate P0", model.resultTableModel.getColumnName(3)
+        assertEquals "test path2 / Ultimate P1", model.resultTableModel.getColumnName(4)
 
         assertEquals 0, model.resultTableModel.getValueAt(0, 0)
         assertEquals 1, model.resultTableModel.getValueAt(0, 1)
