@@ -34,7 +34,8 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
             return cachedDisplayName
 
         String displayName
-        displayName = I18NUtils.findDisplayNameByPacket(name)
+        if (packetClass)
+            displayName = I18NUtils.findDisplayNameByPacket(name)
         if (displayName == null)
             displayName = super.getDisplayName()
         else

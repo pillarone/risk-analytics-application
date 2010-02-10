@@ -96,7 +96,7 @@ class ResultTreeBuilder extends TreeBuilder {
     List createValueNodes(MultiValuePacket valueTypeInstance) {
         List propertyList = []
         for (String fieldName: valueTypeInstance.getFieldNames()) {
-            propertyList.add(new ResultTableTreeNode(fieldName))
+            propertyList.add(new ResultTableTreeNode(fieldName, MultiValuePacket.class))
         }
         propertyList
     }
