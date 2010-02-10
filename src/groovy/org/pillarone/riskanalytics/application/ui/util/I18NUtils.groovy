@@ -2,19 +2,17 @@ package org.pillarone.riskanalytics.application.ui.util
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterObjectParameterTableTreeNode
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 
 public class I18NUtils {
 
-    static final String PACKET_BUNDLE_FILENAME = "org.pillarone.modelling.packets.I18NPacketResources"
+    static final String PACKET_BUNDLE_FILENAME = "org.pillarone.riskanalytics.packets.I18NPacketResources"
 
     static final String MODEL_PACKAGE = "models."
     static final Log LOG = LogFactory.getLog(I18NUtils)
@@ -263,11 +261,11 @@ public class I18NUtils {
     }
 
     public static String getPropertyDisplayName(Model model, String propertyName) {
-        String value=null
+        String value = null
         try {
-            ResourceBundle bundle= getResourceBundle(model.class )
+            ResourceBundle bundle = getResourceBundle(model.class)
             value = bundle.getString(propertyName)
-        } catch (Exception ) {
+        } catch (Exception) {
         }
         return value
 
