@@ -174,6 +174,7 @@ class CompareSimulationsAction extends SelectionTreeAction {
         try {
             validate(elements)
             Model model = getSelectedModel(elements[0])
+            model.init()
             if (model != null && elements[0].item != null) {
                 this.model.compareItems(model, elements)
             }
@@ -215,6 +216,7 @@ class CompareParameterizationsAction extends SelectionTreeAction {
         try {
             validate(elements)
             Model model = getSelectedModel(elements[0])
+            model.init()
             if (model != null && elements[0] != null) {
                 this.model.compareParameterizations(model, elements)
             }
