@@ -148,11 +148,11 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
     void setToolTip(ULCComponent component, SimulationNode node) {
         if (node instanceof SimulationNode) {
-            StringBuilder builder = new StringBuilder("<html>")
+            StringBuilder builder = new StringBuilder("<html><div style='width:100px;'>")
             builder.append(UIUtils.getText(this.class, "numberOfIterations") + ": " + node.item.numberOfIterations)
             if (node.item.comment)
                 builder.append("<br>" + UIUtils.getText(this.class, "comment") + ": " + node.item.comment)
-            builder.append("</html>")
+            builder.append("</div></html>")
             component.setToolTipText String.valueOf(builder.toString())
         }
     }
