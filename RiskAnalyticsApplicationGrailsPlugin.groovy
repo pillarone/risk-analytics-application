@@ -7,11 +7,7 @@ class RiskAnalyticsApplicationGrailsPlugin {
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2.0 > *"
     // the other plugins this plugin depends on
-    def dependsOn = [
-            "riskAnalyticsCore": "0.5 > *",
-            "ulc": "2008 > *",
-            "jasper": "0.9.5-riskanalytics"
-    ]
+    def dependsOn = [:]
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
             "grails-app/views/error.gsp"
