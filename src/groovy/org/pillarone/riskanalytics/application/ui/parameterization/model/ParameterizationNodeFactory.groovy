@@ -118,9 +118,6 @@ class ParameterizationNodeFactory {
 
     private static ParameterizationTableTreeNode createCompareParamaterObjectNode(Map parametersMap, Model simulationModel, int size) {
         ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(ParameterizationUtilities.getParameterList(parametersMap))
-        Map typeParametersMap = [:]
-        typeParametersMap[0] = "test0"
-        typeParametersMap[1] = "test1"
         try {
 
             node.add(new CompareParameterizationClassifierTableTreeNode(parametersMap, size))
