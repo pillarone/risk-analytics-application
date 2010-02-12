@@ -9,9 +9,6 @@ import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
-import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultTableTreeModel
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeModel
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTreeBuilder
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
@@ -100,5 +97,13 @@ class ResultViewModel extends AbstractModellingModel {
         treeModel.numberDataType.maxFractionDigits = treeModel.numberDataType.maxFractionDigits + adjustment
         treeModel.numberDataType.minFractionDigits = treeModel.numberDataType.minFractionDigits + adjustment
         refreshNodes()
+    }
+
+    boolean isFunctionAdded(IFunction function) {
+        for (IFunction iFunction in treeModel.functions) {
+            if (iFunction.name.equals(function.name))
+                return true
+        }
+        return false
     }
 }
