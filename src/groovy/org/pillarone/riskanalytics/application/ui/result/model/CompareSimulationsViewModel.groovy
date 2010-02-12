@@ -6,8 +6,6 @@ import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
-import org.pillarone.riskanalytics.application.ui.result.model.CompareResultTableTreeModel
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTreeBuilder
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
@@ -50,11 +48,13 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
      *
      */
     void addFunction(IFunction function) {
+        treeModel.clearCache()
         function instanceof CompareFunction ? treeModel.addCompareFunction(function) : treeModel.addFunction(function)
         notifyFunctionAdded(function)
     }
 
     void removeFunction(IFunction function) {
+        treeModel.clearCache()
         treeModel.removeFunction(function)
         notifyFunctionRemoved(function)
     }
