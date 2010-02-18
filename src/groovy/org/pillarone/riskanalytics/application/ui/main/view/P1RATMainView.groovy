@@ -529,6 +529,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                     }
                     if (closeTab) {
                         openItems.remove(currentComponent)
+                        openModels.remove(currentComponent)
                         modelCardContent.removeTabAt closingIndex
                         model.closeItem(modelForItem, item)
                     }
@@ -538,6 +539,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             }
             if (!isChanged(item)) {
                 openItems.remove(currentComponent)
+                openModels.remove(currentComponent)
                 modelCardContent.removeTabAt closingIndex
                 model.closeItem(modelForItem, item)
             }
