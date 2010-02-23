@@ -1,3 +1,6 @@
+//Use a custom plugins dir, because different branches use different plugin versions
+grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
+
 grails.plugin.repos.discovery.pillarone = "https://readplugins:readplugins@svn.intuitive-collaboration.com/GrailsPlugins/"
 
 grails.plugin.repos.resolveOrder = ['pillarone', 'default', 'core']
