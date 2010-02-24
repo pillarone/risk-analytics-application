@@ -7,7 +7,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.NumberFormat
-import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class TreeNodeCopier extends ResourceBasedAction {
 
@@ -37,7 +37,7 @@ class TreeNodeCopier extends ResourceBasedAction {
 
     protected String writeHeader() {
         StringBuffer line = new StringBuffer()
-
+        line << UIUtils.getText(TreeNodeCopier, "path") + "\t"
         line << rowHeaderTree.getColumnModel().getColumn(0).getHeaderValue()
         line << "\t"
 
@@ -64,9 +64,8 @@ class TreeNodeCopier extends ResourceBasedAction {
             format(model.getValueAt(node, columnIndex))
         }
 
-        currentDepth.times {
-            line.append(space)
-        }
+        line.append(node.path.toString())
+        line.append("\t")
         line.append(valueStrings.join("\t"))
         line.append("\n")
 
