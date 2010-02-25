@@ -1,24 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view
 
-import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCButton
-import com.ulcjava.base.application.ULCCheckBox
-import com.ulcjava.base.application.ULCComboBox
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCFiller
-import com.ulcjava.base.application.ULCLabel
-import com.ulcjava.base.application.ULCPollingTimer
-import com.ulcjava.base.application.ULCProgressBar
-import com.ulcjava.base.application.ULCSpinner
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
-import com.ulcjava.base.application.ULCSpinnerDateModel
-import com.ulcjava.base.application.ULCTabbedPane
-import com.ulcjava.base.application.ULCTextArea
-import com.ulcjava.base.application.ULCTextField
-import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.IActionListener
@@ -30,16 +12,15 @@ import java.text.SimpleDateFormat
 import org.apache.commons.lang.time.FastDateFormat
 import org.codehaus.groovy.runtime.TimeCategory
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationConfigurationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import com.ulcjava.base.application.*
 
 abstract class AbstractConfigurationView implements ISimulationListener, ISimulationConfigurationListener {
 
@@ -292,11 +273,8 @@ abstract class AbstractConfigurationView implements ISimulationListener, ISimula
     }
 
     public ULCBoxPane getBatchBottomPane() {
-        Collection batches = BatchRun.findAll()
-        ItemsComboBoxModel<BatchRun> batchesComboBoxModel = new ItemsComboBoxModel<BatchRun>(batches?.toList())
-        batchesComboBox = new ULCComboBox(batchesComboBoxModel)
+        batchesComboBox = new ULCComboBox(model.itemsComboBoxModel)
         batchesComboBox.setEditable(true)
-        model.itemsComboBoxModel = batchesComboBoxModel
 
         addToBatchButton = new ULCButton(model.addToBatchAction)
         addToBatchButton.name = "addToBatch"

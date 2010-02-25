@@ -4,11 +4,9 @@ import com.ulcjava.base.application.AbstractAction
 import javax.sql.DataSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.batch.action.AddToBatchAction
-import org.pillarone.riskanalytics.core.output.OutputStrategy
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
@@ -17,8 +15,11 @@ import org.pillarone.riskanalytics.application.ui.simulation.action.ChangeResult
 import org.pillarone.riskanalytics.application.ui.simulation.action.OpenResultAction
 import org.pillarone.riskanalytics.application.ui.simulation.action.RunSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.action.StopSimulationAction
+import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
+import org.pillarone.riskanalytics.core.output.OutputStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
@@ -27,7 +28,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.util.MathUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
 
 abstract class AbstractConfigurationModel implements IModelChangedListener {
 
@@ -80,6 +80,9 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
         availableResultConfigurationNamesForModel = new ResultConfigurationNameListModel()
         availableResultConfigurationVersionsForModel = new ResultConfigurationVersionsListModel()
         outputStrategyComboBoxModel = new OutputStrategyComboBoxModel()
+        Collection batches = BatchRun.findAll()
+        itemsComboBoxModel = new ItemsComboBoxModel<BatchRun>(batches?.toList())
+
 
         runAction = new RunSimulationAction(this)
         stopAction = new StopSimulationAction(this)
