@@ -74,14 +74,16 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
         groupNodePopUpMenu = new ULCPopupMenu()
         groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model)))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model, "importAllFromDir")))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, model)))

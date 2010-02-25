@@ -4,19 +4,14 @@ import models.core.CoreModel
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.example.model.EmptyModel
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.example.model.EmptyModel
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ModelItem
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class ModellingItemFactoryTests extends GroovyTestCase {
 
@@ -31,12 +26,12 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         ConfigObject data = new ConfigObject()
         data.model = CoreModel
 
-        ModellingItem item = ModellingItemFactory.createItem('CoreNotYetExistingParameters', data, Parameterization)
+        ModellingItem item = ModellingItemFactory.createItem('CoreNotYetExistingParameters', data, Parameterization, false)
         item.load()
         assertTrue item instanceof Parameterization
         assertEquals '1', item.versionNumber.toString()
 
-        item = ModellingItemFactory.createItem('CoreParameters', data, Parameterization)
+        item = ModellingItemFactory.createItem('CoreParameters', data, Parameterization, false)
         assertEquals '2', item.versionNumber.toString()
     }
 

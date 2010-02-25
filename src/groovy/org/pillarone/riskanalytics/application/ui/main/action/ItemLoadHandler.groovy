@@ -23,6 +23,7 @@ import org.pillarone.riskanalytics.core.util.PropertiesUtils
 class ItemLoadHandler implements IFileLoadHandler {
     ImportAction importAction
     boolean withVersionNumber = false
+    boolean forceImport = false
     def node
     final static String DEFAULT_VERSION = "0.4.2"
 
@@ -60,7 +61,7 @@ class ItemLoadHandler implements IFileLoadHandler {
                         if (withVersionNumber && versionNumber)
                             newItem = ModellingItemFactory.createParameterization(itemName, data, Parameterization.class, versionNumber)
                         else
-                            newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class)
+                            newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
 
                         if (newItem != null) {
                             importAction.model.importItem(newItem, data.model)
