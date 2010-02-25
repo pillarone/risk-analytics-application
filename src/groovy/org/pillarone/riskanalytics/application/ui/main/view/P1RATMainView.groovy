@@ -138,6 +138,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void attachListeners() {
         model.addModelListener(this)
         model.addPropertyChangeListener("currentItem", this)
+        //add action listener
         selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
 
     }

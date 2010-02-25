@@ -79,6 +79,10 @@ public class DeleteBatchAction extends SelectionTreeAction {
 
 }
 
+/**
+ * delegate an action to openBatchAction or openItemAction
+ * by double clicking
+ */
 public class TreeDoubleClickAction extends SelectionTreeAction {
 
     OpenBatchAction openBatchAction
