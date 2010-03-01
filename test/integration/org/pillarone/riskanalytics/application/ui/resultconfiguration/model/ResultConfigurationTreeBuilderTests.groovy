@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.resultconfiguration.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
+import models.core.CoreModel
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -43,6 +44,26 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
 //        assertNotNull outClaims.collector
 //        assertEquals SingleValueCollectingModeStrategy.IDENTIFIER, outClaims.collector.mode.identifier
     }
+
+    void testBuildTreeWithPacketOutput() {
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+
+        ResultConfiguration configuration = new ResultConfiguration("CoreResultConfiguration")
+        configuration.load()
+        ModelStructure modelStructure = new ModelStructure("CoreStructure")
+        modelStructure.load()
+
+        Model model = new CoreModel()
+        model.init()
+
+        ResultConfigurationTreeBuilder builder = new ResultConfigurationTreeBuilder(model, modelStructure, configuration)
+        assertNotNull builder.root
+
+
+        assertTrue builder.root.childCount == 0
+    }
+
 
     void testDynamicOutputProperties() {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])

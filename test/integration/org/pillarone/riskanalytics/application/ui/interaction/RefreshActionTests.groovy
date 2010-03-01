@@ -95,26 +95,17 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
+        TreePath path = tree1.findPath(["Application", "Parameterization"] as String[])
+        int childCountBeforeInsert = tree1.getChildCount(path)
+
         ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Delete")
 
-
-        ULCFrameOperator frame2 = new ULCFrameOperator("second")
-        frame2.getUIFrame().getBasicComponent().toFront()
-
-        ULCTreeOperator tree2 = new ULCTreeOperator(frame2, new ComponentByNameChooser("selectionTree"))
-        tree2.doExpandRow 0
-        tree2.doExpandRow 1
-
-
-        TreePath path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertNotNull "path not found", path
-        int childCountBeforeInsert = tree2.getChildCount(path)
-        ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
+        ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
-        //childCountBeforeInsert- 1 removed, it doesn't work on cruise
-        assertEquals "childCount after refresh", childCountBeforeInsert, tree2.getChildCount(path)
+        assertEquals "childCount after refresh", childCountBeforeInsert - 1, tree1.getChildCount(path)
     }
 
     void testRefreshAfterRename() {
