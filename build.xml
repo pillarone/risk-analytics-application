@@ -157,10 +157,9 @@
         <Groovydoc destdir="${doc.dir}/gapi" sourcepath="."
                    packagenames="src/groovy/**.*,src/java/**.*,grails-app/**.*,grails-app/services/**.*" use="true"
                    windowtitle="RiskAnalyticsApplication v${version}" private="false">
-            <link packages="com.ulcjava.base.application" href="http://canoo.com/ulc/developerzone/apidoc/extension"/>
+            <link packages="com.ulcjava." href="http://canoo.com/ulc/developerzone/apidoc/extension"/>
             <link packages="java.,org.xml.,javax.,org.xml." href="http://java.sun.com/j2se/1.5.0/docs/api"/>
             <link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
-            <link packages="org.junit.,junit.framework." href="http://junit.sourceforge.net/junit3.8.1/javadoc/"/>
             <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/"/>
         </Groovydoc>
         <copy todir="${doc.dir}/gapi">
