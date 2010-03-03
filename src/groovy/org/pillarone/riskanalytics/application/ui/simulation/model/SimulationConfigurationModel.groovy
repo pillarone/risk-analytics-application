@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model
 
 import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.model.StochasticModel
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class SimulationConfigurationModel extends AbstractConfigurationModel {
 
@@ -36,7 +38,7 @@ class SimulationConfigurationModel extends AbstractConfigurationModel {
         simulation.template = configuration
         simulation.numberOfIterations = iterationCount
         StochasticModel modelInstance = (StochasticModel) simulation.modelClass.newInstance()
-        simulation.periodCount = modelInstance.getSimulationPeriodCount(parameterization.parameters, parameterization.periodCount)
+        simulation.periodCount = parameterization.periodCount
         if (modelInstance.requiresStartDate()) {
             simulation.beginOfFirstPeriod = beginOfFirstPeriod
         }
