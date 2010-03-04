@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import models.core.CoreModel
+import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.dataaccess.function.Mean
+import org.pillarone.riskanalytics.application.example.model.ExtendedCoreModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.example.model.ExtendedCoreModel
 
 class ResultTableTreeModelTests extends GroovyTestCase {
 
@@ -13,7 +13,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
     void testModel() {
         Parameterization parameterization = new Parameterization("name")
         parameterization.periodCount = 3
-        parameterization.modelClass = CoreModel
+        parameterization.modelClass = ApplicationModel
         parameterization.periodLabels = ["Q1", "Q2", "Q3"]
 
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
@@ -64,7 +64,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
 
     void testSimpleLabels() {
         Parameterization parameterization = new Parameterization("name")
-        parameterization.modelClass = CoreModel
+        parameterization.modelClass = ApplicationModel
         parameterization.periodCount = 3
         parameterization.periodLabels = []
 

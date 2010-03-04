@@ -52,7 +52,6 @@ class SimulationConfigurationModelTests extends GroovyTestCase {
         def runner = model.runner
         assertNotNull runner
 
-        assertEquals simulationModel.getSimulationPeriodCount(null, model.currentSimulation.parameterization.periodCount), model.currentSimulation.periodCount
         model.stopSimulation()
         assertEquals "Stopped", model.simulationMessage
 
