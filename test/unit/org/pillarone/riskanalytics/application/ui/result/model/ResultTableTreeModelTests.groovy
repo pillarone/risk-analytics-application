@@ -12,6 +12,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
 
     void testModel() {
         Parameterization parameterization = new Parameterization("name")
+        parameterization.periodCount = 3
         parameterization.modelClass = CoreModel
         parameterization.periodLabels = ["Q1", "Q2", "Q3"]
 
@@ -46,6 +47,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
     void testPeriodCounterLabels() {
         Parameterization parameterization = new Parameterization("name")
         parameterization.modelClass = ExtendedCoreModel
+        parameterization.periodCount = 3
 
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
         SimpleTableTreeNode child = new SimpleTableTreeNode("child")
@@ -63,6 +65,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
     void testSimpleLabels() {
         Parameterization parameterization = new Parameterization("name")
         parameterization.modelClass = CoreModel
+        parameterization.periodCount = 3
         parameterization.periodLabels = []
 
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")

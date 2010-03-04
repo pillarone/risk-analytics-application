@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.core.parameterization.ParameterApplicator
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -50,6 +51,11 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
 
     private void initPeriodLabels() {
         Model model = parameterization.modelClass.newInstance()
+        model.init()
+        //because certain models need the parameterization to determine their period dates
+        ParameterApplicator applicator = new ParameterApplicator(model: model, parameterization: parameterization)
+        applicator.init()
+        applicator.applyParameterForPeriod(0)
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy")
         IPeriodCounter periodCounter = model.createPeriodCounter(simulationRun.beginOfFirstPeriod)
         if (periodCounter != null) {
@@ -58,10 +64,10 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
                 periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
                 periodCounter.next()
             }
-        } else if(!parameterization.periodLabels.empty){
+        } else if (!parameterization.periodLabels.empty) {
             periodLabels = parameterization.getPeriodLabels()
         } else {
-            simulationRun.periodCount.times { int i ->
+            simulationRun.periodCount.times {int i ->
                 periodLabels << "P$i"
             }
         }
