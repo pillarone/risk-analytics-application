@@ -17,9 +17,15 @@ class TreeNodeCopier extends ResourceBasedAction {
     ULCTableTree viewPortTree
     ITableTreeModel model
     List columnOrder
+    boolean copyWithPath = false
 
     public TreeNodeCopier() {
         super("Copy")
+    }
+
+    public TreeNodeCopier(boolean copyWithPath) {
+        super(copyWithPath ? "CopyWithPath" : "Copy")
+        this.copyWithPath = copyWithPath
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -37,7 +43,8 @@ class TreeNodeCopier extends ResourceBasedAction {
 
     protected String writeHeader() {
         StringBuffer line = new StringBuffer()
-        line << UIUtils.getText(TreeNodeCopier, "path") + "\t"
+        if (copyWithPath)
+            line << UIUtils.getText(TreeNodeCopier, "path") + "\t"
         line << rowHeaderTree.getColumnModel().getColumn(0).getHeaderValue()
         line << "\t"
 
@@ -64,8 +71,12 @@ class TreeNodeCopier extends ResourceBasedAction {
             format(model.getValueAt(node, columnIndex))
         }
 
-        line.append(node.path.toString())
-        line.append("\t")
+        if (copyWithPath)
+            line.append(node.path.toString() + "\t")
+
+        currentDepth.times {
+            line.append(space)
+        }
         line.append(valueStrings.join("\t"))
         line.append("\n")
 
