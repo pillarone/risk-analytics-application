@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ConstrainedStr
 import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.DoubleParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.DateParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.parameter.BooleanParameterHolder
 
 class ParameterizationNodeFactory {
     static final Logger LOG = Logger.getLogger(ParameterizationNodeFactory)
@@ -37,6 +38,8 @@ class ParameterizationNodeFactory {
                 return createMultiDimensionalParameterNode(parameters, simulationModel)
             case DateParameterHolder:
                 return createDateNode(parameters)
+            case BooleanParameterHolder:
+                return createBooleanNode(parameters)
             default:
                 throw new RuntimeException("Unknown paramter type: ${parameters[0].class}")
         }
@@ -49,6 +52,10 @@ class ParameterizationNodeFactory {
 
     private static ParameterizationTableTreeNode createDoubleNode(List parameters) {
         return new DoubleTableTreeNode(parameters)
+    }
+
+    private static ParameterizationTableTreeNode createBooleanNode(List parameters) {
+        return new BooleanTableTreeNode(parameters)
     }
 
     private static ParameterizationTableTreeNode createStringNode(List parameters) {

@@ -31,7 +31,6 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.shared.UlcEventCategories
 import com.ulcjava.base.shared.UlcEventConstants
-import java.util.Map.Entry
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
@@ -52,13 +51,10 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDi
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.SimpleValueParameterizationTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.view.BasicCellEditor
-import org.pillarone.riskanalytics.application.ui.parameterization.view.BasicCellRenderer
-import org.pillarone.riskanalytics.application.ui.parameterization.view.ComboBoxCellComponent
-import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalCellRenderer
-import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterView
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BooleanTableTreeNode
+import com.ulcjava.base.application.ULCCheckBox
 
 class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
     ULCTabbedPane tabbedPane
@@ -115,12 +111,14 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         DefaultCellEditor dateEditor = new BasicCellEditor(DataTypeFactory.getDateDataType());
 
         ComboBoxCellComponent comboBoxEditor = new ComboBoxCellComponent();
+        CheckBoxCellComponent checkBoxEditor = new CheckBoxCellComponent();
 
         Map editors = new HashMap<Class, ITableTreeCellEditor>();
         editors.put(SimpleValueParameterizationTableTreeNode.class,
                 defaultEditor);
         editors.put(DoubleTableTreeNode.class,
                 doubleEditor);
+        editors.put(BooleanTableTreeNode.class, checkBoxEditor);
         editors.put(IntegerTableTreeNode.class,
                 integerEditor);
         editors.put(DateParameterizationTableTreeNode.class,
@@ -142,6 +140,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         BasicCellRenderer integerRenderer = new BasicCellRenderer(columnIndex, DataTypeFactory.getIntegerDataTypeForNonEdit());
         BasicCellRenderer dateRenderer = new BasicCellRenderer(columnIndex, DataTypeFactory.getDateDataType());
         ComboBoxCellComponent comboBoxRenderer = new ComboBoxCellComponent();
+        CheckBoxCellComponent checkBoxRenderer = new CheckBoxCellComponent();
 
         ULCPopupMenu menu = new ULCPopupMenu();
         TableTreeCopier copier = new TableTreeCopier();
@@ -156,6 +155,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         initRenderer(integerRenderer, menu);
         initRenderer(dateRenderer, menu);
         initComboBox(comboBoxRenderer, menu);
+        initCheckBox(checkBoxRenderer, menu);
         initRenderer(mdpRenderer, menu);
 
         Map renderers = new HashMap<Class, ITableTreeCellRenderer>();
@@ -163,6 +163,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
                 defaultRenderer);
         renderers.put(DoubleTableTreeNode.class,
                 doubleRenderer);
+        renderers.put(BooleanTableTreeNode.class, checkBoxRenderer);
         renderers.put(IntegerTableTreeNode.class,
                 integerRenderer);
         renderers.put(DateParameterizationTableTreeNode.class,
@@ -185,6 +186,10 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     private void initComboBox(ULCComboBox renderer, ULCPopupMenu menu) {
+        renderer.setComponentPopupMenu(menu);
+    }
+
+    private void initCheckBox(ULCCheckBox renderer, ULCPopupMenu menu) {
         renderer.setComponentPopupMenu(menu);
     }
 

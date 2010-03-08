@@ -52,6 +52,12 @@ class ParameterizationNodeFactoryTests extends GroovyTestCase {
         assertEquals 0, node.childCount
 
         parameters.clear()
+        parameters << ParameterHolderFactory.getHolder('path', 0, true)
+        node = ParameterizationNodeFactory.getNode(parameters, model)
+        assertTrue node instanceof BooleanTableTreeNode
+        assertEquals 0, node.childCount
+
+        parameters.clear()
         parameters << ParameterHolderFactory.getHolder('path', 0, new SimpleMultiDimensionalParameter(['']))
         parameters << ParameterHolderFactory.getHolder('path', 0, new SimpleMultiDimensionalParameter(['']))
         node = ParameterizationNodeFactory.getNode(parameters, model)
