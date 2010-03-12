@@ -10,15 +10,13 @@ import org.jfree.data.statistics.HistogramDataset
 import org.jfree.ui.HorizontalAlignment
 import org.jfree.ui.RectangleEdge
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class HistogramChartViewModel extends ChartViewModel {
 
-    int currentBinCount = Math.min(series[0][0].size() / 5, 50)
+    int currentBinCount = Math.min((int) (series[0][0].size() / 5), 50)
     static final int minBinCount = 1
     final int maxBinCount = 200
     double binSize
