@@ -51,8 +51,8 @@ class ItemLoadHandler implements IFileLoadHandler {
                     ConfigObject data = new ConfigSlurper().parse(fileContent)
                     spreadRanges(data)
                     Model parentNodeModel = importAction.getSelectedModel()
-                    if (parentNodeModel && parentNodeModel.class.name != data.model.name) {
-                        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "differentsModel", [data.model.getSimpleName(), parentNodeModel.class.getSimpleName()])
+                    if (!parentNodeModel || parentNodeModel.class.name != data.model.name) {
+                        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "differentsModel", [data.model.getSimpleName(), parentNodeModel.class.getSimpleName()])
                         alert.show()
                     } else {
                         VersionNumber versionNumber = getVersionNumber(itemName)
