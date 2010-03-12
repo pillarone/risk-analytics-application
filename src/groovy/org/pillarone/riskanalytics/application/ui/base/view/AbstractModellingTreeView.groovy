@@ -12,10 +12,10 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.action.*
 
@@ -133,7 +133,8 @@ abstract class AbstractModellingTreeView {
 
         viewPortTree.tableTreeHeader.addActionListener([actionPerformed: {ActionEvent e ->
             viewPortTree.requestFocus()
-            viewPortTree.setRowSelectionInterval(0, viewPortTree.rowCount - 1)
+            if (e.getModifiers() != ActionEvent.META_MASK)
+                viewPortTree.setRowSelectionInterval(0, viewPortTree.rowCount - 1)
             int selectedColumn = viewPortTree.columnModel.getColumnIndex(e.source)
             viewPortTree.setColumnSelectionInterval(selectedColumn, selectedColumn)
         }] as IActionListener)
@@ -185,10 +186,6 @@ abstract class AbstractModellingTreeView {
             findNodes(node.getChildAt(i), nodes)
         }
     }
-
-
-
-
 
     /**
      * Utility method to get resource bundle entries for this class
