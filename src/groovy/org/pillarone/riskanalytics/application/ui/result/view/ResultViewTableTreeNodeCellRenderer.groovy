@@ -1,11 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.result.view
 
+import org.pillarone.riskanalytics.core.output.SimulationRun
+
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.IPopupMenuListener
 import com.ulcjava.base.application.event.PopupMenuEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
@@ -66,14 +67,25 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         resultNodePopup.addPopupMenuListener(new EnableScatterPlot(scatterPlotMenuItem, tree))
         resultNodePopup.addPopupMenuListener(new EnableParallelCoordinatesChart(parallelCoordinatesMenuItem, tree))
         resultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
+        resultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         nodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
         nodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
+        nodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         nodeHelpPopup.add(new ULCMenuItem(new TreeExpander(tree)))
         nodeHelpPopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
+        nodeHelpPopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
         nodeHelpPopup.addSeparator()
         nodeHelpPopup.add(new ULCMenuItem(help))
+    }
+
+    private TreeNodeCopier getTreeNodeCopier(tree, model) {
+        TreeNodeCopier copierWithPath = new TreeNodeCopier(true)
+        copierWithPath.rowHeaderTree = tree.getRowHeaderTableTree()
+        copierWithPath.viewPortTree = tree.getViewPortTableTree()
+        copierWithPath.model = model.treeModel
+        return copierWithPath
     }
 
     private setFormat(def value) {
@@ -164,11 +176,11 @@ class ChartRenameListener implements IModelChangedListener {
     }
 
     public void modelChanged() {
-        tabbedPane.setTitleAt(panelIndex, format(model.chartProperties.title) )
+        tabbedPane.setTitleAt(panelIndex, format(model.chartProperties.title))
     }
-    
-    private String format(String title){
-        return (title.length() > 12 )? (title.substring(0,12)+"..."): title
+
+    private String format(String title) {
+        return (title.length() > 12) ? (title.substring(0, 12) + "...") : title
     }
 }
 

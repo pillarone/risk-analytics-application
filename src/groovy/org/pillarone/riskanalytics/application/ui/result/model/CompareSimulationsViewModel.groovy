@@ -65,6 +65,14 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         }
     }
 
+    boolean isFunctionAdded(IFunction function) {
+        for (IFunction iFunction in treeModel.functions) {
+            if (iFunction.name.equals(function.name))
+                return true
+        }
+        return false
+    }
+
     void notifyFunctionRemoved(IFunction function) {
         for (ICompareFunctionListener listener in listeners) {
             listener.functionRemoved(function)

@@ -116,7 +116,7 @@ private void createRunnableFiles() {
 }
 
 //Copies all external libraries required by this project (inclusive plugin & grails libs) to the target dir
-private List copyLibraries(String target) {
+private void copyLibraries(String target) {
 
     def externalLibsTarget = "${target}/lib"
     ant.mkdir(dir: externalLibsTarget)

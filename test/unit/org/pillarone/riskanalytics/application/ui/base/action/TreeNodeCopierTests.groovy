@@ -18,10 +18,21 @@ class TreeNodeCopierTests extends GroovyTestCase {
         TestTreeNodeCopier copier = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2])
         String result = copier.writeNode(rootNode, 3)
         println result
-        assertTrue result.indexOf("\tb\tc\n") != -1
-        assertTrue result.indexOf("\ta1\tb1\tc1\n") != -1
-        assertTrue result.indexOf("[[a, b, c]]") != -1
-        assertTrue result.indexOf("[[a, b, c], [a1, b1, c1]]") != -1
+        assertEquals "a\tb\tc\n${TreeNodeCopier.space}a1\tb1\tc1\n", result
+        LocaleResources.clearTestMode()
+    }
+
+    void testWriteWithPathIncludingChildren() {
+        LocaleResources.setTestMode()
+        ITableTreeNode rootNode = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[])
+        rootNode.add(new DefaultMutableTableTreeNode(["a1", "b1", "c1"] as Object[]))
+
+        ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
+        TestTreeNodeCopier copier = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2], copyWithPath: true)
+
+        String result = copier.writeNode(rootNode, 3)
+        def str = "[[a, b, c]]\ta\tb\tc\n[[a, b, c], [a1, b1, c1]]\t   a1\tb1\tc1\n"
+        assertEquals str, result
         LocaleResources.clearTestMode()
     }
 
@@ -31,8 +42,7 @@ class TreeNodeCopierTests extends GroovyTestCase {
         ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
 
         String result = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2]).writeNode(rootNode, 3)
-        assertTrue result.indexOf("[[a, b, c]]") != -1
-        assertTrue result.indexOf("\ta\tb\tc\n") != -1
+        assertEquals "a\tb\tc\n", result
         LocaleResources.clearTestMode()
     }
 
@@ -42,8 +52,7 @@ class TreeNodeCopierTests extends GroovyTestCase {
         ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
 
         String result = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2]).writeNode(rootNode, 3)
-        assertTrue result.indexOf("[[1.1, 0.0, null]]") != -1
-        assertTrue result.indexOf("1.1\t0.0\t\n") != -1
+        assertEquals "1.1\t0.0\t\n", result
         LocaleResources.clearTestMode()
     }
 
@@ -53,8 +62,7 @@ class TreeNodeCopierTests extends GroovyTestCase {
         ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
 
         String result = new TreeNodeCopier(model: model, columnOrder: [0, 2, 1]).writeNode(rootNode, 3)
-        assertTrue result.indexOf("[[a, b, c]]") != -1
-        assertTrue result.indexOf("a\tc\tb\n") != -1
+        assertEquals "a\tc\tb\n", result
         LocaleResources.clearTestMode()
     }
 }
