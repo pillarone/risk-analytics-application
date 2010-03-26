@@ -7,7 +7,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.NumberFormat
-import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class TreeNodeCopier extends ResourceBasedAction {
 
@@ -17,9 +17,15 @@ class TreeNodeCopier extends ResourceBasedAction {
     ULCTableTree viewPortTree
     ITableTreeModel model
     List columnOrder
+    boolean copyWithPath = false
 
     public TreeNodeCopier() {
         super("Copy")
+    }
+
+    public TreeNodeCopier(boolean copyWithPath) {
+        super(copyWithPath ? "CopyWithPath" : "Copy")
+        this.copyWithPath = copyWithPath
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -37,7 +43,8 @@ class TreeNodeCopier extends ResourceBasedAction {
 
     protected String writeHeader() {
         StringBuffer line = new StringBuffer()
-
+        if (copyWithPath)
+            line << UIUtils.getText(TreeNodeCopier, "path") + "\t"
         line << rowHeaderTree.getColumnModel().getColumn(0).getHeaderValue()
         line << "\t"
 
@@ -63,6 +70,9 @@ class TreeNodeCopier extends ResourceBasedAction {
         List valueStrings = columnOrder.collect {columnIndex ->
             format(model.getValueAt(node, columnIndex))
         }
+
+        if (copyWithPath)
+            line.append(node.path.toString() + "\t")
 
         currentDepth.times {
             line.append(space)

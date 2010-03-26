@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
 import com.ulcjava.base.application.ULCTree
 import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -75,5 +76,28 @@ public class DeleteBatchAction extends SelectionTreeAction {
             model.removeItem(item)
         }
     }
+
+}
+
+/**
+ * delegate an action to openBatchAction or openItemAction
+ * by double clicking
+ */
+public class TreeDoubleClickAction extends SelectionTreeAction {
+
+    OpenBatchAction openBatchAction
+    OpenItemAction openItemAction
+
+    public TreeDoubleClickAction(ULCTree tree, P1RATModel model) {
+        super("Open", tree, model)
+        this.openBatchAction = new OpenBatchAction(tree, model);
+        this.openItemAction = new OpenItemAction(tree, model);
+    }
+
+    void doActionPerformed(ActionEvent event) {
+        def item = getSelectedItem()
+        (item != null && (item instanceof BatchRun)) ? openBatchAction.doActionPerformed(event) : openItemAction.doActionPerformed(event)
+    }
+
 
 }

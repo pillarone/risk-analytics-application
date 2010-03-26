@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.ITreeSelectionListener
 import com.ulcjava.base.application.event.TreeSelectionEvent
 import com.ulcjava.base.application.tree.DefaultTreeCellRenderer
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.base.action.GenerateReportAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
@@ -23,8 +25,6 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import com.ulcjava.base.application.util.Font
-import com.ulcjava.base.application.util.Color
 
 class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -74,15 +74,17 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
         groupNodePopUpMenu = new ULCPopupMenu()
         groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model)))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model,"importAllFromDir")))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model, "importAllFromDir")))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, model)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model)))
@@ -95,8 +97,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         modelNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
 
         batchesNodePopUpMenu = new ULCPopupMenu()
-        batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, model)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteBatchAction(tree, model)))
 
@@ -138,21 +140,21 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
     void setFont(ParameterizationNode node) {
         setFont(new Font(getFont().getName(), !node.item.valid ? Font.ITALIC : Font.PLAIN, getFont().getSize()))
-        setForeground(!node.item.valid ? Color.gray:null)  
+        setForeground(!node.item.valid ? Color.gray : null)
     }
 
     void setFont(def node) {
         setFont(new Font(getFont().getName(), Font.PLAIN, getFont().getSize()))
-         setForeground( null)  
+        setForeground(null)
     }
 
     void setToolTip(ULCComponent component, SimulationNode node) {
         if (node instanceof SimulationNode) {
-            StringBuilder builder = new StringBuilder("<html>")
+            StringBuilder builder = new StringBuilder("<html><div style='width:100px;'>")
             builder.append(UIUtils.getText(this.class, "numberOfIterations") + ": " + node.item.numberOfIterations)
             if (node.item.comment)
                 builder.append("<br>" + UIUtils.getText(this.class, "comment") + ": " + node.item.comment)
-            builder.append("</html>")
+            builder.append("</div></html>")
             component.setToolTipText String.valueOf(builder.toString())
         }
     }

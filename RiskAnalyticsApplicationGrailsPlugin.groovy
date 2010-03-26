@@ -8,7 +8,6 @@ class RiskAnalyticsApplicationGrailsPlugin {
     def grailsVersion = "1.2.0 > *"
     // the other plugins this plugin depends on
     def dependsOn = [
-            "riskAnalyticsCore": "0.5 > *",
             "ulc": "2008 > *",
             "jasper": "0.9.5-riskanalytics"
     ]
@@ -27,7 +26,7 @@ ULC view
     def documentation = "http://www.pillarone.org"
 
     def doWithWebDescriptor = {xml ->
-        // TODO Implement additions to web.xml (optional), this event occurs before 
+        // TODO Implement additions to web.xml (optional), this event occurs before
     }
 
     def doWithSpring = {

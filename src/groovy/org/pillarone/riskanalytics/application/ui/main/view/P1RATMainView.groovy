@@ -14,6 +14,7 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
@@ -137,7 +138,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void attachListeners() {
         model.addModelListener(this)
         model.addPropertyChangeListener("currentItem", this)
-        selectionTree.addActionListener(new OpenItemAction(selectionTree, model))
+        //add action listener
+        selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
 
     }
 
@@ -529,6 +531,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                     }
                     if (closeTab) {
                         openItems.remove(currentComponent)
+                        openModels.remove(currentComponent)
                         modelCardContent.removeTabAt closingIndex
                         model.closeItem(modelForItem, item)
                     }
@@ -538,6 +541,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             }
             if (!isChanged(item)) {
                 openItems.remove(currentComponent)
+                openModels.remove(currentComponent)
                 modelCardContent.removeTabAt closingIndex
                 model.closeItem(modelForItem, item)
             }

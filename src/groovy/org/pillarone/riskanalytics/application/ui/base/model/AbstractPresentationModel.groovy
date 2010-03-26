@@ -1,9 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-
 class AbstractPresentationModel {
-    // TODO (Jul 24, 2009, msh): use a Set in order to avoid duplicates
-    List listeners = []
+
+    Set listeners = new HashSet()
 
     void addModelChangedListener(IModelChangedListener listener) {
         listeners << listener

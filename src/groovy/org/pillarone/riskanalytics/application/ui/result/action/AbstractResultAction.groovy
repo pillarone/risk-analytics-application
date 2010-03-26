@@ -1,18 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.result.action
 
-import com.ulcjava.base.application.IAction
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.ULCTextField
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.dataaccess.function.*
-import com.ulcjava.base.application.event.IValueChangedListener
-import com.ulcjava.base.application.event.ValueChangedEvent
-import com.ulcjava.base.application.ULCCheckBox
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.dataaccess.function.*
 
 abstract class AbstractResultAction extends ResourceBasedAction {
 
@@ -77,8 +73,8 @@ abstract class CheckboxAction implements IValueChangedListener {
         model.removeFunction(function)
     }
 
-    protected String getValue(String name){
-          return UIUtils.getText(this.class, name)
+    protected String getValue(String name) {
+        return UIUtils.getText(this.class, name)
     }
 }
 
@@ -143,9 +139,10 @@ abstract class TextFieldResultAction extends AbstractResultAction {
 
         double value = valueField.value
         if (value != null) {
-            if (!openedValues.contains(value)) {
+            if (!model.isFunctionAdded(function(value)) || !openedValues.contains(value)) {
                 addFunction(function(value))
-                openedValues << value
+                if (!openedValues.contains(value))
+                    openedValues << value
             }
         } else {
             ULCAlert alert = new I18NAlert("InvalidNumberFormat")
@@ -223,7 +220,7 @@ class SingleIterationAction extends TextFieldResultAction {
     }
 }
 
-class DeviationPercentageAction extends CheckboxAction{
+class DeviationPercentageAction extends CheckboxAction {
 
     public DeviationPercentageAction(model, ULCTableTree tree, compareSimulationTreeView) {
         super(model, tree, new DeviationPercentage());
@@ -231,7 +228,7 @@ class DeviationPercentageAction extends CheckboxAction{
     }
 }
 
-class DeviationAbsoluteDifferenceAction extends CheckboxAction{
+class DeviationAbsoluteDifferenceAction extends CheckboxAction {
 
     public DeviationAbsoluteDifferenceAction(model, ULCTableTree tree, compareSimulationTreeView) {
         super(model, tree, new DeviationAbsoluteDifference());
@@ -239,7 +236,7 @@ class DeviationAbsoluteDifferenceAction extends CheckboxAction{
     }
 }
 
-class FractionPercentageAction extends CheckboxAction{
+class FractionPercentageAction extends CheckboxAction {
 
     public FractionPercentageAction(model, ULCTableTree tree, compareSimulationTreeView) {
         super(model, tree, new FractionPercentage());
@@ -247,7 +244,7 @@ class FractionPercentageAction extends CheckboxAction{
     }
 }
 
-class FractionAbsoluteDifferenceAction extends CheckboxAction{
+class FractionAbsoluteDifferenceAction extends CheckboxAction {
 
     public FractionAbsoluteDifferenceAction(model, ULCTableTree tree, compareSimulationTreeView) {
         super(model, tree, new FractionAbsoluteDifference());

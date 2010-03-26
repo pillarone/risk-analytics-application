@@ -63,6 +63,14 @@ class CompareParameterizationClassifierTableTreeNode extends ParameterizationCla
             parameter = parametersMap.get(getParameterizationIndex(column))
             getValueForKey(parameter.get(getPeriodIndex(column))?.value)
         } catch (Exception ex) {
+            return getClassifier(parameter)
+        }
+    }
+
+    private String getClassifier(def parameter) {
+        try {
+            return parameter.classifier.displayName
+        } catch (Exception ex) {
             return ""
         }
     }

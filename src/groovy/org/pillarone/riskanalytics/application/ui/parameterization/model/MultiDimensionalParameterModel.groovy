@@ -7,6 +7,8 @@ import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 
 class MultiDimensionalParameterModel implements IModelChangedListener {
     private ITableTreeModel model
@@ -24,6 +26,11 @@ class MultiDimensionalParameterModel implements IModelChangedListener {
         tableModel = new MultiDimensionalParameterTableModel(multiDimensionalParameter)
         tableModel.addListener this
         ClientContext.setModelUpdateMode(tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
+        //TODO: enabled as soon as a new core plugin version is installed
+        /* if(multiDimensionalParameter instanceof IComboBoxBasedMultiDimensionalParameter || multiDimensionalParameter instanceof ConstrainedMultiDimensionalParameter) {
+            multiDimensionalParameter.validateValues()
+            modelChanged()
+        }*/
     }
 
     void save() {

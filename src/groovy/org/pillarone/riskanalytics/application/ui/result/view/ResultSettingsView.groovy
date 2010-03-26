@@ -32,11 +32,10 @@ class ResultSettingsView {
     }
 
     private void initComponents() {
-        ULCTextArea comment = new ULCTextArea(simulation.comment, 4, 30)
+        ULCTextArea comment = new ULCTextArea(simulation.comment, 30, 20)
         comment.lineWrap = true
         comment.wrapStyleWord = true
         comment.enabled = false
-
 
         ULCBoxPane settings = boxLayout(getText('settings')) {ULCBoxPane box ->
 
@@ -90,7 +89,11 @@ class ResultSettingsView {
     private void addLabels(ULCBoxPane container, String key, ULCTextArea value) {
         def keyLabel = new ULCLabel(key)
         container.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(keyLabel, 5, 10, 0, 0))
-        container.add(2, ULCBoxPane.BOX_LEFT_EXPAND, spaceAround(value, 5, 10, 0, 0))
+        ULCScrollPane scrollPane = new ULCScrollPane(value)
+        scrollPane.setPreferredSize(new Dimension(270, 60))
+        scrollPane.border = BorderFactory.createEmptyBorder( 5, 10, 0, 0)
+        scrollPane.setVerticalScrollBarPolicy(ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED)
+        container.add(2, ULCBoxPane.BOX_LEFT_EXPAND, scrollPane)
     }
 
     private void addLabels(ULCBoxPane container, String key, String value, ULCComponent thirdComponent) {
@@ -118,7 +121,6 @@ class ResultSettingsView {
         result.add ULCBoxPane.BOX_EXPAND_CENTER, new ULCFiller()
         return result
     }
-
 
     /**
      * Utility method to get resource bundle entries for this class
@@ -153,26 +155,26 @@ class ExportModelItemAction extends ResourceBasedAction {
 
         ULCWindow ancestor = UlcUtilities.getWindowAncestor(event.source)
         ClientContext.chooseFile([
-            onSuccess: {filePaths, fileNames ->
-                String selectedFile = filePaths[0]
-                ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                    BufferedWriter bw
-                    try {
-                        bw = new BufferedWriter(new OutputStreamWriter(stream))
-                        bw.write modelItem.srcCode
-                    } catch (Throwable t) {
-                        new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                    } finally {
-                        bw.close()
-                    }
-                }, onSuccess: {path, name ->
-                }, onFailure: {reason, description ->
-                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
-                }] as IFileStoreHandler, selectedFile)
+                onSuccess: {filePaths, fileNames ->
+                    String selectedFile = filePaths[0]
+                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
+                        BufferedWriter bw
+                        try {
+                            bw = new BufferedWriter(new OutputStreamWriter(stream))
+                            bw.write modelItem.srcCode
+                        } catch (Throwable t) {
+                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                        } finally {
+                            bw.close()
+                        }
+                    }, onSuccess: {path, name ->
+                    }, onFailure: {reason, description ->
+                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                    }] as IFileStoreHandler, selectedFile)
 
-            },
-            onFailure: {reason, description ->
-            }] as IFileChooseHandler, config, ancestor)
+                },
+                onFailure: {reason, description ->
+                }] as IFileChooseHandler, config, ancestor)
     }
 
     public ModelItem getModelItem() {
@@ -206,25 +208,25 @@ class ExportStructureAction extends ResourceBasedAction {
 
         ULCWindow ancestor = UlcUtilities.getWindowAncestor(event.source)
         ClientContext.chooseFile([
-            onSuccess: {filePaths, fileNames ->
-                String selectedFile = filePaths[0]
-                ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                    try {
-                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
-                        writer.write(item.data, bw)
-                    } catch (Throwable t) {
-                        new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                    } finally {
-                        stream.close()
-                    }
-                }, onSuccess: {path, name ->
-                }, onFailure: {reason, description ->
-                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
-                }] as IFileStoreHandler, selectedFile)
+                onSuccess: {filePaths, fileNames ->
+                    String selectedFile = filePaths[0]
+                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
+                        try {
+                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
+                            writer.write(item.data, bw)
+                        } catch (Throwable t) {
+                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                        } finally {
+                            stream.close()
+                        }
+                    }, onSuccess: {path, name ->
+                    }, onFailure: {reason, description ->
+                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                    }] as IFileStoreHandler, selectedFile)
 
-            },
-            onFailure: {reason, description ->
-            }] as IFileChooseHandler, config, ancestor)
+                },
+                onFailure: {reason, description ->
+                }] as IFileChooseHandler, config, ancestor)
     }
 
 
