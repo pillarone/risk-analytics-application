@@ -1,6 +1,7 @@
-import org.pillarone.riskanalytics.core.output.batch.DerbyBulkInsert
-import org.pillarone.riskanalytics.core.output.batch.MysqlBulkInsert
-import org.pillarone.riskanalytics.core.output.batch.SQLServerBulkInsert
+import org.pillarone.riskanalytics.core.output.batch.results.DerbyBulkInsert
+import org.pillarone.riskanalytics.core.output.batch.results.MysqlBulkInsert
+import org.pillarone.riskanalytics.core.output.batch.results.SQLServerBulkInsert
+import org.pillarone.riskanalytics.core.output.batch.calculations.MysqlCalculationsBulkInsert
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
@@ -26,7 +27,7 @@ grails.enable.native2ascii = true
 
 maxIterations = 100000
 keyFiguresToCalculate = null
-batchInsert = null
+resultBulkInsert = null
 userLogin = false
 // a cron for a batch, A cron expression is a string comprised of 6 or 7 fields separated by white space.
 // Fields can contain any of the allowed values: Sec Min Hour dayOfMonth month dayOfWeek Year
@@ -60,7 +61,7 @@ environments {
     }
     sqlserver {
         models = ["CoreModel", 'ApplicationModel']
-        batchInsert = SQLServerBulkInsert
+        resultBulkInsert = SQLServerBulkInsert
         keyFiguresToCalculate = [
                 'stdev': true,
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
@@ -72,7 +73,8 @@ environments {
         }
     }
     mysql {
-        batchInsert = MysqlBulkInsert
+        resultBulkInsert = MysqlBulkInsert
+        calculationBulkInsert = MysqlCalculationsBulkInsert
         ExceptionSafeOut = System.out
         models = ["CoreModel", 'ApplicationModel']
         log4j = {
@@ -107,7 +109,7 @@ environments {
         ]
     }
     standalone {
-        batchInsert = DerbyBulkInsert
+        resultBulkInsert = DerbyBulkInsert
         ExceptionSafeOut = System.err
         maxIterations = 10000
         models = ["CoreModel", 'ApplicationModel']
