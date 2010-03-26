@@ -9,13 +9,13 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
 import java.awt.FontMetrics
 import java.awt.image.BufferedImage
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TablePaster
 import org.pillarone.riskanalytics.application.ui.base.action.TableSelectionFiller
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterTableCellEditor
-import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterTableCellRenderer
+import org.pillarone.riskanalytics.application.ui.table.MultiDimensionalTableCellRenderer
+import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTable
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
 import com.ulcjava.base.application.*
 
@@ -38,7 +38,7 @@ class MultiDimensionalParameterView {
     private void initComponents() {
         path = new ULCLabel(model.getPathAsString())
         content = new ULCBoxPane(1, 0)
-        table = new ULCTable(model.getTableModel())
+        this.table = new MultiDimensionalTable(this, model.getTableModel())
         ULCSpinnerNumberModel spinnerModel = new ULCSpinnerNumberModel()
         spinnerModel.minimum = model.multiDimensionalParameter.supportsZeroRows() ? 0 : 1
         spinnerModel.stepSize = 1
@@ -50,7 +50,8 @@ class MultiDimensionalParameterView {
         spinnerModel = new ULCSpinnerNumberModel()
         spinnerModel.minimum = 1
         spinnerModel.stepSize = 1
-        spinnerModel.value = model.tableModel.valueColumnCount
+        //-1 for index column
+        spinnerModel.value = model.tableModel.valueColumnCount - 1
         columnCount = new ULCSpinner(spinnerModel)
         columnCount.preferredSize = new Dimension(80, 20)
         columnCount.name = 'columnCount'
@@ -59,15 +60,21 @@ class MultiDimensionalParameterView {
         applyDimensionButton.enabled = columnCount.enabled || rowCount.enabled
 
         setRendererAndEditors()
-        table.tableHeader = null
-        table.cellSelectionEnabled = true
+        //this.table.tableHeader = null
+        this.table.cellSelectionEnabled = true
     }
 
     private def setRendererAndEditors() {
         table.getColumnModel().getColumns().eachWithIndex {ULCTableColumn column, int index ->
             column.minWidth = getColumnWidth(index)
-            column.setCellRenderer(new MultiDimensionalParameterTableCellRenderer(column: index))
+            if (index == 0) {
+                column.minWidth = 50
+                column.maxWidth = 50
+            }
+            column.setCellRenderer(new MultiDimensionalTableCellRenderer(index, table))
             column.setCellEditor(new MultiDimensionalParameterTableCellEditor(column: index))
+            column.resizable = true
+            column.setHeaderValue("")//table.getValueAt(0,index)
         }
     }
 
@@ -90,13 +97,7 @@ class MultiDimensionalParameterView {
     }
 
     private void layoutComponents() {
-        ULCBoxPane dimensionSection = new ULCBoxPane(3, 2)
-        dimensionSection.add(new ULCLabel(getText("rowCount")))
-        dimensionSection.add(rowCount)
-        dimensionSection.add(new ULCFiller())
-        dimensionSection.add(new ULCLabel(getText("columnCount")))
-        dimensionSection.add(columnCount)
-        dimensionSection.add(applyDimensionButton)
+        ULCBoxPane dimensionSection = getDimensionSection()
         content.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller(10, 10))
         content.add(ULCBoxPane.BOX_EXPAND_TOP, path)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller(10, 10))
@@ -109,8 +110,29 @@ class MultiDimensionalParameterView {
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollPane)
     }
 
+    private ULCBoxPane getDimensionSection() {
+        ULCBoxPane dimensionSection
+        if (isMatrix()) {
+            dimensionSection = new ULCBoxPane(3, 1)
+            dimensionSection.add(new ULCLabel(getText("dimension")))
+            dimensionSection.add(columnCount)
+            dimensionSection.add(applyDimensionButton)
+        } else {
+            dimensionSection = new ULCBoxPane(3, 2)
+            dimensionSection.add(new ULCLabel(getText("rowCount")))
+            dimensionSection.add(rowCount)
+            dimensionSection.add(new ULCFiller())
+            dimensionSection.add(new ULCLabel(getText("columnCount")))
+            dimensionSection.add(columnCount)
+            dimensionSection.add(applyDimensionButton)
+        }
+        return dimensionSection
+    }
+
     void attachListeners() {
         applyDimensionButton.addActionListener([actionPerformed: {
+            if (isMatrix())
+                rowCount.value = columnCount.value
             MultiDimensionalParameterDimension dimension = new MultiDimensionalParameterDimension(columnCount.value, rowCount.value)
             model.tableModel.dimension = dimension
         }] as IActionListener)
@@ -132,7 +154,20 @@ class MultiDimensionalParameterView {
      * @return the localized value corresponding to the key
      */
     protected String getText(String key) {
-        return LocaleResources.getString("MultiDimensionalParameterView." + key);
+        return UIUtils.getText(this.class, key)
     }
+
+    public void updateCount(boolean isRow, int x) {
+        //-1 for index column
+        if (isRow)
+            rowCount.value = rowCount.value + x
+        else
+            columnCount.value = columnCount.value + x
+    }
+
+    public boolean isMatrix() {
+        return model.isMatrix()
+    }
+
 
 }

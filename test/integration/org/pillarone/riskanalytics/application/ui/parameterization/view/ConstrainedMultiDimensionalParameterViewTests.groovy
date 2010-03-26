@@ -6,15 +6,15 @@ import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCTableOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TestMultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
 class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
@@ -33,7 +33,7 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
 
         def component = simulationModel.dynamicComponent.createDefaultSubComponent()
         component.name = "subNewComponent"
-        simulationModel.dynamicComponent.addSubComponent (component)
+        simulationModel.dynamicComponent.addSubComponent(component)
 
         def node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("path", 0, mdp)], simulationModel)
         MultiDimensionalParameterModel model = new TestMultiDimensionalParameterModel(null, node, 1)
@@ -46,12 +46,11 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
         ULCFrameOperator frame = new ULCFrameOperator("test")
         ULCTableOperator table = new ULCTableOperator(frame)
 
-        def operator = table.clickForEdit(1, 0) as ULCComboBoxOperator
+        def operator = table.clickForEdit(1, 1) as ULCComboBoxOperator
         assertEquals "hierarchy component", operator.selectedItem
         operator.selectItem 'first component'
 
-
-        operator = table.clickForEdit(1, 1) as ULCTextFieldOperator
+        operator = table.clickForEdit(1, 2) as ULCTextFieldOperator
         assertEquals "1", operator.getText()
         operator.enterText("2")
     }

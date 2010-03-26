@@ -46,9 +46,9 @@ class DynamicLobsInComboBoxTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frame = new ULCFrameOperator("test")
         ULCTableOperator table = new ULCTableOperator(frame)
 
-        def operator = table.clickForEdit(1, 0) as ULCComboBoxOperator
+        def operator = table.clickForEdit(1, 1) as ULCComboBoxOperator
         operator.selectItem 'example output component'
-        operator = table.clickForEdit(1, 0) as ULCComboBoxOperator
+        operator = table.clickForEdit(1, 1) as ULCComboBoxOperator
         operator.selectItem 'hierarchy output component'
     }
 

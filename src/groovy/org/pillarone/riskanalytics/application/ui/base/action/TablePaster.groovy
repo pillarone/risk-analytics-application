@@ -9,8 +9,8 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.table.ITableModel
 import com.ulcjava.base.application.util.Cursor
-import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
 import org.pillarone.riskanalytics.application.ui.base.model.IBulkChangeable
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.TableDataParser
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
@@ -45,11 +45,16 @@ class TablePaster extends ExceptionSafeAction {
         if (content) {
             List data = new TableDataParser().parseTableData(content)
             withBulkChange(model) {
+                if (!validate(data, startColumn)) {
+                    showAlert(table)
+                    return
+                }
                 data.eachWithIndex {line, lineIndex ->
                     line.eachWithIndex {cellValue, cellIndex ->
                         int colIndex = startColumn + cellIndex
                         int rowIndex = startRow + lineIndex
-                        if (rowIndex < rowCount && colIndex < columnCount && model.isCellEditable(rowIndex, colIndex)) {
+                        updateTableCount(rowIndex, colIndex)
+                        if (model.isCellEditable(rowIndex, colIndex)) {
                             model.setValueAt(data[lineIndex][cellIndex], rowIndex, colIndex)
                         }
                     }
@@ -57,6 +62,12 @@ class TablePaster extends ExceptionSafeAction {
 
             }
         }
+    }
+
+    private void showAlert(ULCTable table) {
+        try {
+            new I18NAlert(UlcUtilities.getWindowAncestor(table), "columnCountError").show()
+        } catch (Exception ex) {}
     }
 
     private withBulkChange(ITableModel tableModel, Closure change) {
@@ -77,5 +88,30 @@ class TablePaster extends ExceptionSafeAction {
         if (tableModel instanceof IBulkChangeable) {
             tableModel.stopBulkChange()
         }
+    }
+
+    private void updateTableCount(int rowIndex, int colIndex) {
+        if (!table) return
+        if (rowIndex >= rowCount)
+            model.addRowAt(rowIndex)
+        if (colIndex >= columnCount)
+            model.addColumnAt(colIndex)
+        table.updateCount(true, table.rowCount - rowCount)
+        table.updateCount(false, table.columnCount - columnCount)
+        rowCount = table.rowCount
+        columnCount = table.columnCount
+    }
+
+    private boolean validate(List data, int startColumn) {
+        boolean status = true
+        data.eachWithIndex {line, lineIndex ->
+            line.eachWithIndex {cellValue, cellIndex ->
+                int colIndex = startColumn + cellIndex
+                if (colIndex >= columnCount) {
+                    status = false
+                }
+            }
+        }
+        return status
     }
 }

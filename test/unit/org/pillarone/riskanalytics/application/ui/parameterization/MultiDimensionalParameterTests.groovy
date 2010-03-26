@@ -5,12 +5,7 @@ import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ComboBoxTableMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
-import org.pillarone.riskanalytics.core.parameterization.SimpleConstraint
+import org.pillarone.riskanalytics.core.parameterization.*
 
 class MultiDimensionalParameterTests extends GroovyTestCase {
 
@@ -30,7 +25,7 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         model.injectComponentNames()
         param.simulationModel = model
 
-        def values = param.getPossibleValues(0, 1)
+        def values = param.getPossibleValues(1, 1)
         assertEquals 1, values.size()
         assertTrue values.contains('hierarchy component')
 
@@ -41,11 +36,11 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         model.injectComponentNames()
         param.simulationModel = model
 
-        values = param.getPossibleValues(1, 0)
+        values = param.getPossibleValues(1, 1)
         assertEquals 1, values.size()
         assertTrue values.contains('hierarchy component')
 
-        values = param.getPossibleValues(1, 1)
+        values = param.getPossibleValues(1, 2)
         assertFalse values instanceof Collection
 
         LocaleResources.clearTestMode()
