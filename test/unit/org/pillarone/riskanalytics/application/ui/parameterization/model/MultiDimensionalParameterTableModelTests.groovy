@@ -280,13 +280,17 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         assertTrue model.getValueAt(2, 1) == "Row2"
         assertTrue model.getValueAt(3, 1) == "Row3"
 
-        model.addRowAt 1
+        model.addColumnAndRow 1
+
+        assertEquals 5, model.rowCount
+        assertEquals 6, model.columnCount
+
         assertTrue model.getValueAt(1, 1) == "Row1"
         assertTrue model.getValueAt(2, 1) == "Row1"
         assertTrue model.getValueAt(3, 1) == "Row2"
         assertTrue model.getValueAt(4, 1) == "Row3"
         assertTrue model.getValueAt(2, 2) == 0
-        assertTrue model.getValueAt(2, 3) == 0
+        assertTrue model.getValueAt(2, 3) == 1
         assertTrue model.getValueAt(2, 4) == 0
     }
 
@@ -518,7 +522,7 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
 
     private void print(MultiDimensionalParameterTableModel model) {
         for (int i = 0; i < model.getRowCount(); i++) {
-            for (int j = 0; j < model.columnCount + 1; j++) {
+            for (int j = 0; j < model.columnCount; j++) {
                 println "assertEquals ${model.getValueAt(i, j)}, model.getValueAt($i, $j)"  //"assertTrue model.getValueAt($i, $j) == ${model.getValueAt(i, j)}"
             }
         }

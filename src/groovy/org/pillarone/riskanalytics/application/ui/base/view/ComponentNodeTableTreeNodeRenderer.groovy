@@ -43,12 +43,13 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.name = "popup.expand"
 
         removeDynamicNodeMenu = new ULCPopupMenu()
-        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         //todo remove the context menu item as long as the functionality is not available.
 //        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree)))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
 
