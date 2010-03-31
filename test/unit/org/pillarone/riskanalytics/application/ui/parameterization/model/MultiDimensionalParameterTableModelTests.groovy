@@ -3,10 +3,8 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import com.ulcjava.base.application.event.ITableModelListener
 import com.ulcjava.base.application.event.TableModelEvent
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.parameterization.MatrixMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
-import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.TableMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
+import org.pillarone.riskanalytics.core.parameterization.*
 
 class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
 
@@ -469,6 +467,78 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         assertEquals 1, model.getValueAt(3, 4)
 
     }
+
+    void testMoveColumnAndRowByComboBoxMatrixMultiDimensionalParameter() {
+        def list = [[1, 2, 3], [2, 1, 6], [3, 6, 1]]
+        def rows = ['Row1', 'Row2', 'Row3']
+
+        MultiDimensionalParameterTableModel model = new MultiDimensionalParameterTableModel(new ComboBoxMatrixMultiDimensionalParameter(list, rows, ITestComponentMarker))//MatrixMultiDimensionalParameter(list, rows, cols))
+
+        /*
+             0   space    Column1  Column2   Column3
+             1   Row1     1        2         3
+             2   Row2     2        1         6
+             3   Row3     3        6         1
+         */
+        assertEquals "Row1", model.getValueAt(0, 2)
+        assertEquals "Row2", model.getValueAt(0, 3)
+        assertEquals "Row3", model.getValueAt(0, 4)
+
+        assertEquals "Row1", model.getValueAt(1, 1)
+        assertEquals "Row2", model.getValueAt(2, 1)
+        assertEquals "Row3", model.getValueAt(3, 1)
+
+        //row 1
+        assertEquals 1, model.getValueAt(1, 2)
+        assertEquals 2, model.getValueAt(1, 3)
+        assertEquals 3, model.getValueAt(1, 4)
+
+        //row 2
+        assertEquals 2, model.getValueAt(2, 2)
+        assertEquals 1, model.getValueAt(2, 3)
+        assertEquals 6, model.getValueAt(2, 4)
+
+        //row 3
+        assertEquals 3, model.getValueAt(3, 2)
+        assertEquals 6, model.getValueAt(3, 3)
+        assertEquals 1, model.getValueAt(3, 4)
+
+        model.moveColumnAndRow 0, 1
+
+        /*
+        expected matrix
+
+            0   space    Column2  Column1   Column3
+            1   Row2     1        2         6
+            2   Row1     2        1         3
+            3   Row3     6        3         1
+        */
+
+        assertEquals "Row2", model.getValueAt(0, 2)
+        assertEquals "Row1", model.getValueAt(0, 3)
+        assertEquals "Row3", model.getValueAt(0, 4)
+
+        assertEquals "Row2", model.getValueAt(1, 1)
+        assertEquals "Row1", model.getValueAt(2, 1)
+        assertEquals "Row3", model.getValueAt(3, 1)
+
+        //row 1
+        assertEquals 1, model.getValueAt(1, 2)
+        assertEquals 2, model.getValueAt(1, 3)
+        assertEquals 6, model.getValueAt(1, 4)
+
+        // row 2
+        assertEquals 2, model.getValueAt(2, 2)
+        assertEquals 1, model.getValueAt(2, 3)
+        assertEquals 3, model.getValueAt(2, 4)
+
+        //row 3
+        assertEquals 6, model.getValueAt(3, 2)
+        assertEquals 3, model.getValueAt(3, 3)
+        assertEquals 1, model.getValueAt(3, 4)
+
+    }
+
 
 
 
