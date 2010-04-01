@@ -320,14 +320,6 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         assertTrue model.getValueAt(1, 0) == 1
         assertTrue model.getValueAt(2, 0) == 2
 
-        for (int i = 0; i < model.getRowCount(); i++) {
-            for (int j = 0; j < model.getColumnCount(); j++) {
-                print "| $i:$j  ${model.getValueAt(i, j)} |"
-            }
-            println ""
-        }
-
-
     }
 
 
@@ -589,13 +581,5 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         assertEquals "last row", 5, event.lastRow
     }
 
-
-    private void print(MultiDimensionalParameterTableModel model) {
-        for (int i = 0; i < model.getRowCount(); i++) {
-            for (int j = 0; j < model.columnCount; j++) {
-                println "assertEquals ${model.getValueAt(i, j)}, model.getValueAt($i, $j)"  //"assertTrue model.getValueAt($i, $j) == ${model.getValueAt(i, j)}"
-            }
-        }
-    }
 
 }
