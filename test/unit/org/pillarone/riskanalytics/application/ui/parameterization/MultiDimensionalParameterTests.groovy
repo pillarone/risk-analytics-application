@@ -73,29 +73,4 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         assertEquals 'hierarchyComponent', lobs.get(1).get(1).name
     }
 
-    //TODO: (msp) enable when new simulation engine is used
-    /*void testSetSimulationModel() {
-        CapitalEagleModel model = new CapitalEagleModel()
-        model.init()
-        model.injectComponentNames()
-
-        AbstractMultiDimensionalParameter mdp = new ComboBoxMatrixMultiDimensionalParameter([[0, 1], [1, 0]], ['invalid name', 'mtpl'], LobMarker)
-        mdp.setSimulationModel(model)
-
-        assertFalse "invalid name" == mdp.getValueAt(0, 1)
-        assertEquals "mtpl", mdp.getValueAt(0, 2)
-
-        mdp = new ComboBoxTableMultiDimensionalParameter([['invalid name', 'mtpl']], ['title'], LobMarker)
-        mdp.setSimulationModel(model)
-
-        assertFalse "invalid name" == mdp.getValueAt(1, 0)
-        assertEquals "mtpl", mdp.getValueAt(2, 0)
-
-        mdp = new ConstrainedMultiDimensionalParameter([['invalid name', 'mtpl'], [0.5, 0.5]], ['line', '%'], ConstraintsFactory.getConstraints(ConstraintsFactory.LINE_PERCENTAGE))
-        mdp.setSimulationModel(model)
-
-        assertFalse "invalid name" == mdp.getValueAt(1, 0)
-        assertEquals "mtpl", mdp.getValueAt(2, 0)
-    }*/
-
 }

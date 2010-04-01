@@ -6,8 +6,10 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.MatrixMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.TableMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.MatrixMultiDimensionalParameter
 
 class MultiDimensionalParameterModel implements IModelChangedListener {
     private ITableTreeModel model
@@ -25,6 +27,10 @@ class MultiDimensionalParameterModel implements IModelChangedListener {
         tableModel = new MultiDimensionalParameterTableModel(multiDimensionalParameter, true)
         tableModel.addListener this
         ClientContext.setModelUpdateMode(tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
+        if (multiDimensionalParameter instanceof IComboBoxBasedMultiDimensionalParameter || multiDimensionalParameter instanceof ConstrainedMultiDimensionalParameter) {
+            multiDimensionalParameter.validateValues()
+            modelChanged()
+        }
     }
 
     void save() {

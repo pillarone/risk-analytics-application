@@ -350,6 +350,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
     public void addItem(BatchRun batchRun) {
         selectionTreeModel.addNodeForItem(batchRun)
+        viewModelsInUse.each {k, v ->
+            if (v instanceof AbstractConfigurationModel) {
+                ((AbstractConfigurationModel) v).itemsComboBoxModel.addItem batchRun
+            }
+        }
     }
 
     public void openItem(Model model, BatchRun batchRun) {

@@ -15,6 +15,7 @@
     <property name="target.dir" value="target"/>
     <property name="webapp.lib.dir" value="web-app/lib"/>
     <property name="ulcPlugIn.webapp.lib.dir" value="${plugin.dir}/ulc-2008-u4/web-app/lib"/>
+    <property name="doc.dir" value="docs"/>
 
     <condition property="grails" value="${GRAILS_HOME}/bin/grails.bat">
         <os family="windows"/>
@@ -144,5 +145,28 @@
         </exec>
     </target>
 
+    <target name="doc" depends="init">
+        <taskdef name="Groovydoc" classname="org.codehaus.groovy.ant.Groovydoc">
+            <classpath>
+                <pathelement location="${GRAILS_HOME}/lib/gant_groovy1.6-1.6.0.jar"/>
+                <pathelement location="${GRAILS_HOME}/lib/groovy-all-1.6.7.jar"/>
+            </classpath>
+        </taskdef>
+        <mkdir dir="${doc.dir}"/>
+        <Groovydoc destdir="${doc.dir}/gapi" sourcepath="."
+                   packagenames="src/groovy/**.*,src/java/**.*,grails-app/**.*,grails-app/services/**.*" use="true"
+                   windowtitle="RiskAnalyticsApplication v${version}" private="false">
+            <link packages="com.ulcjava." href="http://canoo.com/ulc/developerzone/apidoc/extension"/>
+            <link packages="java.,org.xml.,javax.,org.xml." href="http://java.sun.com/j2se/1.5.0/docs/api"/>
+            <link packages="org.apache.ant.,org.apache.tools.ant." href="http://www.dpml.net/api/ant/1.7.0"/>
+            <link packages="groovy.,org.codehaus.groovy." href="http://groovy.codehaus.org/api/"/>
+        </Groovydoc>
+        <copy todir="${doc.dir}/gapi">
+            <fileset dir="${doc.dir}/gapi/src/java"/>
+        </copy>
+        <copy todir="${doc.dir}/gapi">
+            <fileset dir="${doc.dir}/gapi/src/groovy"/>
+        </copy>
+    </target>
 
 </project>

@@ -1,9 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.P1RATApplication
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 
 class ImportActionTests extends AbstractStandaloneTestCase {
 
@@ -15,8 +15,9 @@ class ImportActionTests extends AbstractStandaloneTestCase {
 
     private def copyFileToUserHome(String file) {
         String userHome = System.properties["user.home"]
-        File currentDir = new File(".")
-        File importDir = new File(currentDir, "src/java/models/test/")
+        String path = new File(".").getCanonicalPath()
+        File importDir = new File(path, "src/java/models/application/")
+        assertTrue "$path/src/java/models/application/ does not exist ", importDir.exists()
         File srcFile = new File(importDir, file)
         File destFile = new File(userHome, file)
         if (!destFile.exists()) {
@@ -34,7 +35,7 @@ class ImportActionTests extends AbstractStandaloneTestCase {
     }
 
 //    void testImportParameter() {
-//        String importParameterFilename = "ImportTestParameters.groovy"
+//        String importParameterFilename = "ApplicationParameters.groovy"
 //        copyFileToUserHome(importParameterFilename)
 //
 //        ULCFrameOperator frame1 = new ULCFrameOperator("Risk Analytics")
@@ -43,7 +44,7 @@ class ImportActionTests extends AbstractStandaloneTestCase {
 //        tree1.doExpandRow 1
 //
 //
-//        TreePath pathForImport = tree1.findPath(["StructureTest", "Parameterization"] as String[])
+//        TreePath pathForImport = tree1.findPath(["Application", "Parameterization"] as String[])
 //        assertNotNull "path not found", pathForImport
 //
 //        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForImport)
@@ -55,14 +56,14 @@ class ImportActionTests extends AbstractStandaloneTestCase {
 //        fileChooser.pathField.typeText "${System.properties["user.home"]}/$importParameterFilename"
 //        fileChooser.approve()
 //
-//        TreePath path = tree1.findPath(["StructureTest", "Parameterization", "ImportTest v1"] as String[])
+//        TreePath path = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
 //
 //        assertNotNull "path to imported parameter not found", path
 //
 //    }
-//
-//    void testImportExistingParameter() {
-//        String importParameterFilename = "StructureTestParameters.groovy"
+
+//    void testForceImportParameter() {
+//        String importParameterFilename = "ApplicationParameters.groovy"
 //        copyFileToUserHome(importParameterFilename)
 //
 //        ULCFrameOperator frame1 = new ULCFrameOperator("Risk Analytics")
@@ -71,21 +72,37 @@ class ImportActionTests extends AbstractStandaloneTestCase {
 //        tree1.doExpandRow 1
 //
 //
-//        TreePath pathForImport = tree1.findPath(["StructureTest", "Parameterization"] as String[])
+//        TreePath pathForImport = tree1.findPath(["Application", "Parameterization"] as String[])
 //        assertNotNull "path not found", pathForImport
 //
 //        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForImport)
 //        assertNotNull popUpMenu
-//        popUpMenu.pushMenu("Import")
+//        popUpMenu.pushMenu("Import (force)")
 //
 //        ULCFileChooserOperator fileChooser = new ULCFileChooserOperator()
 //
 //        fileChooser.pathField.typeText "${System.properties["user.home"]}/$importParameterFilename"
 //        fileChooser.approve()
 //
-//        ULCDialogOperator alertOperator = new ULCDialogOperator("Info")
-//        assertNotNull "No info alert", alertOperator
-//        alertOperator.close()
+//        TreePath path = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+//        assertNotNull "path to imported parameter not found", path
+//
+//        //second import
+//        pathForImport = tree1.findPath(["Application", "Parameterization"] as String[])
+//        assertNotNull "path not found", pathForImport
+//
+//        popUpMenu = tree1.callPopupOnPath(pathForImport)
+//        assertNotNull popUpMenu
+//        popUpMenu.pushMenu("Import (force)")
+//
+//        fileChooser = new ULCFileChooserOperator()
+//
+//        fileChooser.pathField.typeText "${System.properties["user.home"]}/$importParameterFilename"
+//        fileChooser.approve()
+//
+//        pathForImport = tree1.findPath(["Application", "Parameterization"] as String[])
+//        assertNotNull "path not found", pathForImport
+//
 //    }
 
     // TODO (Apr 16, 2009, msh): Test import of other items

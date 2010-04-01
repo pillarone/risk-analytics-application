@@ -6,13 +6,13 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.DBOutput
-import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.batch.results.AbstractResultsBulkInsert
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
@@ -41,7 +41,7 @@ class RunSimulationAction extends ResourceBasedAction {
         Parameterization parameterization = model.availableParameterizationVersionsForModel.selectedObject
         ResultConfiguration configuration = model.availableResultConfigurationVersionsForModel.selectedObject
         if (model.outputStrategyComboBoxModel.getStrategy() instanceof DBOutput
-                && AbstractBulkInsert.getBulkInsertInstance() == null) {
+                && AbstractResultsBulkInsert.getBulkInsertInstance() == null) {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "NoBatchInsertAllowed")
             alert.show()
             return

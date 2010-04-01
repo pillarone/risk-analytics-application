@@ -134,7 +134,7 @@ class ModellingItemFactory {
         result.collect {getItem(it)}
     }
 
-    static ModellingItem createItem(String name, ConfigObject data, Class itemClass) {
+    static ModellingItem createItem(String name, ConfigObject data, Class itemClass, boolean forceImport) {
 
         def item
 
@@ -177,7 +177,7 @@ class ModellingItemFactory {
                 equals = ItemComparator.contentEquals(item, existingItem)
                 item.versionNumber = VersionNumber.incrementVersion(existingItem)
             }
-            if (equals) {
+            if (equals && !forceImport) {
                 return null
             }
         }

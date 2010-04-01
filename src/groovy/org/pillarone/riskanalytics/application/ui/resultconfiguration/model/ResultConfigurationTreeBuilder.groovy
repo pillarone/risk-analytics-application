@@ -5,11 +5,13 @@ import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeN
 import org.pillarone.riskanalytics.application.ui.base.model.TreeBuilder
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParmComparator
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
-import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.PacketCollector
+import org.pillarone.riskanalytics.core.packets.MultiValuePacket
+import org.pillarone.riskanalytics.core.packets.PacketList
+import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
@@ -44,15 +46,21 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
         componentProperties.addAll(TreeBuilderUtil.collectDynamicProperties(componentNode.component, 'sub'))
         componentProperties.addAll(TreeBuilderUtil.collectProperties(componentNode.component, 'out'))
         def treeSet = new TreeSet(new ParmComparator(componentProperties))
-
+        boolean rcTableTreeNodeAdded = false
         treeSet.addAll(component.properties.keySet())
         treeSet.each {String k ->
             if (k.startsWith("sub")) {
                 componentNode.add(buildComponentNode(component[k], k))
             } else if (k.startsWith("out")) {
-                componentNode.add(new ResultConfigurationTableTreeNode(k, item))
+                boolean packet = isSingleOrMultiValuePacket(component[k])
+                if (packet) {
+                    componentNode.add(new ResultConfigurationTableTreeNode(k, item))
+                    rcTableTreeNodeAdded = true
+                }
             }
         }
+        if (!rcTableTreeNodeAdded)
+            componentNodes.remove(component)
         return componentNode
     }
 
@@ -67,5 +75,9 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
 
     Collection<PacketCollector> getCollectors() {
         (item as ResultConfiguration).collectors
+    }
+
+    private boolean isSingleOrMultiValuePacket(PacketList packetList) {
+        return ((packetList.getType().newInstance() instanceof MultiValuePacket) || (packetList.getType().newInstance() instanceof SingleValuePacket))
     }
 }

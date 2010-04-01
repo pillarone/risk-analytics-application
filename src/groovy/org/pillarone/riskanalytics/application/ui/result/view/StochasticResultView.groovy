@@ -11,8 +11,6 @@ import org.pillarone.riskanalytics.application.dataaccess.function.Sigma
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
-import org.pillarone.riskanalytics.application.ui.result.view.ResultSettingsView
-import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.result.action.*
@@ -80,7 +78,8 @@ class StochasticResultView extends ResultView {
         integerFunctionValue.columns = 6
         integerFunctionValue.value = 1
         toolbar.add integerFunctionValue
-        toolbar.add new ULCButton(new SingleIterationAction(model, tree.viewPortTableTree, integerFunctionValue))
+        ULCButton button = new ULCButton(new SingleIterationAction(model, tree.viewPortTableTree, integerFunctionValue))
+        toolbar.add UIUtils.spaceAround(button, 0, 5, 0, 5)
     }
 
     private def addDoubleFunctions(ULCToolBar toolbar) {

@@ -6,7 +6,6 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
 
 class TreeNodeCopierTests extends GroovyTestCase {
 
@@ -18,7 +17,22 @@ class TreeNodeCopierTests extends GroovyTestCase {
         ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
         TestTreeNodeCopier copier = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2])
         String result = copier.writeNode(rootNode, 3)
+        println result
         assertEquals "a\tb\tc\n${TreeNodeCopier.space}a1\tb1\tc1\n", result
+        LocaleResources.clearTestMode()
+    }
+
+    void testWriteWithPathIncludingChildren() {
+        LocaleResources.setTestMode()
+        ITableTreeNode rootNode = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[])
+        rootNode.add(new DefaultMutableTableTreeNode(["a1", "b1", "c1"] as Object[]))
+
+        ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
+        TestTreeNodeCopier copier = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2], copyWithPath: true)
+
+        String result = copier.writeNode(rootNode, 3)
+        def str = "[[a, b, c]]\ta\tb\tc\n[[a, b, c], [a1, b1, c1]]\t   a1\tb1\tc1\n"
+        assertEquals str, result
         LocaleResources.clearTestMode()
     }
 

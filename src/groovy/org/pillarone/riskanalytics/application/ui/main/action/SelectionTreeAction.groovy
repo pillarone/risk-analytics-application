@@ -174,6 +174,7 @@ class CompareSimulationsAction extends SelectionTreeAction {
         try {
             validate(elements)
             Model model = getSelectedModel(elements[0])
+            model.init()
             if (model != null && elements[0].item != null) {
                 this.model.compareItems(model, elements)
             }
@@ -215,6 +216,7 @@ class CompareParameterizationsAction extends SelectionTreeAction {
         try {
             validate(elements)
             Model model = getSelectedModel(elements[0])
+            model.init()
             if (model != null && elements[0] != null) {
                 this.model.compareParameterizations(model, elements)
             }
@@ -627,12 +629,21 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 class ImportAction extends SelectionTreeAction {
     UserPreferences userPreferences
     ULCWindow ancestor
+    boolean forceImport = false
 
     public ImportAction(ULCTree tree, P1RATModel model) {
         super("Import", tree, model)
         userPreferences = new UserPreferences()
         ancestor = getAncestor()
     }
+
+    public ImportAction(ULCTree tree, P1RATModel model, boolean forceImport) {
+        super(forceImport ? "forceImport" : "Import", tree, model)
+        this.forceImport = forceImport
+        userPreferences = new UserPreferences()
+        ancestor = getAncestor()
+    }
+
 
     public ImportAction(ULCTree tree, P1RATModel model, String actionName) {
         super(actionName, tree, model)
@@ -672,7 +683,9 @@ class ImportAction extends SelectionTreeAction {
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
                     String selectedFile = filePaths[0]
-                    ClientContext.loadFile(new ItemLoadHandler(this, node), selectedFile)
+                    ItemLoadHandler handler = new ItemLoadHandler(this, node)
+                    handler.forceImport = this.forceImport
+                    ClientContext.loadFile(handler, selectedFile)
                 },
                 onFailure: {reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {

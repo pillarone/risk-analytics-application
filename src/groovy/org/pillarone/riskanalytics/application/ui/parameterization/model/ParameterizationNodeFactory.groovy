@@ -125,7 +125,6 @@ class ParameterizationNodeFactory {
 
     private static ParameterizationTableTreeNode createCompareParamaterObjectNode(Map parametersMap, Model simulationModel, int size) {
         ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(ParameterizationUtilities.getParameterList(parametersMap))
-        Map typeParametersMap = [:]
         try {
 
             node.add(new CompareParameterizationClassifierTableTreeNode(parametersMap, size))
@@ -145,7 +144,7 @@ class ParameterizationNodeFactory {
             parametersMap.each {k, List parameters ->
                 parameters.each {ParameterObjectParameterHolder p ->
                     if (p != null) {
-                        p.classifierParameters.each {Map.Entry entry ->
+                         p.classifierParameters.each {Map.Entry entry ->
                             List params = parameterEntries.get(entry.key)
                             if (params == null) {
                                 params = new ArrayList()

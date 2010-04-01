@@ -5,11 +5,11 @@ import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCComboBoxOperator
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import models.core.CoreModel
+import models.application.ApplicationModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -21,20 +21,20 @@ class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     protected void doStart() {
 
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
-
-        configuration = new ResultConfiguration("CoreResultConfiguration")
-        structure = new ModelStructure("CoreStructure")
-
-        configuration.load()
-        structure.load()
-
         ULCFrame frame = new ULCFrame("Test")
         frame.name = "Test"
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
 
-        Model model = new CoreModel()
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+
+        configuration = new ResultConfiguration("ApplicationResultConfiguration")
+        configuration.load()
+
+        structure = new ModelStructure("ApplicationStructure")
+        structure.load()
+
+        Model model = new ApplicationModel()
         model.init()
 
         ResultConfigurationView view = new ResultConfigurationView(new ResultConfigurationViewModel(model, configuration, structure))
@@ -48,17 +48,20 @@ class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
         assertNotNull frame
 
         ULCTableTreeOperator rowHeader = new ULCTableTreeOperator(frame, new ComponentByNameChooser("resultConfigurationTreeRowHeader"))
-        rowHeader.selectCell(3, 0)
+        rowHeader.doExpandRow 1
+        rowHeader.selectCell(0, 0)
         //Also tests if the correct paths are expanded
-        assertEquals "value1", rowHeader.getValueAt(rowHeader.selectedRow, rowHeader.selectedColumn)
-        assertEquals "value2", rowHeader.getValueAt(rowHeader.selectedRow + 1, rowHeader.selectedColumn)
+        assertEquals "application", rowHeader.getValueAt(rowHeader.selectedRow, 0)
+        assertEquals "dynamic component", rowHeader.getValueAt(rowHeader.selectedRow + 1, 0)
+        assertEquals "value1", rowHeader.getValueAt(rowHeader.selectedRow + 2, 0)
+        assertEquals "subcomponents", rowHeader.getValueAt(rowHeader.selectedRow + 3, 0)
 
         ULCTableTreeOperator viewPort = new ULCTableTreeOperator(frame, new ComponentByNameChooser("resultConfigurationTreeContent"))
-        viewPort.selectCell(3, 0)
-        assertEquals "Single", viewPort.getValueAt(viewPort.selectedRow, viewPort.selectedColumn)
-        assertEquals "Single", viewPort.getValueAt(viewPort.selectedRow + 1, viewPort.selectedColumn)
+        viewPort.selectCell(2, 0)
+        assertEquals "Not collected", viewPort.getValueAt(viewPort.selectedRow, viewPort.selectedColumn)
+        assertEquals "", viewPort.getValueAt(viewPort.selectedRow + 1, viewPort.selectedColumn)
 
-        ULCComboBoxOperator comboBoxOperator = viewPort.clickForEdit(3, 0)
+        ULCComboBoxOperator comboBoxOperator = viewPort.clickForEdit(2, 0)
         comboBoxOperator.selectItem "Aggregated"
 
         assertEquals "Aggregated", viewPort.getValueAt(viewPort.selectedRow, viewPort.selectedColumn)
