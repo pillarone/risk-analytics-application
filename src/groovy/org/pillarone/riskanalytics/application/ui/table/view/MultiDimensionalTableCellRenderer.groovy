@@ -41,6 +41,7 @@ class MultiDimensionalTableCellRenderer extends DefaultTableCellRenderer {
             rendererComponent.border = emptyBorder
             setBackground(Color.white)
         }
+
         if (value) {
             rendererComponent.setToolTipText(value.toString())
         }

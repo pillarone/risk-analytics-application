@@ -64,6 +64,13 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         fireTableStructureChanged()
     }
 
+    void removeColumnAndRow(int index) {
+        multiDimensionalParam.removeColumnAt(getIndex(index, columnCount))
+        multiDimensionalParam.removeRowAt(getIndex(index, rowCount))
+        notifyModelChanged()
+        fireTableStructureChanged()
+    }
+
     void addColumnAndRow(int index) {
         multiDimensionalParam.addColumnAt(getIndex(index, columnCount))
         multiDimensionalParam.addRowAt(getIndex(index, rowCount))
@@ -109,6 +116,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     }
 
     public Object getValueAt(int row, int column) {
+        if (column == 0 && row == 0) return ""
         if (column == 0) return row
         Object value = multiDimensionalParam.getValueAt(row, column)
         if (value instanceof DateTime) {

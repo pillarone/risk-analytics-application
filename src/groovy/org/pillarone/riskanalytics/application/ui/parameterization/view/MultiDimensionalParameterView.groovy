@@ -117,13 +117,18 @@ class MultiDimensionalParameterView {
             dimensionSection.add(new ULCLabel(getText("dimension")))
             dimensionSection.add(columnCount)
             dimensionSection.add(applyDimensionButton)
-        } else {
+        } else if (model.tableModel.columnCountChangeable()) {
             dimensionSection = new ULCBoxPane(3, 2)
             dimensionSection.add(new ULCLabel(getText("rowCount")))
             dimensionSection.add(rowCount)
             dimensionSection.add(new ULCFiller())
             dimensionSection.add(new ULCLabel(getText("columnCount")))
             dimensionSection.add(columnCount)
+            dimensionSection.add(applyDimensionButton)
+        } else {
+            dimensionSection = new ULCBoxPane(3, 1)
+            dimensionSection.add(new ULCLabel(getText("rowCount")))
+            dimensionSection.add(rowCount)
             dimensionSection.add(applyDimensionButton)
         }
         return dimensionSection

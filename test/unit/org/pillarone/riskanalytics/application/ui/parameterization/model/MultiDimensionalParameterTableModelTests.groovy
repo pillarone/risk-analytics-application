@@ -72,7 +72,7 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
 
         assertEquals 1, model.getValueAt(1, 0)
         model.setValueAt(0, 0, 0)
-        assertEquals 0, model.getValueAt(0, 0)
+        assertEquals "", model.getValueAt(0, 0)
 
         // column index out of bound
         shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 1, 2)})
@@ -247,23 +247,23 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
     }
 
     void testRemoveColumnAt() {
-        MultiDimensionalParameterTableModel model = new MultiDimensionalParameterTableModel(new MatrixMultiDimensionalParameter([[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['Row1', 'Row2', 'Row3'], ['Column1', 'Column2', 'Column3']), true)
+        MultiDimensionalParameterTableModel model = new MultiDimensionalParameterTableModel(new ComboBoxMatrixMultiDimensionalParameter([[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['Row1', 'Row2', 'Row3'], ITestComponentMarker), true)
 
         assertEquals 4, model.rowCount
         assertEquals 5, model.columnCount
-        println model.rowCount
-        println model.columnCount
 
-        assertTrue model.getValueAt(0, 3) == "Column2"
-        assertTrue model.getValueAt(1, 3) == 4
+        assertEquals "Row1", model.getValueAt(0, 2)
+        assertEquals "Row2", model.getValueAt(0, 3)
+        assertEquals "Row3", model.getValueAt(0, 4)
 
-        model.removeColumnAt 1
+        model.removeColumnAndRow 1
 
-        assertEquals 4, model.rowCount
+        assertEquals 3, model.rowCount
         assertEquals 4, model.columnCount
 
-        assertTrue model.getValueAt(0, 3) == "Column3"
-        assertTrue model.getValueAt(1, 3) == 7
+        assertEquals "Row1", model.getValueAt(0, 2)
+        assertEquals "Row3", model.getValueAt(0, 3)
+
 
     }
 
@@ -316,7 +316,7 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         assertEquals 2 + 1, model.getColumnCount()
         assertEquals 2 + 1, model.getValueColumnCount()
 
-        assertTrue model.getValueAt(0, 0) == 0
+        assertTrue model.getValueAt(0, 0) == ""
         assertTrue model.getValueAt(1, 0) == 1
         assertTrue model.getValueAt(2, 0) == 2
 

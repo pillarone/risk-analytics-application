@@ -40,10 +40,11 @@ class RemoveColumnAction extends TableAction {
     void doActionPerformed(ActionEvent event) {
         // -1 for the index column
         int index = getColumnIndex()
-        table.model.removeColumnAt(index)
         if (table.isMatrix()) {
-            table.model.removeRowAt(index)
+            table.model.removeColumnAndRow(index)
             table.updateCount(true, -1)
+        } else {
+            table.model.removeColumnAt(index)
         }
         table.updateCount(false, -1)
     }
@@ -83,10 +84,11 @@ class RemoveRowAction extends TableAction {
     void doActionPerformed(ActionEvent event) {
         // -1 for the index column
         int index = getRowIndex()
-        table.model.removeRowAt(index)
         if (isMatrix()) {
-            table.model.removeColumnAt(index)
+            table.model.removeColumnAndRow(index)
             table.updateCount(false, -1)
+        } else {
+            table.model.removeRowAt(index)
         }
         table.updateCount(true, -1)
     }
@@ -182,7 +184,7 @@ abstract class TableAction extends ResourceBasedAction {
     }
 
     protected int getRowCount() {
-        return table.getColumnCount() - 1;
+        return table.getRowCount() - 1;
     }
 
 }

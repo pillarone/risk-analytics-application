@@ -108,12 +108,14 @@ class MultiDimensionalTable extends ULCTable {
         if (model.columnCountChangeable()) {
             columnPopupMenu.add(addColumnBeforeMenuItem)
             columnPopupMenu.add(addColumnAfterMenuItem)
-            columnPopupMenu.addSeparator()
-            columnPopupMenu.add(moveRightColumnMenuItem)
-            columnPopupMenu.add(moveLeftColumnMenuItem)
+            if (isMatrix()) {
+                columnPopupMenu.addSeparator()
+                columnPopupMenu.add(moveRightColumnMenuItem)
+                columnPopupMenu.add(moveLeftColumnMenuItem)
+            }
             columnPopupMenu.addSeparator()
             columnPopupMenu.add(removeColumnMenuItem)
-        } else {
+        } else if (isMatrix()) {
             columnPopupMenu.add(moveRightColumnMenuItem)
             columnPopupMenu.add(moveLeftColumnMenuItem)
         }
