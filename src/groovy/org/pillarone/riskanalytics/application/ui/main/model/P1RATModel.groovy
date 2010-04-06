@@ -306,9 +306,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             item.daoClass.withTransaction {status ->
                 boolean usedInSimulation = item.isUsedInSimulation()
                 if (!usedInSimulation) {
-                    if (!item.isLoaded()) {
-                        item.load()
-                    }
+                    item.load()
                     notifyOpenDetailView(model, item)
                 } else {
                     ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
