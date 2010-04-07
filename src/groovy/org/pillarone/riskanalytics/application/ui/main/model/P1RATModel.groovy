@@ -300,8 +300,9 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void openItem(Model model, Parameterization item) {
-        item.dao.modelClassName = model.class.name
+        model = model.class.newInstance()
         model.init()
+        item.dao.modelClassName = model.class.name
         synchronized (item) {
             item.daoClass.withTransaction {status ->
                 boolean usedInSimulation = item.isUsedInSimulation()
