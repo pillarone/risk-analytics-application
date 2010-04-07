@@ -60,6 +60,7 @@ class MultiDimensionalParameterView {
         applyDimensionButton.enabled = columnCount.enabled || rowCount.enabled
 
         setRendererAndEditors()
+        //set table header height
         this.table.getTableHeader().setPreferredSize(new Dimension(80, 5))
         this.table.cellSelectionEnabled = true
     }
