@@ -60,7 +60,7 @@ class MultiDimensionalParameterView {
         applyDimensionButton.enabled = columnCount.enabled || rowCount.enabled
 
         setRendererAndEditors()
-        //this.table.tableHeader = null
+        this.table.getTableHeader().setPreferredSize(new Dimension(80, 5))
         this.table.cellSelectionEnabled = true
     }
 
@@ -74,7 +74,7 @@ class MultiDimensionalParameterView {
             column.setCellRenderer(new MultiDimensionalTableCellRenderer(index, table))
             column.setCellEditor(new MultiDimensionalParameterTableCellEditor(column: index))
             column.resizable = true
-            column.setHeaderValue("")//table.getValueAt(0,index)
+            column.setHeaderValue("")
         }
     }
 
