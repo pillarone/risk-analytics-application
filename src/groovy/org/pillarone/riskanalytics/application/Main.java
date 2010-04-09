@@ -9,9 +9,9 @@ import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 import org.pillarone.riskanalytics.application.initialization.DatabaseManagingSessionStateListener;
-import org.pillarone.riskanalytics.application.initialization.IExternalDatabaseSupport;
-import org.pillarone.riskanalytics.application.initialization.StandaloneConfigLoader;
+import org.pillarone.riskanalytics.core.initialization.StandaloneConfigLoader;
 import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher;
+import org.pillarone.riskanalytics.core.initialization.IExternalDatabaseSupport;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -23,10 +23,12 @@ public class Main {
     private static Log LOG = LogFactory.getLog(Main.class);
 
     public static void main(String args[]) {
-        launchApplication(null);
+        launchApplication();
     }
 
-    public static void launchApplication(IExternalDatabaseSupport databaseSupport) {
+    public static void launchApplication() {
+        IExternalDatabaseSupport databaseSupport = null;
+
         try {
             String environment = System.getProperty("grails.env");
             if (environment == null) {
@@ -36,7 +38,7 @@ public class Main {
             }
             StandaloneConfigLoader.loadLog4JConfig(environment);
             LOG.info("Starting RiskAnalytics with environment " + environment);
-
+            databaseSupport = StandaloneConfigLoader.getExternalDatabaseSupport(environment);
             if(databaseSupport != null) {
                 LOG.info("Starting external database for environment " + environment);
                 databaseSupport.startDatabase();
