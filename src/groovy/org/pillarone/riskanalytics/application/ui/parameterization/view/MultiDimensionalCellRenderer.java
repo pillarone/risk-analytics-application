@@ -36,7 +36,7 @@ public class MultiDimensionalCellRenderer extends BasicCellRenderer {
             int columnCount = value.getColumnCount();
             for (int row = 0; row < rowCount && row < DISPLAY_MAX_ROW_COUNT; row++) {
                 text.append("<tr>");
-                for (int col = 0; col < columnCount; col++) {
+                for (int col = 1; col <= columnCount; col++) {
                     if (col > DISPLAY_MAX_COLUMN_COUNT) break;
                     text.append("<td>");
                     if (isTitleCell(value, row, col)) {
