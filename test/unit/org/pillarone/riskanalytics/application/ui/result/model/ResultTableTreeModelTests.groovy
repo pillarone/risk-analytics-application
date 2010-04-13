@@ -32,7 +32,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         child.add(grandChild)
 
         stub.use {
-            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 1), parameterization, new Mean())
+            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 1), parameterization, new Mean(), new ApplicationModel())
             assertEquals 2, model.getColumnCount()
             assertEquals 2, model.functions.size()
             assertFalse model.isLeaf(root)
@@ -45,7 +45,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
             assertSame child, model.getChild(root, 0)
             assertEquals 1, model.getChildCount(root)
             assertEquals 0, model.getIndexOfChild(root, child)
-            model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean())
+            model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean(), new ApplicationModel())
             assertEquals 4, model.columnCount
             assertEquals 4, model.functions.size()
             assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
@@ -66,7 +66,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         root.add(child)
         child.add(grandChild)
         stub.use {
-            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean())
+            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean(), new ExtendedCoreModel())
             assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
             assertEquals "Wrong columnName for col 1", "Mean 01.01.2009", model.getColumnName(1)
             assertEquals "Wrong columnName for col 2", "Mean 01.01.2010", model.getColumnName(2)
@@ -87,7 +87,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         root.add(child)
         child.add(grandChild)
         stub.use {
-            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean())
+            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean(), new ApplicationModel())
 
             assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
             assertEquals "Wrong columnName for col 1", "Mean P0", model.getColumnName(1)

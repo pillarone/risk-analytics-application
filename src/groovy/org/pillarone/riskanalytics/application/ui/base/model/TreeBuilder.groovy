@@ -2,14 +2,13 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.lang.reflect.Field
-
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.StructureInformationInjector
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 
 abstract class TreeBuilder {
 
@@ -19,6 +18,10 @@ abstract class TreeBuilder {
     ITableTreeNode root
     protected Map componentNodes = [:]
     ModellingItem item
+
+    //Required for RTB, because it cannot use the constructors below
+    TreeBuilder() {
+    }
 
     TreeBuilder(Model model, String structureFilename) {
         this.@structureFilename = structureFilename
@@ -30,7 +33,6 @@ abstract class TreeBuilder {
     }
 
     TreeBuilder(Model model, ModelStructure modelStructure, ModellingItem item = null) {
-        this.@structureFilename = structureFilename
         this.@model = model
         this.@item = item
         structure = modelStructure.data
@@ -70,7 +72,7 @@ abstract class TreeBuilder {
     }
 
 
-    private void createComponentNodes() {
+    protected void createComponentNodes() {
         model.init()
         model.injectComponentNames()
         model.properties.each {propertyName, property ->

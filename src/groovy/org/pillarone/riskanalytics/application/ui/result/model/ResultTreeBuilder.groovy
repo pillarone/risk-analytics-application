@@ -6,7 +6,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.TreeBuilder
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.packets.MultiValuePacket
 import org.pillarone.riskanalytics.core.packets.Packet
@@ -19,18 +18,30 @@ class ResultTreeBuilder extends TreeBuilder {
 
     ConfigObject resultDescriptorConfigObject
     Map resultDescriptorNodes = [:]
+    /**
+     * A list of all result paths of this simulation. Will be injected by RVM.
+     */
+    List allPaths
 
 
     public ResultTreeBuilder(Model model, String structureFilename) {
         super(model, structureFilename)
     }
 
-    public ResultTreeBuilder(Model model, ModelStructure structure, Simulation simulation) {
-        super(model, structure, simulation)
+    //unfortunately we cannot use any of the super constructors, because allPaths must be set when
+    //createComponentNodes is called.
+    public ResultTreeBuilder(Model simulationModel, ModelStructure modelStructure, Simulation simulation, List paths) {
+        allPaths = paths
+
+        model = simulationModel
+        item = simulation
+        structure = modelStructure.data
+        root = new SimpleTableTreeNode(model.getClass().getSimpleName() - "Model")
+        createComponentNodes()
     }
 
     private List getSubComponentCount(ComponentTableTreeNode node) {
-        List paths = ResultAccessor.getPaths(item?.simulationRun)
+        List paths = allPaths
         String path = "${node.path}"
 
         def subComponents = paths.findAll {String it ->
@@ -107,7 +118,7 @@ class ResultTreeBuilder extends TreeBuilder {
 
 
     void applyResultPaths() {
-        traverseTree(root, ResultAccessor.getPaths(item?.simulationRun), root.name)
+        traverseTree(root, allPaths, root.name)
     }
 
     private def traverseTree(SimpleTableTreeNode node, List resultPaths, String pathPrefix) {

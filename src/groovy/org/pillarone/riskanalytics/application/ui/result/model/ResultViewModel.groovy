@@ -5,13 +5,18 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.parameterization.ParameterApplicator
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -24,24 +29,71 @@ class ResultViewModel extends AbstractModellingModel {
 
     public ResultViewModel(Model model, ModelStructure structure, Simulation simulation) {
         super(model, simulation, structure)
-        def simulationRun = item.simulationRun
-        builder = new ResultTreeBuilder(model, structure, item)
-        builder.applyResultPaths()
-        treeRoot = builder.root
-        periodCount = simulationRun.periodCount
-        Parameterization parameterization = simulation.parameterization
-        parameterization.load()
-        MeanAction meanAction = new MeanAction(this, null)
-        // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
-        treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot), filter)
-        nodeNames = extractNodeNames(treeModel)
+
+        ParameterizationDAO.withTransaction {status ->
+            //parameterization is required for certain models to obtain period labels
+            Parameterization parameterization = simulation.parameterization
+            parameterization.load()
+
+            //parameters must be injected into the model before a period counter can be created
+            ParameterApplicator applicator = new ParameterApplicator(model: model, parameterization: parameterization)
+            applicator.init()
+            applicator.applyParameterForPeriod(0)
+
+            //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
+            //all result paths for this simulation run
+            ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
+            List paths = allResults."0".keySet().toList()
+
+            def simulationRun = item.simulationRun
+            builder = new ResultTreeBuilder(model, structure, item, paths)
+            builder.applyResultPaths()
+
+
+            treeRoot = builder.root
+            periodCount = simulationRun.periodCount
+
+            MeanAction meanAction = new MeanAction(this, null)
+            // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
+            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
+            nodeNames = extractNodeNames(treeModel)
+        }
+
     }
 
-    private ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot) {
-        return new ResultTableTreeModel(treeRoot, simulationRun, parameterization, meanAction.getFunction())
+    /**
+     * Loads all PostSimulationCalculations of a simulation and stores them in a map.
+     * This is faster than creating a query for every cell when the result is needed.
+     */
+    private ConfigObject initPostSimulationCalculations(SimulationRun simulationRun) {
+        NumberFormat numberFormat = NumberFormat.getInstance()
+        ConfigObject results = new ConfigObject()
+
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT period, path.pathName, field.fieldName, keyFigure, keyFigureParameter, result FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
+                " WHERE p.run.id = ? order by p.keyFigureParameter asc", [simulationRun.id])
+        for (Object[] psc in calculations) {
+            Map periodMap = results[psc[0].toString()]
+            Map pathMap = periodMap[psc[1]]
+            Map fieldMap = pathMap[psc[2]]
+            Map keyFigureMap = fieldMap[psc[3]]
+            BigDecimal keyFigureParameter = psc[4]
+            String param = keyFigureParameter != null ? numberFormat.format(keyFigureParameter) : "null"
+            if (!keyFigureMap.containsKey(param)) {
+                keyFigureMap[param] = psc[5]
+            }
+        }
+
+        return results
     }
 
-    private ITableTreeModel getResultTreeTableModel(DeterministicModel model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot) {
+    private ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
+        ResultTableTreeModel tableTreeModel = new ResultTableTreeModel(treeRoot, simulationRun, parameterization, meanAction.getFunction(), model)
+        tableTreeModel.simulationModel = model
+        tableTreeModel.results = results
+        return tableTreeModel
+    }
+
+    private ITableTreeModel getResultTreeTableModel(DeterministicModel model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
         return new DeterministicResultTableTreeModel(treeRoot, simulationRun, parameterization)
     }
 

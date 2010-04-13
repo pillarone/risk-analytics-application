@@ -8,20 +8,17 @@ import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.NodeNameFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.SingleIteration
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
-import org.pillarone.riskanalytics.core.parameterization.ParameterApplicator
 import org.pillarone.riskanalytics.core.simulation.LimitedContinuousPeriodCounter
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -36,11 +33,15 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
 
     private List<String> periodLabels = []
     //A map to store all pre-calculated key figures, a ConfigObject is used to easily create nested maps
-    private ConfigObject results = new ConfigObject()
+    //Will be injected by RVM
+    ConfigObject results
     //used to create keys for the result map
     private NumberFormat numberFormat = NumberFormat.getInstance()
 
-    protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, IFunction mean) {
+    Model simulationModel
+
+    protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, IFunction mean, Model model) {
+        this.simulationModel = model
         this.rootNode = rootNode
         this.simulationRun = simulationRun
         this.parameterization = parameterization
@@ -53,27 +54,6 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         usesDeterministicModel = DeterministicModel.isAssignableFrom(parameterization.modelClass)
 
         initPeriodLabels()
-        initPostSimulationCalculations()
-    }
-
-    /**
-     * Loads all PostSimulationCalculations of a simulation and stores them in a map.
-     * This is faster than creating a query for every cell when the result is needed.
-     */
-    private void initPostSimulationCalculations() {
-        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT period, path.pathName, field.fieldName, keyFigure, keyFigureParameter, result FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
-                " WHERE p.run.id = ? order by p.keyFigureParameter asc", [simulationRun.id])
-        for (Object[] psc in calculations) {
-            Map periodMap = results[psc[0].toString()]
-            Map pathMap = periodMap[psc[1]]
-            Map fieldMap = pathMap[psc[2]]
-            Map keyFigureMap = fieldMap[psc[3]]
-            BigDecimal keyFigureParameter = psc[4]
-            String param = keyFigureParameter != null ? numberFormat.format(keyFigureParameter) : "null"
-            if (!keyFigureMap.containsKey(param)) {
-                keyFigureMap[param] = psc[5]
-            }
-        }
     }
 
     protected Double getPreCalculatedValue(int period, String path, String field, String keyFigure) {
@@ -112,14 +92,8 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     private void initPeriodLabels() {
-        Model model = parameterization.modelClass.newInstance()
-        model.init()
-        //because certain models need the parameterization to determine their period dates
-        ParameterApplicator applicator = new ParameterApplicator(model: model, parameterization: parameterization)
-        applicator.init()
-        applicator.applyParameterForPeriod(0)
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy")
-        IPeriodCounter periodCounter = model.createPeriodCounter(simulationRun.beginOfFirstPeriod)
+        IPeriodCounter periodCounter = simulationModel.createPeriodCounter(simulationRun.beginOfFirstPeriod)
         if (periodCounter != null) {
             periodCounter.reset()
             if (periodCounter instanceof LimitedContinuousPeriodCounter) {
