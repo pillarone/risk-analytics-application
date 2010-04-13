@@ -30,6 +30,7 @@ class ResultViewModel extends AbstractModellingModel {
     public ResultViewModel(Model model, ModelStructure structure, Simulation simulation) {
         super(model, simulation, structure)
 
+        model.init()
         ParameterizationDAO.withTransaction {status ->
             //parameterization is required for certain models to obtain period labels
             Parameterization parameterization = simulation.parameterization
