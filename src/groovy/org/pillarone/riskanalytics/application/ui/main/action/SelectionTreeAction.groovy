@@ -35,6 +35,7 @@ import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import org.springframework.transaction.TransactionStatus
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import com.ulcjava.base.application.tree.TreePath
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -66,15 +67,14 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     List getSelectedObjects(Class itemClass) {
         List selectedObjects = []
-        tree.selectionPaths.each {Object selectedPath ->
-            selectedPath.getPath().each {obj ->
-                if (obj instanceof ItemGroupNode) {
-                    try {
-                        if (obj.itemClass == itemClass && selectedPath?.lastPathComponent != null) {
-
-                            selectedObjects.add(selectedPath.lastPathComponent)
+        for (TreePath selectedPath in tree.selectionPaths) {
+            for (Object node in selectedPath.getPath()) {
+                if (node instanceof ItemGroupNode) {
+                    if (node.itemClass == itemClass && selectedPath?.lastPathComponent != null) {
+                        Object lastNode = selectedPath.lastPathComponent
+                        if (lastNode instanceof ItemNode) {
+                            selectedObjects.add(lastNode)
                         }
-                    } catch (Exception ex) {
                     }
                 }
             }
