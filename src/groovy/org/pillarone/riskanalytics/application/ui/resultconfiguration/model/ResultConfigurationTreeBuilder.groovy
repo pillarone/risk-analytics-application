@@ -39,6 +39,9 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
     }
 
     protected ITableTreeNode buildComponentNode(Component component, String propertyName) {
+        if (!hasCollectableOutput(component)) {
+            return null
+        }
         ComponentTableTreeNode componentNode = new ComponentTableTreeNode(component, propertyName)
         componentNodes[component] = componentNode
 
@@ -46,21 +49,20 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
         componentProperties.addAll(TreeBuilderUtil.collectDynamicProperties(componentNode.component, 'sub'))
         componentProperties.addAll(TreeBuilderUtil.collectProperties(componentNode.component, 'out'))
         def treeSet = new TreeSet(new ParmComparator(componentProperties))
-        boolean rcTableTreeNodeAdded = false
         treeSet.addAll(component.properties.keySet())
         treeSet.each {String k ->
             if (k.startsWith("sub")) {
-                componentNode.add(buildComponentNode(component[k], k))
+                ComponentTableTreeNode node = buildComponentNode(component[k], k)
+                if (node != null) {
+                    componentNode.add(node)
+                }
             } else if (k.startsWith("out")) {
-                boolean packet = isSingleOrMultiValuePacket(component[k])
-                if (packet) {
+                if (isSingleOrMultiValuePacket(component[k])) {
                     componentNode.add(new ResultConfigurationTableTreeNode(k, item))
-                    rcTableTreeNodeAdded = true
                 }
             }
         }
-        if (!rcTableTreeNodeAdded)
-            componentNodes.remove(component)
+
         return componentNode
     }
 
@@ -78,6 +80,27 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
     }
 
     private boolean isSingleOrMultiValuePacket(PacketList packetList) {
-        return ((packetList.getType().newInstance() instanceof MultiValuePacket) || (packetList.getType().newInstance() instanceof SingleValuePacket))
+        return ((MultiValuePacket.isAssignableFrom(packetList.getType())) || (SingleValuePacket.isAssignableFrom(packetList.getType())))
+    }
+
+    private boolean hasCollectableOutput(Component component) {
+        boolean result = false
+
+        component.properties.each {String name, value ->
+            if (name.startsWith("out")) {
+                if (value instanceof PacketList) {
+                    if (isSingleOrMultiValuePacket(value)) {
+                        result = true
+                    }
+                }
+            } else if (name.startsWith("sub")) {
+                boolean subComponentResult = hasCollectableOutput(value)
+                if (subComponentResult) {
+                    result = true
+                }
+            }
+        }
+
+        return result
     }
 }

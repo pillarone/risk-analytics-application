@@ -80,7 +80,14 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         ITableTreeNode root = new ResultConfigurationTreeBuilder(model, modelStructure, configuration).root
         assertNotNull root
 
-        ITableTreeNode dynamicSub = root.getChildAt(0).getChildAt(1)
+        //exactly 2 root components contain collectable output
+        //sub components containg no out properties or only out props which are no SVP or MVP should not be here
+        assertEquals 2, root.childCount
+
+        ITableTreeNode dynamicComponent = root.getChildAt(0)
+        //1 out value & subcomponents, NOT 3 because only SVP & MVP should be collectable
+        assertEquals 2, dynamicComponent.childCount
+        ITableTreeNode dynamicSub = dynamicComponent.getChildAt(1)
         assertEquals 2, dynamicSub.childCount //subFirstComponent subSecondComponent
     }
 

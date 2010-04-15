@@ -3,11 +3,12 @@ package org.pillarone.riskanalytics.application.example.component
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.packets.PacketList
 import org.pillarone.riskanalytics.core.packets.Packet
+import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 
 class ExampleInputOutputComponentWithSubcomponent extends ComposedComponent {
 
-    PacketList<Packet> outFirstValue = new PacketList<Packet>()
-    PacketList<Packet> outSecondValue = new PacketList<Packet>()
+    PacketList<SingleValuePacket> outFirstValue = new PacketList<SingleValuePacket>(SingleValuePacket)
+    PacketList<SingleValuePacket> outSecondValue = new PacketList<SingleValuePacket>(SingleValuePacket)
 
     Integer parmFirstParameter = 1
     Integer parmSecondParameter = 2

@@ -8,6 +8,8 @@ import org.pillarone.riskanalytics.core.example.parameter.ExampleParameterObject
 import org.pillarone.riskanalytics.core.example.parameter.ExampleParameterObjectClassifier
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedString
 import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
+import org.pillarone.riskanalytics.core.packets.Packet
+import org.pillarone.riskanalytics.core.packets.PacketList
 
 class ExampleParameterComponent extends Component {
 
@@ -15,6 +17,9 @@ class ExampleParameterComponent extends Component {
     ExampleEnum parmEnumParameter = ExampleEnum.FIRST_VALUE
     ExampleParameterObject parmNestedMdp = ExampleParameterObjectClassifier.NESTED_MDP.getParameterObject(ExampleParameterObjectClassifier.NESTED_MDP.parameters)
     ConstrainedString parmMarkerValue = new ConstrainedString(ITestComponentMarker, "value")
+
+    PacketList<Packet> outValue2 = new PacketList<Packet>(Packet)
+    
 
     protected void doCalculation() {
 

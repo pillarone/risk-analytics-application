@@ -78,9 +78,12 @@ abstract class TreeBuilder {
         model.properties.each {propertyName, property ->
             if (property instanceof Component) {
                 ITableTreeNode iTableTreeNode = buildComponentNode(property, propertyName)
-                String displayName = I18NUtils.getPropertyDisplayName(model, propertyName)
-                if (displayName != null)
-                    iTableTreeNode.cachedDisplayName = displayName
+                if (iTableTreeNode != null) {
+                    String displayName = I18NUtils.getPropertyDisplayName(model, propertyName)
+                    if (displayName != null)
+                        iTableTreeNode.cachedDisplayName = displayName
+                }
+
             }
         }
         buildComponentNodeHierachy()
