@@ -36,11 +36,6 @@ class ResultViewModel extends AbstractModellingModel {
             Parameterization parameterization = simulation.parameterization
             parameterization.load()
 
-            //parameters must be injected into the model before a period counter can be created
-            ParameterApplicator applicator = new ParameterApplicator(model: model, parameterization: parameterization)
-            applicator.init()
-            applicator.applyParameterForPeriod(0)
-
             //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
             //all result paths for this simulation run
             ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
@@ -55,6 +50,12 @@ class ResultViewModel extends AbstractModellingModel {
             periodCount = simulationRun.periodCount
 
             MeanAction meanAction = new MeanAction(this, null)
+            
+            //parameters must be injected into the model before a period counter can be created
+            ParameterApplicator applicator = new ParameterApplicator(model: model, parameterization: parameterization)
+            applicator.init()
+            applicator.applyParameterForPeriod(0)
+
             // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
             treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
             nodeNames = extractNodeNames(treeModel)
