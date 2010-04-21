@@ -4,6 +4,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tree.ITreeNode
+import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
@@ -35,7 +36,6 @@ import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import org.springframework.transaction.TransactionStatus
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import com.ulcjava.base.application.tree.TreePath
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -786,15 +786,28 @@ class DeleteAction extends SelectionTreeAction {
         if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
             usedInSimulation = selectedItem.isUsedInSimulation()
         }
+        Model selectedModel = getSelectedModel()
         if (!usedInSimulation) {
-            model.removeItem(getSelectedModel(), selectedItem)
+            model.removeItem(selectedModel, selectedItem)
         } else {
-            ULCAlert alert = new ULCAlert('Item already used', 'This item has already been used in a simulation and cannot be deleted', 'OK')
-            alert.messageType = ULCAlert.INFORMATION_MESSAGE
-            alert.parent = UlcUtilities.getWindowAncestor(event.source)
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
+            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
             alert.show()
         }
 
+    }
+
+    private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
+        synchronized (item) {
+            if (value.equals(firstButtonValue)) {
+                List<SimulationRun> simulationRuns = item.getSimulations();
+                simulationRuns.each {SimulationRun simulationRun ->
+                    simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
+                }
+                model.refresh();
+                model.removeItem(selectedModel, item);
+            }
+        }
     }
 
 }
