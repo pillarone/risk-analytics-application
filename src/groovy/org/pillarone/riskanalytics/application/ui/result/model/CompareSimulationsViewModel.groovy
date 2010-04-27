@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -32,7 +33,8 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     }
 
     protected ITableTreeModel buildTree() {
-        builder = new ResultTreeBuilder(model, structure, item[0])
+        List paths = ResultAccessor.getPaths(item[0]?.simulationRun)
+        builder = new ResultTreeBuilder(model, structure, item[0], paths)
         builder.applyResultPaths()
 
         treeRoot = builder.root
