@@ -55,7 +55,7 @@ class SimulationConfigurationModel extends AbstractConfigurationModel {
     }
 
     public boolean isSimulationStartEnabled() {
-        !simulationRunning() && iterationCount != null && iterationCount != 0
+        return iterationCount != null && iterationCount != 0
     }
 
 

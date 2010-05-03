@@ -1,21 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view
 
 import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCButtonOperator
-import com.ulcjava.testframework.operator.ULCComboBoxOperator
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import models.core.CoreModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.simulation.model.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import org.pillarone.riskanalytics.application.ui.simulation.model.SimulationConfigurationModel
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import com.ulcjava.testframework.operator.*
 
 class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
@@ -23,7 +19,7 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
     protected void doStart() {
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
-        
+
         new ParameterizationImportService().compareFilesAndWriteToDB(["CoreParameters"])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["CoreResultConfiguration"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["CoreStructure"])
@@ -90,10 +86,6 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
         stopButton.getFocus()
         stopButton.clickMouse()
 
-
-        ULCDialogOperator alert = new ULCDialogOperator('Warning')
-        assertNotNull "display warning when batch upload not available", alert
-        alert.close()
 
         assertTrue "run button should be enabled when the simulation could not be started", runButton.enabled
 

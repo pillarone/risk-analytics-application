@@ -2,8 +2,8 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import groovy.mock.interceptor.StubFor
 import models.core.CoreModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
@@ -47,7 +47,7 @@ class ParameterizationVersionsListModelTests extends GroovyTestCase {
         factoryStub.use {
             listModel.load(CoreModel, 'CoreParameters')
             assertEquals 2, listModel.size
-            assertEquals 'Newest Version', listModel.getElementAt(0)
+            assertEquals 'v2', listModel.getElementAt(0)
             assertEquals 'v1', listModel.getElementAt(1)
         }
         LocaleResources.clearTestMode()
@@ -66,8 +66,8 @@ class ParameterizationVersionsListModelTests extends GroovyTestCase {
 
         factoryStub.use {
             listModel.load(CoreModel, 'CoreParameters')
-            listModel.setSelectedItem("Newest Version")
-            assertEquals 'Newest Version', listModel.getSelectedItem()
+            listModel.setSelectedItem("v1")
+            assertEquals 'v1', listModel.getSelectedItem()
             assertEquals(parameterization, listModel.getSelectedObject())
         }
         LocaleResources.clearTestMode()

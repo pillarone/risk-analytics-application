@@ -1,8 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.DefaultComboBoxModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 public class ParameterizationVersionsListModel extends DefaultComboBoxModel {
 
@@ -40,9 +40,6 @@ public class ParameterizationVersionsListModel extends DefaultComboBoxModel {
         }
         if (parameterizations.size() > 0) {
             parameterizations = parameterizations.sort {it.versionNumber}.reverse()
-            addElement getText('NewestVersion')
-            parameterizationObjects[getText('NewestVersion')] = parameterizations.get(0)
-            parameterizations.remove(parameterizations.get(0))
             parameterizations.each {
                 String paramName = "v${it.versionNumber.toString()}"
                 addElement paramName

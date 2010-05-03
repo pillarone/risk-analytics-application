@@ -4,21 +4,18 @@ import com.ulcjava.base.application.AbstractAction
 import javax.sql.DataSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.batch.action.AddToBatchAction
-import org.pillarone.riskanalytics.core.output.OutputStrategy
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
-import org.pillarone.riskanalytics.application.ui.simulation.action.ChangeResultLocationAction
-import org.pillarone.riskanalytics.application.ui.simulation.action.OpenResultAction
-import org.pillarone.riskanalytics.application.ui.simulation.action.RunSimulationAction
-import org.pillarone.riskanalytics.application.ui.simulation.action.StopSimulationAction
+import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
+import org.pillarone.riskanalytics.core.output.OutputStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
@@ -27,7 +24,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.util.MathUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.ui.simulation.action.*
 
 abstract class AbstractConfigurationModel implements IModelChangedListener {
 
@@ -62,6 +59,7 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
 
     final AbstractAction runAction
     final AbstractAction stopAction
+    final AbstractAction cancelAction
     final AbstractAction openResultAction
     final AbstractAction changeResultLocationAction
     final AbstractAction addToBatchAction
@@ -85,6 +83,7 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
 
         runAction = new RunSimulationAction(this)
         stopAction = new StopSimulationAction(this)
+        cancelAction = new CancelSimulationAction(this)
         openResultAction = new OpenResultAction(this)
         changeResultLocationAction = new ChangeResultLocationAction(this)
         addToBatchAction = new AddToBatchAction(this, mainModel)
@@ -245,6 +244,11 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
         runner.stop()
     }
 
+    void cancelSimulation() {
+        runner.cancel()
+    }
+
+
     void syncIterationCount() {
         if (simulationRunning()) {
             currentIteration = runner.currentScope.iterationsDone
@@ -258,6 +262,7 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
         return runner.simulationState != SimulationState.NOT_RUNNING &&
                 runner.simulationState != SimulationState.STOPPED &&
                 runner.simulationState != SimulationState.FINISHED &&
+                runner.simulationState != SimulationState.CANCELED &&
                 runner.simulationState != SimulationState.ERROR
 
     }
@@ -334,7 +339,7 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
     }
 
     boolean isOpenResultEnabled() {
-        return currentSimulation != null && currentSimulation.end != null && !isResultLocationChangeable() && runner.simulationState != SimulationState.ERROR
+        return currentSimulation != null && currentSimulation.end != null
     }
 
     boolean isConfigurationChangeable() {
@@ -343,10 +348,6 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
 
     private void updateActionEnabling() {
         changeResultLocationAction.enabled = isResultLocationChangeable()
-        openResultAction.enabled = isOpenResultEnabled()
-        stopAction.enabled = isSimulationStopEnabled()
-        runAction.enabled = isSimulationStartEnabled()
-        addToBatchAction.enabled = true
     }
 
     int getSimulationProgress() {
@@ -383,6 +384,8 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
                 return "Done"
             case SimulationState.STOPPED:
                 return "Stopped"
+            case SimulationState.CANCELED:
+                return "Canceled"
             case SimulationState.ERROR:
                 return "Error"
             default:
@@ -404,6 +407,10 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
 
     public void modelChanged() {
         reloadListModels()
+    }
+
+    public SimulationRunner getSimulationRunner() {
+        return runner
     }
 
 

@@ -1,14 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view
 
-import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
+import com.ulcjava.base.application.ULCBoxPane
+import com.ulcjava.base.application.ULCLabel
+import com.ulcjava.base.application.ULCTextField
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.util.Dimension
-import org.apache.commons.lang.time.FastDateFormat
-import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.core.model.DeterministicModel
+import static org.pillarone.riskanalytics.application.ui.util.UIUtils.getText
 
 class CalculationConfigurationView extends AbstractConfigurationView {
 
@@ -36,7 +34,7 @@ class CalculationConfigurationView extends AbstractConfigurationView {
     }
 
     protected void layoutCustomComponents(ULCBoxPane content) {
-        ULCLabel numberOfPeriodLabel = new ULCLabel(getText("NumberOfPeriods") + ":")
+        ULCLabel numberOfPeriodLabel = new ULCLabel(getText(this.class, "NumberOfPeriods") + ":")
         numberOfPeriodLabel.minimumSize = new Dimension(150, 30)
         numberOfPeriodLabel.setLabelFor(periodCount)
         content.add(ULCBoxPane.BOX_LEFT_CENTER, numberOfPeriodLabel)

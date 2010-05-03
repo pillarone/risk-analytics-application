@@ -1,9 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model
 
 import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -47,7 +47,7 @@ class CalculationConfigurationModel extends AbstractConfigurationModel {
     }
 
     public boolean isSimulationStartEnabled() {
-        !simulationRunning() && periodCount != null && periodCount != 0
+        return periodCount != null && periodCount != 0
 
     }
 
