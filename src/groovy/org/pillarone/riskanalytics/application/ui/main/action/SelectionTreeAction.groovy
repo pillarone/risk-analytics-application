@@ -362,13 +362,16 @@ abstract class ExportAction extends SelectionTreeAction {
                                     }
                                 }, onSuccess: {path, name ->
                                 }, onFailure: {reason, description ->
-                                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                                    LOG.error description
+                                    showAlert("exportError")
                                 }] as IFileStoreHandler, selectedFile)
                             }
 
                         }
                     },
                     onFailure: {reason, description ->
+                        LOG.error description
+                        showAlert("exportError")
                     }] as IFileChooseHandler, config, ancestor)
         }
 
@@ -436,12 +439,20 @@ abstract class ExportAction extends SelectionTreeAction {
                         }, onSuccess: {path, name ->
                             LOG.info " $selectedFile exported"
                         }, onFailure: {reason, description ->
-                            new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                            LOG.error description
+                            showAlert("exportError")
                         }] as IFileStoreHandler, selectedFile)
                     }
                 },
                 onFailure: {reason, description ->
+                    LOG.error description
+                    showAlert("exportError")
                 }] as IFileChooseHandler, config, ancestor)
+    }
+
+    private def showAlert(String errorName) {
+        ULCAlert alert = new I18NAlert(ancestor, errorName)
+        alert.show()
     }
 
     String getFileName(int itemCount, filePaths, ModellingItem item) {
@@ -630,6 +641,7 @@ class ImportAction extends SelectionTreeAction {
     UserPreferences userPreferences
     ULCWindow ancestor
     boolean forceImport = false
+    Log LOG = LogFactory.getLog(ImportAction)
 
     public ImportAction(ULCTree tree, P1RATModel model) {
         super("Import", tree, model)
@@ -689,7 +701,9 @@ class ImportAction extends SelectionTreeAction {
                 },
                 onFailure: {reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {
-                        new ULCAlert(ancestor, "Import failed", description, "Ok").show()
+                        LOG.error description
+                        ULCAlert alert = new I18NAlert(ancestor, "importError")
+                        alert.show()
                     }
                     ancestor?.cursor = Cursor.DEFAULT_CURSOR
                 }] as IFileChooseHandler, config, ancestor)
