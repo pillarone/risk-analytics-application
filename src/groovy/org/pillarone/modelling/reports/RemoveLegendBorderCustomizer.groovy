@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.reports
+package org.pillarone.modelling.reports
 
 import net.sf.jasperreports.engine.JRChartCustomizer
 import org.jfree.chart.JFreeChart

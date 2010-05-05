@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="CapitalEagle4PeriodsReports"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="594"
+		 pageHeight="842"
+		 columnWidth="519"
+		 columnSpacing="0"
+		 leftMargin="45"
+		 rightMargin="30"
+		 topMargin="25"
+		 bottomMargin="25"
+		 whenNoDataType="AllSectionsNoDetail"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+	<reportFont name="Verdana20" isDefault="false" fontName="Verdana" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+	<reportFont name="Verdana9" isDefault="false" fontName="Verdana" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
+
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Y:\\compiledReports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="LoBReportBruttoCDF0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoCDF1" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoCDF2" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoCDF3" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoTable0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoTable1" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoTable2" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBReportBruttoTable3" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="GesamtGeschBruttoCDF" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="TotalBusinessCDF0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="TotalBusinessCDF1" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="TotalBusinessCDF2" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="TotalBusinessCDF3" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="ExpectedLossStackedBar0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="ExpectedLossStackedBar1" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="ExpectedLossStackedBar2" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="ExpectedLossStackedBar3" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="WaterfallClaimsGross0" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsGross1" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsGross2" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsGross3" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsNet0" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsNet1" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsNet2" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="WaterfallClaimsNet3" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+	<parameter name="SimulationSettings" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="p1Icon" isForPrompting="false" class="java.io.File"/>
+	<parameter name="summary" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="p1Logo" isForPrompting="false" class="java.io.File"/>
+	<parameter name="Comment" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="SimulationSettingsSmall" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="overview0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="overview1" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="overview2" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="overview3" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBClaimsVaRTableBean" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="NetClaimsMtpl" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsTableMtpl" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsMotorHull" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsTableMotorHull" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsPersonalAccident" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsTablePersonalAccident" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsProperty" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netClaimsTableProperty" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<queryString><![CDATA[SELECT 1;]]></queryString>
+
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[type]]></fieldDescription>
+	</field>
+
+
+		<group  name="asdf" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="281"  isSplitAllowed="false" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="47"
+						width="240"
+						height="214"
+						key="subreport-19"/>
+					<dataSourceExpression><![CDATA[$P{overview0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="27"
+						key="staticText-27"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[Overview]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="27"
+						width="81"
+						height="20"
+						key="staticText-28"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Peak Risk]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="279"
+						y="27"
+						width="81"
+						height="20"
+						key="staticText-29"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[NP Cover]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="279"
+						y="48"
+						width="240"
+						height="213"
+						key="subreport-21"/>
+					<dataSourceExpression><![CDATA[$P{overview1}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="overview2" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="243"  isSplitAllowed="false" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="20"
+						width="240"
+						height="214"
+						key="subreport-22"/>
+					<dataSourceExpression><![CDATA[$P{overview2}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="181"
+						height="20"
+						key="staticText-32"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[MTPL QS, NP Cover]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="279"
+						y="20"
+						width="240"
+						height="214"
+						key="subreport-23"/>
+					<dataSourceExpression><![CDATA[$P{overview3}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="279"
+						y="0"
+						width="137"
+						height="20"
+						key="staticText-33"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[QS and NP Cover]]></text>
+				</staticText>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="Waterfall" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="469"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="27"
+						key="staticText-17"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[99.5% Var Claims]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="26"
+						width="98"
+						height="20"
+						key="staticText-18"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Peak Risk]]></text>
+				</staticText>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="46"
+						width="240"
+						height="200"
+						key="image-1"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$P{WaterfallClaimsGross0}]]></imageExpression>
+				</image>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="279"
+						y="46"
+						width="240"
+						height="200"
+						key="image-13"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$P{WaterfallClaimsGross1}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="279"
+						y="27"
+						width="98"
+						height="20"
+						key="staticText-34"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[NP Cover]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="246"
+						width="181"
+						height="20"
+						key="staticText-35"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[MTPL QS, NP Cover]]></text>
+				</staticText>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="266"
+						width="240"
+						height="200"
+						key="image-14"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$P{WaterfallClaimsGross2}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="279"
+						y="246"
+						width="137"
+						height="20"
+						key="staticText-36"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[QS and NP Cover]]></text>
+				</staticText>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="279"
+						y="266"
+						width="240"
+						height="200"
+						key="image-15"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="net.sf.jasperreports.engine.JRRenderable"><![CDATA[$P{WaterfallClaimsGross3}]]></imageExpression>
+				</image>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="table" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="136"  isSplitAllowed="false" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="10"
+						width="519"
+						height="75"
+						key="subreport-24"/>
+					<subreportParameter  name="PERIOD_NUMBER">
+						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[$P{LoBClaimsVaRTableBean}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBReportBruttoTable.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="LoBReportBruttoChartGroup" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="237"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="27"
+						key="staticText-2"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[Gross Claims]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="207"
+						width="519"
+						height="28"
+						key="subreport-10"/>
+					<dataSourceExpression><![CDATA[$P{ExpectedLossStackedBar0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_ExpectedLoss.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="false">
+					<reportElement
+						x="131"
+						y="27"
+						width="240"
+						height="130"
+						key="subreport-11"/>
+					<dataSourceExpression><![CDATA[$P{TotalBusinessCDF0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="LobReportBruttoTable0Group" isStartNewPage="true" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="340"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="27"
+						key="staticText-37"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[Net Claims]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="27"
+						width="98"
+						height="20"
+						key="staticText-38"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[mtpl]]></text>
+				</staticText>
+				<subreport  isUsingCache="false">
+					<reportElement
+						x="131"
+						y="47"
+						width="240"
+						height="130"
+						key="subreport-25"/>
+					<dataSourceExpression><![CDATA[$P{NetClaimsMtpl}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="257"
+						width="519"
+						height="75"
+						key="subreport-26"/>
+					<subreportParameter  name="PERIOD_NUMBER">
+						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[$P{netClaimsTableMtpl}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="LobReportBruttoTable1Group" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="324"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="98"
+						height="20"
+						key="staticText-39"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[motor hull]]></text>
+				</staticText>
+				<subreport  isUsingCache="false">
+					<reportElement
+						x="131"
+						y="27"
+						width="240"
+						height="130"
+						key="subreport-27"/>
+					<dataSourceExpression><![CDATA[$P{netClaimsMotorHull}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="238"
+						width="519"
+						height="75"
+						key="subreport-28"/>
+					<subreportParameter  name="PERIOD_NUMBER">
+						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[$P{netClaimsTableMotorHull}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="LobReportBruttoTable2Group" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="326"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="98"
+						height="20"
+						key="staticText-40"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[personal accident]]></text>
+				</staticText>
+				<subreport  isUsingCache="false">
+					<reportElement
+						x="131"
+						y="20"
+						width="240"
+						height="130"
+						key="subreport-29"/>
+					<dataSourceExpression><![CDATA[$P{netClaimsPersonalAccident}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="238"
+						width="519"
+						height="75"
+						key="subreport-30"/>
+					<subreportParameter  name="PERIOD_NUMBER">
+						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[$P{netClaimsTablePersonalAccident}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="LobReportBruttoTable3Group" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="340"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="98"
+						height="20"
+						key="staticText-41"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[property]]></text>
+				</staticText>
+				<subreport  isUsingCache="false">
+					<reportElement
+						x="136"
+						y="28"
+						width="240"
+						height="130"
+						key="subreport-31"/>
+					<dataSourceExpression><![CDATA[$P{netClaimsProperty}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="238"
+						width="519"
+						height="75"
+						key="subreport-32"/>
+					<subreportParameter  name="PERIOD_NUMBER">
+						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[$P{netClaimsTableProperty}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="Appendix" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="96"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="27"
+						key="staticText-26"/>
+					<box></box>
+					<textElement>
+						<font size="18"/>
+					</textElement>
+				<text><![CDATA[Simulation Info]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="29"
+						width="519"
+						height="58"
+						key="subreport-18"/>
+					<dataSourceExpression><![CDATA[$P{SimulationSettings}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_SimulationInfoTable.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="139"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="88"
+						width="519"
+						height="51"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Comment}]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="83"
+						key="image-12"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.io.File"><![CDATA[$P{p1Logo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="248"
+						y="42"
+						width="260"
+						height="32"
+						key="staticText-1"/>
+					<box></box>
+					<textElement textAlignment="Center">
+						<font reportFont="Verdana20"/>
+					</textElement>
+				<text><![CDATA[Management Summary]]></text>
+				</staticText>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="47"  isSplitAllowed="false" >
+				<printWhenExpression><![CDATA[new Boolean(!$V{PAGE_NUMBER}.equals(new Integer(1)))]]></printWhenExpression>
+				<line direction="TopDown">
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="25"
+						width="518"
+						height="1"
+						forecolor="#A6A6A6"
+						backcolor="#A6A6A6"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="360"
+						y="8"
+						width="158"
+						height="15"
+						forecolor="#333333"
+						backcolor="#333333"
+						key="staticText-42"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font/>
+					</textElement>
+				<text><![CDATA[Management Summary]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="42"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="30"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="23"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(true)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="16"
+						y="0"
+						width="369"
+						height="22"
+						forecolor="#888888"
+						key="textField-1"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["sample report generated by PillarOne, " + new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date())]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="385"
+						y="0"
+						width="100"
+						height="18"
+						forecolor="#888888"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["page " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="485"
+						y="0"
+						width="33"
+						height="18"
+						forecolor="#888888"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="3"
+						width="10"
+						height="10"
+						key="image-11"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+				</image>
+			</band>
+		</pageFooter>
+		<lastPageFooter>
+			<band height="23"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(true)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="16"
+						y="0"
+						width="369"
+						height="22"
+						forecolor="#888888"
+						key="textField-2"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["sample report generated by PillarOne, " + new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date())]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="385"
+						y="0"
+						width="100"
+						height="18"
+						forecolor="#888888"
+						key="textField-3"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["page " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="485"
+						y="0"
+						width="33"
+						height="18"
+						forecolor="#888888"
+						key="textField-4"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="3"
+						width="10"
+						height="10"
+						key="image-10"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+				</image>
+			</band>
+		</lastPageFooter>
+		<summary>
+			<band height="33"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</summary>
+</jasperReport>

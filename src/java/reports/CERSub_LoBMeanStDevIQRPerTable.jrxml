@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="CERSub_LoBMeanStDevIQRPerTable"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="520"
+		 pageHeight="842"
+		 columnWidth="520"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+	<reportFont name="Verdana10" isDefault="false" fontName="Verdana" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+	<reportFont name="Verdana8" isDefault="false" fontName="Verdana" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+	<reportFont name="Verdana8B" isDefault="false" fontName="Verdana" size="8" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdanab.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+
+	<parameter name="PERIOD_NUMBER" isForPrompting="false" class="java.lang.String"/>
+
+	<field name="IQR" class="java.lang.Double">
+		<fieldDescription><![CDATA[IQR]]></fieldDescription>
+	</field>
+	<field name="lineOfBusiness" class="java.lang.String">
+		<fieldDescription><![CDATA[lineOfBusiness]]></fieldDescription>
+	</field>
+	<field name="mean" class="java.lang.Double">
+		<fieldDescription><![CDATA[mean]]></fieldDescription>
+	</field>
+	<field name="per995" class="java.lang.Double">
+		<fieldDescription><![CDATA[per995]]></fieldDescription>
+	</field>
+	<field name="stdDev" class="java.lang.Double">
+		<fieldDescription><![CDATA[stdDev]]></fieldDescription>
+	</field>
+
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="18"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="22"  isSplitAllowed="true" >
+				<rectangle>
+					<reportElement
+						x="0"
+						y="0"
+						width="520"
+						height="22"
+						forecolor="#E7E7E7"
+						backcolor="#E7E7E7"
+						key="rectangle-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="5"
+						y="6"
+						width="107"
+						height="16"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["[in 1000 EUR]"]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="117"
+						y="-1"
+						width="0"
+						height="22"
+						forecolor="#FFFFFF"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						x="120"
+						y="6"
+						width="100"
+						height="16"
+						key="staticText-12"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8B"/>
+					</textElement>
+				<text><![CDATA[Mean]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="230"
+						y="6"
+						width="90"
+						height="16"
+						key="staticText-13"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8B"/>
+					</textElement>
+				<text><![CDATA[Std Dev]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="330"
+						y="6"
+						width="90"
+						height="16"
+						key="staticText-14"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8B"/>
+					</textElement>
+				<text><![CDATA[IQR]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="430"
+						y="6"
+						width="90"
+						height="16"
+						key="staticText-15"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8B"/>
+					</textElement>
+				<text><![CDATA[99.5% Percentile]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="225"
+						y="0"
+						width="0"
+						height="22"
+						forecolor="#FFFFFF"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="325"
+						y="0"
+						width="0"
+						height="22"
+						forecolor="#FFFFFF"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="426"
+						y="0"
+						width="0"
+						height="22"
+						forecolor="#FFFFFF"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="17"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean($F{lineOfBusiness}!="total")]]></printWhenExpression>
+				<rectangle>
+					<reportElement
+						x="0"
+						y="3"
+						width="520"
+						height="14"
+						forecolor="#F0F0F0"
+						backcolor="#F0F0F0"
+						key="rectangle-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="5"
+						y="4"
+						width="107"
+						height="12"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{lineOfBusiness}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="230"
+						y="4"
+						width="90"
+						height="12"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{stdDev}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="120"
+						y="4"
+						width="100"
+						height="12"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{mean}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="330"
+						y="4"
+						width="90"
+						height="12"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{IQR}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="117"
+						y="0"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						backcolor="#FFFFFF"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="430"
+						y="4"
+						width="90"
+						height="12"
+						key="textField-6"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{per995}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						x="225"
+						y="0"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						backcolor="#FFFFFF"
+						key="line-7"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="325"
+						y="0"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						backcolor="#FFFFFF"
+						key="line-8"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="426"
+						y="0"
+						width="0"
+						height="17"
+						forecolor="#FFFFFF"
+						backcolor="#FFFFFF"
+						key="line-9"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="20"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</pageFooter>
+		<lastPageFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</lastPageFooter>
+		<summary>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</summary>
+</jasperReport>
