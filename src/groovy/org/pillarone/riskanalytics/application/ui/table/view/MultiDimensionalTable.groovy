@@ -58,7 +58,7 @@ class MultiDimensionalTable extends ULCTable {
             if (column == 0) {
                 columnModel.getSelectionModel().addSelectionInterval(1, getColumnCount() - 1)
             }
-            if (row == 0) {
+            if (row == 0 && getRowCount() > 1) {
                 addRowSelectionInterval(1, getRowCount() - 1)
             }
         }] as IListSelectionListener)
@@ -67,7 +67,7 @@ class MultiDimensionalTable extends ULCTable {
             ULCListSelectionModel source = (ULCListSelectionModel) event.getSource()
             int column = source.getMinSelectionIndex()
             int row = getSelectionModel().getMinSelectionIndex()
-            if (row == 0) {
+            if (row == 0 && getRowCount() > 1) {
                 addRowSelectionInterval(1, getRowCount() - 1)
             }
             if (column == 0) {
