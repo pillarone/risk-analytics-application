@@ -26,8 +26,8 @@ public class TreeNodeDuplicator extends TreeNodeAction {
 
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
-        String oldPath = "${node.parent.name}:${node.name}"
-        String newPath = "${node.parent.name}:$newName"
+        String oldPath = getPathName(node.parent, "${node.name}")
+        String newPath = getPathName(node.parent, "$newName")
         ParameterHolderFactory.duplicateParameters(model.builder.item, oldPath, newPath)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
@@ -42,8 +42,9 @@ public class TreeNodeRename extends TreeNodeAction {
     }
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
-        String oldPath = "${node.parent.name}:${node.name}"
-        String newPath = "${node.parent.name}:$newName"
+        String oldPath = getPathName(node.parent, "${node.name}")
+        String newPath = getPathName(node.parent, "$newName")
+
         ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
@@ -94,4 +95,11 @@ abstract class TreeNodeAction extends ResourceBasedAction {
     }
 
     abstract void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree)
+
+    protected String getPathName(ITableTreeNode node, String name) {
+        String pathName = node.path
+        if (pathName.startsWith(model.model.name))
+            pathName = pathName.substring(pathName.indexOf(":") + 1, pathName.length())
+        return pathName + ":${name}"
+    }
 }
