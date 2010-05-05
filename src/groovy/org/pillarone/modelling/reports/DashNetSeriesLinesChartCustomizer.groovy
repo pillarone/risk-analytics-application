@@ -1,10 +1,10 @@
-package org.pillarone.riskanalytics.application.reports
+package org.pillarone.modelling.reports
 
 import net.sf.jasperreports.engine.JRChartCustomizer
 import org.jfree.chart.JFreeChart
 import net.sf.jasperreports.engine.JRChart
 import org.jfree.chart.plot.XYPlot
-import java.awt.Color
+
 import java.awt.Stroke
 import java.awt.BasicStroke
 

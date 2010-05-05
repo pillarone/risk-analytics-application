@@ -1,13 +1,14 @@
-package org.pillarone.riskanalytics.application.reports
+package org.pillarone.modelling.reports
 
-import java.text.AttributedString
-import net.sf.jasperreports.engine.JRChart
 import net.sf.jasperreports.engine.JRChartCustomizer
 import org.jfree.chart.JFreeChart
-import org.jfree.chart.labels.PieSectionLabelGenerator
+import net.sf.jasperreports.engine.JRChart
 import org.jfree.chart.plot.PiePlot
-import org.jfree.data.general.PieDataset
 import java.awt.Color
+import org.jfree.chart.labels.PieSectionLabelGenerator
+import org.jfree.data.general.PieDataset
+import java.text.AttributedString
+
 
 public class PieChartCusttomizer implements JRChartCustomizer {
 
@@ -19,7 +20,7 @@ public class PieChartCusttomizer implements JRChartCustomizer {
         plot.setLabelGenerator new PieChartLabelGenerator()
         plot.shadowPaint = null
         plot.setSectionOutlinePaint(Color.white)
-        new RemoveLegendBorderCustomizer().customize(jFreeChart, jrChart)        
+        new RemoveLegendBorderCustomizer().customize(jFreeChart, jrChart)
     }
 
 }
@@ -40,4 +41,3 @@ class PieChartLabelGenerator implements PieSectionLabelGenerator {
     }
 
 }
-

@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="CapitalEagleActuaryReport"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="594"
+		 pageHeight="842"
+		 columnWidth="519"
+		 columnSpacing="1"
+		 leftMargin="45"
+		 rightMargin="30"
+		 topMargin="25"
+		 bottomMargin="25"
+		 whenNoDataType="AllSectionsNoDetail"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="0" />
+	<property name="ireport.encoding" value="UTF-8" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+	<reportFont name="Verdana10" isDefault="false" fontName="Verdana" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+	<reportFont name="Verdana9" isDefault="false" fontName="Verdana" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+	<reportFont name="Verdana12" isDefault="false" fontName="Verdana" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+	<reportFont name="Verdana12b" isDefault="false" fontName="Verdana" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdanab.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+	<reportFont name="Verdana20" isDefault="false" fontName="Verdana" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["Y:\\compiledReports\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SimulationSettings" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="p1Icon" isForPrompting="false" class="java.io.File"/>
+	<parameter name="p1Logo" isForPrompting="false" class="java.io.File"/>
+	<parameter name="Comment" isForPrompting="false" class="java.lang.String"/>
+	<parameter name="SimulationSettingsSmall" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBRatioNetPdf0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="PremiumNet0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="LoBRatioGrossPdf0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="PremiumGross0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="grossKeyFigureSummary" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<parameter name="netKeyFigureSummary" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+	<queryString><![CDATA[SELECT 1;]]></queryString>
+
+	<field name="type" class="java.lang.String">
+		<fieldDescription><![CDATA[type]]></fieldDescription>
+	</field>
+
+
+		<group  name="LossRatioNet" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="386"  isSplitAllowed="false" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="38"
+						width="240"
+						height="263"
+						key="subreport-19"/>
+					<dataSourceExpression><![CDATA[$P{LoBRatioNetPdf0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_TBReportLineChart_legend.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="240"
+						height="18"
+						key="staticText-27"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Loss ratio]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="18"
+						width="81"
+						height="20"
+						key="staticText-28"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<text><![CDATA[Net]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="278"
+						y="38"
+						width="240"
+						height="263"
+						key="subreport-21"/>
+					<dataSourceExpression><![CDATA[$P{PremiumNet0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_PremiumPieChart_legend.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="278"
+						y="0"
+						width="240"
+						height="18"
+						key="staticText-31"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Premium]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="278"
+						y="17"
+						width="81"
+						height="20"
+						key="staticText-32"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<text><![CDATA[Net]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="360"
+						width="518"
+						height="24"
+						key="subreport-24"/>
+					<dataSourceExpression><![CDATA[$P{netKeyFigureSummary}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBMeanStDevIQRPerTable.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="322"
+						width="240"
+						height="18"
+						key="staticText-38"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Claims]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="340"
+						width="81"
+						height="20"
+						key="staticText-39"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<text><![CDATA[Net]]></text>
+				</staticText>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="Gross" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="417"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="18"
+						width="81"
+						height="20"
+						key="staticText-30"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<text><![CDATA[Gross]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="1"
+						y="38"
+						width="240"
+						height="263"
+						key="subreport-22"/>
+					<dataSourceExpression><![CDATA[$P{LoBRatioGrossPdf0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_TBReportLineChart_legend.jasper"]]></subreportExpression>
+				</subreport>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="278"
+						y="38"
+						width="240"
+						height="263"
+						key="subreport-23"/>
+					<dataSourceExpression><![CDATA[$P{PremiumGross0}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_PremiumPieChart_legend.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="278"
+						y="18"
+						width="81"
+						height="20"
+						key="staticText-33"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<text><![CDATA[Gross]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="381"
+						width="518"
+						height="24"
+						key="subreport-25"/>
+					<dataSourceExpression><![CDATA[$P{grossKeyFigureSummary}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBMeanStDevIQRPerTable.jasper"]]></subreportExpression>
+				</subreport>
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="240"
+						height="18"
+						key="staticText-34"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Loss ratio]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="278"
+						y="0"
+						width="240"
+						height="18"
+						key="staticText-35"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Premium]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="342"
+						width="240"
+						height="18"
+						key="staticText-40"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Claims]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="0"
+						y="361"
+						width="81"
+						height="20"
+						key="staticText-41"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<text><![CDATA[Gross]]></text>
+				</staticText>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<group  name="Settings" >
+			<groupExpression><![CDATA[]]></groupExpression>
+			<groupHeader>
+			<band height="34"  isSplitAllowed="false" >
+				<staticText>
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="27"
+						key="staticText-29"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana12b"/>
+					</textElement>
+				<text><![CDATA[Appendix: Simulation Settings]]></text>
+				</staticText>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="10"
+						width="519"
+						height="24"
+						key="subreport-20"/>
+					<dataSourceExpression><![CDATA[$P{SimulationSettings}]]></dataSourceExpression>
+					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_SimulationInfoTable.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+			</groupHeader>
+			<groupFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+			</groupFooter>
+		</group>
+		<background>
+			<band height="0"  isSplitAllowed="false" >
+			</band>
+		</background>
+		<title>
+			<band height="197"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="99"
+						width="518"
+						height="74"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana10"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{Comment}]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="0"
+						width="519"
+						height="83"
+						key="image-12"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.io.File"><![CDATA[$P{p1Logo}]]></imageExpression>
+				</image>
+				<staticText>
+					<reportElement
+						x="329"
+						y="46"
+						width="187"
+						height="27"
+						key="staticText-37"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana20"/>
+					</textElement>
+				<text><![CDATA[Actuary Summary]]></text>
+				</staticText>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="47"  isSplitAllowed="false" >
+				<printWhenExpression><![CDATA[new Boolean(!$V{PAGE_NUMBER}.equals(new Integer(1)))]]></printWhenExpression>
+				<line direction="TopDown">
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="19"
+						width="518"
+						height="1"
+						forecolor="#A6A6A6"
+						backcolor="#A6A6A6"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
+					<reportElement
+						mode="Transparent"
+						x="438"
+						y="2"
+						width="81"
+						height="15"
+						forecolor="#333333"
+						backcolor="#333333"
+						key="staticText-36"/>
+					<box></box>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[Actuary Summary]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="42"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="30"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="23"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(true)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="16"
+						y="0"
+						width="343"
+						height="22"
+						forecolor="#888888"
+						key="textField-1"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["sample report generated by PillarOne, " + new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date())]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="386"
+						y="0"
+						width="100"
+						height="18"
+						forecolor="#888888"
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["page " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="486"
+						y="0"
+						width="33"
+						height="18"
+						forecolor="#888888"
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="1"
+						width="10"
+						height="10"
+						key="image-11"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+				</image>
+			</band>
+		</pageFooter>
+		<lastPageFooter>
+			<band height="23"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(true)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="16"
+						y="0"
+						width="343"
+						height="22"
+						forecolor="#888888"
+						key="textField-2"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["sample report generated by PillarOne, " + new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date())]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="386"
+						y="0"
+						width="100"
+						height="18"
+						forecolor="#888888"
+						key="textField-3"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["page " + $V{PAGE_NUMBER} + "/"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="486"
+						y="0"
+						width="33"
+						height="18"
+						forecolor="#888888"
+						key="textField-4"/>
+					<box></box>
+					<textElement>
+						<font reportFont="Verdana9"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["" + $V{PAGE_NUMBER} + ""]]></textFieldExpression>
+				</textField>
+				<image  evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="1"
+						y="1"
+						width="10"
+						height="10"
+						key="image-10"/>
+					<box></box>
+					<graphicElement stretchType="NoStretch"/>
+					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+				</image>
+			</band>
+		</lastPageFooter>
+		<summary>
+			<band height="33"  isSplitAllowed="true" >
+				<printWhenExpression><![CDATA[new Boolean(false)]]></printWhenExpression>
+			</band>
+		</summary>
+</jasperReport>

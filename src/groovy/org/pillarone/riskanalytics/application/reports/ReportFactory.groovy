@@ -10,7 +10,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 public class ReportFactory {
-    public static String REPORT_DIR = '/web-app/reports'
+    public static String REPORT_DIR = '/reports'
     public static String SERVER_REPORT_DIR = '/reports'
 
     public static boolean testMode = false
