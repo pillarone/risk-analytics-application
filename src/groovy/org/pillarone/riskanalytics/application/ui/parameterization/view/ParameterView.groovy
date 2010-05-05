@@ -4,57 +4,20 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.DefaultCellEditor
-import com.ulcjava.base.application.IRendererComponent
-import com.ulcjava.base.application.ULCComboBox
-import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.ULCLabel
-import com.ulcjava.base.application.ULCMenuItem
-import com.ulcjava.base.application.ULCPopupMenu
-import com.ulcjava.base.application.ULCTabbedPane
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.ULCTextField
-import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.event.ITableTreeModelListener
-import com.ulcjava.base.application.event.ITreeExpansionListener
-import com.ulcjava.base.application.event.ITreeSelectionListener
-import com.ulcjava.base.application.event.TableTreeModelEvent
-import com.ulcjava.base.application.event.TreeExpansionEvent
-import com.ulcjava.base.application.event.TreeSelectionEvent
-import com.ulcjava.base.application.tabletree.DefaultTableTreeHeaderCellRenderer
-import com.ulcjava.base.application.tabletree.ITableTreeCellEditor
-import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.shared.UlcEventCategories
 import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
-import org.pillarone.riskanalytics.application.ui.base.view.ComponentNodeTableTreeNodeRenderer
-import org.pillarone.riskanalytics.application.ui.base.view.DelegatingCellEditor
-import org.pillarone.riskanalytics.application.ui.base.view.DelegatingCellRenderer
-import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
-import org.pillarone.riskanalytics.application.ui.base.view.PropertiesView
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ConstrainedStringParameterizationTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.DateParameterizationTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.DoubleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumParameterizationTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.IntegerTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.SimpleValueParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BooleanTableTreeNode
-import com.ulcjava.base.application.ULCCheckBox
+import org.pillarone.riskanalytics.application.util.SimulationUtilities
+import com.ulcjava.base.application.*
+import com.ulcjava.base.application.event.*
+import com.ulcjava.base.application.tabletree.*
+import org.pillarone.riskanalytics.application.ui.base.view.*
+import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 
 class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
     ULCTabbedPane tabbedPane
@@ -261,7 +224,7 @@ class MultiDimensionalTabStarter implements IActionListener {
                 MultiDimensionalParameterModel model = new MultiDimensionalParameterModel(tree.model, lastComponent, tree.selectedColumn + 1)
                 ClientContext.setModelUpdateMode(model.tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
                 model.tableModel.addListener([modelChanged: { parameterView.model.item.changed = true }] as IModelChangedListener)
-                tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", new MultiDimensionalParameterView(model).content)
+                tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), new MultiDimensionalParameterView(model).content)
                 int currentTab = tabbedPane.tabCount - 1
                 tabbedPane.selectedIndex = currentTab
                 tabbedPane.setToolTipTextAt(currentTab, model.getPathAsString())
