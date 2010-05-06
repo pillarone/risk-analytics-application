@@ -1,10 +1,10 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 interface IFunction extends Cloneable {
 
@@ -13,7 +13,7 @@ interface IFunction extends Cloneable {
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node)
 }
 
-/** A Function for Result views */
+/** A Function for Result views  */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -159,6 +159,7 @@ class AbsoluteValue extends ResultFunction {
 }
 
 abstract class CompareFunction extends ResultFunction {
+    final double MIN_VALUE = 0.000001
 
     IFunction underlyingFunction
     SimulationRun runA
@@ -175,7 +176,7 @@ class DeviationPercentage extends CompareFunction {
     def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
         Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
-        if (aValue == null || bValue == null || aValue == 0)
+        if (aValue == null || bValue == null || aValue == 0 || bValue < MIN_VALUE || aValue < MIN_VALUE)
             return null
 
         return ((bValue - aValue) / aValue) * 100
@@ -228,7 +229,7 @@ class FractionPercentage extends CompareFunction {
     def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
         Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
-        if (aValue == null || bValue == null || aValue == 0)
+        if (aValue == null || bValue == null || aValue == 0 || bValue < MIN_VALUE || aValue < MIN_VALUE)
             return null
 
         return (bValue / aValue) * 100
@@ -254,7 +255,7 @@ class FractionAbsoluteDifference extends CompareFunction {
     def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
         Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
-        if (aValue == null || bValue == null || aValue == 0)
+        if (aValue == null || bValue == null || aValue == 0 || bValue < MIN_VALUE || aValue < MIN_VALUE)
             return null
 
         return (bValue - aValue) / aValue
