@@ -10,7 +10,9 @@
 
     <ulc:applet
             userParameter_ViewFactory="org.pillarone.riskanalytics.application.environment.applet.P1RATAppletViewFactory"
-            userParameter_java_code="org.pillarone.riskanalytics.application.environment.applet.P1RATAppletLauncher.class"/>
+            userParameter_java_code="org.pillarone.riskanalytics.application.environment.applet.P1RATAppletLauncher.class"
+            applicationContextPath="."
+    />
 
   </BODY>
 </HTML>

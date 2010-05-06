@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.table
+package org.pillarone.riskanalytics.application.ui.table.view
 
 import com.ulcjava.base.application.border.ULCEmptyBorder
 import com.ulcjava.base.application.table.DefaultTableCellRenderer

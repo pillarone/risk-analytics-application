@@ -13,7 +13,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TablePaster
 import org.pillarone.riskanalytics.application.ui.base.action.TableSelectionFiller
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.ui.table.MultiDimensionalTableCellRenderer
+import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTableCellRenderer
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTable
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
