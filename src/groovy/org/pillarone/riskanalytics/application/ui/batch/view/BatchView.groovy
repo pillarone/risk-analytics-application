@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
@@ -16,7 +18,6 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import com.ulcjava.base.application.*
 
 /**
@@ -35,6 +36,7 @@ public class BatchView extends NewBatchView {
     public BatchView(P1RATModel model, BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
         this.model = model
         this.batchRun = batchRun
+        this.batchDataTableModel = new BatchDataTableModel(batchRun)
         this.tabbedPane = tabbedPane
         initComponents()
         layoutComponents()
@@ -54,14 +56,14 @@ public class BatchView extends NewBatchView {
     protected void layoutComponents() {
         ULCBoxPane parameterSection = getParameterSectionPane()
         content.add(ULCBoxPane.BOX_LEFT_TOP, parameterSection)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, spaceAround(createDomainList(), 5, 0, 0, 0))
+        if (batchDataTableModel.getRowCount() > 0)
+            content.add(ULCBoxPane.BOX_EXPAND_TOP, spaceAround(createDomainList(), 5, 0, 0, 0))
         content.add(ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
 
     ULCComponent createDomainList() {
-        batchDataTableModel = new BatchDataTableModel(batchRun)
         batches = new ULCTable(batchDataTableModel)
         int columns = batches.getColumnCount()
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun)
@@ -78,7 +80,11 @@ public class BatchView extends NewBatchView {
             int index = source.getMinSelectionIndex()
             batchDataTableModel.selectedRun = (index >= 0) ? batchRun.batchRunService.getSimulationRunAt(batchRun, index) : null
         }] as IListSelectionListener)
-        return new ULCScrollPane(batches)
+        ULCScrollPane scrollPane = new ULCScrollPane(batches)
+        scrollPane.setPreferredSize(new Dimension(500, 350));
+        scrollPane.setMinimumSize(new Dimension(500, 150));
+        scrollPane.setVerticalScrollBarPolicy(ULCScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        return scrollPane
     }
 
     public ULCBoxPane getButtonsPane() {
@@ -87,6 +93,7 @@ public class BatchView extends NewBatchView {
 
         runBatch = new ULCButton(UIUtils.getText(this.class, "RunBatch"))
         runBatch.setPreferredSize(dimension)
+        runBatch.setEnabled(batchDataTableModel.getRowCount() > 0)
 
 
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
@@ -100,7 +107,7 @@ public class BatchView extends NewBatchView {
     protected void attachListeners() {
         runBatch.addActionListener([actionPerformed: {ActionEvent evt ->
             BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
-            if (!batchToRun.executed) {
+            if (batchToRun && !batchToRun.executed) {
                 BatchRunner.getService().runBatch(batchToRun)
             } else {
                 new I18NAlert("BatchAlreadyExecuted").show()

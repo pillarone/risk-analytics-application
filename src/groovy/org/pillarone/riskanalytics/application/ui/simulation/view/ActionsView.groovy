@@ -166,7 +166,7 @@ class ActionsView {
         stop.enabled = enablingActionHelper.isStopButtonEnabled()
         cancel.enabled = enablingActionHelper.isCancelButtonEnabled()
         openResults.enabled = enablingActionHelper.isOpenResultButtonEnabled()
-        addToBatchButton.enabled = enablingActionHelper.isAddToBatchButtonEnabled()
+        addToBatchButton.enabled = run.enabled
 
 
         progressBar.enabled = model.isSimulationStopEnabled()
