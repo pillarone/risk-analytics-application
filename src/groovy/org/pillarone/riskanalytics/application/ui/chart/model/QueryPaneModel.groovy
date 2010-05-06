@@ -46,6 +46,7 @@ class QueryPaneModel extends AbstractPresentationModel {
             SimulationRun.withTransaction {status ->
                 SimulationRun simulationRun = SimulationRun.get(simulationRun.id)
                 Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
+                parameterization.load(false)
                 simulationRun.periodCount.times {int index ->
                     periodLabels << parameterization.getPeriodLabel(index)
                 }
@@ -210,12 +211,12 @@ class QueryPaneModel extends AbstractPresentationModel {
 
     protected List queryResultsHQL(CriteriaViewModel criteria) {
         String q = "SELECT s.iteration " +
-            "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-            "WHERE s.simulationRun.id = " + simulationRun.id +
-            " AND s.period = " + criteria.selectedPeriod +
-            " AND s.path.pathName = '" + criteria.selectedPath + "'" +
-            " AND s.field.fieldName = '" + criteria.field + "'" +
-            " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.intepretedValue
+                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                "WHERE s.simulationRun.id = " + simulationRun.id +
+                " AND s.period = " + criteria.selectedPeriod +
+                " AND s.path.pathName = '" + criteria.selectedPath + "'" +
+                " AND s.field.fieldName = '" + criteria.field + "'" +
+                " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.intepretedValue
         LOG.debug "Query: " + q
         SingleValueResult.executeQuery(q)
     }
@@ -240,12 +241,12 @@ class QueryPaneModel extends AbstractPresentationModel {
                 String field = node.field
                 simulationRun.periodCount.times {int period ->
                     String q = "SELECT s.value " +
-                        "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                        "WHERE s.simulationRun.id = " + simulationRun.id +
-                        " AND s.period = " + period +
-                        " AND s.path.pathName = '" + path + "'" +
-                        " AND s.field.fieldName = '" + field + "'" +
-                        " AND s.iteration in (:list) ORDER BY s.iteration"
+                            "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                            "WHERE s.simulationRun.id = " + simulationRun.id +
+                            " AND s.period = " + period +
+                            " AND s.path.pathName = '" + path + "'" +
+                            " AND s.field.fieldName = '" + field + "'" +
+                            " AND s.iteration in (:list) ORDER BY s.iteration"
                     resultsPerPathAndPeriod << SingleValueResult.executeQuery(q, ["list": iterations])
                 }
             }
@@ -255,12 +256,12 @@ class QueryPaneModel extends AbstractPresentationModel {
                     String path = node.path
                     String field = node.field
                     String q = "SELECT s.value " +
-                        "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                        "WHERE s.simulationRun.id = " + simulationRun.id +
-                        " AND s.period = " + period +
-                        " AND s.path.pathName = '" + path + "'" +
-                        " AND s.field.fieldName = '" + field + "'" +
-                        " AND s.iteration in (:list) ORDER BY s.iteration"
+                            "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                            "WHERE s.simulationRun.id = " + simulationRun.id +
+                            " AND s.period = " + period +
+                            " AND s.path.pathName = '" + path + "'" +
+                            " AND s.field.fieldName = '" + field + "'" +
+                            " AND s.iteration in (:list) ORDER BY s.iteration"
                     resultsPerPathAndPeriod << SingleValueResult.executeQuery(q, ["list": iterations])
                 }
             }

@@ -34,7 +34,7 @@ class ResultViewModel extends AbstractModellingModel {
         ParameterizationDAO.withTransaction {status ->
             //parameterization is required for certain models to obtain period labels
             Parameterization parameterization = simulation.parameterization
-            parameterization.load()
+            parameterization.load(false)
 
             //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
             //all result paths for this simulation run
@@ -51,11 +51,6 @@ class ResultViewModel extends AbstractModellingModel {
 
             MeanAction meanAction = new MeanAction(this, null)
             
-            //parameters must be injected into the model before a period counter can be created
-            ParameterApplicator applicator = new ParameterApplicator(model: model, parameterization: parameterization)
-            applicator.init()
-            applicator.applyParameterForPeriod(0)
-
             // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
             treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
             nodeNames = extractNodeNames(treeModel)
