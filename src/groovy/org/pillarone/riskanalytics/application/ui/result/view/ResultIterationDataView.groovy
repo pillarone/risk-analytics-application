@@ -90,7 +90,7 @@ class ResultIterationDataView implements IModelChangedListener {
                 column.maxWidth = 75
                 column.resizable = false
             }
-            column.setHeaderRenderer(new IterationResultTableHeaderRenderer(model: model))
+            column.setHeaderRenderer(new IterationResultTableHeaderRenderer(model: model, columnIndex: columnIndex))
         }
         if (resultTable.columnModel.columnCount > 0) {
             resultTable.columnModel.getColumn(0).setCellRenderer(new IterationResultTableRenderer(model: model))
@@ -173,7 +173,6 @@ class ResultIterationDataView implements IModelChangedListener {
         return legendPane
     }
 
-
     /**
      * Utility method to get resource bundle entries for this class
      *
@@ -236,6 +235,7 @@ class ExportRawDataTable extends ResourceBasedAction {
 
 class IterationResultTableHeaderRenderer extends DefaultTableHeaderCellRenderer {
     ResultIterationDataViewModel model
+    int columnIndex
 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
@@ -244,10 +244,10 @@ class IterationResultTableHeaderRenderer extends DefaultTableHeaderCellRenderer 
             Object[] arrs = model.longPaths?.values()?.toArray()
             String label = ""
             if (arrs.size() > 0)
-                label = arrs[0]
+                label = arrs[columnIndex - 1]
             arrs = model.longPaths?.keySet()?.toArray()
             if (arrs.size() > 0) {
-                String keyValue = arrs[0]
+                String keyValue = arrs[columnIndex - 1]
                 label += " " + value[keyValue?.length()..(value?.length() - 1)]
             }
             component.setToolTipText(label)
