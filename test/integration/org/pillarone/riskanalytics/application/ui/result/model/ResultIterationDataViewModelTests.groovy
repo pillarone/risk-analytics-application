@@ -1,20 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import models.core.CoreModel
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.core.output.FieldMapping
-import org.pillarone.riskanalytics.core.output.PathMapping
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
+import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
 import org.pillarone.riskanalytics.application.ui.chart.model.ValueIntepretationType
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
+import org.pillarone.riskanalytics.core.output.*
 
 class ResultIterationDataViewModelTests extends GroovyTestCase {
 
@@ -28,13 +23,13 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     void setUp() {
         LocaleResources.setTestMode()
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
+          new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"
-        simulationRun.parameterization = ParameterizationDAO.findByName('CoreParameters')
-        simulationRun.resultConfiguration = ResultConfigurationDAO.findByName('CoreResultConfiguration')
-        simulationRun.model = CoreModel.name
+        simulationRun.parameterization = ParameterizationDAO.findByName('ApplicationParameters')
+        simulationRun.resultConfiguration = ResultConfigurationDAO.findByName('ApplicationResultConfiguration')
+        simulationRun.model = ApplicationModel.name
         simulationRun.periodCount = 2
         simulationRun.iterations = 5
         simulationRun.randomSeed = 0

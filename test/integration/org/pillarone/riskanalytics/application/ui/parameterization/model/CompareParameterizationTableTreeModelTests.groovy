@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.example.model.ExtendedCoreModel
 
 /**
  * @author fouad jaada
@@ -38,7 +39,7 @@ public class CompareParameterizationTableTreeModelTests extends GroovyTestCase {
 
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('CoreStructure'))
 
-        model = new CoreModel()
+        model = new ExtendedCoreModel()
         model.init()
 
         parameterization1 = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('CoreParameters'))
@@ -65,8 +66,8 @@ public class CompareParameterizationTableTreeModelTests extends GroovyTestCase {
         CompareParameterizationTableTreeModel cpttm = new CompareParameterizationTableTreeModel(builder, parameterizations)
 
         assertEquals "Name", cpttm.getColumnName(0)
-        assertTrue cpttm.getColumnName(1).startsWith("P0")
-        assertTrue cpttm.getColumnName(2).startsWith("P0")
+        assertTrue cpttm.getColumnName(1).endsWith("CoreParameters v1")
+        assertTrue cpttm.getColumnName(2).endsWith("CoreAlternativeParameters v1")
 
         assertEquals 0, cpttm.getParameterizationIndex(0)
         assertEquals 0, cpttm.getParameterizationIndex(1)

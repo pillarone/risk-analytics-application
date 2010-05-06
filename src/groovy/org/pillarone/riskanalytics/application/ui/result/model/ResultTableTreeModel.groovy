@@ -28,7 +28,6 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     SimulationRun simulationRun
     int columnCount
     private Parameterization parameterization
-    boolean usesDeterministicModel
     ULCNumberDataType numberDataType
 
     private List<String> periodLabels = []
@@ -51,7 +50,6 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         }
         columnCount = 1 + simulationRun.periodCount
         //TODO: is this still used despite of DRTTM?
-        usesDeterministicModel = DeterministicModel.isAssignableFrom(parameterization.modelClass)
 
         initPeriodLabels()
     }
@@ -92,24 +90,20 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     private void initPeriodLabels() {
+        //Whenever possible, use the saved period labels
+        if (!parameterization.periodLabels.empty) {
+            periodLabels = parameterization.getPeriodLabels()
+            return
+        }
+        //Saving period labels is not possible for certain period counters.. they have to be resolved here
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy")
         IPeriodCounter periodCounter = simulationModel.createPeriodCounter(simulationRun.beginOfFirstPeriod)
         if (periodCounter != null) {
             periodCounter.reset()
-            if (periodCounter instanceof LimitedContinuousPeriodCounter) {
-                simulationRun.periodCount.times {
-                    periodLabels << format.format(periodCounter.getCurrentPeriodEnd().toDate())
-                    periodCounter.next()
-                }
+            simulationRun.periodCount.times {
+                periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
+                periodCounter.next()
             }
-            else {
-                simulationRun.periodCount.times {
-                    periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
-                    periodCounter.next()
-                }
-            }
-        } else if(!parameterization.periodLabels.empty){
-            periodLabels = parameterization.getPeriodLabels()
         } else {
             simulationRun.periodCount.times { int i ->
                 periodLabels << "P$i"
@@ -135,9 +129,6 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     protected boolean loadAsynchronous(int column, def node) {
-        if (usesDeterministicModel) {
-            return false
-        }
         boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
         if (isResultCell) {
             int periodIndex = (column - 1) % simulationRun.periodCount
@@ -175,10 +166,6 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
             return true
         }
         if (!isFunctionStochastic(functions[i])) {
-            return false
-        }
-        // TODO (Jul 8, 2009, msh): if there is only one iteration, there can be no different values
-        if (usesDeterministicModel) {
             return false
         }
 

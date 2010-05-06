@@ -59,6 +59,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         Parameterization parameterization = new Parameterization("name")
         parameterization.modelClass = ExtendedCoreModel
         parameterization.periodCount = 3
+        parameterization.periodLabels = ["2009-01-01", "2010-01-01", "2011-01-01"]
 
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
         SimpleTableTreeNode child = new SimpleTableTreeNode("child")
@@ -68,9 +69,9 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         stub.use {
             ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new Mean(), new ExtendedCoreModel())
             assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
-            assertEquals "Wrong columnName for col 1", "Mean 01.01.2009", model.getColumnName(1)
-            assertEquals "Wrong columnName for col 2", "Mean 01.01.2010", model.getColumnName(2)
-            assertEquals "Wrong columnName for col 3", "Mean 01.01.2011", model.getColumnName(3)
+            assertEquals "Wrong columnName for col 1", "Mean 2009-01-01", model.getColumnName(1)
+            assertEquals "Wrong columnName for col 2", "Mean 2010-01-01", model.getColumnName(2)
+            assertEquals "Wrong columnName for col 3", "Mean 2011-01-01", model.getColumnName(3)
         }
 
     }
