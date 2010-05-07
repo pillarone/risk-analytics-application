@@ -3,14 +3,12 @@ package org.pillarone.riskanalytics.application.ui.result.view
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.application.ui.result.action.DeviationAbsoluteDifferenceAction
 import org.pillarone.riskanalytics.application.ui.result.action.DeviationPercentageAction
 import org.pillarone.riskanalytics.application.ui.result.action.FractionAbsoluteDifferenceAction
 import org.pillarone.riskanalytics.application.ui.result.action.FractionPercentageAction
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
-import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulationsView
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
@@ -131,6 +129,7 @@ class CompareSimulationsCriteriaView {
                 SimulationCheckBox source = evt.getSource()
                 boolean value = source.selected
                 value ? model.addSimulation(source.simulation) : model.removeSimulation(source.simulation)
+                updateCompareCheckBoxes()
             }] as IValueChangedListener)
         }
 
@@ -215,6 +214,20 @@ class CompareSimulationsCriteriaView {
         }
     }
 
+    private void updateCompareCheckBoxes() {
+        boolean atLeatOneSelected = false
+        simulationCheckBoxes.eachWithIndex {SimulationCheckBox it, int i ->
+            if (i > 0 && it.isSelected()) {
+                atLeatOneSelected = true
+            }
+        }
+        if (!atLeatOneSelected) {
+            devPercentage.setSelected(false)
+            devAbsolute.setSelected(false)
+            frPercentage.setSelected(false)
+            frAbsolute.setSelected(false)
+        }
+    }
 
     private void addSpinnerPane(ULCBoxPane displayPane) {
         ULCLabel andLabel = new ULCLabel(getText(this.class, "And"))
@@ -244,7 +257,7 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
 
     T getSelectedObject() {
         int index = getIndexOf(getSelectedItem())
-        return index >= 0 ? items.get(index): null
+        return index >= 0 ? items.get(index) : null
     }
 
     void addItem(T item) {
