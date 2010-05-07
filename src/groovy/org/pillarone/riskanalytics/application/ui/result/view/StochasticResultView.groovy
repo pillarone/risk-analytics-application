@@ -114,9 +114,8 @@ class StochasticResultView extends ResultView {
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
         }
-        menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
-
         nodeChanged()
+        menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
     }
 
 

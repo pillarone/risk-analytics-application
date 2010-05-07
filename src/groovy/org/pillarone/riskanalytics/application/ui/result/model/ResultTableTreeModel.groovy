@@ -12,12 +12,10 @@ import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeM
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
-import org.pillarone.riskanalytics.core.simulation.LimitedContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
@@ -105,7 +103,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
                 periodCounter.next()
             }
         } else {
-            simulationRun.periodCount.times { int i ->
+            simulationRun.periodCount.times {int i ->
                 periodLabels << "P$i"
             }
         }
@@ -129,13 +127,17 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     protected boolean loadAsynchronous(int column, def node) {
-        boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
-        if (isResultCell) {
-            int periodIndex = (column - 1) % simulationRun.periodCount
-            ResultFunction currentFunction = functions[column]
-            return !isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
-        } else {
-            return false
+        try {
+            boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
+            if (isResultCell) {
+                int periodIndex = (column - 1) % simulationRun.periodCount
+                ResultFunction currentFunction = functions[column]
+                return !isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
+            } else {
+                return false
+            }
+        } catch (Exception ex) {
+            return true
         }
     }
 
