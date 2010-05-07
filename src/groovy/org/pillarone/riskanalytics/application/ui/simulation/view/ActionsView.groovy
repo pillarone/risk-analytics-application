@@ -98,7 +98,7 @@ class ActionsView {
         stop.name = "stop"
         openResults.name = "open"
         run.repaint()
-        Dimension dimension = new Dimension(110, 20)
+        Dimension dimension = new Dimension(140, 20)
         run.setPreferredSize(dimension)
         stop.setPreferredSize(dimension)
         openResults.setPreferredSize(dimension)
