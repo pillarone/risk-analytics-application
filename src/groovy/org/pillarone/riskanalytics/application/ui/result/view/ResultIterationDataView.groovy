@@ -165,7 +165,7 @@ class ResultIterationDataView implements IModelChangedListener {
     private ULCBoxPane getLegendPane() {
         ULCBoxPane legendPane = new ULCBoxPane(3, 0)
         legendPane.border = BorderFactory.createTitledBorder(getText("legend"))
-        model.paths.eachWithIndex {String longPaths, int index ->
+        model.displayPaths.eachWithIndex {String longPaths, int index ->
             legendPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.shortPaths[index]))
             legendPane.add(ULCFiller.createHorizontalStrut(20))
             legendPane.add(ULCBoxPane.BOX_EXPAND_CENTER, new ULCLabel(longPaths))
@@ -240,18 +240,7 @@ class IterationResultTableHeaderRenderer extends DefaultTableHeaderCellRenderer 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
         if (!value.equals("Iteration")) {
-            component.horizontalAlignment = ULCLabel.CENTER
-            Object[] arrs = model.longPaths?.values()?.toArray()
-            String label = ""
-            if (arrs.size() > 0)
-                label = arrs[columnIndex - 1]
-            arrs = model.longPaths?.keySet()?.toArray()
-            if (arrs.size() > 0) {
-                String keyValue = arrs[columnIndex - 1]
-                label += " " + value[keyValue?.length()..(value?.length() - 1)]
-            }
-            component.setToolTipText(label)
-
+            component.setToolTipText(model.resultTableModel.getColumnName(columnIndex))
         }
         return component
     }

@@ -62,6 +62,10 @@ class QueryPaneModel extends AbstractPresentationModel {
         nodes.path
     }
 
+    public List<String> getDisplayPaths() {
+        nodes*.displayPath
+    }
+
     public List<String> getShortPaths() {
         List res = []
         longPaths = [:]
@@ -124,7 +128,7 @@ class QueryPaneModel extends AbstractPresentationModel {
         }
 
         //MySQL 5.1 can not handle self joins with more than 8 table references
-        //so the AND and OR criterias are implemented programmatic 
+        //so the AND and OR criterias are implemented programmatic
         criterias.each {List group ->
             List groupResult = []
             int size = Integer.MAX_VALUE
