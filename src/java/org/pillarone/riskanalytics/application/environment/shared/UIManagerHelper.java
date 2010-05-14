@@ -21,6 +21,8 @@ public class UIManagerHelper {
           //  setMacLookAndFeel();
         //}
         else setSystemLookAndFeel();
+
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
     }
 
 
