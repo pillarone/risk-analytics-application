@@ -11,8 +11,10 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.util.MeshCalculations
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.dataaccess.PostSimulationCalculationAccessor
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
-class PDFGaussKernelEstimateChartViewModelTests extends GroovyTestCase {
+class PDFChartViewModelTests extends GroovyTestCase {
 
     void setUp() {
         LocaleResources.setTestMode()
@@ -22,7 +24,7 @@ class PDFGaussKernelEstimateChartViewModelTests extends GroovyTestCase {
         LocaleResources.clearTestMode()
     }
 
-    void testGetChart() {
+    void testGetChartGauss() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
@@ -36,10 +38,58 @@ class PDFGaussKernelEstimateChartViewModelTests extends GroovyTestCase {
         node.collector = "testCollector"
 
         resultAccessor.use {
-            PDFGaussKernelEstimateChartViewModel model = new PDFGaussKernelEstimateChartViewTestModel("test", new SimulationRun(name: "testRun", periodCount: 1), [node])
+            PDFGaussKernelEstimateChartViewModel model = new PDFGaussKernelEstimateChartViewModel("test", new SimulationRun(name: "testRun", periodCount: 1), [node])
             model.showPeriodLabels = false
             JFreeChart chart = model.getChart()
             assertNotNull chart
+        }
+    }
+
+    void testGetChartAdaptiveGauss() {
+        MockFor resultAccessor = new MockFor(ResultAccessor)
+        resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
+        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
+        resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
+        resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
+        resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 2}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
+
+        ResultTableTreeNode node = new ResultTableTreeNode("outTest")
+        node.collector = "testCollector"
+
+        resultAccessor.use {
+            PDFAdaptiveKernelBandwidthEstimatorChartViewModel model = new PDFAdaptiveKernelBandwidthEstimatorChartViewModel("test", new SimulationRun(name: "testRun", periodCount: 1), [node])
+            model.showPeriodLabels = false
+            JFreeChart chart = model.getChart()
+            assertNotNull chart
+        }
+    }
+
+    void testGetChartAdaptiveRaw() {
+        MockFor resultAccessor = new MockFor(ResultAccessor)
+        resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
+        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
+        resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
+        resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
+        resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 2}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
+
+
+        MockFor calculationAccessor = new MockFor(PostSimulationCalculation)
+        calculationAccessor.demand.executeQuery(1..1) { a, b ->
+            return [["keyFigureParameter": 1.0, "result": 2.0d]]
+        }
+        ResultTableTreeNode node = new ResultTableTreeNode("outTest")
+        node.collector = "testCollector"
+        calculationAccessor.use {
+            resultAccessor.use {
+                PDFRawChartViewModel model = new PDFRawChartViewModel("test", new SimulationRun(name: "testRun", periodCount: 1), [node])
+                model.showPeriodLabels = false
+                JFreeChart chart = model.getChart()
+                assertNotNull chart
+            }
         }
     }
 
@@ -72,12 +122,4 @@ class PDFGaussKernelEstimateChartViewModelTests extends GroovyTestCase {
     }
 
 
-}
-
-class PDFGaussKernelEstimateChartViewTestModel extends PDFGaussKernelEstimateChartViewModel {
-    public PDFGaussKernelEstimateChartViewTestModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
-        super(title, simulationRun, nodes)
-    }
-
-    protected void addHistogram(JFreeChart chart, String legendTitle, double lowerBound, double upperBound) {}
 }

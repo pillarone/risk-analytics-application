@@ -36,7 +36,11 @@ public class PDFRawChartViewModel extends RawChartViewModel {
         XYPlot plot = (XYPlot) chart.getPlot()
         HistogramDataset data = new KiloHistogramDataset()
         data.setType HistogramType.SCALE_AREA_TO_1
-        data.addSeries(legendTitle, observations as double[], (int) Math.max(5.0, Math.min(observations.size() / 5, MeshCalculations.SAMPLE_COUNT)), lowerBound, upperBound)
+
+        int upperBinCount = Math.min((observations.size() / 5) as int, MeshCalculations.SAMPLE_COUNT)
+        int binCount = Math.max(5, upperBinCount)
+
+        data.addSeries(legendTitle, observations as double[], binCount, lowerBound, upperBound)
 
         XYBarRenderer histogramBarRenderer = new XYBarRenderer()
         histogramBarRenderer.setSeriesPaint 0, new java.awt.Color(230, 230, 230)
