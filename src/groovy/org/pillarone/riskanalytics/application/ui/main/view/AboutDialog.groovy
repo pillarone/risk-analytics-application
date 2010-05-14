@@ -40,7 +40,7 @@ class AboutDialog {
         tabbedPane.addTab(getText("about"), createMainTab())
         tabbedPane.addTab(getText("license"), createLicenseTab())
         tabbedPane.addTab(getText("credits"), BorderedComponentUtilities.createBorderedComponent(createCreditsTab(), ULCBoxPane.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
-        tabbedPane.addTab(getText("usedLibraries"), createUsedLibrariesTab())      
+        tabbedPane.addTab(getText("usedLibraries"), createUsedLibrariesTab())
         tabbedPane.addTab(getText("sysProps"), createPropertiesTab())
         mainContent.add(tabbedPane, ULCBoxPane.BOX_EXPAND_EXPAND)
         ULCButton closeButton = new ULCButton(getText("close"))
@@ -109,13 +109,7 @@ class AboutDialog {
 
     private ULCComponent createLicenseTab() {
         ULCHtmlPane pane = new ULCHtmlPane()
-        BufferedReader reader = new BufferedReader(new FileReader(new File(getClass().getResource('/gpl3.html').toURI())))
-        StringBuffer buffer = new StringBuffer()
-        String line
-        while ((line = reader.readLine()) != null) {
-            buffer << line
-        }
-        pane.text = buffer.toString()
+        pane.text = new Scanner(getClass().getResource("/gpl3.html").openStream()).useDelimiter("\\Z").next()
         new ULCScrollPane(pane)
     }
 
@@ -175,7 +169,7 @@ class AboutDialog {
 
         pane
     }
-    
+
 
     private ULCComponent createPropertiesTab() {
         Map props = System.properties
