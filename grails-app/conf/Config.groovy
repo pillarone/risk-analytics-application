@@ -151,3 +151,5 @@ log4j = {
     debug()
     warn()
 }
+
+//log4j.logger.org.springframework.security='off,stdout'

@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application
 import com.ulcjava.base.application.ApplicationContext
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.user.ApplicationUser
+import org.pillarone.riskanalytics.application.user.Person
 import org.pillarone.riskanalytics.application.user.UserManagement
 
 class UserContext {
@@ -29,7 +29,7 @@ class UserContext {
         }
     }
 
-    public static ApplicationUser getCurrentUser() {
+    public static Person getCurrentUser() {
         return UserManagement.getCurrentUser()
     }
 

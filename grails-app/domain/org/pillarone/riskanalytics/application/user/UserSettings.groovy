@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.user
 
 class UserSettings {
+
     String language
-    static belongsTo = [applicationUser: ApplicationUser]
+
+    static belongsTo = Person
 
     static constraints = {
-        language nullable: true
+        language()
     }
 }
