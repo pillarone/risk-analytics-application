@@ -72,8 +72,6 @@ class StochasticResultView extends ResultView {
         ULCTextField integerFunctionValue = new ULCTextField()
         ULCNumberDataType integerDataType = new ULCNumberDataType(ClientContext.locale)
         integerDataType.integer = true
-        integerDataType.min = 0
-        integerDataType.max = model.item.simulationRun.iterations - 1
         integerFunctionValue.dataType = integerDataType
         integerFunctionValue.columns = 6
         integerFunctionValue.value = 1

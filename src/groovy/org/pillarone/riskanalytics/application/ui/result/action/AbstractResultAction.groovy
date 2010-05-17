@@ -207,11 +207,11 @@ class SingleIterationAction extends TextFieldResultAction {
         int value = valueField.value
         int iterationCount = model.item.numberOfIterations
         if (value != null) {
-            if (value >= 0 && value < iterationCount) {
+            if (value > 0 && value <= iterationCount) {
                 super.doActionPerformed(event)
             } else {
                 ULCAlert alert = new I18NAlert("IterationNumberNotAvailable")
-                alert.message = alert.message + (iterationCount - 1)
+                alert.message = alert.message + iterationCount
                 alert.show()
             }
         } else {
