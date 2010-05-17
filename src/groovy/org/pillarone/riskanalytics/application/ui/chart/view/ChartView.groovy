@@ -6,19 +6,16 @@ import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Dimension
 import java.awt.geom.Rectangle2D
-import java.awt.geom.Rectangle2D.Double
 import org.jfree.chart.ChartRenderingInfo
 import org.jfree.chart.ChartUtilities
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.XYPlot
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.chart.action.ChartDataExportAction
 import org.pillarone.riskanalytics.application.ui.chart.action.ChartPictureExportAction
 import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
-import org.pillarone.riskanalytics.application.ui.chart.view.ChartPropertiesDialog
-import org.pillarone.riskanalytics.application.ui.chart.view.ZoomChartViewDialog
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.canoo.ulc.community.jfreechart.server.*
 import com.ulcjava.base.application.*
 
@@ -224,7 +221,7 @@ class ChartView implements IModelChangedListener {
 
     public void zoom(String xMin, String xMax, String yMin, String yMax) {
         double x = valueT2Java2D(xMin, true);
-        double y = valueT2Java2D(yMin, false)
+        double y = valueT2Java2D(yMax, false)
         double w = getDistance(xMin, xMax, true)
         double h = getDistance(yMin, yMax, false)
         Rectangle2D rectangle = new Rectangle2D.Double(x, y, w, h);
