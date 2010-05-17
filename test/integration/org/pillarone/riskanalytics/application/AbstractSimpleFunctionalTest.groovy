@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application
 
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
-import org.pillarone.riskanalytics.application.user.ApplicationUser
+import org.pillarone.riskanalytics.application.user.Person
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -10,7 +10,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
 
     final void start() {
         try {
-            ApplicationUser.withTransaction {
+            Person.withTransaction {
                 doStart()
             }
         } catch (Throwable t) {

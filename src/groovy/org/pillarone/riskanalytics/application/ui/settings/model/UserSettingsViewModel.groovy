@@ -1,9 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.settings.model
 
-import org.pillarone.riskanalytics.application.user.UserManagement
-import org.pillarone.riskanalytics.application.user.ApplicationUser
-import org.pillarone.riskanalytics.application.user.UserSettings
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
+import org.pillarone.riskanalytics.application.user.Person
+import org.pillarone.riskanalytics.application.user.UserManagement
+import org.pillarone.riskanalytics.application.user.UserSettings
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -13,33 +13,29 @@ public class UserSettingsViewModel {
     EnumI18NComboBoxModel languagesComboBoxModel
 
     public UserSettingsViewModel() {
-        ApplicationUser.withTransaction {e ->
-            UserSettings userSettings = UserManagement.getCurrentUser()?.userSettings
-            if (userSettings == null) {
-                languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[])
-            } else {
-                languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[], userSettings.language)
-            }
+        UserSettings userSettings = UserManagement.getCurrentUser()?.settings
+        if (userSettings == null) {
+            languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[])
+        } else {
+            languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[], userSettings.language)
         }
     }
 
     public void save() {
-        ApplicationUser.withTransaction {e ->
-            ApplicationUser user = UserManagement.getCurrentUser()
-            if (user != null) {
-                if (user.userSettings == null) {
-                    user.userSettings = new UserSettings()
-                }
-                user.userSettings.language = languagesComboBoxModel.selectedEnum.toString()
-                user.save()
+        Person user = UserManagement.getCurrentUser()
+        if (user != null) {
+            if (user.settings == null) {
+                user.settings = new UserSettings()
             }
-
+            user.settings.language = languagesComboBoxModel.selectedEnum.toString()
+            user.save()
         }
+
     }
 
     public boolean languageChanged() {
-        ApplicationUser.withTransaction {e ->
-            UserSettings userSettings = UserManagement.getCurrentUser()?.userSettings
+        Person.withTransaction {e ->
+            UserSettings userSettings = UserManagement.getCurrentUser()?.settings
             return userSettings?.language != languagesComboBoxModel.selectedEnum.toString()
         }
     }

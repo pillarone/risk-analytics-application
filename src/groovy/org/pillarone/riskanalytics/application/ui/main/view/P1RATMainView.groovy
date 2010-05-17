@@ -69,7 +69,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     ULCLabel lockedLabel
 
     private AboutDialog aboutDialog
-    private LoginViewDialog loginViewDialog
     private UserSettingsViewDialog settingsViewDialog
     CompareSimulationsViewModel compareSimulationsViewModel
     CompareParameterViewModel compareParameterViewModel
@@ -493,13 +492,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         return aboutDialog
     }
 
-    private LoginViewDialog getLoginViewDialog() {
-        if (loginViewDialog == null) {
-            loginViewDialog = new LoginViewDialog(UlcUtilities.getWindowAncestor(content))//, {event -> getLoginViewDialog().visible = false})
-        }
-        return loginViewDialog
-    }
-
     private UserSettingsViewDialog getSettingsViewDialog() {
         if (settingsViewDialog == null) {
             settingsViewDialog = new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content))//, {event -> getLoginViewDialog().visible = false})
@@ -627,10 +619,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     void openSettingsViewDialog() {
         getSettingsViewDialog().visible = true
-    }
-
-    void openLoginViewDialog() {
-        getLoginViewDialog().visible = true
     }
 
     public void itemChanged(ModellingItem item) {

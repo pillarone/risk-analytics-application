@@ -6,9 +6,9 @@ import java.text.DateFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.user.ApplicationUser
-import org.pillarone.riskanalytics.application.user.UserSettings
+import org.pillarone.riskanalytics.application.user.Person
 import org.pillarone.riskanalytics.application.user.UserManagement
+import org.pillarone.riskanalytics.application.user.UserSettings
 
 /**
  * This class provides properties from resource bundles using client-specific internationalization.
@@ -36,8 +36,8 @@ class LocaleResources {
             return Locale.getDefault()
         }
         Locale locale
-        ApplicationUser.withTransaction {e ->
-            UserSettings userSettings = UserManagement.getCurrentUser()?.userSettings
+        Person.withTransaction {e ->
+            UserSettings userSettings = UserManagement.getCurrentUser()?.settings
             if (userSettings != null) {
                 locale = new Locale(userSettings.language)
                 UserContext.setAttribute(LOCALE, locale)

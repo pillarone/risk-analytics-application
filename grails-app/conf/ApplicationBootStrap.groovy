@@ -1,34 +1,38 @@
 import grails.util.Environment
 
-import org.pillarone.riskanalytics.application.user.ApplicationUser
 import org.pillarone.riskanalytics.application.jobs.JobScheduler
-import org.springframework.transaction.TransactionStatus
+import org.pillarone.riskanalytics.application.user.Person
+import org.grails.plugins.springsecurity.service.AuthenticateService
+import org.pillarone.riskanalytics.application.user.Authority
+import org.pillarone.riskanalytics.application.user.UserSettings
 
 class ApplicationBootStrap {
 
+    AuthenticateService authenticateService
+
     def init = {servletContext ->
 
-        ApplicationUser.withTransaction {TransactionStatus status ->
-            if (ApplicationUser.countByUsername("testUser") == 0) {
-                //create user for testing
-                ApplicationUser user = new ApplicationUser()
-                user.username = "testUser"
-                user.lastname = "last"
-                user.firstname = "first"
-                user.email = "email@pillarone.com"
-                user.password = "123456"
-                user.save()
-                //end create user for testing
-            }
-            if (ApplicationUser.countByUsername("actuary") == 0) {
-                ApplicationUser user = new ApplicationUser()
-                user.username = "actuary"
-                user.lastname = "life"
-                user.firstname = "pc"
-                user.email = "actuary@pillarone.com"
-                user.password = "123456"
-                user.save()
-            }
+        if(Authority.count() == 0) {
+
+            Authority adminGroup = new Authority()
+            adminGroup.description = "admin group"
+            adminGroup.authority = "ROLE_ADMIN"
+            adminGroup.save()
+
+            Authority userGroup = new Authority()
+            userGroup.description = "admin group"
+            userGroup.authority = "ROLE_USER"
+            userGroup.save()
+
+            Person admin = new Person()
+            admin.username = "admin"
+            admin.userRealName = "admin"
+            admin.passwd = authenticateService.encodePassword("admin")
+            admin.enabled = true
+            admin.email = "admin@pillarone.org"
+            admin.settings = new UserSettings(language: "en")
+            admin.addToAuthorities(adminGroup)
+            admin.save()
         }
 
         if (Environment.current == Environment.TEST) {
