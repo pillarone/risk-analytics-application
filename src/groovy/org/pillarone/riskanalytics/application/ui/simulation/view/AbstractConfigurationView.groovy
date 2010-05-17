@@ -112,6 +112,7 @@ abstract class AbstractConfigurationView implements ISimulationListener, ISimula
 
         addCustomListeners()
         configurationSettingView.attachListeners()
+        useUserDefinedSeed.addValueChangedListener([valueChanged: {event -> model.useUserDefinedSeed = useUserDefinedSeed.selected}] as IValueChangedListener)
         randomSeed.addValueChangedListener([valueChanged: {event ->
             int seed = randomSeed.value
             if (seed != null) {
@@ -147,12 +148,13 @@ abstract class AbstractConfigurationView implements ISimulationListener, ISimula
     protected def updateUIState() {
         configurationSettingView.updateUIState()
         actionsView.updateUIState()
-
+        randomSeed.enabled = model.useUserDefinedSeed
         if (model.simulationException != null) {
             if (alert == null) {
                 showMessage()
             }
         }
+
         updateCustomUIState()
     }
 
