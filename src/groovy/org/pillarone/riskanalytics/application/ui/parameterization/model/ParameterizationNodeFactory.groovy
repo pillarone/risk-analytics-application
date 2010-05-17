@@ -2,19 +2,9 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.log4j.Logger
-import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameter.*
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.IntegerParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.EnumParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ConstrainedStringParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.DoubleParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.DateParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.BooleanParameterHolder
+import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
+import org.pillarone.riskanalytics.core.simulation.item.parameter.*
 
 class ParameterizationNodeFactory {
     static final Logger LOG = Logger.getLogger(ParameterizationNodeFactory)
@@ -139,12 +129,13 @@ class ParameterizationNodeFactory {
             }
 
 
-            Map<String, List<ParameterHolder>> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
+            Map<String, List<ParameterHolder>> parameterEntries = null
             Map objectsMap = [:]
             parametersMap.each {k, List parameters ->
+                parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
                 parameters.each {ParameterObjectParameterHolder p ->
                     if (p != null) {
-                         p.classifierParameters.each {Map.Entry entry ->
+                        p.classifierParameters.each {Map.Entry entry ->
                             List params = parameterEntries.get(entry.key)
                             if (params == null) {
                                 params = new ArrayList()
