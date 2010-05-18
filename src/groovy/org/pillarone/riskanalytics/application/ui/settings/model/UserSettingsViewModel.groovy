@@ -1,9 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.settings.model
 
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
-import org.pillarone.riskanalytics.application.user.Person
-import org.pillarone.riskanalytics.application.user.UserManagement
-import org.pillarone.riskanalytics.application.user.UserSettings
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.user.UserSettings
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com

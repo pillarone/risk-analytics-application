@@ -36,6 +36,10 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
         }
         TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title, newTitle)
     }
+
+    public void itemSaved(ModellingItem item) {
+        
+    }
 }
 
 class TabbedPaneGuiHelper {

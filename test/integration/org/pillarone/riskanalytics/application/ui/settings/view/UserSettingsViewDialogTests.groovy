@@ -5,10 +5,10 @@ import groovy.mock.interceptor.MockFor
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.ui.settings.model.LanguagesValues
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
-import org.pillarone.riskanalytics.application.user.Person
+import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.testframework.operator.*
-import org.pillarone.riskanalytics.application.user.UserSettings
+import org.pillarone.riskanalytics.core.user.UserSettings
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -32,7 +32,7 @@ public class UserSettingsViewDialogTests extends AbstractSimpleFunctionalTest {
 //        clientContext = new MockFor(com.ulcjava.base.application.ClientContext)
 //        clientContext.demand.getLocale(0..1) {Locale.default }
 
-        userManagement = new MockFor(org.pillarone.riskanalytics.application.user.UserManagement)
+        userManagement = new MockFor(org.pillarone.riskanalytics.core.user.UserManagement)
         userManagement.demand.getCurrentUser(1..6) {->
             testUser
         }

@@ -6,9 +6,9 @@ import java.text.DateFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.user.Person
-import org.pillarone.riskanalytics.application.user.UserManagement
-import org.pillarone.riskanalytics.application.user.UserSettings
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.user.UserSettings
 
 /**
  * This class provides properties from resource bundles using client-specific internationalization.

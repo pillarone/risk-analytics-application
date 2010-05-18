@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import com.ulcjava.base.application.*
+import java.text.SimpleDateFormat
 
 class PropertiesView implements IGuiUpdate {
 
@@ -31,7 +32,6 @@ class PropertiesView implements IGuiUpdate {
             content.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(new ULCLabel(getText('comment')), 5, 10, 0, 0))
             content.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(textArea, 5, 10, 0, 0))
             box.add(content)
-            lastModifierInfo = new ULCLabel("")
         }
 
         ULCBoxPane holder = new ULCBoxPane(2, 1)
@@ -41,28 +41,26 @@ class PropertiesView implements IGuiUpdate {
         content = new ULCBoxPane(true)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, holder)
 
-        if (hasOwner(model.item)) {
+        if (model.item.creator != null) {
             content.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCLabel(getCreatorInfo()))
         }
-        if (hasOwner(model.item)) {
-            lastModifierInfo.text = getModificatorInfo()
+        if (model.item.lastUpdater != null) {
+            lastModifierInfo = new ULCLabel(getModificatorInfo())
             content.add(ULCBoxPane.BOX_EXPAND_TOP, lastModifierInfo)
         }
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
-    // TODO (msp): adjust to new user concept
     private String getCreatorInfo() {
-        /*String creator = model.item.creator.username
+        String creator = model.item.creator.username
         String date = model.item.creationDate ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(model.item.creationDate) : ""
-        return getTextByKeys("creator", date, creator)*/
+        return getTextByKeys("creator", date, creator)
     }
 
-    // TODO (msp): adjust to new user concept
     private String getModificatorInfo() {
-        /*String changer = model.item.lastModificator.username
+        String changer = model.item.lastUpdater.username
         String date = model.item.modificationDate ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(model.item.modificationDate) : ""
-        return getTextByKeys("modificator", date, changer)*/
+        return getTextByKeys("modificator", date, changer)
     }
 
 
@@ -72,7 +70,6 @@ class PropertiesView implements IGuiUpdate {
         }
     }
 
-    // TODO (msp): adjust to new user concept
     private boolean hasOwner(ModellingItem mi) {
         false
     }

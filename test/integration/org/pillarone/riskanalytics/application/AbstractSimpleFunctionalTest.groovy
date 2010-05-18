@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application
 
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
-import org.pillarone.riskanalytics.application.user.Person
+import org.pillarone.riskanalytics.core.user.Person
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 

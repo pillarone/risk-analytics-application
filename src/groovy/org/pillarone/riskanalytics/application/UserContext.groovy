@@ -3,8 +3,8 @@ package org.pillarone.riskanalytics.application
 import com.ulcjava.base.application.ApplicationContext
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.user.Person
-import org.pillarone.riskanalytics.application.user.UserManagement
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 class UserContext {
 
