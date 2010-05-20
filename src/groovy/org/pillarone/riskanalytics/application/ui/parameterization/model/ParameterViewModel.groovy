@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.parameterization.model.*
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 
 class ParameterViewModel extends AbstractModellingModel {
 
@@ -46,6 +46,15 @@ class ParameterViewModel extends AbstractModellingModel {
 
 
         writer.write(builder.parameterConfigObject, file.newWriter())
+    }
+
+    ParameterizationTableTreeNode findNodeForPath(String path) {
+        String[] pathElements = path.split(":")
+        SimpleTableTreeNode currentNode = paramterTableTreeModel.root
+        for(String p in pathElements) {
+            currentNode = currentNode.getChildByName(p)
+        }
+        return currentNode
     }
 
     void setReadOnly(boolean value) {

@@ -18,8 +18,13 @@ import com.ulcjava.base.application.event.*
 import com.ulcjava.base.application.tabletree.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
+
+    ULCSplitPane splitPane
+    private ErrorPane errorPane
     ULCTabbedPane tabbedPane
     PropertiesView propertiesView
 
@@ -157,6 +162,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     protected void initComponents() {
+        splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
+        errorPane = new ErrorPane(model)
         tabbedPane = new ULCCloseableTabbedPane(name: 'tabbedPane')
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
         tabbedPane.addTabListener([tabClosing: {TabEvent event ->
@@ -165,9 +172,19 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         }] as ITabListener)
 
         super.initComponents();
+        attachListeners()
     }
 
-
+    //TODO: remove listener after closing view
+    protected void attachListeners() {
+        def parameterization = model.getItem() as Parameterization
+        parameterization.addModellingItemChangeListener([itemChanged: {item ->},
+                itemSaved: { Parameterization item ->
+                    errorPane.clear()
+                    errorPane.addErrors item.validationErrors
+                    item.validationErrors.each { println model.findNodeForPath(it.path).displayPath}
+                }] as IModellingItemChangeListener)
+    }
 
     protected ULCContainer layoutContent(ULCContainer content) {
 
@@ -177,7 +194,10 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         tabbedPane.addTab(propertiesView.getText("properties"), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
-        return tabbedPane
+
+        splitPane.add(tabbedPane)
+        splitPane.add(errorPane.content)
+        return splitPane
     }
 
     public void modelItemChanged() {
