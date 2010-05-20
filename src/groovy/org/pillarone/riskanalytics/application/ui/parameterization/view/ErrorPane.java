@@ -3,7 +3,8 @@ package org.pillarone.riskanalytics.application.ui.parameterization.view;
 import com.ulcjava.base.application.*;
 import com.ulcjava.base.application.util.Color;
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel;
-import org.pillarone.riskanalytics.core.parameterization.ParameterValidationError;
+import org.pillarone.riskanalytics.application.util.LocaleResources;
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError;
 
 import java.util.Collection;
 
@@ -38,7 +39,7 @@ public class ErrorPane {
 
         ULCLabel label = new ULCLabel();
         label.setForeground(Color.red);
-        label.setText(error.getMsg());
+        label.setText(error.getLocalizedMessage(LocaleResources.getLocale()));
 
         pane.add(ULCBoxPane.BOX_LEFT_CENTER, label);
         return pane;
