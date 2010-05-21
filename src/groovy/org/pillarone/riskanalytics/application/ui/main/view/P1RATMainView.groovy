@@ -42,8 +42,6 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 

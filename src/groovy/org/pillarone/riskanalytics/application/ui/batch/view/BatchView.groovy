@@ -20,10 +20,6 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
 
-/**
- * @author fouad jaada
- */
-
 public class BatchView extends NewBatchView {
 
     ULCTable batches
@@ -78,7 +74,7 @@ public class BatchView extends NewBatchView {
         batches.selectionModel.addListSelectionListener([valueChanged: {ListSelectionEvent event ->
             ULCListSelectionModel source = (ULCListSelectionModel) event.getSource()
             int index = source.getMinSelectionIndex()
-            batchDataTableModel.selectedRun = (index >= 0) ? batchRun.batchRunService.getSimulationRunAt(batchRun, index) : null
+            batchDataTableModel.selectedRun = (index >= 0) ? batchDataTableModel.getSimulationRunAt(index) : null
         }] as IListSelectionListener)
         ULCScrollPane scrollPane = new ULCScrollPane(batches)
         scrollPane.setPreferredSize(new Dimension(500, 350));
@@ -134,6 +130,8 @@ public class BatchView extends NewBatchView {
                 new I18NAlert("BatchNotValidName").show()
             }
         }] as IActionListener)
+
+        model.addBatchTableListener batchDataTableModel
     }
 
     protected void updateGui(BatchRun batchRun, String oldName) {
