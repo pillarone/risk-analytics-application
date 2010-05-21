@@ -55,7 +55,6 @@ class RunSimulationAction extends ResourceBasedAction {
 
         if (parameterization.changed || configuration.changed) {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "UnsavedChanged")
-
             alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
@@ -70,7 +69,7 @@ class RunSimulationAction extends ResourceBasedAction {
                         }
                         configuration.save()
                     }
-                    return true
+                    runSimulation()
                 } else {
                     model.notifySimulationConfigurationChanged()
                 }
