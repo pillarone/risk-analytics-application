@@ -163,6 +163,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
     protected void initComponents() {
         splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
+        splitPane.oneTouchExpandable = true
         errorPane = new ErrorPane(model)
         tabbedPane = new ULCCloseableTabbedPane(name: 'tabbedPane')
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
@@ -173,17 +174,22 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
         super.initComponents();
         attachListeners()
+        updateErrorPane(model.item)
     }
 
     //TODO: remove listener after closing view
     protected void attachListeners() {
         def parameterization = model.getItem() as Parameterization
-        parameterization.addModellingItemChangeListener([itemChanged: {item ->},
-                itemSaved: { Parameterization item ->
-                    errorPane.clear()
-                    errorPane.addErrors item.validationErrors
-                    item.validationErrors.each { println model.findNodeForPath(it.path).displayPath}
+        parameterization.addModellingItemChangeListener([itemSaved: {item ->},
+                itemChanged: { Parameterization item ->
+                    updateErrorPane(item)
                 }] as IModellingItemChangeListener)
+    }
+
+    protected void updateErrorPane(Parameterization item) {
+        item.validate()
+        errorPane.clear()
+        errorPane.addErrors item.validationErrors
     }
 
     protected ULCContainer layoutContent(ULCContainer content) {
