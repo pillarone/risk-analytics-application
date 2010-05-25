@@ -3,10 +3,12 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.table.AbstractTableModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchRunAction
+import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 public class BatchDataTableModel extends AbstractTableModel implements BatchTableListener {
@@ -17,6 +19,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     SimulationRun selectedRun
     ULCPollingTimer pollingBatchRunTimer
     PollingBatchRunAction pollingBatchRunAction
+    List<IP1RATModelListener> ip1RATModelListeners
 
     private final String SIMULATION_STATUS_COLUMN = UIUtils.getText(this.class, "SimulationStatus")
 
@@ -27,6 +30,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         init()
         pollingBatchRunAction = new PollingBatchRunAction(this)
         startPollingTimer pollingBatchRunAction
+        ip1RATModelListeners = []
     }
 
 
@@ -46,8 +50,8 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         list << brSr.simulationRun.name
         int ptIndex = brSr.simulationRun.model.lastIndexOf(".")
         list << ((ptIndex > 0) ? brSr.simulationRun.model.substring(ptIndex + 1) : brSr.simulationRun.model)
-        list << brSr.simulationRun.parameterization.name + " v" + brSr.simulationRun.parameterization.itemVersion
-        list << brSr.simulationRun.resultConfiguration.name + " v" + brSr.simulationRun.resultConfiguration.itemVersion
+        list << brSr?.simulationRun?.parameterization?.name + " v" + brSr?.simulationRun?.parameterization?.itemVersion
+        list << brSr?.simulationRun?.resultConfiguration?.name + " v" + brSr?.simulationRun?.resultConfiguration?.itemVersion
         list << brSr.simulationRun.periodCount + "/" + brSr.simulationRun.iterations
         list << brSr.strategy.toString()
         list << brSr.simulationState.toString()
@@ -154,8 +158,18 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         pollingBatchRunTimer.start()
     }
 
+    public void openDetailView(Model model, Object item) {
+        ip1RATModelListeners.each {IP1RATModelListener ip1RATModelListener ->
+            ip1RATModelListener.openDetailView model, item
+        }
+    }
+
     private int getColumnIndex(String columnName) {
         return columnHeaders.indexOf(columnName)
+    }
+
+    public void addIP1RATModelListener(IP1RATModelListener ip1RATModelListener) {
+        ip1RATModelListeners << ip1RATModelListener
     }
 }
 

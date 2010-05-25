@@ -12,6 +12,7 @@ import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
+import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneGuiHelper
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -137,6 +138,10 @@ public class BatchView extends NewBatchView {
     protected void updateGui(BatchRun batchRun, String oldName) {
         model.refreshBatchNode()
         TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
+    }
+
+    public void addIP1RATModelListener(IP1RATModelListener ip1RATModelListener) {
+        batchDataTableModel.addIP1RATModelListener ip1RATModelListener
     }
 
 

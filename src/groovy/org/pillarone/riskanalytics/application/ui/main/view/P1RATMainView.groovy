@@ -268,7 +268,13 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     protected ULCComponent createDetailView(BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
-        return batchRun.id != null ? new BatchView(this.model, batchRun, tabbedPane).content : new NewBatchView(this.model, tabbedPane).content
+        if (batchRun.id != null) {
+            BatchView view = new BatchView(this.model, batchRun, tabbedPane)
+            view.addIP1RATModelListener this
+            return view.content
+        } else {
+            return new NewBatchView(this.model, tabbedPane).content
+        }
     }
 
 
