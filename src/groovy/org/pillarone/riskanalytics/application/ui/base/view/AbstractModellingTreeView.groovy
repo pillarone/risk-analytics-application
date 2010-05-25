@@ -131,12 +131,17 @@ abstract class AbstractModellingTreeView {
         viewPortTree.registerKeyboardAction(new TreeSelectionFiller(tree: viewPortTree, model: viewPortTree.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TableTreeCopier(table: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
 
+
         viewPortTree.tableTreeHeader.addActionListener([actionPerformed: {ActionEvent e ->
+            //PMO-779
+            //workaround: the tree will be scrolled to the root position
+            tree.getVerticalScrollBar().setPosition(1)
             viewPortTree.requestFocus()
-            if (e.getModifiers() != ActionEvent.META_MASK)
-                viewPortTree.setRowSelectionInterval(0, viewPortTree.rowCount - 1)
+            viewPortTree.setRowSelectionInterval(0, viewPortTree.rowCount - 1)
             int selectedColumn = viewPortTree.columnModel.getColumnIndex(e.source)
             viewPortTree.setColumnSelectionInterval(selectedColumn, selectedColumn)
+            tree.getVerticalScrollBar().setPosition(0)
+
         }] as IActionListener)
 
 
