@@ -525,7 +525,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                         modelCardContent.setSelectedIndex closingIndex
                         closeTab = false
                     } else {
-                        item.id = null
+                        item.unload()
                     }
                     if (closeTab) {
                         openItems.remove(currentComponent)
