@@ -23,7 +23,6 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 
 class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
 
-    ULCSplitPane splitPane
     private ErrorPane errorPane
     ULCTabbedPane tabbedPane
     PropertiesView propertiesView
@@ -162,8 +161,6 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     protected void initComponents() {
-        splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
-        splitPane.oneTouchExpandable = true
         errorPane = new ErrorPane(model)
         tabbedPane = new ULCCloseableTabbedPane(name: 'tabbedPane')
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
@@ -174,7 +171,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
         super.initComponents();
         attachListeners()
-        updateErrorPane(model.item)
+        updateErrorVisualization(model.item)
     }
 
     //TODO: remove listener after closing view
@@ -182,18 +179,19 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},
                 itemChanged: { Parameterization item ->
-                    updateErrorPane(item)
+                    updateErrorVisualization(item)
                 }] as IModellingItemChangeListener)
     }
 
-    protected void updateErrorPane(Parameterization item) {
+    protected void updateErrorVisualization(Parameterization item) {
         item.validate()
         errorPane.clear()
         errorPane.addErrors item.validationErrors
+        model.addErrors(item.validationErrors)
     }
 
     protected ULCContainer layoutContent(ULCContainer content) {
-
+        content = content as ULCBoxPane
         tabbedPane.removeAll()
         tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
         propertiesView = new PropertiesView(model.propertiesViewModel)
@@ -201,9 +199,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
 
-        splitPane.add(tabbedPane)
-        splitPane.add(errorPane.content)
-        return splitPane
+        content.add(0.2d, 0.2d, ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.content)
+        return tabbedPane
     }
 
     public void modelItemChanged() {

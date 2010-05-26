@@ -43,8 +43,7 @@ public class ErrorPane {
     private ULCComponent createLabel(ParameterValidationError error) {
         ULCBoxPane pane = new ULCBoxPane(1, 1);
         pane.setBackground(Color.white);
-        final String errorPath = model.findNodeForPath(error.getPath()).getDisplayPath();
-        final ULCTitledBorder border = BorderFactory.createTitledBorder(errorPath);
+        final ULCTitledBorder border = BorderFactory.createTitledBorder(model.findNodeForPath(error.getPath()).getDisplayPath());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
         pane.setBorder(border);
 

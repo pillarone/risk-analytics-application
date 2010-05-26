@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     List<ParameterHolder> parameter
+    String errorMessage
 
     public ParameterizationTableTreeNode(List parameter) {
         super(getNodeName(parameter))

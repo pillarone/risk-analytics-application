@@ -9,11 +9,18 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.application.util.LocaleResources
+
 
 class ParameterViewModel extends AbstractModellingModel {
 
     private ParameterizationTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
+
+    private List<ParameterValidationError> validationErrors = []
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
@@ -51,10 +58,28 @@ class ParameterViewModel extends AbstractModellingModel {
     ParameterizationTableTreeNode findNodeForPath(String path) {
         String[] pathElements = path.split(":")
         SimpleTableTreeNode currentNode = paramterTableTreeModel.root
-        for(String p in pathElements) {
+        for (String p in pathElements) {
             currentNode = currentNode.getChildByName(p)
         }
         return currentNode
+    }
+
+    void addErrors(List<ParameterValidationError> validationErrors) {
+        for (ParameterValidationError error in validationErrors) {
+            ParameterizationTableTreeNode node = findNodeForPath(error.getPath())
+            node.errorMessage = error.getLocalizedMessage(LocaleResources.getLocale())
+            paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+        }
+        for (ParameterValidationError previousError in this.validationErrors) {
+            ParameterValidationError currentError = validationErrors.find { it.path == previousError.path}
+            //Error is resolved now
+            if (currentError == null) {
+                ParameterizationTableTreeNode node = findNodeForPath(previousError.getPath())
+                node.errorMessage = null
+                paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+            }
+        }
+        this.validationErrors = validationErrors
     }
 
     void setReadOnly(boolean value) {
