@@ -16,7 +16,6 @@ import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.parameterization.ParameterApplicator
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -50,7 +49,7 @@ class ResultViewModel extends AbstractModellingModel {
             periodCount = simulationRun.periodCount
 
             MeanAction meanAction = new MeanAction(this, null)
-            
+
             // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
             treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
             nodeNames = extractNodeNames(treeModel)
@@ -136,7 +135,9 @@ class ResultViewModel extends AbstractModellingModel {
 
     void removeFunction(IFunction function) {
         if (treeModel.functions.contains(function)) {
-            treeModel.functions.remove(function)
+            periodCount.times {
+                treeModel.functions.remove(function)
+            }
             treeModel.columnCount -= periodCount
             notifyFunctionRemoved(function)
         }
