@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
 import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
@@ -16,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubCompo
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -70,12 +72,28 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
         setPopupMenu(component, node)
+        customizeNode(component, node)
         return component
 
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, def node) {
         rendererComponent.setComponentPopupMenu(node.leaf ? null : expandTreeMenu)
+    }
+
+    void customizeNode(IRendererComponent rendererComponent, def node) {
+    }
+
+    void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
+        if (node.errorMessage == null) {
+            setForeground(Color.black)
+            setToolTipText(null)
+            setFont(getFont().deriveFont(Font.PLAIN))
+        } else {
+            setForeground(Color.red)
+            setToolTipText(node.errorMessage)
+            setFont(getFont().deriveFont(Font.BOLD))
+        }
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ComponentTableTreeNode node) {

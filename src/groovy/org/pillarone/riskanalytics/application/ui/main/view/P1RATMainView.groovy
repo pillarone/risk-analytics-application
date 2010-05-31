@@ -42,8 +42,6 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -270,7 +268,13 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     protected ULCComponent createDetailView(BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
-        return batchRun.id != null ? new BatchView(this.model, batchRun, tabbedPane).content : new NewBatchView(this.model, tabbedPane).content
+        if (batchRun.id != null) {
+            BatchView view = new BatchView(this.model, batchRun, tabbedPane)
+            view.addIP1RATModelListener this
+            return view.content
+        } else {
+            return new NewBatchView(this.model, tabbedPane).content
+        }
     }
 
 
@@ -521,7 +525,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                         modelCardContent.setSelectedIndex closingIndex
                         closeTab = false
                     } else {
-                        item.id = null
+                        item.unload()
                     }
                     if (closeTab) {
                         openItems.remove(currentComponent)

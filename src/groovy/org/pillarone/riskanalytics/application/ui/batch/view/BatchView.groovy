@@ -12,6 +12,7 @@ import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
+import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneGuiHelper
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -19,10 +20,6 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
-
-/**
- * @author fouad jaada
- */
 
 public class BatchView extends NewBatchView {
 
@@ -78,7 +75,7 @@ public class BatchView extends NewBatchView {
         batches.selectionModel.addListSelectionListener([valueChanged: {ListSelectionEvent event ->
             ULCListSelectionModel source = (ULCListSelectionModel) event.getSource()
             int index = source.getMinSelectionIndex()
-            batchDataTableModel.selectedRun = (index >= 0) ? batchRun.batchRunService.getSimulationRunAt(batchRun, index) : null
+            batchDataTableModel.selectedRun = (index >= 0) ? batchDataTableModel.getSimulationRunAt(index) : null
         }] as IListSelectionListener)
         ULCScrollPane scrollPane = new ULCScrollPane(batches)
         scrollPane.setPreferredSize(new Dimension(500, 350));
@@ -134,11 +131,17 @@ public class BatchView extends NewBatchView {
                 new I18NAlert("BatchNotValidName").show()
             }
         }] as IActionListener)
+
+        model.addBatchTableListener batchDataTableModel
     }
 
     protected void updateGui(BatchRun batchRun, String oldName) {
         model.refreshBatchNode()
         TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
+    }
+
+    public void addIP1RATModelListener(IP1RATModelListener ip1RATModelListener) {
+        batchDataTableModel.addIP1RATModelListener ip1RATModelListener
     }
 
 

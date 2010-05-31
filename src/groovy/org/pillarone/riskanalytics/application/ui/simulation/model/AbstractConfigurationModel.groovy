@@ -238,6 +238,7 @@ abstract class AbstractConfigurationModel implements IModelChangedListener {
 
     public void addToBatch(BatchRun batchRun, OutputStrategy strategy) {
         batchRun.batchRunService.addSimulationRun(batchRun, getSimulation(), strategy)
+        mainModel.fireRowAdded()
     }
 
     void stopSimulation() {

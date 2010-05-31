@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
 import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
@@ -13,6 +14,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListen
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTreeModel
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
+import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
+import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
@@ -35,6 +38,8 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     private Map viewModelsInUse
     ModellingInformationTreeModel selectionTreeModel
     def rootPaneForAlerts
+    ULCPollingTimer pollingBatchSimulationTimer
+    PollingBatchSimulationAction pollingBatchSimulationAction
 
     @Bindable ModellingItem currentItem
 
@@ -45,7 +50,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         modelListeners = []
         viewModelsInUse = [:]
         selectionTreeModel = new ModellingInformationTreeModel()
+        pollingBatchSimulationAction = new PollingBatchSimulationAction()
+        startPollingTimer(pollingBatchSimulationAction)
     }
+
+
 
     public ParameterViewModel getParameterViewModel(Parameterization item, Model simulationModel) {
         if (viewModelsInUse.containsKey(item)) {
@@ -439,6 +448,15 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         templateViewModel?.readOnly = true
     }
 
+    private void startPollingTimer(PollingBatchSimulationAction pollingBatchSimulationAction) {
+        try {
+            pollingBatchSimulationAction.addSimulationListener this
+            pollingBatchSimulationTimer = new ULCPollingTimer(2000, pollingBatchSimulationAction)
+            pollingBatchSimulationTimer.repeats = true
+            pollingBatchSimulationTimer.start()
+        } catch (NullPointerException ex) {}
+    }
+
     List modelItemlisteners = []
 
     public void addModelItemChangedListener(IModelItemChangeListener listener) {
@@ -453,16 +471,27 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         modelItemlisteners.each {IModelItemChangeListener listener -> listener.modelItemChanged()}
     }
 
+    List batchTableListeners = []
 
+    public void addBatchTableListener(BatchTableListener batchTableListener) {
+        batchTableListeners << batchTableListener
+    }
+
+    public void fireRowAdded() {
+        batchTableListeners.each {BatchTableListener batchTableListener -> batchTableListener.fireRowAdded()}
+    }
 }
 
 
 
 
 interface IP1RATModelListener {
+
     void openDetailView(Model model, Object item)
 
     void closeDetailView(Model model, Object item)
 
 }
+
+
 

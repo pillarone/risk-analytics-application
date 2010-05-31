@@ -18,8 +18,12 @@ import com.ulcjava.base.application.event.*
 import com.ulcjava.base.application.tabletree.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
+
+    private ErrorPane errorPane
     ULCTabbedPane tabbedPane
     PropertiesView propertiesView
 
@@ -157,6 +161,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     protected void initComponents() {
+        errorPane = new ErrorPane(model)
         tabbedPane = new ULCCloseableTabbedPane(name: 'tabbedPane')
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
         tabbedPane.addTabListener([tabClosing: {TabEvent event ->
@@ -165,18 +170,36 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         }] as ITabListener)
 
         super.initComponents();
+        attachListeners()
+        updateErrorVisualization(model.item)
     }
 
+    //TODO: remove listener after closing view
+    protected void attachListeners() {
+        def parameterization = model.getItem() as Parameterization
+        parameterization.addModellingItemChangeListener([itemSaved: {item ->},
+                itemChanged: { Parameterization item ->
+                    updateErrorVisualization(item)
+                }] as IModellingItemChangeListener)
+    }
 
+    protected void updateErrorVisualization(Parameterization item) {
+        item.validate()
+        errorPane.clear()
+        errorPane.addErrors item.validationErrors
+        model.addErrors(item.validationErrors)
+    }
 
     protected ULCContainer layoutContent(ULCContainer content) {
-
+        content = content as ULCBoxPane
         tabbedPane.removeAll()
         tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
         propertiesView = new PropertiesView(model.propertiesViewModel)
         tabbedPane.addTab(propertiesView.getText("properties"), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
+
+        content.add(0.2d, 0.2d, ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.content)
         return tabbedPane
     }
 
