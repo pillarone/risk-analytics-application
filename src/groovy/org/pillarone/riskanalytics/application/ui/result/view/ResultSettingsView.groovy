@@ -8,16 +8,16 @@ import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import java.text.SimpleDateFormat
 import org.joda.time.format.DateTimeFormat
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.ModelDAO
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
 class ResultSettingsView {
 
@@ -41,7 +41,7 @@ class ResultSettingsView {
 
             ULCBoxPane content = new ULCBoxPane(3, 0)
             addLabels(content, getText('name') + ":", "$simulation.name", new ULCFiller())
-            addLabels(content, getText('creationDate') + ":", simulation.creationDate ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(simulation.creationDate) : "", new ULCFiller())
+            addLabels(content, getText('creationDate') + ":", simulation.start ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(simulation.start) : "", new ULCFiller())
             // TODO (msp): adjust to new user concept
 //            addLabels(content, getText('username') + ":", simulation.creator ? simulation.creator.username : "", new ULCFiller())
             addLabels(content, getText('comment') + ":", comment)
@@ -91,7 +91,7 @@ class ResultSettingsView {
         container.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(keyLabel, 5, 10, 0, 0))
         ULCScrollPane scrollPane = new ULCScrollPane(value)
         scrollPane.setPreferredSize(new Dimension(270, 60))
-        scrollPane.border = BorderFactory.createEmptyBorder( 5, 10, 0, 0)
+        scrollPane.border = BorderFactory.createEmptyBorder(5, 10, 0, 0)
         scrollPane.setVerticalScrollBarPolicy(ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED)
         container.add(2, ULCBoxPane.BOX_LEFT_EXPAND, scrollPane)
     }
