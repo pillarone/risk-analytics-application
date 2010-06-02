@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportServ
 import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.simulation.item.*
+import models.application.ApplicationModel
 
 class ModellingItemFactoryTests extends GroovyTestCase {
 
@@ -114,7 +115,8 @@ class ModellingItemFactoryTests extends GroovyTestCase {
     }
 
     void testCopyParameterization() {
-        ParameterizationDAO dao = ParameterizationDAO.list()[0]
+        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
         parameterization.periodLabels = ['p1', 'p2']
@@ -172,7 +174,9 @@ class ModellingItemFactoryTests extends GroovyTestCase {
     }
 
     void testIncrementParameterizationVersion() {
-        ParameterizationDAO dao = ParameterizationDAO.findByItemVersion('1')
+//        ParameterizationDAO dao = ParameterizationDAO.findByItemVersion('1')
+        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
         parameterization.periodLabels = ['p1', 'p2']
