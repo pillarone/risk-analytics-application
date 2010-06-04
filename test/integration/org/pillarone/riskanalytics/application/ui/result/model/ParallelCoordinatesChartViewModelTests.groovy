@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.ParallelCoordinatesChartViewModel
 import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
+import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 
 class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
 
@@ -65,9 +66,9 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
             field2 = new FieldMapping(fieldName: 'value').save()
         }
 
-        collector = CollectorMapping.findByCollectorName(AbstractBulkInsert.DEFAULT_COLLECTOR_NAME)
+        collector = CollectorMapping.findByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER)
         if (collector == null) {
-            collector = new CollectorMapping(collectorName: AbstractBulkInsert.DEFAULT_COLLECTOR_NAME).save()
+            collector = new CollectorMapping(collectorName: AggregatedCollectingModeStrategy.IDENTIFIER).save()
         }
     }
 

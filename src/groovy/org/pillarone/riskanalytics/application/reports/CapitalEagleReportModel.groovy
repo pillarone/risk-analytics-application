@@ -7,12 +7,13 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNo
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 
 public abstract class CapitalEagleReportModel implements ReportModel {
 
     public static double divider = 1000
     Simulation simulation
-    public static String collector = AbstractBulkInsert.DEFAULT_COLLECTOR_NAME
+    public static String collector = AggregatedCollectingModeStrategy.IDENTIFIER
     public static List lobName = ["mtpl", "motor hull", "personal accident", "property"]
     public static Map grossPathMap = [
         "mtpl": ["CapitalEagle:mtpl:subRiProgram:outClaimsGross", collector, "ultimate"],

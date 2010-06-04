@@ -3,9 +3,10 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
+import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 
 class ResultTableTreeNode extends SimpleTableTreeNode {
-    String collector = AbstractBulkInsert.DEFAULT_COLLECTOR_NAME
+    String collector = AggregatedCollectingModeStrategy.IDENTIFIER
     Class packetClass
 
     public ResultTableTreeNode(String name) {
