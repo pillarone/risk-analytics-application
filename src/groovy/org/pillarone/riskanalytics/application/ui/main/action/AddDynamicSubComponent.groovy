@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.base.view.DynamicComponentNameDialog
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.components.Component
@@ -15,11 +16,15 @@ import org.pillarone.riskanalytics.core.components.Component
 class AddDynamicSubComponent extends ResourceBasedAction {
 
     def tree
+    ParameterViewModel model
 
-    public AddDynamicSubComponent(def tree) {
+    public AddDynamicSubComponent(def tree, ParameterViewModel model) {
         super("AddDynamicSubComponent")
         this.tree = tree
+        this.model = model
     }
+
+
 
     public void doActionPerformed(ActionEvent event) {
         DynamicComposedComponentTableTreeNode node = tree.selectedPath.lastPathComponent
@@ -44,5 +49,9 @@ class AddDynamicSubComponent extends ResourceBasedAction {
             }
         }
         dialog.show()
+    }
+
+    public boolean isEnabled() {
+        return super.isEnabled() && !model.paramterTableTreeModel.readOnly;
     }
 }

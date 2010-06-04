@@ -5,6 +5,8 @@ grails.plugin.repos.discovery.pillarone = "https://readplugins:readplugins@svn.i
 
 grails.plugin.repos.resolveOrder = ['pillarone', 'default', 'core']
 
+//grails.plugin.location.'risk-analytics-core' = "../RiskAnalyticsCore"
+
 grails.compiler.dependencies = {
     fileset(dir: "${grailsSettings.projectPluginsDir}", includes: "*/web-app/lib/*.jar")
     fileset(dir: "${basedir}/web-app", includes: "lib/*.jar")

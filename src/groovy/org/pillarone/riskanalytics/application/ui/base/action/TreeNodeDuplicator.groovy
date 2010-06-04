@@ -33,6 +33,12 @@ public class TreeNodeDuplicator extends TreeNodeAction {
         component.name = newName
         tree.model.addComponentNode(node.parent, component)
     }
+
+    public boolean isEnabled() {
+        return super.isEnabled() && !model.paramterTableTreeModel.readOnly;
+    }
+
+
 }
 
 public class TreeNodeRename extends TreeNodeAction {
@@ -50,6 +56,10 @@ public class TreeNodeRename extends TreeNodeAction {
         component.name = newName
         tree.model.addComponentNode(node.parent, component)
         tree.model.removeComponentNode(node)
+    }
+
+    public boolean isEnabled() {
+        return super.isEnabled() && !model.paramterTableTreeModel.readOnly;
     }
 
 }
