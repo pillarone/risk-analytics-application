@@ -11,15 +11,11 @@ import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.renderer.AbstractRenderer
 import org.jfree.data.category.DefaultCategoryDataset
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
-import org.pillarone.riskanalytics.application.ui.chart.model.ParallelCoordinatesQueryPaneModel
-import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 public class ParallelCoordinatesChartViewModel extends ChartViewModel implements IModelChangedListener {
     double min, max
@@ -94,7 +90,9 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
         rowKeys.each {int rowIndex ->
             Color color
             Double value = dataset.getValue(rowIndex, seriesNames[-1])
-            int g = 255.0 * (maxs[-1][currentPeriod] - value) / (maxs[-1][currentPeriod] - mins[-1][currentPeriod])
+            int g = 255.0
+            if (value)
+                g = 255.0 * (maxs[-1][currentPeriod] - value) / (maxs[-1][currentPeriod] - mins[-1][currentPeriod])
             int r = 255 - g
 
             color = new Color(r, g, 0)

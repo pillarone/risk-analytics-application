@@ -1,9 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
-import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
-import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 
 public class ParallelCoordinatesQueryPaneModel extends QueryPaneModel {
     public static int N_MAX = 200
@@ -24,9 +21,9 @@ public class ParallelCoordinatesQueryPaneModel extends QueryPaneModel {
             } else {
                 pRounded = Math.round((p + 0.049999999999) * ROUND_PRECISION) / ROUND_PRECISION
             }
-            nodes.each {
+            if (nodes && nodes.size() > 0) {
                 CriteriaViewModel model = new CriteriaViewModel(this, false)
-                model.selectedPath = it.getShortDisplayPath(nodes)
+                model.selectedPath = nodes[0].getShortDisplayPath(nodes)
                 model.selectedComparator = CriteriaComparator.GREATER_THAN
                 model.value = pRounded * 100
                 criterias << [model]

@@ -31,22 +31,17 @@ class ParallelCoordinatesQueryPaneModelTests extends GroovyTestCase {
 
         run.iterations = 1000
         model = new ParallelCoordinatesQueryPaneModel(run, [node1, node2, node3], false, false)
-        assertEquals 3, model.criterias.size()
+        assertEquals 1, model.criterias.size()
         assertEquals model.criterias[0][0].value, 95.0
-        assertEquals model.criterias[1][0].value, 95.0
-        assertEquals model.criterias[2][0].value, 95.0
-        assertFalse model.criterias[0][0].selectedPath.equals(model.criterias[1][0].selectedPath)
-        assertFalse model.criterias[0][0].selectedPath.equals(model.criterias[2][0].selectedPath)
-        assertFalse model.criterias[1][0].selectedPath.equals(model.criterias[2][0].selectedPath)
 
         run.iterations = 100000
         model = new ParallelCoordinatesQueryPaneModel(run, [node1, node2, node3], false, false)
-        assertEquals 3, model.criterias.size()
+        assertEquals 1, model.criterias.size()
         assertEquals model.criterias[0][0].value, 99.0
 
         run.iterations = 201
         model = new ParallelCoordinatesQueryPaneModel(run, [node1, node2, node3], false, false)
-        assertEquals 3, model.criterias.size()
+        assertEquals 1, model.criterias.size()
         assertEquals model.criterias[0][0].value, 70.0
     }
 
