@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.AbstractApplication
+import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
@@ -20,6 +21,7 @@ class P1RATApplication extends AbstractApplication {
     public static boolean CLOSE_WINDOW = false
 
     public void start() {
+        ClientContext.sendMessage("hideSplash");
         initMainView()
     }
 
@@ -34,7 +36,7 @@ class P1RATApplication extends AbstractApplication {
         mainFrame.locationRelativeTo = null
         mainFrame.setIconImage(UIUtils.getIcon("application.png"))
         ULCClipboard.install()
-        P1RATMainView mainView = new P1RATMainView(p1RATModel)//new P1RATModel())
+        P1RATMainView mainView = new P1RATMainView(p1RATModel)
         mainFrame.contentPane.add(mainView.content)
         mainFrame.menuBar = mainView.menuBar
         ExceptionSafe.rootPane = mainFrame
