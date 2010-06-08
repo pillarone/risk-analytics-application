@@ -25,7 +25,7 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         model.injectComponentNames()
         param.simulationModel = model
 
-        def values = param.getPossibleValues(1, 1)
+        def values = param.getPossibleValues(0, 1)
         assertEquals 1, values.size()
         assertTrue values.contains('hierarchy component')
 
@@ -36,11 +36,11 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         model.injectComponentNames()
         param.simulationModel = model
 
-        values = param.getPossibleValues(1, 1)
+        values = param.getPossibleValues(1, 0)
         assertEquals 1, values.size()
         assertTrue values.contains('hierarchy component')
 
-        values = param.getPossibleValues(1, 2)
+        values = param.getPossibleValues(1, 1)
         assertFalse values instanceof Collection
 
         LocaleResources.clearTestMode()
