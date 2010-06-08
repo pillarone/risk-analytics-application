@@ -67,10 +67,11 @@ class MultiDimensionalParameterView {
 
     private def setRendererAndEditors() {
         table.getColumnModel().getColumns().eachWithIndex {ULCTableColumn column, int index ->
-            column.minWidth = getColumnWidth(index)
             if (index == 0) {
                 column.minWidth = 50
                 column.maxWidth = 50
+            } else {
+                column.minWidth = getColumnWidth(index)
             }
             column.setCellRenderer(new MultiDimensionalTableCellRenderer(index, table))
             column.setCellEditor(new MultiDimensionalParameterTableCellEditor(column: index))
@@ -84,7 +85,7 @@ class MultiDimensionalParameterView {
         int sampleCount = Math.max(10, model.multiDimensionalParameter.getRowCount())
         int maxWidth = 0
         for (int i = 0; i < sampleCount; i++) {
-            def values = model.multiDimensionalParameter.getPossibleValues(i, column)
+            def values = model.tableModel.getPossibleValues(i, column)
 
             if (values instanceof List) {
                 for (value in values) {

@@ -39,8 +39,8 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
 
     void testGetValueAt() {
         MultiDimensionalParameterTableModel model = new MultiDimensionalParameterTableModel(new SimpleMultiDimensionalParameter([[1, 2, 3], [4, 5]]), true)
-        assertEquals(4, model.getValueAt(0, 1))
-        assertEquals("", model.getValueAt(2, 1))
+        assertEquals(4, model.getValueAt(0, 2))
+        assertEquals("", model.getValueAt(2, 2))
 
         model = new MultiDimensionalParameterTableModel(new TableMultiDimensionalParameter([[1, 2, 3], [4, 5]], ['Column', 'Column 2']))
         assertEquals('Column 2', model.getValueAt(0, 2))
@@ -64,28 +64,29 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
 
     void testSetValueAt() {
         MultiDimensionalParameterTableModel model = new MultiDimensionalParameterTableModel(new SimpleMultiDimensionalParameter([[1, 2, 3], [4, 5]]), true)
-        model.setValueAt(2.2, 0, 1)
-        assertEquals(2.2, model.getValueAt(0, 1))
+        model.setValueAt(2.2, 0, 2)
+        assertEquals(2.2, model.getValueAt(0, 2))
 
-        model.setValueAt(6, 2, 1)
-        assertEquals(6, model.getValueAt(2, 1))
+        model.setValueAt(6, 2, 2)
+        assertEquals(6, model.getValueAt(2, 2))
 
-        assertEquals 1, model.getValueAt(1, 0)
-        model.setValueAt(0, 0, 0)
+        assertEquals 1, model.getValueAt(0, 1)
+        model.setValueAt(0, 0, 1)
+        assertEquals 0, model.getValueAt(0, 1)
         assertEquals "", model.getValueAt(0, 0)
 
         // column index out of bound
-        shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 1, 2)})
+        shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 1, 3)})
 
         // row index out of bound
         shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 3, 0)})
 
         model = new MultiDimensionalParameterTableModel(new MatrixMultiDimensionalParameter([[1, 2, 3], [4, 5]], ['Row'], ['Column']), true)
-        model.setValueAt(2.2, 1, 1)
-        assertEquals(2.2, model.getValueAt(1, 2))
+        model.setValueAt(2.2, 1, 3)
+        assertEquals(2.2, model.getValueAt(1, 3))
 
         // column index out of bound
-        shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 1, 3)})
+        shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 1, 4)})
 
         // row index out of bound
         shouldFail(IndexOutOfBoundsException, {model.setValueAt(7, 4, 1)})
@@ -552,25 +553,25 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
             events << e
         }] as ITableModelListener)
 
-        int oldValue = model.getValueAt(1, 0)
-        model.setValueAt(oldValue, 1, 0)
+        int oldValue = model.getValueAt(0, 1)
+        model.setValueAt(oldValue, 0, 1)
         assertEquals "no event expected when setting the same value", 0, events.size()
 
-        oldValue = model.getValueAt(1, 0)
-        model.setValueAt(oldValue + 1, 1, 0)
+        oldValue = model.getValueAt(0, 1)
+        model.setValueAt(oldValue + 1, 0, 1)
         assertEquals "changed value, event expected", 1, events.size()
 
         events.clear()
         model.startBulkChange()
 
-        oldValue = model.getValueAt(1, 0)
-        model.setValueAt(oldValue + 1, 1, 0)
+        oldValue = model.getValueAt(0, 1)
+        model.setValueAt(oldValue + 1, 1, 1)
 
-        oldValue = model.getValueAt(3, 0)
-        model.setValueAt(oldValue + 1, 3, 0)
+        oldValue = model.getValueAt(3, 1)
+        model.setValueAt(oldValue + 1, 3, 1)
 
-        oldValue = model.getValueAt(5, 0)
-        model.setValueAt(oldValue + 1, 5, 0)
+        oldValue = model.getValueAt(5, 1)
+        model.setValueAt(oldValue + 1, 5, 1)
         assertTrue "no event expected on bulkChange", events.empty
 
         model.stopBulkChange()

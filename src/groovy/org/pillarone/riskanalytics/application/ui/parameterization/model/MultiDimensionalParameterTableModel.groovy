@@ -118,7 +118,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     public Object getValueAt(int row, int column) {
         if (column == 0 && row == 0) return ""
         if (column == 0) return row
-        Object value = multiDimensionalParam.getValueAt(row, column)
+        Object value = multiDimensionalParam.getValueAt(row, column - 1)
         if (value instanceof DateTime) {
             value = value.toDate()
         }
@@ -144,7 +144,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         }
 
         if (value != null && !value.equals(oldValue)) {
-            multiDimensionalParam.setValueAt value, rowIndex, columnIndex
+            multiDimensionalParam.setValueAt(value, rowIndex, columnIndex - 1)
             fireTableCellUpdated rowIndex, columnIndex
             if (multiDimensionalParam instanceof ComboBoxMatrixMultiDimensionalParameter) {
                 //CBMMDP row/column titles are symmetric
@@ -185,7 +185,10 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     }
 
     public getPossibleValues(int row, int col) {
-        multiDimensionalParam.getPossibleValues(row, col)
+        if (col == 0) {
+            return row
+        }
+        multiDimensionalParam.getPossibleValues(row, col - 1)
     }
 
     public void startBulkChange() {
