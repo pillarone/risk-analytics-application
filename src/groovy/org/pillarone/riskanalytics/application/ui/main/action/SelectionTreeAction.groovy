@@ -370,8 +370,10 @@ abstract class ExportAction extends SelectionTreeAction {
                         }
                     },
                     onFailure: {reason, description ->
-                        LOG.error description
-                        showAlert("exportError")
+                        if (reason != IFileChooseHandler.CANCELLED) {
+                            LOG.error description
+                            showAlert("exportError")
+                        }
                     }] as IFileChooseHandler, config, ancestor)
         }
 
@@ -445,8 +447,11 @@ abstract class ExportAction extends SelectionTreeAction {
                     }
                 },
                 onFailure: {reason, description ->
-                    LOG.error description
-                    showAlert("exportError")
+                    if (reason != IFileChooseHandler.CANCELLED) {
+                        LOG.error description
+                        showAlert("exportError")
+                    }
+
                 }] as IFileChooseHandler, config, ancestor)
     }
 
