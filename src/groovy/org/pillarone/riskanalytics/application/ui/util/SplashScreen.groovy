@@ -9,10 +9,10 @@ import javax.swing.*
  */
 class SplashScreen {
     private static final String BUNDLE_FILENAME = "org.pillarone.riskanalytics.application.clientResources";
-    private static final String WAIT_ICON_FILENAME = "/org/pillarone/riskanalytics/application/icons/PillarOneLogoSmall.png";
+    private static final String WAIT_ICON_FILENAME = "/org/pillarone/riskanalytics/application/icons/pillarone-logo-simple-white.png";
 
     private JWindow fSplashWindow;
-    private JLabel fWaitLabel;
+    private volatile JLabel fWaitLabel;
     private JLabel fIconLabel;
 
 
@@ -38,23 +38,29 @@ class SplashScreen {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         double centerX = screenSize.getWidth() / 2;
         double centerY = screenSize.getHeight() / 2;
-        double positionX = (centerX - (fSplashWindow.getSize().getWidth() / 2));
-        double positionY = (centerY - (fSplashWindow.getSize().getHeight() / 2));
+        double positionX = (centerX - 250);
+        double positionY = (centerY - 150);
         return new Point(((int) positionX), ((int) positionY));
     }
 
 
     private void layoutComponents() {
         JPanel contentPane = new JPanel(new BorderLayout());
-        contentPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        contentPane.setBackground(new Color(131, 130, 126));
+        contentPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        contentPane.setBackground(Color.white);
+
+        JPanel msgPanel = new JPanel(new BorderLayout());
+        msgPanel.setBackground(new Color(212, 209, 202));
+        msgPanel.setPreferredSize new Dimension(500, 40)
         fWaitLabel.setHorizontalAlignment(JLabel.CENTER);
-        fWaitLabel.setForeground(Color.white);
+        fWaitLabel.setForeground(Color.black);
+        msgPanel.add(BorderLayout.CENTER, fWaitLabel);
+
         fIconLabel.setHorizontalAlignment(JLabel.CENTER);
         fIconLabel.setVerticalAlignment(JLabel.BOTTOM);
 
         contentPane.add(BorderLayout.CENTER, fIconLabel);
-        contentPane.add(BorderLayout.SOUTH, fWaitLabel);
+        contentPane.add(BorderLayout.SOUTH, msgPanel);//fWaitLabel);
 
         fSplashWindow.getContentPane().add(contentPane);
         fSplashWindow.pack();
@@ -68,6 +74,13 @@ class SplashScreen {
 
     public JLabel getWaitLabel() {
         return fWaitLabel;
+    }
+
+    public void update(String newlabel) {
+        println newlabel
+        fWaitLabel.setText newlabel
+        fWaitLabel.repaint()
+        fSplashWindow.getContentPane().repaint()
     }
 
 

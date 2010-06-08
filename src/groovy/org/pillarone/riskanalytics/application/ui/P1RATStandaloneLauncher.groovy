@@ -1,13 +1,10 @@
 package org.pillarone.riskanalytics.application.ui
 
-import com.ulcjava.base.client.ClientEnvironmentAdapter
 import com.ulcjava.base.client.ISessionStateListener
 import com.ulcjava.base.client.UISession
 import com.ulcjava.base.shared.logging.LogManager
 import com.ulcjava.base.shared.logging.SimpleLogManager
 import org.pillarone.riskanalytics.application.environment.shared.UIManagerHelper
-import org.pillarone.riskanalytics.application.ui.util.SplashScreen
-import org.pillarone.riskanalytics.application.ui.util.SplashScreenHandler
 
 class P1RATStandaloneLauncher {
 
@@ -39,10 +36,6 @@ class P1RATStandaloneLauncher {
         LogManager.setLogManager(logManager)
 
         UIManagerHelper.setLookAndFeel()
-
-        SplashScreenHandler splashScreenHandler = new SplashScreenHandler(new SplashScreen());
-        ClientEnvironmentAdapter.setMessageService(splashScreenHandler);
-        splashScreenHandler.showSplashScreen();
 
         P1RATStandaloneRunner runner = new P1RATStandaloneRunner()
         runner.start()

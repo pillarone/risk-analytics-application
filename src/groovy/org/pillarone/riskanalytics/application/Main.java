@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application;
 
+import com.ulcjava.base.client.ClientEnvironmentAdapter;
 import grails.util.GrailsUtil;
 import groovy.lang.ExpandoMetaClass;
 import org.apache.commons.logging.Log;
@@ -9,9 +10,11 @@ import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 import org.pillarone.riskanalytics.application.initialization.DatabaseManagingSessionStateListener;
-import org.pillarone.riskanalytics.core.initialization.StandaloneConfigLoader;
 import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher;
+import org.pillarone.riskanalytics.application.ui.util.SplashScreen;
+import org.pillarone.riskanalytics.application.ui.util.SplashScreenHandler;
 import org.pillarone.riskanalytics.core.initialization.IExternalDatabaseSupport;
+import org.pillarone.riskanalytics.core.initialization.StandaloneConfigLoader;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -30,6 +33,11 @@ public class Main {
         IExternalDatabaseSupport databaseSupport = null;
 
         try {
+
+            SplashScreenHandler splashScreenHandler = new SplashScreenHandler(new SplashScreen());
+            ClientEnvironmentAdapter.setMessageService(splashScreenHandler);
+            splashScreenHandler.showSplashScreen();
+
             String environment = System.getProperty("grails.env");
             if (environment == null) {
                 environment = "development";
@@ -38,14 +46,20 @@ public class Main {
             }
             StandaloneConfigLoader.loadLog4JConfig(environment);
             LOG.info("Starting RiskAnalytics with environment " + environment);
+            splashScreenHandler.handleMessage("Starting RiskAnalytics with environment " + environment);
+
             databaseSupport = StandaloneConfigLoader.getExternalDatabaseSupport(environment);
-            if(databaseSupport != null) {
+            if (databaseSupport != null) {
                 LOG.info("Starting external database for environment " + environment);
+                splashScreenHandler.handleMessage("Starting external database for environmen " + environment);
+
                 databaseSupport.startDatabase();
             }
 
 
             LOG.info("Loading grails..");
+            splashScreenHandler.handleMessage("Loading grails..");
+
             ExpandoMetaClass.enableGlobally();
             ApplicationContext ctx = GrailsUtil.bootstrapGrailsFromClassPath();
             GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
@@ -61,6 +75,7 @@ public class Main {
             }
 
             LOG.info("Loading user interface..");
+            splashScreenHandler.handleMessage("Loading user interface..");
             if (databaseSupport == null) {
                 P1RATStandaloneLauncher.start();
             } else {

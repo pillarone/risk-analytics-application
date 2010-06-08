@@ -7,7 +7,7 @@ import javax.swing.*;
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class SplashScreenHandler implements IMessageService {
+public class SplashScreenHandler implements IMessageService {
     private SplashScreen fSplashScreen;
 
 
@@ -24,6 +24,8 @@ class SplashScreenHandler implements IMessageService {
     public void handleMessage(String msg) {
         if ("hideSplash".equals(msg)) {
             hideSplashScreen();
+        } else {
+            fSplashScreen.update(msg);
         }
     }
 
