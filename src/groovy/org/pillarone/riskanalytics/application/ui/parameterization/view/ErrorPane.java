@@ -41,7 +41,7 @@ public class ErrorPane {
     }
 
     private ULCComponent createLabel(ParameterValidationError error) {
-        ULCBoxPane pane = new ULCBoxPane(1, 1);
+        ULCBoxPane pane = new ULCBoxPane(2, 1);
         pane.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(model.findNodeForPath(error.getPath()).getDisplayPath());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
@@ -52,6 +52,7 @@ public class ErrorPane {
         label.setText(error.getLocalizedMessage(LocaleResources.getLocale()));
         label.setFont(label.getFont().deriveFont(Font.PLAIN));
 
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, ULCFiller.createHorizontalStrut(2));
         pane.add(ULCBoxPane.BOX_EXPAND_TOP, label);
         return pane;
     }

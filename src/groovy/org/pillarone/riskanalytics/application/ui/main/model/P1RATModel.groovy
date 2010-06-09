@@ -176,6 +176,12 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
+    void refresh(ModellingItem item) {
+        ExceptionSafe.protect {
+            selectionTreeModel.refresh(item)
+        }
+    }
+
     void refreshBatchNode() {
         ExceptionSafe.protect {
             selectionTreeModel.refreshBatchNode()
@@ -187,6 +193,8 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         saveItem(currentItem)
         updateViewModelsMap()
         fireModelItemChanged()
+        if (currentItem instanceof Parameterization)
+            refresh(currentItem)
     }
 
     void saveAllOpenItems() {

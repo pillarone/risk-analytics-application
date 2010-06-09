@@ -139,6 +139,11 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
 
     }
 
+    public void refresh(ModellingItem item) {
+        ITreeNode node = findNodeForItem(findModelNode(item), item)
+        nodeChanged node
+    }
+
     private void synchNodes(List items, DefaultMutableTreeNode groupNode) {
 
         List existingItems = collectItems(groupNode, [])

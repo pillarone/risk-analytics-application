@@ -13,10 +13,6 @@ class ApplicationBootStrap {
             return
         }
 
-//        SplashScreenHandler splashScreenHandler = new SplashScreenHandler(new SplashScreen());
-//        ClientEnvironmentAdapter.setMessageService(splashScreenHandler);
-//        splashScreenHandler.showSplashScreen();
-
         // start a quartz job scheduler for a batch
         new JobScheduler().start()
 
