@@ -115,10 +115,11 @@ abstract class AbstractConfigurationView implements ISimulationListener, ISimula
         useUserDefinedSeed.addValueChangedListener([valueChanged: {event -> model.useUserDefinedSeed = useUserDefinedSeed.selected}] as IValueChangedListener)
         randomSeed.addValueChangedListener([valueChanged: {event ->
             int seed = randomSeed.value
-            if (seed != null) {
+            if (seed != null && seed > 0) {
                 model.randomSeed = seed
             } else {
                 new I18NAlert("NoInteger").show()
+                randomSeed.value = null
             }
         }] as IValueChangedListener)
         configurationSettingView.attachListeners()
