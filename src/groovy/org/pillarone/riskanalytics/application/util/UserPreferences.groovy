@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.util
 
-import java.util.prefs.Preferences
 import com.ulcjava.base.application.ClientContext
+import java.util.prefs.Preferences
 
 /**
  * @author fouad jaada
@@ -12,6 +12,7 @@ public class UserPreferences {
     final static String IMPORT_DIR_KEY = "import_directory"
     final static String RESULT_DIR_KEY = "result_directory"
     final static String EXPORT_DIR_KEY = "export_directory"
+    final static String USER_PREFERRED_LANG = "userPreferredLanguage"
 
 
     public UserPreferences() {
@@ -29,6 +30,14 @@ public class UserPreferences {
 
     void setUserDirectory(String key, String value) {
         userPrefs.put(key, value)
+    }
+
+    public void setLanguage(String lang) {
+        userPrefs.put(USER_PREFERRED_LANG, lang)
+    }
+
+    public String getLanguage() {
+        return userPrefs.get(USER_PREFERRED_LANG, null)
     }
 
     public static String getUserDirectory() {

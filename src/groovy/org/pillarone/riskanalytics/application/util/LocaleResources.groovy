@@ -38,8 +38,12 @@ class LocaleResources {
         Locale locale
         Person.withTransaction {e ->
             UserSettings userSettings = UserManagement.getCurrentUser()?.settings
+            UserPreferences preferences = new UserPreferences()
             if (userSettings != null) {
                 locale = new Locale(userSettings.language)
+                UserContext.setAttribute(LOCALE, locale)
+            } else if (preferences.getLanguage() != null) {
+                locale = new Locale(preferences.getLanguage())
                 UserContext.setAttribute(LOCALE, locale)
             } else {
                 locale = (Locale) UserContext.getAttribute(LOCALE)

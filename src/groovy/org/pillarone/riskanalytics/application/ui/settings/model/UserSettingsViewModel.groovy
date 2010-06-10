@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.settings.model
 
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
+import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.user.UserSettings
@@ -11,6 +12,8 @@ import org.pillarone.riskanalytics.core.user.UserSettings
 
 public class UserSettingsViewModel {
     EnumI18NComboBoxModel languagesComboBoxModel
+    private UserPreferences userPreferences
+
 
     public UserSettingsViewModel() {
         UserSettings userSettings = UserManagement.getCurrentUser()?.settings
@@ -19,6 +22,7 @@ public class UserSettingsViewModel {
         } else {
             languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[], userSettings.language)
         }
+        userPreferences = new UserPreferences();
     }
 
     public void save() {
@@ -29,6 +33,8 @@ public class UserSettingsViewModel {
             }
             user.settings.language = languagesComboBoxModel.selectedEnum.toString()
             user.save()
+        } else {
+            userPreferences.setLanguage(languagesComboBoxModel.selectedEnum.toString())
         }
 
     }

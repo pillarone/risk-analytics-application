@@ -4,8 +4,8 @@ import com.ulcjava.base.application.border.ULCAbstractBorder
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 
 /**
