@@ -123,62 +123,15 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
 
 
     public void refresh() {
-        ModelStructure.findAllModelClasses().each {Class modelClass ->
-            Model model = modelClass.newInstance()
-            model.init()
-            ITreeNode modelNode = getModelNode(model)
-            DefaultMutableTreeNode parametrisationsNode = modelNode.getChildAt(0)
-            DefaultMutableTreeNode resultConfigurationsNode = modelNode.getChildAt(1)
-            DefaultMutableTreeNode simulationsNode = modelNode.getChildAt(2)
-
-            synchNodes(ModellingItemFactory.getParameterizationsForModel(modelClass), parametrisationsNode)
-            synchNodes(ModellingItemFactory.getResultConfigurationsForModel(modelClass), resultConfigurationsNode)
-            synchNodes(ModellingItemFactory.getActiveSimulationsForModel(modelClass), simulationsNode)
-
-        }
-
+        DefaultMutableTreeNode root = getRoot()
+        root.removeAllChildren()
+        buildTreeNodes()
+        nodeStructureChanged(root)
     }
 
     public void refresh(ModellingItem item) {
         ITreeNode node = findNodeForItem(findModelNode(item), item)
         nodeChanged node
-    }
-
-    private void synchNodes(List items, DefaultMutableTreeNode groupNode) {
-
-        List existingItems = collectItems(groupNode, [])
-
-        def itemsToAdd = items - existingItems
-        def itemsToRemove = existingItems - items
-        def itemsToUpdate = existingItems - itemsToRemove
-
-        itemsToAdd.each {
-            def itemNode = findNodeForItem(groupNode, it)
-            if (itemNode == null) {
-                createAndInsertItemNode(groupNode, it)
-            }
-        }
-
-        itemsToRemove.each {
-            removeNodeForItem it
-        }
-
-        itemsToUpdate.each {
-            nodeChanged findNodeForItem(groupNode, it)
-        }
-
-    }
-
-    private List collectItems(DefaultMutableTreeNode node, List collectedItems) {
-        for (int i = 0; i < node.childCount; i++) {
-            collectItems(node.getChildAt(i), collectedItems)
-        }
-        return collectedItems
-    }
-
-    private List collectItems(ItemNode node, List collectedItems) {
-        collectedItems << node.item
-        return collectedItems
     }
 
     public void addNodeForItem(Simulation item) {

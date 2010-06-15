@@ -444,8 +444,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         TreeModelEvent treeModelEvent = null
 
         model.addTreeModelListener([
-                treeNodesChanged: {TreeModelEvent event -> treeModelEvent = event},
-                treeNodesInserted: {TreeModelEvent event -> treeModelEvent = event}
+                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event}
         ] as ITreeModelListener)
 
         assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount

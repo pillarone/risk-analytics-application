@@ -82,6 +82,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         int childCountBeforeInsert = tree2.getChildCount(path)
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
+        path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert + 1, tree2.getChildCount(path)
     }
 
@@ -105,6 +106,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         assertNotNull "path not found", path
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
+        path = tree1.findPath(["Application", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert - 1, tree1.getChildCount(path)
     }
 
@@ -155,6 +157,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
 
+        path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert, tree2.getChildCount(path)
 
     }
