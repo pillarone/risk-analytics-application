@@ -152,7 +152,11 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
             }
         } else {
             if (function.calculateForNonStochasticalValues()) {
-                return function.evaluate(simulationRun, periodIndex, node)
+                if (function instanceof ResultFunction && node instanceof ResultTableTreeNode && isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter)) {
+                    return getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter)
+                } else {
+                    return function.evaluate(simulationRun, periodIndex, node)
+                }
             } else {
                 return null
             }
