@@ -59,6 +59,9 @@ class ChartView implements IModelChangedListener {
         resultNodePopup.add(new ULCMenuItem(new ResetZoomAction(this)))
         resultNodePopup.addSeparator()
         resultNodePopup.add(new ULCMenuItem(new OpenChartPropertiesAction(this)))
+        resultNodePopup.addSeparator()
+        resultNodePopup.add(new ULCMenuItem(new ChangeChartColorAction(this)))
+
         ulcChart.setComponentPopupMenu(resultNodePopup)
         controlsPane = new ULCBoxPane(1, 0)
     }
@@ -312,5 +315,21 @@ class OpenChartPropertiesAction extends ResourceBasedAction {
     public void doActionPerformed(ActionEvent event) {
         new ChartPropertiesDialog(chartView, '', enabledFields).dialog.visible = true
     }
+
+}
+
+class ChangeChartColorAction extends ResourceBasedAction {
+    ChartView chartView
+
+
+    public ChangeChartColorAction(chartView) {
+        super("ChangeChartColorAction");
+        this.chartView = chartView;
+    }
+
+    void doActionPerformed(ActionEvent event) {
+        new ChangeChartColorDialog(chartView).dialog.visible = true
+    }
+
 
 }
