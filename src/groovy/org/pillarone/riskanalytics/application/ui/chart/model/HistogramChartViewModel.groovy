@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import java.awt.Color
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.axis.NumberAxis
@@ -49,12 +48,13 @@ class HistogramChartViewModel extends ChartViewModel {
 
         JFreeChart chart = ChartFactory.createHistogram(chartProperties.title, chartProperties.xAxisTitle, chartProperties.yAxisTitle, data, PlotOrientation.VERTICAL, chartProperties.showLegend, false, false)
 
-        //set series colors
-        if (series.size() > 1 && series.size() <= seriesColorList.size()) {
-            for (index in 0..<series.size()) {
-                Color c = seriesColorList[index]
-                Color tc = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 / series.size()))
-                chart.getXYPlot().getRenderer(0).setSeriesPaint(index, tc)
+        int seriesIndex = 0
+        series.eachWithIndex {List observations, int keyFigureIndex ->
+            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+                if (showLine[keyFigureIndex, periodIndex]) {
+                    chart.getXYPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColor(keyFigureIndex, periodIndex)
+                    seriesIndex++
+                }
             }
         }
 

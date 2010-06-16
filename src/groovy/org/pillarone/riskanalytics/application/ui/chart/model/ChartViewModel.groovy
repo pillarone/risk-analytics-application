@@ -4,12 +4,13 @@ import java.awt.Color
 import java.text.SimpleDateFormat
 import org.jfree.chart.JFreeChart
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
+import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -38,6 +39,8 @@ abstract class ChartViewModel {
 
     public drawLegend = true
 
+    SeriesColor seriesColor;
+
     public ChartViewModel() {}
 
     public ChartViewModel(String title, SimulationRun simulationRun, List nodes, double insetHeight) {
@@ -52,6 +55,7 @@ abstract class ChartViewModel {
             showLine[[i, 0]] = true
         }
         loadData()
+        seriesColor = new SeriesColor(periodCount)
     }
 
     abstract JFreeChart getChart()

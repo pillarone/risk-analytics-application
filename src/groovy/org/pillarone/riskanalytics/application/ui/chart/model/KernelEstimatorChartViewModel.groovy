@@ -13,13 +13,11 @@ import org.jfree.ui.HorizontalAlignment
 import org.jfree.ui.RectangleEdge
 import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.reports.bean.ReportChartDataBean
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
  * Created by IntelliJ IDEA.
@@ -126,11 +124,9 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
                 if (showLine[keyFigureIndex, periodIndex]) {
                     mean = means[keyFigureIndex][periodIndex]
                     stdDev = stdDevs[keyFigureIndex][periodIndex]
-                    if (seriesIndex < seriesColorList.size()) {
-                        chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColorList[seriesIndex]
-                        addStatisticalValues(chart, seriesColorList[seriesIndex], seriesIndex)
-                        seriesIndex++
-                    }
+                    chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColor(keyFigureIndex, periodIndex)
+                    addStatisticalValues(chart, seriesColor.getColor(keyFigureIndex, periodIndex), seriesIndex)
+                    seriesIndex++
                 }
             }
         }

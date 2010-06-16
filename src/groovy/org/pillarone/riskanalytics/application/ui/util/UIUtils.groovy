@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
-import org.pillarone.riskanalytics.application.ui.util.NumberParser
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class UIUtils {
@@ -122,9 +121,16 @@ class UIUtils {
         return locale
     }
 
-    public static final  String getText(Class objClass, String key) {
-        return LocaleResources.getString(objClass.simpleName+"." + key);
+    public static final String getText(Class objClass, String key) {
+        return LocaleResources.getString(objClass.simpleName + "." + key);
     }
 
+    public static com.ulcjava.base.application.util.Color toULCColor(java.awt.Color color) {
+        return new com.ulcjava.base.application.util.Color(color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    public static java.awt.Color toAwtColor(com.ulcjava.base.application.util.Color color) {
+        return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
+    }
 
 }
