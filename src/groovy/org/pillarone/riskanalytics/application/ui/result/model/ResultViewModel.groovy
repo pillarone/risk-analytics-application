@@ -61,7 +61,7 @@ class ResultViewModel extends AbstractModellingModel {
      * Loads all PostSimulationCalculations of a simulation and stores them in a map.
      * This is faster than creating a query for every cell when the result is needed.
      */
-    private ConfigObject initPostSimulationCalculations(SimulationRun simulationRun) {
+    public static ConfigObject initPostSimulationCalculations(SimulationRun simulationRun) {
         NumberFormat numberFormat = NumberFormat.getInstance()
         ConfigObject results = new ConfigObject()
 

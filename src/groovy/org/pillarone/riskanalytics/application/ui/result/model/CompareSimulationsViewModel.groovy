@@ -7,7 +7,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -33,7 +32,10 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     }
 
     protected ITableTreeModel buildTree() {
-        List paths = ResultAccessor.getPaths(item[0]?.simulationRun)
+        //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
+        //all result paths for this simulation run
+        ConfigObject allResults = ResultViewModel.initPostSimulationCalculations(item[0]?.simulationRun)
+        List paths = allResults."0".keySet().toList()
         builder = new ResultTreeBuilder(model, structure, item[0], paths)
         builder.applyResultPaths()
 
