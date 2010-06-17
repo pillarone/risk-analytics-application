@@ -584,7 +584,7 @@ class ExportItemAction extends ExportAction {
 
     protected void doAction(ModellingItem item) {
         if (item.changed) {
-            ULCAlert alert = new I18NAlert("UnsavedChanged")
+            ULCAlert alert = new I18NAlert("UnsavedExport")
 
             alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
                 def value = windowEvent.source.value
