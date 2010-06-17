@@ -1,21 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.chart.action
 
 import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCWindow
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.serializable.IFileChooseHandler
 import com.ulcjava.base.application.util.serializable.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.chart.view.ChartView
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class ChartDataExportAction extends ResourceBasedAction {
     ChartView view
-
+    Log LOG = LogFactory.getLog(ChartDataExportAction)
 
     public ChartDataExportAction(ChartView view) {
         super("ChartDataExportAction")
@@ -41,16 +43,21 @@ class ChartDataExportAction extends ResourceBasedAction {
                             exporter.addTab "Simulation Settngs", view.model.simulationSettings
                             exporter.writeWorkBook stream
                         } catch (UnsupportedOperationException t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                            LOG.error t.toString()
+                            new I18NAlert(ancestor, "exportError").show()
                         } catch (Throwable t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                            LOG.error t.toString()
+                            new I18NAlert(ancestor, "exportError").show()
                             throw t
                         } finally {
                             stream.close()
                         }
                     }, onSuccess: {path, name ->
                     }, onFailure: {reason, description ->
-                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                        if (reason != IFileChooseHandler.CANCELLED) {
+                            LOG.error description
+                            new I18NAlert(ancestor, "exportError").show()
+                        }
                     }] as IFileStoreHandler, selectedFile)
 
                 },
