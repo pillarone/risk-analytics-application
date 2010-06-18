@@ -45,17 +45,19 @@ class ChangeChartColorDialog {
                 GString text = "${chartView?.model?.seriesNames[keyFigureIndex]} for ${chartView.model.getPeriodLabel(periodIndex)}"
                 ULCLabel label = new ULCLabel(text)
                 label.setToolTipText text
+                label.setForeground UIUtils.getFontColor(ulccolor)
                 panel.setBackground(ulccolor)
                 ULCButton button = new ULCButton("Change Color")
                 button.addActionListener([actionPerformed: {
                     ULCColorChooser colorChooser = new ULCColorChooser(ulccolor);
-                    ULCDialog dialog = ULCColorChooser.createDialog(chartView.content, "My Color Chooser", true, colorChooser, new ColorChooserActionListener(colorChooser, chartView.model, panel, keyFigureIndex, periodIndex), null);
+                    ULCDialog dialog = ULCColorChooser.createDialog(chartView.content, "My Color Chooser", true, colorChooser, new ColorChooserActionListener(colorChooser, chartView.model, panel, label, keyFigureIndex, periodIndex), null);
                     dialog.setVisible(true);
                 }] as IActionListener)
                 panel.add(ULCBoxPane.BOX_EXPAND_TOP, label);
                 panel.add(ULCBoxPane.BOX_RIGHT_TOP, button);
                 seriesPane.add(ULCBoxPane.BOX_EXPAND_TOP, panel)
             }
+            seriesPane.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         }
 
         cancel = new ULCButton(UIUtils.getText(this.class, "cancel"))
@@ -87,13 +89,15 @@ class ColorChooserActionListener implements IActionListener {
     ULCColorChooser colorChooser
     ChartViewModel model
     ULCBoxPane panel
+    ULCLabel label
     int keyFigureIndex
     int periodIndex
 
-    public ColorChooserActionListener(ULCColorChooser colorChooser, ChartViewModel model, ULCBoxPane panel, int keyFigureIndex, int periodIndex) {
+    public ColorChooserActionListener(ULCColorChooser colorChooser, ChartViewModel model, ULCBoxPane panel, ULCLabel label, int keyFigureIndex, int periodIndex) {
         this.colorChooser = colorChooser;
         this.model = model
         this.panel = panel
+        this.label = label
         this.keyFigureIndex = keyFigureIndex
         this.periodIndex = periodIndex
     }
@@ -101,6 +105,7 @@ class ColorChooserActionListener implements IActionListener {
     public void actionPerformed(ActionEvent event) {
         com.ulcjava.base.application.util.Color newColor = colorChooser.getColor();
         panel.setBackground newColor
+        label.setForeground UIUtils.getFontColor(newColor)
         if (model instanceof DistributionChartsViewModel) {
             model.strategyModel.seriesColor.changeColor keyFigureIndex, periodIndex, UIUtils.toAwtColor(newColor)
         } else {

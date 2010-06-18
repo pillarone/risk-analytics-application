@@ -4,6 +4,7 @@ import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
@@ -126,11 +127,20 @@ class UIUtils {
     }
 
     public static com.ulcjava.base.application.util.Color toULCColor(java.awt.Color color) {
-        return new com.ulcjava.base.application.util.Color(color.getRed(), color.getGreen(), color.getBlue());
+        return new com.ulcjava.base.application.util.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     public static java.awt.Color toAwtColor(com.ulcjava.base.application.util.Color color) {
-        return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
+        return new java.awt.Color((color.getRed() / 255).floatValue(), (color.getGreen() / 255).floatValue(), (color.getBlue() / 255).floatValue(), (color.getAlpha() / 255).floatValue());
+    }
+
+
+    public static com.ulcjava.base.application.util.Color getFontColor(com.ulcjava.base.application.util.Color color) {
+        if (color.alpha < 150)
+            return Color.black
+        java.awt.Color c = toAwtColor(color);
+        //calculate brightness
+        return Math.round((0.212671F * c.getRed()) + (0.715160F * c.getGreen()) + (0.072169F * c.getBlue())) > 100 ? Color.black : Color.white;
     }
 
 }
