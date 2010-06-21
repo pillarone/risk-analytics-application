@@ -33,9 +33,6 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
     }
 
     public JFreeChart getChart() {
-        if (!onlyStochasticSeries) {
-            return chartInsetWriter.createErrorMessageChart("at least one series is constant")
-        }
 
         DefaultCategoryDataset currentDataset = dataset
 
@@ -227,4 +224,10 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
             fireModelChanged()
         }
     }
+
+    public boolean isChangeColorEnabled() {
+        return false;
+    }
+
+
 }

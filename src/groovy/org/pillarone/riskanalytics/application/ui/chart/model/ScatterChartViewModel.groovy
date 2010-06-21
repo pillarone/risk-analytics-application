@@ -10,10 +10,8 @@ import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class ScatterChartViewModel extends ChartViewModel {
     protected List<Double> means
@@ -30,9 +28,9 @@ class ScatterChartViewModel extends ChartViewModel {
         if (series.size() != 2 || series[0].size() != series[1].size()) {
             return chartInsetWriter.createErrorMessageChart("series contain different number of observations")
         }
-        if (!onlyStochasticSeries) {
-            return chartInsetWriter.createErrorMessageChart("at least one series is constant")
-        }
+//        if (!onlyStochasticSeries) {
+//            return chartInsetWriter.createErrorMessageChart("at least one series is constant")
+//        }
 
         int seriesCount = 0
         periodCount.times {int periodIndex ->
@@ -46,11 +44,13 @@ class ScatterChartViewModel extends ChartViewModel {
         if (chartProperties.xAxisTitle == null) chartProperties.xAxisTitle = seriesNames[0]
         if (chartProperties.yAxisTitle == null) chartProperties.yAxisTitle = seriesNames[1]
         JFreeChart chart = ChartFactory.createScatterPlot(chartProperties.title, chartProperties.xAxisTitle, chartProperties.yAxisTitle, dataset, PlotOrientation.VERTICAL, chartProperties.showLegend, false, false)
-        seriesCount.times {int seriesIndex ->
-            if (seriesIndex < seriesColorList.size()) {
-                chart.getXYPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColorList[seriesIndex]
+        int seriesIndex = 0
+        periodCount.times {int periodIndex ->
+            if (showLine[0, periodIndex]) {
+                chart.getXYPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColor(periodIndex)
+                chart.getXYPlot().getRenderer(0).setSeriesShape seriesIndex, new Rectangle(2, 2)
+                seriesIndex++
             }
-            chart.getXYPlot().getRenderer(0).setSeriesShape seriesIndex, new Rectangle(2, 2)
 //        addStatisticalValues(chart, seriesColorList[0])
         }
         return chart
@@ -103,12 +103,12 @@ class ScatterChartViewModel extends ChartViewModel {
 
     protected void addStatisticalValues(JFreeChart chart, Color c) {
         Color meanColor = new Color((int) (c.getRed() * 0.7),
-            (int) (c.getGreen() * 0.7),
-            (int) (c.getBlue() * 0.7))
+                (int) (c.getGreen() * 0.7),
+                (int) (c.getBlue() * 0.7))
 
         Color stdDevColor = new Color((int) (c.getRed() * 0.7),
-            (int) (c.getGreen() * 0.7),
-            (int) (c.getBlue() * 0.7))
+                (int) (c.getGreen() * 0.7),
+                (int) (c.getBlue() * 0.7))
 
         double yMin = chart.getXYPlot().getRangeAxis().getRange().lowerBound
         double yRange = chart.getXYPlot().getRangeAxis().getRange().upperBound - yMin

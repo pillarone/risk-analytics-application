@@ -27,7 +27,6 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
  * To change this template use File | Settings | File Templates.
  */
 abstract class KernelEstimatorChartViewModel extends ChartViewModel {
-    protected static List<Color> seriesColorList = [Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN, Color.PINK, Color.ORANGE, Color.MAGENTA, Color.CYAN];
 
     protected List<Double> observations
     protected int rawNodeIndex = 0
@@ -80,7 +79,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
 
         series.eachWithIndex {List observations, int keyFigureIndex ->
             observations.eachWithIndex {List<Double> periods, int periodIndex ->
-                if (showLine[keyFigureIndex, periodIndex]) {
+                if (showLine[keyFigureIndex, periodIndex] && notStochasticSeries[seriesNames[keyFigureIndex], periodIndex] == null) {
                     XYSeries currentSeries = null
 
                     this.observations = periods
@@ -206,18 +205,32 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
             List IQRsP = []
             periodCount.times {int periodIndex ->
                 onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                meansP << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                stdDevsP << ResultAccessor.getStdDev(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
                 Percentile percentile = new Percentile(percentile: 75)
                 Double per75 = percentile.evaluate(simulationRun, periodIndex, node)
                 percentile = new Percentile(percentile: 25)
                 Double per25 = percentile.evaluate(simulationRun, periodIndex, node)
-                if (per75 != null && per25 != null) {
-                    IQRsP << per75 - per25
+                if (onlyStochasticSeries) {
+                    periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    meansP << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    stdDevsP << ResultAccessor.getStdDev(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+
+                    if (per75 != null && per25 != null) {
+                        IQRsP << per75 - per25
+                    }
+                } else {
+                    notStochasticSeries[node.getShortDisplayPath(nodes), periodIndex] = true
+                    periods << []
+                    minsP << 0
+                    maxsP << 0
+                    meansP << 0
+                    stdDevsP << 0
+                    if (per75 != null && per25 != null) {
+                        IQRsP << 0
+                    }
                 }
+                onlyStochasticSeries = true
             }
             series << periods
             mins << minsP

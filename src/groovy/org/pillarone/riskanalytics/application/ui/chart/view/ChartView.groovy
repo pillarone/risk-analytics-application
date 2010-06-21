@@ -15,6 +15,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListen
 import org.pillarone.riskanalytics.application.ui.chart.action.ChartDataExportAction
 import org.pillarone.riskanalytics.application.ui.chart.action.ChartPictureExportAction
 import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
+import org.pillarone.riskanalytics.application.ui.chart.model.DistributionChartsViewModel
+import org.pillarone.riskanalytics.application.ui.chart.model.ScatterChartViewModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.canoo.ulc.community.jfreechart.server.*
 import com.ulcjava.base.application.*
@@ -155,14 +157,21 @@ class ChartView implements IModelChangedListener {
                 ULCCheckBox checkBox = new ULCCheckBox()
                 checkBox.addValueChangedListener([valueChanged: {ValueChangedEvent event -> model.setSeriesVisibility(seriesIndex, periodIndex, event.source.isSelected())}] as IValueChangedListener)
                 checkBox.name = "Series${seriesName}Period${periodIndex}CheckBox"
-                if (periodIndex == 0) { checkBox.selected = true }
+                if (periodIndex == 0) { checkBox.selected = isCheckBoxEnabled(model, seriesName, periodIndex)}
                 periodBox.add(ULCBoxPane.BOX_CENTER_EXPAND, checkBox)
+                checkBox.setEnabled(isCheckBoxEnabled(model, seriesName, periodIndex))
                 periodCheckBoxes << [seriesIndex, periodIndex, checkBox]
             }
         }
 
         periodBox.border = BorderFactory.createTitledBorder("")
         return periodBox
+    }
+
+    private boolean isCheckBoxEnabled(ChartViewModel model, String seriesName, int periodIndex) {
+        if (model instanceof DistributionChartsViewModel)
+            return isCheckBoxEnabled(model.strategyModel, seriesName, periodIndex)
+        return model.notStochasticSeries[seriesName, periodIndex] == null
     }
 
 
@@ -198,7 +207,8 @@ class ChartView implements IModelChangedListener {
             button.selected = model.allFromOneKeyFigureSelected(index)
         }
         periodCheckBoxes.each {List l ->
-            l[2].selected = model.getSeriesVisibility(l[0], l[1])
+            if (l[2].enabled)
+                l[2].selected = model.getSeriesVisibility(l[0], l[1])
         }
         allPeriods?.selected = model.allSelected()
         JFreeChart chart = model.getChart()
@@ -328,7 +338,14 @@ class ChangeChartColorAction extends ResourceBasedAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        new ChangeChartColorDialog(chartView).dialog.visible = true
+        if (chartView.model instanceof ScatterChartViewModel)
+            new ChangePeriodColorDialog(chartView).dialog.visible = true
+        else
+            new ChangeChartColorDialog(chartView).dialog.visible = true
+    }
+
+    def boolean isEnabled() {
+        return chartView.model.isChangeColorEnabled();
     }
 
 

@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import java.awt.Color
 import java.text.SimpleDateFormat
 import org.jfree.chart.JFreeChart
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
@@ -29,13 +28,13 @@ abstract class ChartViewModel {
 
     ChartProperties chartProperties
 
-    protected static List<Color> seriesColorList = [Color.RED, Color.BLUE, Color.YELLOW, Color.GREEN];
     protected static float chartLineThickness = 2.0
 
     ChartInsetWriter chartInsetWriter
 
 
     boolean onlyStochasticSeries = true
+    def notStochasticSeries = [:]
 
     public drawLegend = true
 
@@ -207,6 +206,10 @@ abstract class ChartViewModel {
 
 
     protected void writeInsetContent(ChartInsetWriter writer) {}
+
+    public boolean isChangeColorEnabled() {
+        return true
+    }
 }
 
 class ChartProperties {

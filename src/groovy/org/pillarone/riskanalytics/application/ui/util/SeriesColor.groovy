@@ -28,8 +28,21 @@ class SeriesColor {
             new Color((color.getRed() / 255).floatValue(), (color.getGreen() / 255).floatValue(), (color.getBlue() / 255).floatValue(), (1.0f - (1 + periodIndex) * (1 / (periodCount + 1))).floatValue())
     }
 
-    public void changeColor(int keyFigureIndex, int periodIndex, Color newColor) {
-        userChangedColors[keyFigureIndex * periodCount + periodIndex] = newColor
+    public Color getColor(int index) {
+        Color color = (index >= seriesColorList.size()) ? seriesColorList[index % seriesColorList.size()] : seriesColorList[index]
+        return userChangedColors[index] ? userChangedColors[index] : color
     }
+
+    public void changeColor(int keyFigureIndex, int periodIndex, Color newColor) {
+        if (keyFigureIndex == -1)
+            changeColor(periodIndex, newColor)
+        else
+            userChangedColors[keyFigureIndex * periodCount + periodIndex] = newColor
+    }
+
+    public void changeColor(int index, Color newColor) {
+        userChangedColors[index] = newColor
+    }
+
 
 }

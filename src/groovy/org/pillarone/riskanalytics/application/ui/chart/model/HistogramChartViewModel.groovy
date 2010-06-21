@@ -32,15 +32,12 @@ class HistogramChartViewModel extends ChartViewModel {
     }
 
     public JFreeChart getChart() {
-        if (!onlyStochasticSeries) {
-            return chartInsetWriter.createErrorMessageChart("at least one series is constant")
-        }
 
         HistogramDataset data = new HistogramDataset()
-
+        currentBinCount = getMinBinCount()
         series.eachWithIndex {List observations, int keyFigureIndex ->
             observations.eachWithIndex {List<Double> periods, int periodIndex ->
-                if (showLine[keyFigureIndex, periodIndex]) {
+                if (showLine[keyFigureIndex, periodIndex] && notStochasticSeries[seriesNames[keyFigureIndex], periodIndex] == null && periods.size() > 0) {
                     data.addSeries("${seriesNames[keyFigureIndex]} P${getPeriodLabel(periodIndex)}", periods as double[], currentBinCount, min, max)   // Math.floor((max-min)/binSize)
                 }
             }
@@ -121,14 +118,24 @@ class HistogramChartViewModel extends ChartViewModel {
             List periods = []
             List minsP = []
             List maxsP = []
+            String path = node.getShortDisplayPath(nodes)
             periodCount.times {int periodIndex ->
                 onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                if (onlyStochasticSeries) {
+                    periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                } else {
+                    notStochasticSeries[path, periodIndex] = true
+                    periods << []
+                    minsP << 0
+                    maxsP << 0
+                }
+                onlyStochasticSeries = true
             }
             series << periods
-            seriesNames << node.getShortDisplayPath(nodes)
+
+            seriesNames << path
             mins << minsP
             maxs << maxsP
         }
@@ -143,6 +150,18 @@ class HistogramChartViewModel extends ChartViewModel {
                 min = Math.min(min, mins[index][index2])
             }
         }
+    }
+
+    int getMinBinCount() {
+        int min = -1;
+        series.eachWithIndex {List observations, int keyFigureIndex ->
+            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+                if (min == -1 && periods.size() > 5) {
+                    min = Math.min((int) periods.size() / 5, 50);
+                }
+            }
+        }
+        return min
     }
 
 

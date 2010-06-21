@@ -9,11 +9,9 @@ import org.jfree.chart.renderer.xy.XYStepRenderer
 import org.jfree.data.statistics.SimpleHistogramBin
 import org.jfree.data.statistics.SimpleHistogramDataset
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class DiscretePDFChartViewModel extends ChartViewModel {
     double mean
@@ -58,7 +56,7 @@ class DiscretePDFChartViewModel extends ChartViewModel {
             XYStepRenderer discreteLineRenderer = new XYStepRenderer()
             discreteLineRenderer.setSeriesStroke 0, new BasicStroke(chartLineThickness)
 
-            Color c = seriesColorList[index]
+            Color c = seriesColor.getColor(index)
             Color tc = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 / series.size()))
             discreteLineRenderer.setSeriesPaint 0, tc
 
