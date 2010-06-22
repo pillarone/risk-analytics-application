@@ -49,7 +49,22 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
             result << c.getNormalizedName()
             fillMaps(c)
         }
+        setValidValueIfEmpty(result)
         return result
+    }
+
+    //if a new DCC which contains a CS is added this makes sure the displayed value is also stored in the parameter
+    private void setValidValueIfEmpty(List values) {
+        if (values.size() > 0) {
+            int i = 1;
+            for (ConstrainedStringParameterHolder holder in parameter) {
+                String normalizedName = nameToNormalized.get(holder.businessObject.stringValue)
+                if (normalizedName == null || !values.contains(normalizedName)) {
+                    setValueAt(values[0], i)
+                }
+                i++
+            }
+        }
     }
 
     public void addComponent(Component component) {

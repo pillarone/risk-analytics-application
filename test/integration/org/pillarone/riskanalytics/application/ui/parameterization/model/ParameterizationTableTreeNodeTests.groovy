@@ -142,6 +142,10 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertTrue node.isCellEditable(1)
         assertNotNull node.getValueAt(1)
 
+        //ART-83
+        String stringValue = node.parameter[0].businessObject.stringValue
+        assertTrue node.values.contains(node.nameToNormalized.get(stringValue))
+
         assertNotNull node
         assertEquals 5, node.getValues().size()
 
