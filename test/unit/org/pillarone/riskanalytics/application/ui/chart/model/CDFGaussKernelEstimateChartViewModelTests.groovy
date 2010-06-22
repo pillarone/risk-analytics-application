@@ -19,13 +19,15 @@ class CDFGaussKernelEstimateChartViewModelTests extends GroovyTestCase {
 
     void testGetChart() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
+
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> true}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field, percentile -> 2}
         resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 3}
         resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 2}
-        resultAccessor.demand.getPercentile(5..5) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field, percentile -> 2}
+        resultAccessor.demand.getPercentile(3..3) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field, percentile -> 2}
 
         ResultTableTreeNode node = new ResultTableTreeNode("outTest")
         node.collector = "testCollector"

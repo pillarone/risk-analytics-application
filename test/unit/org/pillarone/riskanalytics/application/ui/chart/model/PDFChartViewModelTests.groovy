@@ -27,12 +27,12 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testGetChartGauss() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
         resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 2}
-        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
 
         ResultTableTreeNode node = new ResultTableTreeNode("outTest")
         node.collector = "testCollector"
@@ -48,12 +48,12 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testGetChartAdaptiveGauss() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
         resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 2}
-        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
 
         ResultTableTreeNode node = new ResultTableTreeNode("outTest")
         node.collector = "testCollector"
@@ -69,16 +69,16 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testGetChartAdaptiveRaw() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
         resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 2}
-        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
 
 
         MockFor calculationAccessor = new MockFor(PostSimulationCalculation)
-        calculationAccessor.demand.executeQuery(1..1) { a, b ->
+        calculationAccessor.demand.executeQuery(1..1) {a, b ->
             return [["keyFigureParameter": 1.0, "result": 2.0d]]
         }
         ResultTableTreeNode node = new ResultTableTreeNode("outTest")
