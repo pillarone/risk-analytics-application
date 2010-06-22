@@ -176,7 +176,7 @@ class ActionsView {
         if (simulationMessageKey) {
             simulationMessage = getText(this.class, simulationMessageKey)
         } else if (model.postSimulationCalculationsRunning()) {
-            simulationMessage = "Calculations ${model.simulationProgress} % complete"
+            simulationMessage = "Calculating statistics ${model.simulationProgress} % complete"
         } else if (model.simulationRunning()) {
             simulationMessage = "Simulation ${model.simulationProgress} % complete"
         }
