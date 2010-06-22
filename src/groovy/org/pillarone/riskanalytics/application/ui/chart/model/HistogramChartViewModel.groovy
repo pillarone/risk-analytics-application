@@ -157,7 +157,7 @@ class HistogramChartViewModel extends ChartViewModel {
         series.eachWithIndex {List observations, int keyFigureIndex ->
             observations.eachWithIndex {List<Double> periods, int periodIndex ->
                 if (min == -1 && periods.size() >= 5) {
-                    min = Math.min((int) periods.size() / 5, 50);
+                    min = Math.min((int) (periods.size() / 5), 50);
                 }
             }
         }
