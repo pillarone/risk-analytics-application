@@ -9,7 +9,7 @@ import javax.swing.*
  */
 class SplashScreen {
     private static final String BUNDLE_FILENAME = "org.pillarone.riskanalytics.application.clientResources";
-    private static final String WAIT_ICON_FILENAME = "/org/pillarone/riskanalytics/application/icons/pillarone-logo-simple-white.png";
+    private static final String WAIT_ICON_FILENAME = "/org/pillarone/riskanalytics/application/icons/pillarone-splashscreen.png";
 
     private JWindow fSplashWindow;
     private volatile JLabel fWaitLabel;
@@ -47,10 +47,10 @@ class SplashScreen {
     private void layoutComponents() {
         JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-        contentPane.setBackground(Color.white);
+        contentPane.setPreferredSize new Dimension(498, 330)
 
         JPanel msgPanel = new JPanel(new BorderLayout());
-        msgPanel.setBackground(new Color(212, 209, 202));
+        msgPanel.setBackground(new Color(212, 209, 202));// Color(0xdb, 0xdb, 0xdb));
         msgPanel.setPreferredSize new Dimension(500, 40)
         fWaitLabel.setHorizontalAlignment(JLabel.CENTER);
         fWaitLabel.setForeground(Color.black);
