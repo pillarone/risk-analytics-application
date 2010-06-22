@@ -23,7 +23,7 @@ public class SplashScreenHandler implements IMessageService {
 
     public void handleMessage(String msg) {
         if ("hideSplash".equals(msg)) {
-//            hideSplashScreen();
+            hideSplashScreen();
         } else {
             fSplashScreen.update(msg);
         }
