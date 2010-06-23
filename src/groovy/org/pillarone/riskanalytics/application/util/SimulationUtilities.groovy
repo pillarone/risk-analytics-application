@@ -9,8 +9,8 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 
 public class SimulationUtilities {
 
-    public static List RESULT_CHAR_PREFIXES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-    public static List RESULT_VIEW_COLOR = [new Color(255, 204, 204), new Color(204, 204, 255), new Color(204, 255, 153), new Color(191, 90, 60), new Color(255, 223, 191),  new Color(255, 255, 102),new Color(255, 255, 80), new Color(170, 170, 39), new Color(99, 191, 60), new Color(223, 223, 167)]
+    public static List RESULT_CHAR_PREFIXES = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R"]
+    public static List RESULT_VIEW_COLOR = [new Color(255, 204, 204), new Color(204, 204, 255), new Color(204, 255, 153), new Color(191, 90, 60), new Color(255, 223, 191), new Color(255, 255, 102), new Color(255, 255, 80), new Color(170, 170, 39), new Color(99, 191, 60), new Color(223, 223, 167)]
 
     /**
      *  get a max periodCount in the simulations list

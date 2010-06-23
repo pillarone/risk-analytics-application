@@ -5,21 +5,22 @@ import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.tree.TreePath
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.shared.UlcEventCategories
 import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.SimulationUtilities
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import com.ulcjava.base.application.tabletree.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
 
@@ -175,10 +176,11 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     //TODO: remove listener after closing view
+
     protected void attachListeners() {
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},
-                itemChanged: { Parameterization item ->
+                itemChanged: {Parameterization item ->
                     updateErrorVisualization(item)
                 }] as IModellingItemChangeListener)
     }
@@ -328,7 +330,9 @@ class CenteredHeaderRenderer extends DefaultTableTreeHeaderCellRenderer {
     private void setBackground(ULCTableTree tableTree) {
         if (columnIndex > -1) {
             int pIndex = columnIndex % tableTree.model.getParameterizationsSize()
-            setBackground(SimulationUtilities.RESULT_VIEW_COLOR[pIndex])
+            Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[pIndex])
+            setBackground(color)
+            setForeground UIUtils.getFontColor(color)
         }
     }
 

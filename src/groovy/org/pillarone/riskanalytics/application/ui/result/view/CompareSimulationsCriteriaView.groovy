@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.result.view
 
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.result.action.DeviationAbsoluteDifferenceAction
@@ -8,6 +9,8 @@ import org.pillarone.riskanalytics.application.ui.result.action.DeviationPercent
 import org.pillarone.riskanalytics.application.ui.result.action.FractionAbsoluteDifferenceAction
 import org.pillarone.riskanalytics.application.ui.result.action.FractionPercentageAction
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
+import org.pillarone.riskanalytics.application.ui.util.SeriesColor
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
@@ -207,7 +210,9 @@ class CompareSimulationsCriteriaView {
         pane.removeAll()
         simulationCheckBoxes.eachWithIndex {SimulationCheckBox it, int i ->
             it.setText(getNamePrefix(i) + it.simulation.name)
-            it.setBackground(SimulationUtilities.RESULT_VIEW_COLOR.getAt(i))
+            Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[i])
+            it.setBackground(color)
+            it.setForeground UIUtils.getFontColor(color)
             it.setSelected(true)
             it.setEnabled(true)
             pane.add(ULCBoxPane.BOX_LEFT_TOP, it)

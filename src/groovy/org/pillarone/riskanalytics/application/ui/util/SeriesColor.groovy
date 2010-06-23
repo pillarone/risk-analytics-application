@@ -7,7 +7,7 @@ import java.awt.Color
  */
 class SeriesColor {
 
-    static def seriesColorList = [new Color(159, 4, 4), new Color(0, 131, 52), new Color(25, 0, 211), new Color(131, 86, 0),
+    public static def seriesColorList = [new Color(159, 4, 4), new Color(0, 131, 52), new Color(25, 0, 211), new Color(131, 86, 0),
             new Color(127, 194, 47), new Color(135, 95, 190), new Color(86, 91, 0), new Color(0, 93, 131),
             new Color(64, 41, 84), new Color(0, 131, 98), new Color(0, 51, 10), new Color(0, 28, 91), new Color(131, 131, 0),
             new Color(211, 34, 38), new Color(17, 170, 138), new Color(92, 124, 218), new Color(205, 51, 0), new Color(63, 65, 51)

@@ -11,8 +11,6 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Color
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
@@ -21,10 +19,10 @@ import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
-import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulationsCriteriaView
-import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
-import org.pillarone.riskanalytics.application.ui.result.view.NumberFormatRenderer
+import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.result.action.*
 
@@ -230,11 +228,15 @@ class CompareHeaderRenderer extends CenteredHeaderRenderer {
         IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node);
         int simualtionIndex = tableTree.model.getSimulationRunIndex(columnIndex)
         if (simualtionIndex != -1) {
-            setBackground(SimulationUtilities.RESULT_VIEW_COLOR[tableTree.model.getSimulationRunIndex(columnIndex)])
+            Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[tableTree.model.getSimulationRunIndex(columnIndex)])
+            setBackground(color)
+            setForeground UIUtils.getFontColor(color)
         } else {
             IFunction function = tableTree.model.getFunction(columnIndex)
             if (function instanceof CompareFunction) {
-                setBackground(SimulationUtilities.RESULT_VIEW_COLOR[tableTree.model.getSimulationRunIndex(function.runB)])
+                Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[tableTree.model.getSimulationRunIndex(function.runB)])
+                setBackground(color)
+                setForeground UIUtils.getFontColor(color)
             }
         }
         return component
