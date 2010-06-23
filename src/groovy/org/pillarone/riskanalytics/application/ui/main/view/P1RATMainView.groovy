@@ -76,6 +76,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     Map openItems
     Map openModels
+    Map windowMenus
 
     TabbedPaneManagerHelper tabbedPaneManagerHelper = new TabbedPaneManagerHelper()
 
@@ -83,6 +84,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         this.model = model
         openItems = [:]
         openModels = [:]
+        windowMenus = [:]
         initComponents()
         layoutComponents()
         attachListeners()
@@ -440,6 +442,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new WindowSelectionAction(selectedModel.name, this))
             item.setGroup(windowMenuItemGroup)
             windowMenu.add(item)
+            windowMenus[selectedModel.name] = item
 
             windowTitle = selectedModel.name
         }
@@ -468,6 +471,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new WindowSelectionAction(batchName, this))
             item.setGroup(windowMenuItemGroup)
             windowMenu.add(item)
+            windowMenus[batchName] = item
 
             windowTitle = batchName
         }
@@ -529,9 +533,10 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                     }
                     if (closeTab) {
                         openItems.remove(currentComponent)
-                        openModels.remove(currentComponent)
+                        def removedModel = openModels.remove(currentComponent)
                         modelCardContent.removeTabAt closingIndex
                         model.closeItem(modelForItem, item)
+                        selectLastTab(removedModel, item, modelCardContent)
                     }
 
                 }] as IWindowListener)
@@ -539,9 +544,10 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             }
             if (!isChanged(item)) {
                 openItems.remove(currentComponent)
-                openModels.remove(currentComponent)
+                def removedModel = openModels.remove(currentComponent)
                 modelCardContent.removeTabAt closingIndex
                 model.closeItem(modelForItem, item)
+                selectLastTab(removedModel, item, modelCardContent)
             }
         }] as ITabListener)
 
@@ -558,6 +564,25 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         }, focusLost: {e ->}] as IFocusListener)
 */
         return tabbedPane
+    }
+
+    void selectLastTab(def removedModel, def item, ULCCloseableTabbedPane modelCardContent) {
+        String itemMenuName = (removedModel) ? removedModel.name : item?.name ? item.name : getText("NewBatch")
+        if (itemMenuName && windowMenus[itemMenuName] && modelCardContent.getTabCount() == 0) {
+            windowMenu.remove(windowMenus[itemMenuName])
+            modelPane.removeCard(modelCardContent)
+        }
+
+
+        def lastItem
+        def itemModel
+        openItems.each {k, v ->
+            itemModel = openModels[k]
+            lastItem = v
+        }
+        if (lastItem && itemModel) {
+            createOrSelectTab(itemModel, lastItem)
+        }
     }
 
     private boolean isChanged(item) {
