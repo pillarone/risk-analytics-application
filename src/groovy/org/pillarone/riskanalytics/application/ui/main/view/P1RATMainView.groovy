@@ -572,8 +572,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             windowMenu.remove(windowMenus[itemMenuName])
             modelPane.removeCard(modelCardContent)
         }
-
-
+        if (openItems.size() < 2) return
         def lastItem
         def itemModel
         openItems.each {k, v ->

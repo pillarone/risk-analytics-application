@@ -625,6 +625,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     def param = ParameterizationHelper.createDefaultParameterization(simulationModel, dialog.periodCount.value)
                     param.name = dialog.nameInput.text
                     param.save()
+                    param = ModellingItemFactory.getItem(param.dao, param.modelClass)
                     dialog.hide()
 
                     model.selectionTreeModel.addNodeForItem(param)

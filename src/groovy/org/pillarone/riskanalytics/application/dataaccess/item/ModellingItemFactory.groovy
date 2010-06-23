@@ -419,6 +419,17 @@ class ModellingItemFactory {
         getSimulationInstances().remove(key(item.class, item.modelClass, item.name))
     }
 
+    public static void put(ParameterizationDAO dao, Class modelClass = null) {
+        Parameterization item = new Parameterization(dao.name)
+        item.versionNumber = new VersionNumber(dao.itemVersion)
+        // PMO-645 set valid  for parameterization check
+        item.valid = dao.valid
+        if (modelClass != null)
+            item.modelClass = modelClass
+        getItemInstances()[key(Parameterization, dao.id)] = item
+    }
+
+
     static void clear() {
         getSimulationInstances().clear()
         getItemInstances().clear()
