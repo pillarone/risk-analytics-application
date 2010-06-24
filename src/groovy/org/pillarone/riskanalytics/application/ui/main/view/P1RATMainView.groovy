@@ -536,7 +536,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                         def removedModel = openModels.remove(currentComponent)
                         modelCardContent.removeTabAt closingIndex
                         model.closeItem(modelForItem, item)
-                        removeCard(removedModel, item, modelCardContent)
+                        removeCard(modelCardContent)
                     }
 
                 }] as IWindowListener)
@@ -547,7 +547,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
                 def removedModel = openModels.remove(currentComponent)
                 modelCardContent.removeTabAt closingIndex
                 model.closeItem(modelForItem, item)
-                removeCard(removedModel, item, modelCardContent)
+                removeCard(modelCardContent)
             }
         }] as ITabListener)
 
@@ -566,12 +566,15 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         return tabbedPane
     }
 
-    void removeCard(def removedModel, def item, ULCCloseableTabbedPane modelCardContent) {
-        String itemMenuName = (removedModel) ? removedModel.name : item?.name ? item.name : getText("NewBatch")
-        if (itemMenuName && windowMenus[itemMenuName] && modelCardContent.getTabCount() == 0) {
-            windowMenu.remove(windowMenus[itemMenuName])
-            modelPane.removeCard(modelCardContent)
-        }
+    void removeCard(ULCCloseableTabbedPane modelCardContent) {
+        try {
+            String selectedName = modelPane.getSelectedName()
+            if (modelCardContent && modelCardContent.getTabCount() == 0) {
+                modelPane.removeCard(modelCardContent)
+                if (selectedName && windowMenus[selectedName])
+                    windowMenu.remove(windowMenus[selectedName])
+            }
+        } catch (Exception ex) {}
     }
 
     private boolean isChanged(item) {
