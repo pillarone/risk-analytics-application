@@ -56,7 +56,7 @@ class DiscretePDFChartViewModel extends ChartViewModel {
             XYStepRenderer discreteLineRenderer = new XYStepRenderer()
             discreteLineRenderer.setSeriesStroke 0, new BasicStroke(chartLineThickness)
 
-            Color c = seriesColor.getColor(index)
+            Color c = seriesColor.getColorByParam(index)
             Color tc = new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 / series.size()))
             discreteLineRenderer.setSeriesPaint 0, tc
 

@@ -5,12 +5,10 @@ import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 public class StackedBarChartViewModel extends ChartViewModel {
     List means
@@ -25,24 +23,26 @@ public class StackedBarChartViewModel extends ChartViewModel {
     public JFreeChart getChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
+        JFreeChart chart = ChartFactory.createStackedBarChart(
+                chartProperties.title,         // chart title
+                chartProperties.xAxisTitle,               // domain axis label
+                chartProperties.yAxisTitle,                  // range axis label
+                dataset,                  // data
+                PlotOrientation.VERTICAL, // orientation
+                chartProperties.showLegend,                     // include legend
+                true,                     // tooltips?
+                false                     // URLs?
+        );
+
         means.eachWithIndex {List series, int seriesIndex ->
             series.eachWithIndex {double values, int periodIndex ->
                 if (showLine[seriesIndex, periodIndex]) {
                     dataset.addValue(values, seriesNames[seriesIndex], getPeriodLabel(periodIndex))
+                    chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColorByParam(seriesIndex)
                 }
             }
         }
 
-        JFreeChart chart = ChartFactory.createStackedBarChart(
-            chartProperties.title,         // chart title
-            chartProperties.xAxisTitle,               // domain axis label
-            chartProperties.yAxisTitle,                  // range axis label
-            dataset,                  // data
-            PlotOrientation.VERTICAL, // orientation
-            chartProperties.showLegend,                     // include legend
-            true,                     // tooltips?
-            false                     // URLs?
-        );
         return chart
     }
 

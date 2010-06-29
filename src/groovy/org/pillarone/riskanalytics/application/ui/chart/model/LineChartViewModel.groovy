@@ -7,10 +7,8 @@ import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 public class LineChartViewModel extends ChartViewModel {
     List means
@@ -26,15 +24,23 @@ public class LineChartViewModel extends ChartViewModel {
         DefaultCategoryDataset currentDataset = dataset
 
         JFreeChart chart = ChartFactory.createLineChart(
-            chartProperties.title,      // chart title
-            chartProperties.xAxisTitle,                      // x axis label
-            chartProperties.yAxisTitle,                      // y axis label
-            currentDataset,                  // data
-            PlotOrientation.VERTICAL,
-            chartProperties.showLegend,                     // include legend
-            true,                     // tooltips
-            false                     // urls
+                chartProperties.title,      // chart title
+                chartProperties.xAxisTitle,                      // x axis label
+                chartProperties.yAxisTitle,                      // y axis label
+                currentDataset,                  // data
+                PlotOrientation.VERTICAL,
+                chartProperties.showLegend,                     // include legend
+                true,                     // tooltips
+                false                     // urls
         );
+
+        means.eachWithIndex {List series, int seriesIndex ->
+            series.eachWithIndex {double values, int periodIndex ->
+                if (showLine[seriesIndex, periodIndex]) {
+                    chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColorByParam(seriesIndex)
+                }
+            }
+        }
 
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
