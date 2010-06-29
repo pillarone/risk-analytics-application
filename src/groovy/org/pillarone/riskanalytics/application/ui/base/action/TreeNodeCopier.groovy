@@ -72,7 +72,7 @@ class TreeNodeCopier extends ResourceBasedAction {
         }
 
         if (copyWithPath)
-            line.append(node.path.toString() + "\t")
+            line.append(node.path.toString() + getNodeName(node, valueStrings) + "\t")
 
         currentDepth.times {
             line.append(space)
@@ -105,5 +105,11 @@ class TreeNodeCopier extends ResourceBasedAction {
         format.setMaximumFractionDigits(10)
         format.groupingUsed = false
         return format
+    }
+
+    String getNodeName(def node, List valueStrings) {
+        if (!valueStrings || valueStrings.size() < 2 || "".equals(valueStrings.get(1)) || !node.properties.keySet().contains("name"))
+            return ""
+        return ":" + node.name
     }
 }
