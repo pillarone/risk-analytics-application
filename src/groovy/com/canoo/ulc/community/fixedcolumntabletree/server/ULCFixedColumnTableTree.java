@@ -57,14 +57,16 @@ public class ULCFixedColumnTableTree extends ULCScrollPane {
             throw new IllegalArgumentException("model and columnWidths length are not compatible");
         }
 
-        ULCTableTree rowHeader = new ULCTableTree();
+        //see PMO-919 and PMO-1013
+        ULCTableTree rowHeader = new ULCHeaderFixedTableTree();
         rowHeader.setAutoCreateColumnsFromModel(false);
         rowHeader.setModel(model);
         for (int i = 0; i < firstScrollableColumn; i++) {
             rowHeader.addColumn(new ULCTableTreeColumn(i, columnWidths[i]));
         }
 
-        ULCTableTree viewPort = new ULCTableTree();
+        //see PMO-919 and PMO-1013
+        ULCTableTree viewPort = new ULCHeaderFixedTableTree();
         viewPort.setAutoCreateColumnsFromModel(false);
         viewPort.setModel(model);
         viewPort.setEventDeliveryMode(UlcEventCategories.TREE_SELECTION_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE);
