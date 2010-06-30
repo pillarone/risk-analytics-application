@@ -143,4 +143,14 @@ class UIUtils {
         return Math.round((0.212671F * c.getRed()) + (0.715160F * c.getGreen()) + (0.072169F * c.getBlue())) > 100 ? Color.black : Color.white;
     }
 
+    public static ULCBoxPane boxLayout(String title, Closure body) {
+        ULCBoxPane result = new ULCBoxPane()
+        result.border = BorderFactory.createTitledBorder(" $title ")
+        ULCBoxPane inner = new ULCBoxPane()
+        body(inner)
+        result.add ULCBoxPane.BOX_EXPAND_EXPAND, spaceAround(inner, 0, 5, 5, 5)
+        return result
+    }
+
+
 }
