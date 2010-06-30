@@ -18,6 +18,7 @@ abstract class ChartViewModel {
     List<String> seriesNames = []
     Map showLine = [:]
     boolean showPeriodLabels = true
+    Map periodLabels = [:]
 
     String title
     SimulationRun simulationRun
@@ -91,14 +92,23 @@ abstract class ChartViewModel {
         simulationRun.periodCount
     }
 
-    public String getPeriodLabel(int periodIndex) {
+    public String getPeriodLabel(int periodIndex, boolean periodLabelForPath = false) {
         String label
-        if (showPeriodLabels) {
-            SimulationRun.withTransaction {status ->
-                simulationRun = SimulationRun.get(simulationRun.id)
-                Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
-                label = parameterization.getPeriodLabel(periodIndex)
+        if (showPeriodLabels || periodLabelForPath) {
+            if (periodLabels[periodIndex]) {
+                label = periodLabels[periodIndex]
+            } else {
+                SimulationRun.withTransaction {status ->
+                    simulationRun = SimulationRun.get(simulationRun.id)
+                    Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
+                    parameterization.load(false)
+                    simulationRun.periodCount.times {int index ->
+                        periodLabels[index] = parameterization.getPeriodLabel(index)
+                    }
+                    label = periodLabels[periodIndex]
+                }
             }
+
         } else {
             label = "P" + periodIndex
         }

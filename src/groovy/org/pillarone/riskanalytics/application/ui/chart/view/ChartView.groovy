@@ -16,7 +16,6 @@ import org.pillarone.riskanalytics.application.ui.chart.action.ChartDataExportAc
 import org.pillarone.riskanalytics.application.ui.chart.action.ChartPictureExportAction
 import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.application.ui.chart.model.DistributionChartsViewModel
-import org.pillarone.riskanalytics.application.ui.chart.model.ScatterChartViewModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.canoo.ulc.community.jfreechart.server.*
 import com.ulcjava.base.application.*
@@ -61,8 +60,6 @@ class ChartView implements IModelChangedListener {
         resultNodePopup.add(new ULCMenuItem(new ResetZoomAction(this)))
         resultNodePopup.addSeparator()
         resultNodePopup.add(new ULCMenuItem(new OpenChartPropertiesAction(this)))
-        resultNodePopup.addSeparator()
-        resultNodePopup.add(new ULCMenuItem(new ChangeChartColorAction(this)))
 
         ulcChart.setComponentPopupMenu(resultNodePopup)
         controlsPane = new ULCBoxPane(1, 0)
@@ -129,6 +126,7 @@ class ChartView implements IModelChangedListener {
         model.periodCount.times {int index ->
             String periodLabel = model.getPeriodLabel(index)
             ULCToggleButton button = new ULCToggleButton(periodLabel)
+            button.setToolTipText(periodLabel)
             button.addActionListener([actionPerformed: {ActionEvent event ->
                 if (button.selected) {
                     model.selectAllFromPeriod(index)
@@ -323,30 +321,10 @@ class OpenChartPropertiesAction extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        new ChartPropertiesDialog(chartView, '', enabledFields).dialog.visible = true
+        new PropertiesDialog(chartView, '', enabledFields).dialog.visible = true
     }
 
 }
 
-class ChangeChartColorAction extends ResourceBasedAction {
-    ChartView chartView
 
 
-    public ChangeChartColorAction(chartView) {
-        super("ChangeChartColorAction");
-        this.chartView = chartView;
-    }
-
-    void doActionPerformed(ActionEvent event) {
-        if (chartView.model instanceof ScatterChartViewModel)
-            new ChangePeriodColorDialog(chartView).dialog.visible = true
-        else
-            new ChangeChartColorDialog(chartView).dialog.visible = true
-    }
-
-    def boolean isEnabled() {
-        return chartView.model.isChangeColorEnabled();
-    }
-
-
-}

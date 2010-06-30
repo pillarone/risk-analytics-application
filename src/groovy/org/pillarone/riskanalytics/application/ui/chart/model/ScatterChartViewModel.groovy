@@ -47,7 +47,7 @@ class ScatterChartViewModel extends ChartViewModel {
         int seriesIndex = 0
         periodCount.times {int periodIndex ->
             if (showLine[0, periodIndex]) {
-                chart.getXYPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColor(periodIndex)
+                chart.getXYPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColorByParam(periodIndex)
                 chart.getXYPlot().getRenderer(0).setSeriesShape seriesIndex, new Rectangle(2, 2)
                 seriesIndex++
             }
