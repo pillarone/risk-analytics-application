@@ -71,7 +71,7 @@ class MockSimulationRunner extends SimulationRunner {
 class TestActionPaneModel extends SimulationActionsPaneModel {
 
     def TestActionPaneModel(provider) {
-        super(provider);
+        super(provider, null);
     }
 
     void runSimulation() {

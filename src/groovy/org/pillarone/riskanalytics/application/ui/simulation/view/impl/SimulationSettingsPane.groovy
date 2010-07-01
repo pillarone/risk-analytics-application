@@ -70,11 +70,7 @@ class SimulationSettingsPane {
         }
         outputStrategy.addActionListener(model.getChangeOutputStrategyAction(outputStrategyAction))
 
-        Closure resultLocationAction = {
-            resultLocation.text = model.getResultLocation()
-        }
-        changeLocationButton.addActionListener(model.getChangeResultLocationAction(resultLocationAction))
-        simulationName.addValueChangedListener([valueChanged: { e -> model.simulationName = simulationName.text }] as IValueChangedListener)
+        simulationName.addKeyListener([keyTyped: { e -> model.simulationName = simulationName.text }] as IKeyListener)
         comment.addValueChangedListener([valueChanged: { e -> model.comment = comment.text }] as IValueChangedListener)
         numberOfIterations.addKeyListener([keyTyped: { e ->
             model.numberOfIterations = numberOfIterations.value
@@ -106,7 +102,10 @@ class SimulationSettingsPane {
         resultLocation.name = "resultLocation"
         resultLocation.preferredSize = new Dimension(150, 20)
         resultLocation.enabled = false
-        changeLocationButton = new ULCButton()
+        Closure resultLocationAction = {
+            resultLocation.text = model.getResultLocation()
+        }
+        changeLocationButton = new ULCButton(model.getChangeResultLocationAction(resultLocationAction))
         changeLocationButton.name = "changeLocation"
 
         userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)

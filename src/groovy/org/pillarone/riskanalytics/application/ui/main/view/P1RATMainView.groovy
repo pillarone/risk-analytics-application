@@ -30,7 +30,6 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.Resul
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
 import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsViewDialog
 import org.pillarone.riskanalytics.application.ui.simulation.view.CalculationConfigurationView
-import org.pillarone.riskanalytics.application.ui.simulation.view.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
@@ -42,6 +41,7 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -256,7 +256,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         def view
         if (currentItem.start == null) {
             def simulationConfigurationModel = model.getSimulationConfigurationModel(currentItem, simulationModel)
-            model.addModelChangedListener(simulationConfigurationModel)
+            //TODO: reload list models
+//            model.addModelChangedListener(simulationConfigurationModel)
             view = new SimulationConfigurationView(simulationConfigurationModel)
         } else {
             ResultViewModel resultViewModel = model.getResultViewModel(currentItem, simulationModel)

@@ -114,7 +114,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             timer.stop()
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = "-"
-            estimatedEndTimeInfo.text = model.estimatedEndTime
+            estimatedEndTimeInfo.text = model.simulationEndTime
             progressBar.indeterminate = false
             progressBar.value = 100
             progressBar.string = model.getText("Done")
@@ -171,14 +171,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
         initComponents()
         layoutComponents()
-        attachListeners()
         updateUIState(SimulationState.NOT_RUNNING)
-    }
-
-    void attachListeners() {
-        run.addActionListener(model.runSimulationAction)
-        stop.addActionListener(model.stopSimulationAction)
-        cancel.addActionListener(model.cancelSimulationAction)
     }
 
     void layoutComponents() {
@@ -186,7 +179,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         innerPane.border = BorderFactory.createTitledBorder(model.getText("SimulationProgress") + ":")
         ULCBoxPane infoPane = new ULCBoxPane(4, 0)
         infoPane.add(4, ULCBoxPane.BOX_EXPAND_CENTER, progressBar)
-        infoPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(startTimeLabel, 10, 5, 10, 5))
+        infoPane.add(ULCBoxPane.BOX_LEFT_CENTER, startTimeLabel)
         infoPane.add(ULCBoxPane.BOX_EXPAND_CENTER, startTimeInfo)
         infoPane.add(ULCBoxPane.BOX_LEFT_CENTER, estimatedEndTimeLabel)
         infoPane.add(ULCBoxPane.BOX_EXPAND_CENTER, estimatedEndTimeInfo)
@@ -222,16 +215,16 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         remainingTimeInfo.name = "remainingTime"
 
         Dimension buttonSize = new Dimension(140, 20)
-        run = new ULCButton()
+        run = new ULCButton(model.runSimulationAction)
         run.name = "run"
         run.preferredSize = buttonSize
-        stop = new ULCButton()
+        stop = new ULCButton(model.stopSimulationAction)
         stop.name = "stop"
         stop.preferredSize = buttonSize
-        cancel = new ULCButton()
+        cancel = new ULCButton(model.cancelSimulationAction)
         cancel.name = "cancel"
         cancel.preferredSize = buttonSize
-        openResults = new ULCButton("openResults")
+        openResults = new ULCButton(model.openResultsAction)
         openResults.name = "openResults"
         openResults.preferredSize = buttonSize
     }

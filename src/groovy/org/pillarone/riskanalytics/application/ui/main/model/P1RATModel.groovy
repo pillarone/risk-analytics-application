@@ -24,13 +24,13 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
-import org.pillarone.riskanalytics.application.ui.simulation.model.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -107,7 +107,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         def viewModel = viewModelsInUse.remove(item)
         if (viewModel != null) {
             if (viewModel instanceof SimulationConfigurationModel) {
-                viewModel.removeSimulationListener(this)
+                viewModel.actionsPaneModel.removeSimulationListener(this)
             }
             if (viewModel instanceof IModelChangedListener) {
                 removeModelChangedListener(viewModel)
@@ -126,12 +126,15 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
     public SimulationConfigurationModel getSimulationConfigurationModel(Simulation item, Model simulationModel) {
         if (viewModelsInUse.containsKey(item) && viewModelsInUse[item] instanceof SimulationConfigurationModel) {
-            Object object = viewModelsInUse[item]
-            object.selectedParameterization = item.parameterization
-            return object
+            SimulationConfigurationModel model = viewModelsInUse[item]
+            model.settingsPaneModel.selectedParameterization = item.parameterization
+            model.settingsPaneModel.selectedResultConfiguration = item.template
+            return model
         }
-        SimulationConfigurationModel model = new SimulationConfigurationModel(this, simulationModel.class, item?.parameterization, item?.template)
-        model.addSimulationListener(this)
+        SimulationConfigurationModel model = new SimulationConfigurationModel(simulationModel.class, this)
+        model.settingsPaneModel.selectedParameterization = item.parameterization
+        model.settingsPaneModel.selectedResultConfiguration = item.template
+        model.actionsPaneModel.addSimulationListener(this)
         registerModel(item, model)
 
         return model

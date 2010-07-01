@@ -15,6 +15,8 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.StopSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.CancelSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.OpenResultsAction
 
 /**
  * The view model for the SimulationActionsPane.
@@ -33,14 +35,18 @@ class SimulationActionsPaneModel {
     RunSimulationAction runSimulationAction
     StopSimulationAction stopSimulationAction
     CancelSimulationAction cancelSimulationAction
+    OpenResultsAction openResultsAction
 
     ISimulationProvider simulationProvider
+    P1RATModel mainModel
 
-    public SimulationActionsPaneModel(ISimulationProvider provider) {
+    public SimulationActionsPaneModel(ISimulationProvider provider, P1RATModel mainModel) {
+        this.mainModel = mainModel
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)
         stopSimulationAction = new StopSimulationAction(this)
         cancelSimulationAction = new CancelSimulationAction(this)
+        openResultsAction = new OpenResultsAction(this)
     }
 
     String getText(String key) {
@@ -48,6 +54,7 @@ class SimulationActionsPaneModel {
     }
 
     void runSimulation() {
+        simulation.save()
         runner = SimulationRunner.createRunner()
         RunSimulationService.getService().runSimulation(runner, new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy))
         notifySimulationStart()

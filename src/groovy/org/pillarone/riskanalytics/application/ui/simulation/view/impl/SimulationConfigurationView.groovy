@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.Simulati
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 
 /**
  * The SimulationConfigurationView which combines a settings pane (to define a simulation)
@@ -18,17 +19,16 @@ class SimulationConfigurationView implements ISimulationListener {
     private SimulationSettingsPane settingsPane
     private SimulationActionsPane actionsPane
 
+    private SimulationConfigurationModel model
 
-    public SimulationConfigurationView(Class modelClass) {
-        SimulationSettingsPaneModel settingsModel = new SimulationSettingsPaneModel(modelClass)
-        settingsPane = new SimulationSettingsPane(settingsModel)
-        //Use the setting pane model as ISimulationProvider for the actions pane model
-        SimulationActionsPaneModel actionModel = new SimulationActionsPaneModel(settingsModel)
-        actionsPane = new SimulationActionsPane(actionModel)
+    public SimulationConfigurationView(SimulationConfigurationModel model) {
+        this.model = model
+        settingsPane = new SimulationSettingsPane(model.settingsPaneModel)
+        actionsPane = new SimulationActionsPane(model.actionsPaneModel)
         //to make sure the action pane knows when it's safe to start a simulation
-        settingsModel.addSimulationValidationListener(actionsPane)
+        model.settingsPaneModel.addSimulationValidationListener(actionsPane)
         //used for enabling/disabling the settings pane
-        actionModel.addSimulationListener(this)
+        model.actionsPaneModel.addSimulationListener(this)
 
         layoutComponents()
     }

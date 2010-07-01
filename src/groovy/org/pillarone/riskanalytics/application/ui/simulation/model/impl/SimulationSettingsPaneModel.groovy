@@ -69,7 +69,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider {
 
     public SimulationSettingsPaneModel(Class modelClass) {
         this.modelClass = modelClass
-        simulationName = ""
+        simulationName = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
         comment = ""
 
         models = new ModelListModel()
@@ -79,6 +79,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider {
         resultConfigurationVersions = new ResultConfigurationVersionsListModel()
 
         models.load()
+        models.selectedObject = modelClass
         parameterizationNames.load(modelClass)
         updateParameterizationVersions()
         resultConfigurationNames.load(modelClass)
@@ -175,18 +176,14 @@ class SimulationSettingsPaneModel implements ISimulationProvider {
      * If no user defined seed is set, a random one will be calculated and used.
      */
     Simulation getSimulation() {
-        if (this.simulationName == null || this.simulationName.trim().length() == 0) {
-            simulationName = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
-        }
-
         Simulation simulation = new Simulation(simulationName)
         simulation.modelClass = modelClass
         simulation.comment = comment
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
-        parameterization.load(false)
+        parameterization.load()
         simulation.parameterization = parameterization
         ResultConfiguration configuration = resultConfigurationVersions.selectedObject as ResultConfiguration
-        configuration.load(false)
+        configuration.load()
         simulation.template = configuration
         simulation.numberOfIterations = numberOfIterations
         simulation.periodCount = parameterization.periodCount
@@ -211,6 +208,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider {
         notifyConfigurationChanged()
     }
 
+    void setSimulationName(String name) {
+        simulationName = name
+        notifyConfigurationChanged()
+    }
+
     void addSimulationValidationListener(ISimulationValidationListener listener) {
         listeners.add(listener)
     }
@@ -228,12 +230,27 @@ class SimulationSettingsPaneModel implements ISimulationProvider {
      * @return true if a valid simulation can be created from the current model values
      */
     protected boolean validate() {
-        return numberOfIterations != null
+        return numberOfIterations != null && (simulationName?.trim()?.length() > 0)
     }
 
     ICollectorOutputStrategy getOutputStrategy() {
         return outputStrategies.getStrategy()
     }
 
+    void setSelectedParameterization(Parameterization parameterization) {
+        if (parameterization != null) {
+            parameterizationNames.selectedItem = parameterization.name
+            parameterizationVersions.reload(parameterizationNames.selectedItem.toString())
+            parameterizationVersions.selectedItem = parameterization.versionNumber.toString()
+        }
+    }
+
+    void setSelectedResultConfiguration(ResultConfiguration resultConfiguration) {
+        if (resultConfiguration != null) {
+            resultConfigurationNames.selectedItem = resultConfiguration.name
+            resultConfigurationVersions.reload(resultConfigurationNames.selectedItem.toString())
+            resultConfigurationVersions.selectedItem = resultConfiguration.versionNumber.toString()
+        }
+    }
 
 }
