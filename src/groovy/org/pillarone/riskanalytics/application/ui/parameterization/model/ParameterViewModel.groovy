@@ -59,7 +59,7 @@ class ParameterViewModel extends AbstractModellingModel {
         String[] pathElements = path.split(":")
         SimpleTableTreeNode currentNode = paramterTableTreeModel.root
         for (String p in pathElements) {
-            currentNode = currentNode.getChildByName(p)
+            currentNode = currentNode?.getChildByName(p)
         }
         return currentNode
     }
@@ -75,8 +75,11 @@ class ParameterViewModel extends AbstractModellingModel {
             //Error is resolved now
             if (currentError == null) {
                 ParameterizationTableTreeNode node = findNodeForPath(previousError.getPath())
-                node.errorMessage = null
-                paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+                //if node is null, the error node was removed
+                if (node != null) {
+                    node.errorMessage = null
+                    paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+                }
             }
         }
         this.validationErrors = validationErrors
