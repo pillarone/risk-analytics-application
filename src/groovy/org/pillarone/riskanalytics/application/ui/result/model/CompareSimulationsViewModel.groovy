@@ -41,8 +41,12 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
 
         treeRoot = builder.root
         MeanAction meanAction = new MeanAction(this, null)
-
-        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(treeRoot, item, meanAction.getFunction())//*.simulationRun
+        List<ConfigObject> resultsList = []
+        item.each {
+            ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
+            resultsList << configObject
+        }
+        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(treeRoot, item, meanAction.getFunction(), resultsList)//*.simulationRun
         // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
         return new FilteringTableTreeModel(resultTreeTableModel, filter)
     }

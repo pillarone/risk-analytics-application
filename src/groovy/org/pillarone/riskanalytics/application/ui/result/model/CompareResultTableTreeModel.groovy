@@ -1,20 +1,21 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.datatype.ULCNumberDataType
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.NodeNameFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.util.SimulationUtilities
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
     private List<SimulationRun> simulationRuns
+    private List<ConfigObject> resultsList
     List<Simulation> simulations
     private List<SimulationRun> hiddenSimulations = []
     private List<IFunction> functions = []
@@ -28,15 +29,16 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
     boolean orderByKeyfigure
 
-    public CompareResultTableTreeModel(SimpleTableTreeNode rootNode, List<Simulation> simulations, IFunction mean) {
+    public CompareResultTableTreeModel(SimpleTableTreeNode rootNode, List<Simulation> simulations, IFunction mean, List<ConfigObject> resultsList) {
         super();
         this.root = rootNode
         if (simulations.size() < 2) {
             throw new IllegalArgumentException("At least 2 simulationRuns required.")
         }
-        this.simulationRuns= simulations*.simulationRun
-        this.simulations= simulations
+        this.simulationRuns = simulations*.simulationRun
+        this.simulations = simulations
         minPeriodCount = SimulationUtilities.getMinSimulationsPeriod(simulationRuns)
+        this.resultsList = resultsList
         orderByKeyfigure = true
 
         if (mean) {
@@ -45,11 +47,24 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     public Object getAsynchronValue(Object node, int column) {
+        IFunction function = getFunction(column).clone()
+        int periodIndex = getPeriodIndex(column)
         int simulationIndex = getSimulationRunIndex(column)
         SimulationRun run = simulationIndex >= 0 ? simulationRuns.get(simulationIndex) : null
+        if (isResultFunction(function, node) && isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter, simulationIndex)) {
+            return getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter, simulationIndex)
+        } else if (function instanceof CompareFunction && (node instanceof ResultTableTreeNode)) {
+            Double aValue = getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.underlyingFunction.keyFigureName, function.underlyingFunction.keyFigureParameter, getSimulationRunIndex(function.runA))
+            Double bValue = getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.underlyingFunction.keyFigureName, function.underlyingFunction.keyFigureParameter, getSimulationRunIndex(function.runB))
+            return function.evaluate(run, periodIndex, node, aValue, bValue)
+        } else {
+            return function.evaluate(run, periodIndex, node)
+        }
 
-        IFunction function = getFunction(column).clone()
-        return function.evaluate(run, getPeriodIndex(column), node)
+    }
+
+    private boolean isResultFunction(IFunction function, node) {
+        return (function instanceof ResultFunction) && !(function instanceof CompareFunction) && (node instanceof ResultTableTreeNode)
     }
 
     public String getColumnName(int column) {
@@ -195,6 +210,36 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     public int getColumnCount() {
         1 + (simulationRuns.size() + compareFunctions.size() * (simulationRuns.size() - 1)) * minPeriodCount * functions.size()
     }
+
+    protected boolean isValuePreCalculated(int period, String path, String field, String keyFigure, def param, int columnIndex) {
+        getPreCalculatedValue(period, path, field, keyFigure, param, columnIndex) != null
+    }
+
+    /**
+     * Returns the result of a post simulation calculation
+     */
+    protected Double getPreCalculatedValue(int period, String path, String field, String keyFigure, def param, int simulationIndex) {
+        Map current = resultsList.get(simulationIndex)
+        if (!current.containsKey(period.toString())) return null
+        current = current[period.toString()]
+
+        if (!current.containsKey(path)) return null
+        current = current[path]
+
+        if (!current.containsKey(field)) return null
+        current = current[field]
+
+        if (!current.containsKey(keyFigure)) return null
+        current = current[keyFigure]
+
+        String p = param != null ? numberFormat.format(param) : "null"
+
+        if (!current.containsKey(p)) return null
+        return current[p]
+    }
+
+
+
 
     public ULCNumberDataType getNumberDataType() {
         if (!numberDataType) {

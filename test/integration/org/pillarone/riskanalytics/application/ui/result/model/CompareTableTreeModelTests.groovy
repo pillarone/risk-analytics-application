@@ -27,7 +27,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation2 = createSimulation("simulation2", 1)
 
         List simulations = [simulation1, simulation2]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
         Min min = new Min()
@@ -67,7 +67,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
 
 
         List simulations = [simulation1, simulation2]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
 
@@ -101,7 +101,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation2 = createSimulation("simulation2", 2)
 
         List simulations = [simulation1, simulation2]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         model.addFunction(new Mean())
         model.addCompareFunction(new DeviationPercentage())
@@ -135,7 +135,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation2 = createSimulation("simulation2", 2)
 
         List simulations = [simulation1, simulation2]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
         Min min = new Min()
@@ -235,7 +235,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation2 = createSimulation("simulation2", 2)
 
         List simulations = [simulation1, simulation2]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
         Min min = new Min()
@@ -292,7 +292,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation3 = createSimulation("simulation3", 2)
 
         List simulations = [simulation1, simulation2, simulation3]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
         Min min = new Min()
@@ -339,7 +339,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation3 = createSimulation("simulation3", 3)
 
         List simulations = [simulation1, simulation2, simulation3]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
         Min min = new Min()
@@ -384,7 +384,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         simulation4 = createSimulation("simulation4", 2)
 
         List simulations = [simulation1, simulation2, simulation3, simulation4]
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
         Mean mean = new Mean()
         Min min = new Min()
@@ -412,7 +412,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
 
         List simulations = [simulation1, simulation2, simulation3, simulation4]
 
-        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null)
+        CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
         model.orderByKeyfigure = false
         Mean mean = new Mean()
         Min min = new Min()

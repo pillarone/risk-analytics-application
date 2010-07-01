@@ -13,7 +13,7 @@ interface IFunction extends Cloneable {
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node)
 }
 
-/** A Function for Result views  */
+/** A Function for Result views    */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -173,9 +173,9 @@ class DeviationPercentage extends CompareFunction {
     final String name = "DevPercentage"
 
 
-    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
-        Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
+    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node, Double aValue, Double bValue) {
+        aValue = aValue ? aValue : underlyingFunction.evaluate(runA, periodIndex, node)
+        bValue = bValue ? bValue : underlyingFunction.evaluate(runB, periodIndex, node)
         if (aValue == null || bValue == null || aValue == 0 || bValue < MIN_VALUE || aValue < MIN_VALUE)
             return null
 
@@ -199,9 +199,9 @@ class DeviationAbsoluteDifference extends CompareFunction {
 
     final String name = "DevAbsoluteDifference"
 
-    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
-        Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
+    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node, Double aValue, Double bValue) {
+        aValue = aValue ? aValue : underlyingFunction.evaluate(runA, periodIndex, node)
+        bValue = bValue ? bValue : underlyingFunction.evaluate(runB, periodIndex, node)
         if (aValue == null || bValue == null)
             return null
 
@@ -226,9 +226,9 @@ class FractionPercentage extends CompareFunction {
     final String name = "FrPercentage"
 
 
-    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
-        Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
+    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node, Double aValue, Double bValue) {
+        aValue = aValue ? aValue : underlyingFunction.evaluate(runA, periodIndex, node)
+        bValue = bValue ? bValue : underlyingFunction.evaluate(runB, periodIndex, node)
         if (aValue == null || bValue == null || aValue == 0 || bValue < MIN_VALUE || aValue < MIN_VALUE)
             return null
 
@@ -252,9 +252,9 @@ class FractionAbsoluteDifference extends CompareFunction {
 
     final String name = "FrAbsoluteDifference"
 
-    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        Double aValue = underlyingFunction.evaluate(runA, periodIndex, node)
-        Double bValue = underlyingFunction.evaluate(runB, periodIndex, node)
+    def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node, Double aValue, Double bValue) {
+        aValue = aValue ? aValue : underlyingFunction.evaluate(runA, periodIndex, node)
+        bValue = bValue ? bValue : underlyingFunction.evaluate(runB, periodIndex, node)
         if (aValue == null || bValue == null || aValue == 0 || bValue < MIN_VALUE || aValue < MIN_VALUE)
             return null
 
