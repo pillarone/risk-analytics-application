@@ -122,7 +122,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = true
-            model.notifySimulationStop()
         })
 
         uiStates.put(SimulationState.CANCELED, {
@@ -137,7 +136,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
-            model.notifySimulationStop()
         })
 
         uiStates.put(SimulationState.STOPPED, {
@@ -152,7 +150,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = true
-            model.notifySimulationStop()
         })
 
         uiStates.put(SimulationState.ERROR, {
@@ -166,7 +163,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
-            model.notifySimulationStop()
         })
 
         initComponents()
@@ -233,7 +229,11 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
      * is called when the polling timer event fires.
      */
     void actionPerformed(ActionEvent actionEvent) {
-        updateUIState(model.getSimulationState())
+        SimulationState simulationState = model.getSimulationState()
+        updateUIState(simulationState)
+        if (simulationState == SimulationState.FINISHED || simulationState == SimulationState.STOPPED || simulationState == SimulationState.CANCELED || simulationState == SimulationState.ERROR) {
+            model.notifySimulationStop()
+        }
     }
 
     protected void updateUIState(SimulationState simulationState) {
