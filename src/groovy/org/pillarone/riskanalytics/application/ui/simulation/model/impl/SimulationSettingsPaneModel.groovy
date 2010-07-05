@@ -235,7 +235,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     }
 
     ICollectorOutputStrategy getOutputStrategy() {
-        return outputStrategies.getStrategy()
+        ICollectorOutputStrategy outputStrategy = outputStrategies.getStrategy()
+        if (outputStrategy instanceof DBOutput) {
+            outputStrategy.batchInsert.reset()
+        }
+        return outputStrategy
     }
 
     void setSelectedParameterization(Parameterization parameterization) {
