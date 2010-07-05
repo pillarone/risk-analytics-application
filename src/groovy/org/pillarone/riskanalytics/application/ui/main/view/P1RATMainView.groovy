@@ -256,8 +256,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         def view
         if (currentItem.start == null) {
             def simulationConfigurationModel = model.getSimulationConfigurationModel(currentItem, simulationModel)
-            //TODO: reload list models
-//            model.addModelChangedListener(simulationConfigurationModel)
             view = new SimulationConfigurationView(simulationConfigurationModel)
         } else {
             ResultViewModel resultViewModel = model.getResultViewModel(currentItem, simulationModel)

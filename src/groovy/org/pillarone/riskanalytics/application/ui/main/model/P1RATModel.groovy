@@ -135,6 +135,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
         model.actionsPaneModel.addSimulationListener(this)
+        addModelChangedListener(model.settingsPaneModel)
         registerModel(item, model)
 
         return model

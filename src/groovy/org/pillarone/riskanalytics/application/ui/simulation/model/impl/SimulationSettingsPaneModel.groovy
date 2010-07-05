@@ -27,6 +27,7 @@ import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -35,7 +36,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  * It is also possible to register a ISimulationValidationListener, which will be notified when the simulation configuration changes from
  * an invalid (incomplete) to a valid state.
  */
-class SimulationSettingsPaneModel implements ISimulationProvider {
+class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener {
 
     private static Log LOG = LogFactory.getLog(SimulationSettingsPaneModel)
 
@@ -252,5 +253,20 @@ class SimulationSettingsPaneModel implements ISimulationProvider {
             resultConfigurationVersions.selectedItem = resultConfiguration.versionNumber.toString()
         }
     }
+
+    void modelChanged() {
+        String currentSelection = parameterizationNames.selectedItem
+        parameterizationNames.reload()
+        parameterizationNames.selectedItem = currentSelection
+
+        parameterizationVersions.reload(currentSelection)
+
+        currentSelection = resultConfigurationNames.selectedItem
+        resultConfigurationNames.reload()
+        resultConfigurationNames.selectedItem = currentSelection
+
+        resultConfigurationVersions.reload(currentSelection)
+    }
+
 
 }
