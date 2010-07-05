@@ -70,7 +70,7 @@ class SimulationSettingsPane {
         }
         outputStrategy.addActionListener(model.getChangeOutputStrategyAction(outputStrategyAction))
 
-        simulationName.addKeyListener([keyTyped: { e -> model.simulationName = simulationName.text }] as IKeyListener)
+        simulationName.addValueChangedListener([valueChanged: { e -> model.simulationName = simulationName.text }] as IValueChangedListener)
         comment.addValueChangedListener([valueChanged: { e -> model.comment = comment.text }] as IValueChangedListener)
         numberOfIterations.addKeyListener([keyTyped: { e ->
             model.numberOfIterations = numberOfIterations.value
@@ -189,6 +189,7 @@ class SimulationSettingsPane {
         randomSeed.enabled = false
         resultLocation.enabled = false
         simulationName.enabled = false
+        simulationName.text = model.simulationName
         userDefinedRandomSeed.enabled = false
     }
 
@@ -209,6 +210,8 @@ class SimulationSettingsPane {
         resultConfigurationVersionsComboBox.enabled = true
         randomSeed.enabled = userDefinedRandomSeed.isSelected()
         resultLocation.enabled = fileMode
+        model.simulationName = ""
+        simulationName.text = model.simulationName
         simulationName.enabled = true
         userDefinedRandomSeed.enabled = true
     }

@@ -70,7 +70,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
 
     public SimulationSettingsPaneModel(Class modelClass) {
         this.modelClass = modelClass
-        simulationName = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
+        simulationName = ""
         comment = ""
 
         models = new ModelListModel()
@@ -177,6 +177,9 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * If no user defined seed is set, a random one will be calculated and used.
      */
     Simulation getSimulation() {
+        if (simulationName == null || simulationName.trim().length() == 0) {
+            simulationName = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
+        }
         Simulation simulation = new Simulation(simulationName)
         simulation.modelClass = modelClass
         simulation.comment = comment
@@ -209,11 +212,6 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         notifyConfigurationChanged()
     }
 
-    void setSimulationName(String name) {
-        simulationName = name
-        notifyConfigurationChanged()
-    }
-
     void addSimulationValidationListener(ISimulationValidationListener listener) {
         listeners.add(listener)
     }
@@ -231,7 +229,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * @return true if a valid simulation can be created from the current model values
      */
     protected boolean validate() {
-        return numberOfIterations != null && (simulationName?.trim()?.length() > 0)
+        return numberOfIterations != null
     }
 
     ICollectorOutputStrategy getOutputStrategy() {

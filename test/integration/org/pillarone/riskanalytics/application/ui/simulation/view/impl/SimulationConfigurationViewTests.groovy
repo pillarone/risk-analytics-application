@@ -38,13 +38,6 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
         iterations.typeText("123")
         assertTrue run.enabled
 
-        name.enterText("x")
-        name.clearText()
-        assertFalse run.enabled
-
-        name.typeText("new name")
-        assertTrue run.enabled
-
         iterations.clearText()
         assertFalse run.enabled
     }
