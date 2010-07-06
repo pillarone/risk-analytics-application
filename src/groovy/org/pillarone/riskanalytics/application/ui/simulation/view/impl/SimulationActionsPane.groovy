@@ -78,7 +78,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             estimatedEndTimeInfo.text = model.estimatedEndTime
             progressBar.value = model.progress
             progressBar.indeterminate = false
-            progressBar.string = null
+            progressBar.string = "Simulation ${model.progress}% complete"
             run.enabled = false
             stop.enabled = true
             cancel.enabled = true
@@ -91,7 +91,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             estimatedEndTimeInfo.text = model.estimatedEndTime
             progressBar.value = model.progress
             progressBar.indeterminate = false
-            progressBar.string = null
+            progressBar.string = "Calculations ${model.progress}% complete"
             run.enabled = false
             stop.enabled = false
             cancel.enabled = true
@@ -145,7 +145,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             estimatedEndTimeInfo.text = model.simulationEndTime
             progressBar.indeterminate = false
             progressBar.value = model.progress
-            progressBar.string = model.getText("Stopped")
+            progressBar.string = "Stopped, ${model.iterationsDone} iterations completed"
             run.enabled = configurationValid
             stop.enabled = false
             cancel.enabled = false

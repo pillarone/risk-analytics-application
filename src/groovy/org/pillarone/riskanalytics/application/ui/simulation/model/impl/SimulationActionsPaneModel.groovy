@@ -21,7 +21,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.O
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
- * and provides information about the current simulation state. 
+ * and provides information about the current simulation state.
  */
 class SimulationActionsPaneModel {
 
@@ -70,6 +70,10 @@ class SimulationActionsPaneModel {
 
     int getProgress() {
         runner.getProgress()
+    }
+
+    int getIterationsDone() {
+        runner.currentScope.iterationsDone
     }
 
     SimulationState getSimulationState() {
@@ -127,4 +131,5 @@ class SimulationActionsPaneModel {
     void notifySimulationStop() {
         listeners*.simulationEnd(simulation, runner.currentScope.model)
     }
+
 }
