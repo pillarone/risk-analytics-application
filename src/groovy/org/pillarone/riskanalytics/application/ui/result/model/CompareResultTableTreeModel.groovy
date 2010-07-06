@@ -26,6 +26,7 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     double minValue = 0
     double maxValue = 0
     ULCNumberDataType numberDataType
+    List periodLabels = []
 
     boolean orderByKeyfigure
 
@@ -44,6 +45,7 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
         if (mean) {
             addFunction(mean)
         }
+        initPeriodLabels()
     }
 
     public Object getAsynchronValue(Object node, int column) {
@@ -70,10 +72,10 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     public String getColumnName(int column) {
         int runIndex = getSimulationRunIndex(column);
         if (runIndex >= 0) {
-            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} : P${getPeriodIndex(column)} : ${getFunction(column).name}"
+            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} : ${periodLabels[runIndex][getPeriodIndex(column)]}: ${getFunction(column).name}"
         } else {
             runIndex = simulationRuns.indexOf(getFunction(column).runB)
-            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} :P${getPeriodIndex(column)} : ${getFunction(column).name}: ${getFunction(column).underlyingFunction.name}"
+            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} :${periodLabels[runIndex][getPeriodIndex(column)]}-${periodLabels[0][getPeriodIndex(column)]} : ${getFunction(column).name}: ${getFunction(column).underlyingFunction.name}"
         }
     }
 
@@ -238,6 +240,19 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
         return current[p]
     }
 
+    private void initPeriodLabels() {
+        SimulationRun.withTransaction {status ->
+            simulations.each {Simulation simulation ->
+                if (!simulation.parameterization.isLoaded())
+                    simulation.parameterization.load(false)
+                def labels = []
+                simulation.simulationRun.periodCount.times {int index ->
+                    labels << simulation.parameterization.getPeriodLabel(index)
+                }
+                periodLabels << labels
+            }
+        }
+    }
 
 
 
