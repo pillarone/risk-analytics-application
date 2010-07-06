@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableMode
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneGuiHelper
+import org.pillarone.riskanalytics.application.ui.table.FixedULCTable
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -61,7 +62,9 @@ public class BatchView extends NewBatchView {
 
 
     ULCComponent createDomainList() {
-        batches = new ULCTable(batchDataTableModel)
+        // Workarount for PMO-919: Headings Lost by Undocking Result Window (Tree View)
+        //use FixedULCTable instead of ULCTable
+        batches = new FixedULCTable(batchDataTableModel)
         int columns = batches.getColumnCount()
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun)
         columns.times {int columnIndex ->
