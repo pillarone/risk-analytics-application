@@ -452,12 +452,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
-        if (simulation.simulationRun.endTime != null)
+        if (simulation.simulationRun?.endTime != null) {
             selectionTreeModel.addNodeForItem(simulation)
-        ParameterViewModel viewModel = viewModelsInUse[simulation.parameterization]
-        ResultConfigurationViewModel templateViewModel = viewModelsInUse[simulation.template]
-        viewModel?.readOnly = true
-        templateViewModel?.readOnly = true
+            ParameterViewModel viewModel = viewModelsInUse[simulation.parameterization]
+            ResultConfigurationViewModel templateViewModel = viewModelsInUse[simulation.template]
+            viewModel?.readOnly = true
+            templateViewModel?.readOnly = true
+        }
     }
 
     private void startPollingTimer(PollingBatchSimulationAction pollingBatchSimulationAction) {

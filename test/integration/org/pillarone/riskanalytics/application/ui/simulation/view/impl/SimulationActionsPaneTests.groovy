@@ -95,7 +95,7 @@ class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
         waitForStatus(POST_SIMULATION_CALCULATIONS)
 
         assertFalse run.enabled
-        assertTrue stop.enabled
+        assertFalse stop.enabled
         assertTrue cancel.enabled
         assertFalse openResults.enabled
 

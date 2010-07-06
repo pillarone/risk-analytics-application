@@ -93,7 +93,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.indeterminate = false
             progressBar.string = null
             run.enabled = false
-            stop.enabled = true
+            stop.enabled = false
             cancel.enabled = true
             openResults.enabled = false
         })
