@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCTextField
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 /**
  * A IValueChangedListener which is used for the random seed check box and text field.
@@ -39,8 +40,15 @@ class RandomSeedAction implements IValueChangedListener {
     }
 
     private handleEvent(ULCTextField textField) {
-        int randomSeed = textField.getValue()
-        model.randomSeed = randomSeed
+        Integer randomSeed = textField.getValue()
+        if (randomSeed != null && randomSeed > 0) {
+            model.randomSeed = randomSeed
+        } else {
+            randomSeed = 1
+            new I18NAlert("NoInteger").show()
+            textField.value = randomSeed
+            model.randomSeed = randomSeed
+        }
         LOG.info("User defined random seed changed to ${randomSeed}.")
     }
 }
