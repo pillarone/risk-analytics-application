@@ -17,6 +17,9 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.C
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.OpenResultsAction
+import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.AddToBatchAction
 
 /**
  * The view model for the SimulationActionsPane.
@@ -37,8 +40,13 @@ class SimulationActionsPaneModel {
     CancelSimulationAction cancelSimulationAction
     OpenResultsAction openResultsAction
 
+    ItemsComboBoxModel<BatchRun> batchRunComboBoxModel
+    AddToBatchAction addToBatchAction
+
     ISimulationProvider simulationProvider
     P1RATModel mainModel
+
+    String batchMessage
 
     public SimulationActionsPaneModel(ISimulationProvider provider, P1RATModel mainModel) {
         this.mainModel = mainModel
@@ -47,6 +55,9 @@ class SimulationActionsPaneModel {
         stopSimulationAction = new StopSimulationAction(this)
         cancelSimulationAction = new CancelSimulationAction(this)
         openResultsAction = new OpenResultsAction(this)
+
+        batchRunComboBoxModel = new ItemsComboBoxModel<BatchRun>(BatchRun.list())
+        addToBatchAction = new AddToBatchAction(this)
     }
 
     String getText(String key) {

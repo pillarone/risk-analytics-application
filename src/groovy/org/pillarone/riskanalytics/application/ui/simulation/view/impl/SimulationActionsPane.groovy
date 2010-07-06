@@ -12,6 +12,7 @@ import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAroun
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.model.Model
+import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 
 /**
  * A view which can be used to run & monitor a simulation (provided by an ISimulationProvider in the model).
@@ -22,7 +23,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
     private static Log LOG = LogFactory.getLog(SimulationActionsPane)
 
 
-    ULCBoxPane content
+    ULCDetachableTabbedPane content
     SimulationState currentUISimulationState
 
     private ULCProgressBar progressBar
@@ -34,6 +35,10 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
     private ULCLabel remainingTimeLabel
     private ULCLabel remainingTimeInfo
     private ULCButton run, stop, openResults, cancel
+
+    private ULCComboBox availableBatchRuns
+    private ULCButton addToBatch
+    private ULCLabel batchMessage
 
     SimulationActionsPaneModel model
     private Map<SimulationState, Closure> uiStates = [:]
@@ -55,6 +60,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.indeterminate = false
             progressBar.string = model.getText("SimulationNotRunningMessage")
             run.enabled = configurationValid
+            addToBatch.enabled = configurationValid
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
@@ -67,6 +73,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.indeterminate = true
             progressBar.string = model.getText("StartSimulationMessage")
             run.enabled = false
+            addToBatch.enabled = false
             stop.enabled = false
             cancel.enabled = true
             openResults.enabled = false
@@ -80,6 +87,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.indeterminate = false
             progressBar.string = "Simulation ${model.progress}% complete"
             run.enabled = false
+            addToBatch.enabled = false
             stop.enabled = true
             cancel.enabled = true
             openResults.enabled = false
@@ -93,6 +101,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.indeterminate = false
             progressBar.string = "Calculations ${model.progress}% complete"
             run.enabled = false
+            addToBatch.enabled = false
             stop.enabled = false
             cancel.enabled = true
             openResults.enabled = false
@@ -105,6 +114,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.indeterminate = true
             progressBar.string = model.getText("SavingResultsMessage")
             run.enabled = false
+            addToBatch.enabled = false
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
@@ -119,6 +129,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.value = 100
             progressBar.string = model.getText("Done")
             run.enabled = configurationValid
+            addToBatch.enabled = configurationValid
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = true
@@ -133,6 +144,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.value = model.progress
             progressBar.string = model.getText("Canceled")
             run.enabled = configurationValid
+            addToBatch.enabled = configurationValid
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
@@ -147,6 +159,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.value = model.progress
             progressBar.string = "Stopped, ${model.iterationsDone} iterations completed"
             run.enabled = configurationValid
+            addToBatch.enabled = configurationValid
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = true
@@ -159,7 +172,8 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             estimatedEndTimeInfo.text = model.simulationEndTime
             progressBar.indeterminate = false
             progressBar.string = model.getText("Error")
-            run.enabled = true
+            run.enabled = configurationValid
+            addToBatch.enabled = configurationValid
             stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
@@ -184,15 +198,28 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         infoPane.add(ULCFiller.createHorizontalGlue())
 
         innerPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, infoPane)
-        content.add(spaceAround(run, 10, 2, 10, 2))
-        content.add(spaceAround(stop, 10, 2, 10, 2))
-        content.add(spaceAround(cancel, 10, 2, 10, 2))
-        content.add(spaceAround(openResults, 10, 2, 10, 2))
-        content.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
+        ULCBoxPane simulationContent = new ULCBoxPane(4, 0)
+        simulationContent.add(spaceAround(run, 10, 2, 10, 2))
+        simulationContent.add(spaceAround(stop, 10, 2, 10, 2))
+        simulationContent.add(spaceAround(cancel, 10, 2, 10, 2))
+        simulationContent.add(spaceAround(openResults, 10, 2, 10, 2))
+        simulationContent.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
+
+        content.addTab("Simulation", simulationContent)
+        content.setCloseableTab(0, false)
+
+        innerPane = new ULCBoxPane(3, 0)
+        innerPane.border = BorderFactory.createTitledBorder("Add to a batch run:")
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, availableBatchRuns)
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, addToBatch)
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, batchMessage)
+
+        content.addTab("Batch", innerPane)
+        content.setCloseableTab(1, false)
     }
 
     void initComponents() {
-        content = new ULCBoxPane(4, 0)
+        content = new ULCDetachableTabbedPane()
         progressBar = new ULCProgressBar(ULCProgressBar.HORIZONTAL, 0, 100)
         progressBar.stringPainted = true
         progressBar.name = "progress"
@@ -223,6 +250,11 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         openResults = new ULCButton(model.openResultsAction)
         openResults.name = "openResults"
         openResults.preferredSize = buttonSize
+
+        availableBatchRuns = new ULCComboBox(model.batchRunComboBoxModel)
+        availableBatchRuns.editable = true
+        addToBatch = new ULCButton(model.addToBatchAction)
+        batchMessage = new ULCLabel()
     }
 
     /**

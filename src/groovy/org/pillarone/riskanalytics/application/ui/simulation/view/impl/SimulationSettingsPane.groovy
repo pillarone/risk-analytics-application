@@ -189,7 +189,6 @@ class SimulationSettingsPane {
         randomSeed.enabled = false
         resultLocation.enabled = false
         simulationName.enabled = false
-        simulationName.text = model.simulationName
         userDefinedRandomSeed.enabled = false
     }
 
@@ -210,8 +209,6 @@ class SimulationSettingsPane {
         resultConfigurationVersionsComboBox.enabled = true
         randomSeed.enabled = userDefinedRandomSeed.isSelected()
         resultLocation.enabled = fileMode
-        model.simulationName = ""
-        simulationName.text = model.simulationName
         simulationName.enabled = true
         userDefinedRandomSeed.enabled = true
     }
