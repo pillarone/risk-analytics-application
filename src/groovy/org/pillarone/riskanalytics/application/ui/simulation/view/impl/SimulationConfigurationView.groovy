@@ -41,10 +41,13 @@ class SimulationConfigurationView implements ISimulationListener {
 
     void simulationEnd(Simulation simulation, Model model) {
         settingsPane.enable()
+        settingsPane.model.simulationName = ""
+        settingsPane.simulationName.text = settingsPane.model.simulationName
     }
 
     void simulationStart(Simulation simulation) {
         settingsPane.disable()
+        settingsPane.simulationName.text = simulation.name
     }
 
 

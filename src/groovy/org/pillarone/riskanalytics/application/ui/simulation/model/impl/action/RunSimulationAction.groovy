@@ -17,7 +17,11 @@ class RunSimulationAction extends ResourceBasedAction {
     protected SimulationActionsPaneModel model
 
     public RunSimulationAction(SimulationActionsPaneModel model) {
-        super("Run")
+        this("Run", model)
+    }
+
+    public RunSimulationAction(String actionName, SimulationActionsPaneModel model) {
+        super(actionName)
         this.model = model
         enabled = false
     }

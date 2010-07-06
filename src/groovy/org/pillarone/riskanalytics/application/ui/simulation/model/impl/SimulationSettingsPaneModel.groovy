@@ -177,10 +177,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * If no user defined seed is set, a random one will be calculated and used.
      */
     Simulation getSimulation() {
-        if (simulationName == null || simulationName.trim().length() == 0) {
-            simulationName = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
+        String name = simulationName
+        if (name == null || name.trim().length() == 0) {
+            name = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
         }
-        Simulation simulation = new Simulation(simulationName)
+        Simulation simulation = new Simulation(name)
         simulation.modelClass = modelClass
         simulation.comment = comment
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
