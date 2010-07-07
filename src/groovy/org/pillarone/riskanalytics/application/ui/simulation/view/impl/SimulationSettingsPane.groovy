@@ -79,34 +79,45 @@ class SimulationSettingsPane {
 
     private void initComponents() {
         simulationName = new ULCTextField(model.simulationName)
-        simulationName.preferredSize = new Dimension(150, 20)
+        simulationName.preferredSize = new Dimension(250, 20)
         simulationName.name = "simulationName"
 
         comment = new ULCTextArea(model.comment, 4, 20)
         comment.lineWrap = true
         comment.wrapStyleWord = true
         comment.name = "comment"
+        comment.preferredSize = new Dimension(250, 80)
+
 
         modelComboBox = new ULCComboBox(model.models)
         modelComboBox.enabled = false
+        modelComboBox.preferredSize = new Dimension(250, 20)
+
         parametrizationNamesComboBox = new ULCComboBox(model.parameterizationNames)
         parametrizationNamesComboBox.name = "parameterizationNames"
+        parametrizationNamesComboBox.preferredSize = new Dimension(250, 20)
+
         parameterizationVersionsComboBox = new ULCComboBox(model.parameterizationVersions)
         parameterizationVersionsComboBox.name = "parameterizationVersions"
         resultConfigurationNamesComboBox = new ULCComboBox(model.resultConfigurationNames)
+        resultConfigurationNamesComboBox.preferredSize = new Dimension(250, 20)
         resultConfigurationVersionsComboBox = new ULCComboBox(model.resultConfigurationVersions)
+
 
         outputStrategy = new ULCComboBox(model.outputStrategies)
         outputStrategy.name = "outputStrategy"
+        outputStrategy.preferredSize = new Dimension(250, 20)
+
         resultLocation = new ULCTextField(model.resultLocation)
         resultLocation.name = "resultLocation"
-        resultLocation.preferredSize = new Dimension(150, 20)
+        resultLocation.preferredSize = new Dimension(250, 20)
         resultLocation.enabled = false
         Closure resultLocationAction = {
             resultLocation.text = model.getResultLocation()
         }
         changeLocationButton = new ULCButton(model.getChangeResultLocationAction(resultLocationAction))
         changeLocationButton.name = "changeLocation"
+        changeLocationButton.preferredSize = new Dimension(140, 20)
 
         userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)
         userDefinedRandomSeed.name = "userDefinedRandomSeed"
@@ -117,13 +128,13 @@ class SimulationSettingsPane {
         randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
         numberOfIterations = new ULCTextField()
-        numberOfIterations.preferredSize = new Dimension(150, 20)
+        numberOfIterations.preferredSize = new Dimension(250, 20)
         numberOfIterations.name = "iterations"
         numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
         if (model.requiresStartDate()) {
             beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
-            beginOfFirstPeriod.preferredSize = new Dimension(150, 20)
+            beginOfFirstPeriod.preferredSize = new Dimension(250, 20)
             beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
         }
     }

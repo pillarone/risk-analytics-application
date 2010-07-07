@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
+import com.ulcjava.base.application.ULCFiller
 
 /**
  * The SimulationConfigurationView which combines a settings pane (to define a simulation)
@@ -34,9 +35,13 @@ class SimulationConfigurationView implements ISimulationListener {
     }
 
     void layoutComponents() {
-        content = new ULCBoxPane(1, 2)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, settingsPane.content)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, actionsPane.content)
+        ULCBoxPane holder = new ULCBoxPane(1, 2)
+        holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, settingsPane.content)
+        holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, actionsPane.content)
+
+        content = new ULCBoxPane(1,2)
+        content.add(ULCBoxPane.BOX_LEFT_TOP, holder)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
     void simulationEnd(Simulation simulation, Model model) {

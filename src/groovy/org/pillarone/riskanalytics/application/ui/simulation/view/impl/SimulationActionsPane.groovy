@@ -214,7 +214,11 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, addToBatch)
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, batchMessage)
 
-        content.addTab("Batch", innerPane)
+        ULCBoxPane batchPane = new ULCBoxPane(1, 2)
+        batchPane.add(ULCBoxPane.BOX_LEFT_CENTER, innerPane)
+        batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+
+        content.addTab("Batch", batchPane)
         content.setCloseableTab(1, false)
     }
 
@@ -254,6 +258,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         availableBatchRuns = new ULCComboBox(model.batchRunComboBoxModel)
         availableBatchRuns.editable = true
         addToBatch = new ULCButton(model.addToBatchAction)
+        addToBatch.preferredSize = buttonSize
         batchMessage = new ULCLabel()
     }
 
