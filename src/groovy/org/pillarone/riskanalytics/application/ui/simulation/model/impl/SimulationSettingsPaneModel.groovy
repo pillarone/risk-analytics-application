@@ -185,10 +185,15 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         simulation.modelClass = modelClass
         simulation.comment = comment
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
-        parameterization.load()
+        //do not always load, because params could be open and modified ("save and run")
+        if (!parameterization.isLoaded()) {
+            parameterization.load()
+        }
         simulation.parameterization = parameterization
         ResultConfiguration configuration = resultConfigurationVersions.selectedObject as ResultConfiguration
-        configuration.load()
+        if (!configuration.isLoaded()) {
+            configuration.load()
+        }
         simulation.template = configuration
         simulation.numberOfIterations = numberOfIterations
         simulation.periodCount = parameterization.periodCount
