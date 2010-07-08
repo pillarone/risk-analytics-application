@@ -139,8 +139,10 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     void setFont(ParameterizationNode node) {
-        setFont(new Font(getFont().getName(), !node.item.valid ? Font.ITALIC : Font.PLAIN, getFont().getSize()))
-        setForeground(!node.item.valid ? Color.gray : null)
+        if (node.parent && !(node.parent instanceof SimulationNode)) {
+            setFont(new Font(getFont().getName(), !node.item.valid ? Font.ITALIC : Font.PLAIN, getFont().getSize()))
+            setForeground(!node.item.valid ? Color.gray : null)
+        }
     }
 
     void setFont(def node) {

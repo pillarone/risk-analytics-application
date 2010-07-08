@@ -140,7 +140,7 @@ class PropertiesDialog {
         tabbedPane = new ULCTabbedPane(ULCTabbedPane.TOP);
         tabbedPane.addTab(UIUtils.getText(PropertiesDialog.class, "labels"), chartPropertiesDialog.content)
         if (changeChartColorDialog)
-            tabbedPane.addTab(UIUtils.getText(PropertiesDialog.class, "chartProperties"), changeChartColorDialog.content)
+            tabbedPane.addTab(UIUtils.getText(PropertiesDialog.class, "Colours"), changeChartColorDialog.content)
 
 
         cancel = new ULCButton(UIUtils.getText(ChangeChartColorView.class, "cancel"))
