@@ -214,6 +214,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             item.save()
         }
         updateViewModelsMap()
+        fireModelChanged()
         fireModelItemChanged()
     }
 

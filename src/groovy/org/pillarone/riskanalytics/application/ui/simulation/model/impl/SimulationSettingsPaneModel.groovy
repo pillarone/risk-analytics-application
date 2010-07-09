@@ -226,7 +226,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         listeners.remove(listener)
     }
 
-    protected void notifyConfigurationChanged() {
+    void notifyConfigurationChanged() {
         listeners*.simulationPropertyChanged(validate())
     }
 
@@ -235,7 +235,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * @return true if a valid simulation can be created from the current model values
      */
     protected boolean validate() {
-        return numberOfIterations != null
+        return numberOfIterations != null && parameterizationVersions.selectedObject.valid
     }
 
     ICollectorOutputStrategy getOutputStrategy() {

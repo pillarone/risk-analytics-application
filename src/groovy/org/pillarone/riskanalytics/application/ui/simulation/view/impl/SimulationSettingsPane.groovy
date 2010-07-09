@@ -10,8 +10,14 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
+import com.ulcjava.base.application.util.Font
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import com.ulcjava.base.application.util.Color
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import com.ulcjava.base.application.event.IActionListener
 
 /**
  * A view class which can be used to collect all information necessary for a simulation run (Simulation & output strategy)
@@ -61,6 +67,17 @@ class SimulationSettingsPane {
         randomSeed.addValueChangedListener(model.randomSeedAction)
         userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
         parametrizationNamesComboBox.addActionListener(model.reloadListModelAction)
+        parameterizationVersionsComboBox.addActionListener ([actionPerformed:{ e ->
+            ParameterizationVersionsListModel listModel = parameterizationVersionsComboBox.model
+            if(listModel.isValid(listModel.selectedItem)) {
+                parameterizationVersionsComboBox.font = parameterizationVersionsComboBox.font.deriveFont(Font.PLAIN + Font.BOLD)
+                parameterizationVersionsComboBox.foreground = Color.black
+            } else {
+                parameterizationVersionsComboBox.font = parameterizationVersionsComboBox.font.deriveFont(Font.ITALIC + Font.BOLD)
+                parameterizationVersionsComboBox.foreground = Color.orange
+            }
+            model.notifyConfigurationChanged()
+        }] as IActionListener)
         resultConfigurationNamesComboBox.addActionListener(model.reloadListModelAction)
 
         Closure outputStrategyAction = { boolean resultLocationRequired ->
@@ -99,10 +116,10 @@ class SimulationSettingsPane {
 
         parameterizationVersionsComboBox = new ULCComboBox(model.parameterizationVersions)
         parameterizationVersionsComboBox.name = "parameterizationVersions"
+        parameterizationVersionsComboBox.renderer = new VersionComboBoxRenderer()
         resultConfigurationNamesComboBox = new ULCComboBox(model.resultConfigurationNames)
         resultConfigurationNamesComboBox.preferredSize = new Dimension(250, 20)
         resultConfigurationVersionsComboBox = new ULCComboBox(model.resultConfigurationVersions)
-
 
         outputStrategy = new ULCComboBox(model.outputStrategies)
         outputStrategy.name = "outputStrategy"
@@ -225,3 +242,23 @@ class SimulationSettingsPane {
     }
 
 }
+
+class VersionComboBoxRenderer extends DefaultComboBoxCellRenderer {
+
+    IRendererComponent getComboBoxCellRendererComponent(ULCComboBox comboBox, Object value, boolean isSelected, int row) {
+        ULCLabel component = super.getComboBoxCellRendererComponent(comboBox, value, isSelected, row)
+        ParameterizationVersionsListModel model = comboBox.model
+        if (value != null) {
+            if(!model.isValid(value)) {
+                component.font = component.font.deriveFont(Font.ITALIC + Font.BOLD)
+                component.foreground = Color.orange
+            } else {
+                component.font = component.font.deriveFont(Font.PLAIN + Font.BOLD)
+                component.foreground = Color.black
+            }
+        }
+        return component;
+    }
+
+}
+

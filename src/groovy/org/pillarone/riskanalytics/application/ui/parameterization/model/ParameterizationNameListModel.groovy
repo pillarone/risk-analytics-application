@@ -24,7 +24,6 @@ public class ParameterizationNameListModel extends DefaultComboBoxModel {
         def criteria = ParameterizationDAO.createCriteria()
         def params = criteria.list {
             eq('modelClassName', modelClass.name)
-            eq('valid',true)
             projections {
                 distinct("name")
             }
