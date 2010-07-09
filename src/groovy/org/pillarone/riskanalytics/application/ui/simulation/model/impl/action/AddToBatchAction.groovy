@@ -30,14 +30,14 @@ class AddToBatchAction extends RunSimulationAction {
                 BatchRun.withTransaction {
                     batchRun.save()
                 }
-                model.mainModel.fireRowAdded()
+                model.mainModel.addItem(batchRun)
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
             BatchRunService.getService().addSimulationRun(batchRun, model.simulation, OutputStrategyFactory.getEnum(model.outputStrategy.class))
             model.setBatchMessage(UIUtils.getText(this.class, "succes"))
         } catch (Exception ex) {
             model.setBatchMessage(UIUtils.getText(this.class, "error"))
-        } 
+        }
     }
 
 
