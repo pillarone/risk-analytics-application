@@ -99,10 +99,10 @@ class UIUtils {
     }
 
 
-    public static ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right) {
+    public static ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right, String alignment = null) {
         ULCBoxPane deco = new ULCBoxPane()
         deco.border = BorderFactory.createEmptyBorder(top, left, bottom, right)
-        deco.add comp
+        (alignment) ? deco.add(alignment, comp) : deco.add(comp)
         return deco
     }
 
@@ -148,7 +148,7 @@ class UIUtils {
         result.border = BorderFactory.createTitledBorder(" $title ")
         ULCBoxPane inner = new ULCBoxPane()
         body(inner)
-        result.add ULCBoxPane.BOX_EXPAND_EXPAND, spaceAround(inner, 0, 5, 5, 5)
+        result.add ULCBoxPane.BOX_EXPAND_EXPAND, spaceAround(inner, 0, 5, 5, 5, ULCBoxPane.BOX_EXPAND_EXPAND)
         return result
     }
 

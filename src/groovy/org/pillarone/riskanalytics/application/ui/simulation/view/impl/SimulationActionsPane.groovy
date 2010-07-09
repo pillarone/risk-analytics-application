@@ -5,14 +5,14 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
-import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.model.Model
-import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 
 /**
  * A view which can be used to run & monitor a simulation (provided by an ISimulationProvider in the model).
@@ -22,8 +22,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
     private static Log LOG = LogFactory.getLog(SimulationActionsPane)
 
-
-    ULCDetachableTabbedPane content
+    ULCTabbedPane content
     SimulationState currentUISimulationState
 
     private ULCProgressBar progressBar
@@ -206,24 +205,23 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         simulationContent.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
         content.addTab("Simulation", simulationContent)
-        content.setCloseableTab(0, false)
 
-        innerPane = new ULCBoxPane(3, 0)
-        innerPane.border = BorderFactory.createTitledBorder("Add to a batch run:")
-        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, availableBatchRuns)
+        innerPane = new ULCBoxPane(4, 2)
+        innerPane.border = BorderFactory.createTitledBorder(UIUtils.getText(SimulationActionsPane.class, "AddToBatch"))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(availableBatchRuns, 0, 5, 0, 0))
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, addToBatch)
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, batchMessage)
+        innerPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        innerPane.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
 
-        ULCBoxPane batchPane = new ULCBoxPane(1, 2)
-        batchPane.add(ULCBoxPane.BOX_LEFT_CENTER, innerPane)
-        batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        ULCBoxPane batchPane = new ULCBoxPane(1, 0)
+        batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
         content.addTab("Batch", batchPane)
-        content.setCloseableTab(1, false)
     }
 
     void initComponents() {
-        content = new ULCDetachableTabbedPane()
+        content = new ULCTabbedPane()
         progressBar = new ULCProgressBar(ULCProgressBar.HORIZONTAL, 0, 100)
         progressBar.stringPainted = true
         progressBar.name = "progress"

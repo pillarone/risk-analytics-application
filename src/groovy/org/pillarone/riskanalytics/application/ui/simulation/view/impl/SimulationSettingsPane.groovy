@@ -1,23 +1,21 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.application.util.Font
 import org.apache.commons.lang.time.FastDateFormat
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
-import com.ulcjava.base.application.util.Font
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
-import com.ulcjava.base.application.util.Color
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import com.ulcjava.base.application.event.IActionListener
 
 /**
  * A view class which can be used to collect all information necessary for a simulation run (Simulation & output strategy)
@@ -67,9 +65,9 @@ class SimulationSettingsPane {
         randomSeed.addValueChangedListener(model.randomSeedAction)
         userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
         parametrizationNamesComboBox.addActionListener(model.reloadListModelAction)
-        parameterizationVersionsComboBox.addActionListener ([actionPerformed:{ e ->
+        parameterizationVersionsComboBox.addActionListener([actionPerformed: {e ->
             ParameterizationVersionsListModel listModel = parameterizationVersionsComboBox.model
-            if(listModel.isValid(listModel.selectedItem)) {
+            if (listModel.isValid(listModel.selectedItem)) {
                 parameterizationVersionsComboBox.font = parameterizationVersionsComboBox.font.deriveFont(Font.PLAIN + Font.BOLD)
                 parameterizationVersionsComboBox.foreground = Color.black
             } else {
@@ -80,121 +78,117 @@ class SimulationSettingsPane {
         }] as IActionListener)
         resultConfigurationNamesComboBox.addActionListener(model.reloadListModelAction)
 
-        Closure outputStrategyAction = { boolean resultLocationRequired ->
+        Closure outputStrategyAction = {boolean resultLocationRequired ->
             resultLocation.enabled = resultLocationRequired
             changeLocationButton.enabled = resultLocationRequired
             resultLocation.text = model.getResultLocation()
         }
         outputStrategy.addActionListener(model.getChangeOutputStrategyAction(outputStrategyAction))
 
-        simulationName.addValueChangedListener([valueChanged: { e -> model.simulationName = simulationName.text }] as IValueChangedListener)
-        comment.addValueChangedListener([valueChanged: { e -> model.comment = comment.text }] as IValueChangedListener)
-        numberOfIterations.addKeyListener([keyTyped: { e ->
+        simulationName.addValueChangedListener([valueChanged: {e -> model.simulationName = simulationName.text }] as IValueChangedListener)
+        comment.addValueChangedListener([valueChanged: {e -> model.comment = comment.text }] as IValueChangedListener)
+        numberOfIterations.addKeyListener([keyTyped: {e ->
             model.numberOfIterations = numberOfIterations.value
         }] as IKeyListener)
     }
 
     private void initComponents() {
         simulationName = new ULCTextField(model.simulationName)
-        simulationName.preferredSize = new Dimension(250, 20)
+        simulationName.setPreferredSize(new Dimension(150, 20))
         simulationName.name = "simulationName"
 
         comment = new ULCTextArea(model.comment, 4, 20)
         comment.lineWrap = true
         comment.wrapStyleWord = true
         comment.name = "comment"
-        comment.preferredSize = new Dimension(250, 80)
 
 
         modelComboBox = new ULCComboBox(model.models)
         modelComboBox.enabled = false
-        modelComboBox.preferredSize = new Dimension(250, 20)
 
         parametrizationNamesComboBox = new ULCComboBox(model.parameterizationNames)
         parametrizationNamesComboBox.name = "parameterizationNames"
-        parametrizationNamesComboBox.preferredSize = new Dimension(250, 20)
 
         parameterizationVersionsComboBox = new ULCComboBox(model.parameterizationVersions)
         parameterizationVersionsComboBox.name = "parameterizationVersions"
         parameterizationVersionsComboBox.renderer = new VersionComboBoxRenderer()
         resultConfigurationNamesComboBox = new ULCComboBox(model.resultConfigurationNames)
-        resultConfigurationNamesComboBox.preferredSize = new Dimension(250, 20)
+        resultConfigurationNamesComboBox.minimumSize = new Dimension(250, 20)
         resultConfigurationVersionsComboBox = new ULCComboBox(model.resultConfigurationVersions)
 
         outputStrategy = new ULCComboBox(model.outputStrategies)
         outputStrategy.name = "outputStrategy"
-        outputStrategy.preferredSize = new Dimension(250, 20)
 
         resultLocation = new ULCTextField(model.resultLocation)
         resultLocation.name = "resultLocation"
-        resultLocation.preferredSize = new Dimension(250, 20)
+        resultLocation.setPreferredSize(new Dimension(150, 20))
         resultLocation.enabled = false
         Closure resultLocationAction = {
             resultLocation.text = model.getResultLocation()
         }
         changeLocationButton = new ULCButton(model.getChangeResultLocationAction(resultLocationAction))
         changeLocationButton.name = "changeLocation"
-        changeLocationButton.preferredSize = new Dimension(140, 20)
+        changeLocationButton.setPreferredSize(new Dimension(100, 20))
 
         userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)
         userDefinedRandomSeed.name = "userDefinedRandomSeed"
         randomSeed = new ULCTextField()
-        randomSeed.preferredSize = new Dimension(50, 20)
+        randomSeed.setPreferredSize(new Dimension(100, 20))
         randomSeed.enabler = userDefinedRandomSeed
         randomSeed.name = "randomSeed"
         randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
         numberOfIterations = new ULCTextField()
-        numberOfIterations.preferredSize = new Dimension(250, 20)
         numberOfIterations.name = "iterations"
         numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
         if (model.requiresStartDate()) {
             beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
-            beginOfFirstPeriod.preferredSize = new Dimension(250, 20)
             beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
         }
     }
 
     private void layoutComponents() {
-        content = boxLayout(model.getText(SIMULATION_SETTINGS_KEY)) { ULCBoxPane pane ->
+        content = boxLayout(model.getText(SIMULATION_SETTINGS_KEY)) {ULCBoxPane pane ->
             ULCBoxPane innerPane = new ULCBoxPane(3, 0)
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(SIMULATION_NAME_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_LEFT_CENTER, spaceAround(simulationName, 5, 10, 0, 0))
+            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(simulationName, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             innerPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(model.getText(SIMULATION_COMMENT_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_LEFT_EXPAND, spaceAround(comment, 5, 10, 0, 0))
+            innerPane.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, spaceAround(comment, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(MODEL_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_LEFT_CENTER, spaceAround(modelComboBox, 5, 10, 0, 0))
+            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(modelComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            innerPane.add(new ULCFiller())
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(PARAMETERIZATION_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(parametrizationNamesComboBox, 5, 10, 0, 0))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(parameterizationVersionsComboBox, 5, 10, 0, 0))
+            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(parametrizationNamesComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(parameterizationVersionsComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RESULT_CONFIGURATION_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(resultConfigurationNamesComboBox, 5, 10, 0, 0))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(resultConfigurationVersionsComboBox, 5, 10, 0, 0))
+            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultConfigurationNamesComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(resultConfigurationVersionsComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(OUTPUT_STRATEGY_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_LEFT_CENTER, spaceAround(outputStrategy, 5, 10, 0, 0))
+            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(outputStrategy, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            innerPane.add(new ULCFiller())
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RESULT_LOCATION_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(resultLocation, 5, 10, 0, 0))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(changeLocationButton, 5, 10, 0, 0))
+            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultLocation, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(changeLocationButton, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RANDOM_SEED_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0))
+            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             if (model.requiresStartDate()) {
                 innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
-                innerPane.add(2, ULCBoxPane.BOX_LEFT_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0))
+                innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
             }
 
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(ITERATIONS_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_LEFT_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0))
+            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
             pane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
         }
@@ -249,7 +243,7 @@ class VersionComboBoxRenderer extends DefaultComboBoxCellRenderer {
         ULCLabel component = super.getComboBoxCellRendererComponent(comboBox, value, isSelected, row)
         ParameterizationVersionsListModel model = comboBox.model
         if (value != null) {
-            if(!model.isValid(value)) {
+            if (!model.isValid(value)) {
                 component.font = component.font.deriveFont(Font.ITALIC + Font.BOLD)
                 component.foreground = Color.orange
             } else {
