@@ -136,6 +136,11 @@ class ChartView implements IModelChangedListener {
             }] as IActionListener)
             button.selected = model.allFromOnePeriodSelected(index)
             periodBox.add(ULCBoxPane.BOX_EXPAND_EXPAND, button)
+            boolean isButtonEnabled = false
+            model.seriesNames.each {String seriesName ->
+                isButtonEnabled = isButtonEnabled || isCheckBoxEnabled(model, seriesName, index)
+            }
+            button.setEnabled isButtonEnabled
             periodToggleButtons << button
         }
 
@@ -151,15 +156,19 @@ class ChartView implements IModelChangedListener {
             button.selected = model.allFromOneKeyFigureSelected(seriesIndex)
             periodBox.add(ULCBoxPane.BOX_EXPAND_EXPAND, button)
             keyFigureToggleButtons << button
+            boolean isButtonEnabled = false
             model.periodCount.times {int periodIndex ->
                 ULCCheckBox checkBox = new ULCCheckBox()
                 checkBox.addValueChangedListener([valueChanged: {ValueChangedEvent event -> model.setSeriesVisibility(seriesIndex, periodIndex, event.source.isSelected())}] as IValueChangedListener)
                 checkBox.name = "Series${seriesName}Period${periodIndex}CheckBox"
                 if (periodIndex == 0) { checkBox.selected = isCheckBoxEnabled(model, seriesName, periodIndex)}
                 periodBox.add(ULCBoxPane.BOX_CENTER_EXPAND, checkBox)
-                checkBox.setEnabled(isCheckBoxEnabled(model, seriesName, periodIndex))
+                boolean enabled = isCheckBoxEnabled(model, seriesName, periodIndex)
+                checkBox.setEnabled(enabled)
+                isButtonEnabled = isButtonEnabled || enabled
                 periodCheckBoxes << [seriesIndex, periodIndex, checkBox]
             }
+            button.setEnabled isButtonEnabled
         }
 
         periodBox.border = BorderFactory.createTitledBorder("")
@@ -198,17 +207,21 @@ class ChartView implements IModelChangedListener {
 
     public void update() {
         model.fireEvents = false
+        boolean atLeastOneButtonIsEnabled = false
         periodToggleButtons.eachWithIndex {ULCToggleButton button, int index ->
-            button.selected = model.allFromOnePeriodSelected(index)
+            button.selected = model.allFromOnePeriodSelected(index) && button.isEnabled()
+            atLeastOneButtonIsEnabled = button.isEnabled() || atLeastOneButtonIsEnabled
         }
         keyFigureToggleButtons.eachWithIndex {ULCToggleButton button, int index ->
-            button.selected = model.allFromOneKeyFigureSelected(index)
+            button.selected = model.allFromOneKeyFigureSelected(index) && button.isEnabled()
+            atLeastOneButtonIsEnabled = button.isEnabled() || atLeastOneButtonIsEnabled
         }
         periodCheckBoxes.each {List l ->
             if (l[2].enabled)
                 l[2].selected = model.getSeriesVisibility(l[0], l[1])
         }
-        allPeriods?.selected = model.allSelected()
+        allPeriods?.selected = model.allSelected() && atLeastOneButtonIsEnabled
+        allPeriods?.setEnabled atLeastOneButtonIsEnabled
         JFreeChart chart = model.getChart()
         if (chart) {
             ulcChart.setChart(chart, new Dimension(width, height))
