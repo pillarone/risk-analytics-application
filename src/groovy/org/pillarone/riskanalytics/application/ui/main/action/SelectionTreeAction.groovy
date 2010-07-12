@@ -547,24 +547,35 @@ class ExportItemGroupAction extends ExportAction {
 }
 
 class DeleteAllGroupAction extends DeleteAllAction {
+    String alertId
 
-    public DeleteAllGroupAction(ULCTree tree, P1RATModel model) {
+    public DeleteAllGroupAction(ULCTree tree, P1RATModel model, String alertId) {
         super(tree, model)
+        this.alertId = alertId
     }
 
     public void doActionPerformed(ActionEvent actionEvent) {
-        Class itemClass = getSelectedItemGroupClass()
-        def modelClass = getSelectedModel().class
-        switch (itemClass) {
-            case Parameterization:
-                deleteParameterizations(ModellingItemFactory.getNewestParameterizationsForModel(modelClass))
-                break;
-            case ResultConfiguration:
-                deleteResultConfigurations(ModellingItemFactory.getNewestResultConfigurationsForModel(modelClass))
-                break;
-            case Simulation:
-                deleteResults(ModellingItemFactory.getActiveSimulationsForModel(modelClass))
-                break;
+        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), alertId)
+        alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel)}] as IWindowListener)
+        alert.show()
+
+    }
+
+    private void handleEvent(String value, String firstButtonValue) {
+        if (value.equals(firstButtonValue)) {
+            Class itemClass = getSelectedItemGroupClass()
+            def modelClass = getSelectedModel().class
+            switch (itemClass) {
+                case Parameterization:
+                    deleteParameterizations(ModellingItemFactory.getNewestParameterizationsForModel(modelClass))
+                    break;
+                case ResultConfiguration:
+                    deleteResultConfigurations(ModellingItemFactory.getNewestResultConfigurationsForModel(modelClass))
+                    break;
+                case Simulation:
+                    deleteResults(ModellingItemFactory.getActiveSimulationsForModel(modelClass))
+                    break;
+            }
         }
     }
 

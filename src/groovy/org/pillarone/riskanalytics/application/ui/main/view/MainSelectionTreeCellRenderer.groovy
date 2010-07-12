@@ -77,7 +77,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model)))
+        groupNodePopUpMenu.addSeparator()
+        groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllResultTemplates")))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
@@ -87,11 +88,13 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model, "importAllFromDir")))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, model)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model)))
+        parameterGroupNodePopUpMenu.addSeparator()
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllParameters")))
 
         simulationGroupNodePopUpMenu = new ULCPopupMenu()
         simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
-        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model)))
+        simulationGroupNodePopUpMenu.addSeparator()
+        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllSimulations")))
 
         modelNodePopUpMenu = new ULCPopupMenu()
         modelNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
