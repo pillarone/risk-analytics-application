@@ -619,6 +619,8 @@ class ExportItemAction extends ExportAction {
 
 class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
+    private static Log LOG = LogFactory.getLog(CreateDefaultParameterizationAction)
+
     public CreateDefaultParameterizationAction(ULCTree tree, P1RATModel model) {
         super("CreateDefaultParameterization", tree, model)
     }
@@ -642,6 +644,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     model.selectionTreeModel.addNodeForItem(param)
                     model.fireModelChanged()
                 } catch (Exception ex) {
+                    LOG.error "Error creating default parameterization", ex
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "CreationError")
                     alert.show()
                 }
