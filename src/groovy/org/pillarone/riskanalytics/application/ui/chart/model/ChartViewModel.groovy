@@ -147,7 +147,7 @@ abstract class ChartViewModel {
     public void selectAllFromPeriod(int period, boolean select = true, boolean notify = true) {
         int nrOfSeries = seriesNames.size()
         nrOfSeries.times {int seriesIndex ->
-            showLine[[seriesIndex, period]] = select
+            showLine[[seriesIndex, period]] = select && notStochasticSeries[seriesNames[seriesIndex], period] == null
         }
         if (notify) {
             fireModelChanged()
@@ -171,8 +171,12 @@ abstract class ChartViewModel {
     public boolean allSelected() {
         if (showLine.size() >= periodCount * seriesNames.size()) {
             boolean allSelected = true
-            showLine.values().each {
-                allSelected = allSelected && it
+            seriesNames.size().times {int seriesIndex ->
+                periodCount.times {int period ->
+                    if (notStochasticSeries[seriesNames[seriesIndex], period] == null)
+                        allSelected = allSelected && showLine[[seriesIndex, period]]
+                }
+
             }
             return allSelected
         } else {
