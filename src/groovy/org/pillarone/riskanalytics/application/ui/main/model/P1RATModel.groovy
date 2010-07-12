@@ -108,6 +108,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         if (viewModel != null) {
             if (viewModel instanceof SimulationConfigurationModel) {
                 viewModel.actionsPaneModel.removeSimulationListener(this)
+                removeModelChangedListener(viewModel.settingsPaneModel)
             }
             if (viewModel instanceof IModelChangedListener) {
                 removeModelChangedListener(viewModel)

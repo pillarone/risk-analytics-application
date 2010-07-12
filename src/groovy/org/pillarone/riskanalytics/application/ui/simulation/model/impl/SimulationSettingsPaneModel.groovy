@@ -235,7 +235,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * @return true if a valid simulation can be created from the current model values
      */
     protected boolean validate() {
-        return numberOfIterations != null && parameterizationVersions.selectedObject.valid
+        Parameterization parameterization = parameterizationVersions.selectedObject
+        if(parameterization == null) {
+            return false
+        }
+        return numberOfIterations != null && parameterization.valid
     }
 
     ICollectorOutputStrategy getOutputStrategy() {
