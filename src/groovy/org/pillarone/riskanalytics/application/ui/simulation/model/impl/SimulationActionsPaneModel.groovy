@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
@@ -137,6 +138,11 @@ class SimulationActionsPaneModel {
 
     void notifySimulationStop() {
         listeners*.simulationEnd(simulation, runner.currentScope.model)
+    }
+
+    void notifySimulationToBatchAdded(String message) {
+        batchMessage = message
+        listeners.find {it.class.name == SimulationActionsPane.class.name}.simulationToBatchAdded()
     }
 
     String getErrorMessage() {
