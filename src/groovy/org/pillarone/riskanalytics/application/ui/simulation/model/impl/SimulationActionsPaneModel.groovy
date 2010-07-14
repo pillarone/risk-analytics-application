@@ -143,4 +143,26 @@ class SimulationActionsPaneModel {
         listeners*.simulationEnd(simulation, runner.currentScope.model)
     }
 
+    String getErrorMessage() {
+        Exception simulationException = runner.error?.error
+
+        String exceptionMessage = simulationException.message
+        if (exceptionMessage == null) {
+            exceptionMessage = simulationException.class.name
+        }
+        List words = exceptionMessage.split(" ") as List
+        StringBuffer text = new StringBuffer()
+        int lineLength = 0
+        for (String s in words) {
+            if (lineLength + s.length() > 70) {
+                text << "\n"
+                lineLength = 0
+            }
+            text << s + " "
+            lineLength += (s.length() + 1)
+        }
+
+        return text.toString()
+    }
+
 }

@@ -281,6 +281,11 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
     void simulationEnd(Simulation simulation, Model model) {
         //the polling timer is stopped in the ui state closures to make sure that the last state is correctly applied
+
+        if (currentUISimulationState == SimulationState.ERROR) {
+            ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", this.model.errorMessage, "Ok")
+            alert.show()
+        }
     }
 
     void simulationStart(Simulation simulation) {
