@@ -1,15 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class QueryPaneModel extends AbstractPresentationModel {
 
@@ -235,6 +234,20 @@ class QueryPaneModel extends AbstractPresentationModel {
         List iterations = new ArrayList(results)
         iterations = iterations.sort()
 
+        //do not use more than 1000 ids in the in clause
+        List<List<Integer>> splitUpIterations = []
+        if (iterations.size() > 1000) {
+            int i = 0
+            while (i < iterations.size()) {
+                int lowerBound = i
+                i += 1000
+                int upperBound = Math.min(i - 1, iterations.size() - 1)
+                splitUpIterations << iterations[lowerBound..upperBound]
+            }
+        } else {
+            splitUpIterations << iterations
+        }
+
         if (iterations.size() == 0) {
             return []
         }
@@ -244,14 +257,18 @@ class QueryPaneModel extends AbstractPresentationModel {
                 String path = node.path
                 String field = node.field
                 simulationRun.periodCount.times {int period ->
-                    String q = "SELECT s.value " +
-                            "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                            "WHERE s.simulationRun.id = " + simulationRun.id +
-                            " AND s.period = " + period +
-                            " AND s.path.pathName = '" + path + "'" +
-                            " AND s.field.fieldName = '" + field + "'" +
-                            " AND s.iteration in (:list) ORDER BY s.iteration"
-                    resultsPerPathAndPeriod << SingleValueResult.executeQuery(q, ["list": iterations])
+                    List periodList = []
+                    for (List<Integer> list in splitUpIterations) {
+                        String q = "SELECT s.value " +
+                                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                                "WHERE s.simulationRun.id = " + simulationRun.id +
+                                " AND s.period = " + period +
+                                " AND s.path.pathName = '" + path + "'" +
+                                " AND s.field.fieldName = '" + field + "'" +
+                                " AND s.iteration in (:list) ORDER BY s.iteration"
+                        periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
+                    }
+                    resultsPerPathAndPeriod << periodList
                 }
             }
         } else {
@@ -259,14 +276,18 @@ class QueryPaneModel extends AbstractPresentationModel {
                 nodes.each {ResultTableTreeNode node ->
                     String path = node.path
                     String field = node.field
-                    String q = "SELECT s.value " +
-                            "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                            "WHERE s.simulationRun.id = " + simulationRun.id +
-                            " AND s.period = " + period +
-                            " AND s.path.pathName = '" + path + "'" +
-                            " AND s.field.fieldName = '" + field + "'" +
-                            " AND s.iteration in (:list) ORDER BY s.iteration"
-                    resultsPerPathAndPeriod << SingleValueResult.executeQuery(q, ["list": iterations])
+                    List periodList = []
+                    for (List<Integer> list in splitUpIterations) {
+                        String q = "SELECT s.value " +
+                                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                                "WHERE s.simulationRun.id = " + simulationRun.id +
+                                " AND s.period = " + period +
+                                " AND s.path.pathName = '" + path + "'" +
+                                " AND s.field.fieldName = '" + field + "'" +
+                                " AND s.iteration in (:list) ORDER BY s.iteration"
+                        periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
+                    }
+                    resultsPerPathAndPeriod << periodList
                 }
             }
         }

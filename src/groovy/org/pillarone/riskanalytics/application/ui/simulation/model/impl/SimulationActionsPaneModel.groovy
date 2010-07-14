@@ -7,7 +7,6 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
@@ -140,9 +139,26 @@ class SimulationActionsPaneModel {
         listeners*.simulationEnd(simulation, runner.currentScope.model)
     }
 
-    void notifySimulationToBatchAdded(String message) {
-        batchMessage = message
-        listeners.find {it.class.name == SimulationActionsPane.class.name}.simulationToBatchAdded()
+    String getErrorMessage() {
+        Exception simulationException = runner.error?.error
+
+        String exceptionMessage = simulationException.message
+        if (exceptionMessage == null) {
+            exceptionMessage = simulationException.class.name
+        }
+        List words = exceptionMessage.split(" ") as List
+        StringBuffer text = new StringBuffer()
+        int lineLength = 0
+        for (String s in words) {
+            if (lineLength + s.length() > 70) {
+                text << "\n"
+                lineLength = 0
+            }
+            text << s + " "
+            lineLength += (s.length() + 1)
+        }
+
+        return text.toString()
     }
 
 }
