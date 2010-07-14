@@ -42,7 +42,7 @@ public class AddToBatchAction extends RunSimulationAction {
                     Object newBatchRunName = model.itemsComboBoxModel.getSelectedItem()
                     batchRun = new BatchRun(name: newBatchRunName, executionTime: new Date())
                     BatchRun.withTransaction {
-                        batchRun.save()
+                        batchRun.save(flush: true)
                     }
                     updateModels(batchRun)
                 }

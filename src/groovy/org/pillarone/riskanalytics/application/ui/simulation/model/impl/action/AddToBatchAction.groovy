@@ -2,11 +2,11 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
-import org.pillarone.riskanalytics.core.output.batch.OutputStrategyFactory
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.core.batch.BatchRunService
+import org.pillarone.riskanalytics.core.output.batch.OutputStrategyFactory
 
 class AddToBatchAction extends RunSimulationAction {
 
@@ -34,9 +34,11 @@ class AddToBatchAction extends RunSimulationAction {
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
             BatchRunService.getService().addSimulationRun(batchRun, model.simulation, OutputStrategyFactory.getEnum(model.outputStrategy.class))
-            model.setBatchMessage(UIUtils.getText(this.class, "succes"))
+            def count = BatchRunSimulationRun.countByBatchRun(batchRun).toString()
+            String message = UIUtils.getText(this.class, "succes", [model.simulation.name, count])
+            model.notifySimulationToBatchAdded(message)
         } catch (Exception ex) {
-            model.setBatchMessage(UIUtils.getText(this.class, "error"))
+            model.notifySimulationToBatchAdded(UIUtils.getText(this.class, "error"))
         }
     }
 

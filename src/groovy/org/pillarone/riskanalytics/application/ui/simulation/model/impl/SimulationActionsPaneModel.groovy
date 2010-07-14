@@ -1,25 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
+import groovy.time.TimeCategory
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import java.text.SimpleDateFormat
-import java.text.DateFormat
-import groovy.time.TimeCategory
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.RunSimulationAction
-import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.StopSimulationAction
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.CancelSimulationAction
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.OpenResultsAction
-import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.AddToBatchAction
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 
 /**
  * The view model for the SimulationActionsPane.
@@ -141,6 +138,11 @@ class SimulationActionsPaneModel {
 
     void notifySimulationStop() {
         listeners*.simulationEnd(simulation, runner.currentScope.model)
+    }
+
+    void notifySimulationToBatchAdded(String message) {
+        batchMessage = message
+        listeners.find {it.class.name == SimulationActionsPane.class.name}.simulationToBatchAdded()
     }
 
 }

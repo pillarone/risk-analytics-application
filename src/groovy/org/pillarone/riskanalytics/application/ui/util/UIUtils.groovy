@@ -122,8 +122,14 @@ class UIUtils {
         return locale
     }
 
-    public static final String getText(Class objClass, String key) {
-        return LocaleResources.getString(objClass.simpleName + "." + key);
+    public static final String getText(Class objClass, String key, List argsValue = null) {
+        String str = LocaleResources.getString(objClass.simpleName + "." + key)
+        if (argsValue) {
+            argsValue.eachWithIndex {String value, int index ->
+                str = str.replace("[${index}]", value)
+            }
+        }
+        return str;
     }
 
     public static com.ulcjava.base.application.util.Color toULCColor(java.awt.Color color) {

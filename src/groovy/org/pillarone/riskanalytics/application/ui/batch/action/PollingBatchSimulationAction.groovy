@@ -21,12 +21,16 @@ class PollingBatchSimulationAction implements IActionListener {
     }
 
     void actionPerformed(ActionEvent actionEvent) {
-        batchRunInfoService?.executedSimulations?.each {Simulation simulation ->
-            simulationListeners.each {ISimulationListener simulationListener ->
-                simulationListener.simulationEnd simulation, null
+        try {
+            batchRunInfoService?.executedSimulations?.each {Simulation simulation ->
+                simulationListeners.each {ISimulationListener simulationListener ->
+                    simulationListener.simulationEnd simulation, null
+                }
             }
+            batchRunInfoService?.executedSimulations?.clear()
+        } catch (Exception ex) {
+            //ignore exception
         }
-        batchRunInfoService?.executedSimulations?.clear()
     }
 
     public void addSimulationListener(ISimulationListener simulationListener) {

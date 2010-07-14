@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -206,13 +207,14 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
         content.addTab("Simulation", simulationContent)
 
-        innerPane = new ULCBoxPane(4, 2)
+        innerPane = new ULCBoxPane(3, 2)
         innerPane.border = BorderFactory.createTitledBorder(UIUtils.getText(SimulationActionsPane.class, "AddToBatch"))
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(availableBatchRuns, 0, 5, 0, 0))
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, addToBatch)
-        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, batchMessage)
         innerPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-        innerPane.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+
+        innerPane.add(2, ULCBoxPane.BOX_LEFT_CENTER, batchMessage)
+        innerPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
 
         ULCBoxPane batchPane = new ULCBoxPane(1, 0)
         batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
@@ -257,7 +259,8 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         availableBatchRuns.editable = true
         addToBatch = new ULCButton(model.addToBatchAction)
         addToBatch.preferredSize = buttonSize
-        batchMessage = new ULCLabel()
+        batchMessage = new ULCLabel(model.batchMessage)
+        batchMessage.setForeground(Color.blue)
     }
 
     /**
@@ -285,6 +288,10 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
     void simulationStart(Simulation simulation) {
         timer.start()
+    }
+
+    void simulationToBatchAdded() {
+        batchMessage.text = model.batchMessage
     }
 
     /**
