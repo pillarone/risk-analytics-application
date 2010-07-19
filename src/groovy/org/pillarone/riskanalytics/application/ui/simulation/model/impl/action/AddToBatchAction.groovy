@@ -26,6 +26,8 @@ class AddToBatchAction extends RunSimulationAction {
             BatchRun batchRun = model.batchRunComboBoxModel.selectedObject
             if (!batchRun) {
                 String newBatchRunName = model.batchRunComboBoxModel.getSelectedItem()
+                if (!newBatchRunName || "" == newBatchRunName)
+                    newBatchRunName = "${new Date()}"
                 batchRun = new BatchRun(name: newBatchRunName, executionTime: new Date())
                 BatchRun.withTransaction {
                     batchRun.save()
