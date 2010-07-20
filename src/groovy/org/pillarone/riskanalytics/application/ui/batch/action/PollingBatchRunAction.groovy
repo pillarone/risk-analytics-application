@@ -22,15 +22,17 @@ class PollingBatchRunAction implements IActionListener {
 
     void actionPerformed(ActionEvent actionEvent) {
         synchronized (this) {
-            List<BatchRun> removedBatchRunSimulationRuns = []
-            batchRunInfoService?.executedBatchRunSimulationRuns?.each {BatchRunSimulationRun batchRunSimulationRun ->
-                if (batchDataTableModel?.batchRun?.name == batchRunSimulationRun.batchRun.name) {
-                    batchDataTableModel.fireTableRowsUpdated(batchRunSimulationRun)
-                    removedBatchRunSimulationRuns << batchRunSimulationRun
+            try {
+                List<BatchRun> removedBatchRunSimulationRuns = []
+                batchRunInfoService?.executedBatchRunSimulationRuns?.each {BatchRunSimulationRun batchRunSimulationRun ->
+                    if (batchDataTableModel?.batchRun?.name == batchRunSimulationRun.batchRun.name) {
+                        batchDataTableModel.fireTableRowsUpdated(batchRunSimulationRun)
+                        removedBatchRunSimulationRuns << batchRunSimulationRun
+                    }
                 }
-            }
-            if (!removedBatchRunSimulationRuns.isEmpty())
-                batchRunInfoService?.executedBatchRunSimulationRuns?.removeAll(removedBatchRunSimulationRuns)
+                if (!removedBatchRunSimulationRuns.isEmpty())
+                    batchRunInfoService?.executedBatchRunSimulationRuns?.removeAll(removedBatchRunSimulationRuns)
+            } catch (Exception) {}
         }
 
     }

@@ -144,6 +144,7 @@ class SimulationActionsPaneModel {
         batchMessage = message
         ISimulationListener pane = listeners.find {it.class.name == SimulationActionsPane.class.name}
         pane?.simulationToBatchAdded()
+        mainModel.fireRowAdded()
     }
 
     String getErrorMessage() {
