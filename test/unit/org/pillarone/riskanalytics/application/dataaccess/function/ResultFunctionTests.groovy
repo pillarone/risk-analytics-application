@@ -13,6 +13,7 @@ class ResultFunctionTests extends GroovyTestCase {
         SimpleTableTreeNode node = new SimpleTableTreeNode("node")
         SimpleTableTreeNode child = new SimpleTableTreeNode("child")
         ResultTableTreeNode grandChild = new ResultTableTreeNode("grandchild")
+        grandChild.resultPath = "node:child:grandchild"
         child.add(grandChild)
         node.add(child)
 

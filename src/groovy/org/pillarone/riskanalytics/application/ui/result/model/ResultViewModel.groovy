@@ -19,6 +19,8 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ResultViewModel extends AbstractModellingModel {
 
@@ -38,14 +40,15 @@ class ResultViewModel extends AbstractModellingModel {
             //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
             //all result paths for this simulation run
             ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
-            List paths = allResults."0".keySet().toList()
+            List paths = obtainAllPaths(allResults."0")
 
             def simulationRun = item.simulationRun
-            builder = new ResultTreeBuilder(model, structure, item, paths)
-            builder.applyResultPaths()
+            Class modelClass = model.class
+            ResultStructure resultStructure = new ResultStructure("Default", modelClass)
+            resultStructure.load()
+            builder = new ResultStructureTreeBuilder(paths, modelClass, resultStructure, simulation)
 
-
-            treeRoot = builder.root
+            treeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
 
             MeanAction meanAction = new MeanAction(this, null)
@@ -55,6 +58,19 @@ class ResultViewModel extends AbstractModellingModel {
             nodeNames = extractNodeNames(treeModel)
         }
 
+    }
+
+    List<String> obtainAllPaths(ConfigObject paths) {
+        List res = []
+
+        for (Map.Entry<String, ConfigObject> entry in paths.entrySet()) {
+            String path = entry.key + ":"
+            for (String field in entry.value.keySet()) {
+                res << path + field
+            }
+        }
+
+        return res
     }
 
     /**

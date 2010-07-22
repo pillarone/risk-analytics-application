@@ -7,7 +7,7 @@ class DefaultResultStructureBuilderTests extends GroovyTestCase {
 
     void testCreate() {
         ResultStructure structure = DefaultResultStructureBuilder.create("test", ApplicationModel)
-        println structure.mappings.keySet()
         assertEquals 6, structure.mappings.size()
+        assertTrue structure.mappings.keySet().every { it.startsWith("Application:")}
     }
 }

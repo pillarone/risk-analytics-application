@@ -27,9 +27,10 @@ class DefaultResultStructureBuilder {
     }
 
     private static void collectPaths(Model model, List allPaths) {
+        String modelName = model.class.simpleName - "Model"
         model.properties.each { String name, value ->
             if (value instanceof Component) {
-                collectPaths(value, name, allPaths)
+                collectPaths(value, "${modelName}:${name}", allPaths)
             }
         }
     }

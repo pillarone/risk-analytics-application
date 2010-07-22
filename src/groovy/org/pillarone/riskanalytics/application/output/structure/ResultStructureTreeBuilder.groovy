@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.application.output.structure.item.ResultStruc
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 
 
 class ResultStructureTreeBuilder {
@@ -52,23 +53,26 @@ class ResultStructureTreeBuilder {
     }
 
     ITableTreeNode buildTree() {
-        List tree = transformedPaths.values().sort()
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
-        for (String path in tree) {
-            findOrCreatePath(path, root)
+        for (Map.Entry paths in transformedPaths.entrySet().sort { it.key }) {
+            findOrCreatePath(paths.value, paths.key, root)
         }
-        return root
+        //return the model node
+        SimpleTableTreeNode firstNode = root.getChildAt(0)
+        firstNode.parent = null
+        return firstNode
     }
 
-    private void findOrCreatePath(String path, SimpleTableTreeNode root) {
+    private void findOrCreatePath(String path, String resultPath, SimpleTableTreeNode root) {
         String[] nodes = path.split(":")
         nodes.eachWithIndex { String node, int index ->
             SimpleTableTreeNode temp = root.getChildByName(node)
             if (temp == null) {
                 if (index < nodes.length - 1) {
-                    temp = new SimpleTableTreeNode(node)
+                    temp = new ResultStructureTableTreeNode(node)
                 } else {
                     temp = new ResultTableTreeNode(node)
+                    temp.resultPath = resultPath
                 }
                 root.add(temp)
             }

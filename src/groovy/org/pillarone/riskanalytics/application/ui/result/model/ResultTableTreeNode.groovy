@@ -9,6 +9,8 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
     String collector = AggregatedCollectingModeStrategy.IDENTIFIER
     Class packetClass
 
+    private String path, field
+
     public ResultTableTreeNode(String name) {
         super(name)
     }
@@ -18,16 +20,25 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
         this.packetClass = packetClass
     }
 
-    String getPath() {
+    void setResultPath(String resultPath) {
+        path = resultPath.substring(0, resultPath.lastIndexOf(":"))
+        field = resultPath?.substring(resultPath.lastIndexOf(":") + 1)
+    }
+
+    String getActualTreePath() {
         if (parent) {
-            return "${parent?.path}"
+            return "${parent?.path}:$name"
         } else {
             return name
         }
     }
 
+    String getPath() {
+        return path
+    }
+
     String getField() {
-        return name
+        return field
     }
 
     public String getDisplayName() {

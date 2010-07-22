@@ -23,7 +23,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     void setUp() {
         LocaleResources.setTestMode()
 
-          new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"
@@ -81,7 +81,11 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     }
 
     void testPathOrder() {
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, [new ResultTableTreeNode("testPath1"), new ResultTableTreeNode("testPath2")], false)
+        ResultTableTreeNode node1 = new ResultTableTreeNode("testPath1")
+        node1.resultPath = "testPath1:ultimate"
+        ResultTableTreeNode node2 = new ResultTableTreeNode("testPath2")
+        node2.resultPath = "testPath2:ultimate"
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, [node1, node2], false)
         assertEquals 2, model.paths.size()
         assertEquals "testPath1", model.paths.get(0)
         assertEquals "testPath2", model.paths.get(1)
@@ -90,7 +94,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "test path1", model.shortPaths.get(0)
         assertEquals "test path2", model.shortPaths.get(1)
 
-        model = new ResultIterationDataViewModel(simulationRun, [new ResultTableTreeNode("testPath2"), new ResultTableTreeNode("testPath1")], false)
+        model = new ResultIterationDataViewModel(simulationRun, [node2, node1], false)
         assertEquals 2, model.paths.size()
         assertEquals "testPath1", model.paths.get(0)
         assertEquals "testPath2", model.paths.get(1)
@@ -347,8 +351,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     private List createResultNodes() {
         def res = []
         2.times {int i ->
-            def parent = new SimpleTableTreeNode("testPath${i + 1}")
+            String testPath = "testPath${i + 1}"
+            def parent = new SimpleTableTreeNode(testPath)
             def result = new ResultTableTreeNode("ultimate")
+            result.resultPath = "$testPath:ultimate"
             parent.add(result)
             res << result
         }

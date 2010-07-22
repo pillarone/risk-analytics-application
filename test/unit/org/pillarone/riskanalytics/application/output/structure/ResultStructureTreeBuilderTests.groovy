@@ -34,9 +34,9 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
     void testBuildTree() {
         ResultStructure resultStructure = new ResultStructure("name")
-        resultStructure.mappings.put("node1:node2:[%dyn1%]:out1:field", "A:[%dyn1%]:B:C")
-        resultStructure.mappings.put("node1:node2:out1:field", "X:Y:Z")
-        resultStructure.mappings.put("node1:node3:[%dyn2%]:out2:field", "1:[%dyn2%]:2:3")
+        resultStructure.mappings.put("node1:node2:[%dyn1%]:out1:field", "model:A:[%dyn1%]:B:C")
+        resultStructure.mappings.put("node1:node2:out1:field", "model:X:Y:Z")
+        resultStructure.mappings.put("node1:node3:[%dyn2%]:out2:field", "model:1:[%dyn2%]:2:3")
 
         List allPaths = [
                 "node1:node2:nodeA:out1:field",
@@ -47,10 +47,10 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         ]
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, null, resultStructure, null)
 
-        SimpleTableTreeNode root = treeBuilder.buildTree()
-        assertEquals 3, root.childCount
+        SimpleTableTreeNode model = treeBuilder.buildTree()
+        assertEquals 3, model.childCount
 
-        SimpleTableTreeNode x = root.getChildByName("X")
+        SimpleTableTreeNode x = model.getChildByName("X")
         assertEquals 1, x.childCount
 
         SimpleTableTreeNode y = x.getChildByName("Y")
@@ -60,7 +60,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         assertEquals 0, z.childCount
         assertTrue z instanceof ResultTableTreeNode
 
-        SimpleTableTreeNode a = root.getChildByName("A")
+        SimpleTableTreeNode a = model.getChildByName("A")
         assertEquals 2, a.childCount
 
         SimpleTableTreeNode nodeA = a.getChildByName("nodeA")
@@ -72,6 +72,9 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         z = y.getChildByName("C")
         assertEquals 0, z.childCount
         assertTrue z instanceof ResultTableTreeNode
+        assertEquals "node1:node2:nodeA:out1", z.path
+        assertEquals "field", z.field
+        assertEquals "model:A:nodeA:B:C", z.actualTreePath
 
     }
 }
