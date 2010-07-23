@@ -29,7 +29,7 @@ class SimulationActionsPaneModel {
     private DateFormat dateFormat = new SimpleDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
-    Simulation simulation
+    volatile Simulation simulation
     ICollectorOutputStrategy outputStrategy
 
     RunSimulationAction runSimulationAction

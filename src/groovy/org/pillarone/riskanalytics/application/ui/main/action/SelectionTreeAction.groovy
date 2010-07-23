@@ -119,6 +119,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
 class OpenItemAction extends SelectionTreeAction {
 
+    private static Log LOG = LogFactory.getLog(OpenItemAction)
+
     def OpenItemAction(ULCTree tree, P1RATModel model) {
         super("Open", tree, model)
     }
@@ -127,6 +129,9 @@ class OpenItemAction extends SelectionTreeAction {
         Model model = getSelectedModel()
         def item = getSelectedItem()
         if (model != null && item != null) {
+            if (item instanceof Simulation) {
+                LOG.trace "Reading end time from simulation: ${System.identityHashCode(item)}: ${item.end?.time}"
+            }
             this.model.openItem(model, item)
         }
     }
