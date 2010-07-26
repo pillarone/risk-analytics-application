@@ -51,7 +51,7 @@ public class Main {
             databaseSupport = StandaloneConfigLoader.getExternalDatabaseSupport(environment);
             if (databaseSupport != null) {
                 LOG.info("Starting external database for environment " + environment);
-                splashScreenHandler.handleMessage("Starting external database for environmen " + environment);
+                splashScreenHandler.handleMessage("Starting external database for environment " + environment);
 
                 databaseSupport.startDatabase();
             }
