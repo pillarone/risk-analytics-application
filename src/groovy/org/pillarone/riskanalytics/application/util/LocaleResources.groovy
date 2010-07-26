@@ -35,29 +35,30 @@ class LocaleResources {
         if (sTestMode) {
             return Locale.getDefault()
         }
-        Locale locale
-        Person.withTransaction {e ->
-            UserSettings userSettings = UserManagement.getCurrentUser()?.settings
-            UserPreferences preferences = new UserPreferences()
-            if (userSettings != null) {
-                locale = new Locale(userSettings.language)
-                UserContext.setAttribute(LOCALE, locale)
-            } else if (preferences.getLanguage() != null) {
-                locale = new Locale(preferences.getLanguage())
-                UserContext.setAttribute(LOCALE, locale)
-            } else {
-                locale = (Locale) UserContext.getAttribute(LOCALE)
-            }
-        }
+        Locale locale = (Locale) UserContext.getAttribute(LOCALE)
 
         if (locale == null) {
-            locale = ClientContext.getLocale()
-            if (locale == null) {
-                locale = new Locale("en", "US")
+            Person.withTransaction {e ->
+                UserSettings userSettings = UserManagement.getCurrentUser()?.settings
+                UserPreferences preferences = new UserPreferences()
+                if (userSettings != null) {
+                    locale = new Locale(userSettings.language)
+                    UserContext.setAttribute(LOCALE, locale)
+                } else if (preferences.getLanguage() != null) {
+                    locale = new Locale(preferences.getLanguage())
+                    UserContext.setAttribute(LOCALE, locale)
+                }
             }
-            UserContext.setAttribute(LOCALE, locale)
+            if (locale == null) {
+                locale = ClientContext.getLocale()
+                if (locale == null) {
+                    locale = new Locale("en", "US")
+                }
+                UserContext.setAttribute(LOCALE, locale)
+            }
+            Locale.setDefault(locale)
         }
-        Locale.setDefault(locale)
+
         return locale
     }
 
