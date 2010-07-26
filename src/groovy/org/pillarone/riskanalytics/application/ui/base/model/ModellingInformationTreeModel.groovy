@@ -15,8 +15,12 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 class ModellingInformationTreeModel extends DefaultTreeModel {
+
+    private static Log LOG = LogFactory.getLog(ModellingInformationTreeModel)
 
     public ModellingInformationTreeModel() {
         super(new DefaultMutableTreeNode("root"))
@@ -45,7 +49,11 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
                 simulationsNode.leaf = true
             }
             simulationsForModel.each {
-                simulationsNode.add(createNode(it))
+                try {
+                    simulationsNode.add(createNode(it))
+                } catch (Throwable t) {
+                    LOG.error "Could not create node for ${it.toString()}", t
+                }
             }
             root.add(modelNode)
         }
