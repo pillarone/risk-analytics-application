@@ -57,12 +57,15 @@ class MultiDimensionalParameterView {
         columnCount.name = 'columnCount'
         columnCount.enabled = model.tableModel.columnCountChangeable()
         applyDimensionButton = new ULCButton(getText("apply"))
-        applyDimensionButton.enabled = columnCount.enabled || rowCount.enabled
+        applyDimensionButton.enabled = (columnCount.enabled || rowCount.enabled) && !model.tableModel.readOnly
 
         setRendererAndEditors()
         //set table header height
         this.table.getTableHeader().setPreferredSize(new Dimension(80, 5))
         this.table.cellSelectionEnabled = true
+
+        rowCount.enabled = !model.tableModel.readOnly
+        columnCount.enabled = !model.tableModel.readOnly
     }
 
     private def setRendererAndEditors() {
