@@ -8,10 +8,16 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
-class ResultStructureImportService {
+class ResultStructureImportService extends FileImportService {
 
     private static Log LOG = LogFactory.getLog(ResultStructureImportService)
+
+    public static final String DEFAULT_NAME = "Default"
+
+    protected ConfigObject currentConfigObject
 
     public static void importDefaults() {
         List<Class> allModels = findAllModelClasses()
@@ -24,7 +30,7 @@ class ResultStructureImportService {
             Class modelClass = allModels.find { it.name.endsWith(modelClassName)}
             if (ResultStructureDAO.countByModelClassName(modelClass.name) == 0) {
                 LOG.info "No result structure found for model ${modelClass.simpleName} - importing default"
-                DefaultResultStructureBuilder.create("Default", modelClass).save()
+                DefaultResultStructureBuilder.create(DEFAULT_NAME, modelClass).save()
             }
         }
     }
@@ -35,4 +41,39 @@ class ResultStructureImportService {
 
         return provider.findCandidateComponents("models")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
     }
+
+    Object getDaoClass() {
+        ResultStructureDAO
+    }
+
+    String getFileSuffix() {
+        "ResultStructure"
+    }
+
+    String prepare(URL file, String itemName) {
+        currentConfigObject = new ConfigSlurper().parse(readFromURL(file))
+        String name = itemName - ".groovy"
+        if (currentConfigObject.containsKey('displayName')) {
+            name = currentConfigObject.displayName
+        } else {
+            currentConfigObject.displayName = name
+        }
+        return name
+    }
+
+    protected boolean saveItemObject(String fileContent) {
+        Map<String, String> mappings = currentConfigObject.mappings
+
+        ResultStructure resultStructure = new ResultStructure(currentConfigObject.displayName, currentConfigObject.model)
+        resultStructure.mappings = mappings
+
+        if (!resultStructure.save()) {
+            LOG.error "Could not save result structure: ${resultStructure.dao.errors}"
+            return false
+        }
+
+        return true
+    }
+
+
 }

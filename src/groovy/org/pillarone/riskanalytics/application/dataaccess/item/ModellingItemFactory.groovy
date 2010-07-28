@@ -9,6 +9,8 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ModellingItemFactory {
 
@@ -199,10 +201,15 @@ class ModellingItemFactory {
         return getItem(dao)
     }
 
-
     static List getResultConfigurationsForModel(Class modelClass) {
         ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
             getItem(it, modelClass)
+        }
+    }
+
+    static List getResultStructuresForModel(Class modelClass) {
+        ResultStructureDAO.findAllByModelClassName(modelClass.name).collect {
+            getItem(it)
         }
     }
 
@@ -359,6 +366,17 @@ class ModellingItemFactory {
             getSimulationInstances()[key] = item
         }
         return item
+    }
+
+    private static ModellingItem getItem(ResultStructureDAO dao) {
+        ResultStructure item = getItemInstances()[key(ResultStructure, dao.id)]
+        if (!item) {
+            item = new ResultStructure(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.modelClassName))
+            item.versionNumber = new VersionNumber(dao.itemVersion)
+
+            getItemInstances()[key(ResultStructure, dao.id)] = item
+        }
+        item
     }
 
     private static ModellingItem getItem(ParameterizationDAO dao, Class modelClass = null) {

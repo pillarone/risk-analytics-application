@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
 class ResultViewModel extends AbstractModellingModel {
 
@@ -44,7 +45,7 @@ class ResultViewModel extends AbstractModellingModel {
 
             def simulationRun = item.simulationRun
             Class modelClass = model.class
-            ResultStructure resultStructure = new ResultStructure("Default", modelClass)
+            ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
             resultStructure.load()
             builder = new ResultStructureTreeBuilder(paths, modelClass, resultStructure, simulation)
 
