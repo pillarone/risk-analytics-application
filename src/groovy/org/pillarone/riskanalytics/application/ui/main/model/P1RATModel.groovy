@@ -24,13 +24,13 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -362,10 +362,17 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         if (!item.isLoaded()) {
             item.load()
         }
-        def viewModel = viewModelsInUse[item]
-        if (viewModel != null && viewModel instanceof AbstractConfigurationModel) {
-            viewModel.selectedParameterization = item.parameterization
-            viewModel.selectedResultTemplate = item.template
+        viewModelsInUse?.each {k, v ->
+            if (k instanceof Simulation) {
+                if (item.parameterization && k.parameterization.modelClass.name == item.parameterization.modelClass.name) {
+                    v.settingsPaneModel.parameterizationNames.selectedItem = item.parameterization.name
+                    v.settingsPaneModel.parameterizationVersions.selectedItem = "v" + item.parameterization.versionNumber.toString()
+                }
+                if (item.template && k.parameterization.modelClass.name == item.template.modelClass.name) {
+                    v.settingsPaneModel.resultConfigurationNames.selectedItem = item.template.name
+                    v.settingsPaneModel.resultConfigurationVersions.selectedItem = "v" + item.template.versionNumber.toString()
+                }
+            }
         }
         notifyOpenDetailView(model, item)
     }

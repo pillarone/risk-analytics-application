@@ -111,9 +111,9 @@ class SimulationSettingsPane {
 
         parameterizationVersionsComboBox = new ULCComboBox(model.parameterizationVersions)
         parameterizationVersionsComboBox.name = "parameterizationVersions"
-        parameterizationVersionsComboBox.renderer = new VersionComboBoxRenderer()
+        parameterizationVersionsComboBox.setMinimumSize(new Dimension(100, 20))
         resultConfigurationNamesComboBox = new ULCComboBox(model.resultConfigurationNames)
-        resultConfigurationNamesComboBox.minimumSize = new Dimension(250, 20)
+        resultConfigurationNamesComboBox.setMinimumSize(new Dimension(100, 20))
         resultConfigurationVersionsComboBox = new ULCComboBox(model.resultConfigurationVersions)
 
         outputStrategy = new ULCComboBox(model.outputStrategies)

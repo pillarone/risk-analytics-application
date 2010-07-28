@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
@@ -27,7 +28,6 @@ import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -236,7 +236,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      */
     protected boolean validate() {
         Parameterization parameterization = parameterizationVersions.selectedObject
-        if(parameterization == null) {
+        if (parameterization == null) {
             return false
         }
         return numberOfIterations != null && parameterization.valid
@@ -254,7 +254,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         if (parameterization != null) {
             parameterizationNames.selectedItem = parameterization.name
             parameterizationVersions.reload(parameterizationNames.selectedItem.toString())
-            parameterizationVersions.selectedItem = parameterization.versionNumber.toString()
+            parameterizationVersions.selectedItem = "v" + parameterization.versionNumber.toString()
         }
     }
 
@@ -262,7 +262,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         if (resultConfiguration != null) {
             resultConfigurationNames.selectedItem = resultConfiguration.name
             resultConfigurationVersions.reload(resultConfigurationNames.selectedItem.toString())
-            resultConfigurationVersions.selectedItem = resultConfiguration.versionNumber.toString()
+            resultConfigurationVersions.selectedItem = "v" + resultConfiguration.versionNumber.toString()
         }
     }
 
