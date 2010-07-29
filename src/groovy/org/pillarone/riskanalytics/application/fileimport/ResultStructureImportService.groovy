@@ -47,7 +47,7 @@ class ResultStructureImportService extends FileImportService {
     }
 
     String getFileSuffix() {
-        "ResultStructure"
+        "ResultTree"
     }
 
     String prepare(URL file, String itemName) {
