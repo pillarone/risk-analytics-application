@@ -635,7 +635,10 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
         DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = dialog.getText("title")
         dialog.okAction = {
-            if (ParameterizationDAO.findByNameAndModelClassName(dialog.nameInput.text, simulationModel.class.name)) {
+            if (!dialog.nameInput.text || !(dialog.nameInput.text ==~ /(\w|[-])*/)) {
+                I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "NotValidName")
+                alert.show()
+            } else if (ParameterizationDAO.findByNameAndModelClassName(dialog.nameInput.text, simulationModel.class.name)) {
                 I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniquesNamesRequired")
                 alert.show()
             } else {
