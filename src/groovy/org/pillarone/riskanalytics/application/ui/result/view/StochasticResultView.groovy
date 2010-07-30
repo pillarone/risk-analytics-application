@@ -4,6 +4,7 @@ import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
+import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.Max
 import org.pillarone.riskanalytics.application.dataaccess.function.Min
@@ -21,6 +22,7 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton minButton
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
+    ULCComboBox selectView
 
     public StochasticResultView(ResultViewModel model) {
         super(model)
@@ -31,6 +33,30 @@ class StochasticResultView extends ResultView {
         menu = new ULCPopupMenu()
         tree.viewPortTableTree.tableTreeHeader.componentPopupMenu = menu
     }
+
+    public ULCBoxPane createSelectionPane() {
+        selectView = new ULCComboBox(model.selectionViewModel)
+        selectView.name = "selectView"
+        selectView.setPreferredSize(new Dimension(120, 20))
+        selectView.addActionListener(new ApplySelectionAction(model, this))
+
+        filterSelection = new ULCComboBox()
+        filterSelection.name = "filter"
+        filterSelection.addItem(getText("all"))
+        model.nodeNames.each {
+            filterSelection.addItem it
+        }
+
+        filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
+
+        ULCBoxPane filters = new ULCBoxPane(3, 1)
+        filters.add(ULCBoxPane.BOX_EXPAND_CENTER, selectView)
+        filters.add(filterLabel)
+        filters.add(filterSelection)
+        return filters
+    }
+
+
 
     protected ULCContainer layoutContent(ULCContainer content) {
         tabbedPane.removeAll()
@@ -63,8 +89,7 @@ class StochasticResultView extends ResultView {
 
         addIntegerFunctions(toolbar)
 
-        toolbar.addSeparator()
-        addPrecisionFunctions(toolbar)
+        addPrecisionFunctions(selectionToolbar)
 
     }
 

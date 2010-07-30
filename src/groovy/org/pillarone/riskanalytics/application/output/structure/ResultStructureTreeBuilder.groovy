@@ -1,12 +1,11 @@
 package org.pillarone.riskanalytics.application.output.structure
 
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
-
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class ResultStructureTreeBuilder {
 
@@ -59,13 +58,13 @@ class ResultStructureTreeBuilder {
         }
         //return the model node
         SimpleTableTreeNode firstNode = root.getChildAt(0)
-        firstNode.parent = null
-        return firstNode
+        firstNode?.parent = null
+        return firstNode ? firstNode : root
     }
 
     private void findOrCreatePath(String path, String resultPath, SimpleTableTreeNode root) {
         String[] nodes = path.split(":")
-        nodes.eachWithIndex { String node, int index ->
+        nodes.eachWithIndex {String node, int index ->
             SimpleTableTreeNode temp = root.getChildByName(node)
             if (temp == null) {
                 if (index < nodes.length - 1) {

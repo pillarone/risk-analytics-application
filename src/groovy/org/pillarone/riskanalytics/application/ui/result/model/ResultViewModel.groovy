@@ -7,10 +7,14 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
+import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
@@ -19,9 +23,6 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
 class ResultViewModel extends AbstractModellingModel {
 
@@ -29,36 +30,16 @@ class ResultViewModel extends AbstractModellingModel {
 
     int periodCount
 
+    List resultStructures
+    ItemsComboBoxModel selectionViewModel
+    ConfigObject allResults = null
+
     public ResultViewModel(Model model, ModelStructure structure, Simulation simulation) {
         super(model, simulation, structure)
 
         model.init()
-        ParameterizationDAO.withTransaction {status ->
-            //parameterization is required for certain models to obtain period labels
-            Parameterization parameterization = simulation.parameterization
-            parameterization.load(false)
-
-            //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
-            //all result paths for this simulation run
-            ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
-            List paths = obtainAllPaths(allResults."0")
-
-            def simulationRun = item.simulationRun
-            Class modelClass = model.class
-            ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
-            resultStructure.load()
-            builder = new ResultStructureTreeBuilder(paths, modelClass, resultStructure, simulation)
-
-            treeRoot = builder.buildTree()
-            periodCount = simulationRun.periodCount
-
-            MeanAction meanAction = new MeanAction(this, null)
-
-            // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
-            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
-            nodeNames = extractNodeNames(treeModel)
-        }
-
+        buildTreeStructure()
+        selectionViewModel = new ItemsComboBoxModel(resultStructures)
     }
 
     List<String> obtainAllPaths(ConfigObject paths) {
@@ -72,6 +53,44 @@ class ResultViewModel extends AbstractModellingModel {
         }
 
         return res
+    }
+
+    private void buildTreeStructure(ResultStructure resultStructure = null) {
+        ParameterizationDAO.withTransaction {status ->
+            //parameterization is required for certain models to obtain period labels
+            Parameterization parameterization = item.parameterization
+            if (!parameterization.isLoaded())
+                parameterization.load(false)
+
+            if (!allResults) {
+                //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
+                //all result paths for this simulation run
+                allResults = initPostSimulationCalculations(item.simulationRun)
+
+            }
+            List paths = obtainAllPaths(allResults."0")
+
+            def simulationRun = item.simulationRun
+            Class modelClass = model.class
+
+            if (!resultStructure) {
+                resultStructures = ModellingItemFactory.getResultStructuresForModel(modelClass)
+                resultStructure = resultStructures[0]
+            }
+
+            resultStructure.load()
+            builder = new ResultStructureTreeBuilder(paths, modelClass, resultStructure, item)
+
+            treeRoot = builder.buildTree()
+            periodCount = simulationRun.periodCount
+
+            MeanAction meanAction = new MeanAction(this, null)
+
+            // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
+            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
+            nodeNames = extractNodeNames(treeModel)
+        }
+
     }
 
     /**
@@ -172,5 +191,9 @@ class ResultViewModel extends AbstractModellingModel {
                 return true
         }
         return false
+    }
+
+    public void resultStructureChanged() {
+        buildTreeStructure(selectionViewModel.getSelectedObject())
     }
 }
