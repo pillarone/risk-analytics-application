@@ -331,7 +331,9 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
 
     private ITreeNode createNode(Simulation item) {
         SimulationNode node = new SimulationNode(item)
-        item.load()
+        if (!item.isLoaded()) {
+            item.load()
+        }
         def paramsNode = createNode(item.parameterization)
         paramsNode.leaf = true
         def templateNode = createNode(item.template)

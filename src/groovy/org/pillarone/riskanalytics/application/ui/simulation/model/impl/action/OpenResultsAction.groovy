@@ -22,7 +22,9 @@ class OpenResultsAction extends ResourceBasedAction {
 
     void doActionPerformed(ActionEvent event) {
         Simulation simulation = model.simulation
-        simulation.load()
+        if (!simulation.isLoaded()) {
+            simulation.load()
+        }
         LOG.trace "Reading end time from simulation: ${System.identityHashCode(simulation)}: ${simulation.end?.time}"
         model.mainModel.openItem(simulation.modelClass.newInstance(), simulation)
     }

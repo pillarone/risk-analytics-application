@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
@@ -28,6 +27,8 @@ import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -206,6 +207,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
             simulation.randomSeed = millis - millisE5 * 1E5
         }
         simulation.modelVersionNumber = ModellingItemFactory.getNewestModelItem(modelClass.simpleName).versionNumber // ???
+        simulation.structure = ModelStructure.getStructureForModel(modelClass)
 
         return simulation
     }
