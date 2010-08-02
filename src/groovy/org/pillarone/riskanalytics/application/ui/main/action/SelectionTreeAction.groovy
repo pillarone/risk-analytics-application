@@ -543,10 +543,12 @@ class ExportItemGroupAction extends ExportAction {
     String getFileName(int itemCount, Object filePaths, ModellingItem item) {
         String paramName = (item.properties.keySet().contains("versionNumber")) ? "${item.name}_v${item.versionNumber}" : "${item.name}"
         paramName = paramName.replaceAll(" ", "")
-        File file = new File("${filePaths[0]}/${item.modelClass.name}/")
+        def index = filePaths[0].indexOf("${item.name}.groovy")
+        String dirName = (index != -1) ? new File(filePaths[0]).parent : filePaths[0]
+        File file = new File("${dirName}/${item.modelClass.name}/")
         if (!file.exists())
             file.mkdir()
-        return "${filePaths[0]}/${item.modelClass.name}/${paramName}.groovy"
+        return "${dirName}/${item.modelClass.name}/${paramName}.groovy"
     }
 
 }
