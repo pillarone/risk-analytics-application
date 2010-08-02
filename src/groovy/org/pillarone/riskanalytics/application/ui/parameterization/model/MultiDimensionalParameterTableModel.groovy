@@ -134,6 +134,9 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         if (value instanceof Date) {
             value = new DateTime(value.time)
         }
+        if (value && (value instanceof String) && value.isNumber()) {
+            value = getTypedValue(value)
+        }
 
         Object oldValue = getValueAt(rowIndex, columnIndex)
         // This check is because the use of a ErrorManager in the Editor causes the wrong input to be send to the ULC-side.
@@ -220,6 +223,13 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     private int getIndex(int index, int max) {
         if (index < 0) return 0
         return Math.min(index, max)
+    }
+
+    private Object getTypedValue(Object value) {
+        if (value.isBigDecimal()) return value.asType(BigDecimal)
+        if (value.isDouble()) return value.asType(Double)
+        if (value.isInteger()) return value.asType(Integer)
+        return value
     }
 
 
