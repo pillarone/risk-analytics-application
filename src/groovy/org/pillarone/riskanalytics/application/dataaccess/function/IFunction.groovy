@@ -13,7 +13,7 @@ interface IFunction extends Cloneable {
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node)
 }
 
-/** A Function for Result views    */
+/** A Function for Result views     */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -362,7 +362,7 @@ class SingleIteration extends ResultFunction {
         return "$iteration. Iteration"
     }
 
-    public double evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    public Double evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         ResultAccessor.getUltimatesForOneIteration(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field, iteration)
     }
 

@@ -364,11 +364,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
         viewModelsInUse?.each {k, v ->
             if (k instanceof Simulation) {
-                if (item.parameterization && k.parameterization.modelClass.name == item.parameterization.modelClass.name) {
+                if (v.properties.keySet().contains("settingsPaneModel") && item.parameterization && k.parameterization.modelClass.name == item.parameterization.modelClass.name) {
                     v.settingsPaneModel.parameterizationNames.selectedItem = item.parameterization.name
                     v.settingsPaneModel.parameterizationVersions.selectedItem = "v" + item.parameterization.versionNumber.toString()
                 }
-                if (item.template && k.parameterization.modelClass.name == item.template.modelClass.name) {
+                if (v.properties.keySet().contains("settingsPaneModel") && item.template && k.parameterization.modelClass.name == item.template.modelClass.name) {
                     v.settingsPaneModel.resultConfigurationNames.selectedItem = item.template.name
                     v.settingsPaneModel.resultConfigurationVersions.selectedItem = "v" + item.template.versionNumber.toString()
                 }
