@@ -1,15 +1,15 @@
 package org.pillarone.riskanalytics.application.fileimport
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.output.structure.DefaultResultStructureBuilder
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AssignableTypeFilter
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ResultStructureImportService extends FileImportService {
 
@@ -73,6 +73,16 @@ class ResultStructureImportService extends FileImportService {
         }
 
         return true
+    }
+
+    protected boolean lookUpItem(String itemName) {
+        String modelName = getModelClassName()
+        boolean status = getDaoClass().findByNameAndModelClassName(itemName, modelName) != null
+        return status
+    }
+
+    String getModelClassName() {
+        return currentConfigObject.get("model").name
     }
 
 
