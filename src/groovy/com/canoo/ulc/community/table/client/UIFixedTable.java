@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.table;
+package com.canoo.ulc.community.table.client;
 
 import com.ulcjava.base.client.UITable;
 
@@ -11,7 +11,7 @@ import java.awt.*;
 // Workarount for PMO-919: Headings Lost by Undocking Result Window (Tree View)
 //
 
-public class FixedUITable extends UITable {
+public class UIFixedTable extends UITable {
 
     protected Object createBasicObject(Object[] arguments) {
         return new BasicTable() {

@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.table;
+package com.canoo.ulc.community.table.server;
 
 import com.ulcjava.base.application.ULCTable;
 import com.ulcjava.base.application.table.ITableModel;
@@ -8,14 +8,14 @@ import com.ulcjava.base.application.table.ITableModel;
 //
 
 
-class FixedULCTable extends ULCTable {
+class ULCFixedTable extends ULCTable {
 
-    public FixedULCTable(ITableModel iTableModel) {
+    public ULCFixedTable(ITableModel iTableModel) {
         super(iTableModel);
     }
 
     protected String typeString() {
-        return FixedUITable.class.getName();
+        return "com.canoo.ulc.community.table.client.UIFixedTable";
     }
 
 }
