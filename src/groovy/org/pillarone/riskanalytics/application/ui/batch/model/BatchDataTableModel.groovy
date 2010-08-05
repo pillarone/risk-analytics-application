@@ -139,6 +139,11 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         fireTableRowsInserted(index, index);
     }
 
+    public void fireRowDeleted(SimulationRun run) {
+        int rowIndex = getRowIndex(run)
+        if (rowIndex >= 0) fireRowDeleted(rowIndex)
+    }
+
     public void fireRowDeleted(int rowIndex) {
         tableValues.remove(rowIndex)
         batchRunSimulationRuns.remove(rowIndex)
@@ -178,6 +183,8 @@ interface BatchTableListener {
     void fireRowAdded()
 
     void fireRowDeleted(int rowIndex)
+
+    void fireRowDeleted(SimulationRun run)
 
     void firePriorityChanged(int rowIndex, int step)
 }

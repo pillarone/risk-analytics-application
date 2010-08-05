@@ -278,11 +278,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
     public void removeItem(Model model, ModellingItem item) {
-        closeItem(model, item)
-        selectionTreeModel.removeNodeForItem(item)
-        ModellingItemFactory.remove(item)
-        item.delete()
-        fireModelChanged()
+        if (ModellingItemFactory.delete(item)) {
+            closeItem(model, item)
+            selectionTreeModel.removeNodeForItem(item)
+            ModellingItemFactory.remove(item)
+            fireModelChanged()
+            if (item instanceof Simulation) fireRowDeleted(item)
+        }
     }
 
     public void removeItem(BatchRun batchRun) {
@@ -502,6 +504,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public void fireRowAdded() {
         batchTableListeners.each {BatchTableListener batchTableListener -> batchTableListener.fireRowAdded()}
     }
+
+    public void fireRowDeleted(Object item) {
+        batchTableListeners.each {BatchTableListener batchTableListener ->
+            batchTableListener.fireRowDeleted(item.getSimulationRun())
+        }
+    }
+
 }
 
 
