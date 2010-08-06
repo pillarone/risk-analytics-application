@@ -129,7 +129,9 @@
                      includes="org/pillarone/riskanalytics/application/environment/applet/**"/>
         </jar>
 
-        <signjar alias="canoodev" keystore="canoodev.keystore" storepass=".canoo42" lazy="false">
+        <!-- has to be replaced with a trusted certificate issued for the builder of the jar files -->
+        <!-- this is a self signed certificate and won't work with a strict security policy -->
+        <signjar alias="pillarone" keystore="pillarone.keystore" storepass="nopasswd" keypass="nopasswd" lazy="false">
             <fileset dir="${webapp.lib.dir}" includes="${app.name}*.jar"/>
             <fileset dir="${ulcPlugIn.webapp.lib.dir}" includes="**/*.jar"/>
         </signjar>
