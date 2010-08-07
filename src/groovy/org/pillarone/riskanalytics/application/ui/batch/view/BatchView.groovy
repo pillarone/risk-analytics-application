@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 
 public class BatchView extends NewBatchView {
 
@@ -106,7 +107,7 @@ public class BatchView extends NewBatchView {
         runBatch.addActionListener([actionPerformed: {ActionEvent evt ->
             BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
             if (batchToRun && !batchToRun.executed) {
-                BatchRunner.getService().runBatch(batchToRun)
+                BatchRunService.getService().runBatch(batchToRun)
             } else {
                 new I18NAlert("BatchAlreadyExecuted").show()
             }
