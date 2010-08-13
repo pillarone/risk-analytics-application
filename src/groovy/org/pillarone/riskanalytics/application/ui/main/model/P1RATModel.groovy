@@ -360,17 +360,24 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
+    /**
+     * @param model
+     * @param item can be a simulation page or a result view as both are of the same type
+     */
     public void openItem(Model model, Simulation item) {
         if (!item.isLoaded()) {
             item.load()
         }
+        // update parameter, result template and their version selection according correctly
         viewModelsInUse?.each {k, v ->
-            if (k instanceof Simulation) {
-                if (v.properties.keySet().contains("settingsPaneModel") && item.parameterization && k.parameterization.modelClass.name == item.parameterization.modelClass.name) {
+            if ((v instanceof SimulationConfigurationModel || v instanceof CalculationConfigurationModel) && item.end == null) {
+                if (v.properties.keySet().contains("settingsPaneModel") && item.parameterization
+                        && k.parameterization.modelClass.name == item.parameterization.modelClass.name) {
                     v.settingsPaneModel.parameterizationNames.selectedItem = item.parameterization.name
                     v.settingsPaneModel.parameterizationVersions.selectedItem = "v" + item.parameterization.versionNumber.toString()
                 }
-                if (v.properties.keySet().contains("settingsPaneModel") && item.template && k.parameterization.modelClass.name == item.template.modelClass.name) {
+                if (v.properties.keySet().contains("settingsPaneModel") && item.template
+                        && k.parameterization.modelClass.name == item.template.modelClass.name) {
                     v.settingsPaneModel.resultConfigurationNames.selectedItem = item.template.name
                     v.settingsPaneModel.resultConfigurationVersions.selectedItem = "v" + item.template.versionNumber.toString()
                 }
