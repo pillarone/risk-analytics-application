@@ -17,8 +17,8 @@ class ApplicationBootStrap {
         if (modelFilter) {
             models = modelFilter.collect {it - "Model"}
         }
-        new ResultStructureImportService().compareFilesAndWriteToDB(models)
         ResultStructureImportService.importDefaults()
+        new ResultStructureImportService().compareFilesAndWriteToDB(models)
         // start a quartz job scheduler for a batch
         new JobScheduler().start()
 
