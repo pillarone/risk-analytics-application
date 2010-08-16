@@ -2,13 +2,12 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.AbstractTableModel
-
 import org.apache.log4j.Logger
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.util.PropertiesUtils
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.util.*
-import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
 class AboutDialog {
 
@@ -89,23 +88,23 @@ class AboutDialog {
         pane.add(ULCBoxPane.BOX_LEFT_TOP, title); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller(1, 10)); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Brendle Detlef, Canoo Engineering AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Cartier Sebastian, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Cartier Sebastian, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Dittrich Joerg, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Ginsberg Benjamin, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Ginsberg Benjamin, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Hartmann Stephan, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Huber Matthias, Canoo Engineering AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Jaada Fouad, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Jaada Fouad, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Koenig Dierk, Canoo Engineering AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Kunz Stefan, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Kunz Stefan, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Kuschel Norbert, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Majidi Ali, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Meier Markus, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Meier Markus, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Melchior Martin, UAS Northwestern Switzerland")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Noe Michael, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Spahn Michael, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Stricker Markus, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Walter Jessika, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Zumsteg Stefan, Intuitive Collaboration GmbH")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Spahn Michael, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Stricker Markus, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Walter Jessika, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Zumsteg Stefan, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
 
         //new ULCScrollPane(pane)
         pane

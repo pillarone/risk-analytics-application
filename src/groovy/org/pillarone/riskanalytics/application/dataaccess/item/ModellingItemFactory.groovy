@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -232,6 +233,25 @@ class ModellingItemFactory {
                 collect {SimulationRun run ->
             getItem(Simulation, modelClass, run.name)
         }
+    }
+
+    static boolean delete(def item) {
+        try {
+            item.delete()
+        } catch (Exception) {return false}
+        return true
+    }
+
+    static boolean delete(Simulation simulation) {
+        try {
+            SimulationRun.withTransaction {status ->
+                def run = BatchRunSimulationRun.findBySimulationRun(simulation.getSimulationRun())
+                if (run)
+                    run.delete()
+                simulation.delete()
+            }
+        } catch (Exception) {return false}
+        return true
     }
 
     static ModellingItem copyItem(ModellingItem oldItem, String newName) {

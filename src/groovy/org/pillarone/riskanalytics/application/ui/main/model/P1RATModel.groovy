@@ -24,13 +24,13 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -278,11 +278,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
     public void removeItem(Model model, ModellingItem item) {
-        closeItem(model, item)
-        selectionTreeModel.removeNodeForItem(item)
-        ModellingItemFactory.remove(item)
-        item.delete()
-        fireModelChanged()
+        if (ModellingItemFactory.delete(item)) {
+            closeItem(model, item)
+            selectionTreeModel.removeNodeForItem(item)
+            ModellingItemFactory.remove(item)
+            fireModelChanged()
+            if (item instanceof Simulation) fireRowDeleted(item)
+        }
     }
 
     public void removeItem(BatchRun batchRun) {
@@ -358,14 +360,28 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
+    /**
+     * @param model
+     * @param item can be a simulation page or a result view as both are of the same type
+     */
     public void openItem(Model model, Simulation item) {
         if (!item.isLoaded()) {
             item.load()
         }
-        def viewModel = viewModelsInUse[item]
-        if (viewModel != null && viewModel instanceof AbstractConfigurationModel) {
-            viewModel.selectedParameterization = item.parameterization
-            viewModel.selectedResultTemplate = item.template
+        // update parameter, result template and their version selection according correctly
+        viewModelsInUse?.each {k, v ->
+            if ((v instanceof SimulationConfigurationModel || v instanceof CalculationConfigurationModel) && item.end == null) {
+                if (v.properties.keySet().contains("settingsPaneModel") && item.parameterization
+                        && k.parameterization.modelClass.name == item.parameterization.modelClass.name) {
+                    v.settingsPaneModel.parameterizationNames.selectedItem = item.parameterization.name
+                    v.settingsPaneModel.parameterizationVersions.selectedItem = "v" + item.parameterization.versionNumber.toString()
+                }
+                if (v.properties.keySet().contains("settingsPaneModel") && item.template
+                        && k.parameterization.modelClass.name == item.template.modelClass.name) {
+                    v.settingsPaneModel.resultConfigurationNames.selectedItem = item.template.name
+                    v.settingsPaneModel.resultConfigurationVersions.selectedItem = "v" + item.template.versionNumber.toString()
+                }
+            }
         }
         notifyOpenDetailView(model, item)
     }
@@ -495,6 +511,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public void fireRowAdded() {
         batchTableListeners.each {BatchTableListener batchTableListener -> batchTableListener.fireRowAdded()}
     }
+
+    public void fireRowDeleted(Object item) {
+        batchTableListeners.each {BatchTableListener batchTableListener ->
+            batchTableListener.fireRowDeleted(item.getSimulationRun())
+        }
+    }
+
 }
 
 

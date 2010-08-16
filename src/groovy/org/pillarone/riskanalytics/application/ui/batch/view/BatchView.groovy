@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-
+import com.canoo.ulc.community.table.server.ULCFixedTable
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
@@ -15,12 +14,12 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableMode
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneGuiHelper
-import org.pillarone.riskanalytics.application.ui.table.FixedULCTable
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 
 public class BatchView extends NewBatchView {
 
@@ -64,7 +63,7 @@ public class BatchView extends NewBatchView {
     ULCComponent createDomainList() {
         // Workarount for PMO-919: Headings Lost by Undocking Result Window (Tree View)
         //use FixedULCTable instead of ULCTable
-        batches = new FixedULCTable(batchDataTableModel)
+        batches = new ULCFixedTable(batchDataTableModel)
         int columns = batches.getColumnCount()
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun)
         columns.times {int columnIndex ->
@@ -108,7 +107,7 @@ public class BatchView extends NewBatchView {
         runBatch.addActionListener([actionPerformed: {ActionEvent evt ->
             BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
             if (batchToRun && !batchToRun.executed) {
-                BatchRunner.getService().runBatch(batchToRun)
+                BatchRunService.getService().runBatch(batchToRun)
             } else {
                 new I18NAlert("BatchAlreadyExecuted").show()
             }

@@ -16,6 +16,8 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     private List listeners
     private boolean indexed = false
 
+    boolean readOnly = false
+
     public MultiDimensionalParameterTableModel() {
     }
 
@@ -126,11 +128,14 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     }
 
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        if (value == null) {
+        if (value == null || readOnly) {
             return
         }
         if (value instanceof Date) {
             value = new DateTime(value.time)
+        }
+        if (value && (value instanceof String) && value.isNumber()) {
+            value = getTypedValue(value)
         }
 
         Object oldValue = getValueAt(rowIndex, columnIndex)
@@ -166,7 +171,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return multiDimensionalParam.isCellEditable(rowIndex, columnIndex)
+        return !readOnly && multiDimensionalParam.isCellEditable(rowIndex, columnIndex)
     }
 
     List currentValues() {
@@ -218,6 +223,13 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     private int getIndex(int index, int max) {
         if (index < 0) return 0
         return Math.min(index, max)
+    }
+
+    private Object getTypedValue(Object value) {
+        if (value.isBigDecimal()) return value.asType(BigDecimal)
+        if (value.isDouble()) return value.asType(Double)
+        if (value.isInteger()) return value.asType(Integer)
+        return value
     }
 
 

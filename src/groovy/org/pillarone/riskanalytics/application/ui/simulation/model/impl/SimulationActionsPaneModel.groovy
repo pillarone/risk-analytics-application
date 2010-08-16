@@ -29,7 +29,7 @@ class SimulationActionsPaneModel {
     private DateFormat dateFormat = new SimpleDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
-    Simulation simulation
+    volatile Simulation simulation
     ICollectorOutputStrategy outputStrategy
 
     RunSimulationAction runSimulationAction
@@ -144,6 +144,7 @@ class SimulationActionsPaneModel {
         batchMessage = message
         ISimulationListener pane = listeners.find {it.class.name == SimulationActionsPane.class.name}
         pane?.simulationToBatchAdded()
+        mainModel.fireRowAdded()
     }
 
     String getErrorMessage() {

@@ -247,6 +247,7 @@ class MultiDimensionalTabStarter implements IActionListener {
 
             if (index == null) {
                 MultiDimensionalParameterModel model = new MultiDimensionalParameterModel(tree.model, lastComponent, tree.selectedColumn + 1)
+                model.tableModel.readOnly = parameterView.model.treeModel.readOnly
                 ClientContext.setModelUpdateMode(model.tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
                 model.tableModel.addListener([modelChanged: { parameterView.model.item.changed = true }] as IModelChangedListener)
                 tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), new MultiDimensionalParameterView(model).content)

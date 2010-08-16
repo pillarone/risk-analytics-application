@@ -119,6 +119,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
 class OpenItemAction extends SelectionTreeAction {
 
+    private static Log LOG = LogFactory.getLog(OpenItemAction)
+
     def OpenItemAction(ULCTree tree, P1RATModel model) {
         super("Open", tree, model)
     }
@@ -127,6 +129,9 @@ class OpenItemAction extends SelectionTreeAction {
         Model model = getSelectedModel()
         def item = getSelectedItem()
         if (model != null && item != null) {
+            if (item instanceof Simulation) {
+                LOG.trace "Reading end time from simulation: ${System.identityHashCode(item)}: ${item.end?.time}"
+            }
             this.model.openItem(model, item)
         }
     }
@@ -538,10 +543,12 @@ class ExportItemGroupAction extends ExportAction {
     String getFileName(int itemCount, Object filePaths, ModellingItem item) {
         String paramName = (item.properties.keySet().contains("versionNumber")) ? "${item.name}_v${item.versionNumber}" : "${item.name}"
         paramName = paramName.replaceAll(" ", "")
-        File file = new File("${filePaths[0]}/${item.modelClass.name}/")
+        def index = filePaths[0].indexOf("${item.name}.groovy")
+        String dirName = (index != -1) ? new File(filePaths[0]).parent : filePaths[0]
+        File file = new File("${dirName}/${item.modelClass.name}/")
         if (!file.exists())
             file.mkdir()
-        return "${filePaths[0]}/${item.modelClass.name}/${paramName}.groovy"
+        return "${dirName}/${item.modelClass.name}/${paramName}.groovy"
     }
 
 }
@@ -630,7 +637,10 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
         DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = dialog.getText("title")
         dialog.okAction = {
-            if (ParameterizationDAO.findByNameAndModelClassName(dialog.nameInput.text, simulationModel.class.name)) {
+            if (!dialog.nameInput.text || !(dialog.nameInput.text ==~ /(\w|[-])*/)) {
+                I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "NotValidName")
+                alert.show()
+            } else if (ParameterizationDAO.findByNameAndModelClassName(dialog.nameInput.text, simulationModel.class.name)) {
                 I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniquesNamesRequired")
                 alert.show()
             } else {

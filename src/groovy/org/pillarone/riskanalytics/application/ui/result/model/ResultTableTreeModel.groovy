@@ -132,7 +132,8 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
             if (isResultCell) {
                 int periodIndex = (column - 1) % simulationRun.periodCount
                 ResultFunction currentFunction = functions[column]
-                return !isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
+                boolean isPreCalculated = isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
+                return !isPreCalculated && !(currentFunction instanceof SingleIteration)
             } else {
                 return false
             }

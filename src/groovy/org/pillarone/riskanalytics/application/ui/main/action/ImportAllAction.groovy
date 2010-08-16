@@ -1,21 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.util.Cursor
+import com.ulcjava.base.application.util.IFileChooseHandler
+import com.ulcjava.base.application.util.IFileLoadHandler
+import com.ulcjava.base.shared.FileChooserConfig
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-import com.ulcjava.base.shared.FileChooserConfig
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.core.model.Model
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.util.Cursor
-import com.ulcjava.base.application.util.IFileLoadHandler
 import org.pillarone.riskanalytics.application.util.UserPreferences
-import org.apache.commons.logging.LogFactory
-import org.apache.commons.logging.Log
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.ULCTree
-import com.ulcjava.base.application.ULCWindow
+import org.pillarone.riskanalytics.core.model.Model
+import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -68,7 +64,9 @@ class ImportAllAction extends ImportAction {
         modelFile.eachFile {File selectedFile ->
             if (selectedFile.name.endsWith(".groovy")) {
                 LOG.info "importing a parameterization   $selectedFile.name ..."
-                ClientContext.loadFile(new ItemLoadHandler(this, null, true), modelFile.path + "/" + selectedFile.name)
+                synchronized (this.getClass()) {
+                    ClientContext.loadFile(new ItemLoadHandler(this, null, true), modelFile.path + "/" + selectedFile.name)
+                }
             }
         }
     }

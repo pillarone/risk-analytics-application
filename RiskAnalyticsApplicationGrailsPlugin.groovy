@@ -3,7 +3,7 @@ import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.0.1"
+    def version = "1.0.2.1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.2.0 > *"
     // the other plugins this plugin depends on
@@ -16,7 +16,7 @@ class RiskAnalyticsApplicationGrailsPlugin {
             "grails-app/views/error.gsp"
     ]
 
-    def author = "Intuitive Collaboration GmbH"
+    def author = "Intuitive Collaboration AG"
     def authorEmail = "info@pillarone.org"
     def title = "RiskAnalytics application"
     def description = '''\\
