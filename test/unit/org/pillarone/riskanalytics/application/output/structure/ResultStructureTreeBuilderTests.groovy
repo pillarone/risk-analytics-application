@@ -9,9 +9,9 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
     void testPaths() {
         ResultStructure resultStructure = new ResultStructure("name")
-        resultStructure.mappings.put("node1:node2:[%dyn1%]:out1:field", "A:[%dyn1%]:B:C")
-        resultStructure.mappings.put("node1:node2:out1:field", "X:Y:Z")
-        resultStructure.mappings.put("node1:node3:[%dyn2%]:out2:field", "1:[%dyn2%]:2:3")
+        resultStructure.mappings.put("A:[%dyn1%]:B:C", "node1:node2:[%dyn1%]:out1:field")
+        resultStructure.mappings.put("X:Y:Z", "node1:node2:out1:field")
+        resultStructure.mappings.put("1:[%dyn2%]:2:3", "node1:node3:[%dyn2%]:out2:field")
 
         List allPaths = [
                 "node1:node2:nodeA:out1:field",
@@ -34,9 +34,9 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
     void testBuildTree() {
         ResultStructure resultStructure = new ResultStructure("name")
-        resultStructure.mappings.put("node1:node2:[%dyn1%]:out1:field", "model:A:[%dyn1%]:B:C")
-        resultStructure.mappings.put("node1:node2:out1:field", "model:X:Y:Z")
-        resultStructure.mappings.put("node1:node3:[%dyn2%]:out2:field", "model:1:[%dyn2%]:2:3")
+        resultStructure.mappings.put("model:A:[%dyn1%]:B:C", "node1:node2:[%dyn1%]:out1:field")
+        resultStructure.mappings.put("model:X:Y:Z", "node1:node2:out1:field")
+        resultStructure.mappings.put("model:1:[%dyn2%]:2:3", "node1:node3:[%dyn2%]:out2:field")
 
         List allPaths = [
                 "node1:node2:nodeA:out1:field",

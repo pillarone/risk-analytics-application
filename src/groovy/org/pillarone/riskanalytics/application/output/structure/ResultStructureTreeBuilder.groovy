@@ -28,8 +28,8 @@ class ResultStructureTreeBuilder {
 
     private void transformPaths() {
         for (Map.Entry entry in resultStructure.mappings.entrySet()) {
-            String fromPath = entry.key
-            String toPath = entry.value
+            String fromPath = entry.value
+            String toPath = entry.key
 
             //non dynamic path
             if (!fromPath.contains("[%")) {

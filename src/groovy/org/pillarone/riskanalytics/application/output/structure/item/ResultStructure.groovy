@@ -36,12 +36,12 @@ class ResultStructure extends ModellingItem {
         resultStructureDAO.itemVersion = versionNumber.toString()
 
         for (Map.Entry<String, String> entry in mappings.entrySet()) {
-            StructureMapping mapping = resultStructureDAO.structureMappings.find { it.resultPath == entry.key }
+            StructureMapping mapping = resultStructureDAO.structureMappings.find { it.resultPath == entry.value }
             if (mapping == null) {
-                mapping = new StructureMapping(resultPath: entry.key)
+                mapping = new StructureMapping(resultPath: entry.value)
                 resultStructureDAO.addToStructureMappings(mapping)
             }
-            mapping.artificialPath = entry.value
+            mapping.artificialPath = entry.key
         }
     }
 
@@ -53,7 +53,7 @@ class ResultStructure extends ModellingItem {
 
         mappings.clear()
         for (StructureMapping structureMapping in resultStructureDAO.structureMappings) {
-            mappings.put(structureMapping.resultPath, structureMapping.artificialPath)
+            mappings.put(structureMapping.artificialPath, structureMapping.resultPath)
         }
     }
 

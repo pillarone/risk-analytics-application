@@ -13,8 +13,8 @@ class ResultStructureTests extends GroovyTestCase {
         ResultStructure resultStructure = new ResultStructure("TEST")
         resultStructure.modelClass = ApplicationModel
 
-        resultStructure.mappings.put("1", "a")
-        resultStructure.mappings.put("2", "b")
+        resultStructure.mappings.put("a", "1")
+        resultStructure.mappings.put("b", "2")
 
         resultStructure.save()
 
@@ -55,19 +55,19 @@ class ResultStructureTests extends GroovyTestCase {
         ResultStructure resultStructure = new ResultStructure("TEST")
         resultStructure.modelClass = ApplicationModel
 
-        resultStructure.mappings.put("1", "a")
-        resultStructure.mappings.put("2", "b")
+        resultStructure.mappings.put("a", "1")
+        resultStructure.mappings.put("b", "2")
 
         resultStructure.save()
 
         int structureCount = ResultStructureDAO.count()
         int mappingCount = StructureMapping.count()
-        
+
         ResultStructure resultStructure2 = new ResultStructure("TEST")
         resultStructure2.load()
 
-        resultStructure2.mappings.put("1", "x")
-        resultStructure2.mappings.put("2", "y")
+        resultStructure2.mappings.put("x", "1")
+        resultStructure2.mappings.put("y", "2")
         resultStructure2.save()
 
         assertEquals structureCount, ResultStructureDAO.count()
