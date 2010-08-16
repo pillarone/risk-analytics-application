@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.dataaccess.function.*
+import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultView
 
 abstract class AbstractResultAction extends ResourceBasedAction {
 
@@ -255,16 +256,20 @@ class FractionAbsoluteDifferenceAction extends CheckboxAction {
 }
 
 class ApplySelectionAction extends ResourceBasedAction {
-    ResultViewModel model
-    AbstractModellingTreeView resultView
 
-    public ApplySelectionAction(model, AbstractModellingTreeView view) {
+    ResultViewModel model
+    StochasticResultView resultView
+
+    public ApplySelectionAction(model, StochasticResultView view) {
         super("ApplySelectionAction")
         this.model = model
         this.resultView = view
     }
 
     public void doActionPerformed(ActionEvent event) {
+        //remove the action listener because the view is re-initialized and the same action instance used as listener in the new combo box
+        resultView.selectView.removeActionListener(this)
+
         model.resultStructureChanged()
         resultView.setModel(model)
     }
