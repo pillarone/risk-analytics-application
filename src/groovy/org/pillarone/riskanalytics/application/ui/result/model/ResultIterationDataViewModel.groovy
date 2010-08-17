@@ -1,14 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
-import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 
-import org.pillarone.riskanalytics.application.ui.result.view.ResultView
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
+import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
+import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
+import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 
 class ResultIterationDataViewModel extends QueryPaneModel {
     int periodCount

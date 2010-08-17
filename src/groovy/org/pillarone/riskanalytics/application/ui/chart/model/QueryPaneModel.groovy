@@ -1,14 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class QueryPaneModel extends AbstractPresentationModel {
 
@@ -153,6 +153,17 @@ class QueryPaneModel extends AbstractPresentationModel {
 
         fireModelChanged()
     }
+
+    public boolean validate() {
+        boolean isValid = true
+        criterias.each {List group ->
+            group.eachWithIndex {CriteriaViewModel criteria, int i ->
+                isValid = criteria.validate()
+            }
+        }
+        return isValid
+    }
+
 
     private List programmaticAnd(List groupList, List smallesList) {
         if (groupList.size() == 0) {

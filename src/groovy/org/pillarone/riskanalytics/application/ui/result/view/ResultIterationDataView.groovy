@@ -11,7 +11,6 @@ import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.shared.FileChooserConfig
 import java.awt.event.KeyEvent
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
@@ -19,8 +18,9 @@ import org.pillarone.riskanalytics.application.ui.chart.view.QueryPane
 import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
 import org.pillarone.riskanalytics.application.ui.result.action.SingleIterationAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
-
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 
 class ResultIterationDataView implements IModelChangedListener {
@@ -136,7 +136,9 @@ class ResultIterationDataView implements IModelChangedListener {
 
     void attachListeners() {
         addCriteriaGroupButton.addActionListener([actionPerformed: { model.addCriteriaGroup() }] as IActionListener)
-        queryButton.addActionListener([actionPerformed: { model.query() }] as IActionListener)
+        queryButton.addActionListener([actionPerformed: {
+            model.validate() ? model.query() : new I18NAlert(UlcUtilities.getWindowAncestor(content), "PercentileNumberNotValid").show()
+        }] as IActionListener)
         groupColumnsByPeriodButton.addActionListener([actionPerformed: { updateOrder(false)}] as IActionListener)
         groupColumnsByPathButton.addActionListener([actionPerformed: {updateOrder(true)}] as IActionListener)
         model.addModelChangedListener this
