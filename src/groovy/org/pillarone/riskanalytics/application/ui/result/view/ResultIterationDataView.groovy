@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.result.view
 
+import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
@@ -251,14 +252,28 @@ class IterationResultTableHeaderRenderer extends DefaultTableHeaderCellRenderer 
 
 class IterationResultTableRenderer extends DefaultTableCellRenderer {
     ResultIterationDataViewModel model
+    ULCNumberDataType numberDataType
 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
         ULCPopupMenu menu = new ULCPopupMenu()
         menu.add(new ULCMenuItem(new ShowIterationInTreeViewAction(model.resultView.model, model.resultView.tree.viewPortTableTree, new ULCTextField(value: value), model.resultView, table)))
         component.setComponentPopupMenu(menu)
+        setDataType getLocalNumberDataType()
+        setHorizontalAlignment(ULCLabel.CENTER)
         return component
     }
+
+    protected ULCNumberDataType getLocalNumberDataType() {
+        if (!numberDataType) {
+            numberDataType = new ULCNumberDataType(ClientContext.locale)
+            numberDataType.setGroupingUsed true
+            numberDataType.setInteger true
+        }
+        return numberDataType
+    }
+
+
 }
 
 class ShowIterationInTreeViewAction extends SingleIterationAction {
