@@ -11,6 +11,7 @@ import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
@@ -88,7 +89,13 @@ class SimulationSettingsPane {
         simulationName.addValueChangedListener([valueChanged: {e -> model.simulationName = simulationName.text }] as IValueChangedListener)
         comment.addValueChangedListener([valueChanged: {e -> model.comment = comment.text }] as IValueChangedListener)
         numberOfIterations.addKeyListener([keyTyped: {e ->
-            model.numberOfIterations = numberOfIterations.value
+            def value = numberOfIterations.value
+            if (value && (value instanceof Number) && value < Integer.MAX_VALUE)
+                model.numberOfIterations = value
+            else {
+                new I18NAlert("IterationNumberNotValid").show()
+                numberOfIterations.setValue(model.numberOfIterations)
+            }
         }] as IKeyListener)
     }
 
