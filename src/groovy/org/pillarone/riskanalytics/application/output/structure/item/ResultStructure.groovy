@@ -36,7 +36,7 @@ class ResultStructure extends ModellingItem {
         resultStructureDAO.itemVersion = versionNumber.toString()
 
         for (Map.Entry<String, String> entry in mappings.entrySet()) {
-            StructureMapping mapping = resultStructureDAO.structureMappings.find { it.resultPath == entry.value }
+            StructureMapping mapping = resultStructureDAO.structureMappings.find { it.artificialPath == entry.key }
             if (mapping == null) {
                 mapping = new StructureMapping(resultPath: entry.value)
                 resultStructureDAO.addToStructureMappings(mapping)

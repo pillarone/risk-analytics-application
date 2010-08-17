@@ -34,7 +34,7 @@ class ResultStructureTreeBuilder {
             //non dynamic path
             if (!fromPath.contains("[%")) {
                 if (allPaths.contains(fromPath)) {
-                    transformedPaths.put(fromPath, toPath)
+                    transformedPaths.put(toPath, fromPath)
                 }
             } else {
                 String pattern = fromPath.substring(0, fromPath.indexOf("["))
@@ -45,7 +45,7 @@ class ResultStructureTreeBuilder {
                 for (String path in matchingPaths) {
                     def matcher = path =~ pattern
                     String replacement = matcher[0][1]
-                    transformedPaths.put(path, toPath.replaceAll("\\[.*\\]", replacement))
+                    transformedPaths.put(toPath.replaceAll("\\[.*\\]", replacement), path)
                 }
             }
         }
@@ -54,7 +54,7 @@ class ResultStructureTreeBuilder {
     ITableTreeNode buildTree() {
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
         for (Map.Entry paths in transformedPaths.entrySet().sort { it.key }) {
-            findOrCreatePath(paths.value, paths.key, root)
+            findOrCreatePath(paths.key, paths.value, root)
         }
         //return the model node
         SimpleTableTreeNode firstNode = root.getChildAt(0)
