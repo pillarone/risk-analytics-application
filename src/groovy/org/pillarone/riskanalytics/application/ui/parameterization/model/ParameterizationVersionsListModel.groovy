@@ -48,8 +48,7 @@ public class ParameterizationVersionsListModel extends DefaultComboBoxModel {
                 parameterizationObjects[paramName] = it
                 addElement paramName
             }
-            if (!selectedItem)
-                selectedItem = getElementAt(0)
+            selectedItem = getElementAt(0)
         }
     }
 

@@ -66,7 +66,7 @@ class SimulationSettingsPane {
     private void attachListeners() {
         randomSeed.addValueChangedListener(model.randomSeedAction)
         userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
-        parametrizationNamesComboBox.addActionListener(model.reloadListModelAction)
+        parametrizationNamesComboBox.addActionListener(model.reloadParameterizationListModelAction)
         parameterizationVersionsComboBox.addActionListener([actionPerformed: {e ->
             ParameterizationVersionsListModel listModel = parameterizationVersionsComboBox.model
             if (listModel.isValid(listModel.selectedItem)) {
@@ -76,7 +76,7 @@ class SimulationSettingsPane {
             }
             model.notifyConfigurationChanged()
         }] as IActionListener)
-        resultConfigurationNamesComboBox.addActionListener(model.reloadListModelAction)
+        resultConfigurationNamesComboBox.addActionListener(model.reloadResultConfigurationListModelAction)
 
         Closure outputStrategyAction = {boolean resultLocationRequired ->
             resultLocation.enabled = resultLocationRequired
@@ -91,9 +91,11 @@ class SimulationSettingsPane {
             def value = numberOfIterations.value
             if (value && (value instanceof Number) && value < Integer.MAX_VALUE)
                 model.numberOfIterations = value
-            else {
+            else if (value) {
                 new I18NAlert("IterationNumberNotValid").show()
                 numberOfIterations.setValue(model.numberOfIterations)
+            } else {
+                model.numberOfIterations = null
             }
         }] as IKeyListener)
     }

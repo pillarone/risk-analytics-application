@@ -7,16 +7,13 @@ import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.OutputStrategyComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationNameListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationVersionsListModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.ChangeOutputStrategyAction
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.ChangeResultLocationAction
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.RandomSeedAction
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.ReloadListModelAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationValidationListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -24,11 +21,11 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.DBOutput
 import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -59,7 +56,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     Integer numberOfIterations
 
     RandomSeedAction randomSeedAction
-    ReloadListModelAction reloadListModelAction
+    ReloadParameterizationListModelAction reloadParameterizationListModelAction
+    ReloadResultConfigurationListModelAction reloadResultConfigurationListModelAction
     private ChangeOutputStrategyAction changeOutputStrategyAction
     private ChangeResultLocationAction changeResultLocationAction
 
@@ -90,7 +88,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         outputStrategies = new OutputStrategyComboBoxModel()
 
         randomSeedAction = new RandomSeedAction(this)
-        reloadListModelAction = new ReloadListModelAction(this)
+        reloadParameterizationListModelAction = new ReloadParameterizationListModelAction(this)
+        reloadResultConfigurationListModelAction = new ReloadResultConfigurationListModelAction(this)
     }
 
     /**
