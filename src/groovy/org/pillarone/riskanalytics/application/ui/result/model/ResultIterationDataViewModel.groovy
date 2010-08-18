@@ -1,15 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 import org.pillarone.riskanalytics.application.ui.result.view.ResultView
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class ResultIterationDataViewModel extends QueryPaneModel {
     int periodCount
@@ -48,7 +47,8 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     public String getCounterString() {
         int found = createResultList().size()
-        "Found ${found} out of ${simulationRun.iterations} Iterations"
+        java.text.NumberFormat numberFormat = LocaleResources.getNumberFormat()
+        "Found ${numberFormat.format(found)} out of ${numberFormat.format(simulationRun.iterations)} Iterations"
     }
 
 
