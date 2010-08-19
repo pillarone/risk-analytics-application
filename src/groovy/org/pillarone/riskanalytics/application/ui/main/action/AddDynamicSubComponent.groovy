@@ -27,7 +27,7 @@ class AddDynamicSubComponent extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         def node = tree.selectedPath.lastPathComponent
-        if (!ComponentUtils.isDynamicComposedComponent(node)) return;
+        if (!node || !ComponentUtils.isDynamicComposedComponent(node)) return;
 
         DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = UIUtils.getText(this.class, "newDynamicSubComponent") + ": " + (node ? node.getDisplayName() : "dynamic component")

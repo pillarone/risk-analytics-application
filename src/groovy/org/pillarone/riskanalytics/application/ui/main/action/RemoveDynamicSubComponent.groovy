@@ -18,7 +18,7 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         def node = tree.selectedPath.lastPathComponent
-        if (ComponentUtils.isDynamicComposedSubComponentNode(node))
+        if (node && ComponentUtils.isDynamicComposedSubComponentNode(node))
             tree.model.removeComponentNode(node)
     }
 

@@ -824,9 +824,9 @@ class DeleteAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-
         boolean usedInSimulation = false
         def selectedItem = getSelectedItem()
+        if (!selectedItem) return
         if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
             usedInSimulation = selectedItem.isUsedInSimulation()
         }
