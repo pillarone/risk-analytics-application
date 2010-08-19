@@ -156,9 +156,9 @@ class QueryPaneModel extends AbstractPresentationModel {
 
     public boolean validate() {
         boolean isValid = true
-        criterias.each {List group ->
-            group.eachWithIndex {CriteriaViewModel criteria, int i ->
-                isValid = criteria.validate()
+        for (List group : criterias) {
+            for (ChartViewModel criteria : group) {
+                isValid = isValid && criteria.validate()
             }
         }
         return isValid
