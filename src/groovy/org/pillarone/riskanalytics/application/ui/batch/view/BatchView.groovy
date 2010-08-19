@@ -65,7 +65,6 @@ public class BatchView extends NewBatchView {
         // Workarount for PMO-919: Headings Lost by Undocking Result Window (Tree View)
         //use FixedULCTable instead of ULCTable
         batches = new ULCFixedTable(batchDataTableModel)
-        int columns = batches.getColumnCount()
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun)
         batches.getColumnModel().getColumns().each {ULCTableColumn column ->
             column.setHeaderRenderer(new BatchTableHeaderRenderer())

@@ -5,7 +5,6 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.base.view.DynamicComponentNameDialog
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -27,7 +26,9 @@ class AddDynamicSubComponent extends ResourceBasedAction {
 
 
     public void doActionPerformed(ActionEvent event) {
-        DynamicComposedComponentTableTreeNode node = tree.selectedPath.lastPathComponent
+        def node = tree.selectedPath.lastPathComponent
+        if (!ComponentUtils.isDynamicComposedComponent(node)) return;
+
         DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = UIUtils.getText(this.class, "newDynamicSubComponent") + ": " + (node ? node.getDisplayName() : "dynamic component")
         dialog.okAction = {

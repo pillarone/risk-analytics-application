@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 
 class RemoveDynamicSubComponent extends ResourceBasedAction {
@@ -17,7 +18,8 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         def node = tree.selectedPath.lastPathComponent
-        tree.model.removeComponentNode(node)
+        if (ComponentUtils.isDynamicComposedSubComponentNode(node))
+            tree.model.removeComponentNode(node)
     }
 
     public boolean isEnabled() {
