@@ -62,6 +62,7 @@ class ActionsView {
         progressBar.setStringPainted(true)
 
         timer = new ULCPollingTimer(1000, null)
+        timer.syncClientState = false
         timer.repeats = true
 
         Closure performAction = {event ->

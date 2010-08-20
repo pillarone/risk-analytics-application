@@ -484,6 +484,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             pollingBatchSimulationAction.addSimulationListener this
             pollingBatchSimulationTimer = new ULCPollingTimer(2000, pollingBatchSimulationAction)
             pollingBatchSimulationTimer.repeats = true
+            pollingBatchSimulationTimer.syncClientState = false
             pollingBatchSimulationTimer.start()
         } catch (NullPointerException ex) {}
     }

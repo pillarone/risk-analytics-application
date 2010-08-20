@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.result.view
 
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
-import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
@@ -23,8 +22,8 @@ class CompareSimulationsCriteriaView {
 
     ULCBoxPane content
     ULCBoxPane checkBoxPane
-    ULCTextField minDeviation
-    ULCTextField maxDeviation
+    ULCSpinner minSpinner
+    ULCSpinner maxSpinner
     ULCLabel spinnerLabel
     ULCButton rendererTreeButton
 
@@ -67,19 +66,17 @@ class CompareSimulationsCriteriaView {
     private void initComponents() {
         content = new ULCBoxPane(1, 2)
         content.setPreferredSize(new Dimension(500, 300))
-        ULCNumberDataType dataType = new ULCNumberDataType(ClientContext.locale)
-        dataType.integer = false
-        minDeviation = new ULCTextField()
-        minDeviation.setHorizontalAlignment(ULCTextField.RIGHT);
-        minDeviation.setDataType(dataType)
+        ULCSpinnerNumberModel spinnerModel = new ULCSpinnerNumberModel()
+        spinnerModel.minimum = 0
 
-        maxDeviation = new ULCTextField()
-        maxDeviation.setHorizontalAlignment(ULCTextField.RIGHT);
-        maxDeviation.setDataType(dataType)
+        minSpinner = new ULCSpinner(spinnerModel)
 
+        spinnerModel = new ULCSpinnerNumberModel()
+        spinnerModel.minimum = 0
+        maxSpinner = new ULCSpinner(spinnerModel)
 
-        minDeviation.setPreferredSize(new Dimension(90, 20))
-        maxDeviation.setPreferredSize(new Dimension(90, 20))
+        minSpinner.setPreferredSize(new Dimension(120, 20))
+        maxSpinner.setPreferredSize(new Dimension(120, 20))
 
         spinnerLabel = new ULCLabel(getText(this.class, "interval"))
         rendererTreeButton = new ULCButton(getText(this.class, "update"))
@@ -157,21 +154,16 @@ class CompareSimulationsCriteriaView {
         devPercentage.registerKeyboardAction([actionPerformed: updateAction] as IActionListener, enter, ULCComponent.WHEN_IN_FOCUSED_WINDOW);
         rendererTreeButton.addActionListener([actionPerformed: updateAction] as IActionListener)
 
-        minDeviation.addValueChangedListener([valueChanged: {evt ->
-            if (minDeviation.value > maxDeviation.value) {
-                maxDeviation.value = minDeviation.value
+        minSpinner.addValueChangedListener([valueChanged: {evt ->
+            if (minSpinner.value > maxSpinner.value) {
+                maxSpinner.value = minSpinner.value
             }
 
         }] as IValueChangedListener)
     }
 
     private void setInterval() {
-        if (minDeviation.value > maxDeviation.value) {
-            double temp = maxDeviation.value
-            maxDeviation.value = minDeviation.value
-            minDeviation.value = temp
-        }
-        model.setInterval((double) minDeviation.getValue(), (double) maxDeviation.getValue())
+        model.setInterval(minSpinner.getValue(), maxSpinner.getValue())
     }
 
     private void addSimulationsComboBox(ULCBoxPane pane) {
@@ -245,9 +237,9 @@ class CompareSimulationsCriteriaView {
     private void addSpinnerPane(ULCBoxPane displayPane) {
         ULCLabel andLabel = new ULCLabel(getText(this.class, "And"))
         displayPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(spinnerLabel, 0, 10, 0, 0))
-        displayPane.add(ULCBoxPane.BOX_LEFT_TOP, minDeviation)
+        displayPane.add(ULCBoxPane.BOX_LEFT_TOP, minSpinner)
         displayPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(andLabel, 0, 2, 0, 2))
-        displayPane.add(ULCBoxPane.BOX_LEFT_TOP, maxDeviation)
+        displayPane.add(ULCBoxPane.BOX_LEFT_TOP, maxSpinner)
         displayPane.add(ULCBoxPane.BOX_LEFT_TOP, rendererTreeButton)
     }
 

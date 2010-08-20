@@ -160,6 +160,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     private void startPollingTimer(PollingBatchRunAction pollingBatchRunAction) {
         pollingBatchRunTimer = new ULCPollingTimer(2000, pollingBatchRunAction)
         pollingBatchRunTimer.repeats = true
+        pollingBatchRunTimer.syncClientState = false
         pollingBatchRunTimer.start()
     }
 

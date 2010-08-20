@@ -31,6 +31,7 @@ abstract class AsynchronTableTreeModel extends AbstractTableTreeModel {
         if (!timer) {
             timer = new ULCPollingTimer(1000, pollingAction)
             timer.repeats = true
+            timer.syncClientState = false
         }
         return timer
     }
