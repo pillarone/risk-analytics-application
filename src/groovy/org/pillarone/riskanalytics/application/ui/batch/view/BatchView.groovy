@@ -7,6 +7,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.event.ListSelectionEvent
+import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
@@ -18,8 +19,8 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
-import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.batch.BatchRunService
+import com.ulcjava.base.application.*
 
 public class BatchView extends NewBatchView {
 
@@ -64,11 +65,10 @@ public class BatchView extends NewBatchView {
         // Workarount for PMO-919: Headings Lost by Undocking Result Window (Tree View)
         //use FixedULCTable instead of ULCTable
         batches = new ULCFixedTable(batchDataTableModel)
-        int columns = batches.getColumnCount()
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun)
-        columns.times {int columnIndex ->
-            batches.columnModel.getColumn(columnIndex).setHeaderRenderer(new BatchTableHeaderRenderer())
-            batches.columnModel.getColumn(columnIndex).setCellRenderer(batchTableRenderer)
+        batches.getColumnModel().getColumns().each {ULCTableColumn column ->
+            column.setHeaderRenderer(new BatchTableHeaderRenderer())
+            column.setCellRenderer(batchTableRenderer)
         }
         batches.setSelectionMode(ULCListSelectionModel.SINGLE_SELECTION)
         batches.setShowHorizontalLines(true)

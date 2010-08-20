@@ -4,16 +4,14 @@ import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.DateFormat
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.output.SimulationRun
-
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.dataaccess.DeterminsiticResultAccessor
-import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
-
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
 
@@ -97,7 +95,7 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
     }
 
     public String getColumnName(int column) {
-        if(column == 0) return "Name"
+        if (column == 0) return "Name"
 
         return columnNames.get(column - 1)
     }
@@ -114,7 +112,7 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
 
     private ULCNumberDataType getNumberDataType() {
         if (!numberDataType) {
-            numberDataType = LocaleResources.numberDataType
+            numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true
             numberDataType.setMinFractionDigits 2
             numberDataType.setMaxFractionDigits 2

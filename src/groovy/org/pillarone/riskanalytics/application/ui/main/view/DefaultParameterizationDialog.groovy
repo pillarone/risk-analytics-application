@@ -2,8 +2,8 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import com.ulcjava.base.application.*
 
 class DefaultParameterizationDialog {
 
@@ -44,10 +44,10 @@ class DefaultParameterizationDialog {
         ULCBoxPane content = new ULCBoxPane(rows: 3, columns: 4)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
 
-        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("name")+":"))
+        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("name") + ":"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, nameInput)
 
-        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("periods")+":"))
+        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("periods") + ":"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, periodCount)
 
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
@@ -66,7 +66,7 @@ class DefaultParameterizationDialog {
 
     private void attachListeners() {
         IActionListener action = [actionPerformed: {e -> okAction.call()}] as IActionListener
-
+        dialog.setDefaultButton okButton
         okButton.addActionListener(action)
         cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
     }

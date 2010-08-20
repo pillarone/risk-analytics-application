@@ -6,11 +6,14 @@ import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.shared.UlcEventCategories
 import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
+import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -178,6 +181,10 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     //TODO: remove listener after closing view
 
     protected void attachListeners() {
+        def rowHeaderTree = tree.getRowHeaderTableTree()
+        rowHeaderTree.registerKeyboardAction(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new AddDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0, true), ULCComponent.WHEN_FOCUSED)
+
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},
                 itemChanged: {Parameterization item ->

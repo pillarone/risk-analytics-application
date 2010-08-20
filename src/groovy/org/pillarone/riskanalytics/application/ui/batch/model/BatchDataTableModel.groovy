@@ -53,8 +53,8 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         list << brSr?.simulationRun?.parameterization?.name + " v" + brSr?.simulationRun?.parameterization?.itemVersion
         list << brSr?.simulationRun?.resultConfiguration?.name + " v" + brSr?.simulationRun?.resultConfiguration?.itemVersion
         list << brSr.simulationRun.periodCount + "/" + brSr.simulationRun.iterations
-        list << brSr.strategy.toString()
-        list << brSr.simulationState.toString()
+        list << UIUtils.getText(this.class, brSr.strategy.toString())
+        list << UIUtils.getText(this.class, brSr.simulationState.toString())
         return list
     }
 
@@ -123,7 +123,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         batchRunSimulationRuns.eachWithIndex {BatchRunSimulationRun brsr, int index ->
             if (batchRunSimulationRun.simulationRun.name == brsr.simulationRun.name) {
                 rows << index
-                this.tableValues.get(index).set(getColumnIndex(SIMULATION_STATUS_COLUMN), batchRunSimulationRun.simulationState.toString())
+                this.tableValues.get(index).set(getColumnIndex(SIMULATION_STATUS_COLUMN), UIUtils.getText(this.class, batchRunSimulationRun.simulationState.toString()))
             }
         }
         rows.each {
@@ -160,6 +160,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     private void startPollingTimer(PollingBatchRunAction pollingBatchRunAction) {
         pollingBatchRunTimer = new ULCPollingTimer(2000, pollingBatchRunAction)
         pollingBatchRunTimer.repeats = true
+        pollingBatchRunTimer.syncClientState = false
         pollingBatchRunTimer.start()
     }
 

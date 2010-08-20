@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCTextField
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.getText
 
 class CalculationConfigurationView extends AbstractConfigurationView {
@@ -23,7 +24,7 @@ class CalculationConfigurationView extends AbstractConfigurationView {
      * </ul>
      */
     protected void initCustomComponents() {
-        ULCNumberDataType numberDataType = new ULCNumberDataType()
+        ULCNumberDataType numberDataType = DataTypeFactory.numberDataType
         numberDataType.integer = true
         numberDataType.min = 1
 

@@ -5,8 +5,8 @@ import com.ulcjava.base.application.event.ITableModelListener
 import com.ulcjava.base.application.event.TableModelEvent
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import com.ulcjava.base.application.table.ITableModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.result.view.ResultIterationDataTableCellRenderer
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
 class ResultIterationDataTableModel implements ITableModel {
     List<String> columnHeaders
@@ -82,7 +82,7 @@ class ResultIterationDataTableModel implements ITableModel {
 
     private ULCNumberDataType getNumberDataType() {
         if (!numberDataType) {
-            numberDataType = LocaleResources.numberDataType
+            numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true
             numberDataType.setMinFractionDigits 2
             numberDataType.setMaxFractionDigits 2

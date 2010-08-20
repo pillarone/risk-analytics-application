@@ -229,6 +229,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         progressBar.name = "progress"
 
         timer = new ULCPollingTimer(1000, this)
+        timer.syncClientState = false
         timer.repeats = true
 
         startTimeLabel = new ULCLabel(model.getText("StartTime") + ":")

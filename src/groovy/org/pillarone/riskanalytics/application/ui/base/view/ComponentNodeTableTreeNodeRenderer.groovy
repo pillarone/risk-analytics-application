@@ -183,8 +183,14 @@ class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
 
 class ComponentUtils {
 
-    static boolean isDynamicComposedSubComponentNode(ComponentTableTreeNode node) {
-        return node.parent instanceof ComponentTableTreeNode && node.parent.component instanceof DynamicComposedComponent && node.parent.component.isDynamicSubComponent(node.component)
+    static boolean isDynamicComposedSubComponentNode(def node) {
+        if (node instanceof ComponentTableTreeNode)
+            return node.parent instanceof ComponentTableTreeNode && node.parent.component instanceof DynamicComposedComponent && node.parent.component.isDynamicSubComponent(node.component)
+        return false
+    }
+
+    static boolean isDynamicComposedComponent(def node) {
+        return (node instanceof ComponentTableTreeNode) && (node.component instanceof DynamicComposedComponent)
     }
 
     static String getSubComponentName(String name) {

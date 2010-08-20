@@ -115,7 +115,7 @@ class UIUtils {
         Locale locale = Locale.default
 
         try {
-            locale = ClientContext.locale
+            locale = LocaleResources.getLocale()
         } catch (Exception e) {
             LOG.warn "Unable to detect client locale. Using default."
         }

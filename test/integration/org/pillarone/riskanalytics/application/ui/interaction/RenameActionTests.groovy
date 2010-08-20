@@ -2,10 +2,11 @@ package org.pillarone.riskanalytics.application.ui.interaction
 
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import javax.swing.tree.TreePath
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.P1RATApplication
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
-import org.pillarone.riskanalytics.application.ui.P1RATApplication
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import com.ulcjava.testframework.operator.*
 
 class RenameActionTests extends AbstractStandaloneTestCase {
@@ -14,12 +15,14 @@ class RenameActionTests extends AbstractStandaloneTestCase {
     protected void setUp() {
         FileImportService.importModelsIfNeeded(["Application"])
         ModellingItemFactory.clear()
+        LocaleResources.setTestMode()
         super.setUp();
     }
 
     protected void tearDown() {
         super.tearDown();
         new DBCleanUpService().cleanUp()
+        LocaleResources.clearTestMode()
     }
 
     protected Class getApplicationClass() {

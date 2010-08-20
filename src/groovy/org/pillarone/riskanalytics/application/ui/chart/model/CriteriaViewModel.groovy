@@ -1,10 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
-import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -59,6 +58,13 @@ class CriteriaViewModel {
         } else {
             return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
         }
+    }
+
+    public boolean validate() {
+        if (valueIntepretationModel.getSelectedEnum() != ValueIntepretationType.ABSOLUTE) {
+            if (value < 0 || value > 100) return false
+        }
+        return true
     }
 
     public void setValue(String s) {

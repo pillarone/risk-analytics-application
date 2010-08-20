@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.application.dataaccess.function.NodeNameFunct
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -258,7 +258,7 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
     public ULCNumberDataType getNumberDataType() {
         if (!numberDataType) {
-            numberDataType = LocaleResources.numberDataType
+            numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true
             numberDataType.setMinFractionDigits 2
             numberDataType.setMaxFractionDigits 2
