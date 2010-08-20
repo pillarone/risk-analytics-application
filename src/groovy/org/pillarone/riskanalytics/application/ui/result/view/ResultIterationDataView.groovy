@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.chart.view.QueryPane
 import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
 import org.pillarone.riskanalytics.application.ui.result.action.SingleIterationAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -266,7 +267,7 @@ class IterationResultTableRenderer extends DefaultTableCellRenderer {
 
     protected ULCNumberDataType getLocalNumberDataType() {
         if (!numberDataType) {
-            numberDataType = new ULCNumberDataType(ClientContext.locale)
+            numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true
             numberDataType.setInteger true
         }

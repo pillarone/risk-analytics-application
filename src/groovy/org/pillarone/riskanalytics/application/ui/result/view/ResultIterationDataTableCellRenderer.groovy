@@ -5,7 +5,7 @@ import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
-import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
 public class ResultIterationDataTableCellRenderer extends DefaultTableCellRenderer {
     ULCNumberDataType numberDataType
@@ -38,7 +38,7 @@ public class ResultIterationDataTableCellRenderer extends DefaultTableCellRender
 
     protected ULCNumberDataType getLocalNumberDataType() {
         if (!numberDataType) {
-            numberDataType = LocaleResources.numberDataType
+            numberDataType = DataTypeFactory.numberDataType
         }
         return numberDataType
     }

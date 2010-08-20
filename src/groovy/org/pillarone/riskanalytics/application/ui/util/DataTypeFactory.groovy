@@ -126,6 +126,11 @@ public class DataTypeFactory {
         return dataType
     }
 
+    static ULCNumberDataType getNumberDataType() {
+        return new ULCNumberDataType(UIUtils.clientLocale)
+    }
+
+
     private static ULCAbstractErrorManager getErrorManager() {
         ULCDefaultErrorManager errorManager = UserContext.getAttribute("errorManager")
         if (errorManager == null) {
