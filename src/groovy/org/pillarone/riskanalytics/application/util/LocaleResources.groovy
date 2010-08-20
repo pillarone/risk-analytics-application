@@ -6,6 +6,7 @@ import java.text.DateFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.user.UserSettings
@@ -64,7 +65,7 @@ class LocaleResources {
 
 
     static NumberFormat getNumberFormat() {
-        NumberFormat.getInstance(getLocale())
+        NumberFormat.getInstance(UIUtils.clientLocale)
     }
 
     static ULCNumberDataType getNumberDataType() {

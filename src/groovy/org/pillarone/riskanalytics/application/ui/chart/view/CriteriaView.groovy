@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.chart.view
 
-import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
 import org.pillarone.riskanalytics.application.ui.chart.model.ValueIntepretationType
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
@@ -70,11 +70,7 @@ class CriteriaView {
 
         valueField = new ULCTextField()
         valueField.value = model.value
-        ULCNumberDataType dataType = new ULCNumberDataType(ClientContext.locale)
-        dataType.integer = false
-        dataType.minFractionDigits = 1
-        dataType.maxFractionDigits = 2
-        valueField.dataType = dataType
+        valueField.dataType = DataTypeFactory.getDoubleDataType()
 
         valueIntepretationComboBox = new ULCComboBox(model.valueIntepretationModel)
         valueIntepretationComboBox.enabled = (model.selectedPeriod != null)

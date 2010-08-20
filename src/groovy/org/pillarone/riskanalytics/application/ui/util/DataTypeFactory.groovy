@@ -7,7 +7,6 @@ import org.pillarone.riskanalytics.core.parameter.DateParameter
 import org.pillarone.riskanalytics.core.parameter.DoubleParameter
 import org.pillarone.riskanalytics.core.parameter.IntegerParameter
 import org.pillarone.riskanalytics.core.parameter.Parameter
-
 import com.ulcjava.base.application.datatype.*
 
 public class DataTypeFactory {
@@ -117,6 +116,14 @@ public class DataTypeFactory {
             UserContext.setAttribute("floatingPointDataTypeForNonEdit", floatingPointDataTypeForNonEdit)
         }
         return floatingPointDataTypeForNonEdit
+    }
+
+    static IDataType getDoubleDataType() {
+        ULCNumberDataType dataType = new ULCNumberDataType(UIUtils.clientLocale)
+        dataType.integer = false
+        dataType.minFractionDigits = 1
+        dataType.maxFractionDigits = 2
+        return dataType
     }
 
     private static ULCAbstractErrorManager getErrorManager() {
