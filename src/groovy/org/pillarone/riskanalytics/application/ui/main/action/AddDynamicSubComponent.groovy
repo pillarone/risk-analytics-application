@@ -1,8 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.util.KeyStroke
 import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
@@ -21,6 +24,7 @@ class AddDynamicSubComponent extends ResourceBasedAction {
         super("AddDynamicSubComponent")
         this.tree = tree
         this.model = model
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0, true));
     }
 
 

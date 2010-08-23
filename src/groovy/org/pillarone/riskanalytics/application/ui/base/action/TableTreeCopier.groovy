@@ -5,10 +5,11 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
+import com.ulcjava.base.application.util.KeyStroke
 import java.text.NumberFormat
-import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class TableTreeCopier extends ExceptionSafeAction {
@@ -21,6 +22,7 @@ class TableTreeCopier extends ExceptionSafeAction {
     public TableTreeCopier() {
         super("Copy")
         putValue(IAction.SMALL_ICON, UIUtils.getIcon("copy-active.png"));
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false));
     }
 
     public void doActionPerformed(ActionEvent event) {

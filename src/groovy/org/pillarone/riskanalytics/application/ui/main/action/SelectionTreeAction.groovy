@@ -2,13 +2,10 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
+import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tree.ITreeNode
 import com.ulcjava.base.application.tree.TreePath
-import com.ulcjava.base.application.util.Cursor
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.util.IFileLoadHandler
-import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import java.text.SimpleDateFormat
 import org.apache.commons.logging.Log
@@ -35,6 +32,7 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import org.springframework.transaction.TransactionStatus
 import com.ulcjava.base.application.*
+import com.ulcjava.base.application.util.*
 import org.pillarone.riskanalytics.core.simulation.item.*
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
@@ -821,6 +819,7 @@ class DeleteAction extends SelectionTreeAction {
 
     public DeleteAction(ULCTree tree, P1RATModel model) {
         super("Delete", tree, model)
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true));
     }
 
     public void doActionPerformed(ActionEvent event) {
