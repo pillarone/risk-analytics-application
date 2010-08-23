@@ -465,8 +465,12 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
     public void simulationStart(Simulation simulation) {
-        closeItem(simulation.modelClass.newInstance(), simulation.parameterization)
-        closeItem(simulation.modelClass.newInstance(), simulation.template)
+        def parameterViewModel = viewModelsInUse[simulation.parameterization]
+        if (parameterViewModel && parameterViewModel instanceof ParameterViewModel)
+            parameterViewModel.setReadOnly(true)
+        def resultConfigurationViewModel = viewModelsInUse[simulation.template]
+        if (resultConfigurationViewModel && resultConfigurationViewModel instanceof ResultConfigurationViewModel)
+            resultConfigurationViewModel.setReadOnly(true)
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
