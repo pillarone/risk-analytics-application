@@ -405,7 +405,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
                 it.item.load()
             }
         }
-
+        simulations.sort {it.item.getSimulationRun().endTime}
         notifyOpenDetailView(model, simulations)
     }
 
