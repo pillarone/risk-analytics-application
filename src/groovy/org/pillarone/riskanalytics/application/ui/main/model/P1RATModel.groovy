@@ -18,9 +18,11 @@ import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimul
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
+import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
@@ -471,6 +473,12 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         def resultConfigurationViewModel = viewModelsInUse[simulation.template]
         if (resultConfigurationViewModel && resultConfigurationViewModel instanceof ResultConfigurationViewModel)
             resultConfigurationViewModel.setReadOnly(true)
+
+        modelItemlisteners.each {
+            if ((it instanceof ParameterView && it.model == parameterViewModel) || (it instanceof ResultConfigurationView && it.model == resultConfigurationViewModel)) {
+                it.removeTabs()
+            }
+        }
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
