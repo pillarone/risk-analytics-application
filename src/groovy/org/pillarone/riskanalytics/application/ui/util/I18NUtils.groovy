@@ -245,13 +245,19 @@ public class I18NUtils {
         }
 
         StringBuffer displayNameBuffer = new StringBuffer()
-
+        //display name will be as the following formatted
+        // HelloWORLD -> hello world
+        // HELLOWorld -> HELLO world
+        // HELLOWORLD -> HELLOWORLD
         value.eachWithIndex {String it, int index ->
-            if (!it.equals(it.toLowerCase())) {
-                if (index > 0) {
+            char c = -1
+            if (index + 1 < value.length())
+                c = value.charAt(index + 1)
+            if (!it.equals(it.toLowerCase()) && c != -1 && c.equals(c.toLowerCase())) {
+                if (index > 0 && index < value.length() - 1) {
                     displayNameBuffer << " " + it.toLowerCase()
                 } else {
-                    displayNameBuffer << it.toLowerCase()
+                    displayNameBuffer << ((index < value.length() - 1) ? it.toLowerCase() : it)
                 }
             } else {
                 displayNameBuffer << it

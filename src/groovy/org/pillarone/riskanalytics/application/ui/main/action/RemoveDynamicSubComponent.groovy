@@ -5,8 +5,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 
 class RemoveDynamicSubComponent extends ResourceBasedAction {
 

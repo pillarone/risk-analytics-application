@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 

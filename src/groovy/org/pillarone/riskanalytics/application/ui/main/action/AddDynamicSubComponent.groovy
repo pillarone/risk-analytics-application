@@ -8,9 +8,9 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.base.view.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.base.view.DynamicComponentNameDialog
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.components.Component
