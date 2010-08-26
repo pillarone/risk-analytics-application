@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguratio
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
+import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationTask
 
 /**
  * The view model for the SimulationActionsPane.
@@ -25,7 +26,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
  */
 class SimulationActionsPaneModel {
 
-    protected SimulationRunner runner
+    protected SimulationTask runner
     private DateFormat dateFormat = new SimpleDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
@@ -63,17 +64,16 @@ class SimulationActionsPaneModel {
 
     void runSimulation() {
         simulation.save()
-        runner = SimulationRunner.createRunner()
-        RunSimulationService.getService().runSimulation(runner, new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy))
+        runner = RunSimulationService.getService().runSimulationOnGrid(new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy))
         notifySimulationStart()
     }
 
     void stopSimulation() {
-        runner.stop()
+//        runner.stop()
     }
 
     void cancelSimulation() {
-        runner.cancel()
+//        runner.cancel()
     }
 
     int getProgress() {
@@ -81,7 +81,7 @@ class SimulationActionsPaneModel {
     }
 
     int getIterationsDone() {
-        runner.currentScope.iterationsDone
+        0//runner.currentScope.iterationsDone
     }
 
     SimulationState getSimulationState() {
@@ -89,7 +89,7 @@ class SimulationActionsPaneModel {
     }
 
     String getEstimatedEndTime() {
-        Date estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
+        Date estimatedSimulationEnd = null//runner.getEstimatedSimulationEnd()
         if (estimatedSimulationEnd != null) {
             return dateFormat.format(estimatedSimulationEnd)
         }
@@ -114,7 +114,7 @@ class SimulationActionsPaneModel {
 
     String getRemainingTime() {
         String result = "-"
-        Date end = runner.getEstimatedSimulationEnd()
+        Date end = null//runner.getEstimatedSimulationEnd()
         if (end != null) {
             use(TimeCategory) {
                 def duration = end - new Date()
@@ -137,7 +137,8 @@ class SimulationActionsPaneModel {
     }
 
     void notifySimulationStop() {
-        listeners*.simulationEnd(simulation, runner.currentScope.model)
+        this.simulation = runner.simulation
+        listeners*.simulationEnd(simulation, simulation.modelClass.newInstance())
     }
 
     void notifySimulationToBatchAdded(String message) {
@@ -148,7 +149,7 @@ class SimulationActionsPaneModel {
     }
 
     String getErrorMessage() {
-        Exception simulationException = runner.error?.error
+        Throwable simulationException = runner.getSimulationErrors()[0]
 
         String exceptionMessage = simulationException.message
         if (exceptionMessage == null) {
