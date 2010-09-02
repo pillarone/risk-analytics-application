@@ -12,6 +12,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         resultStructure.mappings.put("A:[%dyn1%]:B:C", "node1:node2:[%dyn1%]:out1:field")
         resultStructure.mappings.put("X:Y:Z", "node1:node2:out1:field")
         resultStructure.mappings.put("1:[%dyn2%]:2:3", "node1:node3:[%dyn2%]:out2:field")
+        resultStructure.mappings.put("A:[%dyn3%]:B:[%dyn4%]:C", "node1:node4:[%dyn3%]:node5:[%dyn4%]:out3:field")
 
         List allPaths = [
                 "node1:node2:nodeA:out1:field",
@@ -19,6 +20,10 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
                 "node1:node2:out1:field",
                 "node1:node3:nodeC:out2:field",
                 "node1:node3:nodeD:out2:field",
+                "node1:node4:nodeX:node5:nodeY:out3:field",
+                "node1:node4:nodeX:node5:nodeZ:out3:field",
+                "node1:node4:nodeW:node5:nodeY:out3:field",
+                "node1:node4:nodeW:node5:nodeZ:out3:field",
         ]
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, null, resultStructure, null)
         Map transformedPaths = treeBuilder.transformedPaths
@@ -30,6 +35,10 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         assertEquals "node1:node2:nodeB:out1:field", transformedPaths.get("A:nodeB:B:C")
         assertEquals "node1:node3:nodeC:out2:field", transformedPaths.get("1:nodeC:2:3")
         assertEquals "node1:node3:nodeD:out2:field", transformedPaths.get("1:nodeD:2:3")
+        assertEquals "node1:node4:nodeX:node5:nodeY:out3:field", transformedPaths.get("A:nodeX:B:nodeY:C")
+        assertEquals "node1:node4:nodeX:node5:nodeZ:out3:field", transformedPaths.get("A:nodeX:B:nodeZ:C")
+        assertEquals "node1:node4:nodeW:node5:nodeY:out3:field", transformedPaths.get("A:nodeW:B:nodeY:C")
+        assertEquals "node1:node4:nodeW:node5:nodeZ:out3:field", transformedPaths.get("A:nodeW:B:nodeZ:C")
     }
 
     void testBuildTree() {

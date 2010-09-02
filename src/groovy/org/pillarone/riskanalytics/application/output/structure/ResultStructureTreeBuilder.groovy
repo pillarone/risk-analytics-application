@@ -37,15 +37,20 @@ class ResultStructureTreeBuilder {
                     transformedPaths.put(toPath, fromPath)
                 }
             } else {
-                String pattern = fromPath.substring(0, fromPath.indexOf("["))
-                pattern += "(.*)"
-                pattern += fromPath.substring(fromPath.indexOf("]") + 1)
+                String toPattern = fromPath.replaceAll("\\[%.*?%\\]", "(.*)")
 
-                Collection matchingPaths = allPaths.findAll { it ==~ pattern}
+                Collection matchingPaths = allPaths.findAll { it ==~ toPattern}
                 for (String path in matchingPaths) {
-                    def matcher = path =~ pattern
-                    String replacement = matcher[0][1]
-                    transformedPaths.put(toPath.replaceAll("\\[.*\\]", replacement), path)
+                    def toMatcher = path =~ toPattern
+                    def fromMatcher = fromPath =~ toPattern
+                    List toResults = toMatcher[0]
+                    List fromResults = fromMatcher[0]
+                    String updatedToPath = toPath
+                    for (int j = 1; j < toResults.size(); j++) {
+                        String replacement = fromResults[j].replace("[", "\\[")
+                        updatedToPath = updatedToPath.replaceFirst(replacement, toResults[j])
+                    }
+                    transformedPaths.put(updatedToPath, path)
                 }
             }
         }
