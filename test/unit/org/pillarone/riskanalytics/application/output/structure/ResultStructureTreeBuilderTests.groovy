@@ -25,11 +25,11 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
         assertEquals allPaths.size(), transformedPaths.size()
 
-        assertEquals "X:Y:Z", transformedPaths.get("node1:node2:out1:field")
-        assertEquals "A:nodeA:B:C", transformedPaths.get("node1:node2:nodeA:out1:field")
-        assertEquals "A:nodeB:B:C", transformedPaths.get("node1:node2:nodeB:out1:field")
-        assertEquals "1:nodeC:2:3", transformedPaths.get("node1:node3:nodeC:out2:field")
-        assertEquals "1:nodeD:2:3", transformedPaths.get("node1:node3:nodeD:out2:field")
+        assertEquals "node1:node2:out1:field", transformedPaths.get("X:Y:Z")
+        assertEquals "node1:node2:nodeA:out1:field", transformedPaths.get("A:nodeA:B:C")
+        assertEquals "node1:node2:nodeB:out1:field", transformedPaths.get("A:nodeB:B:C")
+        assertEquals "node1:node3:nodeC:out2:field", transformedPaths.get("1:nodeC:2:3")
+        assertEquals "node1:node3:nodeD:out2:field", transformedPaths.get("1:nodeD:2:3")
     }
 
     void testBuildTree() {

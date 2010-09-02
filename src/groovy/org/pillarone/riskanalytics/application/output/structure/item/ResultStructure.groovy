@@ -38,10 +38,10 @@ class ResultStructure extends ModellingItem {
         for (Map.Entry<String, String> entry in mappings.entrySet()) {
             StructureMapping mapping = resultStructureDAO.structureMappings.find { it.artificialPath == entry.key }
             if (mapping == null) {
-                mapping = new StructureMapping(resultPath: entry.value)
+                mapping = new StructureMapping(artificialPath: entry.key)
                 resultStructureDAO.addToStructureMappings(mapping)
             }
-            mapping.artificialPath = entry.key
+            mapping.resultPath = entry.value
         }
     }
 

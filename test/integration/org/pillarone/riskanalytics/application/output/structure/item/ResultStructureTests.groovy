@@ -55,8 +55,8 @@ class ResultStructureTests extends GroovyTestCase {
         ResultStructure resultStructure = new ResultStructure("TEST")
         resultStructure.modelClass = ApplicationModel
 
-        resultStructure.mappings.put("a", "1")
-        resultStructure.mappings.put("b", "2")
+        resultStructure.mappings.put("1", "a")
+        resultStructure.mappings.put("2", "b")
 
         resultStructure.save()
 
@@ -66,8 +66,8 @@ class ResultStructureTests extends GroovyTestCase {
         ResultStructure resultStructure2 = new ResultStructure("TEST")
         resultStructure2.load()
 
-        resultStructure2.mappings.put("x", "1")
-        resultStructure2.mappings.put("y", "2")
+        resultStructure2.mappings.put("1", "x")
+        resultStructure2.mappings.put("2", "y")
         resultStructure2.save()
 
         assertEquals structureCount, ResultStructureDAO.count()
@@ -78,7 +78,7 @@ class ResultStructureTests extends GroovyTestCase {
 
         assertEquals 2, resultStructureDAO.structureMappings.size()
 
-        assertEquals "x", resultStructureDAO.structureMappings.find { it.resultPath == "1"}.artificialPath
-        assertEquals "y", resultStructureDAO.structureMappings.find { it.resultPath == "2"}.artificialPath
+        assertEquals "1", resultStructureDAO.structureMappings.find { it.resultPath == "x"}.artificialPath
+        assertEquals "2", resultStructureDAO.structureMappings.find { it.resultPath == "y"}.artificialPath
     }
 }
