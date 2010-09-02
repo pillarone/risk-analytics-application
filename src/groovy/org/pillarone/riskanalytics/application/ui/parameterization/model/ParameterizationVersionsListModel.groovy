@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.DefaultComboBoxModel
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 
 public class ParameterizationVersionsListModel extends DefaultComboBoxModel {
 

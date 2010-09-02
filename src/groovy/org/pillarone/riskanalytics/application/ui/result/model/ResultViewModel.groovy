@@ -42,18 +42,6 @@ class ResultViewModel extends AbstractModellingModel {
         selectionViewModel = new ItemsComboBoxModel(resultStructures)
     }
 
-    List<String> obtainAllPaths(ConfigObject paths) {
-        List res = []
-
-        for (Map.Entry<String, ConfigObject> entry in paths.entrySet()) {
-            String path = entry.key + ":"
-            for (String field in entry.value.keySet()) {
-                res << path + field
-            }
-        }
-
-        return res
-    }
 
     private void buildTreeStructure(ResultStructure resultStructure = null) {
         ParameterizationDAO.withTransaction {status ->
@@ -196,4 +184,16 @@ class ResultViewModel extends AbstractModellingModel {
     public void resultStructureChanged() {
         buildTreeStructure(selectionViewModel.getSelectedObject())
     }
+
+    static List<String> obtainAllPaths(ConfigObject paths) {
+        List res = []
+        for (Map.Entry<String, ConfigObject> entry in paths.entrySet()) {
+            String path = entry.key + ":"
+            for (String field in entry.value.keySet()) {
+                res << path + field
+            }
+        }
+        return res
+    }
+
 }

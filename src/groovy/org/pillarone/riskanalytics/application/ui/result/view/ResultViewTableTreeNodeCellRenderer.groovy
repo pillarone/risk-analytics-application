@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.result.view
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.IPopupMenuListener
@@ -17,6 +15,8 @@ import org.pillarone.riskanalytics.application.ui.result.action.OpenChartTab
 import org.pillarone.riskanalytics.application.ui.result.action.OpenPlotChartTab
 import org.pillarone.riskanalytics.application.ui.result.action.OpenResultIterationDataViewer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import com.ulcjava.base.application.*
 
 enum ChartType {
@@ -37,7 +37,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         this.simulationRun = simulationRun
         this.tree = tree
 
-        numberDataType = new ULCNumberDataType()
+        numberDataType = DataTypeFactory.numberDataType
         numberDataType.setGroupingUsed true
         numberDataType.setMinFractionDigits 2
         numberDataType.setMaxFractionDigits 2

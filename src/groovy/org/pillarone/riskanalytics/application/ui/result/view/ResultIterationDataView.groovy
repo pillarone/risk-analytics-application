@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.result.view
 
+import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
@@ -11,7 +12,6 @@ import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.shared.FileChooserConfig
 import java.awt.event.KeyEvent
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
@@ -19,8 +19,10 @@ import org.pillarone.riskanalytics.application.ui.chart.view.QueryPane
 import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
 import org.pillarone.riskanalytics.application.ui.result.action.SingleIterationAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
-
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 
 class ResultIterationDataView implements IModelChangedListener {
@@ -136,7 +138,9 @@ class ResultIterationDataView implements IModelChangedListener {
 
     void attachListeners() {
         addCriteriaGroupButton.addActionListener([actionPerformed: { model.addCriteriaGroup() }] as IActionListener)
-        queryButton.addActionListener([actionPerformed: { model.query() }] as IActionListener)
+        queryButton.addActionListener([actionPerformed: {
+            model.validate() ? model.query() : new I18NAlert(UlcUtilities.getWindowAncestor(content), "PercentileNumberNotValid").show()
+        }] as IActionListener)
         groupColumnsByPeriodButton.addActionListener([actionPerformed: { updateOrder(false)}] as IActionListener)
         groupColumnsByPathButton.addActionListener([actionPerformed: {updateOrder(true)}] as IActionListener)
         model.addModelChangedListener this
@@ -249,14 +253,28 @@ class IterationResultTableHeaderRenderer extends DefaultTableHeaderCellRenderer 
 
 class IterationResultTableRenderer extends DefaultTableCellRenderer {
     ResultIterationDataViewModel model
+    ULCNumberDataType numberDataType
 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
         ULCPopupMenu menu = new ULCPopupMenu()
         menu.add(new ULCMenuItem(new ShowIterationInTreeViewAction(model.resultView.model, model.resultView.tree.viewPortTableTree, new ULCTextField(value: value), model.resultView, table)))
         component.setComponentPopupMenu(menu)
+        setDataType getLocalNumberDataType()
+        setHorizontalAlignment(ULCLabel.CENTER)
         return component
     }
+
+    protected ULCNumberDataType getLocalNumberDataType() {
+        if (!numberDataType) {
+            numberDataType = DataTypeFactory.numberDataType
+            numberDataType.setGroupingUsed true
+            numberDataType.setInteger true
+        }
+        return numberDataType
+    }
+
+
 }
 
 class ShowIterationInTreeViewAction extends SingleIterationAction {

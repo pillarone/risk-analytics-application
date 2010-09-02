@@ -7,10 +7,10 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
 class StochasticValueTableTreeCellRenderer extends NumberFormatRenderer {
     int index
@@ -73,7 +73,7 @@ class NumberFormatRenderer extends DefaultTableTreeCellRenderer {
 
     public ULCNumberDataType getNumberDataType() {
         if (numberDataType == null) {
-            numberDataType = LocaleResources.numberDataType
+            numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true
             numberDataType.setMinFractionDigits 2
             numberDataType.setMaxFractionDigits 2

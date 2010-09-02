@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.parameterization.view;
+package org.pillarone.riskanalytics.application.ui.comment.view;
 
 import com.ulcjava.base.application.*;
 import com.ulcjava.base.application.border.ULCTitledBorder;

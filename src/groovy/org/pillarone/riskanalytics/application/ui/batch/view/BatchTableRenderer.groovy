@@ -15,23 +15,32 @@ import com.ulcjava.base.application.*
 
 public class BatchTableRenderer extends DefaultTableCellRenderer {
     BatchRun batchRun
+    ULCPopupMenu nodePopup
 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
         setHorizontalAlignment(component, value)
         component.setToolTipText String.valueOf(value)
-        ULCPopupMenu nodePopup = new ULCPopupMenu()
-        nodePopup.add(new ULCMenuItem(new RunBatchSimulationAction(model: table.model)))
-        nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, 1)))
-        nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, -1)))
-        nodePopup.add(new ULCMenuItem(new DeleteBatchSimulationAction(model: table.model)))
-        nodePopup.addSeparator()
-        nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.SIMULATION, "BatchOpenSimulationAction")))
-        nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.PARAMETERIZATION, "BatchOpenParameterizationAction")))
-        nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.RESULT_CONFIG, "BatchOpenresultAction")))
+        ULCPopupMenu nodePopup = getNodePopUp(table)
 
         component.setComponentPopupMenu(nodePopup)
         return component
+    }
+
+    private ULCPopupMenu getNodePopUp(ULCTable table) {
+        if (!nodePopup) {
+            nodePopup = new ULCPopupMenu()
+            nodePopup.add(new ULCMenuItem(new RunBatchSimulationAction(model: table.model)))
+            nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, 1)))
+            nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, -1)))
+            nodePopup.add(new ULCMenuItem(new DeleteBatchSimulationAction(model: table.model)))
+            nodePopup.addSeparator()
+            nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.SIMULATION, "BatchOpenSimulationAction")))
+            nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.PARAMETERIZATION, "BatchOpenParameterizationAction")))
+            nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.RESULT_CONFIG, "BatchOpenresultAction")))
+        }
+
+        return nodePopup
     }
 
     private void setHorizontalAlignment(IRendererComponent component, Number value) {

@@ -171,7 +171,10 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return !readOnly && multiDimensionalParam.isCellEditable(rowIndex, columnIndex)
+        if (columnIndex == 0) {
+            return false
+        }
+        return !readOnly && multiDimensionalParam.isCellEditable(rowIndex, columnIndex - 1)
     }
 
     List currentValues() {

@@ -11,6 +11,7 @@ import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
@@ -53,6 +54,7 @@ class SimulationSettingsPane {
     private ULCTextField numberOfIterations
 
     SimulationSettingsPaneModel model
+    final private Dimension dimension = new Dimension(100, 20)
 
     public SimulationSettingsPane(SimulationSettingsPaneModel model) {
         this.model = model
@@ -64,19 +66,17 @@ class SimulationSettingsPane {
     private void attachListeners() {
         randomSeed.addValueChangedListener(model.randomSeedAction)
         userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
-        parametrizationNamesComboBox.addActionListener(model.reloadListModelAction)
+        parametrizationNamesComboBox.addActionListener(model.reloadParameterizationListModelAction)
         parameterizationVersionsComboBox.addActionListener([actionPerformed: {e ->
             ParameterizationVersionsListModel listModel = parameterizationVersionsComboBox.model
             if (listModel.isValid(listModel.selectedItem)) {
-                parameterizationVersionsComboBox.font = parameterizationVersionsComboBox.font.deriveFont(Font.PLAIN + Font.BOLD)
                 parameterizationVersionsComboBox.foreground = Color.black
             } else {
-                parameterizationVersionsComboBox.font = parameterizationVersionsComboBox.font.deriveFont(Font.ITALIC + Font.BOLD)
                 parameterizationVersionsComboBox.foreground = Color.orange
             }
             model.notifyConfigurationChanged()
         }] as IActionListener)
-        resultConfigurationNamesComboBox.addActionListener(model.reloadListModelAction)
+        resultConfigurationNamesComboBox.addActionListener(model.reloadResultConfigurationListModelAction)
 
         Closure outputStrategyAction = {boolean resultLocationRequired ->
             resultLocation.enabled = resultLocationRequired
@@ -88,7 +88,15 @@ class SimulationSettingsPane {
         simulationName.addValueChangedListener([valueChanged: {e -> model.simulationName = simulationName.text }] as IValueChangedListener)
         comment.addValueChangedListener([valueChanged: {e -> model.comment = comment.text }] as IValueChangedListener)
         numberOfIterations.addKeyListener([keyTyped: {e ->
-            model.numberOfIterations = numberOfIterations.value
+            def value = numberOfIterations.value
+            if (value && (value instanceof Number) && value < Integer.MAX_VALUE)
+                model.numberOfIterations = value
+            else if (value) {
+                new I18NAlert("IterationNumberNotValid").show()
+                numberOfIterations.setValue(model.numberOfIterations)
+            } else {
+                model.numberOfIterations = null
+            }
         }] as IKeyListener)
     }
 
@@ -111,10 +119,11 @@ class SimulationSettingsPane {
 
         parameterizationVersionsComboBox = new ULCComboBox(model.parameterizationVersions)
         parameterizationVersionsComboBox.name = "parameterizationVersions"
-        parameterizationVersionsComboBox.setMinimumSize(new Dimension(100, 20))
+
+        parameterizationVersionsComboBox.setPreferredSize(dimension)
         resultConfigurationNamesComboBox = new ULCComboBox(model.resultConfigurationNames)
-        resultConfigurationNamesComboBox.setMinimumSize(new Dimension(100, 20))
         resultConfigurationVersionsComboBox = new ULCComboBox(model.resultConfigurationVersions)
+        resultConfigurationVersionsComboBox.setPreferredSize(dimension)
 
         outputStrategy = new ULCComboBox(model.outputStrategies)
         outputStrategy.name = "outputStrategy"
@@ -128,12 +137,12 @@ class SimulationSettingsPane {
         }
         changeLocationButton = new ULCButton(model.getChangeResultLocationAction(resultLocationAction))
         changeLocationButton.name = "changeLocation"
-        changeLocationButton.setPreferredSize(new Dimension(100, 20))
+        changeLocationButton.setPreferredSize(dimension)
 
         userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)
         userDefinedRandomSeed.name = "userDefinedRandomSeed"
         randomSeed = new ULCTextField()
-        randomSeed.setPreferredSize(new Dimension(100, 20))
+        randomSeed.setPreferredSize(dimension)
         randomSeed.enabler = userDefinedRandomSeed
         randomSeed.name = "randomSeed"
         randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()

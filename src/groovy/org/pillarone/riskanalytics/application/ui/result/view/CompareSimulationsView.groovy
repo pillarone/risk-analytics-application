@@ -6,7 +6,6 @@ import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.datatype.IDataType
-import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
@@ -19,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -137,7 +137,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     private def addDoubleFunctions(ULCToolBar toolbar) {
         toolbar.add(new ULCLabel(getText("Add")))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        IDataType dataType = new ULCNumberDataType(ClientContext.locale)
+        IDataType dataType = DataTypeFactory.numberDataType
         dataType.integer = false
         dataType.minFractionDigits = 1
         dataType.maxFractionDigits = 2

@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view
 
 import com.ulcjava.base.application.datatype.IDataType
-import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.util.Dimension
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationConfigurationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
@@ -52,7 +52,7 @@ abstract class AbstractConfigurationView implements ISimulationListener, ISimula
         useUserDefinedSeed = new ULCCheckBox()
         randomSeed = new ULCTextField("")
         randomSeed.enabled = false
-        IDataType dataType = new ULCNumberDataType(ClientContext.locale)
+        IDataType dataType = DataTypeFactory.numberDataType
         dataType.integer = true
         randomSeed.dataType = dataType
 
