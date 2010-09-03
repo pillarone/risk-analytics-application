@@ -39,7 +39,7 @@ class ResultStructureTreeBuilder {
             } else {
                 String toPattern = fromPath.replaceAll("\\[%.*?%\\]", "(.*)")
 
-                Collection matchingPaths = allPaths.findAll { it ==~ toPattern}
+                Collection matchingPaths = allPaths.findAll { it ==~ toPattern && it.count(":") == toPattern.count(":")}
                 for (String path in matchingPaths) {
                     def toMatcher = path =~ toPattern
                     def fromMatcher = fromPath =~ toPattern

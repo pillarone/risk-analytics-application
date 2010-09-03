@@ -17,6 +17,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         List allPaths = [
                 "node1:node2:nodeA:out1:field",
                 "node1:node2:nodeB:out1:field",
+                "node1:node2:nodeC:XYZ:out1:field", //should NOT be matched by node1:node2:[%dyn1%]:out1:field
                 "node1:node2:out1:field",
                 "node1:node3:nodeC:out2:field",
                 "node1:node3:nodeD:out2:field",
@@ -28,7 +29,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, null, resultStructure, null)
         Map transformedPaths = treeBuilder.transformedPaths
 
-        assertEquals allPaths.size(), transformedPaths.size()
+        assertEquals allPaths.size() - 1, transformedPaths.size()
 
         assertEquals "node1:node2:out1:field", transformedPaths.get("X:Y:Z")
         assertEquals "node1:node2:nodeA:out1:field", transformedPaths.get("A:nodeA:B:C")
