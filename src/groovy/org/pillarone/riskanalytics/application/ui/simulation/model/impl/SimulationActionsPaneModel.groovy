@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationTask
+import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 
 /**
  * The view model for the SimulationActionsPane.
@@ -26,7 +27,7 @@ import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationTask
  */
 class SimulationActionsPaneModel {
 
-    protected SimulationTask runner
+    protected SimulationHandler runner
     private DateFormat dateFormat = new SimpleDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
@@ -69,11 +70,11 @@ class SimulationActionsPaneModel {
     }
 
     void stopSimulation() {
-//        runner.stop()
+        runner.stop()
     }
 
     void cancelSimulation() {
-//        runner.cancel()
+        runner.cancel()
     }
 
     int getProgress() {
