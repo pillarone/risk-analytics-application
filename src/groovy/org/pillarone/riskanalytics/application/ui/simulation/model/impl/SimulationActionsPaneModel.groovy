@@ -90,7 +90,7 @@ class SimulationActionsPaneModel {
     }
 
     String getEstimatedEndTime() {
-        Date estimatedSimulationEnd = null//runner.getEstimatedSimulationEnd()
+        Date estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
         if (estimatedSimulationEnd != null) {
             return dateFormat.format(estimatedSimulationEnd)
         }
@@ -115,7 +115,7 @@ class SimulationActionsPaneModel {
 
     String getRemainingTime() {
         String result = "-"
-        Date end = null//runner.getEstimatedSimulationEnd()
+        Date end = runner.getEstimatedSimulationEnd()
         if (end != null) {
             use(TimeCategory) {
                 def duration = end - new Date()
@@ -150,7 +150,6 @@ class SimulationActionsPaneModel {
     }
 
     String getErrorMessage() {
-        //Throwable simulationException = runner.getSimulationErrors()[0]
         HashSet<String> messages = new HashSet<String>();
         for (Throwable simulationException:runner.getSimulationErrors()) {
             String exceptionMessage = simulationException.message
