@@ -14,7 +14,6 @@ import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
-import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationTask
@@ -89,7 +88,7 @@ class SimulationActionsPaneModel {
     }
 
     String getEstimatedEndTime() {
-        Date estimatedSimulationEnd = null//runner.getEstimatedSimulationEnd()
+        Date estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
         if (estimatedSimulationEnd != null) {
             return dateFormat.format(estimatedSimulationEnd)
         }
@@ -149,22 +148,29 @@ class SimulationActionsPaneModel {
     }
 
     String getErrorMessage() {
-        Throwable simulationException = runner.getSimulationErrors()[0]
-
-        String exceptionMessage = simulationException.message
-        if (exceptionMessage == null) {
-            exceptionMessage = simulationException.class.name
-        }
-        List words = exceptionMessage.split(" ") as List
-        StringBuffer text = new StringBuffer()
-        int lineLength = 0
-        for (String s in words) {
-            if (lineLength + s.length() > 70) {
-                text << "\n"
-                lineLength = 0
+        //Throwable simulationException = runner.getSimulationErrors()[0]
+        HashSet<String> messages = new HashSet<String>();
+        for (Throwable simulationException:runner.getSimulationErrors()) {
+            String exceptionMessage = simulationException.message
+            if (exceptionMessage == null) {
+                exceptionMessage = simulationException.class.name
             }
-            text << s + " "
-            lineLength += (s.length() + 1)
+            messages.add(exceptionMessage);
+        }
+
+        StringBuffer text = new StringBuffer();
+        for (String exceptionMessage: messages) {
+            List words = exceptionMessage.split(" ") as List
+            int lineLength = 0
+            for (String s in words) {
+                if (lineLength + s.length() > 70) {
+                    text << "\n"
+                    lineLength = 0
+                }
+                text << s + " "
+                lineLength += (s.length() + 1)
+            }
+            text <<"\n";
         }
 
         return text.toString()
