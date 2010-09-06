@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationTask
@@ -89,7 +90,7 @@ class SimulationActionsPaneModel {
     }
 
     String getEstimatedEndTime() {
-        Date estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
+        Date estimatedSimulationEnd = null//runner.getEstimatedSimulationEnd()
         if (estimatedSimulationEnd != null) {
             return dateFormat.format(estimatedSimulationEnd)
         }
