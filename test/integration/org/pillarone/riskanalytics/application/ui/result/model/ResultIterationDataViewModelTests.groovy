@@ -23,7 +23,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     void setUp() {
         LocaleResources.setTestMode()
 
-          new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"

@@ -38,10 +38,14 @@ class ResultViewModel extends AbstractModellingModel {
             //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
             //all result paths for this simulation run
             ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
-            List paths = allResults."0".keySet().toList()
+            Set paths = new HashSet()
+            //look through all periods, not all paths may have a result in the first period
+            for(Map<String,Map> periodResults in allResults.values()) {
+                paths.addAll(periodResults.keySet())
+            }
 
             def simulationRun = item.simulationRun
-            builder = new ResultTreeBuilder(model, structure, item, paths)
+            builder = new ResultTreeBuilder(model, structure, item, paths.toList())
             builder.applyResultPaths()
 
 
