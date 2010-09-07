@@ -9,6 +9,7 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
     protected String name, cachedDisplayName
     List children
     ITableTreeNode parent
+    String commentMessage = ""
 
     static String PATH_SEPARATOR = '/'
 

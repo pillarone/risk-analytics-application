@@ -1,34 +1,38 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ShowCommentsView {
+class ShowCommentsView implements ChangedCommentListener {
     private ULCBoxPane content;
     private ULCBoxPane container;
     private CommentAndErrorView commentAndErrorView
     private ParameterViewModel model;
+    String path
 
-    public ShowCommentsView(CommentAndErrorView commentAndErrorView) {
+    public ShowCommentsView(CommentAndErrorView commentAndErrorView, String path) {
         this.commentAndErrorView = commentAndErrorView
         this.model = commentAndErrorView.model
+        this.path = path
         content = new ULCBoxPane();
         container = new ULCBoxPane(1, 0);
         container.setBackground(Color.white);
 
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
-        addComments(commentAndErrorView.model.item.comments)
+        def allComments = getComments()
+        addComments(allComments)
+        model.commentsChanged(allComments)
     }
 
     public void addComment(Comment comment) {
-        CommentPane commentPane = new CommentPane(comment)
+        CommentPane commentPane = new CommentPane(model, comment)
         commentPane.addCommentListener commentAndErrorView
         container.add(ULCBoxPane.BOX_EXPAND_TOP, commentPane.content)
     }
@@ -44,4 +48,19 @@ class ShowCommentsView {
         container.removeAll();
     }
 
+    void updateCommentVisualization() {
+        clear()
+        addComments(getComments())
+    }
+
+    private List<Comment> getComments() {
+        def all = model.item.comments.findAll {!it.deleted}//.sort{it.path}
+        return path ? all.findAll {it.path == path} : all
+    }
+
+
+}
+
+interface ChangedCommentListener {
+    void updateCommentVisualization()
 }

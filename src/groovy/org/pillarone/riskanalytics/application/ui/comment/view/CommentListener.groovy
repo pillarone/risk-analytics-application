@@ -7,10 +7,17 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
  */
 public interface CommentListener {
 
-    void addNewCommentView(String path, int periodIndex, String displayPath)
+    void addNewCommentView(String path, int periodIndex)
 
     void editCommentView(Comment comment)
 
-    void showCommentsView(String path, int periodIndex, String displayPath)
+    void showCommentsView(String path, int periodIndex)
 
+    void showErrorsView()
+
+}
+
+interface NavigationListener {
+
+    void commentsSelected()
 }

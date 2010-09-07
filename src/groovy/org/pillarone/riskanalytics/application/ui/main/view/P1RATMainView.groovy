@@ -1,5 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+
+import org.pillarone.riskanalytics.core.simulation.item.*
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -35,13 +40,9 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
-import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -121,11 +122,18 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         splitPane.setLeftComponent(treePane)
         splitPane.setRightComponent(modelPane)
 
-        ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 0)
-        selectionSwitchPane.preferredSize = new Dimension(25, 90)
+        ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)
         ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(new ToggleSplitPaneAction(splitPane, "Navigation"))
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, navigationSwitchButton);
+
+        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(new CommentsSwitchAction(model, "Validations and comments", false))
+        validationSwitchButton.selected = false
+        validationSwitchButton.setEnabled false
+        model.switchActions << validationSwitchButton
+        selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, validationSwitchButton);
+
+
 
         ULCBoxPane toolBarLockPane = new ULCBoxPane(2, 0)
         toolBarLockPane.add(ULCBoxPane.BOX_EXPAND_TOP, toolBar)

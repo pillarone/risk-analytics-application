@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
 
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
@@ -14,14 +17,13 @@ import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.action.ShowErrorsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
@@ -53,7 +55,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
             it.setCellRenderer(new DelegatingCellRenderer(createRendererConfiguration(index + 1, tree.viewPortTableTree)))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
-        ComponentNodeTableTreeNodeRenderer renderer = new ComponentNodeTableTreeNodeRenderer(tree, model)
+        ComponentNodeTableTreeNodeRenderer renderer = new ComponentNodeTableTreeNodeRenderer(tree, model, commentAndErrorView)
 
 
         tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
@@ -123,12 +125,19 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         menu.add(new ULCMenuItem(paster));
         InsertCommentAction insertComment = new InsertCommentAction(tree, (columnIndex - 1) % model.periodCount)
         insertComment.addCommentListener commentAndErrorView
-        ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree, (columnIndex - 1) % model.periodCount)
+        ShowCommentsAction allShowCommentsAction = new ShowCommentsAction(tree, (columnIndex - 1) % model.periodCount, true)
+        allShowCommentsAction.addCommentListener commentAndErrorView
+        ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree, (columnIndex - 1) % model.periodCount, false)
         showCommentsAction.addCommentListener commentAndErrorView
+        ShowErrorsAction showErrorsAction = new ShowErrorsAction(tree)
+        showErrorsAction.addCommentListener commentAndErrorView
 
         menu.addSeparator()
         menu.add(new ULCMenuItem(insertComment))
         menu.add(new ULCMenuItem(showCommentsAction))
+        menu.addSeparator()
+        menu.add(new ULCMenuItem(allShowCommentsAction))
+        menu.add(new ULCMenuItem(showErrorsAction))
 
         initRenderer(defaultRenderer, menu);
         initRenderer(doubleRenderer, menu);

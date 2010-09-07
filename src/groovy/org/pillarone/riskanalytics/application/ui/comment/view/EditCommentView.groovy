@@ -1,9 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCButton
 import com.ulcjava.base.application.ULCListSelectionModel
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.event.*
 
 /**
@@ -37,7 +38,10 @@ class EditCommentView extends NewCommentView {
         }] as IListSelectionListener)
         commentTextArea.addValueChangedListener([valueChanged: {ValueChangedEvent event -> this.comment.setText(commentTextArea.getText())}] as IValueChangedListener)
         saveButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            commentAndErrorView.model.item.changed = true
+            commentAndErrorView.model.commentChanged()
+            commentAndErrorView.closeTab()
+        }] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
             commentAndErrorView.closeTab()
         }] as IActionListener)
 
@@ -52,7 +56,7 @@ class EditCommentView extends NewCommentView {
     }
 
     String getDisplayPath() {
-        return commentAndErrorView.getDisplayPath(comment.path)
+        return CommentAndErrorView.getDisplayPath(commentAndErrorView.model, comment.path)
     }
 
 }

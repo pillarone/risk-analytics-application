@@ -1,5 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.*
+
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.UlcUtilities
@@ -27,10 +32,6 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -40,6 +41,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     def rootPaneForAlerts
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction
+    def switchActions = []
 
     @Bindable ModellingItem currentItem
 
@@ -63,6 +65,10 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         ParameterViewModel model = new ParameterViewModel(simulationModel, item, ModelStructure.getStructureForModel(simulationModel.class))
         registerModel(item, model)
         return model
+    }
+
+    public ParameterViewModel getParameterViewModel(Parameterization item) {
+        return viewModelsInUse[item]
     }
 
     public ResultConfigurationViewModel getResultConfigurationViewModel(ResultConfiguration item, Model simulationModel) {
@@ -516,6 +522,15 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public void fireRowDeleted(Object item) {
         batchTableListeners.each {BatchTableListener batchTableListener ->
             batchTableListener.fireRowDeleted(item.getSimulationRun())
+        }
+    }
+
+    public void setCurrentItem(def currentItem) {
+        this.currentItem = currentItem
+        switchActions.each {
+            boolean b = this.currentItem instanceof Parameterization
+            it.setEnabled(b)
+            it.selected = b
         }
     }
 

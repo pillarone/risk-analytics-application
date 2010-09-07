@@ -6,17 +6,15 @@ import org.pillarone.riskanalytics.application.ui.comment.view.CommentListener
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class InsertCommentAction extends AbstractCommentAction {
+class ShowErrorsAction extends AbstractCommentAction {
 
-    public InsertCommentAction(ULCTableTree tree, int periodIndex) {
-        super(tree, periodIndex, "InsertComment");
+    public ShowErrorsAction(ULCTableTree tree) {
+        super(tree, -1, "ShowErrorsAction")
     }
 
     void executeAction(String path, int periodIndex, String displayPath) {
         commentListeners.each {CommentListener commentListener ->
-            commentListener.addNewCommentView(path, periodIndex)
+            commentListener.showErrorsView()
         }
     }
-
-
 }

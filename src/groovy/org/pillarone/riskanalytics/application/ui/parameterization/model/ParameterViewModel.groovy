@@ -1,19 +1,26 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
+
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tree.TreePath
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
-import org.pillarone.riskanalytics.application.util.LocaleResources
 
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentListener
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
+import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class ParameterViewModel extends AbstractModellingModel {
 
@@ -21,10 +28,14 @@ class ParameterViewModel extends AbstractModellingModel {
     PropertiesViewModel propertiesViewModel
 
     private List<ParameterValidationError> validationErrors = []
+    private List<ChangedCommentListener> changedCommentListeners
+    private List<NavigationListener> navigationListeners
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
         propertiesViewModel = new PropertiesViewModel(parameterization)
+        changedCommentListeners = []
+        navigationListeners = []
     }
 
     protected ITableTreeModel buildTree() {
@@ -85,9 +96,66 @@ class ParameterViewModel extends AbstractModellingModel {
         this.validationErrors = validationErrors
     }
 
+    void addComment(Comment comment) {
+        item.addComment(comment)
+        commentChanged(comment)
+    }
+
+    void removeComment(Comment comment) {
+        item.removeComment(comment)
+        commentChanged(comment)
+    }
+
     void setReadOnly(boolean value) {
         paramterTableTreeModel.readOnly = value
     }
+
+    void addChangedCommentListener(ChangedCommentListener listener) {
+        changedCommentListeners << listener
+    }
+
+    void removeChangedCommentListener(ChangedCommentListener listener) {
+        changedCommentListeners.remove(listener)
+    }
+
+    void addNavigationListener(NavigationListener listener) {
+        navigationListeners << listener
+    }
+
+    void removeNavigationListener(NavigationListener listener) {
+        navigationListeners.remove(listener)
+    }
+
+
+
+    void commentChanged(Comment comment) {
+        item.changed = true
+        changedCommentListeners.each {ChangedCommentListener listener ->
+            listener.updateCommentVisualization()
+        }
+        if (comment) {
+            String path = comment.getPath()
+            def node = CommentAndErrorView.findNodeForPath(paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
+            node.commentMessage += comment.getText() + "\n"
+            paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+        }
+    }
+
+    void commentsChanged(List<Comment> comments) {
+        for (Comment comment: comments) {
+            String path = comment.getPath()
+            def node = CommentAndErrorView.findNodeForPath(paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
+            node.commentMessage += comment.getText() + "\n"
+            paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+        }
+    }
+
+    void navigationSelected(boolean comment) {
+        navigationListeners.each {NavigationListener listener ->
+            listener.commentsSelected()
+        }
+    }
+
 }
 
 class CompareParameterViewModel extends AbstractModellingModel {
