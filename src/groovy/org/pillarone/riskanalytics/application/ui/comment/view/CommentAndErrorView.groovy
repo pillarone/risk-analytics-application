@@ -75,7 +75,8 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
     public void addNewCommentView(String path, int periodIndex) {
         NewCommentView view = new NewCommentView(this, path, periodIndex)
         openItems[view.content] = view
-        String tabTitle = getDisplayName(model, path) + " P" + periodIndex
+        String tabTitle = getDisplayName(model, path)
+        tabTitle += ((periodIndex == -1) ? " for all periods" : " P" + periodIndex)
         int index = tabbedPane.indexOfTab(tabTitle)
         if (index >= 0) {
             tabbedPane.selectedIndex = index
@@ -97,6 +98,7 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
             EditCommentView view = new EditCommentView(this, comment)
             openItems[view.content] = view
             String tabTitle = getDisplayName(model, comment.path) + " P" + comment.period
+            tabTitle += ((comment.period == -1) ? " for all periods" : " P" + comment.period)
             tabbedPane.addTab(tabTitle, view.content)
             tabbedPane.setCloseableTab(tabIndex, true)
             tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, comment.path))

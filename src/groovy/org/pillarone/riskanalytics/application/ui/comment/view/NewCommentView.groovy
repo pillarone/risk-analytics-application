@@ -113,6 +113,6 @@ class NewCommentView {
     }
 
     String getDisplayPath() {
-        return ""
+        return CommentAndErrorView.getDisplayPath(model, path)
     }
 }
