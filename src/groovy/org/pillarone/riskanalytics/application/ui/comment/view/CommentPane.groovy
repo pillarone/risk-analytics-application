@@ -54,8 +54,10 @@ class CommentPane {
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
         editButton = new ULCButton(editCommentAction)
+        editButton.name = "editComment"
         removeCommentAction = new RemoveCommentAction(model, comment)
         deleteButton = new ULCButton(removeCommentAction)
+        deleteButton.name = "deleteComment"
 
     }
 

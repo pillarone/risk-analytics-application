@@ -1,10 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCButton
 import com.ulcjava.base.application.ULCListSelectionModel
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.event.*
 
 /**
@@ -25,6 +24,7 @@ class EditCommentView extends NewCommentView {
     protected void initComponents() {
         super.initComponents();
         saveButton = new ULCButton("Save")
+        saveButton.name = "updateComment"
         saveButton.setPreferredSize(dimension)
         this.commentTextArea.setText(comment.getText())
         tags.setSelectedIndices(tagListModel.getSelectedIndices(comment?.getTags()?.collect {it.name}))

@@ -50,6 +50,7 @@ class NewCommentView {
 
     protected void initComponents() {
         commentTextArea = new ULCTextArea(5, 65)
+        commentTextArea.name = "newCommentText"
         commentTextArea.lineWrap = true
         commentTextArea.wrapStyleWord = true
 
@@ -57,6 +58,7 @@ class NewCommentView {
         tags.setVisibleRowCount(6);
 
         addButton = new ULCButton("Apply")
+        addButton.name = "saveNewComment"
         addButton.setPreferredSize(dimension)
 
         cancelButton = new ULCButton("Cancel")
