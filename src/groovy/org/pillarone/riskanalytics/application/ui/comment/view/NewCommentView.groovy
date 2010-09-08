@@ -62,6 +62,7 @@ class NewCommentView {
         addButton.setPreferredSize(dimension)
 
         cancelButton = new ULCButton("Cancel")
+        cancelButton.name = "cancelComment"
         cancelButton.setPreferredSize(dimension)
         content = new ULCBoxPane(3, 3)
         content.setPreferredSize(new Dimension(400, 160))
