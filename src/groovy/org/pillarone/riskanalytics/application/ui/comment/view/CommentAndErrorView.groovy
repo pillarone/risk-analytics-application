@@ -97,7 +97,7 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
             int tabIndex = tabbedPane.tabCount
             EditCommentView view = new EditCommentView(this, comment)
             openItems[view.content] = view
-            String tabTitle = getDisplayName(model, comment.path) + " P" + comment.period
+            String tabTitle = getDisplayName(model, comment.path)
             tabTitle += ((comment.period == -1) ? " for all periods" : " P" + comment.period)
             tabbedPane.addTab(tabTitle, view.content)
             tabbedPane.setCloseableTab(tabIndex, true)
