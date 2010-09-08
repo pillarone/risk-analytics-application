@@ -82,8 +82,6 @@ class StochasticResultView extends ResultView {
         sigmaButton = new ULCToggleButton(new SigmaAction(model, tree.viewPortTableTree))
         toolbar.add(sigmaButton)
 
-        toolbar.addSeparator()
-
         addDoubleFunctions(toolbar)
 
         toolbar.addSeparator()
@@ -107,6 +105,7 @@ class StochasticResultView extends ResultView {
     }
 
     private def addDoubleFunctions(ULCToolBar toolbar) {
+        toolbar.add ULCFiller.createHorizontalStrut(5)
         toolbar.add(new ULCLabel(getText("Add")))
         toolbar.add ULCFiller.createHorizontalStrut(5)
         IDataType dataType = DataTypeFactory.numberDataType
