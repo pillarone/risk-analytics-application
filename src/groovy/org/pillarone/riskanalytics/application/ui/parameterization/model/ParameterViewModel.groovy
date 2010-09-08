@@ -1,16 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
-
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
-
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
@@ -21,6 +10,13 @@ import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentLis
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
+import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class ParameterViewModel extends AbstractModellingModel {
 
@@ -136,7 +132,10 @@ class ParameterViewModel extends AbstractModellingModel {
         if (comment) {
             String path = comment.getPath()
             def node = CommentAndErrorView.findNodeForPath(paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-            node.commentMessage += comment.getText() + "\n"
+            node.comments.remove(comment)
+            if (!comment.deleted)
+                node.comments << comment
+
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
     }
@@ -145,7 +144,7 @@ class ParameterViewModel extends AbstractModellingModel {
         for (Comment comment: comments) {
             String path = comment.getPath()
             def node = CommentAndErrorView.findNodeForPath(paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-            node.commentMessage += comment.getText() + "\n"
+            node.comments << comment
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
     }

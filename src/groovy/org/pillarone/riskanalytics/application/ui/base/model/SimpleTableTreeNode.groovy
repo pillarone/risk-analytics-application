@@ -3,19 +3,21 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class SimpleTableTreeNode implements IMutableTableTreeNode {
     boolean expanded = true
     protected String name, cachedDisplayName
     List children
     ITableTreeNode parent
-    String commentMessage = ""
+    Set comments
 
     static String PATH_SEPARATOR = '/'
 
     public SimpleTableTreeNode(String name) {
         children = []
         this.@name = name
+        this.comments = new HashSet()
     }
 
     String getName() {
@@ -180,5 +182,13 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
 
     SimpleTableTreeNode getChildByName(String name) {
         return children.find {it.name == name}
+    }
+
+    String getCommentMessage() {
+        StringBuilder sb = new StringBuilder("")
+        for (Comment comment: comments) {
+            sb.append(comment.getText() + "\n")
+        }
+        return sb.toString()
     }
 }

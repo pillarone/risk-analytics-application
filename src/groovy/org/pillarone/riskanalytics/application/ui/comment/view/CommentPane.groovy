@@ -1,17 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.*
 
 /**
@@ -19,7 +18,6 @@ import com.ulcjava.base.application.*
  */
 class CommentPane {
     private ULCBoxPane content;
-    private ULCBoxPane container;
     ULCLabel label
     ULCLabel tags
     ULCButton editButton
@@ -42,6 +40,8 @@ class CommentPane {
 
     protected void initComponents() {
         content = new ULCBoxPane(3, 2);
+        content.setMinimumSize new Dimension(400, 100)
+        content.name = "CommentPane"
         content.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(getTitle());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));

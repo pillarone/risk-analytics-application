@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,7 +21,7 @@ class ShowCommentsView implements ChangedCommentListener {
         this.commentAndErrorView = commentAndErrorView
         this.model = commentAndErrorView.model
         this.path = path
-        content = new ULCBoxPane();
+        content = new ULCBoxPane(name: "Comments");
         container = new ULCBoxPane(1, 0);
         container.setBackground(Color.white);
 

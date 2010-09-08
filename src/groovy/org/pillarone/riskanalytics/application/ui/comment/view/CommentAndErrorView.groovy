@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -13,6 +10,8 @@ import com.ulcjava.base.application.ULCScrollPane
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,6 +24,7 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
     Map openItems
     boolean tabbedPaneVisible = true
 
+
     public CommentAndErrorView(ParameterViewModel model) {
         this.model = model;
         initComponents()
@@ -35,14 +35,16 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
     }
 
     protected void initComponents() {
-        tabbedPane = new ULCDetachableTabbedPane()
+        tabbedPane = new ULCDetachableTabbedPane(name: "commentAndErrorPane")
         errorPane = new ErrorPane(model)
     }
 
     private void layoutComponents() {
         ShowCommentsView view = new ShowCommentsView(this, null)
         model.addChangedCommentListener view
-        ULCBoxPane content = new ULCBoxPane(1, 2)
+        ULCBoxPane content = new ULCBoxPane(1, 3)
+        CommentSearchPane commentSearchPane = new CommentSearchPane(view.container, errorPane.container, model)
+        content.add(ULCBoxPane.BOX_EXPAND_CENTER, commentSearchPane.content)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, view.container)
         tabbedPane.addTab("Validations and comments", new ULCScrollPane(content))
@@ -150,7 +152,11 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
     static String getDisplayName(def model, String path) {
         if (!path) return ""
         def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-        return node.getDisplayName()
+        String displayName = node.getDisplayName()
+        if (!displayName) {
+            displayName = getDisplayPath(model, path)
+        }
+        return displayName ? displayName : path
     }
 
     static def findNodeForPath(def root, String path) {

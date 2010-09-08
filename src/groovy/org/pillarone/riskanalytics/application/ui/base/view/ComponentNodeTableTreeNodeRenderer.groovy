@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.view
 
-import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-
 import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
@@ -18,12 +16,12 @@ import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
-import org.pillarone.riskanalytics.application.ui.comment.action.ShowErrorsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
+import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -49,12 +47,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
         InsertCommentAction insertComment = new InsertCommentAction(tree.rowHeaderTableTree, -1)
         insertComment.addCommentListener commentAndErrorView
-        ShowCommentsAction allShowCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, -1, true)
-        allShowCommentsAction.addCommentListener commentAndErrorView
         ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, -1, false)
         showCommentsAction.addCommentListener commentAndErrorView
-        ShowErrorsAction showErrorsAction = new ShowErrorsAction(tree.rowHeaderTableTree)
-        showErrorsAction.addCommentListener commentAndErrorView
 
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
@@ -64,8 +58,6 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
-        addDynamicNodeMenu.add(new ULCMenuItem(allShowCommentsAction))
-        addDynamicNodeMenu.add(new ULCMenuItem(showErrorsAction))
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(help))
         addDynamicNodeMenu.name = "popup.expand"
@@ -79,8 +71,6 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         removeDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
-        removeDynamicNodeMenu.add(new ULCMenuItem(allShowCommentsAction))
-        removeDynamicNodeMenu.add(new ULCMenuItem(showErrorsAction))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
 
@@ -96,17 +86,13 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
         expandTreeMenuWithHelp.add(new ULCMenuItem(showCommentsAction))
-        expandTreeMenuWithHelp.add(new ULCMenuItem(allShowCommentsAction))
-        expandTreeMenuWithHelp.add(new ULCMenuItem(showErrorsAction))
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(help))
 
         commentMenu = new ULCPopupMenu()
-        commentMenu.name = "popup.expand"
+        commentMenu.name = "popup.comment"
         commentMenu.add(new ULCMenuItem(insertComment))
         commentMenu.add(new ULCMenuItem(showCommentsAction))
-        commentMenu.add(new ULCMenuItem(allShowCommentsAction))
-        commentMenu.add(new ULCMenuItem(showErrorsAction))
 
     }
 

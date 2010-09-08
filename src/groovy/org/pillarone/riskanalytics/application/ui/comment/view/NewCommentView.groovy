@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -11,6 +8,8 @@ import com.ulcjava.base.application.util.Font
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.*
 
 /**
@@ -64,7 +63,7 @@ class NewCommentView {
         cancelButton.setPreferredSize(dimension)
         content = new ULCBoxPane(3, 3)
         content.setPreferredSize(new Dimension(400, 160))
-        String borderTitle = getDisplayPath() + (periodIndex == -1) ? " for all periods" : " P" + periodIndex
+        String borderTitle = getDisplayPath() + ((periodIndex == -1) ? " for all periods" : " P" + periodIndex)
         final ULCTitledBorder border = BorderFactory.createTitledBorder(borderTitle);
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
         content.setBorder(border);
