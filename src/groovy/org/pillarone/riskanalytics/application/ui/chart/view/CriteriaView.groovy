@@ -39,7 +39,13 @@ class CriteriaView {
                 alert.show()
             }
         }] as IValueChangedListener)
-        valueField.addActionListener([actionPerformed: { model.queryModel.query() }] as IActionListener)
+        valueField.addActionListener([actionPerformed: {
+            if (model.validate())
+                model.queryModel.query()
+            else
+                new I18NAlert(UlcUtilities.getWindowAncestor(content), "PercentileNumberNotValid").show()
+
+        }] as IActionListener)
         periodComboBox.addActionListener([actionPerformed: {
             if (model.selectedPeriod == null) {
                 valueIntepretationComboBox.model.selectedEnum = ValueIntepretationType.ABSOLUTE
