@@ -5,7 +5,8 @@ import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.TableDataParser
 import org.pillarone.riskanalytics.application.ui.util.TableTreeMutator
@@ -17,6 +18,7 @@ class TreeNodePaster extends ExceptionSafeAction {
     public TreeNodePaster() {
         super("Paste")
         putValue(IAction.SMALL_ICON, UIUtils.getIcon("paste-active.png"));
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false));
     }
 
     public void doActionPerformed(ActionEvent event) {

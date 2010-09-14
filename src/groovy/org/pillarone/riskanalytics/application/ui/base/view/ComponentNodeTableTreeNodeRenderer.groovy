@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubCompo
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
@@ -223,26 +224,4 @@ class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
 
 
 
-class ComponentUtils {
 
-    static boolean isDynamicComposedSubComponentNode(def node) {
-        if (node instanceof ComponentTableTreeNode)
-            return node.parent instanceof ComponentTableTreeNode && node.parent.component instanceof DynamicComposedComponent && node.parent.component.isDynamicSubComponent(node.component)
-        return false
-    }
-
-    static boolean isDynamicComposedComponent(def node) {
-        return (node instanceof ComponentTableTreeNode) && (node.component instanceof DynamicComposedComponent)
-    }
-
-    static String getSubComponentName(String name) {
-        if (name.length() != 0) {
-            List tokens = name.split(" ") as List
-            if (tokens.get(0) != 'sub') {
-                tokens.add(0, "sub")
-            }
-            name = StringUtils.uncapitalize(tokens.collect { StringUtils.capitalize(it)}.join(""))
-        }
-        return name
-    }
-}

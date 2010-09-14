@@ -56,7 +56,11 @@ class ResultViewModel extends AbstractModellingModel {
                 allResults = initPostSimulationCalculations(item.simulationRun)
 
             }
-            List paths = obtainAllPaths(allResults."0")
+            Set paths = new HashSet()
+            //look through all periods, not all paths may have a result in the first period
+            for(Map<String,Map> periodResults in allResults.values()) {
+                paths.addAll(obtainAllPaths(periodResults))
+            }
 
             def simulationRun = item.simulationRun
             Class modelClass = model.class
@@ -67,7 +71,7 @@ class ResultViewModel extends AbstractModellingModel {
             }
 
             resultStructure.load()
-            builder = new ResultStructureTreeBuilder(paths, modelClass, resultStructure, item)
+            builder = new ResultStructureTreeBuilder(paths.toList(), modelClass, resultStructure, item)
 
             treeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
