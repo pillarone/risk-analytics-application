@@ -42,7 +42,7 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
         assertFalse run.enabled
     }
 
-    protected void stop() {
+    void stop() {
         LocaleResources.clearTestMode()
     }
 

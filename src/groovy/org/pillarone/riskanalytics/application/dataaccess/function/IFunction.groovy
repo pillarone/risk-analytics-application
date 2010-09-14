@@ -13,7 +13,7 @@ interface IFunction extends Cloneable {
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node)
 }
 
-/** A Function for Result views     */
+/** A Function for Result views      */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -21,10 +21,11 @@ abstract class ResultFunction implements IFunction {
         node.path
     }
 
-    public String getName(int periodIndex) {
-        return name
+    String getName(int periodIndex) {
+        return getName()
     }
 
+    abstract String getName()
 
     abstract String getKeyFigureName()
 
@@ -303,7 +304,7 @@ class ColumnOrder extends ResultFunction {
 
 class Percentile extends ResultFunction {
 
-    final String name
+    String name
     final Double percentile
 
     public void setPercentile(Double percentile) {
