@@ -14,20 +14,20 @@ import org.pillarone.riskanalytics.application.ui.table.action.*
  */
 class MultiDimensionalTable extends ULCTable {
 
-    final ULCPopupMenu rowPopupMenu
-    final ULCPopupMenu columnPopupMenu
+    ULCPopupMenu rowPopupMenu
+    ULCPopupMenu columnPopupMenu
 
-    final ULCMenuItem addRowAfterMenuItem
-    final ULCMenuItem addRowBeforeMenuItem
-    final ULCMenuItem removeRowMenuItem
-    final ULCMenuItem addColumnAfterMenuItem
-    final ULCMenuItem addColumnBeforeMenuItem
-    final ULCMenuItem removeColumnMenuItem
+    ULCMenuItem addRowAfterMenuItem
+    ULCMenuItem addRowBeforeMenuItem
+    ULCMenuItem removeRowMenuItem
+    ULCMenuItem addColumnAfterMenuItem
+    ULCMenuItem addColumnBeforeMenuItem
+    ULCMenuItem removeColumnMenuItem
     //move
-    final ULCMenuItem moveRightColumnMenuItem
-    final ULCMenuItem moveLeftColumnMenuItem
-    final ULCMenuItem moveTopRowMenuItem
-    final ULCMenuItem moveBottomRowMenuItem
+    ULCMenuItem moveRightColumnMenuItem
+    ULCMenuItem moveLeftColumnMenuItem
+    ULCMenuItem moveTopRowMenuItem
+    ULCMenuItem moveBottomRowMenuItem
 
     private AddColumnAction addColumnAfterAction
     private AddColumnAction addColumnBeforeAction

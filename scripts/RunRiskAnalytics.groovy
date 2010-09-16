@@ -3,20 +3,16 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.context.ApplicationContext
 
 ant.property(environment: "env")
-grailsHome = ant.antProject.properties."env.GRAILS_HOME"
 
-System.setProperty(GrailsApplication.WORK_DIR, ".")
-
-includeTargets << new File("${grailsHome}/scripts/Package.groovy")
-includeTargets << new File("${grailsHome}/scripts/Bootstrap.groovy")
+includeTargets << grailsScript("_GrailsPackage")
+includeTargets << grailsScript("_GrailsBootstrap")
 
 target('default': "Load the Grails interactive Swing console") {
     depends(checkVersion, configureProxy, packageApp, classpath)
-    pirat()
+    runRiskAnalytics()
 }
 
-target(pirat: "The application start target") {
-
+target(runRiskAnalytics: "The application start target") {
     try {
         ApplicationContext ctx = GrailsUtil.bootstrapGrailsFromClassPath();
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
