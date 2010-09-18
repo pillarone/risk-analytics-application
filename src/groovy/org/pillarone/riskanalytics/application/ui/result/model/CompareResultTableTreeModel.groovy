@@ -176,6 +176,7 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
         }
 
         Collections.swap(simulationRuns, 0, index)
+        Collections.swap(resultsList, 0, index)
         for (CompareFunction cf in compareFunctions) {
             cf.runA = simulationRuns.get(0)
             if (cf.runA == cf.runB) {
