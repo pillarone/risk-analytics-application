@@ -17,6 +17,8 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 
 class ModellingInformationTreeModel extends DefaultTreeModel {
 
@@ -33,14 +35,19 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
             model.init()
             ITreeNode modelNode = getModelNode(model)
             DefaultMutableTreeNode parametrisationsNode = modelNode.getChildAt(0)
+            ItemGroupNode normalNode = parametrisationsNode.getChildAt(0)
+            ItemGroupNode workflowNode = parametrisationsNode.getChildAt(1)
             DefaultMutableTreeNode resultConfigurationsNode = modelNode.getChildAt(1)
             DefaultMutableTreeNode simulationsNode = modelNode.getChildAt(2)
 
-            getItemMap(ModellingItemFactory.getParameterizationsForModel(modelClass)).values().each {
-                parametrisationsNode.add(createItemNodes(it))
+            getItemMap(ModellingItemFactory.getParameterizationsForModel(modelClass), false).values().each { List<Parameterization> it ->
+                normalNode.add(createItemNodes(it))
+            }
+            getItemMap(ModellingItemFactory.getParameterizationsForModel(modelClass), true).values().each { List<Parameterization> it ->
+                workflowNode.add(createItemNodes(it))
             }
 
-            getItemMap(ModellingItemFactory.getResultConfigurationsForModel(modelClass)).values().each {
+            getItemMap(ModellingItemFactory.getResultConfigurationsForModel(modelClass), false).values().each {
                 resultConfigurationsNode.add(createItemNodes(it))
             }
 
@@ -73,6 +80,8 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         if (modelNode == null) {
             modelNode = new ModelNode(model)
             DefaultMutableTreeNode parameterizationsNode = new ItemGroupNode(getText("Parameterization"), Parameterization)
+            parameterizationsNode.add(new ItemGroupNode(getText("Normal"), Parameterization))
+            parameterizationsNode.add(new ItemGroupNode(getText("Workflow"), Parameterization))
             DefaultMutableTreeNode resultConfigurationsNode = new ItemGroupNode(getText("ResultTemplates"), ResultConfiguration)
             DefaultMutableTreeNode simulationsNode = new ItemGroupNode(getText("Results"), Simulation)
             modelNode.add(parameterizationsNode)
@@ -83,8 +92,13 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         return modelNode
     }
 
-    private Map getItemMap(items) {
+    private Map getItemMap(items, boolean workflow) {
         Map map = [:]
+        if (workflow) {
+            items = items.findAll { it.versionNumber.toString().startsWith("R")}
+        } else {
+            items = items.findAll { !it.versionNumber.toString().startsWith("R")}
+        }
         items.each {
             def list = map.get(it.name)
             if (!list) {
@@ -243,6 +257,17 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         groupNode
     }
 
+    private ItemGroupNode findGroupNode(Parameterization item, ModelNode modelNode) {
+        ItemGroupNode groupNode = null
+        for (int i = 0; i < modelNode.childCount && groupNode == null; i++) {
+            ItemGroupNode childNode = modelNode.getChildAt(i)
+            if (childNode.itemClass == Parameterization) {
+                groupNode = childNode
+            }
+        }
+        return item.status == Status.NONE ? groupNode.getChildAt(0) : groupNode.getChildAt(1)
+    }
+
     private def createAndInsertItemNode(DefaultMutableTreeNode node, ModellingItem item) {
         boolean parameterNameFound = false
         for (int i = 0; i < node.childCount; i++) {
@@ -318,7 +343,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
     private ITreeNode createNode(Parameterization item) {
-        return new ParameterizationNode(item)
+        return item.status == Status.NONE ? new ParameterizationNode(item) : new WorkflowParameterizationNode(item)
     }
 
     private ITreeNode createNode(ResultConfiguration item) {
@@ -355,6 +380,10 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
 
 
     private boolean nodeMatches(item, ParameterizationNode node) {
+        return node.item == item
+    }
+
+    private boolean nodeMatches(item, WorkflowParameterizationNode node) {
         return node.item == item
     }
 

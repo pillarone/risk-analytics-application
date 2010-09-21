@@ -13,10 +13,12 @@ import org.pillarone.riskanalytics.application.ui.batch.action.DeleteBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -25,6 +27,10 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToProductionAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.RejectWorkflowAction
 
 class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -41,6 +47,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     ULCTree tree
     P1RATModel model
 
+    private Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
 
     public MainSelectionTreeCellRenderer(ULCTree tree, P1RATModel model) {
         this.tree = tree
@@ -53,9 +60,37 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         parameterNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
         ULCMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
+
+        ULCPopupMenu dataEntry = new ULCPopupMenu()
+        dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        dataEntry.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.DATA_ENTRY, dataEntry)
+
+        ULCPopupMenu inReview = new ULCPopupMenu()
+        inReview.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        inReview.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inReview.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        inReview.add(new ULCMenuItem(new SendToProductionAction(tree, model)))
+        inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, model)))
+        inReview.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        inReview.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.IN_REVIEW, inReview)
+
+        ULCPopupMenu inProduction = new ULCPopupMenu()
+        inProduction.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        inProduction.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.IN_PRODUCTION, inProduction)
 
         simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
@@ -127,6 +162,10 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
     void setPopUpMenu(ULCComponent component, ParameterizationNode node) {
         component.setComponentPopupMenu(parameterNodePopUpMenu)
+    }
+
+    void setPopUpMenu(ULCComponent component, WorkflowParameterizationNode node) {
+        component.setComponentPopupMenu(workflowMenus.get(node.status))
     }
 
     void setPopUpMenu(ULCComponent component, ResultConfigurationNode node) {

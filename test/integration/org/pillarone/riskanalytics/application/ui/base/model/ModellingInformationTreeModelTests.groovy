@@ -30,10 +30,9 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 def model = new ModellingInformationTreeModel()
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
-                assertEquals 1, paramsNode.childCount
-                def node = paramsNode.getChildAt(0)
+
+                ItemGroupNode normalNode = getNormalNode(model.root)
+                def node = normalNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
                 assertEquals '1', node.item.versionNumber.toString()
             }
@@ -49,8 +48,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 def model = new ModellingInformationTreeModel()
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -80,8 +78,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 def model = new ModellingInformationTreeModel()
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -103,8 +100,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 def model = new ModellingInformationTreeModel()
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -135,8 +131,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 def model = new ModellingInformationTreeModel()
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -162,8 +157,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('2'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -189,8 +183,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -217,8 +210,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'foo', versionNumber: new VersionNumber('2'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 2, paramsNode.childCount
             }
         }
@@ -235,8 +227,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'bar', versionNumber: new VersionNumber('1'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 2, paramsNode.childCount
             }
         }
@@ -255,8 +246,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('2.1'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -290,8 +280,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('2.1.1'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
                 assertEquals 'Name', node.item.name
@@ -327,8 +316,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel))
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
 
                 def node = paramsNode.getChildAt(0)
@@ -359,8 +347,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.removeNodeForItem(parameterization)
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 0, paramsNode.childCount
             }
         }
@@ -378,8 +365,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.removeNodeForItem(parameterization3)
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
 
                 def node = paramsNode.getChildAt(0)
@@ -406,8 +392,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTreeModel()
                 model.removeNodeForItem(parameterization3)
 
-                DefaultMutableTreeNode modelNode = model.root.getChildAt(0)
-                DefaultMutableTreeNode paramsNode = modelNode.getChildAt(0)
+                DefaultMutableTreeNode paramsNode = getNormalNode(model.root)
                 assertEquals 1, paramsNode.childCount
 
                 def node = paramsNode.getChildAt(0)
@@ -447,14 +432,14 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
                 treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event}
         ] as ITreeModelListener)
 
-        assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
+        assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).getChildAt(0).childCount
         prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
         modelStructureMock.use {
             factoryMock.use {
                 model.refresh()
             }
         }
-        assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
+        assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).getChildAt(0).childCount
         assertNotNull "No event fired", treeModelEvent
     }
 
@@ -469,7 +454,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 model = new ModellingInformationTreeModel()
-                assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
+                assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).getChildAt(0).childCount
             }
         }
 
@@ -485,7 +470,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.use {
             factoryMock.use {
                 model.refresh()
-                assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
+                assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).getChildAt(0).childCount
                 assertNotNull "No event fired", treeModelEvent
             }
         }
@@ -496,7 +481,7 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         modelStructureMock.demand.findAllModelClasses { CoreModel }
 
         factoryMock = new MockFor(ModellingItemFactory)
-        factoryMock.demand.getParameterizationsForModel {modelClass ->
+        factoryMock.demand.getParameterizationsForModel(2..2) {modelClass ->
             params
         }
         factoryMock.demand.getResultConfigurationsForModel {modelClass ->
@@ -505,6 +490,14 @@ class ModellingInformationTreeModelTests extends GroovyTestCase {
         factoryMock.demand.getActiveSimulationsForModel {modelClass ->
             []
         }
+    }
+
+    private ItemGroupNode getNormalNode(DefaultMutableTreeNode root) {
+        def modelNode = root.getChildAt(0)
+        assertEquals 3, modelNode.childCount
+        def paramNode = modelNode.getChildAt(0)
+        assertEquals 2, paramNode.childCount
+        return paramNode.getChildAt(0)
     }
 
 }

@@ -406,6 +406,7 @@ class ModellingItemFactory {
             item.versionNumber = new VersionNumber(dao.itemVersion)
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
+            item.status = dao.status
             if (modelClass != null)
                 item.modelClass = modelClass
             getItemInstances()[key(Parameterization, dao.id)] = item

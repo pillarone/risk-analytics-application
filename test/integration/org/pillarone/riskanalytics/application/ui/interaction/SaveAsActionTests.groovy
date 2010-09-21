@@ -33,7 +33,7 @@ class SaveAsActionTests extends AbstractStandaloneTestCase {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTreeOperator tree = new ULCTreeOperator(frame, new ComponentByNameChooser("selectionTree"))
 
-        TreePath pathForRename = tree.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree.findPath(["Application", "Parameterization", "Normal", "ApplicationParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
         ULCPopupMenuOperator popUpMenu = tree.callPopupOnPath(pathForRename)
@@ -55,10 +55,10 @@ class SaveAsActionTests extends AbstractStandaloneTestCase {
         okButton.getFocus()
         okButton.clickMouse()
 
-        TreePath oldPath = tree.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath oldPath = tree.findPath(["Application", "Parameterization", "Normal", "ApplicationParameters"] as String[])
         assertNotNull "old path not found", oldPath
 
-        TreePath newPath = tree.findPath(["Application", "Parameterization", "SavedAsParameters v1"] as String[])
+        TreePath newPath = tree.findPath(["Application", "Parameterization", "Normal", "SavedAsParameters v1"] as String[])
         assertNotNull "new path not found", newPath
     }
 

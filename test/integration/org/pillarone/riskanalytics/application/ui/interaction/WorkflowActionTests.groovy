@@ -1,16 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
+import com.ulcjava.testframework.operator.ComponentByNameChooser
+import com.ulcjava.testframework.operator.ULCFrameOperator
+import com.ulcjava.testframework.operator.ULCPopupMenuOperator
+import com.ulcjava.testframework.operator.ULCTreeOperator
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
-import com.ulcjava.testframework.operator.*
+import javax.swing.tree.TreePath
 
-class RenameActionTests extends AbstractStandaloneTestCase {
-
+class WorkflowActionTests extends AbstractStandaloneTestCase {
 
     protected void setUp() {
         FileImportService.importModelsIfNeeded(["Application"])
@@ -29,39 +31,37 @@ class RenameActionTests extends AbstractStandaloneTestCase {
         return P1RATApplication
     }
 
-    void testRenameParameter() {
+    void testWorkflow() {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTreeOperator tree = new ULCTreeOperator(frame, new ComponentByNameChooser("selectionTree"))
 
         TreePath pathForRename = tree.findPath(["Application", "Parameterization", "Normal", "ApplicationParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        int oldParametersCount = tree.getChildCount(pathForRename.lastPathComponent.parent)
-
         ULCPopupMenuOperator popUpMenu = tree.callPopupOnPath(pathForRename)
         assertNotNull popUpMenu
-        popUpMenu.pushMenu("Rename")
+        popUpMenu.pushMenu("Start workflow")
 
-        ULCDialogOperator renameDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('renameDialog'))
-        assertNotNull renameDialog
-
-        ULCTextFieldOperator newNameField = new ULCTextFieldOperator(renameDialog, new ComponentByNameChooser('newName'))
-        assertNotNull newNameField
-
-        newNameField.clearText()
-        newNameField.typeText('RenamedParameters')
-
-        ULCButtonOperator okButton = new ULCButtonOperator(renameDialog, new ComponentByNameChooser('okButton'))
-        assertNotNull okButton
-
-        okButton.getFocus()
-        okButton.clickMouse()
-
-        TreePath newPath = tree.findPath(["Application", "Parameterization", "Normal", "RenamedParameters v1"] as String[])
+        TreePath newPath = tree.findPath(["Application", "Parameterization", "Workflow", "ApplicationParameters vR1"] as String[])
         assertNotNull "path not found", newPath
-        assertEquals "element added", oldParametersCount, tree.getChildCount(newPath.lastPathComponent.parent)
+
+        popUpMenu = tree.callPopupOnPath(newPath)
+        assertNotNull popUpMenu
+        popUpMenu.pushMenu("Send to reviewer")
+
+        popUpMenu = tree.callPopupOnPath(newPath)
+        popUpMenu.pushMenu("Reject")
+
+        newPath = tree.findPath(["Application", "Parameterization", "Workflow", "ApplicationParameters vR2"] as String[])
+        assertNotNull "path not found", newPath
+
+        popUpMenu = tree.callPopupOnPath(newPath)
+        assertNotNull popUpMenu
+        popUpMenu.pushMenu("Send to reviewer")
+
+        popUpMenu = tree.callPopupOnPath(newPath)
+        popUpMenu.pushMenu("In production")
 
     }
 
-    // TODO (Apr 16, 2009, msh): Test rename of used items
 }

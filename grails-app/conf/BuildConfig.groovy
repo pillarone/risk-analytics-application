@@ -1,6 +1,6 @@
 import org.apache.ivy.plugins.resolver.URLResolver
 //Use a custom plugins dir, because different branches use different plugin versions
-grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-v1.1"
+grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-v1.2"
 
 grails.compiler.dependencies = {
     fileset(dir: "${grailsSettings.projectPluginsDir}", includes: "*/web-app/lib/*.jar")
