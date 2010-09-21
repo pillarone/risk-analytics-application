@@ -42,11 +42,14 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
     private void layoutComponents() {
         ShowCommentsView view = new ShowCommentsView(this, null)
         model.addChangedCommentListener view
-        ULCBoxPane content = new ULCBoxPane(1, 3)
-        CommentSearchPane commentSearchPane = new CommentSearchPane(view.container, errorPane.container, model)
+        ShowCommentsView result = new ShowCommentsView(this, null)
+        model.addChangedCommentListener result
+        ULCBoxPane content = new ULCBoxPane(1, 4)
+        CommentSearchPane commentSearchPane = new CommentSearchPane(view, errorPane, result, model)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, commentSearchPane.content)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, view.container)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, result.container)
         tabbedPane.addTab("Validations and comments", new ULCScrollPane(content))
         tabbedPane.setCloseableTab(0, false)
     }

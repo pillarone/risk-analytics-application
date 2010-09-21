@@ -16,6 +16,7 @@ class ShowCommentsView implements ChangedCommentListener {
     private CommentAndErrorView commentAndErrorView
     private ParameterViewModel model;
     String path
+    List<Comment> comments
 
     public ShowCommentsView(CommentAndErrorView commentAndErrorView, String path) {
         this.commentAndErrorView = commentAndErrorView
@@ -26,10 +27,22 @@ class ShowCommentsView implements ChangedCommentListener {
         container.setBackground(Color.white);
 
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
-        def allComments = getComments()
-        addComments(allComments)
+        comments = getAllComments()
+        addComments(comments)
         model.commentsChanged(allComments)
     }
+
+    public ShowCommentsView(CommentAndErrorView commentAndErrorView) {
+        this.commentAndErrorView = commentAndErrorView
+        this.model = commentAndErrorView.model
+        content = new ULCBoxPane(name: "resultComments");
+        container = new ULCBoxPane(1, 0);
+        container.setBackground(Color.white);
+
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
+        this.comments = []
+    }
+
 
     public void addComment(Comment comment) {
         CommentPane commentPane = new CommentPane(model, comment)
@@ -50,14 +63,28 @@ class ShowCommentsView implements ChangedCommentListener {
 
     void updateCommentVisualization() {
         clear()
-        addComments(getComments())
+        addComments(getAllComments())
     }
 
-    private List<Comment> getComments() {
-        def all = model.item.comments.findAll {!it.deleted}//.sort{it.path}
+    void order(String orderBy, String order) {
+        def comparator = { x, y -> if ("asc" == order) x.properties[orderBy] <=> y.properties[orderBy] else y.properties[orderBy] <=> x.properties[orderBy] } as Comparator
+        comments.sort(comparator)
+        clear()
+        addComments(comments)
+    }
+
+    private List<Comment> getAllComments() {
+        def all = model.item.comments.findAll {!it.deleted}
         return path ? all.findAll {it.path == path} : all
     }
 
+    public void setVisible(boolean visibility) {
+        container.setVisible visibility
+    }
+
+    public boolean isVisible() {
+        return container.isVisible()
+    }
 
 }
 

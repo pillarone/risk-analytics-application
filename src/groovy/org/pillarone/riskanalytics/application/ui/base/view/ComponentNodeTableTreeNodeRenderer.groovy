@@ -6,9 +6,7 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
-import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
-import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeDuplicator
@@ -130,10 +128,12 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
             setToolTipText(node.errorMessage)
             setFont(getFont().deriveFont(Font.BOLD))
         }
-        if (node.commentMessage != "") {
+        if (node.comments && node.comments.size() > 0) {
+            setForeground(Color.black)
             setFont(getFont().deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
+            setForeground(Color.black)
             setFont(getFont().deriveFont(Font.PLAIN))
             setToolTipText("")
         }

@@ -60,4 +60,9 @@ public class ErrorPane {
     public ULCBoxPane getContent() {
         return content;
     }
+
+    public void setVisible(boolean visibility) {
+        container.setVisible(visibility);
+    }
+
 }
