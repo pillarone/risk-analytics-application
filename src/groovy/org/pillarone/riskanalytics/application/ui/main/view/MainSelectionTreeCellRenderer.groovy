@@ -74,6 +74,14 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         dataEntry.add(compareParameterizationMenuItem)
         workflowMenus.put(Status.DATA_ENTRY, dataEntry)
 
+        ULCPopupMenu rejected = new ULCPopupMenu()
+        rejected.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        rejected.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        rejected.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        rejected.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        rejected.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.REJECTED, rejected)
+
         ULCPopupMenu inReview = new ULCPopupMenu()
         inReview.add(new ULCMenuItem(new OpenItemAction(tree, model)))
         inReview.add(new ULCMenuItem(new ExportItemAction(tree, model)))
