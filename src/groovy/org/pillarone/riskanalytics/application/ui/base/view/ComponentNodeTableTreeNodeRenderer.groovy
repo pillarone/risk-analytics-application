@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
@@ -109,7 +110,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, def node) {
-        if (node.commentMessage != "") {
+        if (node.comments && node.comments.size() > 0) {
             setFont(getFont().deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
@@ -119,22 +120,23 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
+        Font font = getFont()
         if (node.errorMessage == null) {
             setForeground(Color.black)
             setToolTipText(null)
-            setFont(getFont().deriveFont(Font.PLAIN))
+            setFont(font.deriveFont(Font.PLAIN))
         } else {
             setForeground(Color.red)
             setToolTipText(node.errorMessage)
-            setFont(getFont().deriveFont(Font.BOLD))
+            setFont(font.deriveFont(Font.BOLD))
         }
         if (node.comments && node.comments.size() > 0) {
             setForeground(Color.black)
-            setFont(getFont().deriveFont(Font.BOLD))
+            setFont(font.deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
             setForeground(Color.black)
-            setFont(getFont().deriveFont(Font.PLAIN))
+            setFont(font.deriveFont(Font.PLAIN))
             setToolTipText("")
         }
     }
@@ -201,6 +203,8 @@ class CompareComponentNodeTableTreeNodeRenderer extends ComponentNodeTableTreeNo
     private void setBackground(ULCTableTree tableTree, Object node) {
         (tableTree.model.isDifferent(node)) ? setBackground(ParameterizationUtilities.ERROR_BG) : setBackground(Color.white)
     }
+
+
 }
 
 class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {

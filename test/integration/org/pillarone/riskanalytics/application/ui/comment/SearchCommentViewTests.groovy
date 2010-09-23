@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.comment
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
+import com.ulcjava.base.application.event.KeyEvent
 import java.awt.event.InputEvent
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
@@ -73,15 +74,17 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         assertNotNull textFieldOperator
 
         textFieldOperator.typeText('test')
-
-        ULCButtonOperator buttonOperator = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("searchButton"))
-        assertNotNull buttonOperator
-
-        buttonOperator.getFocus()
-        buttonOperator.clickMouse()
+        textFieldOperator.typeKey((char) KeyEvent.VK_ENTER)
 
         ULCComponentOperator commentPane = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('CommentPane'))
         assertNotNull commentPane
+
+        textFieldOperator.getFocus()
+        textFieldOperator.typeText('test007')
+        textFieldOperator.typeKey((char) KeyEvent.VK_ENTER)
+
+        ULCComponentOperator noCommentLabel = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('noComment'))
+        assertNotNull noCommentLabel
 
     }
 

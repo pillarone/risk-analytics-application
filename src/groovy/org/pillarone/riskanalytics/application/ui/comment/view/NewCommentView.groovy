@@ -56,6 +56,7 @@ class NewCommentView {
 
         tags = new ULCList(tagListModel)
         tags.setVisibleRowCount(6);
+        tags.setMinimumSize(new Dimension(100, 160))
 
         addButton = new ULCButton("Apply")
         addButton.name = "saveNewComment"
@@ -66,6 +67,7 @@ class NewCommentView {
         cancelButton.setPreferredSize(dimension)
         content = new ULCBoxPane(3, 3)
         content.setPreferredSize(new Dimension(400, 160))
+        content.setMinimumSize(new Dimension(400, 160))
         String borderTitle = getDisplayPath() + ((periodIndex == -1) ? " for all periods" : " P" + periodIndex)
         final ULCTitledBorder border = BorderFactory.createTitledBorder(borderTitle);
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));

@@ -2,9 +2,11 @@ package org.pillarone.riskanalytics.application.ui.comment.view
 
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCFiller
+import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
@@ -51,9 +53,16 @@ class ShowCommentsView implements ChangedCommentListener {
     }
 
     public void addComments(Collection<Comment> comments) {
-        for (Comment comment: comments) {
-            addComment(comment);
+        if (comments && !comments.isEmpty()) {
+            for (Comment comment: comments) {
+                addComment(comment);
+            }
+        } else {
+            ULCLabel label = new ULCLabel(UIUtils.getText(this.class, "noComment"))
+            label.name = "noComment"
+            container.add(ULCBoxPane.BOX_LEFT_TOP, UIUtils.spaceAround(label, 2, 10, 0, 0))
         }
+
         container.add(ULCBoxPane.BOX_EXPAND_EXPAND, ULCFiller.createVerticalGlue());
     }
 

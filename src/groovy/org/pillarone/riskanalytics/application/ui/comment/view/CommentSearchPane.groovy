@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.util.Font
+import com.ulcjava.base.application.util.Insets
+import com.ulcjava.base.application.util.KeyStroke
+import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentSearchBean
 import org.pillarone.riskanalytics.application.ui.comment.model.MapComboBoxModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -17,11 +19,12 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CommentSearchPane {
-    private ULCBoxPane content;
+    ULCBoxPane content;
+    ULCToolBar toolBar
     private ParameterViewModel model
     ULCToggleButton selectCommentButton
     ULCToggleButton selectValidationButton
-    ULCButton searchButton
+    ULCButton clearButton
     ULCTextField searchText
     ULCLabel orderByLabel
     ULCComboBox orderByComboBox
@@ -46,37 +49,48 @@ class CommentSearchPane {
     }
 
     protected void initComponents() {
-        content = new ULCBoxPane(8, 1);
+        content = new ULCBoxPane(2, 1);
         content.name = "CommentSearchPane"
-        content.setBackground(Color.white);
-        final ULCTitledBorder border = BorderFactory.createTitledBorder("");
-        border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
-        content.setBorder(border);
-        selectCommentButton = new ULCToggleButton("All comments")
+        toolBar = new ULCToolBar("commentToolBar", ULCToolBar.HORIZONTAL);
+        toolBar.margin = new Insets(2, 5, 2, 5)
+        toolBar.floatable = false
+        selectCommentButton = new ULCToggleButton(UIUtils.getText(this.class, "comments", null))
         selectCommentButton.setSelected(true)
-        selectValidationButton = new ULCToggleButton("Validations")
+        selectValidationButton = new ULCToggleButton(UIUtils.getText(this.class, "validations"))
         selectValidationButton.setSelected(true)
-        searchButton = new ULCButton("Search")
-        searchButton.name = "searchButton"
+        clearButton = new ULCButton(UIUtils.getIcon("delete-active.png"))
+        clearButton.setToolTipText UIUtils.getText(this.class, "clear")
+        clearButton.name = "searchButton"
         searchText = new ULCTextField(name: "searchText")
-        searchText.setToolTipText "search text"
+        searchText.setMaximumSize(new Dimension(20, 180))
+        searchText.setToolTipText UIUtils.getText(this.class, "initialText")
+        searchText.setText(UIUtils.getText(this.class, "initialText"))
+        searchText.setForeground(Color.gray)
         searchText.setPreferredSize(new Dimension(200, 20))
-        orderByLabel = new ULCLabel("order by")
-        orderByComboBoxModel = new MapComboBoxModel(["path", "user", "lastChange"])
+        orderByLabel = new ULCLabel(UIUtils.getText(this.class, "orderBy"))
+        orderByComboBoxModel = new MapComboBoxModel(["lastChange", "path", "user"])
         orderByComboBox = new ULCComboBox(orderByComboBoxModel)
         orderComboBoxModel = new MapComboBoxModel(["asc", "desc"])
         orderComboBox = new ULCComboBox(orderComboBoxModel)
     }
 
     protected void layoutComponents() {
-        content.add(ULCBoxPane.BOX_LEFT_TOP, selectValidationButton);
-        content.add(ULCBoxPane.BOX_LEFT_TOP, selectCommentButton)
-        content.add(ULCBoxPane.BOX_LEFT_TOP, searchText);
-        content.add(ULCBoxPane.BOX_LEFT_TOP, searchButton);
-        content.add(ULCBoxPane.BOX_LEFT_CENTER, UIUtils.spaceAround(orderByLabel, 0, 5, 0, 5, null));
-        content.add(ULCBoxPane.BOX_LEFT_TOP, orderByComboBox);
-        content.add(ULCBoxPane.BOX_LEFT_TOP, orderComboBox);
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        toolBar.add(UIUtils.spaceAround(selectValidationButton, 0, 2, 0, 2, null));
+        toolBar.add(UIUtils.spaceAround(selectCommentButton, 0, 2, 0, 2, null))
+        toolBar.add(ULCFiller.createHorizontalStrut(10))
+        toolBar.addSeparator()
+        toolBar.add(UIUtils.spaceAround(orderByLabel, 0, 5, 0, 5, null))
+        toolBar.add(UIUtils.spaceAround(orderByComboBox, 0, 2, 0, 2, null));
+        toolBar.add(UIUtils.spaceAround(orderComboBox, 0, 2, 0, 2, null));
+        toolBar.add(ULCFiller.createHorizontalStrut(10))
+        toolBar.addSeparator()
+        toolBar.add(ULCFiller.createHorizontalStrut(10))
+        toolBar.add(searchText);
+        toolBar.add(clearButton);
+        content.add(ULCBoxPane.BOX_LEFT_TOP, toolBar)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+//        toolBar.add( new ULCFiller())
+
     }
 
     protected void attachListeners() {
@@ -89,7 +103,7 @@ class CommentSearchPane {
             resultView.setVisible false
         }] as IActionListener)
 
-        searchButton.addActionListener([actionPerformed: {ActionEvent event ->
+        Closure searchClosure = {ActionEvent event ->
             String text = searchText.getText()
             if (text) {
                 List<Comment> comments = commentSearchBean.performSearch(text)
@@ -98,17 +112,16 @@ class CommentSearchPane {
                 errorsView.setVisible(false)
                 selectValidationButton.selected = false
                 resultView.setVisible true
-//                if (comments) {
                 resultView.clear()
                 resultView.comments = comments
                 resultView.addComments(comments)
-//                } else {
-//                    resultView.clear()
-//                }
             }
+        }
+        IActionListener action = [actionPerformed: {e -> searchClosure.call()}] as IActionListener
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
+        searchText.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
+        searchText.addFocusListener(new TextFieldFocusListener(searchText))
 
-
-        }] as IActionListener)
         orderByComboBox.addActionListener([actionPerformed: {ActionEvent event ->
             ULCComboBox source = (ULCComboBox) event.getSource();
             order(source.model.selectedObject, orderComboBox.model.selectedObject)
@@ -118,6 +131,12 @@ class CommentSearchPane {
             ULCComboBox source = (ULCComboBox) event.getSource();
             order(orderByComboBox.model.selectedObject, source.model.selectedObject)
         }] as IActionListener)
+
+        clearButton.addActionListener([actionPerformed: {ActionEvent event ->
+            searchText.setText(UIUtils.getText(this.class, "initialText"))
+            searchText.setForeground Color.gray
+        }] as IActionListener)
+
     }
 
     private def order(String orderBy, String order) {
@@ -127,3 +146,5 @@ class CommentSearchPane {
             resultView.order(orderBy, order)
     }
 }
+
+

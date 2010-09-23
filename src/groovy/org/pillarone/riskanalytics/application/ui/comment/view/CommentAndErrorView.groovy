@@ -16,13 +16,13 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CommentAndErrorView implements CommentListener, NavigationListener {
+class CommentAndErrorView implements CommentListener {
 
     ULCCloseableTabbedPane tabbedPane
     ErrorPane errorPane
     private ParameterViewModel model;
     Map openItems
-    boolean tabbedPaneVisible = true
+//    boolean tabbedPaneVisible = true
 
 
     public CommentAndErrorView(ParameterViewModel model) {
@@ -31,7 +31,7 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
         layoutComponents()
         attachListeners()
         openItems = [:]
-        this.model.addNavigationListener this
+//        this.model.addNavigationListener this
     }
 
     protected void initComponents() {
@@ -140,11 +140,6 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
             tabbedPane.setCloseableTab(tabIndex, true)
             tabbedPane.selectedIndex = tabIndex
         }
-    }
-
-    public void commentsSelected() {
-        this.tabbedPaneVisible = !tabbedPaneVisible
-        tabbedPane.setVisible this.tabbedPaneVisible
     }
 
 

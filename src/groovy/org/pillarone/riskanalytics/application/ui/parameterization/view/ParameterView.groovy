@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
+import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
@@ -26,14 +27,17 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 
-class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
+class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener, NavigationListener {
 
     ULCTabbedPane tabbedPane
     PropertiesView propertiesView
     CommentAndErrorView commentAndErrorView
+    ULCSplitPane splitPane
+    boolean tabbedPaneVisible = true
 
     ParameterView(ParameterViewModel model) {
         super(model)
+        model.addNavigationListener this
     }
 
     protected void initTree() {
@@ -207,16 +211,25 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     protected ULCContainer layoutContent(ULCContainer content) {
-        content = content as ULCBoxPane
+        ULCBoxPane contentPane = new ULCBoxPane(1, 1)
+
+        splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
+        splitPane.oneTouchExpandable = true
+        splitPane.setResizeWeight(1)
+        splitPane.setDividerSize(10)
+        splitPane.add(content); splitPane.add(commentAndErrorView.tabbedPane)
+        splitPane.setDividerLocation(0.65)
+        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
-        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
+        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), contentPane)
         propertiesView = new PropertiesView(model.propertiesViewModel)
         tabbedPane.addTab(propertiesView.getText("properties"), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
 
-        content.add(0.2d, 0.2d, ULCBoxPane.BOX_EXPAND_EXPAND, commentAndErrorView.tabbedPane)
         return tabbedPane
+
+
     }
 
     public void modelItemChanged() {
@@ -232,6 +245,15 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
                 it.openTabs = [:]
         }
     }
+
+    public void commentsSelected() {
+        this.tabbedPaneVisible = !tabbedPaneVisible
+        if (this.tabbedPaneVisible)
+            splitPane.setDividerLocation(0.65)
+        else
+            splitPane.setDividerLocation(1.0)
+    }
+
 
 }
 
