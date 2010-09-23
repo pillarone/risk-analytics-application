@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -32,9 +33,17 @@ class ShowCommentsView implements ChangedCommentListener {
     }
 
     public void addComment(Comment comment) {
-        CommentPane commentPane = new CommentPane(model, comment)
+        CommentPane commentPane = createCommentPane(comment)
         commentPane.addCommentListener commentAndErrorView
         container.add(ULCBoxPane.BOX_EXPAND_TOP, commentPane.content)
+    }
+
+    protected CommentPane createCommentPane(Comment comment) {
+        return new CommentPane(model, comment)
+    }
+
+    protected CommentPane createCommentPane(WorkflowComment comment) {
+        return new WorkflowCommentPane(model, comment)
     }
 
     public void addComments(Collection<Comment> comments) {

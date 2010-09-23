@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.main.action.workflow
 import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.ULCTree
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 
 class StartWorkflowAction extends AbstractWorkflowAction {
@@ -17,6 +20,10 @@ class StartWorkflowAction extends AbstractWorkflowAction {
 
     Status toStatus() {
         return Status.DATA_ENTRY
+    }
+
+    protected String requiredRole() {
+        UserManagement.USER_ROLE
     }
 
 

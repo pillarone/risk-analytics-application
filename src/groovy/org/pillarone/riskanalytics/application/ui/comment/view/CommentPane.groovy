@@ -17,7 +17,8 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CommentPane {
-    private ULCBoxPane content;
+
+    protected ULCBoxPane content;
     ULCLabel label
     ULCLabel tags
     ULCButton editButton
@@ -27,7 +28,7 @@ class CommentPane {
     int periodIndex
     EditCommentAction editCommentAction
     RemoveCommentAction removeCommentAction
-    private ParameterViewModel model
+    protected ParameterViewModel model
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat('dd.MM.yyyy HH:mm')
 
     public CommentPane(ParameterViewModel model, Comment comment) {

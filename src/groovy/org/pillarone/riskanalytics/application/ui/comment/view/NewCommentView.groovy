@@ -25,7 +25,7 @@ class NewCommentView {
     int periodIndex
     String path
 
-    private ParameterViewModel model;
+    protected ParameterViewModel model;
     protected CommentAndErrorView commentAndErrorView
     ItemListModel<Tag> tagListModel
 
@@ -89,11 +89,15 @@ class NewCommentView {
         return pane
     }
 
+    protected Comment createComment(String path, int periodIndex) {
+        return new Comment(path, periodIndex)
+    }
+
     protected void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
             String text = commentTextArea.getText()
             if (text && text.length() > 0) {
-                Comment comment = new Comment(path, periodIndex)
+                Comment comment = createComment(path, periodIndex)
                 comment.lastChange = new Date()
                 comment.comment = commentTextArea.getText()
                 tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->

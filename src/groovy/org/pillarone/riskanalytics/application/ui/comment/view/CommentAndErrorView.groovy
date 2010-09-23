@@ -89,6 +89,23 @@ class CommentAndErrorView implements CommentListener, NavigationListener {
         }
     }
 
+    public void addNewIssueView(String path, int periodIndex) {
+        NewCommentView view = new NewIssueView(this, path, periodIndex)
+        openItems[view.content] = view
+        String tabTitle = getDisplayName(model, path)
+        tabTitle += ((periodIndex == -1) ? " for all periods" : " P" + periodIndex)
+        int index = tabbedPane.indexOfTab(tabTitle)
+        if (index >= 0) {
+            tabbedPane.selectedIndex = index
+        } else {
+            int tabIndex = tabbedPane.tabCount
+            tabbedPane.addTab(tabTitle, view.content)
+            tabbedPane.setCloseableTab(tabIndex, true)
+            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
+            tabbedPane.selectedIndex = tabIndex
+        }
+    }
+
     public void editCommentView(Comment comment) {
         int index = getTabIndex(comment, null, null)
         if (index >= 0) {
