@@ -17,10 +17,10 @@ class DefaultParameterizationDialog {
     Closure okAction
     String title
 
-    DefaultParameterizationDialog(ULCWindow parent) {
+    DefaultParameterizationDialog(ULCWindow parent, boolean hasOneParameterColumnOnly) {
         this.parent = parent
         initComponents()
-        layoutComponents()
+        layoutComponents(hasOneParameterColumnOnly)
         attachListeners()
     }
 
@@ -39,7 +39,7 @@ class DefaultParameterizationDialog {
 
     }
 
-    private void layoutComponents() {
+    private void layoutComponents(boolean hasOneParameterColumnOnly) {
         nameInput.setPreferredSize(new Dimension(200, 20))
         ULCBoxPane content = new ULCBoxPane(rows: 3, columns: 4)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
@@ -47,8 +47,10 @@ class DefaultParameterizationDialog {
         content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("name") + ":"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, nameInput)
 
-        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("periods") + ":"))
-        content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, periodCount)
+        if (!hasOneParameterColumnOnly) {
+            content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("periods") + ":"))
+            content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, periodCount)
+        }
 
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
