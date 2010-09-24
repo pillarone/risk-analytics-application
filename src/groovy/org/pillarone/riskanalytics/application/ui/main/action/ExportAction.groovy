@@ -186,7 +186,8 @@ abstract class ExportAction extends SelectionTreeAction {
     private ConfigObject getConfigObject(Parameterization parameterization) {
         ConfigObject result
         ParameterizationDAO.withTransaction {TransactionStatus status ->
-            parameterization.load()
+            if (!parameterization.isLoaded())
+                parameterization.load()
             result = parameterization.toConfigObject()
         }
         return result
