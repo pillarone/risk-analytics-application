@@ -89,6 +89,15 @@ class WorkflowCommentPane extends CommentPane {
             content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
             content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
         })
+        uiStates.put((CLOSED_USER), {
+            content.removeAll()
+            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
+            ULCBoxPane buttons = new ULCBoxPane(1, 1)
+            buttons.add(closedLabel)
+            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
+            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+        })
     }
 
     private Map getUIStates() {
