@@ -26,7 +26,8 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
     public void doActionPerformed(ActionEvent event) {
         Model simulationModel = getSelectedModel()
-        DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree))
+        boolean hasOneParameterColumnOnly = simulationModel.maxNumberOfFullyDistinctPeriods() == 1
+        DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree), hasOneParameterColumnOnly)
         dialog.title = dialog.getText("title")
         dialog.okAction = {
             if (!validate(dialog.nameInput.text)) {
@@ -37,7 +38,8 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                 alert.show()
             } else {
                 try {
-                    def param = ParameterizationHelper.createDefaultParameterization(simulationModel, dialog.periodCount.value)
+                    int periodCount = hasOneParameterColumnOnly ? 1 : (Integer) dialog.periodCount.value
+                    def param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
                     param.name = dialog.nameInput.text
                     param.save()
                     param = ModellingItemFactory.getItem(param.dao, param.modelClass)

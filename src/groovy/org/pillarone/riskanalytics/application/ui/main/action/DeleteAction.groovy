@@ -11,6 +11,7 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -28,9 +29,13 @@ class DeleteAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        boolean usedInSimulation = false
         def selectedItem = getSelectedItem()
         if (!selectedItem) return
+        removeItem(selectedItem)
+    }
+
+    private void removeItem(ModellingItem selectedItem) {
+        boolean usedInSimulation = false
         if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
             usedInSimulation = selectedItem.isUsedInSimulation()
         }
@@ -42,8 +47,14 @@ class DeleteAction extends SelectionTreeAction {
             alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
             alert.show()
         }
-
     }
+
+    private void removeItem(BatchRun selectedItem) {
+        model.removeItem(selectedItem)
+    }
+
+    private void removeItem(def selectedItem) {}
+
 
     private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
         synchronized (item) {

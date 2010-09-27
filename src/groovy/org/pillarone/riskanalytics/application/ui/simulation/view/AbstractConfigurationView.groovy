@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationCo
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -164,18 +165,7 @@ abstract class AbstractConfigurationView implements ISimulationListener, ISimula
         if (exceptionMessage == null) {
             exceptionMessage = model.simulationException.class.name
         }
-        List words = exceptionMessage.split(" ") as List
-        StringBuffer text = new StringBuffer()
-        int lineLength = 0
-        for (String s in words) {
-            if (lineLength + s.length() > 70) {
-                text << "\n"
-                lineLength = 0
-            }
-            text << s + " "
-            lineLength += (s.length() + 1)
-        }
-        alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", text.toString(), "Ok")
+        alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", I18NUtils.getExceptionText(exceptionMessage), "Ok")
         alert.show()
     }
 
