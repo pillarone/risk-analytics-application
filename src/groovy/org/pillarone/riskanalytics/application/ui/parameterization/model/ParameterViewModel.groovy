@@ -42,7 +42,7 @@ class ParameterViewModel extends AbstractModellingModel {
         paramterTableTreeModel.simulationModel = model
         paramterTableTreeModel.addValueChangedListener(
                 [valueChanged: {Object node, int column -> item.changed = true}] as TableTreeValueChangedListener)
-        paramterTableTreeModel.readOnly = item.isUsedInSimulation()
+        paramterTableTreeModel.readOnly = !item.isEditable()
         return paramterTableTreeModel
     }
 

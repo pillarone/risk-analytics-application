@@ -47,7 +47,15 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
     }
 
     boolean isCellEditable(Object node, int columnIndex) {
-        readOnly ? false : node.isCellEditable(columnIndex)
+        if (readOnly) {
+            return false
+        }
+        List allEditablePaths = builder.item.allEditablePaths
+        if (allEditablePaths.size() == 0 || allEditablePaths.any { node.path.startsWith(it)}) {
+            return node.isCellEditable(columnIndex)
+        } else {
+            return false
+        }
     }
 
     public int getColumnCount() {

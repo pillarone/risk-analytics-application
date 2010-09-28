@@ -20,6 +20,7 @@ abstract class AbstractWorkflowCommentAction extends ExceptionSafeAction {
 
     final void doActionPerformed(ActionEvent event) {
         changeStatus(commentPane.comment)
+        commentPane.model.item.changed = true
         commentPane.updateUI()
     }
 

@@ -669,10 +669,10 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (model.currentItem) {
             runAction.enabled = !(model.currentItem instanceof Simulation)
             if (model.currentItem instanceof Parameterization || model.currentItem instanceof ResultConfiguration) {
-                if (model.currentItem.isUsedInSimulation()) {
-                    lockedLabel.icon = UIUtils.getIcon("locked-active.png")
-                } else {
+                if (model.currentItem.isEditable()) {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")
+                } else {
+                    lockedLabel.icon = UIUtils.getIcon("locked-active.png")
                 }
             } else {
                 lockedLabel.icon = UIUtils.getIcon("clear.png")

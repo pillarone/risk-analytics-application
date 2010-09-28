@@ -339,7 +339,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         synchronized (item) {
             item.daoClass.withTransaction {status ->
                 boolean usedInSimulation = item.isUsedInSimulation()
-                if (!usedInSimulation) {
+                if (!usedInSimulation || !item.newVersionAllowed()) {
                     item.load()
                     notifyOpenDetailView(model, item)
                 } else {

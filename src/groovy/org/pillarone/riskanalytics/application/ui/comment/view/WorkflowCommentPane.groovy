@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeActio
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ReopenWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ResolveWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class WorkflowCommentPane extends CommentPane {
 
@@ -125,7 +126,16 @@ class WorkflowCommentPane extends CommentPane {
     }
 
     public void updateUI() {
+        setEnabled(actionsEnabled())
         getUIStates().get(new StatusIdentifier(status: getStatus(), role: getUserRole())).call()
+    }
+
+    public void setEnabled(boolean enabled) {
+        reOpenButton.enabled = enabled
+        resolveButton.enabled = enabled
+        closeButton.enabled = enabled
+        editButton.enabled = enabled
+        deleteButton.enabled = enabled
     }
 
     private String getUserRole() {
@@ -142,6 +152,11 @@ class WorkflowCommentPane extends CommentPane {
 
     private IssueStatus getStatus() {
         getWorkflowComment().status
+    }
+
+    protected boolean actionsEnabled() {
+        Parameterization parameterization = model.item as Parameterization
+        return parameterization.status != org.pillarone.riskanalytics.core.workflow.Status.REJECTED
     }
 
 

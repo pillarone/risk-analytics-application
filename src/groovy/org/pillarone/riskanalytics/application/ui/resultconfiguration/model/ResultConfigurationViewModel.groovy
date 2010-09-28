@@ -26,7 +26,7 @@ class ResultConfigurationViewModel extends AbstractModellingModel {
         periodCount = 1
         tableTreeModel = new ResultConfigurationTableTreeModel(treeRoot, 1 + periodCount)
         tableTreeModel.addValueChangedListener([valueChanged: {Object node, int column -> item.changed = true}] as TableTreeValueChangedListener)
-        tableTreeModel.readOnly = item.isUsedInSimulation()
+        tableTreeModel.readOnly = !item.isEditable()
 
         return tableTreeModel
     }

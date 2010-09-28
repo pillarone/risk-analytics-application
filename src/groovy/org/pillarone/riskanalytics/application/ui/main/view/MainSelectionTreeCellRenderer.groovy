@@ -216,7 +216,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     void setToolTip(ULCComponent component, ParameterizationNode node) {
-        component.setToolTipText String.valueOf("")
+        component.setToolTipText node.item.status == Status.NONE ? String.valueOf("") : node.item.status.displayName
     }
 
     void setToolTip(ULCComponent component, ResultConfigurationNode node) {
