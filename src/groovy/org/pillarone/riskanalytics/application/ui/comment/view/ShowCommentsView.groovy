@@ -30,6 +30,7 @@ class ShowCommentsView implements ChangedCommentListener {
 
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
         comments = getAllComments()
+        order("lastChange", "desc")
         addComments(comments)
         model.commentsChanged(allComments)
     }
