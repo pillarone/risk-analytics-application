@@ -73,10 +73,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         tree.viewPortTableTree.addActionListener(new MultiDimensionalTabStarter(this))
 
 
-        model.treeModel.root.childCount.times {
-            tree.expandPath new TreePath([model.treeModel.root, model.treeModel.root.getChildAt(it)] as Object[])
-        }
-
+        tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
         new SelectionTracker(tree)
     }
 
