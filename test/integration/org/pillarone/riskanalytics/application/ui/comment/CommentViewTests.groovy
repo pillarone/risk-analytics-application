@@ -53,6 +53,10 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         frame.visible = true
     }
 
+    private void resetParameterization() {
+        parameterization = null
+    }
+
     void testShowAllComments() {
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
@@ -63,23 +67,23 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
 
         ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
         ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "show comments")
         assertNotNull expandItem
         expandItem.clickMouse()
 
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
-
+        resetParameterization()
     }
 
     void testAddNewComment() {
-        assertEquals parameterization.comments.size(), 0
+        assertEquals 0, parameterization.comments.size()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -89,15 +93,15 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
 
         ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
         ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "Add comment")
         assertNotNull expandItem
         expandItem.clickMouse()
 
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))
         assertNotNull textAreaOperator
@@ -108,10 +112,11 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         buttonOperator.getFocus()
         buttonOperator.clickMouse()
 
-        assertEquals parameterization.comments.size(), 1
-        assertEquals parameterization.comments.get(0).text, 'Comment'
+        assertEquals 1, parameterization.comments.size()
+        assertEquals 'Comment', parameterization.comments.get(0).text
         println parameterization.comments.get(0).path
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
+        resetParameterization()
     }
 
     void testCancelAddNewComment() {
@@ -125,15 +130,15 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
 
         ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
         ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "Add comment")
         assertNotNull expandItem
         expandItem.clickMouse()
 
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))
         assertNotNull textAreaOperator
@@ -144,8 +149,9 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         buttonOperator.getFocus()
         buttonOperator.clickMouse()
 
-        assertEquals parameterization.comments.size(), 0
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 0, parameterization.comments.size()
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
+        resetParameterization()
     }
 
 
@@ -160,15 +166,15 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
 
         ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
         ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "show comments")
         assertNotNull expandItem
         expandItem.clickMouse()
 
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
@@ -178,8 +184,8 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         buttonOperator.getFocus()
         buttonOperator.clickMouse()
 
-        assertEquals tabbedPaneOperator.getComponentCount(), 3
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 2
+        assertEquals 3, tabbedPaneOperator.getComponentCount()
+        assertEquals 2, tabbedPaneOperator.getSelectedIndex()
 
         ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))
         assertNotNull textAreaOperator
@@ -190,14 +196,15 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         updateOperator.getFocus()
         updateOperator.clickMouse()
 
-        assertEquals parameterization.comments.size(), 1
-        assertEquals parameterization.comments.get(0).text, 'newComment'
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
+        assertEquals 1, parameterization.comments.size()
+        assertEquals 'newComment', parameterization.comments.get(0).text
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        resetParameterization()
     }
 
     void testDeleteComment() {
         parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
-        assertEquals parameterization.comments.size(), 1
+        assertEquals 1, parameterization.comments.size()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -207,15 +214,15 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
-        assertEquals tabbedPaneOperator.getComponentCount(), 1
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
 
         ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
         ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "show comments")
         assertNotNull expandItem
         expandItem.clickMouse()
 
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
@@ -225,9 +232,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         buttonOperator.getFocus()
         buttonOperator.clickMouse()
 
-        assertEquals parameterization.comments.size(), 0
-
+        assertEquals 0, parameterization.comments.size()
+        resetParameterization()
     }
-
-
 }
