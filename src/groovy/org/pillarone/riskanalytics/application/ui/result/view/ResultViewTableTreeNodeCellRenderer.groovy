@@ -6,6 +6,7 @@ import com.ulcjava.base.application.event.IPopupMenuListener
 import com.ulcjava.base.application.event.PopupMenuEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
+import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
@@ -70,10 +71,12 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         resultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         nodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
+        nodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
         nodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         nodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         nodeHelpPopup.add(new ULCMenuItem(new TreeExpander(tree)))
+        nodeHelpPopup.add(new ULCMenuItem(new TreeCollapser(tree)))
         nodeHelpPopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         nodeHelpPopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
         nodeHelpPopup.addSeparator()

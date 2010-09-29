@@ -12,6 +12,7 @@ import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
@@ -254,6 +255,7 @@ class CompareResultsTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         this.tree = tree;
         nodePopup = new ULCPopupMenu()
         nodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
+        nodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
     }
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
