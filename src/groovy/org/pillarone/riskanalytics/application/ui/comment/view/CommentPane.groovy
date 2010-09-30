@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.*
@@ -78,7 +79,7 @@ class CommentPane {
 
     String getTagsValue() {
         int size = comment.getTags().size()
-        StringBuilder sb = new StringBuilder("Tags: ")
+        StringBuilder sb = new StringBuilder(UIUtils.getText(this.class, "Tags") + ":")
         comment.getTags().eachWithIndex {Tag tag, int index ->
             sb.append(tag.getName())
             if (index < size - 1)
@@ -90,7 +91,7 @@ class CommentPane {
     String getTitle() {
         String username = comment.user ? comment.user.userRealName : ""
         StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
-        sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " for all periods")
+        sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
         sb.append(" " + username)
         sb.append(" " + simpleDateFormat.format(comment.lastChange))
         return sb.toString()

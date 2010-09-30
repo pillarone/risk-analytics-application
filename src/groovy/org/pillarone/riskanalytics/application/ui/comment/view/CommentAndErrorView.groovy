@@ -50,7 +50,7 @@ class CommentAndErrorView implements CommentListener {
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, view.container)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, result.container)
-        tabbedPane.addTab("Validations and comments", new ULCScrollPane(content))
+        tabbedPane.addTab(UIUtils.getText(this.class, "ValidationsAndComments"), new ULCScrollPane(content))
         tabbedPane.setCloseableTab(0, false)
     }
 
@@ -79,7 +79,7 @@ class CommentAndErrorView implements CommentListener {
         NewCommentView view = new NewCommentView(this, path, periodIndex)
         openItems[view.content] = view
         String tabTitle = getDisplayName(model, path)
-        tabTitle += ((periodIndex == -1) ? " for all periods" : " P" + periodIndex)
+        tabTitle += ((periodIndex == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + periodIndex)
         int index = tabbedPane.indexOfTab(tabTitle)
         if (index >= 0) {
             tabbedPane.selectedIndex = index
@@ -101,7 +101,7 @@ class CommentAndErrorView implements CommentListener {
             EditCommentView view = new EditCommentView(this, comment)
             openItems[view.content] = view
             String tabTitle = getDisplayName(model, comment.path)
-            tabTitle += ((comment.period == -1) ? " for all periods" : " P" + comment.period)
+            tabTitle += ((comment.period == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + comment.period)
             tabbedPane.addTab(tabTitle, view.content)
             tabbedPane.setCloseableTab(tabIndex, true)
             tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, comment.path))
@@ -111,8 +111,8 @@ class CommentAndErrorView implements CommentListener {
     }
 
     public void showCommentsView(String path, int periodIndex) {
-        String tabTitle = path ? getDisplayName(model, path) : "Comments"
-        int index = getTabIndex(null, path, "Comments")
+        String tabTitle = path ? getDisplayName(model, path) : UIUtils.getText(CommentSearchPane.class, "comments")
+        int index = getTabIndex(null, path, UIUtils.getText(CommentSearchPane.class, "comments"))
         if (index >= 0 && (!path || tabbedPane.getToolTipTextAt(index) == getDisplayPath(model, path))) {
             tabbedPane.selectedIndex = index
         } else {
@@ -128,7 +128,7 @@ class CommentAndErrorView implements CommentListener {
     }
 
     public void showErrorsView() {
-        String tabTitle = "Validations"
+        String tabTitle = UIUtils.getText(this.class, "Validations")
         int index = tabbedPane.indexOfTab(tabTitle)
         if (index >= 0) {
             tabbedPane.selectedIndex = index

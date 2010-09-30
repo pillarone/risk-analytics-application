@@ -70,7 +70,7 @@ class CommentSearchPane {
         orderByLabel = new ULCLabel(UIUtils.getText(this.class, "orderBy"))
         orderByComboBoxModel = new MapComboBoxModel(["lastChange", "path", "user"])
         orderByComboBox = new ULCComboBox(orderByComboBoxModel)
-        orderComboBoxModel = new MapComboBoxModel(["asc", "desc"])
+        orderComboBoxModel = new MapComboBoxModel(["desc", "asc"])
         orderComboBox = new ULCComboBox(orderComboBoxModel)
     }
 

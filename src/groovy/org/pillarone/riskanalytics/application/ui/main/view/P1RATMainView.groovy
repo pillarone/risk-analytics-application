@@ -1,10 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-
-import org.pillarone.riskanalytics.core.simulation.item.*
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -19,6 +14,7 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
@@ -40,9 +36,13 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -123,11 +123,11 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         splitPane.setRightComponent(modelPane)
 
         ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)
-        ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(new ToggleSplitPaneAction(splitPane, "Navigation"))
+        ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(new ToggleSplitPaneAction(splitPane, UIUtils.getText(this.class, "Navigation")))
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, navigationSwitchButton);
 
-        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(new CommentsSwitchAction(model, "Validations and comments", false))
+        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(new CommentsSwitchAction(model, UIUtils.getText(this.class, "ValidationsAndComments"), false))
         validationSwitchButton.selected = false
         validationSwitchButton.setEnabled false
         model.switchActions << validationSwitchButton
@@ -182,10 +182,13 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)
         fileMenu.addSeparator()
-        fileMenu.add(exportAllItemsNewstVersion)
-        fileMenu.add(exportAllItems)
-        fileMenu.add(importAllItems)
-        fileMenu.addSeparator()
+        if (UserContext.isStandAlone()) {
+            fileMenu.add(exportAllItemsNewstVersion)
+            fileMenu.add(exportAllItems)
+            fileMenu.add(importAllItems)
+            fileMenu.addSeparator()
+        }
+
         ULCMenuItem exitItem = new ULCMenuItem(new ExitAction())
         exitItem.mnemonic = 'X'
         fileMenu.add(exitItem)

@@ -146,7 +146,7 @@ abstract class ExportAction extends SelectionTreeAction {
                         }
                         IConfigObjectWriter writer = item.getWriter()
                         String selectedFile = getFileName(itemCount, filePaths, item)
-                        LOG.info " selectedFile : $selectedFile"
+                        LOG.info " selectedFile : $selectedFile "
                         ClientContext.storeFile([prepareFile: {OutputStream stream ->
                             try {
                                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
@@ -179,7 +179,7 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     String getFileName(int itemCount, filePaths, ModellingItem item) {
-        String selectedFile = itemCount > 1 ? "${filePaths[0]}/${item.name}.groovy" : filePaths[0]
+        String selectedFile = itemCount > 1 ? "${filePaths[0]}${getFileSeparator()}${item.name}.groovy" : filePaths[0]
         return validateFileName(selectedFile)
     }
 
@@ -221,7 +221,8 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     static String validateFileName(String filename) {
-        def arr = filename.split(Pattern.quote(File.separator))
+        String separator = getFileSeparator()
+        def arr = filename.split(Pattern.quote(separator))
         def pattern = ~/[^\w.]/
         arr[arr.size() - 1] = pattern.matcher(arr[arr.size() - 1]).replaceAll("")
 
@@ -229,8 +230,12 @@ abstract class ExportAction extends SelectionTreeAction {
         arr.eachWithIndex {String p, int index ->
             filename += p
             if (index != arr.size() - 1)
-                filename += File.separator
+                filename += separator
         }
         return filename
+    }
+
+    static String getFileSeparator() {
+        return ClientContext.getSystemProperty("file.separator")
     }
 }

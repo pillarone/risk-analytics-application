@@ -58,17 +58,17 @@ class NewCommentView {
         tags.setVisibleRowCount(6);
         tags.setMinimumSize(new Dimension(100, 160))
 
-        addButton = new ULCButton("Apply")
+        addButton = new ULCButton(UIUtils.getText(NewCommentView.class, "Apply"))
         addButton.name = "saveNewComment"
         addButton.setPreferredSize(dimension)
 
-        cancelButton = new ULCButton("Cancel")
+        cancelButton = new ULCButton(UIUtils.getText(NewCommentView.class, "Cancel"))
         cancelButton.name = "cancelComment"
         cancelButton.setPreferredSize(dimension)
         content = new ULCBoxPane(3, 3)
         content.setPreferredSize(new Dimension(400, 160))
         content.setMinimumSize(new Dimension(400, 160))
-        String borderTitle = getDisplayPath() + ((periodIndex == -1) ? " for all periods" : " P" + periodIndex)
+        String borderTitle = getDisplayPath() + ((periodIndex == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + periodIndex)
         final ULCTitledBorder border = BorderFactory.createTitledBorder(borderTitle);
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
         content.setBorder(border);
