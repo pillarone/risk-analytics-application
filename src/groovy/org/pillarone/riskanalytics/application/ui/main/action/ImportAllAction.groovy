@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 

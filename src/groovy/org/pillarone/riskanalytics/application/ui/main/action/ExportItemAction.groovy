@@ -1,10 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTree
 import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.event.IWindowListener
-import com.ulcjava.base.application.event.WindowEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -21,25 +18,26 @@ class ExportItemAction extends ExportAction {
 
 
     public void doActionPerformed(ActionEvent event) {
-        doAction(getSelectedItem())
+        def selectedItem = getSelectedItem()
+        if (selectedItem.class)
+            doAction(getSelectedObjects(selectedItem.class)?.collect {it.item})
     }
 
-    protected void doAction(ModellingItem item) {
-        if (item.changed) {
-            ULCAlert alert = new I18NAlert("UnsavedExport")
 
-            alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
-                def value = windowEvent.source.value
-                if (value.equals(alert.firstButtonLabel)) {
-                    item.save()
-                    exportItems([item])
-                }
-            }] as IWindowListener)
-
-            alert.show()
+    protected void doAction(List<ModellingItem> items) {
+        if (atLeastOneItemChanged(items)) {
+            new I18NAlert("UnsavedExport").show()
         } else {
-            exportItems([item])
+            exportItems(items)
         }
+    }
+
+    private boolean atLeastOneItemChanged(List<ModellingItem> items) {
+        for (Object item: items) {
+            if (item.changed)
+                return true
+        }
+        return false
     }
 
     protected void doAction(Simulation item) {

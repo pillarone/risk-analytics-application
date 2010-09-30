@@ -6,6 +6,7 @@ import com.ulcjava.base.application.tree.DefaultTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.action.GenerateReportAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
@@ -73,7 +74,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         simulationNodePopUpMenu.add(reportsMenu)
 
         groupNodePopUpMenu = new ULCPopupMenu()
-        groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
+        if (UserContext.isStandAlone())
+            groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
@@ -81,18 +83,22 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllResultTemplates")))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
+        if (UserContext.isStandAlone()) {
+            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
+            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
+        }
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model, "importAllFromDir")))
+        if (UserContext.isStandAlone())
+            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model, "importAllFromDir")))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, model)))
         parameterGroupNodePopUpMenu.addSeparator()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllParameters")))
 
         simulationGroupNodePopUpMenu = new ULCPopupMenu()
-        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
+        if (UserContext.isStandAlone())
+            simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
         simulationGroupNodePopUpMenu.addSeparator()
         simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllSimulations")))
 

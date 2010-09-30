@@ -14,6 +14,7 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
@@ -181,10 +182,13 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)
         fileMenu.addSeparator()
-        fileMenu.add(exportAllItemsNewstVersion)
-        fileMenu.add(exportAllItems)
-        fileMenu.add(importAllItems)
-        fileMenu.addSeparator()
+        if (UserContext.isStandAlone()) {
+            fileMenu.add(exportAllItemsNewstVersion)
+            fileMenu.add(exportAllItems)
+            fileMenu.add(importAllItems)
+            fileMenu.addSeparator()
+        }
+
         ULCMenuItem exitItem = new ULCMenuItem(new ExitAction())
         exitItem.mnemonic = 'X'
         fileMenu.add(exitItem)
