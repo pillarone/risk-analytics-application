@@ -6,6 +6,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.output.structure.DefaultResultStructureBuilder
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
@@ -63,8 +64,7 @@ class ResultStructureImportService extends FileImportService {
 
     protected boolean saveItemObject(String fileContent) {
         Map<String, String> mappings = currentConfigObject.mappings
-
-        ResultStructure resultStructure = new ResultStructure(currentConfigObject.displayName, currentConfigObject.model)
+        ResultStructure resultStructure = new ResultStructure(currentConfigObject.displayName, currentConfigObject.model, getLanguage())
         resultStructure.mappings = mappings
 
         if (!resultStructure.save()) {
@@ -77,13 +77,22 @@ class ResultStructureImportService extends FileImportService {
 
     protected boolean lookUpItem(String itemName) {
         String modelName = getModelClassName()
-        boolean status = getDaoClass().findByNameAndModelClassName(itemName, modelName) != null
-        return status
+        def structures = getDaoClass().findAllByNameAndModelClassName(itemName, modelName).collect {it.language == getLanguage()}
+        return structures?.size() != 0
     }
 
     String getModelClassName() {
         return currentConfigObject.get("model").name
     }
 
+    private String getLanguage() {
+        String lang = null
+        try {
+            lang = currentConfigObject.language
+        } catch (Exception ex) {
+            lang = LocaleResources.getLanguage()
+        }
+        return lang
+    }
 
 }

@@ -3,9 +3,21 @@ package org.pillarone.riskanalytics.application.output.structure
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class ResultStructureTreeBuilderTests extends GroovyTestCase {
+
+    protected void setUp() {
+        super.setUp();
+        LocaleResources.setTestMode()
+    }
+
+    protected void tearDown() {
+        super.tearDown();
+        LocaleResources.clearTestMode()
+    }
+
+
 
     void testPaths() {
         ResultStructure resultStructure = new ResultStructure("name")

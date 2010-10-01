@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -10,8 +13,6 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ModellingItemFactory {
 
@@ -209,7 +210,7 @@ class ModellingItemFactory {
     }
 
     static List getResultStructuresForModel(Class modelClass) {
-        ResultStructureDAO.findAllByModelClassName(modelClass.name).collect {
+        ResultStructureDAO.findAllByModelClassNameAndLanguage(modelClass.name, LocaleResources.getLanguage()).collect {
             getItem(it)
         }
     }
@@ -324,6 +325,9 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
+        List comments = item?.comments?.collect {it.clone()}
+        comments?.each {newItem.addComment(it)}
+
         newItem.periodCount = item.periodCount
         newItem.periodLabels = item.periodLabels
         newItem.modelClass = item.modelClass

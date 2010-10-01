@@ -1,41 +1,35 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
 
-import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
-import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCComboBoxOperator
-import com.ulcjava.testframework.operator.ULCDialogOperator
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCMenuItemOperator
-import com.ulcjava.testframework.operator.ULCPopupMenuOperator
-import com.ulcjava.testframework.operator.ULCTabbedPaneOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import com.ulcjava.testframework.operator.ULCTextAreaOperator
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
 import java.awt.event.InputEvent
 import java.text.DecimalFormat
-import models.core.CoreModel
 
-import org.pillarone.riskanalytics.core.ModelStructureDAO
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.output.DBCleanUpService
+import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import com.ulcjava.base.application.ULCFrame
+import com.ulcjava.base.application.event.KeyEvent
+import models.core.CoreModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.ModelStructureDAO
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.output.DBCleanUpService
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import com.ulcjava.testframework.operator.*
 
 class ParameterViewTests extends AbstractSimpleFunctionalTest {
 
     Parameterization parameterization
 
     protected void doStart() {
+        LocaleResources.setTestMode()
         new DBCleanUpService().cleanUp()
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])

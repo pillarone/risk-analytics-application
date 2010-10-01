@@ -3,8 +3,8 @@ package models.application
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 
 model = ApplicationModel
-displayName = ResultStructureImportService.DEFAULT_NAME
-language = "en"
+displayName = "de: " + ResultStructureImportService.DEFAULT_NAME
+language = "de"
 
 mappings = [
         "Application:dynamicComponent:[%subcomponents%]:outSecondValue:value": "Application:dynamicComponent:[%subcomponents%]:outSecondValue:value",
