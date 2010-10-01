@@ -42,7 +42,7 @@ class CommentSearchPane {
         this.errorsView = errorsView
         this.resultView = resultView
         this.resultView.setVisible false
-        this.commentSearchBean = new CommentSearchBean(this.model.item.comments)
+        this.commentSearchBean = new CommentSearchBean(this.model.item)
         initComponents()
         layoutComponents()
         attachListeners()
@@ -135,6 +135,8 @@ class CommentSearchPane {
         clearButton.addActionListener([actionPerformed: {ActionEvent event ->
             searchText.setText(UIUtils.getText(this.class, "initialText"))
             searchText.setForeground Color.gray
+            commentsView.setVisible(true)
+            resultView.setVisible(false)
         }] as IActionListener)
 
     }

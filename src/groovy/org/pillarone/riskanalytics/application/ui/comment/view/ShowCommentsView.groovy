@@ -61,7 +61,9 @@ class ShowCommentsView implements ChangedCommentListener {
         } else {
             ULCLabel label = new ULCLabel(UIUtils.getText(this.class, "noComment"))
             label.name = "noComment"
-            container.add(ULCBoxPane.BOX_LEFT_TOP, UIUtils.spaceAround(label, 2, 10, 0, 0))
+            ULCBoxPane around = UIUtils.spaceAround(label, 2, 10, 0, 0)
+            around.setBackground(Color.white)
+            container.add(ULCBoxPane.BOX_LEFT_TOP, around)
         }
 
         container.add(ULCBoxPane.BOX_EXPAND_EXPAND, ULCFiller.createVerticalGlue());
