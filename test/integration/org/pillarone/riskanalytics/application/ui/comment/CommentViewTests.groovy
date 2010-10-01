@@ -53,8 +53,16 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         frame.visible = true
     }
 
-    private void resetParameterization() {
-        parameterization = null
+    private void clearComments() {
+        if (parameterization) {
+            def removedComments = []
+            parameterization.comments.each {
+                removedComments << it
+            }
+            removedComments.each {
+                parameterization.removeComment it
+            }
+        }
     }
 
     void testShowAllComments() {
@@ -79,7 +87,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
-        resetParameterization()
+        clearComments()
     }
 
     void testAddNewComment() {
@@ -116,7 +124,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 'Comment', parameterization.comments.get(0).text
         println parameterization.comments.get(0).path
         assertEquals 1, tabbedPaneOperator.getComponentCount()
-        resetParameterization()
+        clearComments()
     }
 
     void testCancelAddNewComment() {
@@ -151,7 +159,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         assertEquals 0, parameterization.comments.size()
         assertEquals 1, tabbedPaneOperator.getComponentCount()
-        resetParameterization()
+        clearComments()
     }
 
 
@@ -199,7 +207,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 1, parameterization.comments.size()
         assertEquals 'newComment', parameterization.comments.get(0).text
         assertEquals 2, tabbedPaneOperator.getComponentCount()
-        resetParameterization()
+        clearComments()
     }
 
     void testDeleteComment() {
@@ -233,6 +241,6 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         buttonOperator.clickMouse()
 
         assertEquals 0, parameterization.comments.size()
-        resetParameterization()
+        clearComments()
     }
 }
