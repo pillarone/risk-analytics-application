@@ -6,18 +6,19 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 
 class ResultStructureTreeBuilder {
 
     private Class modelClass
     private Simulation simulation
     private ResultStructure resultStructure
-    private List<String> allPaths
+    private Map<String, ICollectingModeStrategy> allPaths
 
     Map<String, String> transformedPaths = [:]
 
 
-    public ResultStructureTreeBuilder(List<String> allPaths, Class modelClass, ResultStructure resultStructure, Simulation simulation) {
+    public ResultStructureTreeBuilder(Map<String, ICollectingModeStrategy> allPaths, Class modelClass, ResultStructure resultStructure, Simulation simulation) {
         this.allPaths = allPaths;
         this.modelClass = modelClass;
         this.resultStructure = resultStructure;
@@ -33,13 +34,13 @@ class ResultStructureTreeBuilder {
 
             //non dynamic path
             if (!fromPath.contains("[%")) {
-                if (allPaths.contains(fromPath)) {
+                if (allPaths.keySet().contains(fromPath)) {
                     transformedPaths.put(toPath, fromPath)
                 }
             } else {
                 String toPattern = fromPath.replaceAll("\\[%.*?%\\]", "(.*)")
 
-                Collection matchingPaths = allPaths.findAll { it ==~ toPattern && it.count(":") == toPattern.count(":")}
+                Collection matchingPaths = allPaths.keySet().findAll { it ==~ toPattern && it.count(":") == toPattern.count(":")}
                 for (String path in matchingPaths) {
                     def toMatcher = path =~ toPattern
                     def fromMatcher = fromPath =~ toPattern
@@ -77,6 +78,7 @@ class ResultStructureTreeBuilder {
                 } else {
                     temp = new ResultTableTreeNode(node)
                     temp.resultPath = resultPath
+                    temp.collector = allPaths.get(resultPath).getIdentifier()
                 }
                 root.add(temp)
             }

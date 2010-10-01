@@ -61,10 +61,15 @@ class LocaleResources {
                 }
             }
             if (locale == null) {
-                locale = ClientContext.getLocale()
-                if (locale == null) {
+                try {
+                    locale = ClientContext.getLocale()
+                    if (locale == null) {
+                        locale = new Locale("en", "US")
+                    }
+                } catch (Exception e) {
                     locale = new Locale("en", "US")
                 }
+
                 UserContext.setAttribute(LOCALE, locale)
             }
             Locale.setDefault(locale)

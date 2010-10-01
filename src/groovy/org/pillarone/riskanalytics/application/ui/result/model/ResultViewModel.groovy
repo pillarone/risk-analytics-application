@@ -23,6 +23,8 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 
 class ResultViewModel extends AbstractModellingModel {
 
@@ -71,7 +73,7 @@ class ResultViewModel extends AbstractModellingModel {
             }
 
             resultStructure.load()
-            builder = new ResultStructureTreeBuilder(paths.toList(), modelClass, resultStructure, item)
+            builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)
 
             treeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
@@ -108,6 +110,21 @@ class ResultViewModel extends AbstractModellingModel {
         }
 
         return results
+    }
+
+    private Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
+        Map<String, ICollectingModeStrategy> result = [:]
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
+                " WHERE p.run.id = ?", [simulationRun.id])
+        for (Object[] psc in calculations) {
+            String path = "${psc[0]}:${psc[1]}"
+            String collector = psc[2]
+            if(allPaths.contains(path)) {
+                result.put(path, CollectingModeFactory.getStrategy(collector))
+            }
+        }
+
+        return result
     }
 
     private ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
