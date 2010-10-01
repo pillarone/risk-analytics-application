@@ -15,6 +15,10 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.application.dataaccess.function.Mean
+import org.pillarone.riskanalytics.application.dataaccess.function.Min
+import org.pillarone.riskanalytics.application.dataaccess.function.Max
+import com.ulcjava.base.application.tabletree.ITableTreeModel
 
 
 class ResultViewModelTests extends GroovyTestCase {
@@ -82,5 +86,40 @@ class ResultViewModelTests extends GroovyTestCase {
         assertEquals 2, resultViewModel.builder.allPaths.size()
         assertTrue resultViewModel.builder.allPaths.contains(path1.pathName)
         assertTrue resultViewModel.builder.allPaths.contains(path2.pathName)
+    }
+
+    void testFunctions() {
+        Simulation simulation = new Simulation("testRun")
+        simulation.load()
+
+        Model model = new ApplicationModel()
+
+        ResultViewModel resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
+
+        Max max = new Max()
+        Min min = new Min()
+
+        def treeModel = resultViewModel.treeModel
+        assertEquals 3, treeModel.functions.size() //node name + 2 * mean
+
+        resultViewModel.addFunction(max)
+        assertEquals 5, treeModel.functions.size()
+        assertSame max, treeModel.functions[3]
+        assertSame max, treeModel.functions[4]
+
+        resultViewModel.addFunction(min)
+        assertEquals 7, treeModel.functions.size()
+        assertSame min, treeModel.functions[5]
+        assertSame min, treeModel.functions[6]
+
+        resultViewModel.removeFunction(max)
+        assertEquals 7, treeModel.functions.size()
+        assertSame null, treeModel.functions[3]
+        assertSame null, treeModel.functions[4]
+
+        resultViewModel.addFunction(max)
+        assertEquals 9, treeModel.functions.size()
+        assertSame max, treeModel.functions[7]
+        assertSame max, treeModel.functions[8]
     }
 }
