@@ -307,15 +307,20 @@ public class I18NUtils {
         String text = null
         def keys = null
         try {
+            exception = exception.replaceAll("\n", "")
             for (ResourceBundle resourceBundle: exceptionResourceBundle) {
                 keys = (List) new GroovyShell().evaluate(exception)
-                text = resourceBundle.getString(keys[0])
-                keys.eachWithIndex {String key, int index ->
-                    if (index > 0) {
-                        text = text.replace("[" + index + "]", key)
+                try {
+                    text = resourceBundle.getString(keys[0])
+                } catch (Exception ex) {}
+                if (text) {
+                    keys.eachWithIndex {String key, int index ->
+                        if (index > 0) {
+                            text = text.replace("[" + index + "]", key)
+                        }
                     }
+                    return text;
                 }
-                if (text) break;
             }
         } catch (Exception ex) {  /*ignore the exception*/}
         return text;
