@@ -54,15 +54,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
     }
 
     private void clearComments() {
-        if (parameterization) {
-            def removedComments = []
-            parameterization.comments.each {
-                removedComments << it
-            }
-            removedComments.each {
-                parameterization.removeComment it
-            }
-        }
+        parameterization?.comments?.clear()
     }
 
     void testShowAllComments() {
