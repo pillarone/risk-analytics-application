@@ -66,6 +66,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
     }
 
     void testShowAllComments() {
+        clearComments()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -87,10 +88,10 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
-        clearComments()
     }
 
     void testAddNewComment() {
+        clearComments()
         assertEquals 0, parameterization.comments.size()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
@@ -124,10 +125,11 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 'Comment', parameterization.comments.get(0).text
         println parameterization.comments.get(0).path
         assertEquals 1, tabbedPaneOperator.getComponentCount()
-        clearComments()
+
     }
 
     void testCancelAddNewComment() {
+        clearComments()
         assertEquals parameterization.comments.size(), 0
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
@@ -159,11 +161,12 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         assertEquals 0, parameterization.comments.size()
         assertEquals 1, tabbedPaneOperator.getComponentCount()
-        clearComments()
+
     }
 
 
     void testEditComment() {
+        clearComments()
         parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
@@ -207,10 +210,11 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 1, parameterization.comments.size()
         assertEquals 'newComment', parameterization.comments.get(0).text
         assertEquals 2, tabbedPaneOperator.getComponentCount()
-        clearComments()
+
     }
 
     void testDeleteComment() {
+        clearComments()
         parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
         assertEquals 1, parameterization.comments.size()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
@@ -241,6 +245,5 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         buttonOperator.clickMouse()
 
         assertEquals 0, parameterization.comments.size()
-        clearComments()
     }
 }
