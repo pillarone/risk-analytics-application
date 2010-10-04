@@ -139,7 +139,7 @@ abstract class ExportAction extends SelectionTreeAction {
         ULCWindow ancestor = getAncestor()
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
-                    userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
+                    userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, getFolderName(itemCount, filePaths))
                     items.each {ModellingItem item ->
                         if (!item.isLoaded()) {
                             item.load()
@@ -180,6 +180,11 @@ abstract class ExportAction extends SelectionTreeAction {
 
     String getFileName(int itemCount, filePaths, ModellingItem item) {
         String selectedFile = itemCount > 1 ? "${filePaths[0]}${getFileSeparator()}${item.name}.groovy" : filePaths[0]
+        return validateFileName(selectedFile)
+    }
+
+    String getFolderName(int itemCount, filePaths) {
+        String selectedFile = itemCount > 1 ? "${filePaths[0]}" : filePaths[0].substring(0, filePaths[0].lastIndexOf(getFileSeparator()))
         return validateFileName(selectedFile)
     }
 
