@@ -154,6 +154,7 @@ class ParameterizationTreeBuilder {
                     //new dynamic subcomponent
                     List parameters = []
                     periodCount.times {int periodIndex ->
+                        if (value instanceof Cloneable) value = value.clone()
                         ParameterHolder holder = ParameterHolderFactory.getHolder("${buildParameterPath(componentNode)}:$name", periodIndex, value)
                         item.addParameter(holder)
                         parameters << holder

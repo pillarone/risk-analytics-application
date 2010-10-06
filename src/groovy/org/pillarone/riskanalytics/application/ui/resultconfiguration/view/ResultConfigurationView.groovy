@@ -4,27 +4,19 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.ULCLabel
-import com.ulcjava.base.application.ULCTabbedPane
-import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeCellEditor
 import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
-import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
-import org.pillarone.riskanalytics.application.ui.base.view.DelegatingCellEditor
-import org.pillarone.riskanalytics.application.ui.base.view.DelegatingCellRenderer
-import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
-import org.pillarone.riskanalytics.application.ui.base.view.PropertiesView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ComboBoxCellComponent
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resulttemplate.view.ResultConfigurationTableTreeNodeRenderer
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.base.view.*
 
 class ResultConfigurationView extends AbstractModellingTreeView implements IModelItemChangeListener {
 
@@ -114,4 +106,11 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
     public void modelItemChanged() {
         propertiesView.updateGui()
     }
+
+    public void removeTabs() {
+        int count = tabbedPane.getTabCount()
+        for (int i = 2; i < count; i++)
+            tabbedPane.closeCloseableTab(i)
+    }
+
 }

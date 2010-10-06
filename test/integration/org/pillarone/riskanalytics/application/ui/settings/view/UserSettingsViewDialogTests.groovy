@@ -72,9 +72,7 @@ public class UserSettingsViewDialogTests extends AbstractSimpleFunctionalTest {
     private Person createUser() {
         Person user = new Person()
         user.username = "testUser2"
-        user.userRealName = "last"
-        user.email = "email@pillarone.com"
-        user.passwd = "123456"
+        user.password = "123456"
         user.settings = new UserSettings(language: "en")
         return user
     }

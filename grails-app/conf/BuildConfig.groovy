@@ -1,13 +1,42 @@
+import org.apache.ivy.plugins.resolver.URLResolver
+import org.apache.ivy.plugins.resolver.FileSystemResolver
+
 //Use a custom plugins dir, because different branches use different plugin versions
 grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-kti"
 
-grails.plugin.repos.discovery.pillarone = "https://readplugins:readplugins@svn.intuitive-collaboration.com/GrailsPlugins/"
+grails.project.dependency.resolution = {
+    inherits "global" // inherit Grails' default dependencies
+    log "warn"
 
-grails.plugin.repos.resolveOrder = ['pillarone', 'default', 'core']
+    repositories {
+        grailsHome()
+        grailsCentral()
+    }
 
-//grails.plugin.location.'risk-analytics-core' = "../RiskAnalyticsCore"
+    def ulcClientJarResolver = new FileSystemResolver()
+    String absolutePluginDir = grailsSettings.projectPluginsDir.absolutePath
 
-grails.compiler.dependencies = {
-    fileset(dir: "${grailsSettings.projectPluginsDir}", includes: "*/web-app/lib/*.jar")
-    fileset(dir: "${basedir}/web-app", includes: "lib/*.jar")
+    ulcClientJarResolver.addArtifactPattern "${absolutePluginDir}/ulc-[revision]/web-app/lib/[artifact].[ext]"
+    ulcClientJarResolver.name = "ulc"
+
+    resolver ulcClientJarResolver
+
+    def myResolver = new URLResolver()
+    myResolver.addArtifactPattern "https://build.intuitive-collaboration.com/plugins/[artifact]/grails-[artifact]-[revision].[ext]"
+
+    resolver myResolver
+
+    dependencies {
+        Properties properties = new Properties()
+        properties.load(new File("${basedir}/application.properties").newReader())
+        String ulcVersion = properties.getProperty("plugins.ulc")
+
+        compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-base-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-base-trusted', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-ejb-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
+    }
 }

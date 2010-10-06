@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.result.action.*
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 class StochasticResultView extends ResultView {
 
@@ -23,8 +24,15 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
 
+    private int nextModelIndex = 0
+
     public StochasticResultView(ResultViewModel model) {
         super(model)
+    }
+
+    void setModel(AbstractModellingModel model) {
+        nextModelIndex = model.periodCount + 1
+        super.setModel(model)
     }
 
     protected void initComponents() {
@@ -102,18 +110,14 @@ class StochasticResultView extends ResultView {
         toolbar.add new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue))
     }
 
-
-
     public void functionAdded(IFunction function) {
         ResultViewModel model = this.model as ResultViewModel
-        int newColumnIndex = tree.viewPortTableTree.columnCount + 1
         for (int i = 0; i < model.periodCount; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(newColumnIndex + i, tree.viewPortTableTree, function)
+            ULCTableTreeColumn column = new ResultTableTreeColumn(nextModelIndex++, tree.viewPortTableTree, function)
             column.setMinWidth 110
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
         }
-        nodeChanged()
         menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
     }
 

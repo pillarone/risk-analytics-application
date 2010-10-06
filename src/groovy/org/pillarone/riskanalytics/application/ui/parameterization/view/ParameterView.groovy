@@ -216,6 +216,16 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         propertiesView.updateGui()
     }
 
+    public void removeTabs() {
+        int count = tabbedPane.getTabCount()
+        for (int i = 2; i < count; i++)
+            tabbedPane.closeCloseableTab(i)
+        tree.viewPortTableTree.getActionListeners().each {
+            if (it instanceof MultiDimensionalTabStarter)
+                it.openTabs = [:]
+        }
+    }
+
 }
 
 class MultiDimensionalTabStarter implements IActionListener {

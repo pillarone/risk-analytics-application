@@ -57,7 +57,7 @@ public class DataTypeFactory {
         IDataType dateDataType = UserContext.getAttribute("dateDataType")
 
         if (dateDataType == null) {
-            dateDataType = new ULCDateDataType(getErrorManager(), SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, UIUtils.getClientLocale()).toPattern())
+            dateDataType = new ULCDateDataType(getErrorManager(), SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, UIUtils.getClientLocale()).toPattern())
             UserContext.setAttribute("dateDataType", dateDataType)
         }
 

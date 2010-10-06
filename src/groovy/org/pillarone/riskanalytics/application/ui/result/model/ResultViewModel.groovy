@@ -38,10 +38,14 @@ class ResultViewModel extends AbstractModellingModel {
             //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
             //all result paths for this simulation run
             ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
-            List paths = allResults."0".keySet().toList()
+            Set paths = new HashSet()
+            //look through all periods, not all paths may have a result in the first period
+            for (Map<String, Map> periodResults in allResults.values()) {
+                paths.addAll(periodResults.keySet())
+            }
 
             def simulationRun = item.simulationRun
-            builder = new ResultTreeBuilder(model, structure, item, paths)
+            builder = new ResultTreeBuilder(model, structure, item, paths.toList())
             builder.applyResultPaths()
 
 
@@ -135,8 +139,11 @@ class ResultViewModel extends AbstractModellingModel {
 
     void removeFunction(IFunction function) {
         if (treeModel.functions.contains(function)) {
-            periodCount.times {
-                treeModel.functions.remove(function)
+            //do not change list size, because the view always increases the model index of new columns
+            int index = treeModel.functions.indexOf(function)
+            while (index >= 0) {
+                treeModel.functions[index] = null
+                index = treeModel.functions.indexOf(function)
             }
             treeModel.columnCount -= periodCount
             notifyFunctionRemoved(function)
@@ -150,9 +157,10 @@ class ResultViewModel extends AbstractModellingModel {
     }
 
     boolean isFunctionAdded(IFunction function) {
-        for (IFunction iFunction in treeModel.functions) {
-            if (iFunction.name.equals(function.name))
+        for (IFunction f in treeModel.functions) {
+            if (f != null && f.getName(0).equals(function.name)) {
                 return true
+            }
         }
         return false
     }

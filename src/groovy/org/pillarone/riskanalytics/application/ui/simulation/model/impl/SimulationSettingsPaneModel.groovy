@@ -26,6 +26,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
+import javax.sql.DataSource
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -168,7 +170,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     }
 
     private String getDatabaseUrl() {
-        return ApplicationHolder.application.getMainContext().getBean("dataSource").url
+        DataSource dataSource = ApplicationHolder.application.getMainContext().getBean("dataSource")
+        if(dataSource instanceof TransactionAwareDataSourceProxy) {
+            dataSource = dataSource.targetDataSource
+        }
+        return dataSource.url
     }
 
     /**

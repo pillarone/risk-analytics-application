@@ -659,7 +659,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     private boolean syncMenuBar() {
         saveAction.enabled = model.currentItem != null ? model.currentItem.changed : false
         if (model.currentItem) {
-            runAction.enabled = !(model.currentItem instanceof Simulation)
+            runAction.enabled = !((model.currentItem instanceof Simulation) || (model.currentItem instanceof BatchRun))
             if (model.currentItem instanceof Parameterization || model.currentItem instanceof ResultConfiguration) {
                 if (model.currentItem.isUsedInSimulation()) {
                     lockedLabel.icon = UIUtils.getIcon("locked-active.png")
