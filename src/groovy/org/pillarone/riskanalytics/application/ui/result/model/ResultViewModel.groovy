@@ -18,13 +18,13 @@ import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.CollectingModeFactory
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 
 class ResultViewModel extends AbstractModellingModel {
 
@@ -60,7 +60,7 @@ class ResultViewModel extends AbstractModellingModel {
             }
             Set paths = new HashSet()
             //look through all periods, not all paths may have a result in the first period
-            for(Map<String,Map> periodResults in allResults.values()) {
+            for (Map<String, Map> periodResults in allResults.values()) {
                 paths.addAll(obtainAllPaths(periodResults))
             }
 
@@ -112,14 +112,14 @@ class ResultViewModel extends AbstractModellingModel {
         return results
     }
 
-    private Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
+    public static Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
         Map<String, ICollectingModeStrategy> result = [:]
         List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
                 " WHERE p.run.id = ?", [simulationRun.id])
         for (Object[] psc in calculations) {
             String path = "${psc[0]}:${psc[1]}"
             String collector = psc[2]
-            if(allPaths.contains(path)) {
+            if (allPaths.contains(path)) {
                 result.put(path, CollectingModeFactory.getStrategy(collector))
             }
         }

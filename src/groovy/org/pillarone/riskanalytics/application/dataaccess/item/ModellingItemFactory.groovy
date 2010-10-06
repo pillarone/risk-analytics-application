@@ -210,7 +210,10 @@ class ModellingItemFactory {
     }
 
     static List getResultStructuresForModel(Class modelClass) {
-        ResultStructureDAO.findAllByModelClassNameAndLanguage(modelClass.name, LocaleResources.getLanguage()).collect {
+        List structures = ResultStructureDAO.findAllByModelClassNameAndLanguage(modelClass.name, LocaleResources.getLanguage())
+        if (structures.isEmpty())
+            structures = ResultStructureDAO.findAllByModelClassName(modelClass.name)
+        structures.collect {
             getItem(it)
         }
     }
