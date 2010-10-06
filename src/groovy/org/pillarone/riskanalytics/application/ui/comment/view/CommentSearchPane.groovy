@@ -114,7 +114,7 @@ class CommentSearchPane {
                 resultView.setVisible true
                 resultView.clear()
                 resultView.comments = comments
-                resultView.addComments(comments)
+                resultView.addComments(comments, text)
             }
         }
         IActionListener action = [actionPerformed: {e -> searchClosure.call()}] as IActionListener

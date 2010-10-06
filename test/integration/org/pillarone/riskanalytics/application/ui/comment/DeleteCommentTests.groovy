@@ -16,12 +16,13 @@ import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.testframework.operator.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CommentViewTests extends AbstractSimpleFunctionalTest {
+class DeleteCommentTests extends AbstractSimpleFunctionalTest {
 
     Parameterization parameterization
 
@@ -52,9 +53,9 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         frame.visible = true
     }
 
-
-
-    void testShowAllComments() {
+    void testDeleteComment() {
+        parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
+        assertEquals 1, parameterization.comments.size()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -71,12 +72,17 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertNotNull expandItem
         expandItem.clickMouse()
 
-        assertEquals 2, tabbedPaneOperator.getComponentCount()
-        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
+        assertEquals tabbedPaneOperator.getComponentCount(), 2
+        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
+
+        ULCButtonOperator buttonOperator = new ULCButtonOperator(tabbedPaneOperator, new ComponentByNameChooser('deleteComment'))
+        assertNotNull buttonOperator
+        buttonOperator.getFocus()
+        buttonOperator.clickMouse()
+
+        assertEquals 0, parameterization.comments.size()
     }
-
-
 }

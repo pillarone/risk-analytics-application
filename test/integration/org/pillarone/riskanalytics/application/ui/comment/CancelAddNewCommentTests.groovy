@@ -21,7 +21,7 @@ import com.ulcjava.testframework.operator.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CommentViewTests extends AbstractSimpleFunctionalTest {
+class CancelAddNewCommentTests extends AbstractSimpleFunctionalTest {
 
     Parameterization parameterization
 
@@ -52,9 +52,8 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         frame.visible = true
     }
 
-
-
-    void testShowAllComments() {
+    void testCancelAddNewComment() {
+        assertEquals parameterization.comments.size(), 0
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -67,16 +66,25 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 1, tabbedPaneOperator.getComponentCount()
 
         ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
-        ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "show comments")
+        ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "Add comment")
         assertNotNull expandItem
         expandItem.clickMouse()
 
         assertEquals 2, tabbedPaneOperator.getComponentCount()
         assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
-        ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
-        assertNotNull tabbedPaneComments
-    }
+        ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))
+        assertNotNull textAreaOperator
+        textAreaOperator.typeText('Comment')
 
+        ULCButtonOperator buttonOperator = new ULCButtonOperator(frameOperator, new ComponentByNameChooser('cancelComment'))
+        assertNotNull buttonOperator
+        buttonOperator.getFocus()
+        buttonOperator.clickMouse()
+
+        assertEquals 0, parameterization.comments.size()
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
+
+    }
 
 }

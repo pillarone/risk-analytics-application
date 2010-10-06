@@ -79,6 +79,10 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         ULCComponentOperator commentPane = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('CommentPane'))
         assertNotNull commentPane
 
+        ULCLabelOperator label = new ULCLabelOperator(frameOperator, new ComponentByNameChooser('foundText'))
+        assertNotNull label
+        assertTrue label.getText().indexOf("span") != -1
+
         textFieldOperator.getFocus()
         textFieldOperator.typeText('test007')
         textFieldOperator.typeKey((char) KeyEvent.VK_ENTER)

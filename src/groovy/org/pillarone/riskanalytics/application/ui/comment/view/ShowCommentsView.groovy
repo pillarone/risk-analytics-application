@@ -47,16 +47,17 @@ class ShowCommentsView implements ChangedCommentListener {
     }
 
 
-    public void addComment(Comment comment) {
-        CommentPane commentPane = new CommentPane(model, comment)
+    public void addComment(Comment comment, String searchText = null) {
+        CommentPane commentPane = new CommentPane(model, comment, searchText)
+//        if (searchText) commentPane.setSearchText(searchText)
         commentPane.addCommentListener commentAndErrorView
         container.add(ULCBoxPane.BOX_EXPAND_TOP, commentPane.content)
     }
 
-    public void addComments(Collection<Comment> comments) {
+    public void addComments(Collection<Comment> comments, String searchText = null) {
         if (comments && !comments.isEmpty()) {
             for (Comment comment: comments) {
-                addComment(comment);
+                addComment(comment, searchText);
             }
         } else {
             ULCLabel label = new ULCLabel(UIUtils.getText(this.class, "noComment"))

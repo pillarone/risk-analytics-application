@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import be.devijver.wikipedia.Parser
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
@@ -12,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 
 /**
@@ -30,10 +32,12 @@ class CommentPane {
     RemoveCommentAction removeCommentAction
     private ParameterViewModel model
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat('dd.MM.yyyy HH:mm')
+    String searchText = null
 
-    public CommentPane(ParameterViewModel model, Comment comment) {
+    public CommentPane(ParameterViewModel model, Comment comment, String searchText = null) {
         this.model = model
         this.comment = comment
+        if (searchText) this.searchText = searchText
         initComponents()
         layoutComponents()
     }
@@ -49,7 +53,9 @@ class CommentPane {
         content.setBorder(border);
 
         label = new ULCLabel();
-        label.setText HTMLUtilities.convertToHtml(comment.getText())
+        if (searchText) label.name = "foundText"
+        label.setText getLabelText()
+
         label.setFont(label.getFont().deriveFont(Font.PLAIN));
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
@@ -61,6 +67,8 @@ class CommentPane {
         deleteButton.name = "deleteComment"
 
     }
+
+
 
     protected void layoutComponents() {
         content.add(ULCBoxPane.BOX_LEFT_TOP, tags);
@@ -96,5 +104,33 @@ class CommentPane {
         sb.append(" " + simpleDateFormat.format(comment.lastChange))
         return sb.toString()
     }
+
+    private String getLabelText() {
+        String text = comment.getText()
+        if (searchText) {
+            text = addHighlighting(text, searchText.split())
+        }
+        String wiki = null
+        try {
+            wiki = Parser.toHtml(text, null)
+        } catch (Exception ex) {
+            wiki = text
+        }
+        return HTMLUtilities.convertToHtml(HtmlUtils.htmlUnescape(wiki))
+    }
+
+    private String addHighlighting(String text, def words) {
+        def found = []
+        words.each {
+            (text =~ /(?i)${it}/).each {def m ->
+                found.add(m)
+            }
+        }
+        found.each {
+            text = text.replaceAll(it, "<span style=\"font-weight:bold;color:#006400\">${it}</span>")
+        }
+        return text
+    }
+
 
 }

@@ -16,12 +16,13 @@ import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.testframework.operator.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CommentViewTests extends AbstractSimpleFunctionalTest {
+class EditCommentTests extends AbstractSimpleFunctionalTest {
 
     Parameterization parameterization
 
@@ -52,9 +53,8 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         frame.visible = true
     }
 
-
-
-    void testShowAllComments() {
+    void testEditComment() {
+        parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -76,7 +76,27 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
+
+        ULCButtonOperator buttonOperator = new ULCButtonOperator(tabbedPaneOperator, new ComponentByNameChooser('editComment'))
+        assertNotNull buttonOperator
+        buttonOperator.getFocus()
+        buttonOperator.clickMouse()
+
+        assertEquals 3, tabbedPaneOperator.getComponentCount()
+        assertEquals 2, tabbedPaneOperator.getSelectedIndex()
+
+        ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))
+        assertNotNull textAreaOperator
+        textAreaOperator.typeText('newComment')
+
+        ULCButtonOperator updateOperator = new ULCButtonOperator(tabbedPaneOperator, new ComponentByNameChooser('updateComment'))
+        assertNotNull updateOperator
+        updateOperator.getFocus()
+        updateOperator.clickMouse()
+
+        assertEquals 1, parameterization.comments.size()
+        assertEquals 'newComment', parameterization.comments.get(0).text
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+
     }
-
-
 }
