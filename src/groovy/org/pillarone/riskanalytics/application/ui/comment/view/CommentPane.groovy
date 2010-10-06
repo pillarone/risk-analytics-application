@@ -112,7 +112,9 @@ class CommentPane {
         }
         String wiki = null
         try {
-            wiki = Parser.toHtml(text, null)
+            java.io.StringWriter writer = new java.io.StringWriter();
+            (new Parser()).withVisitor(text, new HtmlVisitor(writer, null));
+            wiki = writer.toString()
         } catch (Exception ex) {
             wiki = text
         }

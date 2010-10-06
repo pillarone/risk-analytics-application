@@ -29,32 +29,27 @@ class ShowCommentsView implements ChangedCommentListener {
         container.setBackground(Color.white);
 
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
+        this.comments = []
+
+    }
+
+    public void addAllComments() {
+        comments.clear()
         comments = getAllComments()
         order("lastChange", "desc")
         addComments(comments)
         model.commentsChanged(allComments)
     }
 
-    public ShowCommentsView(CommentAndErrorView commentAndErrorView) {
-        this.commentAndErrorView = commentAndErrorView
-        this.model = commentAndErrorView.model
-        content = new ULCBoxPane(name: "resultComments");
-        container = new ULCBoxPane(1, 0);
-        container.setBackground(Color.white);
-
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
-        this.comments = []
-    }
-
 
     public void addComment(Comment comment, String searchText = null) {
         CommentPane commentPane = new CommentPane(model, comment, searchText)
-//        if (searchText) commentPane.setSearchText(searchText)
         commentPane.addCommentListener commentAndErrorView
         container.add(ULCBoxPane.BOX_EXPAND_TOP, commentPane.content)
     }
 
     public void addComments(Collection<Comment> comments, String searchText = null) {
+        clear()
         if (comments && !comments.isEmpty()) {
             for (Comment comment: comments) {
                 addComment(comment, searchText);

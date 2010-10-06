@@ -41,6 +41,7 @@ class CommentAndErrorView implements CommentListener {
 
     private void layoutComponents() {
         ShowCommentsView view = new ShowCommentsView(this, null)
+        view.addAllComments()
         model.addChangedCommentListener view
         ShowCommentsView result = new ShowCommentsView(this, null)
         model.addChangedCommentListener result
