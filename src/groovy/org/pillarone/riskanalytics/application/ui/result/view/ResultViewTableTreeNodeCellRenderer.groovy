@@ -30,6 +30,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     def tree
     ULCPopupMenu nodePopup
     ULCPopupMenu nodeHelpPopup
+    ULCPopupMenu defaultResultNodePopup
     ULCPopupMenu resultNodePopup
     ULCNumberDataType numberDataType
 
@@ -44,6 +45,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         numberDataType.setMaxFractionDigits 2
 
         resultNodePopup = new ULCPopupMenu()
+        defaultResultNodePopup = new ULCPopupMenu()
         nodePopup = new ULCPopupMenu()
         nodeHelpPopup = new ULCPopupMenu()
         OpenComponentHelp help = new OpenComponentHelp(this.tree.rowHeaderTableTree)
@@ -63,6 +65,16 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         chartsMenu.add(scatterPlotMenuItem)
         chartsMenu.add(parallelCoordinatesMenuItem)
 
+        defaultResultNodePopup.add(chartsMenu)
+        defaultResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
+        defaultResultNodePopup.addPopupMenuListener(new EnableScatterPlot(scatterPlotMenuItem, tree))
+        defaultResultNodePopup.addPopupMenuListener(new EnableParallelCoordinatesChart(parallelCoordinatesMenuItem, tree))
+        defaultResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
+        defaultResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
+
+        resultNodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
+        resultNodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
+        resultNodePopup.addSeparator()
         resultNodePopup.add(chartsMenu)
         resultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
         resultNodePopup.addPopupMenuListener(new EnableScatterPlot(scatterPlotMenuItem, tree))
@@ -72,11 +84,13 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
 
         nodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
         nodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
+        nodePopup.addSeparator()
         nodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         nodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         nodeHelpPopup.add(new ULCMenuItem(new TreeExpander(tree)))
         nodeHelpPopup.add(new ULCMenuItem(new TreeCollapser(tree)))
+        nodeHelpPopup.addSeparator()
         nodeHelpPopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         nodeHelpPopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
         nodeHelpPopup.addSeparator()
@@ -108,7 +122,10 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
-        rendererComponent.setComponentPopupMenu(resultNodePopup)
+        if (node.childCount > 0)
+            rendererComponent.setComponentPopupMenu(resultNodePopup)
+        else
+            rendererComponent.setComponentPopupMenu(defaultResultNodePopup)
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, def node) {
