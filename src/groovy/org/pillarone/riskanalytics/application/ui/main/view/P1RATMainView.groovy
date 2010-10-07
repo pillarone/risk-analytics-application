@@ -593,8 +593,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     private void selectCurrentItemFromTab(ULCCloseableTabbedPane modelCardContent) {
         def item = openItems[modelCardContent.getSelectedComponent()]
-        if (!(item instanceof BatchRun))
-            model.currentItem = item
+        model.currentItem = (item instanceof BatchRun) ? null : item
     }
 
     public void openDetailView(Model selectedModel, Object item) {
