@@ -36,6 +36,7 @@ abstract class TreeNodeAction extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         ITableTreeNode node = tree.selectedPath.lastPathComponent
+        if (!node || !ComponentUtils.isDynamicComposedSubComponentNode(node)) return;
         DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree), node?.displayName)
         dialog.title = UIUtils.getText(this.class, "title") + ":"
         dialog.okAction = {

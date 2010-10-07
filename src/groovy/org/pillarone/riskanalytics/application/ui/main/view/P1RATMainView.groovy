@@ -150,6 +150,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         //add action listener
         selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
         selectionTree.registerKeyboardAction(new DeleteAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
+        selectionTree.registerKeyboardAction(new RenameAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
     }
 
 

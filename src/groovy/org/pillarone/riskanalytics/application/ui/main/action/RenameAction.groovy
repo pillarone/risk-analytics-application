@@ -7,6 +7,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
@@ -26,6 +27,7 @@ class RenameAction extends SelectionTreeAction {
         */
         boolean usedInSimulation = false
         def selectedItem = getSelectedItem()
+        if (!(selectedItem instanceof ModellingItem)) return
         if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
             selectedItem.setModelClass(getSelectedModel().class)
             usedInSimulation = selectedItem.isUsedInSimulation()
