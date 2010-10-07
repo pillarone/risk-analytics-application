@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.comment
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
-import java.awt.event.InputEvent
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
@@ -45,6 +44,9 @@ class EditCommentTests extends AbstractSimpleFunctionalTest {
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
+        Comment comment = new Comment("Core:exampleInputOutputComponent", 0)
+        comment.text = "test"
+        parameterization.addComment(comment)
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
@@ -54,39 +56,26 @@ class EditCommentTests extends AbstractSimpleFunctionalTest {
     }
 
     void testEditComment() {
-        parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
-        componentTree.doCollapseRow(1)
-        componentTree.clickOnCell(1, 0, 1, InputEvent.BUTTON1_MASK)
-        componentTree.clickOnCell(1, 0, 1, InputEvent.BUTTON3_MASK)
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
         assertEquals 1, tabbedPaneOperator.getComponentCount()
 
-        ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
-        ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "show comments")
-        assertNotNull expandItem
-        expandItem.clickMouse()
-
-        assertEquals 2, tabbedPaneOperator.getComponentCount()
-        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
-
-        ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
-        assertNotNull tabbedPaneComments
 
         ULCButtonOperator buttonOperator = new ULCButtonOperator(tabbedPaneOperator, new ComponentByNameChooser('editComment'))
         assertNotNull buttonOperator
         buttonOperator.getFocus()
         buttonOperator.clickMouse()
 
-        assertEquals 3, tabbedPaneOperator.getComponentCount()
-        assertEquals 2, tabbedPaneOperator.getSelectedIndex()
+        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))
         assertNotNull textAreaOperator
+        textAreaOperator.clearText()
         textAreaOperator.typeText('newComment')
 
         ULCButtonOperator updateOperator = new ULCButtonOperator(tabbedPaneOperator, new ComponentByNameChooser('updateComment'))
@@ -95,8 +84,8 @@ class EditCommentTests extends AbstractSimpleFunctionalTest {
         updateOperator.clickMouse()
 
         assertEquals 1, parameterization.comments.size()
-        assertEquals 'newComment', parameterization.comments.get(0).text
-        assertEquals 2, tabbedPaneOperator.getComponentCount()
+        assertEquals parameterization.comments.get(0).getText(), 'newComment'
+        assertEquals 1, tabbedPaneOperator.getComponentCount()
 
     }
 }

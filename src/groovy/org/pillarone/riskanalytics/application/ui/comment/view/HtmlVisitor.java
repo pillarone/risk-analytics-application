@@ -10,6 +10,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * this class belong to the  project http://code.google.com/p/java-wikipedia-parser/
+ * the source code copied to RiskAnalytics project to avoid insertion of end line
+ * by converting the bold notation.
+ */
+
 public class HtmlVisitor implements Visitor {
 
     private class Output {

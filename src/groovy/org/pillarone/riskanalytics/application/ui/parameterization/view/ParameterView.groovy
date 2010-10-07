@@ -12,6 +12,7 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
+import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
@@ -195,6 +196,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         def rowHeaderTree = tree.getRowHeaderTableTree()
         rowHeaderTree.registerKeyboardAction(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new AddDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeNodeRename(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
 
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},

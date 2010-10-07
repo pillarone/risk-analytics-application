@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.comment
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
-import java.awt.event.InputEvent
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
@@ -45,6 +44,10 @@ class DeleteCommentTests extends AbstractSimpleFunctionalTest {
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
+        Comment comment = new Comment("Core:exampleInputOutputComponent", 0)
+        comment.text = "test"
+        parameterization.addComment(comment)
+
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
@@ -54,35 +57,21 @@ class DeleteCommentTests extends AbstractSimpleFunctionalTest {
     }
 
     void testDeleteComment() {
-        parameterization.addComment(new Comment("Core:exampleInputOutputComponent", 0))
         assertEquals 1, parameterization.comments.size()
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
-        componentTree.doCollapseRow(1)
-        componentTree.clickOnCell(1, 0, 1, InputEvent.BUTTON1_MASK)
-        componentTree.clickOnCell(1, 0, 1, InputEvent.BUTTON3_MASK)
 
         ULCTabbedPaneOperator tabbedPaneOperator = new ULCTabbedPaneOperator(frameOperator, new ComponentByNameChooser('commentAndErrorPane'))
         assertNotNull tabbedPaneOperator
         assertEquals 1, tabbedPaneOperator.getComponentCount()
 
-        ULCPopupMenuOperator popupMenuOperator = new ULCPopupMenuOperator(frameOperator, new ComponentByNameChooser("popup.expand"))
-        ULCMenuItemOperator expandItem = new ULCMenuItemOperator(popupMenuOperator, "show comments")
-        assertNotNull expandItem
-        expandItem.clickMouse()
-
-        assertEquals tabbedPaneOperator.getComponentCount(), 2
-        assertEquals tabbedPaneOperator.getSelectedIndex(), 1
-
-        ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
-        assertNotNull tabbedPaneComments
 
         ULCButtonOperator buttonOperator = new ULCButtonOperator(tabbedPaneOperator, new ComponentByNameChooser('deleteComment'))
         assertNotNull buttonOperator
         buttonOperator.getFocus()
         buttonOperator.clickMouse()
 
-        assertEquals 0, parameterization.comments.size()
+        assertEquals parameterization.comments.size(), 0
     }
 }
