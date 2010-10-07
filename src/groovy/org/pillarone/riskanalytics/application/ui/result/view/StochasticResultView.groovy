@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.Max
 import org.pillarone.riskanalytics.application.dataaccess.function.Min
 import org.pillarone.riskanalytics.application.dataaccess.function.Sigma
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
@@ -16,7 +17,6 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.result.action.*
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 class StochasticResultView extends ResultView {
 
@@ -114,7 +114,7 @@ class StochasticResultView extends ResultView {
 
     private def addDoubleFunctions(ULCToolBar toolbar) {
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        toolbar.add(new ULCLabel(getText("Add")))
+        toolbar.addSeparator()
         toolbar.add ULCFiller.createHorizontalStrut(5)
         IDataType dataType = DataTypeFactory.numberDataType
         dataType.integer = false
