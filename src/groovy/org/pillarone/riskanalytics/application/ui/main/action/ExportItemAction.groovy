@@ -18,9 +18,8 @@ class ExportItemAction extends ExportAction {
 
 
     public void doActionPerformed(ActionEvent event) {
-        def selectedItem = getSelectedItem()
-        if (selectedItem.class)
-            doAction(getSelectedObjects(selectedItem.class)?.collect {it.item})
+        List selectedItems = getAllSelectedObjects()?.collect {it.item}
+        doAction(selectedItems)
     }
 
 
@@ -28,7 +27,7 @@ class ExportItemAction extends ExportAction {
         if (atLeastOneItemChanged(items)) {
             new I18NAlert("UnsavedExport").show()
         } else {
-            exportItems(items)
+            exportAll(items)
         }
     }
 
