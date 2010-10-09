@@ -18,7 +18,12 @@ abstract class ResultFunction implements IFunction {
     String i18nName
 
     static String getPath(SimpleTableTreeNode node) {
-        node.path
+        if (node.path) {
+            node.path
+        }
+        else if (node.parent?.name) {
+            "${node.parent.name}"
+        }
     }
 
     String getName(int periodIndex) {
