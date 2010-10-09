@@ -50,35 +50,18 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         nodeHelpPopup = new ULCPopupMenu()
         OpenComponentHelp help = new OpenComponentHelp(this.tree.rowHeaderTableTree)
 
-        ULCMenu chartsMenu = new ULCMenu("Charts")
-        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "StackedBarChart", ChartType.STACKED_BAR_CHART, simulationRun, tree)))
-        ULCMenuItem lineChartItem = new ULCMenuItem(new OpenChartTab(tabbedPane, "LineChart", ChartType.LINE_CHART, simulationRun, tree))
-        lineChartItem.enabled = simulationRun.periodCount > 1
-        chartsMenu.add(lineChartItem)
-        chartsMenu.addSeparator()
-        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "HistogramChart", ChartType.HISTOGRAM, simulationRun, tree)))
-        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "Distributions", ChartType.DISTRIBUTIONS, simulationRun, tree)))
-        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "WaterfallChart", ChartType.WATERFALL, simulationRun, tree)))
-        chartsMenu.addSeparator()
-        ULCMenuItem scatterPlotMenuItem = new ULCMenuItem(new OpenPlotChartTab(tabbedPane, "ScatterPlotChart", ChartType.Scatter, simulationRun, tree))
-        ULCMenuItem parallelCoordinatesMenuItem = new ULCMenuItem(new OpenChartTab(tabbedPane, "ParallelCoordinatesChart", ChartType.PARALLEL_COORDINATES, simulationRun, tree))
-        chartsMenu.add(scatterPlotMenuItem)
-        chartsMenu.add(parallelCoordinatesMenuItem)
-
-        defaultResultNodePopup.add(chartsMenu)
+        defaultResultNodePopup.add(createChartsMenu(defaultResultNodePopup, tree))
         defaultResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
-        defaultResultNodePopup.addPopupMenuListener(new EnableScatterPlot(scatterPlotMenuItem, tree))
-        defaultResultNodePopup.addPopupMenuListener(new EnableParallelCoordinatesChart(parallelCoordinatesMenuItem, tree))
+        defaultResultNodePopup.addSeparator()
         defaultResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         defaultResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         resultNodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
         resultNodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
         resultNodePopup.addSeparator()
-        resultNodePopup.add(chartsMenu)
+        resultNodePopup.add(createChartsMenu(resultNodePopup, tree))
         resultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
-        resultNodePopup.addPopupMenuListener(new EnableScatterPlot(scatterPlotMenuItem, tree))
-        resultNodePopup.addPopupMenuListener(new EnableParallelCoordinatesChart(parallelCoordinatesMenuItem, tree))
+        resultNodePopup.addSeparator()
         resultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         resultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
@@ -122,6 +105,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
+        println "${node.path} > ${node.name} ${node.childCount}"
         if (node.childCount > 0)
             rendererComponent.setComponentPopupMenu(resultNodePopup)
         else
@@ -129,7 +113,28 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, def node) {
+        println node.name
         rendererComponent.setComponentPopupMenu((node instanceof ComponentTableTreeNode) ? nodeHelpPopup : nodePopup)
+    }
+
+    private ULCMenu createChartsMenu(ULCPopupMenu popupMenu, def tree) {
+        ULCMenu chartsMenu = new ULCMenu("Charts")
+        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "StackedBarChart", ChartType.STACKED_BAR_CHART, simulationRun, tree)))
+        ULCMenuItem lineChartItem = new ULCMenuItem(new OpenChartTab(tabbedPane, "LineChart", ChartType.LINE_CHART, simulationRun, tree))
+        lineChartItem.enabled = simulationRun.periodCount > 1
+        chartsMenu.add(lineChartItem)
+        chartsMenu.addSeparator()
+        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "HistogramChart", ChartType.HISTOGRAM, simulationRun, tree)))
+        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "Distributions", ChartType.DISTRIBUTIONS, simulationRun, tree)))
+        chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "WaterfallChart", ChartType.WATERFALL, simulationRun, tree)))
+        chartsMenu.addSeparator()
+        ULCMenuItem scatterPlotMenuItem = new ULCMenuItem(new OpenPlotChartTab(tabbedPane, "ScatterPlotChart", ChartType.Scatter, simulationRun, tree))
+        popupMenu.addPopupMenuListener(new EnableScatterPlot(scatterPlotMenuItem, tree))
+        ULCMenuItem parallelCoordinatesMenuItem = new ULCMenuItem(new OpenChartTab(tabbedPane, "ParallelCoordinatesChart", ChartType.PARALLEL_COORDINATES, simulationRun, tree))
+        popupMenu.addPopupMenuListener(new EnableParallelCoordinatesChart(parallelCoordinatesMenuItem, tree))
+        chartsMenu.add(scatterPlotMenuItem)
+        chartsMenu.add(parallelCoordinatesMenuItem)
+        return chartsMenu
     }
 }
 
