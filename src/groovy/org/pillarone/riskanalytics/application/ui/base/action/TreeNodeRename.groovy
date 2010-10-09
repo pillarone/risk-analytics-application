@@ -6,6 +6,9 @@ import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.IAction
 
 /**
  * @author stefan.kunz (at) intuitive-collaboration (dot) com
@@ -14,6 +17,7 @@ public class TreeNodeRename extends TreeNodeAction {
 
     public TreeNodeRename(def tree, ParameterViewModel model) {
         super(tree, model, "RenameNode")
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {

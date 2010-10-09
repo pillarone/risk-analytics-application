@@ -4,6 +4,9 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tree.TreePath
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.IAction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -15,6 +18,7 @@ class TreeCollapser extends ResourceBasedAction {
     public TreeCollapser(ULCFixedColumnTableTree tree) {
         super("CollapseNode")
         this.tree = tree
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true));
     }
 
     public void doActionPerformed(ActionEvent event) {
