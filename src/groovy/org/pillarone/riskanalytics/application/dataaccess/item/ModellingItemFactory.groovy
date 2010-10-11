@@ -1,9 +1,6 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -13,6 +10,8 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ModellingItemFactory {
 
@@ -210,10 +209,7 @@ class ModellingItemFactory {
     }
 
     static List getResultStructuresForModel(Class modelClass) {
-        List structures = ResultStructureDAO.findAllByModelClassNameAndLanguage(modelClass.name, LocaleResources.getLanguage())
-        if (structures.isEmpty())
-            structures = ResultStructureDAO.findAllByModelClassName(modelClass.name)
-        structures.collect {
+        ResultStructureDAO.findAllByModelClassName(modelClass.name).collect {
             getItem(it)
         }
     }

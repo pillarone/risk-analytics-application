@@ -13,15 +13,9 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
     protected void setUp() {
         super.setUp();
-        LocaleResources.setTestMode()
 
         CollectingModeFactory.registerStrategy(new SingleValueCollectingModeStrategy())
         CollectingModeFactory.registerStrategy(new AggregatedCollectingModeStrategy())
-    }
-
-    protected void tearDown() {
-        super.tearDown();
-        LocaleResources.clearTestMode()
     }
 
     void testOneWildcard() {

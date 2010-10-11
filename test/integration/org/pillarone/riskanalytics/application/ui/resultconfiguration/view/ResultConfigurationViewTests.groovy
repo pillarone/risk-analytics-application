@@ -8,7 +8,6 @@ import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
@@ -21,7 +20,7 @@ class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
     ModelStructure structure
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+
         ULCFrame frame = new ULCFrame("Test")
         frame.name = "Test"
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE

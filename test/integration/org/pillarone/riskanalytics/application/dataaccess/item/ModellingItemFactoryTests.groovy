@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
-import models.application.ApplicationModel
 import models.core.CoreModel
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -14,6 +13,7 @@ import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.*
+import models.application.ApplicationModel
 
 class ModellingItemFactoryTests extends GroovyTestCase {
 

@@ -6,21 +6,19 @@ import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCSpinnerOperator
 import org.netbeans.jemmy.drivers.scrolling.ScrollAdjuster
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TestMultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 
 class MultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
 
     AbstractMultiDimensionalParameter multiDimensionalParameter
 
     protected void doStart() {
-        LocaleResources.setTestMode()
         ULCFrame frame = new ULCFrame("test")
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"

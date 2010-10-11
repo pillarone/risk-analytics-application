@@ -4,7 +4,6 @@ import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportS
 
 model = ApplicationModel
 displayName = ResultStructureImportService.DEFAULT_NAME
-language = "en"
 
 mappings = {
     Application {

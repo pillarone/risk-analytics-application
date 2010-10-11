@@ -1,37 +1,27 @@
 package org.pillarone.riskanalytics.application.output.structure.item
 
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.output.structure.StructureMapping
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 
 class ResultStructure extends ModellingItem {
 
     VersionNumber versionNumber
     ResultNode rootNode
-    String language
 
     public ResultStructure(String name) {
         super(name);
         versionNumber = new VersionNumber("1")
-        language = LocaleResources.getLanguage()
     }
 
     public ResultStructure(String name, Class modelClass) {
         this(name);
         this.modelClass = modelClass
-        this.language = LocaleResources.getLanguage()
-    }
-
-    public ResultStructure(String name, Class modelClass, String language) {
-        this(name);
-        this.modelClass = modelClass
-        this.language = language
     }
 
     protected Object createDao() {
-        return new ResultStructureDAO(name: name, modelClassName: modelClass.name, language: language)
+        return new ResultStructureDAO(name: name, modelClassName: modelClass.name)
     }
 
     Object getDaoClass() {
@@ -44,7 +34,6 @@ class ResultStructure extends ModellingItem {
         resultStructureDAO.name = name
         resultStructureDAO.modelClassName = modelClass.name
         resultStructureDAO.itemVersion = versionNumber.toString()
-        resultStructureDAO.language = language
 
         List<StructureMapping> mappings = []
         createMappings(mappings, rootNode, null, 0)
@@ -68,7 +57,6 @@ class ResultStructure extends ModellingItem {
 
         name = resultStructureDAO.name
         modelClass = getClass().getClassLoader().loadClass(resultStructureDAO.modelClassName)
-        language = resultStructureDAO.language
 
         Set<StructureMapping> mappings = resultStructureDAO.structureMappings
         StructureMapping root = mappings.find { it.parent == null }
@@ -90,7 +78,6 @@ class ResultStructure extends ModellingItem {
         return criteria.get {
             eq("name", name)
             eq("itemVersion", versionNumber.toString())
-            eq("language", language)
             if (modelClass != null) {
                 eq("modelClassName", modelClass.name)
             }
