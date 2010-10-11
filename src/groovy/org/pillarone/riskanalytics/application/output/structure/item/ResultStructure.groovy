@@ -9,7 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 class ResultStructure extends ModellingItem {
 
     VersionNumber versionNumber
-    Map<String, String> mappings = new HashMap<String, String>()
+    ResultNode rootNode
     String language
 
     public ResultStructure(String name) {
@@ -46,13 +46,20 @@ class ResultStructure extends ModellingItem {
         resultStructureDAO.itemVersion = versionNumber.toString()
         resultStructureDAO.language = language
 
-        for (Map.Entry<String, String> entry in mappings.entrySet()) {
-            StructureMapping mapping = resultStructureDAO.structureMappings.find { it.artificialPath == entry.key }
-            if (mapping == null) {
-                mapping = new StructureMapping(artificialPath: entry.key)
-                resultStructureDAO.addToStructureMappings(mapping)
-            }
-            mapping.resultPath = entry.value
+        List<StructureMapping> mappings = []
+        createMappings(mappings, rootNode, null, 0)
+        for (StructureMapping m in mappings) {
+            resultStructureDAO.addToStructureMappings(m)
+        }
+    }
+
+    private void createMappings(List<StructureMapping> mappings, ResultNode currentNode, StructureMapping parent, int order) {
+        StructureMapping currentMapping = new StructureMapping(name: currentNode.name, resultPath: currentNode.resultPath, parent: parent, orderWithinLevel: order)
+        mappings.add(currentMapping)
+        int newOrder = 0
+        for (ResultNode child in currentNode.childNodes) {
+            createMappings(mappings, child, currentMapping, newOrder)
+            newOrder++
         }
     }
 
@@ -63,9 +70,18 @@ class ResultStructure extends ModellingItem {
         modelClass = getClass().getClassLoader().loadClass(resultStructureDAO.modelClassName)
         language = resultStructureDAO.language
 
-        mappings.clear()
-        for (StructureMapping structureMapping in resultStructureDAO.structureMappings) {
-            mappings.put(structureMapping.artificialPath, structureMapping.resultPath)
+        Set<StructureMapping> mappings = resultStructureDAO.structureMappings
+        StructureMapping root = mappings.find { it.parent == null }
+        rootNode = new ResultNode(root.name, root.resultPath)
+        loadMappings(mappings, rootNode, root)
+    }
+
+    private void loadMappings(Set<StructureMapping> allMappings, ResultNode currentNode, StructureMapping parentMapping) {
+        Collection<StructureMapping> children = allMappings.findAll { it.parent == parentMapping }.sort { it.orderWithinLevel }
+        for (StructureMapping child in children) {
+            ResultNode childNode = new ResultNode(child.name, child.resultPath)
+            currentNode.addChild(childNode)
+            loadMappings(allMappings, childNode, child)
         }
     }
 

@@ -15,18 +15,36 @@ target(main: "Lists all possible paths of a model") {
     new GroovyShell(app.classLoader, new Binding([modelClass: argsMap.modelClass])).evaluate '''
             import org.pillarone.riskanalytics.application.output.structure.DefaultResultStructureBuilder
             import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+            import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 
             Class clazz = Thread.currentThread().getContextClassLoader().loadClass(modelClass)
             ResultStructure resultStructure = DefaultResultStructureBuilder.create("default", clazz)
             println "### Begin Path Map ###"
 
-            println "["
-            for (Map.Entry entry in resultStructure.mappings) {
-                println '"' + entry.key + '": "' + entry.value + '",'
-            }
-            println "]"
+            printNode(resultStructure.rootNode, 0)
 
             println "### End Path Map ###"
+
+            void printNode(ResultNode node, Integer level) {
+                println()
+                String indent = ""
+                level.times {
+                    indent = "${indent}\t"
+                }
+                print "${indent}'${node.name}'"
+                if(node.resultPath != null) {
+                    println " '${node.resultPath}'"
+
+                }
+                if(node.childCount > 0) {
+                    level++
+                    print " {"
+                    for(ResultNode child in node.childNodes) {
+                        printNode (child, level)
+                    }
+                    println "${indent}}"
+                }
+            }
         '''
 
 

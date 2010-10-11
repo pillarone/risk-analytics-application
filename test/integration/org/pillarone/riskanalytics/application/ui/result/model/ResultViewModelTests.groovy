@@ -54,19 +54,19 @@ class ResultViewModelTests extends GroovyTestCase {
 
         simulationRun = simulationRun.save(flush: true)
 
-        path1 = PathMapping.findByPathName('testPath1')
+        path1 = PathMapping.findByPathName("Application:composedComponent:subDynamicComponent:outValue1")
         if (path1 == null) {
             path1 = new PathMapping(pathName: 'testPath1').save()
         }
 
-        path2 = PathMapping.findByPathName('testPath2')
+        path2 = PathMapping.findByPathName('Application:composedComponent:subDynamicComponent:subComponent:outFirstValue')
         if (path2 == null) {
             path2 = new PathMapping(pathName: 'testPath2').save()
         }
 
-        field = FieldMapping.findByFieldName('Ultimate')
+        field = FieldMapping.findByFieldName('value')
         if (field == null) {
-            field = new FieldMapping(fieldName: 'ultimate').save()
+            field = new FieldMapping(fieldName: 'value').save()
         }
 
         collector1 = CollectorMapping.findByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER)
@@ -102,6 +102,8 @@ class ResultViewModelTests extends GroovyTestCase {
     }
 
     void testFunctions() {
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         Simulation simulation = new Simulation("testRun")
         simulation.load()
 

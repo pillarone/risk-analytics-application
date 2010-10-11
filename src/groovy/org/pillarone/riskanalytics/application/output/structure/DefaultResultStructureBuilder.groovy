@@ -6,6 +6,8 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.packets.PacketList
 import org.pillarone.riskanalytics.core.packets.Packet
+import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
+import java.lang.reflect.Field
 
 
 class DefaultResultStructureBuilder {
@@ -14,52 +16,114 @@ class DefaultResultStructureBuilder {
         Model model = modelClass.newInstance()
         model.init()
 
-        List allPaths = []
-        collectPaths(model, allPaths)
+        ResultNode node = new ResultNode(modelClass.simpleName - "Model", null)
+        collectPaths(model, node)
 
         ResultStructure resultStructure = new ResultStructure(name)
         resultStructure.modelClass = modelClass
-        for (String path in allPaths) {
-            resultStructure.mappings.put(path, path)
-        }
-
+        resultStructure.rootNode = node
         return resultStructure
     }
 
-    private static void collectPaths(Model model, List allPaths) {
-        String modelName = model.class.simpleName - "Model"
+    private static void collectPaths(Model model, ResultNode rootNode) {
         model.properties.each { String name, value ->
             if (value instanceof Component) {
-                collectPaths(value, "${modelName}:${name}", allPaths)
+                if (hasComponentOutputPath(value)) {
+                    ResultNode componentNode = new ResultNode(name, null)
+                    rootNode.addChild(componentNode)
+                    collectPaths(value, componentNode)
+                }
+
             }
         }
     }
 
-    private static void collectPaths(Component component, String prefix, List allPaths) {
+    private static void collectPaths(Component component, ResultNode componentNode) {
         component.properties.each { String name, value ->
             if (name.startsWith("out")) {
-                collectPaths(value, "${prefix}:${name}", allPaths)
+                if (hasPacketListValidOutput(value)) {
+                    ResultNode outNode = new ResultNode(name, null)
+                    componentNode.addChild(outNode)
+                    collectPaths(value, outNode)
+                }
+
             } else if (name.startsWith("sub")) {
-                collectPaths(value, "${prefix}:${name}", allPaths)
+                if (hasComponentOutputPath(value)) {
+                    ResultNode subComponentNode = new ResultNode(name, null)
+                    componentNode.addChild(subComponentNode)
+                    collectPaths(value, subComponentNode)
+                }
+
             }
         }
     }
 
-    private static void collectPaths(DynamicComposedComponent component, String prefix, List allPaths) {
+    private static void collectPaths(DynamicComposedComponent component, ResultNode componentNode) {
         component.properties.each { String name, value ->
             if (name.startsWith("out")) {
-                collectPaths(value, "${prefix}:${name}", allPaths)
+                if (hasPacketListValidOutput(value)) {
+                    ResultNode outNode = new ResultNode(name, null)
+                    componentNode.addChild(outNode)
+                    collectPaths(value, outNode)
+                }
+
             }
         }
-        collectPaths(component.createDefaultSubComponent(), "${prefix}:[%${component.genericSubComponentName}%]", allPaths)
+        Component defaultSubComponent = component.createDefaultSubComponent()
+        if (hasComponentOutputPath(defaultSubComponent)) {
+            ResultNode defaultSubComponentNode = new ResultNode("[%${component.genericSubComponentName}%]", null)
+            componentNode.addChild(defaultSubComponentNode)
+            collectPaths(defaultSubComponent, defaultSubComponentNode)
+        }
+
     }
 
-    private static void collectPaths(PacketList packetList, String prefix, List allPaths) {
+    private static void collectPaths(PacketList packetList, ResultNode componentNode) {
         Class packetType = packetList.getType()
         Packet packet = packetType.newInstance()
         List allFields = packet.valuesToSave.keySet().toList()
         for (String field in allFields) {
-            allPaths << "${prefix}:${field}"
+            ResultNode outNode = new ResultNode(field, null)
+            componentNode.addChild(outNode)
+            outNode.resultPath = outNode.path
         }
     }
+
+    private static boolean hasComponentOutputPath(Component component) {
+        boolean result = false
+        component.properties.each { String name, value ->
+            if (name.startsWith("out")) {
+                if (hasPacketListValidOutput(value)) {
+                    result = true
+                }
+            } else if (!result && name.startsWith("sub")) {
+                if (hasComponentOutputPath(value)) {
+                    result = true
+                }
+            }
+        }
+        return result
+    }
+
+    private static boolean hasComponentOutputPath(DynamicComposedComponent component) {
+        boolean result = false
+        component.properties.each { String name, value ->
+            if (name.startsWith("out")) {
+                if (hasPacketListValidOutput(value)) {
+                    result = true
+                }
+            }
+        }
+        if (!result) {
+            result = hasComponentOutputPath(component.createDefaultSubComponent())
+        }
+        return result
+    }
+
+    private static boolean hasPacketListValidOutput(PacketList packetList) {
+        Class packetType = packetList.getType()
+        Packet packet = packetType.newInstance()
+        return !packet.valuesToSave.keySet().isEmpty()
+    }
+
 }

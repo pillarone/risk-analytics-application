@@ -63,9 +63,10 @@ class ResultStructureImportService extends FileImportService {
     }
 
     protected boolean saveItemObject(String fileContent) {
-        Map<String, String> mappings = currentConfigObject.mappings
+        Closure mappings = currentConfigObject.mappings
+
         ResultStructure resultStructure = new ResultStructure(currentConfigObject.displayName, currentConfigObject.model, getLanguage())
-        resultStructure.mappings = mappings
+        resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mappings)
 
         if (!resultStructure.save()) {
             LOG.error "Could not save result structure: ${resultStructure.dao.errors}"
