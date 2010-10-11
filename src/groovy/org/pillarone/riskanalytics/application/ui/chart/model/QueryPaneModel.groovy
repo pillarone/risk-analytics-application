@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class QueryPaneModel extends AbstractPresentationModel {
 
@@ -232,7 +233,11 @@ class QueryPaneModel extends AbstractPresentationModel {
                 " AND s.field.fieldName = '" + criteria.field + "'" +
                 " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.intepretedValue
         LOG.debug "Query: " + q
-        SingleValueResult.executeQuery(q)
+
+        //SingleValueResult.executeQuery(q)
+        List list=ResultAccessor.getCriteriaConstrainedIterations(simulationRun,criteria.selectedPeriod,criteria.selectedPath
+        ,criteria.field,criteria.selectedComparator.toString(),criteria.intepretedValue);
+        return list;
     }
 
     protected String createCriteriaSubQuerry(CriteriaViewModel model) {
@@ -277,7 +282,9 @@ class QueryPaneModel extends AbstractPresentationModel {
                                 " AND s.path.pathName = '" + path + "'" +
                                 " AND s.field.fieldName = '" + field + "'" +
                                 " AND s.iteration in (:list) ORDER BY s.iteration"
-                        periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
+                        //periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
+                        periodList.addAll(ResultAccessor.getIterationConstrainedValues(simulationRun,period,path,field,
+                        list));
                     }
                     resultsPerPathAndPeriod << periodList
                 }
@@ -296,7 +303,9 @@ class QueryPaneModel extends AbstractPresentationModel {
                                 " AND s.path.pathName = '" + path + "'" +
                                 " AND s.field.fieldName = '" + field + "'" +
                                 " AND s.iteration in (:list) ORDER BY s.iteration"
-                        periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
+                        //periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
+                        periodList.addAll(ResultAccessor.getIterationConstrainedValues(simulationRun,period,path,field,
+                        list));
                     }
                     resultsPerPathAndPeriod << periodList
                 }
