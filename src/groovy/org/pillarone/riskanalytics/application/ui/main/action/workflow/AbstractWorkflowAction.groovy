@@ -20,9 +20,11 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         super(name, tree, model)
     }
 
-    final void doActionPerformed(ActionEvent event) {
+    void doActionPerformed(ActionEvent event) {
         Parameterization item = getSelectedItem()
-        item.load()
+        if (!item.isLoaded()) {
+            item.load()
+        }
         Parameterization parameterization = service.changeStatus(item, toStatus())
         if (!item.is(parameterization)) {
             model.selectionTreeModel.addNodeForItem(parameterization)
