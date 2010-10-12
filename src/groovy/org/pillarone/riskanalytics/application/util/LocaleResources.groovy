@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.util
 
+import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import com.ulcjava.base.application.ClientContext
 import java.text.DateFormat
 import java.text.NumberFormat
@@ -31,6 +32,15 @@ class LocaleResources {
         ResourceBundle.getBundle(bundleFilename, getLocale())
     }
 
+    static Set getBundles() {
+        def resourceBundle = []
+        def resources = ResourceBundleRegistry.getResourceBundles()
+        for (String bundleName in resources) {
+            resourceBundle << ResourceBundle.getBundle(bundleName, getLocale())
+        }
+        return resourceBundle
+    }
+
     static Locale getLocale() {
         if (sTestMode) {
             return Locale.getDefault()
@@ -50,10 +60,15 @@ class LocaleResources {
                 }
             }
             if (locale == null) {
-                locale = ClientContext.getLocale()
-                if (locale == null) {
+                try {
+                    locale = ClientContext.getLocale()
+                    if (locale == null) {
+                        locale = new Locale("en", "US")
+                    }
+                } catch (Exception e) {
                     locale = new Locale("en", "US")
                 }
+
                 UserContext.setAttribute(LOCALE, locale)
             }
             Locale.setDefault(locale)

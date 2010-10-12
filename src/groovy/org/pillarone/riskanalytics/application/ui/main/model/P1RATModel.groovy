@@ -1,10 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.*
-
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.UlcUtilities
@@ -34,6 +29,10 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -404,6 +403,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void openItem(Model model, BatchRun batchRun) {
+        currentItem = null
         notifyOpenDetailView(model, batchRun)
     }
 
@@ -488,12 +488,16 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
+        ParameterViewModel viewModel = viewModelsInUse[simulation.parameterization]
+        ResultConfigurationViewModel templateViewModel = viewModelsInUse[simulation.template]
         if (simulation.simulationRun?.endTime != null) {
             selectionTreeModel.addNodeForItem(simulation)
-            ParameterViewModel viewModel = viewModelsInUse[simulation.parameterization]
-            ResultConfigurationViewModel templateViewModel = viewModelsInUse[simulation.template]
             viewModel?.readOnly = true
             templateViewModel?.readOnly = true
+        }
+        else {
+            viewModel?.readOnly = false
+            templateViewModel?.readOnly = false
         }
     }
 

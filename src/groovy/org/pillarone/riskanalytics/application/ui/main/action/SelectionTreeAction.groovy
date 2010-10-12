@@ -57,6 +57,24 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedObjects
     }
 
+    List getAllSelectedObjects() {
+        List selectedObjects = []
+        for (TreePath selectedPath in tree.selectionPaths) {
+            for (Object node in selectedPath.getPath()) {
+                if (node instanceof ItemGroupNode) {
+                    if (selectedPath?.lastPathComponent != null) {
+                        Object lastNode = selectedPath.lastPathComponent
+                        if (lastNode instanceof ItemNode) {
+                            selectedObjects.add(lastNode)
+                        }
+                    }
+                }
+            }
+        }
+        return selectedObjects
+    }
+
+
     Model getSelectedModel() {
         ITreeNode itemNode = tree?.selectionPath?.lastPathComponent
         return getSelectedModel(itemNode)

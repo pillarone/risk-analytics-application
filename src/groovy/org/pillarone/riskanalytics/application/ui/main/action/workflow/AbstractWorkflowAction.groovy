@@ -37,7 +37,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
     final boolean isEnabled() {
         Person user = UserManagement.getCurrentUser()
-        return user != null && user.roles().contains(requiredRole()) && isActionEnabled()
+        return user != null && user.getAuthorities()*.authority.contains(requiredRole()) && isActionEnabled()
     }
 
     abstract protected String requiredRole()

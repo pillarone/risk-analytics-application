@@ -18,6 +18,8 @@ import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.CollectingModeFactory
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
@@ -58,7 +60,7 @@ class ResultViewModel extends AbstractModellingModel {
             }
             Set paths = new HashSet()
             //look through all periods, not all paths may have a result in the first period
-            for(Map<String,Map> periodResults in allResults.values()) {
+            for (Map<String, Map> periodResults in allResults.values()) {
                 paths.addAll(obtainAllPaths(periodResults))
             }
 
@@ -71,7 +73,7 @@ class ResultViewModel extends AbstractModellingModel {
             }
 
             resultStructure.load()
-            builder = new ResultStructureTreeBuilder(paths.toList(), modelClass, resultStructure, item)
+            builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)
 
             treeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
@@ -108,6 +110,21 @@ class ResultViewModel extends AbstractModellingModel {
         }
 
         return results
+    }
+
+    public static Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
+        Map<String, ICollectingModeStrategy> result = [:]
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
+                " WHERE p.run.id = ?", [simulationRun.id])
+        for (Object[] psc in calculations) {
+            String path = "${psc[0]}:${psc[1]}"
+            String collector = psc[2]
+            if (allPaths.contains(path)) {
+                result.put(path, CollectingModeFactory.getStrategy(collector))
+            }
+        }
+
+        return result
     }
 
     private ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
@@ -163,8 +180,11 @@ class ResultViewModel extends AbstractModellingModel {
 
     void removeFunction(IFunction function) {
         if (treeModel.functions.contains(function)) {
-            periodCount.times {
-                treeModel.functions.remove(function)
+            //do not change list size, because the view always increases the model index of new columns
+            int index = treeModel.functions.indexOf(function)
+            while (index >= 0) {
+                treeModel.functions[index] = null
+                index = treeModel.functions.indexOf(function)
             }
             treeModel.columnCount -= periodCount
             notifyFunctionRemoved(function)
@@ -178,9 +198,10 @@ class ResultViewModel extends AbstractModellingModel {
     }
 
     boolean isFunctionAdded(IFunction function) {
-        for (IFunction iFunction in treeModel.functions) {
-            if (iFunction.name.equals(function.name))
+        for (IFunction f in treeModel.functions) {
+            if (f != null && f.getName(0).equals(function.name)) {
                 return true
+            }
         }
         return false
     }

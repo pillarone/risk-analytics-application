@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.workflow.Reopen
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ResolveWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.user.Authority
 
 class WorkflowCommentPane extends CommentPane {
 
@@ -37,8 +38,8 @@ class WorkflowCommentPane extends CommentPane {
 
     private Map<StatusIdentifier, Closure> uiStates
 
-    public WorkflowCommentPane(ParameterViewModel model, Comment comment) {
-        super(model, comment);
+    public WorkflowCommentPane(ParameterViewModel model, Comment comment, String searchText) {
+        super(model, comment, searchText);
     }
 
     private void initMap() {
@@ -139,11 +140,11 @@ class WorkflowCommentPane extends CommentPane {
     }
 
     private String getUserRole() {
-        List roles = UserManagement.getCurrentUser()?.roles()?.toList()
+        List<Authority> roles = UserManagement.getCurrentUser()?.getAuthorities()?.toList()
         if (roles == null || roles.size() != 1) {
             return UserManagement.USER_ROLE
         }
-        return roles[0]
+        return roles[0].authority
     }
 
     private WorkflowComment getWorkflowComment() {

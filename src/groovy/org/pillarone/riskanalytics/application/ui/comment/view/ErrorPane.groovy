@@ -1,14 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.comment.view;
 
-import com.ulcjava.base.application.*;
-import com.ulcjava.base.application.border.ULCTitledBorder;
-import com.ulcjava.base.application.util.Color;
-import com.ulcjava.base.application.util.Font;
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel;
-import org.pillarone.riskanalytics.application.util.LocaleResources;
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError;
 
-import java.util.Collection;
+import com.ulcjava.base.application.border.ULCTitledBorder
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import com.ulcjava.base.application.*
 
 public class ErrorPane {
 
@@ -30,9 +30,16 @@ public class ErrorPane {
     }
 
     public void addErrors(Collection<ParameterValidationError> errors) {
-        for (ParameterValidationError error : errors) {
-            addError(error);
+        if (errors != null && !errors.isEmpty()) {
+            for (ParameterValidationError error: errors) {
+                addError(error);
+            }
+        } else {
+            ULCBoxPane around = UIUtils.spaceAround(new ULCLabel(UIUtils.getText(ErrorPane.class, "noError")), 2, 10, 0, 0)
+            around.setBackground(Color.white)
+            container.add(ULCBoxPane.BOX_LEFT_TOP, around);
         }
+
         container.add(ULCBoxPane.BOX_EXPAND_EXPAND, ULCFiller.createVerticalGlue());
     }
 
@@ -60,4 +67,9 @@ public class ErrorPane {
     public ULCBoxPane getContent() {
         return content;
     }
+
+    public void setVisible(boolean visibility) {
+        container.setVisible(visibility);
+    }
+
 }

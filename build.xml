@@ -5,9 +5,10 @@
     <import file="${GRAILS_HOME}/src/grails/grails-macros.xml"/>
 
     <property file="application.properties"/>
+    <property file="${user.home}/cert.properties"/>
 
     <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}"/>
-    <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-v1.1"/>
+    <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-v1.2"/>
     <property name="classes.prod.dir" value="${build.prod.dir}/classes"/>
     <property name="resources.prod.dir" value="src/java"/>
 
@@ -101,7 +102,21 @@
         </exec>
     </target>
 
-    <target name="jar-client" description="--> Create clientside jar files">
+    <target name="-trusted-cert-available">
+        <!-- try to use a trusted certificate reading cert.properties from the user.home directory -->
+        <available property="file.exists" file="${user.home}/cert.properties"/>
+    </target>
+
+    <target name="-self-signed-cert" unless="-trusted-cert-available">
+        <!-- if no trusted certificate has been found use the self signed certificate available in the project root -->
+        <!-- <echo  message="No trusted certificate found. user.home is ${user.home}."/> -->
+        <property name="signjar.alias" value="pillarone"/>
+        <property name="signjar.keystore" value="pillarone.keystore"/>
+        <property name="signjar.storepass" value="nopasswd"/>
+        <property name="signjar.keypass" value="nopasswd"/>
+    </target>
+
+    <target name="jar-client" depends="-self-signed-cert" description="--> Create clientside jar files">
         <mkdir dir="${webapp.lib.dir}"/>
         <delete dir="${webapp.lib.dir}">
             <include name="${app.name}*.jar"/>
@@ -131,7 +146,7 @@
 
         <!-- has to be replaced with a trusted certificate issued for the builder of the jar files -->
         <!-- this is a self signed certificate and won't work with a strict security policy -->
-        <signjar alias="pillarone" keystore="pillarone.keystore" storepass="nopasswd" keypass="nopasswd" lazy="false">
+        <signjar alias="${signjar.alias}" keystore="${signjar.keystore}" storepass="${signjar.storepass}" keypass="${signjar.keypass}" lazy="false">
             <fileset dir="${webapp.lib.dir}" includes="${app.name}*.jar"/>
             <fileset dir="${ulcPlugIn.webapp.lib.dir}" includes="**/*.jar"/>
         </signjar>

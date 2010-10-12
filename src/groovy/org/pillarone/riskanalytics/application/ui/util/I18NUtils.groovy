@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import com.ulcjava.base.application.util.HTMLUtilities
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
@@ -18,6 +19,7 @@ public class I18NUtils {
     static final Log LOG = LogFactory.getLog(I18NUtils)
     static boolean testMode = false
     static ResourceBundle testResourceBundle = null
+    static Set exceptionResourceBundle = null
 
     public static findParameterTypeDisplayName(String type) {
         String value = null
@@ -274,6 +276,54 @@ public class I18NUtils {
         } catch (Exception) {
         }
         return value
-
     }
+
+    public static String getExceptionText(String exception) {
+        if (!exceptionResourceBundle)
+            exceptionResourceBundle = LocaleResources.getBundles()
+        String text = getTextByResourceBundles(exception)
+        if (!text) {
+            text = toLines(exception, 70)
+        }
+        return HTMLUtilities.convertToHtml(text)
+    }
+
+    private static String toLines(String exception, int lineMaxLength) {
+        List words = exception.split(" ") as List
+        StringBuffer bf = new StringBuffer()
+        int lineLength = 0
+        for (String s in words) {
+            if (lineLength + s.length() > lineMaxLength) {
+                bf << "\n"
+                lineLength = 0
+            }
+            bf << s + " "
+            lineLength += (s.length() + 1)
+        }
+        return bf.toString()
+    }
+
+    private static String getTextByResourceBundles(String exception) {
+        String text = null
+        def keys = null
+        try {
+            exception = exception.replaceAll("\n", "")
+            for (ResourceBundle resourceBundle: exceptionResourceBundle) {
+                keys = (List) new GroovyShell().evaluate(exception)
+                try {
+                    text = resourceBundle.getString(keys[0])
+                } catch (Exception ex) {}
+                if (text) {
+                    keys.eachWithIndex {String key, int index ->
+                        if (index > 0) {
+                            text = text.replace("[" + index + "]", key)
+                        }
+                    }
+                    return text;
+                }
+            }
+        } catch (Exception ex) {  /*ignore the exception*/}
+        return text;
+    }
+
 }

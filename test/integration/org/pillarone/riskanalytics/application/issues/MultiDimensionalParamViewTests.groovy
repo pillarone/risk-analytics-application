@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.issues
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
+import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCTabbedPaneOperator
@@ -40,7 +41,12 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        frame.setContentPane(new ParameterView(parameterViewModel).content)
+        ParameterView view = new ParameterView(parameterViewModel)
+        view.model.treeModel.root.childCount.times {
+            view.tree.expandPath new TreePath([view.model.treeModel.root, view.model.treeModel.root.getChildAt(it)] as Object[])
+        }
+
+        frame.setContentPane(view.content)
         ULCClipboard.install()
         ExceptionSafe.rootPane = frame
         frame.visible = true

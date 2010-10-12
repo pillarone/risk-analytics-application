@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertIssueAction
+import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -59,6 +60,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu = new ULCPopupMenu()
         addDynamicNodeMenu.add(new ULCMenuItem(new AddDynamicSubComponent(tree.rowHeaderTableTree, model)))
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        addDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(insertIssue))
@@ -69,6 +71,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
         removeDynamicNodeMenu = new ULCPopupMenu()
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
@@ -83,10 +86,12 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
 
         expandTreeMenuWithHelp = new ULCPopupMenu()
         expandTreeMenuWithHelp.name = "popup.expand"
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeCollapser(tree)))
         //expandTreeMenuWithHelp.addSeparator()
 
         expandTreeMenuWithHelp.addSeparator()
@@ -118,7 +123,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, def node) {
-        if (node.commentMessage != "") {
+        if (node.comments && node.comments.size() > 0) {
             setFont(getFont().deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
@@ -128,20 +133,23 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
+        Font font = getFont()
         if (node.errorMessage == null) {
             setForeground(Color.black)
             setToolTipText(null)
-            setFont(getFont().deriveFont(Font.PLAIN))
+            setFont(font.deriveFont(Font.PLAIN))
         } else {
             setForeground(Color.red)
             setToolTipText(node.errorMessage)
-            setFont(getFont().deriveFont(Font.BOLD))
+            setFont(font.deriveFont(Font.BOLD))
         }
-        if (node.commentMessage != "") {
-            setFont(getFont().deriveFont(Font.BOLD))
+        if (node.comments && node.comments.size() > 0) {
+            setForeground(Color.black)
+            setFont(font.deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
-            setFont(getFont().deriveFont(Font.PLAIN))
+            setForeground(Color.black)
+            setFont(font.deriveFont(Font.PLAIN))
             setToolTipText("")
         }
     }
@@ -173,6 +181,7 @@ class CompareComponentNodeTableTreeNodeRenderer extends ComponentNodeTableTreeNo
 
         addDynamicNodeMenu = new ULCPopupMenu()
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        addDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
 
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(help))
@@ -180,6 +189,7 @@ class CompareComponentNodeTableTreeNodeRenderer extends ComponentNodeTableTreeNo
 
         removeDynamicNodeMenu = new ULCPopupMenu()
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
 
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
@@ -187,10 +197,12 @@ class CompareComponentNodeTableTreeNodeRenderer extends ComponentNodeTableTreeNo
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
 
         expandTreeMenuWithHelp = new ULCPopupMenu()
         expandTreeMenuWithHelp.name = "popup.expand"
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeCollapser(tree)))
 
         expandTreeMenuWithHelp.add(new ULCMenuItem(help))
     }

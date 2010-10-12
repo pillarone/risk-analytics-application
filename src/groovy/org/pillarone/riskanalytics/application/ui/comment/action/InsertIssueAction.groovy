@@ -20,7 +20,7 @@ class InsertIssueAction extends AbstractCommentAction {
 
     boolean isEnabled() {
         Person user = UserManagement.getCurrentUser()
-        return user != null && user.roles().contains(UserManagement.REVIEWER_ROLE)
+        return user != null && user.getAuthorities()*.authority.contains(UserManagement.REVIEWER_ROLE)
     }
 
 

@@ -28,7 +28,7 @@ class DataTypeFactoryTests extends GroovyTestCase {
         assertFalse "integer", dataType.integer
         assertTrue "grouping not used", dataType.groupingUsed
         assertEquals "minFractionDigits", 0, dataType.minFractionDigits
-        assertEquals "maxFractionDigits", 4, dataType.maxFractionDigits
+        assertEquals "maxFractionDigits", 20, dataType.maxFractionDigits
 
         assertSame dataType, DataTypeFactory.getDataType(value, false)
         assertSame dataType, DataTypeFactory.getDataType(1.1d, false)

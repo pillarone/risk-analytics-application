@@ -27,5 +27,7 @@ class LinePercentage implements IMultiDimensionalConstraints {
         return column == 0 ? ITestComponentMarker : BigDecimal
     }
 
-
+    Integer getColumnIndex(Class marker) {
+        null
+    }
 }

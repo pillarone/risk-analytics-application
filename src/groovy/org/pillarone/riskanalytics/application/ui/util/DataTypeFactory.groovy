@@ -57,7 +57,7 @@ public class DataTypeFactory {
         IDataType dateDataType = UserContext.getAttribute("dateDataType")
 
         if (dateDataType == null) {
-            dateDataType = new ULCDateDataType(getErrorManager(), SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, UIUtils.getClientLocale()).toPattern())
+            dateDataType = new ULCDateDataType(getErrorManager(), SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, UIUtils.getClientLocale()).toPattern())
             UserContext.setAttribute("dateDataType", dateDataType)
         }
 
@@ -111,7 +111,7 @@ public class DataTypeFactory {
             floatingPointDataTypeForNonEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
             floatingPointDataTypeForNonEdit.integer = false
             floatingPointDataTypeForNonEdit.minFractionDigits = 0
-            floatingPointDataTypeForNonEdit.maxFractionDigits = 4
+            floatingPointDataTypeForNonEdit.maxFractionDigits = 20
             floatingPointDataTypeForNonEdit.groupingUsed = true
             UserContext.setAttribute("floatingPointDataTypeForNonEdit", floatingPointDataTypeForNonEdit)
         }

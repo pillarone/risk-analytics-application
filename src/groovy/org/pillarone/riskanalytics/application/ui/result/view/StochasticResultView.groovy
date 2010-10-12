@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.Max
 import org.pillarone.riskanalytics.application.dataaccess.function.Min
 import org.pillarone.riskanalytics.application.dataaccess.function.Sigma
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
@@ -25,8 +26,15 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton sigmaButton
     ULCComboBox selectView
 
+    private int nextModelIndex = 0
+
     public StochasticResultView(ResultViewModel model) {
         super(model)
+    }
+
+    void setModel(AbstractModellingModel model) {
+        nextModelIndex = model.periodCount + 1
+        super.setModel(model)
     }
 
     protected void initComponents() {
@@ -106,7 +114,7 @@ class StochasticResultView extends ResultView {
 
     private def addDoubleFunctions(ULCToolBar toolbar) {
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        toolbar.add(new ULCLabel(getText("Add")))
+        toolbar.addSeparator()
         toolbar.add ULCFiller.createHorizontalStrut(5)
         IDataType dataType = DataTypeFactory.numberDataType
         dataType.integer = false
@@ -126,18 +134,14 @@ class StochasticResultView extends ResultView {
         toolbar.add new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue))
     }
 
-
-
     public void functionAdded(IFunction function) {
         ResultViewModel model = this.model as ResultViewModel
-        int newColumnIndex = tree.viewPortTableTree.columnCount + 1
         for (int i = 0; i < model.periodCount; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(newColumnIndex + i, tree.viewPortTableTree, function)
+            ULCTableTreeColumn column = new ResultTableTreeColumn(nextModelIndex++, tree.viewPortTableTree, function)
             column.setMinWidth 110
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
         }
-        nodeChanged()
         menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
     }
 

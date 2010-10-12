@@ -191,7 +191,7 @@ class ResultIterationDataView implements IModelChangedListener {
 
 class ExportRawDataTable extends ResourceBasedAction {
     ResultIterationDataView view
-    ExcelExporter exporter = new ExcelExporter()
+    final static int MAX_OF_ROWS = 65535
 
 
     public ExportRawDataTable(ResultIterationDataView view) {
@@ -200,41 +200,55 @@ class ExportRawDataTable extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        FileChooserConfig config = new FileChooserConfig()
-        config.dialogTitle = "Result Iteration Data Export"
-        config.dialogType = FileChooserConfig.SAVE_DIALOG
-        config.FILES_ONLY
-        config.selectedFile = "ResultIterationData.xls"
+        if (!validate()) {
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(view.content), "RawDataExcelExportError")
+            alert.show()
+        } else {
+            FileChooserConfig config = new FileChooserConfig()
+            config.dialogTitle = "Result Iteration Data Export"
+            config.dialogType = FileChooserConfig.SAVE_DIALOG
+            config.FILES_ONLY
+            config.selectedFile = "ResultIterationData.xls"
 
-        ULCWindow ancestor = UlcUtilities.getWindowAncestor(view.content)
-        ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
-                    String selectedFile = filePaths[0]
+            ULCWindow ancestor = UlcUtilities.getWindowAncestor(view.content)
+            ClientContext.chooseFile([
+                    onSuccess: {filePaths, fileNames ->
+                        String selectedFile = filePaths[0]
 
-                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                        try {
-                            exporter.headers = view.model.columnHeader
-                            exporter.exportResults(view.model.rawData)
-                            exporter.addTab "Simulation Settings", view.model.simulationSettings
-                            exporter.writeWorkBook stream
-                        } catch (UnsupportedOperationException t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                        } catch (Throwable t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                            throw t
-                        } finally {
-                            stream.close()
-                        }
-                    }, onSuccess: {path, name ->
-                    }, onFailure: {reason, description ->
-                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
-                    }] as IFileStoreHandler, selectedFile)
+                        ClientContext.storeFile([prepareFile: {OutputStream stream ->
+                            try {
+                                ExcelExporter exporter = new ExcelExporter()
+                                exporter.headers = view.model.columnHeader
+                                exporter.exportResults(view.model.rawData)
+                                exporter.addTab "Simulation Settings", view.model.simulationSettings
+                                exporter.writeWorkBook stream
+                            } catch (UnsupportedOperationException t) {
+                                new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                            } catch (Throwable t) {
+                                new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                                throw t
+                            } catch (Exception ex) {
+                                new ULCAlert(ancestor, "Export failed", ex.message, "Ok").show()
+                            } finally {
+                                stream.close()
+                            }
+                        }, onSuccess: {path, name ->
+                        }, onFailure: {reason, description ->
+                            new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                        }] as IFileStoreHandler, selectedFile)
 
-                },
-                onFailure: {reason, description ->
-                }] as IFileChooseHandler, config, ancestor)
+                    },
+                    onFailure: {reason, description ->
+                    }] as IFileChooseHandler, config, ancestor)
+        }
+
 
     }
+
+    private boolean validate() {
+        return view.model.rawData && view.model.rawData.size() < MAX_OF_ROWS
+    }
+
 }
 
 class IterationResultTableHeaderRenderer extends DefaultTableHeaderCellRenderer {

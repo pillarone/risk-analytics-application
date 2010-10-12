@@ -41,12 +41,13 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
 
 
         List paths = ResultViewModel.obtainAllPaths(allResults."0")
+        Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
         Class modelClass = model.class
 
         ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
 
         resultStructure.load()
-        builder = new ResultStructureTreeBuilder(paths, modelClass, resultStructure, item[0])
+        builder = new ResultStructureTreeBuilder(collectors, modelClass, resultStructure, item[0])
 
         treeRoot = builder.buildTree()
 
@@ -142,5 +143,18 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
             listener.refreshNodes()
         }
     }
+
+}
+
+public class TestCompareSimulationsViewModel extends CompareSimulationsViewModel {
+
+    public TestCompareSimulationsViewModel(Model model, ModelStructure structure, List simulations) {
+        super(model, structure, simulations);
+    }
+
+    protected changeUpdateMode(def model) {
+
+    }
+
 
 }

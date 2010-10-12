@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.SimulationState
@@ -99,7 +100,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             estimatedEndTimeInfo.text = model.estimatedEndTime
             progressBar.value = model.progress
             progressBar.indeterminate = false
-            progressBar.string = "Calculations ${model.progress}% complete"
+            progressBar.string = "Calculating statistics ${model.progress}% complete"
             run.enabled = false
             addToBatch.enabled = false
             stop.enabled = false
@@ -287,7 +288,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         //the polling timer is stopped in the ui state closures to make sure that the last state is correctly applied
 
         if (currentUISimulationState == SimulationState.ERROR) {
-            ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", this.model.errorMessage, "Ok")
+            ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", I18NUtils.getExceptionText(this.model.errorMessage), "Ok")
             alert.show()
         }
     }

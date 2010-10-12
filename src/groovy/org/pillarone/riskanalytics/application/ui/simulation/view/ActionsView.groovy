@@ -6,6 +6,7 @@ import com.ulcjava.base.application.util.Dimension
 import java.text.SimpleDateFormat
 import org.codehaus.groovy.runtime.TimeCategory
 import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
@@ -177,9 +178,9 @@ class ActionsView {
         if (simulationMessageKey) {
             simulationMessage = getText(this.class, simulationMessageKey)
         } else if (model.postSimulationCalculationsRunning()) {
-            simulationMessage = "Calculating statistics ${model.simulationProgress} % complete"
+            simulationMessage = UIUtils.getText(this.class, "CalculatingStatistics", [model.simulationProgress])
         } else if (model.simulationRunning()) {
-            simulationMessage = "Simulation ${model.simulationProgress} % complete"
+            simulationMessage = UIUtils.getText(this.class, "SimulationComplete", [model.simulationProgress])
         }
         progressBar.indeterminate = model.isCurrentTaskEndIndeterminate()
         progressBar.setString(simulationMessage)

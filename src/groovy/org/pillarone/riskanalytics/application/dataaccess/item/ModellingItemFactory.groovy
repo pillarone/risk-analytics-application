@@ -324,6 +324,9 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
+        List comments = item?.comments?.collect {it.clone()}
+        comments?.each {newItem.addComment(it)}
+
         newItem.periodCount = item.periodCount
         newItem.periodLabels = item.periodLabels
         newItem.modelClass = item.modelClass

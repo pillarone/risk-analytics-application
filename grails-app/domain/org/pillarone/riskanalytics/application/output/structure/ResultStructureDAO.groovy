@@ -6,7 +6,7 @@ class ResultStructureDAO {
     String name
     String itemVersion
 
-    static hasMany = [structureMappings : StructureMapping]
+    static hasMany = [structureMappings: StructureMapping]
 
     String toString() {
         "$name v$itemVersion"

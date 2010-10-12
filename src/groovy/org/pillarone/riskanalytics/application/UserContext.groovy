@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application
 
 import com.ulcjava.base.application.ApplicationContext
+import com.ulcjava.base.application.ClientContext
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.user.Person
@@ -33,9 +34,14 @@ class UserContext {
         return UserManagement.getCurrentUser()
     }
 
-      public static void removeAttribute(String key){
+    public static void removeAttribute(String key) {
         ApplicationContext.removeAttribute(key)
         fallbackContext.remove(key)
+    }
+
+    public static boolean isStandAlone() {
+        int type = ClientContext.getClientEnvironmentType()
+        return type != ClientContext.APPLET && type != ClientContext.JNLP
     }
 
 }
