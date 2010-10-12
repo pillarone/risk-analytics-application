@@ -165,4 +165,15 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         assertEquals "Model:contracts:subContractA:claimsGenerators:subFire:outClaims", claimsGen.getChildAt(0).path
         assertEquals "ultimate", claimsGen.getChildAt(0).field
     }
+
+    void testNodeReplacementCompareTo() {
+        String path = "claims:paid:[%lineOfBusiness%]:gross:[%claimsGenerator%]"
+        String path2 = "claims:paid:[%lineOfBusiness%]:ceded:[%contract%]"
+
+        assertTrue new ResultStructureTreeBuilder.NodeReplacement(path: path, wildcard: "[%lineOfBusiness%]").compareTo(new ResultStructureTreeBuilder.NodeReplacement(path: path, wildcard: "[%claimsGenerator%]")) > 0
+        assertTrue new ResultStructureTreeBuilder.NodeReplacement(path: path2, wildcard: "[%lineOfBusiness%]").compareTo(new ResultStructureTreeBuilder.NodeReplacement(path: path2, wildcard: "[%contract%]")) > 0
+
+        assertTrue new ResultStructureTreeBuilder.NodeReplacement(path: path, wildcard: "[%claimsGenerator%]").compareTo(new ResultStructureTreeBuilder.NodeReplacement(path: path2, wildcard: "[%lineOfBusiness%]")) < 0
+        assertTrue new ResultStructureTreeBuilder.NodeReplacement(path: path2, wildcard: "[%contract%]").compareTo(new ResultStructureTreeBuilder.NodeReplacement(path: path, wildcard: "[%lineOfBusiness%]")) < 0
+    }
 }
