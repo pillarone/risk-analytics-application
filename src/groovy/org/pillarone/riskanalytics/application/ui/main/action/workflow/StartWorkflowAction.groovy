@@ -4,10 +4,10 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.ULCTree
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.UlcUtilities
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
 
 class StartWorkflowAction extends AbstractWorkflowAction {
@@ -22,16 +22,23 @@ class StartWorkflowAction extends AbstractWorkflowAction {
 
     void doActionPerformed(ActionEvent event) {
         DealLinkDialog dialog = new DealLinkDialog(UlcUtilities.getWindowAncestor(tree))
+        Parameterization parameterization = getSelectedItem()
         Closure okAction = {
-            Parameterization parameterization = getSelectedItem()
-            if (!parameterization.isLoaded()) {
-                parameterization.load()
+            ExceptionSafe.protect {
+                if (!parameterization.isLoaded()) {
+                    parameterization.load()
+                }
+                parameterization.dealId = dialog.dealSelectionModel.dealId
+                super.doActionPerformed(event)
             }
-            parameterization.dealId = dialog.dealSelectionModel.dealId
+        }
+        if (parameterization.status == Status.NONE) {
+            dialog.okAction = okAction
+            dialog.show()
+        } else {
             super.doActionPerformed(event)
         }
-        dialog.okAction = okAction
-        dialog.show()
+
     }
 
     Status toStatus() {

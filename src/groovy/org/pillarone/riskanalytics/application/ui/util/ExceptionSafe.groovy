@@ -7,6 +7,7 @@ import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationError
+import org.pillarone.riskanalytics.core.workflow.WorkflowException
 
 /**
  * Convenience class to allow easy use of protect  {}  for centralized Exception handling.
@@ -19,30 +20,33 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterizationError
 class ExceptionSafe {
     private static LOG = Logger.getLogger(ExceptionSafe)
     private static messagePatterns = [
-        Exception: "Sorry, PillarOne has hit a technical error.\n[{0}]\n\nIt tries to proceed, but it is safer to restart PillarOne.\nYou may want to save your data before restarting.",
-        ParameterizationSaveError: "Invalid parameterization:\n\n {0}\n\nThe parameterization is not saved.",
-        ParameterizationImportError: "Error in parameterization on line {1}:\n\n{0}\n\nParameterization import failed.",
-        PasteError: "Paste Error:\n\n {0} \nThis error appears also if the tree structure changes while pasting.",
-        MissingHelpException: "No help available",
-        HibernateOptimisticLockingFailureException: "Your values cannot be stored because another\nuser has changed them in the meantime.",
+            Exception: "Sorry, PillarOne has hit a technical error.\n[{0}]\n\nIt tries to proceed, but it is safer to restart PillarOne.\nYou may want to save your data before restarting.",
+            ParameterizationSaveError: "Invalid parameterization:\n\n {0}\n\nThe parameterization is not saved.",
+            ParameterizationImportError: "Error in parameterization on line {1}:\n\n{0}\n\nParameterization import failed.",
+            PasteError: "Paste Error:\n\n {0} \nThis error appears also if the tree structure changes while pasting.",
+            MissingHelpException: "No help available",
+            HibernateOptimisticLockingFailureException: "Your values cannot be stored because another\nuser has changed them in the meantime.",
+            WorkflowException: "Workflow action failed. Reason: {0}"
     ]
 
     private static titles = [
-        Exception: "Notification",
-        ParameterizationSaveError: "Parameterization error",
-        ParameterizationImportError: "Parameterization error",
-        PasteError: "Paste error",
-        MissingHelpException: "Notification",
-        HibernateOptimisticLockingFailureException: "Concurrent modification",
+            Exception: "Notification",
+            ParameterizationSaveError: "Parameterization error",
+            ParameterizationImportError: "Parameterization error",
+            PasteError: "Paste error",
+            MissingHelpException: "Notification",
+            HibernateOptimisticLockingFailureException: "Concurrent modification",
+            WorkflowException: "Workflow error"
     ]
 
     private static errorLevel = [
-        Exception: ULCAlert.ERROR_MESSAGE,
-        ParameterizationSaveError: ULCAlert.WARNING_MESSAGE,
-        ParameterizationImportError: ULCAlert.WARNING_MESSAGE,
-        PasteError: ULCAlert.INFORMATION_MESSAGE,
-        MissingHelpException: ULCAlert.INFORMATION_MESSAGE,
-        HibernateOptimisticLockingFailureException: ULCAlert.WARNING_MESSAGE
+            Exception: ULCAlert.ERROR_MESSAGE,
+            ParameterizationSaveError: ULCAlert.WARNING_MESSAGE,
+            ParameterizationImportError: ULCAlert.WARNING_MESSAGE,
+            PasteError: ULCAlert.INFORMATION_MESSAGE,
+            MissingHelpException: ULCAlert.INFORMATION_MESSAGE,
+            HibernateOptimisticLockingFailureException: ULCAlert.WARNING_MESSAGE,
+            WorkflowException: ULCAlert.INFORMATION_MESSAGE
     ]
 
     static ULCRootPane rootPane = null
@@ -50,14 +54,14 @@ class ExceptionSafe {
     static out = ApplicationHolder.getApplication()?.config?.ExceptionSafeOut instanceof OutputStream ? ApplicationHolder.getApplication().config.ExceptionSafeOut : System.out
 
     static final List IGNORE = [
-        /^sun\./,
-        /^com\.intellij\./,
-        /^java\./,
-        /^groovy\./,
-        /^org\.codehaus\./,
-        /^com\.ulcjava\./,
-        /^org\.pillarone\.modelling\.ui\.util\.ExceptionSafe$/,
-        /^junit\./
+            /^sun\./,
+            /^com\.intellij\./,
+            /^java\./,
+            /^groovy\./,
+            /^org\.codehaus\./,
+            /^com\.ulcjava\./,
+            /^org\.pillarone\.modelling\.ui\.util\.ExceptionSafe$/,
+            /^junit\./
     ]
 
     static def protect(Closure yield) {
