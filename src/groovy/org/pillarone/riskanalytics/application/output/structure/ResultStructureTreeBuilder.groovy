@@ -18,14 +18,10 @@ class ResultStructureTreeBuilder {
 
         int compareTo(Object o) {
             NodeReplacement nodeReplacement = o
-            if (path != nodeReplacement.path) {
-                return path.compareTo(nodeReplacement.path)
-            } else {
-                int wildcardIndex = path.indexOf(wildcard)
-                int otherWildcardIndex = nodeReplacement.path.indexOf(nodeReplacement.wildcard)
+            int wildcardIndex = path.indexOf(wildcard)
+            int otherWildcardIndex = nodeReplacement.path.indexOf(nodeReplacement.wildcard)
 
-                return wildcardIndex > otherWildcardIndex ? -1 : 1
-            }
+            return wildcardIndex > otherWildcardIndex ? -1 : 1
         }
 
     }
