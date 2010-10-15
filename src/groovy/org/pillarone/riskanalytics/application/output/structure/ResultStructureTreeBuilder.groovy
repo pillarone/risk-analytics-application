@@ -175,9 +175,9 @@ class ResultStructureTreeBuilder {
         for (ResultNode child in node.childNodes) {
             SimpleTableTreeNode newNode
             if (child.resultPath == null || allPaths.get(child.resultPath) == null) {
-                newNode = new ResultStructureTableTreeNode(child.name)
+                newNode = new ResultStructureTableTreeNode(child.name, modelClass)
             } else {
-                newNode = new ResultTableTreeNode(child.name)
+                newNode = new ResultTableTreeNode(child.name, modelClass)
                 newNode.resultPath = child.resultPath
                 newNode.collector = allPaths.get(child.resultPath).getIdentifier()
             }

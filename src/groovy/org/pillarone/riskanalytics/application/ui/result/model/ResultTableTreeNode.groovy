@@ -2,12 +2,12 @@ package org.pillarone.riskanalytics.application.ui.result.model
 
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
-import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
+
 import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 
 class ResultTableTreeNode extends SimpleTableTreeNode {
     String collector = AggregatedCollectingModeStrategy.IDENTIFIER
-    Class packetClass
+    Class modelClass
 
     private String path, field
 
@@ -15,9 +15,9 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
         super(name)
     }
 
-    public ResultTableTreeNode(String name, Class packetClass) {
+    public ResultTableTreeNode(String name, Class modelClass) {
         super(name)
-        this.packetClass = packetClass
+        this.modelClass = modelClass
     }
 
     void setResultPath(String resultPath) {
@@ -47,17 +47,10 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
     }
 
     public String getDisplayName() {
-        if (cachedDisplayName != null)
-            return cachedDisplayName
-
-        String displayName
-        if (packetClass)
-            displayName = I18NUtils.findDisplayNameByPacket(name)
-        if (displayName == null)
-            displayName = super.getDisplayName()
-        else
-            cachedDisplayName = displayName
-        return displayName
+        if (cachedDisplayName == null) {
+            cachedDisplayName = I18NUtils.getResultStructureString(modelClass, name)
+        }
+        return cachedDisplayName
     }
 
 

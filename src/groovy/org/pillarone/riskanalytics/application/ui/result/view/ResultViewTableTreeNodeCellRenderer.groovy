@@ -105,7 +105,6 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
-        println "${node.path} > ${node.name} ${node.childCount}"
         if (node.childCount > 0)
             rendererComponent.setComponentPopupMenu(resultNodePopup)
         else
@@ -113,7 +112,6 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, def node) {
-        println node.name
         rendererComponent.setComponentPopupMenu((node instanceof ComponentTableTreeNode) ? nodeHelpPopup : nodePopup)
     }
 
