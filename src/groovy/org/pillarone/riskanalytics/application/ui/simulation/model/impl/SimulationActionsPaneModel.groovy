@@ -65,7 +65,9 @@ class SimulationActionsPaneModel {
 
     void runSimulation() {
         simulation.save()
-        runner = RunSimulationService.getService().runSimulationOnGrid(new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy))
+        runner = RunSimulationService.getService().runSimulationOnGrid(
+                new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy),
+                simulation.template)
         notifySimulationStart()
     }
 
