@@ -28,7 +28,7 @@ grails.project.dependency.resolution = {
 
     dependencies {
         Properties properties = new Properties()
-        properties.load(new File("${basedir}/application.properties").newReader())
+        properties.load(new File("${basedir}/application.properties").newInputStream())
         String ulcVersion = properties.getProperty("plugins.ulc")
 
         compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
