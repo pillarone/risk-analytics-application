@@ -216,7 +216,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         splitPane.oneTouchExpandable = true
         splitPane.setResizeWeight(1)
         splitPane.setDividerSize(10)
-        splitPane.add(content); splitPane.add(commentAndErrorView.tabbedPane)
+        splitPane.add(content);
+        splitPane.add(commentAndErrorView.tabbedPane)
         splitPane.setDividerLocation(0.65)
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
