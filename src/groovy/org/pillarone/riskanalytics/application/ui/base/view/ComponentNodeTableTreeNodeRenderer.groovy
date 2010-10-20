@@ -70,13 +70,13 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
-        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
-        removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         removeDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
         removeDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
 
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
