@@ -10,9 +10,6 @@ import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
@@ -25,6 +22,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.base.action.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 
@@ -197,6 +195,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         rowHeaderTree.registerKeyboardAction(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new AddDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new TreeNodeRename(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeCollapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
 
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},
