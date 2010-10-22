@@ -39,6 +39,7 @@ class EditCommentView extends NewCommentView {
         }] as IListSelectionListener)
         commentTextArea.addValueChangedListener([valueChanged: {ValueChangedEvent event -> this.comment.setText(commentTextArea.getText())}] as IValueChangedListener)
         saveButton.addActionListener([actionPerformed: {ActionEvent evt ->
+            comment.updated = true
             commentAndErrorView.model.commentChanged()
             commentAndErrorView.closeTab()
         }] as IActionListener)
