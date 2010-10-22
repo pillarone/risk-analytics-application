@@ -1,10 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-
-import org.pillarone.riskanalytics.core.simulation.item.*
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -40,9 +35,13 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -456,6 +455,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             windowMenus[selectedModel.name] = item
 
             windowTitle = selectedModel.name
+            Closure closeAction = { event -> closeItem(modelCardContent, modelCardContent.getSelectedIndex()) }
+            modelCardContent.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         }
         cardPane.selectedName = selectedModel.name // TODO (msh): Ask Dani why setSelected does not trigger the action
 
@@ -485,6 +486,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             windowMenus[batchName] = item
 
             windowTitle = batchName
+            Closure closeAction = { event -> closeItem(modelCardContent, modelCardContent.getSelectedIndex()) }
+            modelCardContent.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         }
         cardPane.selectedName = batchName // TODO (msh): Ask Dani why setSelected does not trigger the action
 
@@ -526,40 +529,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             int closingIndex = event.getTabClosingIndex()
             if (closingIndex < 0) closingIndex = 0
             ULCCloseableTabbedPane modelCardContent = event.getClosableTabbedPane()
-            ULCComponent currentComponent = modelCardContent.getComponentAt(closingIndex)
-            def item = openItems[currentComponent]
-            def modelForItem = openModels[currentComponent]
-            if (isChanged(item)) {
-                boolean closeTab = true
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
-                alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
-                    def value = windowEvent.source.value
-                    if (value.equals(alert.firstButtonLabel)) {
-                        item.save()
-                    } else if (value.equals(alert.thirdButtonLabel)) {
-                        modelCardContent.setSelectedIndex closingIndex
-                        closeTab = false
-                    } else {
-                        item.unload()
-                    }
-                    if (closeTab) {
-                        openItems.remove(currentComponent)
-                        def removedModel = openModels.remove(currentComponent)
-                        modelCardContent.removeTabAt closingIndex
-                        model.closeItem(modelForItem, item)
-                        removeCard(modelCardContent)
-                    }
-
-                }] as IWindowListener)
-                alert.show()
-            }
-            if (!isChanged(item)) {
-                openItems.remove(currentComponent)
-                def removedModel = openModels.remove(currentComponent)
-                modelCardContent.removeTabAt closingIndex
-                model.closeItem(modelForItem, item)
-                removeCard(modelCardContent)
-            }
+            closeItem(modelCardContent, closingIndex)
         }] as ITabListener)
 
         Closure syncCurrentItem = {e -> selectCurrentItemFromTab(e.source)}
@@ -652,6 +622,43 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     void openSettingsViewDialog() {
         getSettingsViewDialog().visible = true
+    }
+
+    private void closeItem(ULCCloseableTabbedPane modelCardContent, int closingIndex) {
+        ULCComponent currentComponent = modelCardContent.getComponentAt(closingIndex)
+        def item = openItems[currentComponent]
+        def modelForItem = openModels[currentComponent]
+        if (isChanged(item)) {
+            boolean closeTab = true
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
+            alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+                def value = windowEvent.source.value
+                if (value.equals(alert.firstButtonLabel)) {
+                    item.save()
+                } else if (value.equals(alert.thirdButtonLabel)) {
+                    modelCardContent.setSelectedIndex closingIndex
+                    closeTab = false
+                } else {
+                    item.unload()
+                }
+                if (closeTab) {
+                    openItems.remove(currentComponent)
+                    def removedModel = openModels.remove(currentComponent)
+                    modelCardContent.removeTabAt closingIndex
+                    model.closeItem(modelForItem, item)
+                    removeCard(modelCardContent)
+                }
+
+            }] as IWindowListener)
+            alert.show()
+        }
+        if (!isChanged(item)) {
+            openItems.remove(currentComponent)
+            def removedModel = openModels.remove(currentComponent)
+            modelCardContent.removeTabAt closingIndex
+            model.closeItem(modelForItem, item)
+            removeCard(modelCardContent)
+        }
     }
 
     public void itemChanged(ModellingItem item) {
