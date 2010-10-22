@@ -11,6 +11,7 @@ import com.ulcjava.base.application.util.HTMLUtilities
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationAndCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
@@ -46,6 +47,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         insertComment.addCommentListener commentAndErrorView
         ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, -1, false)
         showCommentsAction.addCommentListener commentAndErrorView
+        ShowValidationAndCommentsAction validationAndComments = new ShowValidationAndCommentsAction(tree.rowHeaderTableTree)
+        validationAndComments.addCommentListener commentAndErrorView
 
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
@@ -56,6 +59,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
+        addDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(help))
         addDynamicNodeMenu.name = "popup.expand"
@@ -66,12 +70,13 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
-        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
-        removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         removeDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
+        removeDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
 
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
@@ -87,6 +92,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
         expandTreeMenuWithHelp.add(new ULCMenuItem(showCommentsAction))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(validationAndComments))
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(help))
 
@@ -94,6 +100,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         commentMenu.name = "popup.comment"
         commentMenu.add(new ULCMenuItem(insertComment))
         commentMenu.add(new ULCMenuItem(showCommentsAction))
+        commentMenu.add(new ULCMenuItem(validationAndComments))
 
     }
 

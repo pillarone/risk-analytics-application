@@ -15,6 +15,8 @@ public interface CommentListener {
 
     void showErrorsView()
 
+    void showErrorAndCommentsView()
+
 }
 
 interface NavigationListener {

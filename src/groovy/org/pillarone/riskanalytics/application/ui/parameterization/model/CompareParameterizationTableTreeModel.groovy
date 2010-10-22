@@ -1,12 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import com.ulcjava.base.application.util.Color
 
 /**
  * User: Fouad Jaada
@@ -163,8 +163,7 @@ class ParameterizationUtilities {
         List parameters = []
         simulations.each {Simulation simulation ->
             Parameterization parameterization = simulation.parameterization
-            if (!parameterization.isLoaded())
-                parameterization.load()
+            parameterization.load()
             parameters << parameterization
         }
         return parameters
