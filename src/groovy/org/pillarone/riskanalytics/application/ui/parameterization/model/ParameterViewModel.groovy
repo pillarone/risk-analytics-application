@@ -135,8 +135,10 @@ class ParameterViewModel extends AbstractModellingModel {
             node.comments.remove(comment)
             if (!comment.deleted)
                 node.comments << comment
-
-            paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+            if (paramterTableTreeModel.root.path == path)
+                paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(paramterTableTreeModel.root) as Object[]), 0)
+            else
+                paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
     }
 

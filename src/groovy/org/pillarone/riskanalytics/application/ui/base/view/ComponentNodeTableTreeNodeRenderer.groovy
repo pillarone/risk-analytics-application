@@ -82,6 +82,10 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenu.name = "popup.expand"
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
+        expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(insertComment))
+        expandTreeMenu.add(new ULCMenuItem(showCommentsAction))
+        expandTreeMenu.add(new ULCMenuItem(validationAndComments))
 
         expandTreeMenuWithHelp = new ULCPopupMenu()
         expandTreeMenuWithHelp.name = "popup.expand"

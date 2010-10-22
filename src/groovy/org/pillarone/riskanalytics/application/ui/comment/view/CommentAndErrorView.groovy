@@ -176,6 +176,7 @@ class CommentAndErrorView implements CommentListener {
     }
 
     static def findNodeForPath(def root, String path) {
+        if (path == root.path) return root
         String[] pathElements = path.split(":")
         SimpleTableTreeNode currentNode = root
         for (String p in pathElements) {
