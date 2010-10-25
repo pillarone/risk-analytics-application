@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import java.text.SimpleDateFormat
+import javax.sql.DataSource
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
@@ -25,9 +26,8 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import javax.sql.DataSource
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -171,7 +171,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
 
     private String getDatabaseUrl() {
         DataSource dataSource = ApplicationHolder.application.getMainContext().getBean("dataSource")
-        if(dataSource instanceof TransactionAwareDataSourceProxy) {
+        if (dataSource instanceof TransactionAwareDataSourceProxy) {
             dataSource = dataSource.targetDataSource
         }
         return dataSource.url
@@ -185,7 +185,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     Simulation getSimulation() {
         String name = simulationName
         if (name == null || name.trim().length() == 0) {
-            name = new SimpleDateFormat("yyyy.MM.dd kk:mm:ss").format(new Date())
+            name = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date())
         }
         Simulation simulation = new Simulation(name)
         simulation.modelClass = modelClass

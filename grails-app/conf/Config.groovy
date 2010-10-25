@@ -34,6 +34,7 @@ userLogin = false
 // Fire every 60 minutes
 batchCron = "0 0/10 * * * ?"
 transactionServiceUrl = "rmi://localhost:1099/TransactionService"
+resultServiceRegistryPort=1099
 
 environments {
     development {

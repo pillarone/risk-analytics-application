@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationAndCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
@@ -54,6 +55,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         insertIssue.addCommentListener commentAndErrorView
         ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, -1, false)
         showCommentsAction.addCommentListener commentAndErrorView
+        ShowValidationAndCommentsAction validationAndComments = new ShowValidationAndCommentsAction(tree.rowHeaderTableTree)
+        validationAndComments.addCommentListener commentAndErrorView
 
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
@@ -65,6 +68,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(insertIssue))
         addDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
+        addDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(help))
         addDynamicNodeMenu.name = "popup.expand"
@@ -75,18 +79,23 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
-        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
-        removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         removeDynamicNodeMenu.add(new ULCMenuItem(insertIssue))
         removeDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
+        removeDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
 
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
+        expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(insertComment))
+        expandTreeMenu.add(new ULCMenuItem(showCommentsAction))
+        expandTreeMenu.add(new ULCMenuItem(validationAndComments))
 
         expandTreeMenuWithHelp = new ULCPopupMenu()
         expandTreeMenuWithHelp.name = "popup.expand"
@@ -98,6 +107,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertIssue))
         expandTreeMenuWithHelp.add(new ULCMenuItem(showCommentsAction))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(validationAndComments))
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(help))
 
@@ -106,6 +116,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         commentMenu.add(new ULCMenuItem(insertComment))
         commentMenu.add(new ULCMenuItem(insertIssue))
         commentMenu.add(new ULCMenuItem(showCommentsAction))
+        commentMenu.add(new ULCMenuItem(validationAndComments))
 
     }
 

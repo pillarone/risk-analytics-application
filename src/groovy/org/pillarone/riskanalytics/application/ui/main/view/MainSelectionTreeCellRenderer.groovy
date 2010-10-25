@@ -55,7 +55,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         this.model = model
         parameterNodePopUpMenu = new ULCPopupMenu()
         parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
@@ -65,6 +65,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         ULCMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
+        parameterNodePopUpMenu.addSeparator()
+        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 
         ULCPopupMenu dataEntry = new ULCPopupMenu()
         dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
@@ -103,18 +105,21 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
         simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
         ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, model))
         tree.addTreeSelectionListener(compareSimulationMenuItem)
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
 
+
         ULCMenu reportsMenu = new ReportMenu("Reports")
         reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, model)))
         reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Actuary Summary", tree, model)))
         tree.addTreeSelectionListener(reportsMenu)
         simulationNodePopUpMenu.add(reportsMenu)
+        simulationNodePopUpMenu.addSeparator()
+        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 
         groupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
@@ -152,6 +157,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, model)))
+        batchesNodePopUpMenu.addSeparator()
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteBatchAction(tree, model)))
 
         batchesRootNodePopUpMenu = new ULCPopupMenu()

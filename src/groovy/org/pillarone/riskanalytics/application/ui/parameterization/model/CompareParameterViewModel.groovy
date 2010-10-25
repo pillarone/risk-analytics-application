@@ -1,12 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -33,7 +33,7 @@ class CompareParameterViewModel extends AbstractModellingModel {
     }
 
     private void aggregateParameters(Parameterization firstParameterization) {
-        item*.item.eachWithIndex {Parameterization parameterization, int index ->
+        getItems().eachWithIndex {Parameterization parameterization, int index ->
             if (index > 0) {
                 parameterization.getParameterHolders().each {ParameterHolder parameterHolder ->
                     def list = firstParameterization.getParameters().findAll {ParameterHolder parameter ->

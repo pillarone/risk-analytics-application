@@ -136,6 +136,8 @@ abstract class AbstractModellingTreeView {
         def viewPortTree = tree.getViewPortTableTree()
         rowHeaderTree.registerKeyboardAction(new TreeNodeExpander(tree: rowHeaderTree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), ULCComponent.WHEN_FOCUSED);
         rowHeaderTree.registerKeyboardAction(new TreeNodeCollapser(tree: rowHeaderTree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), ULCComponent.WHEN_FOCUSED);
+        rowHeaderTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeCollapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new TreeNodeCopier(rowHeaderTree: rowHeaderTree, viewPortTree: viewPortTree, model: model.treeModel), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeNodePaster(tree: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeSelectionFiller(tree: viewPortTree, model: viewPortTree.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)

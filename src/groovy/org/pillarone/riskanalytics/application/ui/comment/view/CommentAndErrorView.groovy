@@ -20,6 +20,7 @@ class CommentAndErrorView implements CommentListener {
 
     ULCCloseableTabbedPane tabbedPane
     ErrorPane errorPane
+    ULCBoxPane content
     private ParameterViewModel model;
     Map openItems
 //    boolean tabbedPaneVisible = true
@@ -45,7 +46,7 @@ class CommentAndErrorView implements CommentListener {
         model.addChangedCommentListener view
         ShowCommentsView result = new ShowCommentsView(this, null)
         model.addChangedCommentListener result
-        ULCBoxPane content = new ULCBoxPane(1, 4)
+        content = new ULCBoxPane(1, 4)
         CommentSearchPane commentSearchPane = new CommentSearchPane(view, errorPane, result, model)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, commentSearchPane.content)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
@@ -136,6 +137,7 @@ class CommentAndErrorView implements CommentListener {
         } else {
             int tabIndex = tabbedPane.tabCount
             ShowCommentsView view = new ShowCommentsView(this, path)
+            view.addAllComments()
             openItems[view.content] = view
             model.addChangedCommentListener view
             tabbedPane.addTab(tabTitle, UIUtils.getIcon("comment.png"), view.content)
@@ -160,6 +162,19 @@ class CommentAndErrorView implements CommentListener {
         }
     }
 
+    public void showErrorAndCommentsView() {
+        String tabTitle = UIUtils.getText(this.class, "ValidationsAndComments")
+        int index = tabbedPane.indexOfTab(tabTitle)
+        if (index >= 0) {
+            tabbedPane.selectedIndex = index
+        } else {
+            tabbedPane.insertTab(tabTitle, null, new ULCScrollPane(content), "", 0)
+            tabbedPane.selectedIndex = 0
+        }
+    }
+
+
+
 
     static String getDisplayPath(def model, String path) {
         if (!path) return ""
@@ -178,6 +193,7 @@ class CommentAndErrorView implements CommentListener {
     }
 
     static def findNodeForPath(def root, String path) {
+        if (path == root.path) return root
         String[] pathElements = path.split(":")
         SimpleTableTreeNode currentNode = root
         for (String p in pathElements) {
