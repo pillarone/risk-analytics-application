@@ -49,6 +49,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
                         Object lastNode = selectedPath.lastPathComponent
                         if (lastNode instanceof ItemNode) {
                             selectedObjects.add(lastNode)
+                            break
                         }
                     }
                 }

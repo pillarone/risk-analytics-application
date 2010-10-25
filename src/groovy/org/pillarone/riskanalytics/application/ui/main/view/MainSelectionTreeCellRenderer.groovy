@@ -74,6 +74,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         dataEntry.add(new ULCMenuItem(new SimulationAction(tree, model)))
         dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, model)))
         dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
         dataEntry.add(compareParameterizationMenuItem)
         workflowMenus.put(Status.DATA_ENTRY, dataEntry)
 
@@ -82,6 +84,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         rejected.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         rejected.add(new ULCMenuItem(new SimulationAction(tree, model)))
         rejected.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
         rejected.add(compareParameterizationMenuItem)
         workflowMenus.put(Status.REJECTED, rejected)
 
@@ -92,6 +96,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         inReview.add(new ULCMenuItem(new SendToProductionAction(tree, model)))
         inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, model)))
         inReview.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inReview.add(compareParameterizationMenuItem)
         workflowMenus.put(Status.IN_REVIEW, inReview)
 
@@ -100,6 +106,8 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         inProduction.add(new ULCMenuItem(new SimulationAction(tree, model)))
         inProduction.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)
         workflowMenus.put(Status.IN_PRODUCTION, inProduction)
 
