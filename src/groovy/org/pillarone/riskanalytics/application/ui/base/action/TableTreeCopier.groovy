@@ -47,7 +47,8 @@ class TableTreeCopier extends ExceptionSafeAction {
             TreePath path = table.getPathForRow(selectedRows[i])
             for (int j = 0; j < selectedColumns.size(); j++) {
                 buffer << format(model.getValueAt(path.lastPathComponent, selectedColumns[j] + 1))
-                buffer << '\t'
+                if (j != selectedColumns.size() - 1)
+                    buffer << '\t'
             }
             buffer << '\n'
         }
