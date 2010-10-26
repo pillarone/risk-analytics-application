@@ -1,12 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.core.example.parameter.ExampleParameterObjectClassifier
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -40,7 +43,14 @@ class CompareParameterViewModel extends AbstractModellingModel {
                         parameter.path == parameterHolder.path
                     }
                     if (!list || list.size() == 0) {
-                        firstParameterization.addParameter new StringParameterHolder(parameterHolder.path, parameterHolder.periodIndex, "")
+                        if (parameterHolder instanceof ParameterObjectParameterHolder) {
+                            ParameterObjectParameterHolder cloned = ParameterHolderFactory.createParamaterObjectHolder(parameterHolder.createEmptyParameter())
+                            ExampleParameterObjectClassifier classifier = new ExampleParameterObjectClassifier(parameterHolder.classifier.typeName, parameterHolder.classifier.parameters)
+                            classifier.displayName = ""
+                            cloned.classifier = classifier
+                            firstParameterization.addParameter cloned
+                        } else
+                            firstParameterization.addParameter new StringParameterHolder(parameterHolder.path, parameterHolder.periodIndex, "")
                     }
                 }
             }

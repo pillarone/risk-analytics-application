@@ -7,15 +7,12 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.table.ITableModel
 import java.text.NumberFormat
-import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class TableCopier extends ExceptionSafeAction {
 
     ULCTable table
     ITableModel model
-    int rowCount
-    int columnCount
 
     public TableCopier() {
         putValue(IAction.SMALL_ICON, UIUtils.getIcon("copy-active.png"));
@@ -23,19 +20,17 @@ class TableCopier extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
         model = table.model
-        int startRow = table.getSelectedRow()
-        int startColumn = table.getSelectedColumn()
-        rowCount = table.selectedRowCount
-        columnCount = table.selectedColumnCount
-        String content = copyContent(startRow, startColumn)
+        int[] selectedRows = getSelectedRows()
+        int[] selectedColumns = getSelectedColumns()
+        String content = copyContent(selectedRows, selectedColumns)
         ULCClipboard.getClipboard().content = content
     }
 
-    private String copyContent(int startRow, int startColumn) {
+    private String copyContent(int[] selectedRows, int[] selectedColumns) {
         StringBuffer buffer = new StringBuffer()
-        for (int i = startRow; i < (startRow + rowCount); i++) {
-            for (int j = startColumn; j < (startColumn + columnCount); j++) {
-                Object value = model.getValueAt(i, j)
+        for (int i = 0; i < selectedRows.size(); i++) {
+            for (int j = 0; j < selectedColumns.size(); j++) {
+                Object value = model.getValueAt(selectedRows[i], selectedColumns[j])
                 buffer << format(value)
                 buffer << '\t'
             }
@@ -43,6 +38,15 @@ class TableCopier extends ExceptionSafeAction {
         }
         buffer.toString()
     }
+
+    private int[] getSelectedColumns() {
+        return (table.selectedColumns as List)?.sort() as int[]
+    }
+
+    private int[] getSelectedRows() {
+        return (table.selectedRows as List)?.sort() as int[]
+    }
+
 
     protected String format(Number value) {
         return copyFormat.format(value)
