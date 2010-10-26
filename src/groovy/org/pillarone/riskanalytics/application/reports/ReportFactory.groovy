@@ -35,29 +35,23 @@ public class ReportFactory {
     }
 
     static def getReport(Simulation simulation, String reportName) {
-        JasperService service = getJasperService(simulation)
         ReportModel model = ReportFactory.getReportModel(simulation, reportName)
+
         Map params = model.parameters
         params["_file"] = model.reportFileName
-        String reportDir
-        if (testMode) {
-            reportDir = SERVER_REPORT_DIR
-        } else {
-            reportDir = ApplicationHolder.application.isWarDeployed() ? SERVER_REPORT_DIR : REPORT_DIR
-        }
-        params["SUBREPORT_DIR"] = service.fetchReportSpec(reportDir, "", true).getFile().absolutePath + File.separator
+        params["SUBREPORT_DIR"] = ReportHelper.getReportFolder()
         params["SimulationSettings"] = JasperChartUtils.createSimulationSettingsDataSource(simulation, false)
         params["SimulationSettingsSmall"] = JasperChartUtils.createSimulationSettingsDataSource(simulation, true)
-        params["p1Icon"] = new File(simulation.class.getResource(UIUtils.ICON_DIRECTORY + "application.png").toURI())
+        params["p1Icon"] = getClass().getResource(UIUtils.ICON_DIRECTORY + "application.png")
         if (!params["p1Logo"]) {
-            params["p1Logo"] = new File(simulation.class.getResource(UIUtils.ICON_DIRECTORY + "pdf-reports-header.png").toURI())
+            params["p1Logo"] = getClass().getResource(UIUtils.ICON_DIRECTORY + "pdf-reports-header.png")
         }
         params["Comment"] = simulation.comment ? simulation.comment : ""
         Collection collection = model.prepareData()
         if (collection == null) {
             collection = [new AllRVTableDataBean(type: "type")]
         }
-        def output = service.generateReport(reportDir, JasperService.PDF_FORMAT, collection, params).toByteArray()
+        def output = ReportHelper.generateReport(collection, params).toByteArray()
         if (testMode) {
             generationSuccessful = true
         }

@@ -25,8 +25,8 @@
 	<reportFont name="Verdana20" isDefault="false" fontName="Verdana" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
 	<reportFont name="Verdana9" isDefault="false" fontName="Verdana" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="false"/>
 
-	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["Y:\\compiledReports\\"]]></defaultValueExpression>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.net.URL">
+		<defaultValueExpression ><![CDATA[this.getClass().getResource("/reports")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LoBReportBruttoCDF0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
 	<parameter name="LoBReportBruttoCDF1" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
@@ -54,9 +54,9 @@
 	<parameter name="WaterfallClaimsNet2" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
 	<parameter name="WaterfallClaimsNet3" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
 	<parameter name="SimulationSettings" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
-	<parameter name="p1Icon" isForPrompting="false" class="java.io.File"/>
+	<parameter name="p1Icon" isForPrompting="false" class="java.net.URL"/>
 	<parameter name="summary" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
-	<parameter name="p1Logo" isForPrompting="false" class="java.io.File"/>
+	<parameter name="p1Logo" isForPrompting="false" class="java.net.URL"/>
 	<parameter name="Comment" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="SimulationSettingsSmall" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
 	<parameter name="overview0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
@@ -91,7 +91,7 @@
 						height="214"
 						key="subreport-19"/>
 					<dataSourceExpression><![CDATA[$P{overview0}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_adsd.jasper")]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement
@@ -140,7 +140,7 @@
 						height="213"
 						key="subreport-21"/>
 					<dataSourceExpression><![CDATA[$P{overview1}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_adsd.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -162,7 +162,7 @@
 						height="214"
 						key="subreport-22"/>
 					<dataSourceExpression><![CDATA[$P{overview2}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_adsd.jasper")]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement
@@ -185,7 +185,7 @@
 						height="214"
 						key="subreport-23"/>
 					<dataSourceExpression><![CDATA[$P{overview3}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_adsd.jasper")]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement
@@ -343,7 +343,7 @@
 						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$P{LoBClaimsVaRTableBean}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBReportBruttoTable.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_LoBReportBruttoTable.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -378,7 +378,7 @@
 						height="28"
 						key="subreport-10"/>
 					<dataSourceExpression><![CDATA[$P{ExpectedLossStackedBar0}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_ExpectedLoss.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_ExpectedLoss.jasper")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="false">
 					<reportElement
@@ -388,7 +388,7 @@
 						height="130"
 						key="subreport-11"/>
 					<dataSourceExpression><![CDATA[$P{TotalBusinessCDF0}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_TBReportLineChart.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -436,7 +436,7 @@
 						height="130"
 						key="subreport-25"/>
 					<dataSourceExpression><![CDATA[$P{NetClaimsMtpl}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_TBReportLineChart.jasper")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -449,7 +449,7 @@
 						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$P{netClaimsTableMtpl}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_LoBOverAllPeriods.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -484,7 +484,7 @@
 						height="130"
 						key="subreport-27"/>
 					<dataSourceExpression><![CDATA[$P{netClaimsMotorHull}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_TBReportLineChart.jasper")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -497,7 +497,7 @@
 						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$P{netClaimsTableMotorHull}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_LoBOverAllPeriods.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -532,7 +532,7 @@
 						height="130"
 						key="subreport-29"/>
 					<dataSourceExpression><![CDATA[$P{netClaimsPersonalAccident}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_TBReportLineChart.jasper")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -545,7 +545,7 @@
 						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$P{netClaimsTablePersonalAccident}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_LoBOverAllPeriods.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -580,7 +580,7 @@
 						height="130"
 						key="subreport-31"/>
 					<dataSourceExpression><![CDATA[$P{netClaimsProperty}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR}+"CERSub_TBReportLineChart.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_TBReportLineChart.jasper")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -593,7 +593,7 @@
 						<subreportParameterExpression><![CDATA["1"]]></subreportParameterExpression>
 					</subreportParameter>
 					<dataSourceExpression><![CDATA[$P{netClaimsTableProperty}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_LoBOverAllPeriods.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_LoBOverAllPeriods.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -628,7 +628,7 @@
 						height="58"
 						key="subreport-18"/>
 					<dataSourceExpression><![CDATA[$P{SimulationSettings}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_SimulationInfoTable.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_SimulationInfoTable.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -666,7 +666,7 @@
 						key="image-12"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.io.File"><![CDATA[$P{p1Logo}]]></imageExpression>
+					<imageExpression class="java.net.URL"><![CDATA[$P{p1Logo}]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement
@@ -784,7 +784,7 @@
 						key="image-11"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+					<imageExpression class="java.net.URL"><![CDATA[$P{p1Icon}]]></imageExpression>
 				</image>
 			</band>
 		</pageFooter>
@@ -842,7 +842,7 @@
 						key="image-10"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+					<imageExpression class="java.net.URL"><![CDATA[$P{p1Icon}]]></imageExpression>
 				</image>
 			</band>
 		</lastPageFooter>
