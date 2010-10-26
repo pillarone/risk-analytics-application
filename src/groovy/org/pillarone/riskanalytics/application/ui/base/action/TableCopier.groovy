@@ -32,7 +32,8 @@ class TableCopier extends ExceptionSafeAction {
             for (int j = 0; j < selectedColumns.size(); j++) {
                 Object value = model.getValueAt(selectedRows[i], selectedColumns[j])
                 buffer << format(value)
-                buffer << '\t'
+                if (j != selectedColumns.size() - 1)
+                    buffer << '\t'
             }
             buffer << '\n'
         }
