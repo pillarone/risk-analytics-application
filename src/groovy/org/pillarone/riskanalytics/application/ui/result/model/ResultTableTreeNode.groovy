@@ -38,12 +38,7 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
     }
 
     String getField() {
-        if (field) {
-            return field
-        }
-        else {
-            return name
-        }
+        return field
     }
 
     public String getDisplayName() {
