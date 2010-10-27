@@ -102,6 +102,22 @@ class ParameterViewModel extends AbstractModellingModel {
         commentChanged(comment)
     }
 
+    void removeCommentsByPath(String path) {
+        def commentsToRemove = []
+        item.comments.each {Comment comment ->
+            if (comment.path.startsWith(path)) {
+                commentsToRemove << comment
+            }
+        }
+        commentsToRemove.each {Comment comment ->
+            item.removeComment(comment)
+        }
+        changedCommentListeners.each {ChangedCommentListener listener ->
+            listener.updateCommentVisualization()
+        }
+
+    }
+
     void setReadOnly(boolean value) {
         paramterTableTreeModel.readOnly = value
     }

@@ -162,13 +162,13 @@ class CommentAndErrorView implements CommentListener {
     static String getDisplayPath(def model, String path) {
         if (!path) return ""
         def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-        return node.getDisplayPath()
+        return node?.getDisplayPath()
     }
 
     static String getDisplayName(def model, String path) {
         if (!path) return ""
         def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-        String displayName = node.getDisplayName()
+        String displayName = node?.getDisplayName()
         if (!displayName) {
             displayName = getDisplayPath(model, path)
         }
