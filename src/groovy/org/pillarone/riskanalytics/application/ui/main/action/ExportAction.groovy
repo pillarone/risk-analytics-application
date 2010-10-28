@@ -39,6 +39,14 @@ abstract class ExportAction extends SelectionTreeAction {
         userPreferences = new UserPreferences()
     }
 
+    protected void exportAll(List items) {
+        if (!items || items.isEmpty()) return
+        switch (items[0].class) {
+            case Simulation.class: exportSimulations(items); break;
+            default: exportItems(items); break;
+        }
+    }
+
     protected void exportSimulations(List items) {
         int itemCount = items.size()
         ULCWindow ancestor = getAncestor()
@@ -59,32 +67,8 @@ abstract class ExportAction extends SelectionTreeAction {
             ClientContext.chooseFile([
                     onSuccess: {filePaths, fileNames ->
                         userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
-                        ExcelExporter exporter = new ExcelExporter()
-                        items.each {Simulation item ->
-
-                            SingleValueResult.withTransaction {trx ->
-                                def simulationFileName = "${item.name}.xls".replaceAll(':', '-')
-                                String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
-                                item.load()
-                                def simulationRun = item.simulationRun
-                                List rawData = ResultAccessor.getRawData(simulationRun)
-                                ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                                    try {
-                                        exporter.exportResults rawData
-                                        exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
-                                        exporter.writeWorkBook stream
-                                    } catch (Throwable t) {
-                                        new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                                    } finally {
-                                        stream.close()
-                                    }
-                                }, onSuccess: {path, name ->
-                                }, onFailure: {reason, description ->
-                                    LOG.error description
-                                    showAlert("exportError")
-                                }] as IFileStoreHandler, selectedFile)
-                            }
-
+                        items.each {def item ->
+                            exportItem(item, itemCount, filePaths, ancestor)
                         }
                     },
                     onFailure: {reason, description ->
@@ -96,6 +80,57 @@ abstract class ExportAction extends SelectionTreeAction {
         }
 
     }
+
+    private void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
+        ExcelExporter exporter = new ExcelExporter()
+        SingleValueResult.withTransaction {trx ->
+            def simulationFileName = "${item.name}.xls".replaceAll(':', '-')
+            String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
+            item.load()
+            def simulationRun = item.simulationRun
+            List rawData = ResultAccessor.getRawData(simulationRun)
+            ClientContext.storeFile([prepareFile: {OutputStream stream ->
+                try {
+                    exporter.exportResults rawData
+                    exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
+                    exporter.writeWorkBook stream
+                } catch (Throwable t) {
+                    new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                } finally {
+                    stream.close()
+                }
+            }, onSuccess: {path, name ->
+            }, onFailure: {reason, description ->
+                LOG.error description
+                showAlert("exportError")
+            }] as IFileStoreHandler, selectedFile)
+        }
+    }
+
+    private void exportItem(ModellingItem item, int itemCount, filePaths, ULCWindow ancestor) {
+        if (!item.isLoaded()) {
+            item.load()
+        }
+        IConfigObjectWriter writer = item.getWriter()
+        String selectedFile = getFileName(itemCount, filePaths, item)
+        LOG.info " selectedFile : $selectedFile "
+        ClientContext.storeFile([prepareFile: {OutputStream stream ->
+            try {
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
+                writer.write(getConfigObject(item), bw)
+            } catch (Throwable t) {
+                new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+            } finally {
+                stream.close()
+            }
+        }, onSuccess: {path, name ->
+            LOG.info " $selectedFile exported"
+        }, onFailure: {reason, description ->
+            LOG.error description
+            showAlert("exportError")
+        }] as IFileStoreHandler, selectedFile)
+    }
+
 
     ULCWindow getAncestor() {
         ULCWindow ancestor = UlcUtilities.getWindowAncestor(tree)
@@ -139,29 +174,9 @@ abstract class ExportAction extends SelectionTreeAction {
         ULCWindow ancestor = getAncestor()
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
-                    userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
-                    items.each {ModellingItem item ->
-                        if (!item.isLoaded()) {
-                            item.load()
-                        }
-                        IConfigObjectWriter writer = item.getWriter()
-                        String selectedFile = getFileName(itemCount, filePaths, item)
-                        LOG.info " selectedFile : $selectedFile"
-                        ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                            try {
-                                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
-                                writer.write(getConfigObject(item), bw)
-                            } catch (Throwable t) {
-                                new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                            } finally {
-                                stream.close()
-                            }
-                        }, onSuccess: {path, name ->
-                            LOG.info " $selectedFile exported"
-                        }, onFailure: {reason, description ->
-                            LOG.error description
-                            showAlert("exportError")
-                        }] as IFileStoreHandler, selectedFile)
+                    userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, getFolderName(itemCount, filePaths))
+                    items.each {def item ->
+                        exportItem(item, itemCount, filePaths, ancestor)
                     }
                 },
                 onFailure: {reason, description ->
@@ -173,13 +188,19 @@ abstract class ExportAction extends SelectionTreeAction {
                 }] as IFileChooseHandler, config, ancestor)
     }
 
+
     private def showAlert(String errorName) {
         ULCAlert alert = new I18NAlert(ancestor, errorName)
         alert.show()
     }
 
     String getFileName(int itemCount, filePaths, ModellingItem item) {
-        String selectedFile = itemCount > 1 ? "${filePaths[0]}/${item.name}.groovy" : filePaths[0]
+        String selectedFile = itemCount > 1 ? "${filePaths[0]}${getFileSeparator()}${item.name}.groovy" : filePaths[0]
+        return validateFileName(selectedFile)
+    }
+
+    String getFolderName(int itemCount, filePaths) {
+        String selectedFile = itemCount > 1 ? "${filePaths[0]}" : filePaths[0].substring(0, filePaths[0].lastIndexOf(getFileSeparator()))
         return validateFileName(selectedFile)
     }
 
@@ -207,13 +228,15 @@ abstract class ExportAction extends SelectionTreeAction {
 
     private boolean validate(List items) {
         boolean status = true
-        items.each {Simulation item ->
-            SingleValueResult.withTransaction {trx ->
-                item.load()
-                def simulationRun = item.simulationRun
-                def count = SingleValueResult.countBySimulationRun(simulationRun)
-                if (count > 50000) {
-                    status = false
+        items.each {def item ->
+            if (item instanceof Simulation) {
+                SingleValueResult.withTransaction {trx ->
+                    item.load()
+                    def simulationRun = item.simulationRun
+                    def count = SingleValueResult.countBySimulationRun(simulationRun)
+                    if (count > 50000) {
+                        status = false
+                    }
                 }
             }
         }
@@ -221,7 +244,8 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     static String validateFileName(String filename) {
-        def arr = filename.split(Pattern.quote(File.separator))
+        String separator = getFileSeparator()
+        def arr = filename.split(Pattern.quote(separator))
         def pattern = ~/[^\w.]/
         arr[arr.size() - 1] = pattern.matcher(arr[arr.size() - 1]).replaceAll("")
 
@@ -229,8 +253,12 @@ abstract class ExportAction extends SelectionTreeAction {
         arr.eachWithIndex {String p, int index ->
             filename += p
             if (index != arr.size() - 1)
-                filename += File.separator
+                filename += separator
         }
         return filename
+    }
+
+    static String getFileSeparator() {
+        return ClientContext.getSystemProperty("file.separator")
     }
 }

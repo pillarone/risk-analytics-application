@@ -5,6 +5,8 @@ import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
+import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
@@ -251,3 +253,26 @@ class FractionAbsoluteDifferenceAction extends CheckboxAction {
         function.i18nName = getValue(function.name)
     }
 }
+
+class ApplySelectionAction extends ResourceBasedAction {
+
+    ResultViewModel model
+    StochasticResultView resultView
+
+    public ApplySelectionAction(model, StochasticResultView view) {
+        super("ApplySelectionAction")
+        this.model = model
+        this.resultView = view
+    }
+
+    public void doActionPerformed(ActionEvent event) {
+        //remove the action listener because the view is re-initialized and the same action instance used as listener in the new combo box
+        resultView.selectView.removeActionListener(this)
+
+        model.resultStructureChanged()
+        resultView.setModel(model)
+        resultView.filterSelection.setVisible(resultView.selectView.getSelectedIndex() == 0)
+        resultView.filterLabel.setVisible(resultView.selectView.getSelectedIndex() == 0)
+    }
+}
+

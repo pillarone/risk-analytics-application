@@ -9,16 +9,14 @@ import com.ulcjava.base.application.ULCButton
 import com.ulcjava.base.application.ULCToolBar
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
-import org.pillarone.riskanalytics.application.ui.result.view.ResultViewTableTreeNodeCellRenderer
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class ResultView extends AbstractModellingFunctionView {
 
@@ -59,11 +57,10 @@ class ResultView extends AbstractModellingFunctionView {
     }
 
     protected void addPrecisionFunctions(ULCToolBar toolbar) {
-        toolbar.add new ULCButton(new PercisionAction(model, -1, "reducePrecision"))
-        toolbar.add new ULCButton(new PercisionAction(model, +1, "increasePrecision"))
+        selectionToolbar.addSeparator()
+        selectionToolbar.add new ULCButton(new PercisionAction(model, -1, "reducePrecision"))
+        selectionToolbar.add new ULCButton(new PercisionAction(model, +1, "increasePrecision"))
     }
-
-
 
     /**
      * Utility method to get resource bundle entries for this class

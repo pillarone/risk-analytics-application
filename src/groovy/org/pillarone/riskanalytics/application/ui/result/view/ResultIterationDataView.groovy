@@ -191,7 +191,6 @@ class ResultIterationDataView implements IModelChangedListener {
 
 class ExportRawDataTable extends ResourceBasedAction {
     ResultIterationDataView view
-    ExcelExporter exporter = new ExcelExporter()
     final static int MAX_OF_ROWS = 65535
 
 
@@ -218,6 +217,7 @@ class ExportRawDataTable extends ResourceBasedAction {
 
                         ClientContext.storeFile([prepareFile: {OutputStream stream ->
                             try {
+                                ExcelExporter exporter = new ExcelExporter()
                                 exporter.headers = view.model.columnHeader
                                 exporter.exportResults(view.model.rawData)
                                 exporter.addTab "Simulation Settings", view.model.simulationSettings
@@ -227,6 +227,8 @@ class ExportRawDataTable extends ResourceBasedAction {
                             } catch (Throwable t) {
                                 new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
                                 throw t
+                            } catch (Exception ex) {
+                                new ULCAlert(ancestor, "Export failed", ex.message, "Ok").show()
                             } finally {
                                 stream.close()
                             }

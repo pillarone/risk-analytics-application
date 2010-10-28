@@ -5,7 +5,6 @@ import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCSpinnerOperator
-
 import org.netbeans.jemmy.drivers.scrolling.ScrollAdjuster
 import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel

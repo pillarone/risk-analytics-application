@@ -111,7 +111,7 @@ public class DataTypeFactory {
             floatingPointDataTypeForNonEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
             floatingPointDataTypeForNonEdit.integer = false
             floatingPointDataTypeForNonEdit.minFractionDigits = 0
-            floatingPointDataTypeForNonEdit.maxFractionDigits = 4
+            floatingPointDataTypeForNonEdit.maxFractionDigits = 20
             floatingPointDataTypeForNonEdit.groupingUsed = true
             UserContext.setAttribute("floatingPointDataTypeForNonEdit", floatingPointDataTypeForNonEdit)
         }

@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 
 interface ITableTreeFilter {
 
@@ -31,6 +32,10 @@ class NodeNameFilter implements ITableTreeFilter {
     }
 
     boolean internalAcceptNode(DynamicComposedComponentTableTreeNode node) {
+        return nodeName ? nodeName == node.displayName || acceptNode(node.parent) : true
+    }
+
+    boolean internalAcceptNode(ResultStructureTableTreeNode node) {
         return nodeName ? nodeName == node.displayName || acceptNode(node.parent) : true
     }
 

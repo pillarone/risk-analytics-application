@@ -164,6 +164,12 @@ class AboutDialog {
         builder.append("<tr><td align='left' >COLT</td>")
         builder.append("   <td align='left' ><a href=''>http://acs.lbl.gov/~hoschek/colt</a></td>")
         builder.append("</tr>")
+        builder.append("<tr><td align='left' >Lucene</td>")
+        builder.append("   <td align='left' ><a href=''>http://lucene.apache.org/</a></td>")
+        builder.append("</tr>")
+        builder.append("<tr><td align='left' >java-wikipedia-parser</td>")
+        builder.append("   <td align='left' ><a href=''>http://code.google.com/p/java-wikipedia-parser/</a></td>")
+        builder.append("</tr>")
 
 
         ULCLabel html = new ULCLabel(builder.toString())

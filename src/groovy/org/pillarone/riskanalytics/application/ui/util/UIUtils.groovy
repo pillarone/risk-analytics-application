@@ -123,13 +123,16 @@ class UIUtils {
     }
 
     public static final String getText(Class objClass, String key, List argsValue = null) {
-        String str = LocaleResources.getString(objClass.simpleName + "." + key)
-        if (argsValue) {
-            argsValue.eachWithIndex {String value, int index ->
-                str = str.replace("[${index}]", value)
+        String str = null
+        try {
+            str = LocaleResources.getString(objClass.simpleName + "." + key)
+            if (argsValue) {
+                argsValue.eachWithIndex {String value, int index ->
+                    str = str.replace("[${index}]", value)
+                }
             }
-        }
-        return str;
+        } catch (Exception ex) {}
+        return str ? str : key;
     }
 
     public static com.ulcjava.base.application.util.Color toULCColor(java.awt.Color color) {

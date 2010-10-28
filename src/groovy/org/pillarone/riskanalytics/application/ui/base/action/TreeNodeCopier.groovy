@@ -53,7 +53,7 @@ class TreeNodeCopier extends ResourceBasedAction {
             columnOrder << it.modelIndex
         }
 
-        line.delete(line.size() - 1, line.size() - 1)
+        line.delete(line.size() - 1, line.size())
 
         line << "\n\n"
 

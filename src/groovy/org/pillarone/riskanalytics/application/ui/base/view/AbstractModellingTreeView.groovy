@@ -29,6 +29,7 @@ abstract class AbstractModellingTreeView {
     ULCLabel filterLabel
     ULCComboBox filterSelection
     ULCToolBar toolbar
+    ULCToolBar selectionToolbar
 
 
     public AbstractModellingTreeView(def model) {
@@ -56,6 +57,24 @@ abstract class AbstractModellingTreeView {
 
     protected void initComponents() {
         initTree()
+        ULCBoxPane filters = createSelectionPane()
+        selectionToolbar = new ULCToolBar()
+        selectionToolbar.margin = new Insets(2, 2, 2, 2)
+        selectionToolbar.floatable = false
+        selectionToolbar.add(filters)
+
+
+        toolbar = new ULCToolBar()
+        toolbar.margin = new Insets(2, 2, 2, 2)
+        toolbar.floatable = false
+
+        addToolBarElements(toolbar)
+        changeToolbarFont(toolbar)
+        toolbar.add(ULCFiller.createGlue())
+
+    }
+
+    ULCBoxPane createSelectionPane() {
         filterSelection = new ULCComboBox()
         filterSelection.name = "filter"
         filterSelection.addItem(getText("all"))
@@ -65,20 +84,10 @@ abstract class AbstractModellingTreeView {
 
         filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
 
-        toolbar = new ULCToolBar()
-        toolbar.margin = new Insets(2, 2, 2, 2)
-        toolbar.floatable = false
-
         ULCBoxPane filters = new ULCBoxPane(2, 1)
         filters.add(filterLabel)
         filters.add(filterSelection)
-
-        toolbar.add(filters)
-        toolbar.addSeparator()
-        addToolBarElements(toolbar)
-        changeToolbarFont(toolbar)
-        toolbar.add(ULCFiller.createGlue())
-
+        return filters
     }
 
     protected changeToolbarFont(ULCContainer container) {
@@ -108,6 +117,7 @@ abstract class AbstractModellingTreeView {
     private void layoutComponents() {
         ULCBoxPane toolbarBox = new ULCBoxPane(1, 0, 5, 5)
         toolbarBox.add(new ULCFiller(0, 0))
+        toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, selectionToolbar)
         toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, toolbar)
         toolbarBox.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
         viewComponent = layoutContent(toolbarBox)
@@ -126,6 +136,8 @@ abstract class AbstractModellingTreeView {
         def viewPortTree = tree.getViewPortTableTree()
         rowHeaderTree.registerKeyboardAction(new TreeNodeExpander(tree: rowHeaderTree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), ULCComponent.WHEN_FOCUSED);
         rowHeaderTree.registerKeyboardAction(new TreeNodeCollapser(tree: rowHeaderTree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), ULCComponent.WHEN_FOCUSED);
+        rowHeaderTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeCollapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new TreeNodeCopier(rowHeaderTree: rowHeaderTree, viewPortTree: viewPortTree, model: model.treeModel), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeNodePaster(tree: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeSelectionFiller(tree: viewPortTree, model: viewPortTree.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
@@ -153,7 +165,6 @@ abstract class AbstractModellingTreeView {
             model?.updateNodeNameFilter(filter)
 
         }] as IActionListener)
-
 
     }
 

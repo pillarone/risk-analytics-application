@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.NodeNameFilter
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 
 abstract class AbstractModellingModel {
 
@@ -63,6 +64,13 @@ abstract class AbstractModellingModel {
     }
 
     protected def collectChildNames(ComponentTableTreeNode node, Set names) {
+        names << node.displayName
+        node.childCount.times {
+            collectChildNames(node.getChildAt(it), names)
+        }
+    }
+
+    protected def collectChildNames(ResultStructureTableTreeNode node, Set names) {
         names << node.displayName
         node.childCount.times {
             collectChildNames(node.getChildAt(it), names)

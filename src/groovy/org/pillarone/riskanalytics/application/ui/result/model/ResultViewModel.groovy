@@ -7,13 +7,19 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
+import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.CollectingModeFactory
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
@@ -26,30 +32,50 @@ class ResultViewModel extends AbstractModellingModel {
 
     int periodCount
 
+    List resultStructures
+    ItemsComboBoxModel selectionViewModel
+    ConfigObject allResults = null
+
     public ResultViewModel(Model model, ModelStructure structure, Simulation simulation) {
         super(model, simulation, structure)
 
         model.init()
+        buildTreeStructure()
+        selectionViewModel = new ItemsComboBoxModel(resultStructures)
+    }
+
+
+    private void buildTreeStructure(ResultStructure resultStructure = null) {
         ParameterizationDAO.withTransaction {status ->
             //parameterization is required for certain models to obtain period labels
-            Parameterization parameterization = simulation.parameterization
-            parameterization.load(false)
+            Parameterization parameterization = item.parameterization
+            if (!parameterization.isLoaded())
+                parameterization.load(false)
 
-            //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
-            //all result paths for this simulation run
-            ConfigObject allResults = initPostSimulationCalculations(simulation.simulationRun)
+            if (!allResults) {
+                //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
+                //all result paths for this simulation run
+                allResults = initPostSimulationCalculations(item.simulationRun)
+
+            }
             Set paths = new HashSet()
             //look through all periods, not all paths may have a result in the first period
             for (Map<String, Map> periodResults in allResults.values()) {
-                paths.addAll(periodResults.keySet())
+                paths.addAll(obtainAllPaths(periodResults))
             }
 
             def simulationRun = item.simulationRun
-            builder = new ResultTreeBuilder(model, structure, item, paths.toList())
-            builder.applyResultPaths()
+            Class modelClass = model.class
 
+            if (!resultStructure) {
+                resultStructures = ModellingItemFactory.getResultStructuresForModel(modelClass)
+                resultStructure = resultStructures[0]
+            }
 
-            treeRoot = builder.root
+            resultStructure.load()
+            builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)
+
+            treeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
 
             MeanAction meanAction = new MeanAction(this, null)
@@ -84,6 +110,21 @@ class ResultViewModel extends AbstractModellingModel {
         }
 
         return results
+    }
+
+    public static Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
+        Map<String, ICollectingModeStrategy> result = [:]
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
+                " WHERE p.run.id = ?", [simulationRun.id])
+        for (Object[] psc in calculations) {
+            String path = "${psc[0]}:${psc[1]}"
+            String collector = psc[2]
+            if (allPaths.contains(path)) {
+                result.put(path, CollectingModeFactory.getStrategy(collector))
+            }
+        }
+
+        return result
     }
 
     private ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
@@ -164,4 +205,20 @@ class ResultViewModel extends AbstractModellingModel {
         }
         return false
     }
+
+    public void resultStructureChanged() {
+        buildTreeStructure(selectionViewModel.getSelectedObject())
+    }
+
+    static List<String> obtainAllPaths(ConfigObject paths) {
+        List res = []
+        for (Map.Entry<String, ConfigObject> entry in paths.entrySet()) {
+            String path = entry.key + ":"
+            for (String field in entry.value.keySet()) {
+                res << path + field
+            }
+        }
+        return res
+    }
+
 }

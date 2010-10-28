@@ -4,35 +4,39 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.tabletree.ITableTreeCellEditor
+import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
+import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
-import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.KeyStroke
-import com.ulcjava.base.shared.UlcEventCategories
-import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
+import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
+import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
+import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
-import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
-import com.ulcjava.base.application.event.*
-import com.ulcjava.base.application.tabletree.*
+import org.pillarone.riskanalytics.application.ui.base.action.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 
-class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener {
+class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener, NavigationListener {
 
-    private ErrorPane errorPane
     ULCTabbedPane tabbedPane
     PropertiesView propertiesView
+    CommentAndErrorView commentAndErrorView
+    ULCSplitPane splitPane
+    boolean tabbedPaneVisible = true
 
     ParameterView(ParameterViewModel model) {
         super(model)
+        model.addNavigationListener this
     }
 
     protected void initTree() {
@@ -52,7 +56,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
             it.setCellRenderer(new DelegatingCellRenderer(createRendererConfiguration(index + 1, tree.viewPortTableTree)))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
-        ComponentNodeTableTreeNodeRenderer renderer = new ComponentNodeTableTreeNodeRenderer(tree, model)
+        ComponentNodeTableTreeNodeRenderer renderer = new ComponentNodeTableTreeNodeRenderer(tree, model, commentAndErrorView)
 
 
         tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
@@ -68,10 +72,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         tree.viewPortTableTree.addActionListener(new MultiDimensionalTabStarter(this))
 
 
-        model.treeModel.root.childCount.times {
-            tree.expandPath new TreePath([model.treeModel.root, model.treeModel.root.getChildAt(it)] as Object[])
-        }
-
+        tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
         new SelectionTracker(tree)
     }
 
@@ -120,6 +121,15 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         TreeNodePaster paster = new TreeNodePaster();
         paster.setTree(tree);
         menu.add(new ULCMenuItem(paster));
+        InsertCommentAction insertComment = new InsertCommentAction(tree, (columnIndex - 1) % model.periodCount)
+        insertComment.addCommentListener commentAndErrorView
+        ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree, (columnIndex - 1) % model.periodCount, false)
+        showCommentsAction.addCommentListener commentAndErrorView
+
+        menu.addSeparator()
+        menu.add(new ULCMenuItem(insertComment))
+        menu.add(new ULCMenuItem(showCommentsAction))
+        menu.addSeparator()
 
         initRenderer(defaultRenderer, menu);
         initRenderer(doubleRenderer, menu);
@@ -165,7 +175,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     protected void initComponents() {
-        errorPane = new ErrorPane(model)
+        commentAndErrorView = new CommentAndErrorView(model)
         tabbedPane = new ULCCloseableTabbedPane(name: 'tabbedPane')
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
         tabbedPane.addTabListener([tabClosing: {TabEvent event ->
@@ -184,6 +194,9 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         def rowHeaderTree = tree.getRowHeaderTableTree()
         rowHeaderTree.registerKeyboardAction(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new AddDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeNodeRename(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeCollapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
 
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},
@@ -193,23 +206,30 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     }
 
     protected void updateErrorVisualization(Parameterization item) {
-        item.validate()
-        errorPane.clear()
-        errorPane.addErrors item.validationErrors
-        model.addErrors(item.validationErrors)
+        commentAndErrorView.updateErrorVisualization item
     }
 
     protected ULCContainer layoutContent(ULCContainer content) {
-        content = content as ULCBoxPane
+        ULCBoxPane contentPane = new ULCBoxPane(1, 1)
+
+        splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
+        splitPane.oneTouchExpandable = true
+        splitPane.setResizeWeight(1)
+        splitPane.setDividerSize(10)
+        splitPane.add(content);
+        splitPane.add(commentAndErrorView.tabbedPane)
+        splitPane.setDividerLocation(0.65)
+        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
-        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
+        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), contentPane)
         propertiesView = new PropertiesView(model.propertiesViewModel)
         tabbedPane.addTab(propertiesView.getText("properties"), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
 
-        content.add(0.2d, 0.2d, ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.content)
         return tabbedPane
+
+
     }
 
     public void modelItemChanged() {
@@ -226,224 +246,18 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         }
     }
 
-}
-
-class MultiDimensionalTabStarter implements IActionListener {
-
-    ParameterView parameterView
-    Map openTabs = [:]
-
-    public MultiDimensionalTabStarter(ParameterView parameterView) {
-        this.@parameterView = parameterView
-        parameterView.tabbedPane.addTabListener(
-                [tabClosing: {
-                    TabEvent event ->
-                    int index = event.getTabClosingIndex()
-
-                    for (Iterator it = openTabs.iterator(); it.hasNext();) {
-                        Map.Entry entry = it.next();
-                        if (entry.value > index) {
-                            entry.value--
-                        } else if (entry.value == index) {
-                            it.remove()
-                        }
-                    }
-                }
-                ] as ITabListener)
-
-    }
-
-    public void actionPerformed(ActionEvent event) {
-        ULCTableTree tree = event.source
-        def lastComponent = tree.getSelectedPath().lastPathComponent
-
-        if (lastComponent instanceof MultiDimensionalParameterizationTableTreeNode) {
-            TabIdentifier identifier = new TabIdentifier(path: tree.getSelectedPath(), columnIndex: tree.selectedColumn)
-            def index = openTabs.get(identifier)
-            ULCTabbedPane tabbedPane = parameterView.tabbedPane
-
-            if (index == null) {
-                MultiDimensionalParameterModel model = new MultiDimensionalParameterModel(tree.model, lastComponent, tree.selectedColumn + 1)
-                model.tableModel.readOnly = parameterView.model.treeModel.readOnly
-                ClientContext.setModelUpdateMode(model.tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
-                model.tableModel.addListener([modelChanged: { parameterView.model.item.changed = true }] as IModelChangedListener)
-                tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), new MultiDimensionalParameterView(model).content)
-                int currentTab = tabbedPane.tabCount - 1
-                tabbedPane.selectedIndex = currentTab
-                tabbedPane.setToolTipTextAt(currentTab, model.getPathAsString())
-                openTabs.put(new TabIdentifier(path: tree.getSelectedPath(), columnIndex: tree.selectedColumn), currentTab)
-            } else {
-                tabbedPane.selectedIndex = index
-            }
-        } else {
-            int selectedRow = tree.selectedRow
-            if (selectedRow + 1 <= tree.rowCount) {
-                tree.selectionModel.setSelectionPath(tree.getPathForRow(selectedRow + 1))
-            }
-        }
-    }
-
-}
-
-class TabIdentifier {
-    TreePath path
-    Integer columnIndex
-
-    public boolean equals(Object obj) {
-        if (obj instanceof TabIdentifier) {
-            return obj.path.equals(path) && obj.columnIndex.equals(columnIndex)
-        } else {
-            return false
-        }
-    }
-
-    public int hashCode() {
-        return path.hashCode() * columnIndex;
+    public void commentsSelected() {
+        this.tabbedPaneVisible = !tabbedPaneVisible
+        if (this.tabbedPaneVisible)
+            splitPane.setDividerLocation(0.65)
+        else
+            splitPane.setDividerLocation(1.0)
     }
 
 
 }
 
-class TreeExpansionForwarder implements ITreeExpansionListener {
-
-    ITableTreeModel model
-
-    public TreeExpansionForwarder(ITableTreeModel model) {
-        this.@model = model
-    }
-
-    public void treeCollapsed(TreeExpansionEvent event) {
-        forwardStateChange(event.path, false)
-    }
-
-    public void treeExpanded(TreeExpansionEvent event) {
-        forwardStateChange(event.path, true)
-    }
-
-    private void forwardStateChange(TreePath path, boolean expanded) {
-        model.expansionChanged(path, expanded)
-    }
-
-}
-
-class CenteredHeaderRenderer extends DefaultTableTreeHeaderCellRenderer {
-    int columnIndex = -1
-
-    def CenteredHeaderRenderer() {
-    }
-
-    def CenteredHeaderRenderer(columnIndex) {
-        this.columnIndex = columnIndex;
-    }
-
-    public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
-        setBackground(tableTree)
-        IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
-        component.horizontalAlignment = ULCLabel.CENTER
-        component.setToolTipText String.valueOf(value)
-
-        return component
-    }
-
-    private void setBackground(ULCTableTree tableTree) {
-        if (columnIndex > -1) {
-            int pIndex = columnIndex % tableTree.model.getParameterizationsSize()
-            Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[pIndex])
-            setBackground(color)
-            setForeground UIUtils.getFontColor(color)
-        }
-    }
-
-}
-
-class SelectionTracker implements ITableTreeModelListener, ITreeSelectionListener {
-
-    ULCFixedColumnTableTree tableTree
-    TreePath selectedPath
-    int selectedColumn
 
 
 
 
-    public SelectionTracker(ULCFixedColumnTableTree tableTree) {
-        this.tableTree = tableTree
-        tableTree.rowHeaderTableTree.model.addTableTreeModelListener this
-        tableTree.rowHeaderTableTree.selectionModel.addTreeSelectionListener this
-        tableTree.rowHeaderTableTree.selectionModel.setEventDeliveryMode(UlcEventCategories.SELECTION_CHANGED_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE)
-        tableTree.rowHeaderTableTree.setEventDeliveryMode(UlcEventCategories.SELECTION_CHANGED_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE)
-        tableTree.viewPortTableTree.selectionModel.addTreeSelectionListener this
-        tableTree.viewPortTableTree.selectionModel.setEventDeliveryMode(UlcEventCategories.SELECTION_CHANGED_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE)
-        tableTree.viewPortTableTree.setEventDeliveryMode(UlcEventCategories.SELECTION_CHANGED_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE)
-    }
-
-    public void tableTreeStructureChanged(TableTreeModelEvent tableTreeModelEvent) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void tableTreeNodeStructureChanged(TableTreeModelEvent tableTreeModelEvent) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void tableTreeNodesInserted(TableTreeModelEvent tableTreeModelEvent) {
-        selectedAffectedNode(tableTreeModelEvent)
-    }
-
-    public void tableTreeNodesRemoved(TableTreeModelEvent tableTreeModelEvent) {
-        selectedAffectedNode(tableTreeModelEvent)
-    }
-
-    private void selectedAffectedNode(TableTreeModelEvent tableTreeModelEvent) {
-        TreePath parentPath = tableTreeModelEvent.treePath
-        TreePath scrollingPath = parentPath.lastPathComponent.childCount > 0 ? parentPath.pathByAddingChild(parentPath.lastPathComponent.getChildAt(-1)) : parentPath
-        TreePath selectionPath = parentPath.lastPathComponent.childCount > 0 ? parentPath.pathByAddingChild(parentPath.lastPathComponent.getChildAt(0)) : parentPath
-        tableTree.expandPath parentPath
-        def yPosition = tableTree.getVerticalScrollBar().getPosition()
-        if (selectedColumn > 0) {
-            tableTree.viewPortTableTree.scrollCellToVisible scrollingPath, selectedColumn - 1
-            tableTree.viewPortTableTree.selectionModel.setSelectionPath(selectionPath)
-
-        } else {
-            tableTree.rowHeaderTableTree.scrollCellToVisible scrollingPath, 0
-            tableTree.rowHeaderTableTree.selectionModel.setSelectionPath(selectionPath)
-        }
-        restoreColumnSelection()
-        tableTree.getVerticalScrollBar().setPosition(yPosition)
-    }
-
-    private restoreColumnSelection() {
-        if (selectedColumn == 0) {
-            tableTree.rowHeaderTableTree.setColumnSelectionInterval(selectedColumn, selectedColumn)
-        } else {
-            tableTree.viewPortTableTree.setColumnSelectionInterval(selectedColumn - 1, selectedColumn - 1)
-        }
-    }
-
-    public void tableTreeNodesChanged(TableTreeModelEvent tableTreeModelEvent) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void valueChanged(TreeSelectionEvent event) {
-
-        def currentSelection
-
-        event.paths.each {pathsElement ->
-            if (event.isAddedPath(pathsElement)) {
-                currentSelection = pathsElement
-            }
-        }
-        if (currentSelection) {
-            selectedPath = currentSelection
-
-            int col = tableTree.rowHeaderTableTree.getSelectedColumn()
-
-            if (col >= 0) {
-                selectedColumn = col
-            } else {
-                selectedColumn = tableTree.viewPortTableTree.getSelectedColumn() + 1
-            }
-        }
-
-    }
-
-
-}

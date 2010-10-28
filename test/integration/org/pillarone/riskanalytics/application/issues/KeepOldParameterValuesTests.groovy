@@ -2,11 +2,6 @@ package org.pillarone.riskanalytics.application.issues
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCComboBoxOperator
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import java.awt.event.KeyEvent
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
@@ -20,6 +15,7 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import com.ulcjava.testframework.operator.*
 
 public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
 
@@ -53,6 +49,7 @@ public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
 
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
         ULCTableTreeOperator parameterTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeContent"))
+        componentTree.doExpandRow 1
         componentTree.doExpandRow 2
 
         parameterTree.clickForEdit(3, 0)

@@ -145,8 +145,10 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
     private List createResultNodes() {
         def res = []
         (2..1).each {int i ->
-            def parent = new SimpleTableTreeNode("testPath${i}")
+            String testPath = "testPath${i}"
+            def parent = new SimpleTableTreeNode(testPath)
             def result = new ResultTableTreeNode("ultimate")
+            result.resultPath = "$testPath:ultimate"
             parent.add(result)
             res << result
         }

@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.*
 import models.application.ApplicationModel
 
@@ -180,6 +181,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
         parameterization.periodLabels = ['p1', 'p2']
+        parameterization.addComment(new Comment("path", 0))
         Parameterization copy = ModellingItemFactory.incrementVersion(parameterization)
 
         assertNotSame parameterization, copy
@@ -193,6 +195,9 @@ class ModellingItemFactoryTests extends GroovyTestCase {
 
         assertEquals parameterization.periodCount, copy.periodCount
         assertEquals parameterization.parameters.size(), copy.parameters.size()
+        assertEquals 1, copy.comments.size()
+        assertEquals "path", copy.comments.get(0).path
+        assertEquals 0, copy.comments.get(0).period
     }
 
     void testGetNewestModelStructure() {

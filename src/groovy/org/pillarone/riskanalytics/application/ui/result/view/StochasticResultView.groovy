@@ -4,10 +4,12 @@ import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
+import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.Max
 import org.pillarone.riskanalytics.application.dataaccess.function.Min
 import org.pillarone.riskanalytics.application.dataaccess.function.Sigma
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
@@ -15,7 +17,6 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.result.action.*
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 class StochasticResultView extends ResultView {
 
@@ -23,6 +24,7 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton minButton
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
+    ULCComboBox selectView
 
     private int nextModelIndex = 0
 
@@ -40,6 +42,30 @@ class StochasticResultView extends ResultView {
         menu = new ULCPopupMenu()
         tree.viewPortTableTree.tableTreeHeader.componentPopupMenu = menu
     }
+
+    public ULCBoxPane createSelectionPane() {
+        selectView = new ULCComboBox(model.selectionViewModel)
+        selectView.name = "selectView"
+        selectView.setPreferredSize(new Dimension(120, 20))
+        selectView.addActionListener(new ApplySelectionAction(model, this))
+
+        filterSelection = new ULCComboBox()
+        filterSelection.name = "filter"
+        filterSelection.addItem(getText("all"))
+        model.nodeNames.each {
+            filterSelection.addItem it
+        }
+
+        filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
+
+        ULCBoxPane filters = new ULCBoxPane(3, 1)
+        filters.add(ULCBoxPane.BOX_EXPAND_CENTER, selectView)
+        filters.add(filterLabel)
+        filters.add(filterSelection)
+        return filters
+    }
+
+
 
     protected ULCContainer layoutContent(ULCContainer content) {
         tabbedPane.removeAll()
@@ -64,16 +90,13 @@ class StochasticResultView extends ResultView {
         sigmaButton = new ULCToggleButton(new SigmaAction(model, tree.viewPortTableTree))
         toolbar.add(sigmaButton)
 
-        toolbar.addSeparator()
-
         addDoubleFunctions(toolbar)
 
         toolbar.addSeparator()
 
         addIntegerFunctions(toolbar)
 
-        toolbar.addSeparator()
-        addPrecisionFunctions(toolbar)
+        addPrecisionFunctions(selectionToolbar)
 
     }
 
@@ -90,7 +113,8 @@ class StochasticResultView extends ResultView {
     }
 
     private def addDoubleFunctions(ULCToolBar toolbar) {
-        toolbar.add(new ULCLabel(getText("Add")))
+        toolbar.add ULCFiller.createHorizontalStrut(5)
+        toolbar.addSeparator()
         toolbar.add ULCFiller.createHorizontalStrut(5)
         IDataType dataType = DataTypeFactory.numberDataType
         dataType.integer = false

@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
+import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 
@@ -19,9 +20,11 @@ class ResultConfigurationTableTreeNodeRenderer extends DefaultTableTreeCellRende
         this.tree = tree;
         menu = new ULCPopupMenu()
         menu.add(new ULCMenuItem(new TreeExpander(tree)))
+        menu.add(new ULCMenuItem(new TreeCollapser(tree)))
         OpenComponentHelp help = new OpenComponentHelp(this.tree.rowHeaderTableTree)
         helpMenu = new ULCPopupMenu()
         helpMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        helpMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         helpMenu.addSeparator()
         helpMenu.add(new ULCMenuItem(help))
 

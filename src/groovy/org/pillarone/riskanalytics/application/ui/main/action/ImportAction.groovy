@@ -75,10 +75,11 @@ class ImportAction extends SelectionTreeAction {
 
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
-                    String selectedFile = filePaths[0]
-                    ItemLoadHandler handler = new ItemLoadHandler(this, node)
-                    handler.forceImport = this.forceImport
-                    ClientContext.loadFile(handler, selectedFile)
+                    filePaths?.each {def selectedFile ->
+                        ItemLoadHandler handler = new ItemLoadHandler(this, node)
+                        handler.forceImport = this.forceImport
+                        ClientContext.loadFile(handler, selectedFile)
+                    }
                 },
                 onFailure: {reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {
@@ -96,6 +97,7 @@ class ImportAction extends SelectionTreeAction {
         config.dialogTitle = getDialogTitle(node)
         config.dialogType = FileChooserConfig.OPEN_DIALOG
         config.setFileSelectionMode(FileChooserConfig.FILES_ONLY)
+        config.setMultiSelectionEnabled(true)
         def ext = new String[1]
         ext[0] = "groovy"
         config.addFileFilterConfig(new FileChooserConfig.FileFilterConfig(ext, "description (*.groovy)"));

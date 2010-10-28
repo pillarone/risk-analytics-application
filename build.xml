@@ -8,7 +8,7 @@
     <property file="${user.home}/cert.properties"/>
 
     <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}"/>
-    <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-master"/>
+    <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-v1.1"/>
     <property name="classes.prod.dir" value="${build.prod.dir}/classes"/>
     <property name="resources.prod.dir" value="src/java"/>
 
@@ -109,7 +109,7 @@
 
     <target name="-self-signed-cert" unless="-trusted-cert-available">
         <!-- if no trusted certificate has been found use the self signed certificate available in the project root -->
-        <echo  message="No trusted certificate found. user.home is ${user.home}."/>
+        <!-- <echo  message="No trusted certificate found. user.home is ${user.home}."/> -->
         <property name="signjar.alias" value="pillarone"/>
         <property name="signjar.keystore" value="pillarone.keystore"/>
         <property name="signjar.storepass" value="nopasswd"/>

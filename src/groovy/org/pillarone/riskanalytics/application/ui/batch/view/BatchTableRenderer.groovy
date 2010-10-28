@@ -33,11 +33,12 @@ public class BatchTableRenderer extends DefaultTableCellRenderer {
             nodePopup.add(new ULCMenuItem(new RunBatchSimulationAction(model: table.model)))
             nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, 1)))
             nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, -1)))
-            nodePopup.add(new ULCMenuItem(new DeleteBatchSimulationAction(model: table.model)))
             nodePopup.addSeparator()
             nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.SIMULATION, "BatchOpenSimulationAction")))
             nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.PARAMETERIZATION, "BatchOpenParameterizationAction")))
             nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.RESULT_CONFIG, "BatchOpenresultAction")))
+            nodePopup.addSeparator()
+            nodePopup.add(new ULCMenuItem(new DeleteBatchSimulationAction(model: table.model)))
         }
 
         return nodePopup

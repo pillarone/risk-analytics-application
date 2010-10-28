@@ -14,13 +14,13 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
@@ -121,11 +121,18 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         splitPane.setLeftComponent(treePane)
         splitPane.setRightComponent(modelPane)
 
-        ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 0)
-        selectionSwitchPane.preferredSize = new Dimension(25, 90)
-        ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(new ToggleSplitPaneAction(splitPane, "Navigation"))
+        ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)
+        ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(new ToggleSplitPaneAction(splitPane, UIUtils.getText(this.class, "Navigation")))
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, navigationSwitchButton);
+
+        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(new CommentsSwitchAction(model, UIUtils.getText(this.class, "ValidationsAndComments"), false))
+        validationSwitchButton.selected = false
+        validationSwitchButton.setEnabled false
+        model.switchActions << validationSwitchButton
+        selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, validationSwitchButton);
+
+
 
         ULCBoxPane toolBarLockPane = new ULCBoxPane(2, 0)
         toolBarLockPane.add(ULCBoxPane.BOX_EXPAND_TOP, toolBar)
@@ -142,6 +149,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         //add action listener
         selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
         selectionTree.registerKeyboardAction(new DeleteAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
+        selectionTree.registerKeyboardAction(new RenameAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
     }
 
 
@@ -174,10 +182,13 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)
         fileMenu.addSeparator()
-        fileMenu.add(exportAllItemsNewstVersion)
-        fileMenu.add(exportAllItems)
-        fileMenu.add(importAllItems)
-        fileMenu.addSeparator()
+        if (UserContext.isStandAlone()) {
+            fileMenu.add(exportAllItemsNewstVersion)
+            fileMenu.add(exportAllItems)
+            fileMenu.add(importAllItems)
+            fileMenu.addSeparator()
+        }
+
         ULCMenuItem exitItem = new ULCMenuItem(new ExitAction())
         exitItem.mnemonic = 'X'
         fileMenu.add(exitItem)
@@ -444,6 +455,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             windowMenus[selectedModel.name] = item
 
             windowTitle = selectedModel.name
+            Closure closeAction = { event -> closeItem(modelCardContent, modelCardContent.getSelectedIndex()) }
+            modelCardContent.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         }
         cardPane.selectedName = selectedModel.name // TODO (msh): Ask Dani why setSelected does not trigger the action
 
@@ -473,6 +486,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             windowMenus[batchName] = item
 
             windowTitle = batchName
+            Closure closeAction = { event -> closeItem(modelCardContent, modelCardContent.getSelectedIndex()) }
+            modelCardContent.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         }
         cardPane.selectedName = batchName // TODO (msh): Ask Dani why setSelected does not trigger the action
 
@@ -514,40 +529,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             int closingIndex = event.getTabClosingIndex()
             if (closingIndex < 0) closingIndex = 0
             ULCCloseableTabbedPane modelCardContent = event.getClosableTabbedPane()
-            ULCComponent currentComponent = modelCardContent.getComponentAt(closingIndex)
-            def item = openItems[currentComponent]
-            def modelForItem = openModels[currentComponent]
-            if (isChanged(item)) {
-                boolean closeTab = true
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
-                alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
-                    def value = windowEvent.source.value
-                    if (value.equals(alert.firstButtonLabel)) {
-                        item.save()
-                    } else if (value.equals(alert.thirdButtonLabel)) {
-                        modelCardContent.setSelectedIndex closingIndex
-                        closeTab = false
-                    } else {
-                        item.unload()
-                    }
-                    if (closeTab) {
-                        openItems.remove(currentComponent)
-                        def removedModel = openModels.remove(currentComponent)
-                        modelCardContent.removeTabAt closingIndex
-                        model.closeItem(modelForItem, item)
-                        removeCard(modelCardContent)
-                    }
-
-                }] as IWindowListener)
-                alert.show()
-            }
-            if (!isChanged(item)) {
-                openItems.remove(currentComponent)
-                def removedModel = openModels.remove(currentComponent)
-                modelCardContent.removeTabAt closingIndex
-                model.closeItem(modelForItem, item)
-                removeCard(modelCardContent)
-            }
+            closeItem(modelCardContent, closingIndex)
         }] as ITabListener)
 
         Closure syncCurrentItem = {e -> selectCurrentItemFromTab(e.source)}
@@ -582,8 +564,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     private void selectCurrentItemFromTab(ULCCloseableTabbedPane modelCardContent) {
         def item = openItems[modelCardContent.getSelectedComponent()]
-        if (!(item instanceof BatchRun))
-            model.currentItem = item
+        model.currentItem = (item instanceof BatchRun) ? null : item
     }
 
     public void openDetailView(Model selectedModel, Object item) {
@@ -599,7 +580,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     public void openDetailView(Model selectedModel, List items) {
         if (items?.size() > 1 && items.get(0) instanceof SimulationNode) {
             createOrSelectTab(selectedModel, items)
-        } else if (items?.size() > 1 && items.get(0) instanceof ParameterizationNode) {
+        } else if (items?.size() > 1 && items.get(0) instanceof Parameterization) {
             createCompareParameterizationOrSelectTab(selectedModel, items)
         }
     }
@@ -641,6 +622,43 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     void openSettingsViewDialog() {
         getSettingsViewDialog().visible = true
+    }
+
+    private void closeItem(ULCCloseableTabbedPane modelCardContent, int closingIndex) {
+        ULCComponent currentComponent = modelCardContent.getComponentAt(closingIndex)
+        def item = openItems[currentComponent]
+        def modelForItem = openModels[currentComponent]
+        if (isChanged(item)) {
+            boolean closeTab = true
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(this.content), "itemChanged")
+            alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+                def value = windowEvent.source.value
+                if (value.equals(alert.firstButtonLabel)) {
+                    item.save()
+                } else if (value.equals(alert.thirdButtonLabel)) {
+                    modelCardContent.setSelectedIndex closingIndex
+                    closeTab = false
+                } else {
+                    item.unload()
+                }
+                if (closeTab) {
+                    openItems.remove(currentComponent)
+                    def removedModel = openModels.remove(currentComponent)
+                    modelCardContent.removeTabAt closingIndex
+                    model.closeItem(modelForItem, item)
+                    removeCard(modelCardContent)
+                }
+
+            }] as IWindowListener)
+            alert.show()
+        }
+        if (!isChanged(item)) {
+            openItems.remove(currentComponent)
+            def removedModel = openModels.remove(currentComponent)
+            modelCardContent.removeTabAt closingIndex
+            model.closeItem(modelForItem, item)
+            removeCard(modelCardContent)
+        }
     }
 
     public void itemChanged(ModellingItem item) {

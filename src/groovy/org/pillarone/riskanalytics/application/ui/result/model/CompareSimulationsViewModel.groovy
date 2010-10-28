@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
@@ -35,11 +38,19 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
         //all result paths for this simulation run
         ConfigObject allResults = ResultViewModel.initPostSimulationCalculations(item[0]?.simulationRun)
-        List paths = allResults."0".keySet().toList()
-        builder = new ResultTreeBuilder(model, structure, item[0], paths)
-        builder.applyResultPaths()
 
-        treeRoot = builder.root
+
+        List paths = ResultViewModel.obtainAllPaths(allResults."0")
+        Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
+        Class modelClass = model.class
+
+        ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
+
+        resultStructure.load()
+        builder = new ResultStructureTreeBuilder(collectors, modelClass, resultStructure, item[0])
+
+        treeRoot = builder.buildTree()
+
         MeanAction meanAction = new MeanAction(this, null)
         List<ConfigObject> resultsList = []
         item.each {
@@ -132,5 +143,18 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
             listener.refreshNodes()
         }
     }
+
+}
+
+public class TestCompareSimulationsViewModel extends CompareSimulationsViewModel {
+
+    public TestCompareSimulationsViewModel(Model model, ModelStructure structure, List simulations) {
+        super(model, structure, simulations);
+    }
+
+    protected changeUpdateMode(def model) {
+
+    }
+
 
 }

@@ -2,46 +2,50 @@ package org.pillarone.riskanalytics.application.ui.result.model
 
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
-import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
+
 import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 
 class ResultTableTreeNode extends SimpleTableTreeNode {
     String collector = AggregatedCollectingModeStrategy.IDENTIFIER
-    Class packetClass
+    Class modelClass
+
+    private String path, field
 
     public ResultTableTreeNode(String name) {
         super(name)
     }
 
-    public ResultTableTreeNode(String name, Class packetClass) {
+    public ResultTableTreeNode(String name, Class modelClass) {
         super(name)
-        this.packetClass = packetClass
+        this.modelClass = modelClass
     }
 
-    String getPath() {
+    void setResultPath(String resultPath) {
+        path = resultPath.substring(0, resultPath.lastIndexOf(":"))
+        field = resultPath?.substring(resultPath.lastIndexOf(":") + 1)
+    }
+
+    String getActualTreePath() {
         if (parent) {
-            return "${parent?.path}"
+            return "${parent?.path}:$name"
         } else {
             return name
         }
     }
 
+    String getPath() {
+        return path
+    }
+
     String getField() {
-        return name
+        return field
     }
 
     public String getDisplayName() {
-        if (cachedDisplayName != null)
-            return cachedDisplayName
-
-        String displayName
-        if (packetClass)
-            displayName = I18NUtils.findDisplayNameByPacket(name)
-        if (displayName == null)
-            displayName = super.getDisplayName()
-        else
-            cachedDisplayName = displayName
-        return displayName
+        if (cachedDisplayName == null) {
+            cachedDisplayName = I18NUtils.getResultStructureString(modelClass, name)
+        }
+        return cachedDisplayName
     }
 
 

@@ -100,7 +100,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             estimatedEndTimeInfo.text = model.estimatedEndTime
             progressBar.value = model.progress
             progressBar.indeterminate = false
-            progressBar.string = "Calculations ${model.progress}% complete"
+            progressBar.string = "Calculating statistics ${model.progress}% complete"
             run.enabled = false
             addToBatch.enabled = false
             stop.enabled = false

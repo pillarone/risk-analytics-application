@@ -221,6 +221,17 @@ public class I18NUtils {
         return LocaleResources.getBundle(resourceBundleName)
     }
 
+    public static String getResultStructureString(Class model, String property) {
+        try {
+            ResourceBundle bundle = getModelResourceBundle(model.simpleName - "Model")
+            return bundle.getString(property)
+        } catch (MissingResourceException e) {
+            return formatDisplayName(property)
+        } catch (NullPointerException e) {
+            return formatDisplayName(property)
+        }
+    }
+
     protected static ResourceBundle getResourceBundle(Class class2) {
         if (testMode) {
             return testResourceBundle
@@ -307,15 +318,20 @@ public class I18NUtils {
         String text = null
         def keys = null
         try {
+            exception = exception.replaceAll("\n", "")
             for (ResourceBundle resourceBundle: exceptionResourceBundle) {
                 keys = (List) new GroovyShell().evaluate(exception)
-                text = resourceBundle.getString(keys[0])
-                keys.eachWithIndex {String key, int index ->
-                    if (index > 0) {
-                        text = text.replace("[" + index + "]", key)
+                try {
+                    text = resourceBundle.getString(keys[0])
+                } catch (Exception ex) {}
+                if (text) {
+                    keys.eachWithIndex {String key, int index ->
+                        if (index > 0) {
+                            text = text.replace("[" + index + "]", key)
+                        }
                     }
+                    return text;
                 }
-                if (text) break;
             }
         } catch (Exception ex) {  /*ignore the exception*/}
         return text;
