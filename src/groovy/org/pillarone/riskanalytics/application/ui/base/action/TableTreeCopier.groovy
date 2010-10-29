@@ -25,8 +25,8 @@ class TableTreeCopier extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
         model = table.model
-        def int[] selectedRows = getSelectedRows()
-        def int[] selectedColumns = getSelectedColumns()
+        int[] selectedRows = getSelectedRows()
+        int[] selectedColumns = getSelectedColumns()
         if (selectedRows != null) {
             String content = copyContent(selectedRows, selectedColumns)
             ULCClipboard.getClipboard().content = content
@@ -34,7 +34,8 @@ class TableTreeCopier extends ExceptionSafeAction {
     }
 
     private int[] getSelectedColumns() {
-        return (table.selectedColumns as List)?.sort() as int[]
+        List list = table.selectedColumns?.collect { table.convertColumnIndexToModel(it) } as List
+        return list?.sort() as int[]
     }
 
     private int[] getSelectedRows() {
@@ -46,7 +47,7 @@ class TableTreeCopier extends ExceptionSafeAction {
         for (int i = 0; i < selectedRows.size(); i++) {
             TreePath path = table.getPathForRow(selectedRows[i])
             for (int j = 0; j < selectedColumns.size(); j++) {
-                buffer << format(model.getValueAt(path.lastPathComponent, selectedColumns[j] + 1))
+                buffer << format(model.getValueAt(path.lastPathComponent, selectedColumns[j]))
                 if (j != selectedColumns.size() - 1)
                     buffer << '\t'
             }
