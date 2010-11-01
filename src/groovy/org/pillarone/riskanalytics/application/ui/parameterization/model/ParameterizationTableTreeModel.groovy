@@ -167,9 +167,11 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
     public void addComponentNode(ComponentTableTreeNode parent, Component component) {
         parent.component.addSubComponent(component)
         ComponentTableTreeNode node = builder.createNewComponentNode(parent, component)
+        node.comments = builder?.item?.comments?.findAll {it.path == node.path}
         nodesWereInserted(getPath(parent), parent.getIndex(node))
         notifyNodeValueChanged(node, -1)
         notifyComboBoxNodesComponentAdded(component)
+        changedComments()
     }
 
     private void notifyComboBoxNodesComponentAdded(Component newComponent) {
@@ -177,6 +179,7 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
         findNodes(root, nodes)
         for (ConstrainedStringParameterizationTableTreeNode node in nodes) {
             node.addComponent(newComponent)
+            node.comments = builder?.item?.comments?.findAll {it.path == node.path}
             nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }
     }

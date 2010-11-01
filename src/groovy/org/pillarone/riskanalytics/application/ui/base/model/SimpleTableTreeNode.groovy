@@ -10,14 +10,13 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
     protected String name, cachedDisplayName
     List children
     ITableTreeNode parent
-    Set comments
+    Set comments = new HashSet()
 
     static String PATH_SEPARATOR = '/'
 
     public SimpleTableTreeNode(String name) {
         children = []
         this.@name = name
-        this.comments = new HashSet()
     }
 
     String getName() {
