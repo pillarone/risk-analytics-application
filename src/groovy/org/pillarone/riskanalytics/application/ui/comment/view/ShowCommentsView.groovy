@@ -76,6 +76,8 @@ class ShowCommentsView implements ChangedCommentListener {
 
     void order(String orderBy, String order) {
         def comparator = { x, y -> if ("asc" == order) x.properties[orderBy] <=> y.properties[orderBy] else y.properties[orderBy] <=> x.properties[orderBy] } as Comparator
+        if (!comments || comments.size() == 0)
+            comments = getAllComments()
         comments.sort(comparator)
         clear()
         addComments(comments)
