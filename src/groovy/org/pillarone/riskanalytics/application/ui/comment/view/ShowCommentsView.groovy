@@ -82,7 +82,7 @@ class ShowCommentsView implements ChangedCommentListener {
     }
 
     private List<Comment> getAllComments() {
-        def all = model.item.comments.findAll {!it.deleted}
+        def all = model.item.comments.findAll {!it.deleted && model.commentIsVisible(it)}
         return path ? all.findAll {it.path == path} : all
     }
 
