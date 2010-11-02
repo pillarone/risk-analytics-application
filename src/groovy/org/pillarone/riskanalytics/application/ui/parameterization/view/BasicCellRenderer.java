@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view;
 
 import com.ulcjava.base.application.IRendererComponent;
+import com.ulcjava.base.application.ULCLabel;
+import com.ulcjava.base.application.ULCPopupMenu;
 import com.ulcjava.base.application.ULCTableTree;
 import com.ulcjava.base.application.datatype.IDataType;
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer;
@@ -12,6 +14,7 @@ public class BasicCellRenderer extends DefaultTableTreeCellRenderer implements I
 
     protected int columnIndex;
     private IDataType dataType;
+    ULCPopupMenu menu;
 
     public BasicCellRenderer() {
 
@@ -33,12 +36,19 @@ public class BasicCellRenderer extends DefaultTableTreeCellRenderer implements I
         if (!selected) {
             if (value != null || ((ParameterizationTableTreeNode) node).isCellEditable(columnIndex)) {
                 setBackground(Color.white);
+                setHorizontalAlignment(ULCLabel.RIGHT);
+                setComponentPopupMenu(menu);
             } else {
                 setBackground(Color.lightGray);
+                setComponentPopupMenu(null);
             }
         }
         setDataType(dataType);
         return super.getTableTreeCellRendererComponent(ulcTableTree, value, selected, hasFocus, expanded, leaf, node);
+    }
+
+    public void setMenu(ULCPopupMenu menu) {
+        this.menu = menu;
     }
 
     protected String typeString() {

@@ -131,13 +131,13 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         menu.add(new ULCMenuItem(showCommentsAction))
         menu.addSeparator()
 
-        initRenderer(defaultRenderer, menu);
-        initRenderer(doubleRenderer, menu);
-        initRenderer(integerRenderer, menu);
-        initRenderer(dateRenderer, menu);
+        defaultRenderer.setMenu(menu)
+        doubleRenderer.setMenu(menu)
+        integerRenderer.setMenu(menu)
+        dateRenderer.setMenu(menu)
         initComboBox(comboBoxRenderer, menu);
         initCheckBox(checkBoxRenderer, menu);
-        initRenderer(mdpRenderer, menu);
+        mdpRenderer.setMenu(menu)
 
         Map renderers = new HashMap<Class, ITableTreeCellRenderer>();
         renderers.put(SimpleValueParameterizationTableTreeNode.class,
