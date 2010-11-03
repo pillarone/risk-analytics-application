@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
@@ -103,28 +104,18 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
     }
 
     String getShortDisplayPath(List otherNodes) {
+        if (!otherNodes.contains(this)) otherNodes.add(this)
         List otherNodesCopy = otherNodes.clone()
-        otherNodesCopy.remove(this)
-        List otherPaths = otherNodesCopy.treePath
-        def lastRelatedNode
-        String ret = null
-        treePath.eachWithIndex {def myParent, int index ->
-            otherPaths.each {List otherPath ->
-                if (otherPath[index] == myParent) {
-                    lastRelatedNode = myParent
-                } else if (!ret && lastRelatedNode) {
-                    ret = displayPath[(lastRelatedNode.displayPath.size() + 3)..(displayPath.size() - 1)]
-                }
-            }
-        }
-        if (!ret) {
-            if (parent && otherNodes.size() == 1 && otherNodes[0] == this) {
-                ret = "${parent.getDisplayName()} $PATH_SEPARATOR ${getDisplayName()}"
+        List list = ComponentUtils.intersection(otherNodesCopy.treePath)
+        if (list && list.size() > 0 && list.last().displayPath != displayPath) {
+            return displayPath[(list.last().displayPath.size() + 3)..(displayPath.size() - 1)]
+        } else {
+            if (otherNodes.size() == 1 && otherNodes[0] == this) {
+                return displayName
             } else {
-                ret = displayPath
+                return displayPath
             }
         }
-        return ret
     }
 
     int add(ITableTreeNode child) {

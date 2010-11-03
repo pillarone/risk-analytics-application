@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.core.parameter.StringParameter
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
@@ -105,6 +103,6 @@ class SimpleTableTreeNodeTests extends GroovyTestCase {
         //todo sca
 //        assertEquals "node1 > node3", node3.getShortDisplayPath([node4,node5])
         assertEquals "node3", node3.getShortDisplayPath([node1])
-        assertEquals "node1 $SimpleTableTreeNode.PATH_SEPARATOR node3", node3.getShortDisplayPath([node3])
+        assertEquals "node3", node3.getShortDisplayPath([node3])
     }
 }
