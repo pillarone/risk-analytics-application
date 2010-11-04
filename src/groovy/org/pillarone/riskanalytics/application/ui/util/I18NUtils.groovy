@@ -237,7 +237,7 @@ public class I18NUtils {
         }
 
         if (value.startsWith("sub")) {
-            value = value.substring(3)
+            return formatComponentName(value.substring(3))
         }
         if (value.startsWith("parm")) {
             value = value.substring(4)
@@ -246,6 +246,10 @@ public class I18NUtils {
             value = value.substring(3)
         }
 
+        return formatComponentName(value)
+    }
+
+    private static String formatComponentName(String value) {
         StringBuffer displayNameBuffer = new StringBuffer()
         //display name will be as the following formatted
         // HelloWORLD -> hello world

@@ -12,17 +12,24 @@ class ComponentUtilsTests extends GroovyTestCase {
         name = I18NUtils.formatDisplayName(name)
         assertEquals "hello world", name
 
-        name = "helloworld"
+        name = "helloWorld"
+        name = ComponentUtils.getSubComponentName(name)
+        assertEquals "subHelloWorld", name
+        name = I18NUtils.formatDisplayName(name)
+        assertEquals "hello world", name
+
+        name = "Helloworld"
         name = ComponentUtils.getSubComponentName(name)
         assertEquals "subHelloworld", name
         name = I18NUtils.formatDisplayName(name)
         assertEquals "helloworld", name
 
-        name = "hello world"
+
+        name = "helloworld"
         name = ComponentUtils.getSubComponentName(name)
-        assertEquals "subHelloWorld", name
+        assertEquals "subHelloworld", name
         name = I18NUtils.formatDisplayName(name)
-        assertEquals "hello world", name
+        assertEquals "helloworld", name
 
         name = "HELLOWORLD"
         name = ComponentUtils.getSubComponentName(name)
@@ -35,6 +42,9 @@ class ComponentUtilsTests extends GroovyTestCase {
         assertEquals "subHELLOWorld", name
         name = I18NUtils.formatDisplayName(name)
         assertEquals "HELLO world", name
+
+
     }
+
 
 }
