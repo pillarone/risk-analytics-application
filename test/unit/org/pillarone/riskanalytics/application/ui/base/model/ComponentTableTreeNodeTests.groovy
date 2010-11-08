@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.application.util.LocaleResources
-
 import org.pillarone.riskanalytics.core.example.component.TestComponent
 
 class ComponentTableTreeNodeTests extends GroovyTestCase {
@@ -24,7 +23,7 @@ class ComponentTableTreeNodeTests extends GroovyTestCase {
         assertEquals("node name", node.displayName)
 
         node = new ComponentTableTreeNode(new TestComponent(name: "subCompo"), "subCompo")
-        assertEquals("compo", node.displayName)
+        assertEquals("Compo", node.displayName)
     }
 
     void testGetValueAt() {

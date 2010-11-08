@@ -2,16 +2,16 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class ParameterizationTreeBuilderTests extends GroovyTestCase {
@@ -96,17 +96,17 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
 
         assertEquals 1, dynamicComponentNode.childCount
         def dynamicSubcomponentNode = dynamicComponentNode.getChildAt(0)
-        assertEquals 'test', dynamicSubcomponentNode.displayName
+        assertEquals 'Test', dynamicSubcomponentNode.displayName
         assertEquals 4, dynamicSubcomponentNode.childCount
 
         def nestedComponentNode = dynamicSubcomponentNode.getChildAt(0)
         assertTrue nestedComponentNode instanceof ComponentTableTreeNode
-        assertEquals "first component", nestedComponentNode.displayName
+        assertEquals "First Component", nestedComponentNode.displayName
         assertEquals 1, nestedComponentNode.childCount
 
         nestedComponentNode = dynamicSubcomponentNode.getChildAt(1)
         assertTrue nestedComponentNode instanceof ComponentTableTreeNode
-        assertEquals "second component", nestedComponentNode.displayName
+        assertEquals "Second Component", nestedComponentNode.displayName
         assertEquals 1, nestedComponentNode.childCount
 
         assertTrue dynamicSubcomponentNode.getChildAt(2) instanceof ParameterizationTableTreeNode
@@ -140,6 +140,6 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
         ComponentTableTreeNode subComponentNode = dynamicComposedComponentNode.getChildAt(0)
 
         assertEquals 4, subComponentNode.childCount
-        assertEquals "nested", subComponentNode.displayName
+        assertEquals "Nested", subComponentNode.displayName
     }
 }
