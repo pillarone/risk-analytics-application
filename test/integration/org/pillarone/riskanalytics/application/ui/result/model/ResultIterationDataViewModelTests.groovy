@@ -292,17 +292,17 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
         assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
 
-        assertEquals 0, model.resultTableModel.getValueAt(0, 0)
-        assertEquals 1, model.resultTableModel.getValueAt(0, 1)
-        assertEquals 3, model.resultTableModel.getValueAt(0, 2)
-        assertEquals 2, model.resultTableModel.getValueAt(0, 3)
-        assertEquals 6, model.resultTableModel.getValueAt(0, 4)
+        assertEquals 1, model.resultTableModel.getValueAt(0, 0)
+        assertEquals 2, model.resultTableModel.getValueAt(0, 1)
+        assertEquals 6, model.resultTableModel.getValueAt(0, 2)
+        assertEquals 4, model.resultTableModel.getValueAt(0, 3)
+        assertEquals 12, model.resultTableModel.getValueAt(0, 4)
 
-        assertEquals 4, model.resultTableModel.getValueAt(4, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(4, 1)
-        assertEquals 15, model.resultTableModel.getValueAt(4, 2)
-        assertEquals 10, model.resultTableModel.getValueAt(4, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(4, 4)
+        assertEquals 4, model.resultTableModel.getValueAt(3, 0)
+        assertEquals 5, model.resultTableModel.getValueAt(3, 1)
+        assertEquals 15, model.resultTableModel.getValueAt(3, 2)
+        assertEquals 10, model.resultTableModel.getValueAt(3, 3)
+        assertEquals 30, model.resultTableModel.getValueAt(3, 4)
 
         model.orderByPath = true
         model.query()
@@ -315,17 +315,18 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(3)
         assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
 
-        assertEquals 0, model.resultTableModel.getValueAt(0, 0)
-        assertEquals 1, model.resultTableModel.getValueAt(0, 1)
-        assertEquals 2, model.resultTableModel.getValueAt(0, 2)
-        assertEquals 3, model.resultTableModel.getValueAt(0, 3)
-        assertEquals 6, model.resultTableModel.getValueAt(0, 4)
+        assertEquals 1, model.resultTableModel.getValueAt(0, 0)
+        assertEquals 2, model.resultTableModel.getValueAt(0, 1)
+        assertEquals 4, model.resultTableModel.getValueAt(0, 2)
+        assertEquals 6, model.resultTableModel.getValueAt(0, 3)
+        assertEquals 12, model.resultTableModel.getValueAt(0, 4)
 
-        assertEquals 4, model.resultTableModel.getValueAt(4, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(4, 1)
-        assertEquals 10, model.resultTableModel.getValueAt(4, 2)
-        assertEquals 15, model.resultTableModel.getValueAt(4, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(4, 4)
+        assertEquals 4, model.resultTableModel.getValueAt(3, 0)
+        assertEquals 5, model.resultTableModel.getValueAt(3, 1)
+        assertEquals 10, model.resultTableModel.getValueAt(3, 2)
+        assertEquals 15, model.resultTableModel.getValueAt(3, 3)
+        assertEquals 30, model.resultTableModel.getValueAt(3, 4)
+
 
     }
 
