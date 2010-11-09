@@ -5,10 +5,6 @@ import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.Max
-import org.pillarone.riskanalytics.application.dataaccess.function.Min
-import org.pillarone.riskanalytics.application.dataaccess.function.Sigma
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
@@ -16,11 +12,13 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.application.ui.result.action.*
 
 class StochasticResultView extends ResultView {
 
     private ULCPopupMenu menu
+    private ULCToggleButton meanButton
     private ULCToggleButton minButton
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
@@ -41,6 +39,9 @@ class StochasticResultView extends ResultView {
         super.initComponents();
         menu = new ULCPopupMenu()
         tree.viewPortTableTree.tableTreeHeader.componentPopupMenu = menu
+        // add default function to menu
+        def function = meanButton.action.function
+        menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
     }
 
     public ULCBoxPane createSelectionPane() {
@@ -83,6 +84,9 @@ class StochasticResultView extends ResultView {
     }
 
     protected void addToolBarElements(ULCToolBar toolbar) {
+        meanButton = new ULCToggleButton(new MeanAction(model, tree.viewPortTableTree))
+        meanButton.setSelected true
+        toolbar.add(meanButton)
         minButton = new ULCToggleButton(new MinAction(model, tree.viewPortTableTree))
         toolbar.add(minButton)
         maxButton = new ULCToggleButton(new MaxAction(model, tree.viewPortTableTree))
@@ -183,6 +187,10 @@ class StochasticResultView extends ResultView {
 
     private ULCToggleButton getToggleButton(Sigma function) {
         sigmaButton
+    }
+
+    private ULCToggleButton getToggleButton(Mean function) {
+        meanButton
     }
 
 }
