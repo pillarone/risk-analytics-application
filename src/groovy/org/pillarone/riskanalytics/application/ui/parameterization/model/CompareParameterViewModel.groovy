@@ -1,12 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -22,7 +22,6 @@ class CompareParameterViewModel extends AbstractModellingModel {
         Parameterization firstParameterization = getFirstObject()
         aggregateParameters(firstParameterization)
         builder = new CompareParameterizationTreeBuilder(model, structure, firstParameterization, getItems())
-        treeRoot = builder.root
         periodCount = builder.minPeriod
         paramterTableTreeModel = new CompareParameterizationTableTreeModel(builder, getItems())
         paramterTableTreeModel.simulationModel = model

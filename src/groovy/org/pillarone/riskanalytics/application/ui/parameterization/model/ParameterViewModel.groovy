@@ -36,7 +36,6 @@ class ParameterViewModel extends AbstractModellingModel {
 
     protected ITableTreeModel buildTree() {
         builder = new ParameterizationTreeBuilder(model, structure, item)
-        treeRoot = builder.root
         periodCount = builder.periodCount
         paramterTableTreeModel = new ParameterizationTableTreeModel(builder)
         paramterTableTreeModel.simulationModel = model

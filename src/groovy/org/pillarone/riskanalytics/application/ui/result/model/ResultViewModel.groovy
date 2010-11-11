@@ -75,13 +75,13 @@ class ResultViewModel extends AbstractModellingModel {
             resultStructure.load()
             builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)
 
-            treeRoot = builder.buildTree()
+            def localTreeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
 
             MeanAction meanAction = new MeanAction(this, null)
 
             // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
-            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, treeRoot, allResults), filter)
+            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, localTreeRoot, allResults), filter)
             nodeNames = extractNodeNames(treeModel)
         }
 
