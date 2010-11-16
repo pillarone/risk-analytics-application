@@ -3,8 +3,11 @@ package org.pillarone.riskanalytics.application.ui.parameterization.view;
 import com.ulcjava.base.application.IRendererComponent;
 import com.ulcjava.base.application.ULCTableTree;
 import com.ulcjava.base.application.util.HTMLUtilities;
+import org.joda.time.DateTime;
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode;
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter;
+
+import java.text.SimpleDateFormat;
 
 /**
  * Render the cell that displays a MultiDimensionalParameter with a tooltip that allows a
@@ -51,7 +54,13 @@ public class MultiDimensionalCellRenderer extends BasicCellRenderer {
                         if (col == DISPLAY_MAX_COLUMN_COUNT){
                             text.append("...");
                         } else {
-                            text.append(value.getValueAt(row, col));
+                            Object item = value.getValueAt(row, col);
+                            if (item instanceof DateTime) {
+                                text.append(new SimpleDateFormat("MMM dd, yyyy").format(((DateTime) item).toDate()));
+                            }
+                            else {
+                                text.append(item);
+                            }
                         }
                     }
                     text.append("</td>");

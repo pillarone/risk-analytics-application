@@ -8,7 +8,6 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
-import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeDuplicator
@@ -26,6 +25,7 @@ import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertIssueAction
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
+import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -65,6 +65,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         addDynamicNodeMenu.addSeparator()
+        addDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(insertIssue))
         addDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
@@ -76,6 +78,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu = new ULCPopupMenu()
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
@@ -93,6 +97,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenu.addSeparator()
         expandTreeMenu.add(new ULCMenuItem(insertComment))
         expandTreeMenu.add(new ULCMenuItem(showCommentsAction))
         expandTreeMenu.add(new ULCMenuItem(validationAndComments))
@@ -104,6 +110,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         //expandTreeMenuWithHelp.addSeparator()
 
         expandTreeMenuWithHelp.addSeparator()
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertIssue))
         expandTreeMenuWithHelp.add(new ULCMenuItem(showCommentsAction))
@@ -113,6 +121,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
         commentMenu = new ULCPopupMenu()
         commentMenu.name = "popup.comment"
+        commentMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        commentMenu.addSeparator()
         commentMenu.add(new ULCMenuItem(insertComment))
         commentMenu.add(new ULCMenuItem(insertIssue))
         commentMenu.add(new ULCMenuItem(showCommentsAction))

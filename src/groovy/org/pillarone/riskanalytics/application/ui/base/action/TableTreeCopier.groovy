@@ -16,8 +16,6 @@ class TableTreeCopier extends ExceptionSafeAction {
 
     ULCTableTree table
     ITableTreeModel model
-    int rowCount
-    int columnCount
 
     public TableTreeCopier() {
         super("Copy")
@@ -27,34 +25,31 @@ class TableTreeCopier extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
         model = table.model
-        def int[] selectedRows = getSelectedRows()
-        def int[] selectedColumns = getSelectedColumns()
+        int[] selectedRows = getSelectedRows()
+        int[] selectedColumns = getSelectedColumns()
         if (selectedRows != null) {
-            int startRow = selectedRows[0]
-            int startColumn = selectedColumns[0]
-            rowCount = selectedRows.size()
-            columnCount = selectedColumns.size()
-            String content = copyContent(startRow, startColumn)
+            String content = copyContent(selectedRows, selectedColumns)
             ULCClipboard.getClipboard().content = content
         }
     }
 
     private int[] getSelectedColumns() {
-        return (table.selectedColumns as List)?.sort() as int[]
+        List list = table.selectedColumns?.collect { table.convertColumnIndexToModel(it) } as List
+        return list?.sort() as int[]
     }
 
     private int[] getSelectedRows() {
         return (table.selectedRows as List)?.sort() as int[]
     }
 
-    private String copyContent(int startRow, int startColumn) {
+    private String copyContent(int[] selectedRows, int[] selectedColumns) {
         StringBuffer buffer = new StringBuffer()
-        for (int i = startRow; i < (startRow + rowCount); i++) {
-            TreePath path = table.getPathForRow(i)
-            for (int j = startColumn; j < (startColumn + columnCount); j++) {
-
-                buffer << format(model.getValueAt(path.lastPathComponent, j + 1))
-                buffer << '\t'
+        for (int i = 0; i < selectedRows.size(); i++) {
+            TreePath path = table.getPathForRow(selectedRows[i])
+            for (int j = 0; j < selectedColumns.size(); j++) {
+                buffer << format(model.getValueAt(path.lastPathComponent, selectedColumns[j]))
+                if (j != selectedColumns.size() - 1)
+                    buffer << '\t'
             }
             buffer << '\n'
         }

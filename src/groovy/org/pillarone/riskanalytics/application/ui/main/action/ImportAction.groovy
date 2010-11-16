@@ -19,7 +19,7 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ImportAction extends SelectionTreeAction {
-    UserPreferences userPreferences
+    protected UserPreferences userPreferences
     ULCWindow ancestor
     boolean forceImport = false
     Log LOG = LogFactory.getLog(ImportAction)

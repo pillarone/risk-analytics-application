@@ -10,6 +10,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.table.ITableModel
 import com.ulcjava.base.application.util.Cursor
 import org.pillarone.riskanalytics.application.ui.base.model.IBulkChangeable
+import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTable
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.TableDataParser
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -28,6 +29,9 @@ class TablePaster extends ExceptionSafeAction {
     public void doActionPerformed(ActionEvent event) {
         int startRow = table.getSelectedRow()
         int startColumn = table.getSelectedColumn()
+        if (startRow == 0 || startColumn == 0) {
+            if (table instanceof MultiDimensionalTable) return
+        }
         rowCount = table.rowCount
         columnCount = table.columnCount
 

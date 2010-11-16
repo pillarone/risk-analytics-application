@@ -33,6 +33,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
     boolean tabbedPaneVisible = true
+    static double DIVIDER = 0.65
+    static double NO_DIVIDER = 1.0
 
     ParameterView(ParameterViewModel model) {
         super(model)
@@ -131,13 +133,13 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         menu.add(new ULCMenuItem(showCommentsAction))
         menu.addSeparator()
 
-        initRenderer(defaultRenderer, menu);
-        initRenderer(doubleRenderer, menu);
-        initRenderer(integerRenderer, menu);
-        initRenderer(dateRenderer, menu);
+        defaultRenderer.setMenu(menu)
+        doubleRenderer.setMenu(menu)
+        integerRenderer.setMenu(menu)
+        dateRenderer.setMenu(menu)
         initComboBox(comboBoxRenderer, menu);
         initCheckBox(checkBoxRenderer, menu);
-        initRenderer(mdpRenderer, menu);
+        mdpRenderer.setMenu(menu)
 
         Map renderers = new HashMap<Class, ITableTreeCellRenderer>();
         renderers.put(SimpleValueParameterizationTableTreeNode.class,
@@ -218,7 +220,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         splitPane.setDividerSize(10)
         splitPane.add(content);
         splitPane.add(commentAndErrorView.tabbedPane)
-        splitPane.setDividerLocation(0.65)
+        splitPane.setDividerLocation(DIVIDER)
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
         tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), contentPane)
@@ -249,9 +251,9 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     public void commentsSelected() {
         this.tabbedPaneVisible = !tabbedPaneVisible
         if (this.tabbedPaneVisible)
-            splitPane.setDividerLocation(0.65)
+            splitPane.setDividerLocation(DIVIDER)
         else
-            splitPane.setDividerLocation(1.0)
+            splitPane.setDividerLocation(NO_DIVIDER)
     }
 
 
