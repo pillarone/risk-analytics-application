@@ -1,25 +1,26 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCTree
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+
+import com.ulcjava.base.application.IAction
+import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
-import com.ulcjava.base.application.IAction
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class RenameAction extends SelectionTreeAction {
 
-    public RenameAction(ULCTree tree, P1RATModel model) {
+    public RenameAction(ULCTableTree tree, P1RATModel model) {
         super("Rename", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }

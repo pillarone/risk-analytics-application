@@ -1,12 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
+
 import com.ulcjava.base.application.ULCFrame
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.environment.jnlp.P1RATFrameViewFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import com.ulcjava.testframework.operator.*
 
 class RefreshActionTests extends AbstractSimpleFunctionalTest {
@@ -37,15 +38,15 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
 
     void testRefreshAfterInsert() {
         ULCFrameOperator frame1 = new ULCFrameOperator("first")
-        ULCTreeOperator tree1 = new ULCTreeOperator(frame1, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree1 = new ULCTableTreeOperator(frame1, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
 
-        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "Normal", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
+        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Save as ...")
 
@@ -65,62 +66,58 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         okButton.clickMouse()
         renameDialog.close()
 
-
-
-
-
         ULCFrameOperator frame2 = new ULCFrameOperator("second")
         frame2.getUIFrame().getBasicComponent().toFront()
 
-        ULCTreeOperator tree2 = new ULCTreeOperator(frame2, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree2 = new ULCTableTreeOperator(frame2, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree2.doExpandRow 0
         tree2.doExpandRow 1
 
-
-        TreePath path = tree2.findPath(["Application", "Parameterization", "Normal"] as String[])
+        TreePath path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertNotNull "path not found", path
         int childCountBeforeInsert = tree2.getChildCount(path)
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
-        path = tree2.findPath(["Application", "Parameterization", "Normal"] as String[])
+
+        path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert + 1, tree2.getChildCount(path)
     }
 
     void testRefreshAfterDelete() {
         ULCFrameOperator frame1 = new ULCFrameOperator("first")
-        ULCTreeOperator tree1 = new ULCTreeOperator(frame1, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree1 = new ULCTableTreeOperator(frame1, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
 
-        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "Normal", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        TreePath path = tree1.findPath(["Application", "Parameterization", "Normal"] as String[])
+        TreePath path = tree1.findPath(["Application", "Parameterization"] as String[])
         int childCountBeforeInsert = tree1.getChildCount(path)
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
+        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Delete")
 
         assertNotNull "path not found", path
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
-        path = tree1.findPath(["Application", "Parameterization", "Normal"] as String[])
+        path = tree1.findPath(["Application", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert - 1, tree1.getChildCount(path)
     }
 
     void testRefreshAfterRename() {
         ULCFrameOperator frame1 = new ULCFrameOperator("first")
-        ULCTreeOperator tree1 = new ULCTreeOperator(frame1, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree1 = new ULCTableTreeOperator(frame1, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
 
-        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "Normal", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
+        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Rename")
 
@@ -145,19 +142,19 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frame2 = new ULCFrameOperator("second")
         frame2.getUIFrame().getBasicComponent().toFront()
 
-        ULCTreeOperator tree2 = new ULCTreeOperator(frame2, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree2 = new ULCTableTreeOperator(frame2, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree2.doExpandRow 0
         tree2.doExpandRow 1
 
 
-        TreePath path = tree2.findPath(["Application", "Parameterization", "Normal"] as String[])
+        TreePath path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertNotNull "path not found", path
         int childCountBeforeInsert = tree2.getChildCount(path)
 
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
 
-        path = tree2.findPath(["Application", "Parameterization", "Normal"] as String[])
+        path = tree2.findPath(["Application", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert, tree2.getChildCount(path)
 
     }

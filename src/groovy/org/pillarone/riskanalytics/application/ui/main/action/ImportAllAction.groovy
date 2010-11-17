@@ -1,15 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+
+import org.pillarone.riskanalytics.core.model.Model
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 
 /**
@@ -19,7 +21,7 @@ class ImportAllAction extends ImportAction {
     P1RATMainView p1RATMainView
     Log LOG = LogFactory.getLog(ImportAllAction)
 
-    public ImportAllAction(ULCTree tree, P1RATModel model, String actionName) {
+    public ImportAllAction(ULCTableTree tree, P1RATModel model, String actionName) {
         super(tree, model, actionName)
     }
 

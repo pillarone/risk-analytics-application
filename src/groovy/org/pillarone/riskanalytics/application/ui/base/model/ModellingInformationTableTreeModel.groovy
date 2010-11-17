@@ -2,17 +2,25 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.*
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+
 import org.pillarone.riskanalytics.core.workflow.Status
 
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import com.ulcjava.base.application.tree.DefaultMutableTreeNode
+import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
@@ -22,12 +30,16 @@ import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
-class ModellingInformationTreeModel extends DefaultTableTreeModel {
+/**
+ * @author fouad.jaada@intuitive-collaboration.com
+ */
+class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
-    private static Log LOG = LogFactory.getLog(ModellingInformationTreeModel)
+    List<String> columnNames = ["State", "Comments", "Review comment", "Owner", "Last Update By", "Created", "Last Modification", "Tags"]// "Assigned To","Visibility",
+    DefaultMutableTableTreeNode root
 
-    public ModellingInformationTreeModel() {
-        super(new DefaultMutableTreeNode("root"))
+    public ModellingInformationTableTreeModel() {
+        root = new DefaultMutableTableTreeNode("root")
     }
 
     public def buildTreeNodes() {
@@ -35,24 +47,22 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
             Model model = modelClass.newInstance()
             model.init()
             ITableTreeNode modelNode = getModelNode(model)
-            DefaultMutableTreeNode parametrisationsNode = modelNode.getChildAt(0)
-            ItemGroupNode normalNode = parametrisationsNode.getChildAt(0)
-            ItemGroupNode workflowNode = parametrisationsNode.getChildAt(1)
-            DefaultMutableTreeNode resultConfigurationsNode = modelNode.getChildAt(1)
-            DefaultMutableTreeNode simulationsNode = modelNode.getChildAt(2)
+            DefaultMutableTableTreeNode parametrisationsNode = modelNode.getChildAt(0)
+            DefaultMutableTableTreeNode resultConfigurationsNode = modelNode.getChildAt(1)
+            DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(2)
 
             getItemMap(getItemsForModel(modelClass, Parameterization), false).values().each { List<Parameterization> it ->
-                normalNode.add(createItemNodes(it))
+                parametrisationsNode.add(createItemNodes(it))
             }
             getItemMap(getItemsForModel(modelClass, Parameterization), true).values().each { List<Parameterization> it ->
-                workflowNode.add(createItemNodes(it))
+                parametrisationsNode.add(createItemNodes(it))
             }
 
             getItemMap(getItemsForModel(modelClass, ResultConfiguration), false).values().each {
                 resultConfigurationsNode.add(createItemNodes(it))
             }
 
-            List simulationsForModel = getItemsForModel(modelClass, Simulation)//ModellingItemFactory.getActiveSimulationsForModel(modelClass)
+            List simulationsForModel = getItemsForModel(modelClass, Simulation)
             if (simulationsForModel.size() == 0) {
                 simulationsNode.leaf = true
             }
@@ -68,6 +78,65 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
         root.add(createBatchNode())
     }
 
+
+    int getColumnCount() {
+        return 9;
+    }
+
+    public String getColumnName(int i) {
+        return columnNames[i - 1]
+    }
+
+    Object getValueAt(Object node, int i) {
+        if (i == 0) {
+            return "${node.getValueAt(0)}".toString()
+        } else if (node instanceof ParameterizationNode) {
+            Parameterization item = node.item
+            if (!item.isLoaded())
+                item.load()
+
+            return getValue(item, i)
+        }
+        return ""
+    }
+
+    public Object getRoot() {
+        return root
+    }
+
+    public Object getChild(Object parent, int index) {
+        return parent.getChildAt(index)
+    }
+
+    public int getChildCount(Object node) {
+        return node.childCount
+    }
+
+    public boolean isLeaf(Object node) {
+        return getChildCount(node) == 0
+    }
+
+    public int getIndexOfChild(Object parent, Object child) {
+        return parent.getIndex(child)
+    }
+
+    private Object getValue(Parameterization parameterization, int columnIndex) {
+        switch (columnIndex) {
+            case 1: return parameterization?.status?.getDisplayName()
+            case 2: return parameterization?.comments?.size()
+            case 3: return "Review comment ?"
+            case 4: return parameterization?.getCreator()?.username
+            case 5: return parameterization?.getLastUpdater()?.username
+//            case 6: return "Assigned To ?"
+            case 6: return parameterization.getCreationDate()
+            case 7: return parameterization.getModificationDate()
+//            case 8: return "Visibility ?"
+            case 8: return "Tags ?"
+            default: return ""
+        }
+    }
+
+
     public List getItemsForModel(Class modelClass, Class clazz) {
         switch (clazz) {
             case Parameterization: return ModellingItemFactory.getParameterizationsForModel(modelClass)
@@ -82,7 +151,7 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
     }
 
     private ITableTreeNode getModelNode(Model model) {
-        ITableTreeNode modelNode = null
+        DefaultMutableTableTreeNode modelNode = null
 
         for (int i = 0; i < root.childCount && modelNode == null; i++) {
             ItemNode candidate = root.getChildAt(i)
@@ -93,11 +162,9 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
         if (modelNode == null) {
             modelNode = new ModelNode(model)
-            DefaultMutableTreeNode parameterizationsNode = new ItemGroupNode(getText("Parameterization"), Parameterization)
-            parameterizationsNode.add(new ItemGroupNode(getText("Normal"), Parameterization))
-            parameterizationsNode.add(new ItemGroupNode(getText("Workflow"), Parameterization))
-            DefaultMutableTreeNode resultConfigurationsNode = new ItemGroupNode(getText("ResultTemplates"), ResultConfiguration)
-            DefaultMutableTreeNode simulationsNode = new ItemGroupNode(getText("Results"), Simulation)
+            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(getText("Parameterization"), Parameterization)
+            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(getText("ResultTemplates"), ResultConfiguration)
+            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(getText("Results"), Simulation)
             modelNode.add(parameterizationsNode)
             modelNode.add(resultConfigurationsNode)
             modelNode.add(simulationsNode)
@@ -159,41 +226,40 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
 
     public void refresh() {
-        DefaultMutableTreeNode root = getRoot()
         root.removeAllChildren()
         buildTreeNodes()
-        nodeStructureChanged(root)
+        nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
     }
 
     public void refresh(ModellingItem item) {
         ITableTreeNode node = findNodeForItem(findModelNode(item), item)
-        nodeChanged node
+        nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
     }
 
-    public def addNodeForItem(Simulation item) {
-        ITableTreeNode groupNode = findGroupNode(item, findModelNode(item))
+    public void addNodeForItem(Simulation item) {
+        DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         groupNode.leaf = false
-        insertNodeInto(createNode(item), groupNode, groupNode.childCount)
-        return groupNode
+        insertNodeInto(createNode(item), groupNode)
     }
 
     public def addNodeForItem(ModellingItem item) {
         ITableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         createAndInsertItemNode(groupNode, item)
-//        nodeStructureChanged(groupNode)
+        nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
         return groupNode
     }
 
     public def addNodeForItem(BatchRun batchRun) {
         ITableTreeNode groupNode = findBatchRootNode()
         createAndInsertItemNode(groupNode, batchRun)
+        nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]), [groupNode.childCount - 1] as int[])
         return groupNode
     }
 
 
     public void removeAllGroupNodeChildren(ItemGroupNode groupNode) {
         groupNode.removeAllChildren()
-        nodeStructureChanged(groupNode)
+        nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
     }
 
     public void removeNodeForItem(ModellingItem item) {
@@ -220,23 +286,21 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
             }
         }
         removeNodeFromParent(itemNode)
-        nodeStructureChanged(groupNode)
     }
 
     public void removeNodeForItem(BatchRun batchRun) {
         ITableTreeNode groupNode = findBatchRootNode()
         def itemNode = findNodeForItem(groupNode, batchRun)
         removeNodeFromParent(itemNode)
-        nodeStructureChanged(groupNode)
     }
 
     public void refreshBatchNode() {
         ITableTreeNode batchNode = findBatchRootNode()
 
         removeNodeFromParent(batchNode)
-        nodeStructureChanged(root)
+        nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
         root.add(createBatchNode())
-        nodeStructureChanged(root)
+        nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
     }
 
 
@@ -253,7 +317,7 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
     private BatchRootNode findBatchRootNode() {
         for (int i = 0; i < root.childCount; i++) {
-            DefaultMutableTreeNode candidate = root.getChildAt(i)
+            DefaultMutableTableTreeNode candidate = root.getChildAt(i)
             if (candidate instanceof BatchRootNode) {
                 return candidate
             }
@@ -263,7 +327,7 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
 
     private ItemGroupNode findGroupNode(ModellingItem item, ModelNode modelNode) {
-        ITableTreeNode groupNode = null
+        DefaultMutableTableTreeNode groupNode = null
         for (int i = 0; i < modelNode.childCount && groupNode == null; i++) {
             ITableTreeNode childNode = modelNode.getChildAt(i)
             if (childNode.itemClass == item.class) {
@@ -281,10 +345,10 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
                 groupNode = childNode
             }
         }
-        return item.status == Status.NONE ? groupNode.getChildAt(0) : groupNode.getChildAt(1)
+        return groupNode
     }
 
-    private def createAndInsertItemNode(DefaultMutableTreeNode node, ModellingItem item) {
+    private def createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingItem item) {
         boolean parameterNameFound = false
         for (int i = 0; i < node.childCount; i++) {
             if (item.name.equals(node.getChildAt(i).item.name)) {
@@ -292,8 +356,8 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
                 if (item.properties.containsKey("versionNumber") && item.versionNumber.level > 1) {
                     insertSubversionItemNode(node.getChildAt(i), createNode(item))
                 } else {
-                    DefaultMutableTreeNode childNode = node.getChildAt(i)
-                    DefaultMutableTreeNode newNode = createNode(item)
+                    DefaultMutableTableTreeNode childNode = node.getChildAt(i)
+                    DefaultMutableTableTreeNode newNode = createNode(item)
                     def children = []
                     childNode.childCount.times {
                         children << childNode.getChildAt(it)
@@ -316,30 +380,31 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
             def newNode = createNode(item)
             newNode.leaf = true
             node.leaf = false
-            insertNodeInto(newNode, node, node.childCount)
+            insertNodeInto(newNode, node)
         }
     }
 
-    private def createAndInsertItemNode(DefaultMutableTreeNode node, BatchRun batchRun) {
-        DefaultMutableTreeNode newNode = createNode(batchRun)
+
+    private def createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchRun batchRun) {
+        DefaultMutableTableTreeNode newNode = createNode(batchRun)
         node.add(newNode)
     }
 
-    private void insertSubversionItemNode(DefaultMutableTreeNode node, DefaultMutableTreeNode newItemNode) {
+
+    private void insertSubversionItemNode(DefaultMutableTableTreeNode node, DefaultMutableTableTreeNode newItemNode) {
         node.childCount.times {
-            def childNode = node.getChildAt(it)
+            DefaultMutableTableTreeNode childNode = node.getChildAt(it)
             if (newItemNode.item.properties.containsKey("versionNumber") && newItemNode.item.versionNumber.toString().startsWith(childNode.item.versionNumber.toString())) {
                 if (newItemNode.item.versionNumber.isDirectChildVersionOf(childNode.item.versionNumber)) {
                     childNode.leaf = false
                     newItemNode.leaf = true
-                    childNode.add(newItemNode)
+                    childNode.insert(newItemNode, childNode.childCount)
                 } else {
                     insertSubversionItemNode(childNode, newItemNode)
                 }
             }
         }
     }
-
 
     ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
         ITableTreeNode nodeForItem = null
@@ -353,7 +418,6 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
         }
         return nodeForItem
     }
-
 
     private ITableTreeNode createNode(String name) {
         new DefaultMutableTableTreeNode(name)
@@ -425,6 +489,18 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
         return false
     }
 
+    private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent) {
+        parent.insert(newNode, parent.childCount)
+        nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [parent.childCount - 1] as int[])
+    }
+
+    private void removeNodeFromParent(DefaultMutableTableTreeNode itemNode) {
+        DefaultMutableTableTreeNode parent = itemNode.getParent()
+        parent.remove(parent.getIndex(itemNode))
+        nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+        nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+    }
+
     /**
      * Utility method to get resource bundle entries for this class
      *
@@ -436,7 +512,3 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
     }
 
 }
-
-
-
-

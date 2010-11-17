@@ -1,17 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ULCTree
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+
+import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
+
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.DefaultParameterizationDialog
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -20,7 +22,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateDefaultParameterizationAction)
 
-    public CreateDefaultParameterizationAction(ULCTree tree, P1RATModel model) {
+    public CreateDefaultParameterizationAction(ULCTableTree tree, P1RATModel model) {
         super("CreateDefaultParameterization", tree, model)
     }
 

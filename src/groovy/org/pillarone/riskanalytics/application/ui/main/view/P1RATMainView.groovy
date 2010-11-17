@@ -1,5 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+
+import org.pillarone.riskanalytics.core.simulation.item.*
+
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -15,7 +21,6 @@ import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
@@ -35,13 +40,9 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
-import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -64,7 +65,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     ULCCardPane modelPane
     ULCMenu windowMenu
     ULCButtonGroup windowMenuItemGroup
-    ULCTree selectionTree
+    SelectionTreeView selectionTreeView
 
     ULCLabel lockedLabel
 
@@ -95,28 +96,25 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         content = new ULCBoxPane(2, 0)
         model.rootPaneForAlerts = content
 
-        selectionTree = new ULCTree(model.selectionTreeModel)
+        selectionTreeView = new SelectionTreeView(model)
         initMenuBar()
 
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
 
-        selectionTree.name = "selectionTree"
-        selectionTree.rootVisible = false
-        selectionTree.showsRootHandles = true
-        selectionTree.editable = false
-        selectionTree.setCellRenderer(new MainSelectionTreeCellRenderer(selectionTree, model))
 
     }
 
     void layoutComponents() {
-        ULCScrollPane treeScrollPane = new ULCScrollPane(selectionTree)
+        ULCScrollPane treeScrollPane = new ULCScrollPane(selectionTreeView.content)
         treeScrollPane.minimumSize = new Dimension(200, 600)
         modelPane.minimumSize = new Dimension(600, 600)
         treePane.add(ULCBoxPane.BOX_EXPAND_EXPAND, treeScrollPane)
         ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.HORIZONTAL_SPLIT)
+        splitPane.oneTouchExpandable = true
+        splitPane.setResizeWeight(1)
         splitPane.dividerLocation = 200
-        splitPane.dividerSize = 5
+        splitPane.dividerSize = 10
 
         splitPane.setLeftComponent(treePane)
         splitPane.setRightComponent(modelPane)
@@ -146,10 +144,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void attachListeners() {
         model.addModelListener(this)
         model.addPropertyChangeListener("currentItem", this)
-        //add action listener
-        selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
-        selectionTree.registerKeyboardAction(new DeleteAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
-        selectionTree.registerKeyboardAction(new RenameAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+
     }
 
 
@@ -160,7 +155,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         importAllAction = new ImportAllAction(this, model, "ImportAllParameterizations")
         saveAction = new SaveAction(model)
         settingsAction = new ShowUserSettingsAction(this)
-        runAction = new SimulationAction(selectionTree, model)
+        runAction = new SimulationAction(null, model)
         syncMenuBar()
         menuBar = new ULCMenuBar()
         ULCMenu fileMenu = new ULCMenu(getText("File"))
@@ -665,7 +660,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (item == model.currentItem) {
             syncMenuBar()
         }
-        runAction.enabled = selectionTree?.selectionPath?.lastPathComponent != null
+//        runAction.enabled = selectionTree?.selectionPath?.lastPathComponent != null
     }
 
     public void itemSaved(ModellingItem item) {

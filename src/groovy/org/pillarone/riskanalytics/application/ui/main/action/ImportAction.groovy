@@ -1,18 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.tree.ITreeNode
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.UserPreferences
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 
 /**
@@ -24,13 +26,13 @@ class ImportAction extends SelectionTreeAction {
     boolean forceImport = false
     Log LOG = LogFactory.getLog(ImportAction)
 
-    public ImportAction(ULCTree tree, P1RATModel model) {
+    public ImportAction(ULCTableTree tree, P1RATModel model) {
         super("Import", tree, model)
         userPreferences = new UserPreferences()
         ancestor = getAncestor()
     }
 
-    public ImportAction(ULCTree tree, P1RATModel model, boolean forceImport) {
+    public ImportAction(ULCTableTree tree, P1RATModel model, boolean forceImport) {
         super(forceImport ? "forceImport" : "Import", tree, model)
         this.forceImport = forceImport
         userPreferences = new UserPreferences()
@@ -38,7 +40,7 @@ class ImportAction extends SelectionTreeAction {
     }
 
 
-    public ImportAction(ULCTree tree, P1RATModel model, String actionName) {
+    public ImportAction(ULCTableTree tree, P1RATModel model, String actionName) {
         super(actionName, tree, model)
         userPreferences = new UserPreferences()
         ancestor = getAncestor()
@@ -51,17 +53,17 @@ class ImportAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        doAction(tree.selectionPath.lastPathComponent)
+        doAction(tree.selectedPath.lastPathComponent)
     }
 
-    protected doAction(ITreeNode node) {
+    protected doAction(ITableTreeNode node) {
         new I18NAlert("FunctionNotImplemented").show()
     }
 
     protected doAction(ItemGroupNode node) {
 
         if (Simulation == node.itemClass) {
-            doAction(node as ITreeNode)
+            doAction(node as ITableTreeNode)
             return
         }
         importItem(node)
@@ -105,8 +107,8 @@ class ImportAction extends SelectionTreeAction {
         return config
     }
 
-    protected GString getDialogTitle(node) {
-        return "Import ${node != null ? node.userObject : ''}"
+    protected String getDialogTitle(node) {
+        return "Import"
     }
 
     ULCWindow getAncestor() {

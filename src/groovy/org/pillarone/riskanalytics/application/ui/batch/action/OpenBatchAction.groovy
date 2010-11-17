@@ -2,13 +2,14 @@ package org.pillarone.riskanalytics.application.ui.batch.action
 
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
-import com.ulcjava.base.application.ULCTree
+import org.pillarone.riskanalytics.core.BatchRun
+
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.BatchRun
 
 /**
  * @author fouad jaada
@@ -16,12 +17,11 @@ import org.pillarone.riskanalytics.core.BatchRun
 
 public class OpenBatchAction extends SelectionTreeAction {
 
-    public OpenBatchAction(ULCTree tree, P1RATModel model) {
+    public OpenBatchAction(ULCTableTree tree, P1RATModel model) {
         super("OpenBatch", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
-        //Model model = getSelectedModel()
         def item = getSelectedItem()
         if (item != null) {
             item = BatchRun.findByName(item.name)
@@ -33,7 +33,7 @@ public class OpenBatchAction extends SelectionTreeAction {
 
 public class NewBatchAction extends SelectionTreeAction {
 
-    public NewBatchAction(ULCTree tree, P1RATModel model) {
+    public NewBatchAction(ULCTableTree tree, P1RATModel model) {
         super("NewBatch", tree, model)
     }
 
@@ -46,7 +46,7 @@ public class NewBatchAction extends SelectionTreeAction {
 
 public class RunBatchAction extends SelectionTreeAction {
 
-    public RunBatchAction(ULCTree tree, P1RATModel model) {
+    public RunBatchAction(ULCTableTree tree, P1RATModel model) {
         super("RunBatch", tree, model)
     }
 
@@ -66,7 +66,7 @@ public class RunBatchAction extends SelectionTreeAction {
 
 public class DeleteBatchAction extends SelectionTreeAction {
 
-    public DeleteBatchAction(ULCTree tree, P1RATModel model) {
+    public DeleteBatchAction(ULCTableTree tree, P1RATModel model) {
         super("DeleteBatch", tree, model)
     }
 
@@ -88,7 +88,7 @@ public class TreeDoubleClickAction extends SelectionTreeAction {
     OpenBatchAction openBatchAction
     OpenItemAction openItemAction
 
-    public TreeDoubleClickAction(ULCTree tree, P1RATModel model) {
+    public TreeDoubleClickAction(ULCTableTree tree, P1RATModel model) {
         super("Open", tree, model)
         this.openBatchAction = new OpenBatchAction(tree, model);
         this.openItemAction = new OpenItemAction(tree, model);

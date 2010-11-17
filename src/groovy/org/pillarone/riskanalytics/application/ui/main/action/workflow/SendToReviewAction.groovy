@@ -1,14 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
 import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import com.ulcjava.base.application.ULCTree
+
 import org.pillarone.riskanalytics.core.user.UserManagement
 
+import com.ulcjava.base.application.ULCTableTree
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 
 class SendToReviewAction extends AbstractWorkflowAction {
 
-    public SendToReviewAction(ULCTree tree, P1RATModel model) {
+    public SendToReviewAction(ULCTableTree tree, P1RATModel model) {
         super("SendToReview", tree, model);
     }
 

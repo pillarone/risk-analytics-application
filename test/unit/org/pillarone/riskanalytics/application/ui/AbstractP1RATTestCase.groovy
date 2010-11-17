@@ -50,6 +50,10 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         return new ULCComponentOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
+    ULCPopupMenuOperator getPopupMenuOperator(String name) {
+        return new ULCPopupMenuOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
     abstract ULCComponent createContentPane()
 
 
