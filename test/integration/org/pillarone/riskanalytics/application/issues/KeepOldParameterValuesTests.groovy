@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
@@ -22,6 +23,7 @@ public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
     Parameterization parameterization
 
     protected void doStart() {
+        new DBCleanUpService().cleanUp()
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
 

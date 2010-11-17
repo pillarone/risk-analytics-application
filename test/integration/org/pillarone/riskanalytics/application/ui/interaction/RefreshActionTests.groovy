@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-
 import com.ulcjava.base.application.ULCFrame
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.environment.jnlp.P1RATFrameViewFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import com.ulcjava.testframework.operator.*
 
 class RefreshActionTests extends AbstractSimpleFunctionalTest {
@@ -16,8 +16,10 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
 
 
     protected void doStart() {
+        new DBCleanUpService().cleanUp()
         LocaleResources.setTestMode()
-        FileImportService.importModelsIfNeeded(["Application"])
+//        FileImportService.importModelsIfNeeded(["Application"])
+        FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
 
         ULCFrame frame1 = new P1RATFrameViewFactory().create()
@@ -42,8 +44,8 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
-
-        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+//        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
         ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
@@ -73,13 +75,13 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         tree2.doExpandRow 0
         tree2.doExpandRow 1
 
-        TreePath path = tree2.findPath(["Application", "Parameterization"] as String[])
+        TreePath path = tree2.findPath(["Core", "Parameterization"] as String[])
         assertNotNull "path not found", path
         int childCountBeforeInsert = tree2.getChildCount(path)
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
 
-        path = tree2.findPath(["Application", "Parameterization"] as String[])
+        path = tree2.findPath(["Core", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert + 1, tree2.getChildCount(path)
     }
 
@@ -90,10 +92,10 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         tree1.doExpandRow 1
 
 
-        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        TreePath path = tree1.findPath(["Application", "Parameterization"] as String[])
+        TreePath path = tree1.findPath(["Core", "Parameterization"] as String[])
         int childCountBeforeInsert = tree1.getChildCount(path)
 
         ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
@@ -103,7 +105,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         assertNotNull "path not found", path
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
-        path = tree1.findPath(["Application", "Parameterization"] as String[])
+        path = tree1.findPath(["Core", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert - 1, tree1.getChildCount(path)
     }
 
@@ -114,7 +116,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         tree1.doExpandRow 1
 
 
-        TreePath pathForRename = tree1.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
         ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
@@ -147,14 +149,14 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         tree2.doExpandRow 1
 
 
-        TreePath path = tree2.findPath(["Application", "Parameterization"] as String[])
+        TreePath path = tree2.findPath(["Core", "Parameterization"] as String[])
         assertNotNull "path not found", path
         int childCountBeforeInsert = tree2.getChildCount(path)
 
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
 
-        path = tree2.findPath(["Application", "Parameterization"] as String[])
+        path = tree2.findPath(["Core", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert, tree2.getChildCount(path)
 
     }

@@ -47,7 +47,7 @@ class ShowCommentsView implements ChangedCommentListener {
         commentPane.addCommentListener commentAndErrorView
         container.add(ULCBoxPane.BOX_EXPAND_TOP, commentPane.content)
     }
-    
+
     protected CommentPane createCommentPane(Comment comment, String searchText) {
         return new CommentPane(model, comment, searchText)
     }
@@ -83,13 +83,15 @@ class ShowCommentsView implements ChangedCommentListener {
 
     void order(String orderBy, String order) {
         def comparator = { x, y -> if ("asc" == order) x.properties[orderBy] <=> y.properties[orderBy] else y.properties[orderBy] <=> x.properties[orderBy] } as Comparator
+        if (!comments || comments.size() == 0)
+            comments = getAllComments()
         comments.sort(comparator)
         clear()
         addComments(comments)
     }
 
     private List<Comment> getAllComments() {
-        def all = model.item.comments.findAll {!it.deleted}
+        def all = model.item.comments.findAll {!it.deleted && model.commentIsVisible(it)}
         return path ? all.findAll {it.path == path} : all
     }
 

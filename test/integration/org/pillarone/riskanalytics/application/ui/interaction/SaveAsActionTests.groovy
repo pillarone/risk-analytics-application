@@ -1,20 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.core.output.DBCleanUpService
-
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import com.ulcjava.testframework.operator.*
 
 class SaveAsActionTests extends AbstractStandaloneTestCase {
 
 
     protected void setUp() {
-        FileImportService.importModelsIfNeeded(["Application"])
+        new DBCleanUpService().cleanUp()
+        FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         super.setUp();
@@ -35,7 +35,7 @@ class SaveAsActionTests extends AbstractStandaloneTestCase {
         ULCTableTreeOperator tree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
         assertNotNull tree
 
-        TreePath pathForRename = tree.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
         tree.doExpandRow 0
@@ -62,10 +62,10 @@ class SaveAsActionTests extends AbstractStandaloneTestCase {
         okButton.getFocus()
         okButton.clickMouse()
 
-        TreePath oldPath = tree.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath oldPath = tree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "old path not found", oldPath
 
-        TreePath newPath = tree.findPath(["Application", "Parameterization", "SavedAsParameters v1"] as String[])
+        TreePath newPath = tree.findPath(["Core", "Parameterization", "SavedAsParameters v1"] as String[])
         assertNotNull "new path not found", newPath
     }
 

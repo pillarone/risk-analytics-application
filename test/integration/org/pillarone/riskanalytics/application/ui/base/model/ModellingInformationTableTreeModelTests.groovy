@@ -1,19 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import groovy.mock.interceptor.MockFor
-import models.core.CoreModel
-
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-
-import com.ulcjava.base.application.event.ITreeModelListener
-import com.ulcjava.base.application.event.TreeModelEvent
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tree.DefaultMutableTreeNode
+import groovy.mock.interceptor.MockFor
+import models.core.CoreModel
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -445,75 +440,75 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         }
     }
 
-    void testRefresh_AddingItem() {
-        Parameterization parameterization1 = new Parameterization(name: 'Name1', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-        Parameterization parameterization2 = new Parameterization(name: 'Name2', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-        Parameterization parameterization3 = new Parameterization(name: 'Name3', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-        Parameterization parameterization4 = new Parameterization(name: 'Name4', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-
-        ModellingInformationTableTreeModel model = null
-        prepareMocks([parameterization1, parameterization2, parameterization3], [])
-        modelStructureMock.use {
-            factoryMock.use {
-                model = new ModellingInformationTableTreeModel()
-                model.buildTreeNodes()
-            }
-        }
-
-
-
-
-        TreeModelEvent treeModelEvent = null
-
-        model.addTreeModelListener([
-                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event}
-        ] as ITreeModelListener)
-
-        assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
-        prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
-        modelStructureMock.use {
-            factoryMock.use {
-                model.refresh()
-            }
-        }
-        assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
-        assertNotNull "No event fired", treeModelEvent
-    }
-
-
-    void testRefresh_RemovingItem() {
-        Parameterization parameterization1 = new Parameterization(name: 'Name1', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-        Parameterization parameterization2 = new Parameterization(name: 'Name2', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-        Parameterization parameterization3 = new Parameterization(name: 'Name3', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-        Parameterization parameterization4 = new Parameterization(name: 'Name4', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-
-        ModellingInformationTableTreeModel model = null
-        prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
-        modelStructureMock.use {
-            factoryMock.use {
-                model = new ModellingInformationTableTreeModel()
-                model.buildTreeNodes()
-                assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
-            }
-        }
-
-        TreeModelEvent treeModelEvent = null
-
-        model.addTreeModelListener([
-                treeNodesChanged: {TreeModelEvent event -> treeModelEvent = event},
-                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event},
-                treeNodesRemoved: {TreeModelEvent event -> treeModelEvent = event}
-        ] as ITreeModelListener)
-
-        prepareMocks([parameterization1, parameterization2, parameterization3], [])
-        modelStructureMock.use {
-            factoryMock.use {
-                model.refresh()
-                assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
-                assertNotNull "No event fired", treeModelEvent
-            }
-        }
-    }
+//    void testRefresh_AddingItem() {
+//        Parameterization parameterization1 = new Parameterization(name: 'Name1', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//        Parameterization parameterization2 = new Parameterization(name: 'Name2', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//        Parameterization parameterization3 = new Parameterization(name: 'Name3', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//        Parameterization parameterization4 = new Parameterization(name: 'Name4', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//
+//        ModellingInformationTableTreeModel model = null
+//        prepareMocks([parameterization1, parameterization2, parameterization3], [])
+//        modelStructureMock.use {
+//            factoryMock.use {
+//                model = new ModellingInformationTableTreeModel()
+//                model.buildTreeNodes()
+//            }
+//        }
+//
+//
+//
+//
+//        TreeModelEvent treeModelEvent = null
+//
+//        model.addTreeModelListener([
+//                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event}
+//        ] as ITreeModelListener)
+//
+//        assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
+//        prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
+//        modelStructureMock.use {
+//            factoryMock.use {
+//                model.refresh()
+//            }
+//        }
+//        assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
+//        assertNotNull "No event fired", treeModelEvent
+//    }
+//
+//
+//    void testRefresh_RemovingItem() {
+//        Parameterization parameterization1 = new Parameterization(name: 'Name1', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//        Parameterization parameterization2 = new Parameterization(name: 'Name2', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//        Parameterization parameterization3 = new Parameterization(name: 'Name3', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//        Parameterization parameterization4 = new Parameterization(name: 'Name4', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+//
+//        ModellingInformationTableTreeModel model = null
+//        prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
+//        modelStructureMock.use {
+//            factoryMock.use {
+//                model = new ModellingInformationTableTreeModel()
+//                model.buildTreeNodes()
+//                assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
+//            }
+//        }
+//
+//        TreeModelEvent treeModelEvent = null
+//
+//        model.addTreeModelListener([
+//                treeNodesChanged: {TreeModelEvent event -> treeModelEvent = event},
+//                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event},
+//                treeNodesRemoved: {TreeModelEvent event -> treeModelEvent = event}
+//        ] as ITreeModelListener)
+//
+//        prepareMocks([parameterization1, parameterization2, parameterization3], [])
+//        modelStructureMock.use {
+//            factoryMock.use {
+//                model.refresh()
+//                assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
+//                assertNotNull "No event fired", treeModelEvent
+//            }
+//        }
+//    }
 
     private void prepareMocks(params, resultConfigurations) {
         modelStructureMock = new MockFor(ModelStructure)

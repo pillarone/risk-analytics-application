@@ -1,27 +1,25 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ImportAction extends SelectionTreeAction {
-    UserPreferences userPreferences
+    protected UserPreferences userPreferences
     ULCWindow ancestor
     boolean forceImport = false
     Log LOG = LogFactory.getLog(ImportAction)

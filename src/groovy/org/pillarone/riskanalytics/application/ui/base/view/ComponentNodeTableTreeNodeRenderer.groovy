@@ -8,13 +8,9 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
-import org.apache.commons.lang.StringUtils
-import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
-import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeDuplicator
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
+import org.pillarone.riskanalytics.application.ui.comment.action.InsertIssueAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationAndCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
@@ -24,8 +20,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.application.ui.comment.action.InsertIssueAction
-import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
+import org.pillarone.riskanalytics.application.ui.base.action.*
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -65,6 +60,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         addDynamicNodeMenu.addSeparator()
+        addDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(insertIssue))
         addDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
@@ -76,6 +73,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu = new ULCPopupMenu()
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
+        removeDynamicNodeMenu.addSeparator()
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
@@ -93,6 +92,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenu.addSeparator()
         expandTreeMenu.add(new ULCMenuItem(insertComment))
         expandTreeMenu.add(new ULCMenuItem(showCommentsAction))
         expandTreeMenu.add(new ULCMenuItem(validationAndComments))
@@ -104,6 +105,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         //expandTreeMenuWithHelp.addSeparator()
 
         expandTreeMenuWithHelp.addSeparator()
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertIssue))
         expandTreeMenuWithHelp.add(new ULCMenuItem(showCommentsAction))
@@ -113,6 +116,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
         commentMenu = new ULCPopupMenu()
         commentMenu.name = "popup.comment"
+        commentMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        commentMenu.addSeparator()
         commentMenu.add(new ULCMenuItem(insertComment))
         commentMenu.add(new ULCMenuItem(insertIssue))
         commentMenu.add(new ULCMenuItem(showCommentsAction))
@@ -145,24 +150,20 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
     void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
         Font font = getFont()
-        if (node.errorMessage == null) {
-            setForeground(Color.black)
-            setToolTipText(null)
-            setFont(font.deriveFont(Font.PLAIN))
-        } else {
+        if (node.errorMessage != null) {
             setForeground(Color.red)
             setToolTipText(node.errorMessage)
             setFont(font.deriveFont(Font.BOLD))
-        }
-        if (node.comments && node.comments.size() > 0) {
+        } else if (node.comments && node.comments.size() > 0) {
             setForeground(Color.black)
             setFont(font.deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
             setForeground(Color.black)
+            setToolTipText(null)
             setFont(font.deriveFont(Font.PLAIN))
-            setToolTipText("")
         }
+
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ComponentTableTreeNode node) {
@@ -250,7 +251,6 @@ class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
 
 
 }
-
 
 
 

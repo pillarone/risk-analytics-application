@@ -4,12 +4,11 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
-import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentListener
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
-import org.pillarone.riskanalytics.core.parameter.Parameter
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class ParameterizationTableTreeModel extends AbstractTableTreeModel {
 
@@ -20,6 +19,8 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
     private List valueChangedListeners = []
     Boolean readOnly = false
     Map nonValidValues = [:]
+    List<Comment> commentsToBeDeleted = []
+    private List<ChangedCommentListener> changedCommentListeners = []
 
 
 
@@ -140,6 +141,12 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
         parent.children.each {
             nodesToRemove << it
         }
+        //remove comments
+        nodesToRemove.each {
+            if (it.comments) {
+                commentsToBeDeleted.addAll(it.comments as List)
+            }
+        }
 
         List removedIndices = []
         nodesToRemove.each {
@@ -151,17 +158,28 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
         List addedIndices = []
         newNode.children.each {
             addedIndices << parent.add(it)
+            def comments = builder?.item?.comments?.findAll {Comment c ->
+                c.path == it.path
+            }
+            comments.each {Comment c ->
+                if (commentsToBeDeleted.contains(c))
+                    commentsToBeDeleted.remove(c)
+            }
+            it.comments = comments
         }
         nodesWereInserted(getPath(parent), addedIndices as int[])
+        changedComments()
         return false
     }
 
     public void addComponentNode(ComponentTableTreeNode parent, Component component) {
         parent.component.addSubComponent(component)
         ComponentTableTreeNode node = builder.createNewComponentNode(parent, component)
+        node.comments = builder?.item?.comments?.findAll {it.path == node.path}
         nodesWereInserted(getPath(parent), parent.getIndex(node))
         notifyNodeValueChanged(node, -1)
         notifyComboBoxNodesComponentAdded(component)
+        changedComments()
     }
 
     private void notifyComboBoxNodesComponentAdded(Component newComponent) {
@@ -169,6 +187,7 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
         findNodes(root, nodes)
         for (ConstrainedStringParameterizationTableTreeNode node in nodes) {
             node.addComponent(newComponent)
+            node.comments = builder?.item?.comments?.findAll {it.path == node.path}
             nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }
     }
@@ -226,6 +245,24 @@ class ParameterizationTableTreeModel extends AbstractTableTreeModel {
             return builder.item.getPeriodLabel(column - 1)
         }
         return null
+    }
+
+    void addChangedCommentListener(ChangedCommentListener listener) {
+        changedCommentListeners << listener
+    }
+
+    void removeChangedCommentListener(ChangedCommentListener listener) {
+        changedCommentListeners.remove(listener)
+    }
+
+    void changedComments() {
+        changedCommentListeners.each {ChangedCommentListener listener ->
+            listener.updateCommentVisualization()
+        }
+    }
+
+    boolean commentIsVisible(Comment comment) {
+        return !commentsToBeDeleted.contains(comment)
     }
 
 

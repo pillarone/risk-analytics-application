@@ -27,8 +27,8 @@
 	<reportFont name="Verdana12b" isDefault="false" fontName="Verdana" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdanab.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
 	<reportFont name="Verdana20" isDefault="false" fontName="Verdana" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
 
-	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.lang.String">
-		<defaultValueExpression ><![CDATA["Y:\\compiledReports\\"]]></defaultValueExpression>
+	<parameter name="SUBREPORT_DIR" isForPrompting="true" class="java.net.URL">
+		<defaultValueExpression ><![CDATA[this.getClass().getResource("/reports")]]></defaultValueExpression>
 	</parameter>
 	<parameter name="LoBReportBruttoCDF0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
 	<parameter name="LoBReportBruttoTable0" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
@@ -38,8 +38,8 @@
 	<parameter name="WaterfallClaimsGross0" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
 	<parameter name="WaterfallClaimsNet0" isForPrompting="false" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
 	<parameter name="SimulationSettings" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
-	<parameter name="p1Icon" isForPrompting="false" class="java.io.File"/>
-	<parameter name="p1Logo" isForPrompting="false" class="java.io.File"/>
+	<parameter name="p1Icon" isForPrompting="false" class="java.net.URL"/>
+	<parameter name="p1Logo" isForPrompting="false" class="java.net.URL"/>
 	<parameter name="Comment" isForPrompting="false" class="java.lang.String"/>
 	<parameter name="SimulationSettingsSmall" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
 	<parameter name="PremLossOverviewChart" isForPrompting="false" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
@@ -63,7 +63,7 @@
 						height="268"
 						key="subreport-19"/>
 					<dataSourceExpression><![CDATA[$P{PremLossOverviewChart}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_adsd.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_adsd.jasper")]]></subreportExpression>
 				</subreport>
 				<staticText>
 					<reportElement
@@ -123,7 +123,7 @@
 						height="24"
 						key="subreport-21"/>
 					<dataSourceExpression><![CDATA[$P{PremLossOverviewTable}]]></dataSourceExpression>
-					<subreportExpression  class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CERSub_PremLossOverviewTable.jasper"]]></subreportExpression>
+					<subreportExpression  class="java.net.URL"><![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_PremLossOverviewTable.jasper")]]></subreportExpression>
 				</subreport>
 			</band>
 			</groupHeader>
@@ -161,7 +161,7 @@
 						key="image-12"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.io.File"><![CDATA[$P{p1Logo}]]></imageExpression>
+					<imageExpression class="java.net.URL"><![CDATA[$P{p1Logo}]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement
@@ -250,7 +250,7 @@
 						key="image-11"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+					<imageExpression class="java.net.URL"><![CDATA[$P{p1Icon}]]></imageExpression>
 				</image>
 			</band>
 		</pageFooter>
@@ -308,7 +308,7 @@
 						key="image-10"/>
 					<box></box>
 					<graphicElement stretchType="NoStretch"/>
-					<imageExpression class="java.io.File"><![CDATA[$P{p1Icon}]]></imageExpression>
+					<imageExpression class="java.net.URL"><![CDATA[$P{p1Icon}]]></imageExpression>
 				</image>
 			</band>
 		</lastPageFooter>
