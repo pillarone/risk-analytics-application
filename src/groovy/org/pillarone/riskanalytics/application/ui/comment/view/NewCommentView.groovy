@@ -7,6 +7,7 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
@@ -24,6 +25,7 @@ class NewCommentView {
     final Dimension dimension = new Dimension(140, 20)
     int periodIndex
     String path
+    static int MAX_CHARS = 4080
 
     private ParameterViewModel model;
     protected CommentAndErrorView commentAndErrorView
@@ -94,7 +96,7 @@ class NewCommentView {
     protected void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
             String text = commentTextArea.getText()
-            if (text && text.length() > 0) {
+            if (text && text.length() > 0 && text.length() < MAX_CHARS) {
                 Comment comment = new Comment(path, periodIndex)
                 comment.lastChange = new Date()
                 comment.comment = commentTextArea.getText()
@@ -103,8 +105,10 @@ class NewCommentView {
                 }
                 model.addComment(comment)
                 commentAndErrorView.closeTab()
+            } else if (text && text.length() > MAX_CHARS) {
+                new I18NAlert("CommentTooLong").show()
             } else {
-                //todo: alert text required
+                new I18NAlert("CommentIsNull").show()
             }
         }] as IActionListener)
 

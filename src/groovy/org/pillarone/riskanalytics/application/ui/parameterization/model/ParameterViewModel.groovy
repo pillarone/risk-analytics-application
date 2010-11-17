@@ -20,7 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 
 class ParameterViewModel extends AbstractModellingModel {
 
-    private ParameterizationTableTreeModel paramterTableTreeModel
+    ParameterizationTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
 
     private List<ParameterValidationError> validationErrors = []
@@ -124,10 +124,12 @@ class ParameterViewModel extends AbstractModellingModel {
 
     void addChangedCommentListener(ChangedCommentListener listener) {
         changedCommentListeners << listener
+        paramterTableTreeModel.addChangedCommentListener listener
     }
 
     void removeChangedCommentListener(ChangedCommentListener listener) {
         changedCommentListeners.remove(listener)
+        paramterTableTreeModel.removeChangedCommentListener listener
     }
 
     void addNavigationListener(NavigationListener listener) {
@@ -171,6 +173,16 @@ class ParameterViewModel extends AbstractModellingModel {
         navigationListeners.each {NavigationListener listener ->
             listener.commentsSelected()
         }
+    }
+
+    void removeInvisibleComments() {
+        paramterTableTreeModel.commentsToBeDeleted.each {Comment comment ->
+            item.removeComment(comment)
+        }
+    }
+
+    boolean commentIsVisible(Comment comment) {
+        return paramterTableTreeModel.commentIsVisible(comment)
     }
 
 }

@@ -12,6 +12,7 @@ ULC view
     <resource>Config</resource>
     <resource>DataSource</resource>
     <resource>UrlMappings</resource>
+    <resource>spring.resources</resource>
     <resource>org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO</resource>
     <resource>org.pillarone.riskanalytics.application.output.structure.StructureMapping</resource>
   </resources>
