@@ -109,27 +109,28 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         assertTrue location.isEnabled()
     }
 
-    void testResultLocation() {
-        ULCFrameOperator frame = new ULCFrameOperator("test")
-        assertNotNull frame
-
-        ULCComboBoxOperator output = new ULCComboBoxOperator(frame, new ComponentByNameChooser("outputStrategy"))
-        ULCTextFieldOperator location = new ULCTextFieldOperator(frame, new ComponentByNameChooser("resultLocation"))
-        ULCButtonOperator button = new ULCButtonOperator(frame, new ComponentByNameChooser("changeLocation"))
-        assertNotNull output
-        assertNotNull location
-        assertNotNull button
-
-        output.selectItem("File")
-
-        button.clickMouse()
-
-        ULCFileChooserOperator fileChooser = new ULCFileChooserOperator()
-        fileChooser.pathField.enterText("result")
-
-        assertTrue location.text.endsWith("result")
-
-    }
+    // todo: selection of result location is currently disabled on kti branch
+//    void testResultLocation() {
+//        ULCFrameOperator frame = new ULCFrameOperator("test")
+//        assertNotNull frame
+//
+//        ULCComboBoxOperator output = new ULCComboBoxOperator(frame, new ComponentByNameChooser("outputStrategy"))
+//        ULCTextFieldOperator location = new ULCTextFieldOperator(frame, new ComponentByNameChooser("resultLocation"))
+//        ULCButtonOperator button = new ULCButtonOperator(frame, new ComponentByNameChooser("changeLocation"))
+//        assertNotNull output
+//        assertNotNull location
+//        assertNotNull button
+//
+//        output.selectItem("File")
+//
+//        button.clickMouse()
+//
+//        ULCFileChooserOperator fileChooser = new ULCFileChooserOperator()
+//        fileChooser.pathField.enterText("result")
+//
+//        assertTrue location.text.endsWith("result")
+//
+//    }
 
     void testGetSimulation() {
         ULCFrameOperator frame = new ULCFrameOperator("test")

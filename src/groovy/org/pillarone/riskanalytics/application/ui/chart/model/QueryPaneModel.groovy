@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNo
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class QueryPaneModel extends AbstractPresentationModel {
 
