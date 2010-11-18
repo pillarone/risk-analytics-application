@@ -375,7 +375,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         dos.writeInt(result.iteration);
         dos.writeInt(1);
         dos.writeDouble(result.value);
-        //dos.writeLong(0);
+        dos.writeLong(0);
 
         resultWriter.writeResult(new ResultTransferObject(new ResultDescriptor(result.field.id, result.path.id, result.period), null, bos.toByteArray(), 0));
     }
