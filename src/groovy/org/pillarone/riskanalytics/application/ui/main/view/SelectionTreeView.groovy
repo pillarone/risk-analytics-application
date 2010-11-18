@@ -54,7 +54,7 @@ class SelectionTreeView {
         int treeWidth = 200
         def columnsWidths = 120
 
-        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([treeWidth] + [columnsWidths] * 8) as int[])
+        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([treeWidth] + [columnsWidths] * 10) as int[])
         tree.name = "selectionTableTree"
 
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->

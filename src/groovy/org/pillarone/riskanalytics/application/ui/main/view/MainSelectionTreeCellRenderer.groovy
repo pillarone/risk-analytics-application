@@ -14,6 +14,9 @@ import org.pillarone.riskanalytics.application.ui.batch.action.DeleteBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.RejectWorkflowAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToProductionAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
@@ -26,12 +29,9 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToProductionAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.RejectWorkflowAction
 
 class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -55,7 +55,6 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         this.model = model
         parameterNodePopUpMenu = new ULCPopupMenu()
         parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))

@@ -1,18 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-
-import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-
-import groovy.mock.interceptor.MockFor
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.core.workflow.Status
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.testframework.operator.ULCMenuItemOperator
 import com.ulcjava.testframework.operator.ULCPopupMenuOperator
@@ -22,12 +9,26 @@ import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.workflow.Status
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
     ModellingInformationTableTreeModel viewModel
+
+    public void testCheckBoxMenu() {
+        Thread.sleep 30000
+    }
+
+
 
     public void testOpenItem() {
 

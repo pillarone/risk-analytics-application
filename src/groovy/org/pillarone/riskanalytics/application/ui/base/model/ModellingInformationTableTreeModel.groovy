@@ -2,25 +2,12 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
-import org.pillarone.riskanalytics.core.model.Model
-
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-
-import org.pillarone.riskanalytics.core.workflow.Status
-
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
@@ -29,14 +16,20 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
-    List<String> columnNames = ["State", "Comments", "Review comment", "Owner", "Last Update By", "Created", "Last Modification", "Tags"]// "Assigned To","Visibility",
+    List<String> columnNames = ["State", "Tags", "Comments", "Review comment", "Owner", "Last Update By", "Created", "Last Modification", "Assigned To", "Visibility"]
     DefaultMutableTableTreeNode root
+    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
 
     public ModellingInformationTableTreeModel() {
         root = new DefaultMutableTableTreeNode("root")
@@ -80,7 +73,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
 
     int getColumnCount() {
-        return 9;
+        return 11;
     }
 
     public String getColumnName(int i) {
@@ -123,15 +116,18 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     private Object getValue(Parameterization parameterization, int columnIndex) {
         switch (columnIndex) {
             case 1: return parameterization?.status?.getDisplayName()
-            case 2: return parameterization?.comments?.size()
-            case 3: return "Review comment ?"
-            case 4: return parameterization?.getCreator()?.username
-            case 5: return parameterization?.getLastUpdater()?.username
-//            case 6: return "Assigned To ?"
-            case 6: return parameterization.getCreationDate()
-            case 7: return parameterization.getModificationDate()
-//            case 8: return "Visibility ?"
-            case 8: return "Tags ?"
+            case 2:
+                String tags = ""
+                parameterization.getTags().each {tags += "${it.name}, "}
+                return tags
+            case 3: return parameterization?.comments?.findAll {!(it instanceof WorkflowComment)}?.size()
+            case 4: return parameterization?.comments?.findAll {(it instanceof WorkflowComment)}?.size()
+            case 5: return parameterization?.getCreator()?.username
+            case 6: return parameterization?.getLastUpdater()?.username
+            case 7: return format.format(parameterization.getCreationDate())
+            case 8: return format.format(parameterization.getModificationDate())
+            case 9: return "to do"
+            case 10: return "to do"
             default: return ""
         }
     }

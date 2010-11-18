@@ -29,4 +29,10 @@ class ItemListModel<T> extends DefaultListModel {
         return tags
     }
 
+    public void add(Object o, def value) {
+        super.add(o);
+        values.add(value)
+    }
+
+
 }

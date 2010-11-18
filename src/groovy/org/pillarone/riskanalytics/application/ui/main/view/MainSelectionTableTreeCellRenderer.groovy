@@ -1,11 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
-import org.pillarone.riskanalytics.core.workflow.Status
-
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
@@ -30,6 +24,10 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 
@@ -69,6 +67,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(getAction(StartWorkflowAction)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, model)))
         ULCMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
@@ -84,6 +83,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         dataEntry.add(compareParameterizationMenuItem)
+        dataEntry.add(new ULCMenuItem(new TagsAction(tree, model)))
         workflowMenus.put(Status.DATA_ENTRY, dataEntry)
 
         ULCPopupMenu rejected = new ULCPopupMenu()
@@ -94,6 +94,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         rejected.add(compareParameterizationMenuItem)
+        rejected.add(new ULCMenuItem(new TagsAction(tree, model)))
         workflowMenus.put(Status.REJECTED, rejected)
 
         ULCPopupMenu inReview = new ULCPopupMenu()
@@ -106,6 +107,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inReview.add(compareParameterizationMenuItem)
+        inReview.add(new ULCMenuItem(new TagsAction(tree, model)))
         workflowMenus.put(Status.IN_REVIEW, inReview)
 
         ULCPopupMenu inProduction = new ULCPopupMenu()
@@ -116,6 +118,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)
+        inProduction.add(new ULCMenuItem(new TagsAction(tree, model)))
         workflowMenus.put(Status.IN_PRODUCTION, inProduction)
 
         simulationNodePopUpMenu = new ULCPopupMenu()
