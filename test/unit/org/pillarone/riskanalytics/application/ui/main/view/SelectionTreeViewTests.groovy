@@ -24,22 +24,15 @@ import org.pillarone.riskanalytics.core.workflow.Status
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
     ModellingInformationTableTreeModel viewModel
 
-    public void testCheckBoxMenu() {
-        Thread.sleep 30000
-    }
-
-
-
     public void testOpenItem() {
 
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        componentTree.doExpandRow 2
 
-        componentTree.selectCell(3, 0)
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 
@@ -53,11 +46,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        componentTree.doExpandRow 2
 
-        componentTree.selectCell(3, 0)
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 
@@ -71,11 +63,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        componentTree.doExpandRow 2
 
-        componentTree.selectCell(3, 0)
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 
@@ -88,11 +79,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        componentTree.doExpandRow 2
 
-        componentTree.selectCell(3, 0)
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 
@@ -104,11 +94,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        componentTree.doExpandRow 2
 
-        componentTree.selectCell(3, 0)
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 
@@ -121,11 +110,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        componentTree.doExpandRow 2
 
-        componentTree.selectCell(3, 0)
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 
@@ -136,10 +124,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     public void testOpenBatch() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        componentTree.doExpandRow 2
-        componentTree.selectCell(3, 0)
+        componentTree.doExpandRow 1
+        componentTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
 

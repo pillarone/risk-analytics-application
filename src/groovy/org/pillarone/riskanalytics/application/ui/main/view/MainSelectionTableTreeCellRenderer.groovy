@@ -60,61 +60,75 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterNodePopUpMenu = new ULCPopupMenu()
         parameterNodePopUpMenu.name = "parameterNodePopUpMenu"
         parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-
-        parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(getAction(StartWorkflowAction)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, model)))
+        parameterNodePopUpMenu.addSeparator()
         ULCMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
+        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, model)))
+        parameterNodePopUpMenu.addSeparator()
+        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        parameterNodePopUpMenu.addSeparator()
+        parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 //
         ULCPopupMenu dataEntry = new ULCPopupMenu()
         dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         dataEntry.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        dataEntry.add(new ULCMenuItem(getAction(SendToReviewAction)))
-        dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        dataEntry.addSeparator()
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         dataEntry.add(compareParameterizationMenuItem)
         dataEntry.add(new ULCMenuItem(new TagsAction(tree, model)))
+        dataEntry.addSeparator()
+        dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        dataEntry.addSeparator()
+        dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, model)))
         workflowMenus.put(Status.DATA_ENTRY, dataEntry)
 
         ULCPopupMenu rejected = new ULCPopupMenu()
         rejected.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        rejected.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         rejected.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        rejected.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        rejected.addSeparator()
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         rejected.add(compareParameterizationMenuItem)
         rejected.add(new ULCMenuItem(new TagsAction(tree, model)))
+        rejected.addSeparator()
+        rejected.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        rejected.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         workflowMenus.put(Status.REJECTED, rejected)
 
         ULCPopupMenu inReview = new ULCPopupMenu()
         inReview.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        inReview.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         inReview.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        inReview.add(new ULCMenuItem(getAction(SendToProductionAction)))
-        inReview.add(new ULCMenuItem(getAction(RejectWorkflowAction)))
-        inReview.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        inReview.addSeparator()
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inReview.add(compareParameterizationMenuItem)
         inReview.add(new ULCMenuItem(new TagsAction(tree, model)))
+        inReview.addSeparator()
+        inReview.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        inReview.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inReview.addSeparator()
+        ULCMenuItem sendToProductionMenuItem = new SendToProductionMenuItem(new SendToProductionAction(tree, model))
+        inReview.add(sendToProductionMenuItem)
+        tree.addTreeSelectionListener(sendToProductionMenuItem)
+        inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, model)))
         workflowMenus.put(Status.IN_REVIEW, inReview)
 
         ULCPopupMenu inProduction = new ULCPopupMenu()
         inProduction.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         inProduction.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        inProduction.addSeparator()
         inProduction.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inProduction.addSeparator()
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)
@@ -132,15 +146,15 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
 
         ULCMenu reportsMenu = new ReportMenu("Reports")
-        reportsMenu.add(new ULCMenuItem(getAction(GenerateReportAction, "Management Summary")))
-        reportsMenu.add(new ULCMenuItem(getAction(GenerateReportAction, "Actuary Summary")))
+        reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, model)))
+        reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Actuary Summary", tree, model)))
         tree.addTreeSelectionListener(reportsMenu)
         simulationNodePopUpMenu.add(reportsMenu)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 
         groupNodePopUpMenu = new ULCPopupMenu()
-        if (isStandAlone())
+        if (UserContext.isStandAlone())
             groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
@@ -149,13 +163,13 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllResultTemplates")))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
-        if (isStandAlone()) {
+        if (UserContext.isStandAlone()) {
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
         }
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
-        if (isStandAlone())
+        if (UserContext.isStandAlone())
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, model, "importAllFromDir")))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, model)))
@@ -163,7 +177,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllParameters")))
 
         simulationGroupNodePopUpMenu = new ULCPopupMenu()
-        if (isStandAlone())
+        if (UserContext.isStandAlone())
             simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
         simulationGroupNodePopUpMenu.addSeparator()
         simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllSimulations")))
@@ -289,21 +303,11 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         component.setComponentPopupMenu(batchesRootNodePopUpMenu)
     }
 
-    AbstractAction getAction(Class clazz, String name = null) {
-        try {
-            switch (clazz) {
-                case StartWorkflowAction: return new StartWorkflowAction(tree, model)
-                case RejectWorkflowAction: return new RejectWorkflowAction(tree, model)
-                case SendToReviewAction: return new SendToReviewAction(tree, model)
-                case SendToProductionAction: return new SendToProductionAction(tree, model)
-                case GenerateReportAction: return new GenerateReportAction(name, tree, model)
-            }
-        } catch (Exception ex) {}
-    }
 
     boolean isStandAlone() {
         try {
             return UserContext.isStandAlone()
         } catch (Exception ex) {}
     }
+
 }

@@ -40,32 +40,42 @@ class AddTagDialog {
 
     public AddTagDialog(ULCTableTree tree, AbstractTableTreeModel model, ModellingItem item) {
         this.tree = tree
-        this.parent = UlcUtilities.getWindowAncestor(tree)
         this.model = model
         this.item = item
+    }
+
+    public void init() {
         initComponents()
         layoutComponents()
         attachListeners()
     }
 
     private void initComponents() {
-        dialog = new ULCDialog(parent, true)
+        if (tree)
+            this.parent = UlcUtilities.getWindowAncestor(tree)
+        dialog = new ULCDialog(parent, "Edit tags dialog", true)
         dialog.name = 'AddTagDialog'
-        List items = Tag.findAllByTagType(EnumTagType.PARAMETERIZATION)
-        tagListModel = new ItemListModel(items?.collect {it.name}.toArray(), items)
+        List<Tag> dialogTags = getItems()
+        tagListModel = new ItemListModel(dialogTags?.collect {it.name}.toArray(), dialogTags)
         tags = new ULCList(tagListModel)
+        tags.name = "tagesList"
         tags.setSelectedIndices(tagListModel.getSelectedIndices(item?.getTags()?.collect {it.name}))
         tags.setVisibleRowCount(6);
         tags.setMinimumSize(new Dimension(160, 100))
         newTag = new ULCTextField()
-        newTag.name = 'newName'
+        newTag.name = 'newTag'
         addNewButton = new ULCButton("add new")
+        addNewButton.name = "addNew"
         addNewButton.setPreferredSize(buttonDimension)
         applyButton = new ULCButton("apply")
-        applyButton.name = 'applyButton'
+        applyButton.name = "apply"
         applyButton.setPreferredSize(buttonDimension)
         cancelButton = new ULCButton("cancel")
         cancelButton.setPreferredSize(buttonDimension)
+    }
+
+    public List<Tag> getItems() {
+        return Tag.findAllByTagType(EnumTagType.PARAMETERIZATION)
     }
 
     private void layoutComponents() {
@@ -93,9 +103,11 @@ class AddTagDialog {
             String tagName = newTag.getText()
             if (tagName && !Tag.findByName(tagName)) {
                 Tag newTag = new Tag(name: tagName, tagType: EnumTagType.PARAMETERIZATION)
-                newTag.save()
-                tagListModel.add(tagName, newTag)
-                tagListModel.fireIntervalAdded(evt.source, tagListModel.getSize() - 1, tagListModel.getSize() - 1)
+                Tag.withTransaction {
+                    newTag.save()
+                    tagListModel.add(tagName, newTag)
+                    tagListModel.fireIntervalAdded(evt.source, tagListModel.getSize() - 1, tagListModel.getSize() - 1)
+                }
             }
 
         }] as IActionListener)

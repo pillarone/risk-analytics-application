@@ -56,6 +56,8 @@ class SelectionTreeView {
 
         tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([treeWidth] + [columnsWidths] * 10) as int[])
         tree.name = "selectionTableTree"
+        tree.viewPortTableTree.setRootVisible(false);
+        tree.viewPortTableTree.showsRootHandles = true
 
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
             it.setHeaderRenderer(new CenteredHeaderRenderer())
@@ -69,7 +71,7 @@ class SelectionTreeView {
         }
 
         tree.rowHeaderTableTree.name = "selectionTreeRowHeader"
-        tree.rowHeaderTableTree.setRootVisible(true);
+        tree.rowHeaderTableTree.setRootVisible(false);
         tree.rowHeaderTableTree.showsRootHandles = true
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = "Name"
         tree.cellSelectionEnabled = true

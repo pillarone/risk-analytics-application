@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -18,6 +16,8 @@ import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultCon
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.*
@@ -121,13 +121,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                 parameterization.getTags().each {tags += "${it.name}, "}
                 return tags
             case 3: return parameterization?.comments?.findAll {!(it instanceof WorkflowComment)}?.size()
-            case 4: return parameterization?.comments?.findAll {(it instanceof WorkflowComment)}?.size()
+            case 4: return parameterization?.comments?.findAll {(it instanceof WorkflowComment) && it.status != IssueStatus.CLOSED}?.size()
             case 5: return parameterization?.getCreator()?.username
             case 6: return parameterization?.getLastUpdater()?.username
             case 7: return format.format(parameterization.getCreationDate())
             case 8: return format.format(parameterization.getModificationDate())
-            case 9: return "to do"
-            case 10: return "to do"
+            case 9: return "---"
+            case 10: return "---"
             default: return ""
         }
     }

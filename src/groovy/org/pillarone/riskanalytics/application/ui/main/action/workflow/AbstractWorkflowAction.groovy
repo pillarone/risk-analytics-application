@@ -1,12 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.workflow.StatusChangeService
-import org.pillarone.riskanalytics.core.workflow.Status
-
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.user.Person
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -14,10 +7,15 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
-    private StatusChangeService service = StatusChangeService.getService()
+    private StatusChangeService service = getService()
 
     public AbstractWorkflowAction(String name, ULCTableTree tree, P1RATModel model) {
         super(name, tree, model)
@@ -41,14 +39,24 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
     abstract Status toStatus()
 
     final boolean isEnabled() {
-        Person user = UserManagement.getCurrentUser()
-        return user != null && user.getAuthorities()*.authority.contains(requiredRole()) && isActionEnabled()
+        try {
+            Person user = UserManagement.getCurrentUser()
+            return user != null && user.getAuthorities()*.authority.contains(requiredRole()) && isActionEnabled()
+        } catch (Exception ex) {}
+        return false
     }
 
     abstract protected String requiredRole()
 
     protected boolean isActionEnabled() {
         return true
+    }
+
+    StatusChangeService getService() {
+        try {
+            return StatusChangeService.getService()
+        } catch (Exception ex) {}
+        return null
     }
 
 
