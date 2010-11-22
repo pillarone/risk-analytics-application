@@ -24,6 +24,10 @@ import org.pillarone.riskanalytics.core.workflow.Status
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
     ModellingInformationTableTreeModel viewModel
 
+//    public void testView(){
+//        Thread.sleep 10000
+//    }
+
     public void testOpenItem() {
 
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")

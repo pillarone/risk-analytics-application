@@ -19,11 +19,12 @@ import org.pillarone.riskanalytics.application.ui.parameterization.view.Centered
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class SelectionTreeView {
-
+    NavigationBarTopPane navigationBarTopPane
     AbstractTableTreeModel tableTreeModel
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     P1RATModel p1RATModel
+    final static int TREE_FIRST_COLUMN_WIDTH = 240
 
     public SelectionTreeView(P1RATModel p1RATModel) {
         this.p1RATModel = p1RATModel
@@ -51,10 +52,9 @@ class SelectionTreeView {
 
     protected void initTree() {
 
-        int treeWidth = 200
         def columnsWidths = 120
 
-        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([treeWidth] + [columnsWidths] * 10) as int[])
+        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([TREE_FIRST_COLUMN_WIDTH] + [columnsWidths] * 10) as int[])
         tree.name = "selectionTableTree"
         tree.viewPortTableTree.setRootVisible(false);
         tree.viewPortTableTree.showsRootHandles = true

@@ -1,11 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-
-import org.pillarone.riskanalytics.core.simulation.item.*
-
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -40,9 +34,13 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -66,6 +64,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     ULCMenu windowMenu
     ULCButtonGroup windowMenuItemGroup
     SelectionTreeView selectionTreeView
+    NavigationBarTopPane navigationBarTopPane
 
     ULCLabel lockedLabel
 
@@ -230,6 +229,10 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         toolBar.add(refreshButton)
         toolBar.add(saveButton)
         toolBar.add(runButton)
+        toolBar.addSeparator()
+
+        navigationBarTopPane = new NavigationBarTopPane(toolBar)
+        navigationBarTopPane.init()
 
         rightToolBar = new ULCToolBar()
         rightToolBar.floatable = false
