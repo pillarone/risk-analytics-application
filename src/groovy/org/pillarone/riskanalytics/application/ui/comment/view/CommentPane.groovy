@@ -49,14 +49,15 @@ class CommentPane {
         content.name = "CommentPane"
         content.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(getTitle());
-        border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
+        Font font = border.getTitleFont().deriveFont(Font.PLAIN)
+        border.setTitleFont(font);
         content.setBorder(border);
 
         label = new ULCLabel();
         if (searchText) label.name = "foundText"
         label.setText getLabelText()
 
-        label.setFont(label.getFont().deriveFont(Font.PLAIN));
+        label.setFont(font);
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
