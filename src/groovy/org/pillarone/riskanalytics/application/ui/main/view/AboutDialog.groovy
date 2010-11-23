@@ -1,13 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.table.AbstractTableModel
+import com.ulcjava.base.application.util.BorderedComponentUtilities
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.application.util.Font
 import org.apache.log4j.Logger
+import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 import com.ulcjava.base.application.*
-import com.ulcjava.base.application.util.*
 
 class AboutDialog {
 
@@ -29,7 +32,7 @@ class AboutDialog {
     private void initComponents() {
         dialog = new ULCDialog(rootPane, getText("title"), true)
         dialog.setLocationRelativeTo(rootPane)
-        dialog.size = new Dimension(550, 500)
+        dialog.size = new Dimension(550, 600)
 
         tabbedPane = new ULCTabbedPane()
         mainContent = new ULCBoxPane(1, 2)
@@ -62,20 +65,10 @@ class AboutDialog {
         String buildNo = "${getText("build#")}: ${infoProperties.getProperty("build.no", "N/A")}"
         pane.add(new ULCLabel(buildNo), ULCBoxPane.BOX_CENTER_TOP)
 
+        FollowLinkPane htmlPane = new FollowLinkPane()
         String url = getText("url")
-        ULCButton web = new ULCButton("<html><a href='${url}'>${url}</a></html>")
-        web.borderPainted = false
-        web.setForeground pane.getBackground()
-        web.setBackground pane.getBackground()
-        web.setCursor Cursor.HAND_CURSOR
-        web.setOpaque false
-        web.actionPerformed = {event ->
-            if (!UIUtils.isUnixOs()) {
-                ClientContext.showDocument("http://www.pillarone.org", "_new")
-            }
-        }
-        pane.add(web, ULCBoxPane.BOX_CENTER_TOP)
-
+        htmlPane.setText("<html><a href='${url}'>${url}</a></html>")
+        pane.add(htmlPane, ULCBoxPane.BOX_CENTER_TOP)
         pane
     }
 
@@ -126,55 +119,55 @@ class AboutDialog {
         builder.append("</b></p><br>")
         builder.append("<table>")
         builder.append("<tr><td align='left' >Java</td>")
-        builder.append("<td align='left' ><a href=''>http://java.sun.com/</a></td> ")
+        builder.append("<td align='left' ><a href='http://java.sun.com/'>http://java.sun.com</a></td> ")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Grails</td>")
         builder.append("<td align='left' ><a href='http://www.grails.org'>http://www.grails.org</a></td> ")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Groovy</td>")
-        builder.append("<td align='left' ><a href=''>http://groovy.codehaus.org/</a></td> ")
+        builder.append("<td align='left' ><a href='http://groovy.codehaus.org/'>http://groovy.codehaus.org/</a></td> ")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Spring<</td>")
-        builder.append("<td align='left' ><a href=''>http://www.springsource.org</a></td>")
+        builder.append("<td align='left' ><a href='http://www.springsource.org'>http://www.springsource.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Hibernate</td>")
-        builder.append("<td align='left' ><a href=''>http://www.hibernate.org</a></td>")
+        builder.append("<td align='left' ><a href='http://www.hibernate.org'>http://www.hibernate.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >JFreechart</td>")
-        builder.append(" <td align='left' ><a href=''>http://www.jfree.org</a></td>")
+        builder.append(" <td align='left' ><a href='http://www.jfree.org'>http://www.jfree.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >JasperReports</td>")
-        builder.append("<td align='left' ><a href=''>http://www.jasperforge.org</a></td>")
+        builder.append("<td align='left' ><a href='http://www.jasperforge.org'>http://www.jasperforge.org</a></td>")
         builder.append(" </tr>")
         builder.append(" <tr><td align='left' >JodaTime</td>")
-        builder.append(" <td align='left' ><a href=''>http://joda.sourceforge.net</a></td>")
+        builder.append(" <td align='left' ><a href='http://joda.sourceforge.net'>http://joda.sourceforge.net</a></td>")
         builder.append("</tr>")
         builder.append(" <tr><td align='left' >UltraLightClient (ULC)</td>")
-        builder.append("<td align='left' ><a href=''>http://canoo.com/ulc/</a></td>")
+        builder.append("<td align='left' ><a href='http://canoo.com/ulc'>http://canoo.com/ulc</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Apache Commons Math,<br> Logging</td>")
-        builder.append("   <td align='left' ><a href=''>http://commons.apache.org/</a></td>")
+        builder.append(" <td align='left' ><a href='http://commons.apache.org'>http://commons.apache.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >POI</td>")
-        builder.append("   <td align='left' ><a href=''>http://poi.apache.org</a></td>")
+        builder.append(" <td align='left' ><a href='http://poi.apache.org'>http://poi.apache.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >SSJ</td>")
-        builder.append("   <td align='left' ><a href=''>http://www.iro.umontreal.ca/~simardr/ssj</a></td>")
+        builder.append(" <td align='left' ><a href='http://www.iro.umontreal.ca/~simardr/ssj'>http://www.iro.umontreal.ca/~simardr/ssj</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >COLT</td>")
-        builder.append("   <td align='left' ><a href=''>http://acs.lbl.gov/~hoschek/colt</a></td>")
+        builder.append(" <td align='left' ><a href='http://acs.lbl.gov/~hoschek/colt'>http://acs.lbl.gov/~hoschek/colt</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Lucene</td>")
-        builder.append("   <td align='left' ><a href=''>http://lucene.apache.org/</a></td>")
+        builder.append(" <td align='left' ><a href='http://lucene.apache.org'>http://lucene.apache.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >java-wikipedia-parser</td>")
-        builder.append("   <td align='left' ><a href=''>http://code.google.com/p/java-wikipedia-parser/</a></td>")
+        builder.append(" <td align='left' ><a href='http://code.google.com/p/java-wikipedia-parser'>http://code.google.com/p/java-wikipedia-parser</a></td>")
         builder.append("</tr>")
 
-
-        ULCLabel html = new ULCLabel(builder.toString())
-        //title.font = title.font.deriveFont(Font.BOLD, 14)
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, html); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        FollowLinkPane htmlPane = new FollowLinkPane()
+        htmlPane.setText(builder.toString())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, htmlPane);
+        pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
 
         pane
     }
@@ -209,30 +202,3 @@ class AboutDialog {
     }
 }
 
-class PropertiesTableModel extends AbstractTableModel {
-
-    Object[][] array
-
-    public PropertiesTableModel(Object[][] array) {
-        super()
-        this.@array = array
-    }
-
-    public int getRowCount() {
-        array.length
-    }
-
-    public int getColumnCount() {
-        return 2;
-    }
-
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        array[rowIndex][columnIndex]
-    }
-
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        false
-    }
-
-
-}
