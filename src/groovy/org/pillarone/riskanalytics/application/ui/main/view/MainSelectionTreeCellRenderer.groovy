@@ -45,24 +45,22 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         this.tree = tree
         this.model = model
         parameterNodePopUpMenu = new ULCPopupMenu()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new OpenItemAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new RenameAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new SimulationAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new SaveAsAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new CreateNewMajorVersion(tree, model)))
         ULCMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new DeleteAction(tree, model)))
 
         simulationNodePopUpMenu = new ULCPopupMenu()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-
+        simulationNodePopUpMenu.add(new SingleSelectMenuItem(new OpenItemAction(tree, model)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
+        simulationNodePopUpMenu.add(new SingleSelectMenuItem(new RenameAction(tree, model)))
         ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, model))
         tree.addTreeSelectionListener(compareSimulationMenuItem)
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
@@ -74,7 +72,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         tree.addTreeSelectionListener(reportsMenu)
         simulationNodePopUpMenu.add(reportsMenu)
         simulationNodePopUpMenu.addSeparator()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+        simulationNodePopUpMenu.add(new SingleSelectMenuItem(new DeleteAction(tree, model)))
 
         groupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
