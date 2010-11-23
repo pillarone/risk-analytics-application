@@ -484,9 +484,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
     public void simulationStart(Simulation simulation) {
+        // lock parameterization if it is visible
         def parameterViewModel = viewModelsInUse[simulation.parameterization]
         if (parameterViewModel && parameterViewModel instanceof ParameterViewModel)
             parameterViewModel.setReadOnly(true)
+        // lock result template if it is visible
         def resultConfigurationViewModel = viewModelsInUse[simulation.template]
         if (resultConfigurationViewModel && resultConfigurationViewModel instanceof ResultConfigurationViewModel)
             resultConfigurationViewModel.setReadOnly(true)
