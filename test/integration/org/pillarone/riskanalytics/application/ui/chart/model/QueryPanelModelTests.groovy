@@ -56,7 +56,7 @@ class QueryPanelModelTests extends GroovyTestCase {
         CriteriaViewModel criteriaViewModel = new TestCriteriaViewModel(model)
         criteriaViewModel.selectedPath = path
         criteriaViewModel.setSelectedComparator(comparator)
-        criteriaViewModel.valueIntepretationModel.setSelectedEnum(ValueIntepretationType.ABSOLUTE)
+        criteriaViewModel.valueInterpretationModel.setSelectedEnum(ValueInterpretationType.ABSOLUTE)
         criteriaViewModel.value = value
         criteriaViewModel.selectedPeriod = period
         return criteriaViewModel
