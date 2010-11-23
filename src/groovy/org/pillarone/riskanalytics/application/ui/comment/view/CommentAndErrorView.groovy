@@ -46,13 +46,15 @@ class CommentAndErrorView implements CommentListener {
         model.addChangedCommentListener view
         ShowCommentsView result = new ShowCommentsView(this, null)
         model.addChangedCommentListener result
-        content = new ULCBoxPane(1, 4)
+        content = new ULCBoxPane(1, 2)
         CommentSearchPane commentSearchPane = new CommentSearchPane(view, errorPane, result, model)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, commentSearchPane.content)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, view.container)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, result.container)
-        tabbedPane.addTab(UIUtils.getText(this.class, "ValidationsAndComments"), new ULCScrollPane(content))
+        ULCBoxPane scrolledPane = new ULCBoxPane(1, 3)
+        scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
+        scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, view.container)
+        scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, result.container)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(scrolledPane))
+        tabbedPane.addTab(UIUtils.getText(this.class, "ValidationsAndComments"), content)
         tabbedPane.setCloseableTab(0, false)
     }
 
