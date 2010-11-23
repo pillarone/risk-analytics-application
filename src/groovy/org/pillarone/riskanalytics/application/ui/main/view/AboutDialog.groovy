@@ -1,9 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.util.PropertiesUtils
-
 import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.util.BorderedComponentUtilities
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
@@ -12,6 +9,7 @@ import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.util.PropertiesUtils
 import com.ulcjava.base.application.*
 
 class AboutDialog {
@@ -204,30 +202,3 @@ class AboutDialog {
     }
 }
 
-class PropertiesTableModel extends AbstractTableModel {
-
-    Object[][] array
-
-    public PropertiesTableModel(Object[][] array) {
-        super()
-        this.@array = array
-    }
-
-    public int getRowCount() {
-        array.length
-    }
-
-    public int getColumnCount() {
-        return 2;
-    }
-
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        array[rowIndex][columnIndex]
-    }
-
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        false
-    }
-
-
-}

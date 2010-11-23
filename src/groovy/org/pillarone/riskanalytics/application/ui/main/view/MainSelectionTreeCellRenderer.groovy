@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.base.application.event.ITreeSelectionListener
-import com.ulcjava.base.application.event.TreeSelectionEvent
 import com.ulcjava.base.application.tree.DefaultTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
@@ -225,53 +223,3 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 }
 
-class ReportMenu extends ULCMenu implements ITreeSelectionListener {
-    List actions = []
-
-    public ReportMenu(String name) {
-        super(name)
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        boolean enable = false
-        actions.each {GenerateReportAction action ->
-            enable = enable || action.isEnabled()
-        }
-        setEnabled(enable)
-    }
-
-    public ULCMenuItem add(ULCMenuItem ulcMenuItem) {
-        ULCMenuItem retValue = super.add(ulcMenuItem)
-        actions << ulcMenuItem.action
-        return retValue
-    }
-
-}
-
-class CompareSimulationMenuItem extends ULCMenuItem implements ITreeSelectionListener {
-    def compareSimulationsAction
-
-    def CompareSimulationMenuItem(compareSimulationsAction) {
-        super(compareSimulationsAction);
-        this.compareSimulationsAction = compareSimulationsAction;
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        setEnabled(compareSimulationsAction.isEnabled())
-    }
-
-}
-
-class CompareParameterizationMenuItem extends ULCMenuItem implements ITreeSelectionListener {
-    def compareParameterizationsAction
-
-    public CompareParameterizationMenuItem(compareParameterizationsAction) {
-        super(compareParameterizationsAction)
-        this.compareParameterizationsAction = compareParameterizationsAction
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        setEnabled(compareParameterizationsAction.isEnabled())
-    }
-
-}
