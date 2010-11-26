@@ -4,7 +4,7 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
-import org.pillarone.riskanalytics.application.ui.chart.model.ValueIntepretationType
+import org.pillarone.riskanalytics.application.ui.chart.model.ValueInterpretationType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -48,7 +48,7 @@ class CriteriaView {
         }] as IActionListener)
         periodComboBox.addActionListener([actionPerformed: {
             if (model.selectedPeriod == null) {
-                valueIntepretationComboBox.model.selectedEnum = ValueIntepretationType.ABSOLUTE
+                valueIntepretationComboBox.model.selectedEnum = ValueInterpretationType.ABSOLUTE
             }
             valueIntepretationComboBox.enabled = (model.selectedPeriod != null)
         }] as IActionListener)
@@ -78,7 +78,7 @@ class CriteriaView {
         valueField.value = model.value
         valueField.dataType = DataTypeFactory.getDoubleDataType()
 
-        valueIntepretationComboBox = new ULCComboBox(model.valueIntepretationModel)
+        valueIntepretationComboBox = new ULCComboBox(model.valueInterpretationModel)
         valueIntepretationComboBox.enabled = (model.selectedPeriod != null)
         periodComboBox = new ULCComboBox(model.periodModel)
         removeButton = new ULCButton(getText("remove"))
