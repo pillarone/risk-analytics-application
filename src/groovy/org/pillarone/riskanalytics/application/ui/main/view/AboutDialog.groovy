@@ -67,7 +67,7 @@ class AboutDialog {
 
         FollowLinkPane htmlPane = new FollowLinkPane()
         String url = getText("url")
-        htmlPane.setText("<html><a href='${url}'>${url}</a></html>")
+        htmlPane.setText("<a href='${url}'>${url}</a>")
         pane.add(htmlPane, ULCBoxPane.BOX_CENTER_TOP)
         pane
     }
@@ -113,7 +113,7 @@ class AboutDialog {
         ULCBoxPane pane = new ULCBoxPane(2, 0)
         pane.background = Color.white
         pane.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        StringBuilder builder = new StringBuilder("<html><table><tr>");
+        StringBuilder builder = new StringBuilder("");
         builder.append("<p><b>")
         builder.append(getText("usedLibraries"))
         builder.append("</b></p><br>")
@@ -163,6 +163,7 @@ class AboutDialog {
         builder.append("<tr><td align='left' >java-wikipedia-parser</td>")
         builder.append(" <td align='left' ><a href='http://code.google.com/p/java-wikipedia-parser'>http://code.google.com/p/java-wikipedia-parser</a></td>")
         builder.append("</tr>")
+        builder.append("</table>")
 
         FollowLinkPane htmlPane = new FollowLinkPane()
         htmlPane.setText(builder.toString())
