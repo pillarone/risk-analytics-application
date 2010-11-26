@@ -101,8 +101,9 @@ public class UIFixedColumnTableTree extends UIScrollPane {
                     }
                 } else if (fSource.getRowSelectionAllowed()) {
                     int[] selectedRows = fSource.getSelectedRows();
-                    for (int i = 0; i < selectedRows.length; i++) {
-                        fTarget.setRowSelectionInterval(selectedRows[i], selectedRows[i]);
+                    for (int selectedRow : selectedRows) {
+                        fTarget.setRowSelectionInterval(selectedRow, selectedRow);
+                        fTarget.scrollCellToVisible(event.getPath(), 0);
                     }
                 }
             }
