@@ -6,7 +6,6 @@ import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.util.Font
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
@@ -148,7 +147,7 @@ class SimulationSettingsPane {
         randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
         numberOfIterations = new ULCTextField()
-        numberOfIterations.name = "iterations"
+        numberOfIterations.name = "${SimulationSettingsPane.getSimpleName()}.iterations"
         numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
         if (model.requiresStartDate()) {

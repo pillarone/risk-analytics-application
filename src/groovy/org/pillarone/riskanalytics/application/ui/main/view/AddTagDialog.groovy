@@ -41,7 +41,10 @@ class AddTagDialog {
     public AddTagDialog(ULCTableTree tree, AbstractTableTreeModel model, ModellingItem item) {
         this.tree = tree
         this.model = model
+        if (!item.isLoaded())
+            item.load(true)
         this.item = item
+
     }
 
     public void init() {

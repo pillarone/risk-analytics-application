@@ -16,6 +16,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
         SimpleTableTreeNode rootNode = createRootNode()
         DefaultTableTreeModel model = new DefaultTableTreeModel(rootNode, ["one", "two", "three", "four", "five", "six"] as String[])
         ULCFixedColumnTableTree tree = new ULCFixedColumnTableTree(model, 1, [500, 500, 500, 500, 500, 500] as int[])
+        tree.setCellSelectionEnabled true
         return tree
     }
 

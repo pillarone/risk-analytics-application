@@ -1,20 +1,25 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import javax.swing.tree.TreePath
+import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
+import org.pillarone.riskanalytics.functional.P1RATAbstractStandaloneTestCase
 import com.ulcjava.testframework.operator.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class AddTagDialogITests extends AbstractStandaloneTestCase {
+class AddTagDialogITests extends P1RATAbstractStandaloneTestCase {
+
+    protected String getConfigurationResourceName() {
+        return "/org/pillarone/riskanalytics/functional/main/ULCApplicationConfiguration.xml"
+    }
 
     protected void setUp() {
         new DBCleanUpService().cleanUp()
@@ -34,10 +39,6 @@ class AddTagDialogITests extends AbstractStandaloneTestCase {
         LocaleResources.clearTestMode()
     }
 
-    protected Class getApplicationClass() {
-        return P1RATApplication
-    }
-
     void testAddNewTag() {
         int size = Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).size()
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
@@ -51,6 +52,7 @@ class AddTagDialogITests extends AbstractStandaloneTestCase {
         tableTree.doExpandRow 0
         tableTree.doExpandRow 1
 
+        tableTree.selectCell(3, 0)
         ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(3, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Tags")
@@ -81,34 +83,44 @@ class AddTagDialogITests extends AbstractStandaloneTestCase {
     }
 
     void testAddTagToParameterization() {
+        Tag.withSession {Session session ->
 
-        int size = Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).size()
-        ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
+            int size = Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).size()
+            ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
 
-        ULCTableTreeOperator tableTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
-        assertNotNull tableTree
+            ULCTableTreeOperator tableTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
+            assertNotNull tableTree
 
-        TreePath pathForRename = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
-        assertNotNull "path not found", pathForRename
-        int oldParametersCount = tableTree.getChildCount(pathForRename.lastPathComponent.parent)
-        tableTree.doExpandRow 0
-        tableTree.doExpandRow 1
-        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(2, 0)
-        assertNotNull popUpMenu
-        popUpMenu.pushMenu("Tags")
+            TreePath pathForRename = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
+            assertNotNull "path not found", pathForRename
+            int oldParametersCount = tableTree.getChildCount(pathForRename.lastPathComponent.parent)
+            tableTree.doExpandRow 0
+            tableTree.doExpandRow 1
+
+            tableTree.selectCell(3, 0)
+            ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(2, 0)
+            assertNotNull popUpMenu
+            popUpMenu.pushMenu("Tags")
 //        Thread.sleep 1000
 
-        ULCDialogOperator addTagDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('AddTagDialog'))
-        assertNotNull addTagDialog
+            ULCDialogOperator addTagDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('AddTagDialog'))
+            assertNotNull addTagDialog
 
-        ULCListOperator listOperator = new ULCListOperator(addTagDialog, new ComponentByNameChooser('tagesList'))
-        listOperator.selectItems([0] as int[])
+            ULCListOperator listOperator = new ULCListOperator(addTagDialog, new ComponentByNameChooser('tagesList'))
+            listOperator.selectItems([0] as int[])
 
-        ULCButtonOperator applyButton = new ULCButtonOperator(addTagDialog, new ComponentByNameChooser('apply'))
-        assertNotNull applyButton
+            ULCButtonOperator applyButton = new ULCButtonOperator(addTagDialog, new ComponentByNameChooser('apply'))
+            assertNotNull applyButton
 //
-        applyButton.getFocus()
-        applyButton.clickMouse()
+            applyButton.getFocus()
+            applyButton.clickMouse()
+            session.flush()
+        }
+        Tag.withNewSession {Session session ->
+            ParameterizationDAO parameterization = ParameterizationDAO.findByName("CoreAlternativeParameters")
+            assertNotNull parameterization
+            assertEquals 1, parameterization.tags.size()
+        }
 
     }
 

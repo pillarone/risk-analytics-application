@@ -67,12 +67,6 @@ public class ULCFixedColumnTableTree extends ULCScrollPane {
 
         //see PMO-919 and PMO-1013
         final ULCTableTree viewPort = new ULCHeaderFixedTableTree();
-        rowHeader.getSelectionModel().addTreeSelectionListener(new ITreeSelectionListener() {
-            public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-                viewPort.scrollCellToVisible(treeSelectionEvent.getPath(), 1);
-            }
-        }
-        );
         viewPort.setAutoCreateColumnsFromModel(false);
         viewPort.setModel(model);
         viewPort.setEventDeliveryMode(UlcEventCategories.TREE_SELECTION_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE);

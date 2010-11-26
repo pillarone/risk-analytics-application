@@ -1,24 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import models.core.CoreModel
-import com.ulcjava.testframework.operator.ULCCheckBoxOperator
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCTextFieldOperator
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import com.ulcjava.testframework.operator.ULCComboBoxOperator
-import com.ulcjava.testframework.operator.ULCButtonOperator
-import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.testframework.operator.ULCTextAreaOperator
-
+import com.ulcjava.testframework.operator.*
 
 class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
@@ -141,7 +133,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         ULCTextAreaOperator comment = new ULCTextAreaOperator(frame, new ComponentByNameChooser("comment"))
         comment.typeText("comment")
 
-        ULCTextFieldOperator iterations = new ULCTextFieldOperator(frame, new ComponentByNameChooser("iterations"))
+        ULCTextFieldOperator iterations = new ULCTextFieldOperator(frame, new ComponentByNameChooser("${SimulationSettingsPane.getSimpleName()}.iterations"))
         iterations.enterText("10")
 
         ULCComboBoxOperator param = new ULCComboBoxOperator(frame, new ComponentByNameChooser("parameterizationNames"))

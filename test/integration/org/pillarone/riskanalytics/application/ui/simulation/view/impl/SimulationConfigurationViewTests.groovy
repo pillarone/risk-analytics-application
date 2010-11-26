@@ -1,16 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import com.ulcjava.base.application.ULCFrame
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import models.core.CoreModel
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ComponentByNameChooser
+import com.ulcjava.testframework.operator.ULCButtonOperator
+import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
+import models.core.CoreModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
-
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 
 class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
@@ -29,8 +28,8 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     void testEnableRun() {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        ULCButtonOperator run = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("run"))
-        ULCTextFieldOperator iterations = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("iterations"))
+        ULCButtonOperator run = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.run"))
+        ULCTextFieldOperator iterations = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("${SimulationSettingsPane.getSimpleName()}.iterations"))
         ULCTextFieldOperator name = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("simulationName"))
 
         assertFalse run.enabled
