@@ -61,6 +61,7 @@ class SelectionTreeView {
 
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
             it.setHeaderRenderer(new CenteredHeaderRenderer())
+//            it.setHeaderRenderer(new IconHeaderCellRenderer())
         }
 
         MainSelectionTableTreeCellRenderer renderer = getPopUpRenderer(tree)

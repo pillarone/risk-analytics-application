@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ulc:ULCApplicationConfiguration xmlns:ulc="http://www.canoo.com/ulc"
+                                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                                 xsi:schemaLocation="http://www.canoo.com/ulc ULCApplicationConfiguration.xsd ">
+    <ulc:applicationClassName>org.pillarone.riskanalytics.application.ui.P1RATApplication</ulc:applicationClassName>
+    <ulc:serverSessionProviderClassName>org.pillarone.riskanalytics.functional.GrailsSessionProvider
+    </ulc:serverSessionProviderClassName>
+</ulc:ULCApplicationConfiguration>

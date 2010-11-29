@@ -75,7 +75,6 @@ class LocaleResources {
                 UserContext.setAttribute(LOCALE, locale)
             }
             ULCClientLocaleSetter.setDefaultLocale(locale)
-
         }
 
         return locale
