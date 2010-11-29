@@ -93,6 +93,7 @@ class CommentAndErrorView implements CommentListener {
             tabbedPane.setCloseableTab(tabIndex, true)
             tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
             tabbedPane.selectedIndex = tabIndex
+            view.commentTextArea.requestFocus()
         }
     }
 
