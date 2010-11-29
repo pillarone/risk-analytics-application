@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -13,12 +15,14 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
+import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
+import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.*
 
@@ -27,9 +31,20 @@ import org.pillarone.riskanalytics.core.simulation.item.*
  */
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
-    List<String> columnNames = ["State", "Tags", "Comments", "Review comment", "Owner", "Last Update By", "Created", "Last Modification", "Assigned To", "Visibility"]
-    DefaultMutableTableTreeNode root
+    List<String> columnNames = ["Name", "State", "Tags", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
     SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
+    final static int STATE = 1
+    final static int TAGS = 2
+    final static int COMMENTS = 3
+    final static int REVIEW_COMMENT = 4
+    final static int OWNER = 5
+    final static int LAST_UPDATER = 6
+    final static int CREATER = 7
+    final static int LAST_MODIFICATOR = 8
+    final static int ASSIGNED_TO = 9
+    final static int VISIBILITY = 10
+
+    DefaultMutableTableTreeNode root
 
     public ModellingInformationTableTreeModel() {
         root = new DefaultMutableTableTreeNode("root")
@@ -73,11 +88,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
 
     int getColumnCount() {
-        return 11;
+        return columnNames.size();
     }
 
     public String getColumnName(int i) {
-        return columnNames[i - 1]
+        return UIUtils.getText(this.class, columnNames[i])
     }
 
     Object getValueAt(Object node, int i) {
@@ -86,7 +101,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         } else if (node instanceof ParameterizationNode) {
             Parameterization item = node.item
             if (!item.isLoaded())
-                item.load()
+                item.load(false)
 
             return getValue(item, i)
         }
@@ -113,21 +128,25 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         return parent.getIndex(child)
     }
 
+
     private Object getValue(Parameterization parameterization, int columnIndex) {
         switch (columnIndex) {
-            case 1: return parameterization?.status?.getDisplayName()
-            case 2:
+            case STATE: return parameterization?.status?.getDisplayName()
+            case TAGS:
                 String tags = ""
-                parameterization.getTags().each {tags += "${it.name}, "}
+                List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.id = ? ", [parameterization.id])
+                pTags.each {
+                    tags += "${it}, "
+                }
                 return tags
-            case 3: return parameterization?.comments?.findAll {!(it instanceof WorkflowComment)}?.size()
-            case 4: return parameterization?.comments?.findAll {(it instanceof WorkflowComment) && it.status != IssueStatus.CLOSED}?.size()
-            case 5: return parameterization?.getCreator()?.username
-            case 6: return parameterization?.getLastUpdater()?.username
-            case 7: return format.format(parameterization.getCreationDate())
-            case 8: return format.format(parameterization.getModificationDate())
-            case 9: return "---"
-            case 10: return "---"
+            case COMMENTS: return CommentDAO.countByParameterization(parameterization.dao)
+            case REVIEW_COMMENT: return WorkflowCommentDAO.countByParameterizationAndStatusNotEqual(parameterization.dao, IssueStatus.CLOSED)
+            case OWNER: return parameterization?.getCreator()?.username
+            case LAST_UPDATER: return parameterization?.getLastUpdater()?.username
+            case CREATER: return format.format(parameterization.getCreationDate())
+            case LAST_MODIFICATOR: return format.format(parameterization.getModificationDate())
+            case ASSIGNED_TO: return "---"
+            case VISIBILITY: return "---"
             default: return ""
         }
     }
