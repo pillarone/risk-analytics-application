@@ -4,6 +4,8 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.apache.commons.logging.LogFactory
+import org.apache.commons.logging.Log
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
@@ -20,11 +22,16 @@ class SimulationAction extends SelectionTreeAction {
 
     public void doActionPerformed(ActionEvent event) {
         Model selectedModel = getSelectedModel()
-        Object selectedItem = getSelectedItem()
-        Simulation simulation = new Simulation("Simulation")
-        simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
-        simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
-        model.openItem(selectedModel, simulation)
+        if (selectedModel) {
+            Object selectedItem = getSelectedItem()
+            Simulation simulation = new Simulation("Simulation")
+            simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
+            simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
+            model.openItem(selectedModel, simulation)
+        }
+        else {
+            LOG.debug("No selected model found. Action cancelled.")
+        }
     }
 
 }

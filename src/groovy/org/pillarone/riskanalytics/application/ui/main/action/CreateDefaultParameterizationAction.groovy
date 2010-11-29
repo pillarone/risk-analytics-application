@@ -49,6 +49,8 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
                     model.selectionTreeModel.addNodeForItem(param)
                     model.fireModelChanged()
+                    param.load(true)
+                    model.notifyOpenDetailView(simulationModel, param)
                 } catch (Exception ex) {
                     LOG.error "Error creating default parameterization", ex
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "CreationError")

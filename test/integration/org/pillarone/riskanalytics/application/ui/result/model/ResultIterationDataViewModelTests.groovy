@@ -4,7 +4,7 @@ import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
-import org.pillarone.riskanalytics.application.ui.chart.model.ValueIntepretationType
+import org.pillarone.riskanalytics.application.ui.chart.model.ValueInterpretationType
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
@@ -114,7 +114,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedPeriod = 0
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 4
-        criteriaViewModel.valueIntepretationModel.selectedEnum = ValueIntepretationType.ABSOLUTE
+        criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         criteriaViewModel.selectedPath = "test path1 / ultimate"
 
         model.criterias.add([criteriaViewModel])
@@ -152,7 +152,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedPeriod = 0
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 4
-        criteriaViewModel.valueIntepretationModel.selectedEnum = ValueIntepretationType.ABSOLUTE
+        criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         criteriaViewModel.selectedPath = "test path1 / ultimate"
 
         model.criterias.add([criteriaViewModel])
@@ -190,7 +190,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedPeriod = 0
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 4
-        criteriaViewModel.valueIntepretationModel.selectedEnum = ValueIntepretationType.ABSOLUTE
+        criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         criteriaViewModel.selectedPath = "test path1 / ultimate"
 
         model.criterias.add([criteriaViewModel])
@@ -199,7 +199,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedPeriod = 0
         criteriaViewModel.selectedComparator = CriteriaComparator.LESS_EQUALS
         criteriaViewModel.value = 5
-        criteriaViewModel.valueIntepretationModel.selectedEnum = ValueIntepretationType.ABSOLUTE
+        criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         criteriaViewModel.selectedPath = "test path1 / ultimate"
 
         model.criterias.get(0).add(criteriaViewModel)
@@ -238,7 +238,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedPeriod = 0
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 5
-        criteriaViewModel.valueIntepretationModel.selectedEnum = ValueIntepretationType.ABSOLUTE
+        criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         criteriaViewModel.selectedPath = "test path1 / ultimate"
 
         model.criterias.add([criteriaViewModel])
@@ -247,7 +247,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedPeriod = 0
         criteriaViewModel.selectedComparator = CriteriaComparator.LESS_EQUALS
         criteriaViewModel.value = 1
-        criteriaViewModel.valueIntepretationModel.selectedEnum = ValueIntepretationType.ABSOLUTE
+        criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         criteriaViewModel.selectedPath = "test path1 / ultimate"
 
         model.criterias.add([criteriaViewModel])

@@ -36,6 +36,10 @@ class RenameAction extends SelectionTreeAction {
         if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
             selectedItem.setModelClass(getSelectedModel().class)
             usedInSimulation = selectedItem.isUsedInSimulation()
+            if (!usedInSimulation) {
+                List runs = SimulationRun.executeQuery(" from ${SimulationRun.class.name} as run where run.parameterization.name = :name ", ["name": selectedItem.name])
+                usedInSimulation = runs != null && runs.size() > 0
+            }
         }
         if (!usedInSimulation) {
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)

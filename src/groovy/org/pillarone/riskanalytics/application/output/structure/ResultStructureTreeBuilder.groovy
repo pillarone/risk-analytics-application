@@ -119,6 +119,7 @@ class ResultStructureTreeBuilder {
                 obtainReplacementsRecursive(child, leafNodes, level, leafPath)
             }
         } else {
+            if (currentNode == null) return
             currentNode = currentNode.getChildByName(currentNodeName)
             if (currentNode != null) { // path collected
                 obtainReplacementsRecursive(currentNode, leafNodes, ++level, leafPath)

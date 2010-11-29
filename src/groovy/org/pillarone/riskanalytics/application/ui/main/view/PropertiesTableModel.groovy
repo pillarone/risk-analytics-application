@@ -29,6 +29,4 @@ class PropertiesTableModel extends AbstractTableModel {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         false
     }
-
-
 }

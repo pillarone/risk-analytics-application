@@ -20,3 +20,4 @@ class CompareParameterizationMenuItem extends ULCMenuItem implements ITreeSelect
     }
 
 }
+

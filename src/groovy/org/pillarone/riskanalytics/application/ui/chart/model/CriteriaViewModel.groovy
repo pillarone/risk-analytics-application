@@ -10,7 +10,7 @@ class CriteriaViewModel {
     IComboBoxModel keyFigureTypeModel
     IComboBoxModel comparatorModel = new DefaultComboBoxModel()
     double value = 99
-    IComboBoxModel valueIntepretationModel = new DefaultComboBoxModel()
+    IComboBoxModel valueInterpretationModel = new DefaultComboBoxModel()
     DefaultComboBoxModel periodModel
     boolean enablePeriodComboBox
 
@@ -19,7 +19,7 @@ class CriteriaViewModel {
         this.@enablePeriodComboBox = enablePeriodComboBox
         keyFigureTypeModel = new DefaultComboBoxModel(queryModel.shortPaths)
         comparatorModel = new EnumComboBoxModel(CriteriaComparator.values() as Object[], CriteriaComparator.GREATER_EQUALS, false)
-        valueIntepretationModel = new EnumComboBoxModel(ValueIntepretationType.values() as Object[], ValueIntepretationType.PERCENTILE, true)
+        valueInterpretationModel = new EnumComboBoxModel(ValueInterpretationType.values() as Object[], ValueInterpretationType.ORDER_STATISTIC, true)
         createPeriodModel()
         selectedPeriod = queryModel.defaultPeriod
     }
@@ -52,16 +52,20 @@ class CriteriaViewModel {
         comparatorModel.selectedEnum = comparator
     }
 
-    public double getIntepretedValue() {
-        if (valueIntepretationModel.getSelectedEnum() == ValueIntepretationType.ABSOLUTE) {
-            return this.@value
-        } else {
-            return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
+    public double getInterpretedValue() {
+        switch (valueInterpretationModel.selectedEnum) {
+            case ValueInterpretationType.ABSOLUTE :
+                return this.@value
+            case ValueInterpretationType.PERCENTILE :
+                return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
+            case ValueInterpretationType.ORDER_STATISTIC :
+                boolean countingFromLowerEnd = comparatorModel.selectedEnum == CriteriaComparator.LESS_THAN && comparatorModel.selectedEnum == CriteriaComparator.LESS_EQUALS
+                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value, countingFromLowerEnd)
         }
     }
 
     public boolean validate() {
-        if (valueIntepretationModel.getSelectedEnum() != ValueIntepretationType.ABSOLUTE) {
+        if (valueInterpretationModel.getSelectedEnum() != ValueInterpretationType.ABSOLUTE) {
             if (value < 0 || value > 100) return false
         }
         return true
@@ -114,6 +118,6 @@ public enum CriteriaComparator {
     }
 }
 
-public enum ValueIntepretationType {
-    ABSOLUTE, PERCENTILE
+public enum ValueInterpretationType {
+    ABSOLUTE, ORDER_STATISTIC, PERCENTILE
 }
