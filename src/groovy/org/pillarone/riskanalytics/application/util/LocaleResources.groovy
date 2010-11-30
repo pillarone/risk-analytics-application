@@ -1,11 +1,5 @@
 package org.pillarone.riskanalytics.application.util
 
-import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
-
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.user.UserSettings
-
 import com.canoo.ulc.community.locale.server.ULCClientLocaleSetter
 import com.ulcjava.base.application.ClientContext
 import java.text.DateFormat
@@ -13,6 +7,10 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.user.UserSettings
+import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 
 /**
  * This class provides properties from resource bundles using client-specific internationalization.
