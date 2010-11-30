@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.output.structure
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
-import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class ResultStructureTreeBuilder {
 
@@ -119,6 +119,7 @@ class ResultStructureTreeBuilder {
                 obtainReplacementsRecursive(child, leafNodes, level, leafPath)
             }
         } else {
+            if (currentNode == null) return
             currentNode = currentNode.getChildByName(currentNodeName)
             if (currentNode != null) { // path collected
                 obtainReplacementsRecursive(currentNode, leafNodes, ++level, leafPath)

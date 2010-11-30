@@ -41,9 +41,8 @@ class RenameActionTests extends AbstractStandaloneTestCase {
         int oldParametersCount = tableTree.getChildCount(pathForRename.lastPathComponent.parent)
         tableTree.doExpandRow 0
         tableTree.doExpandRow 1
-        tableTree.doExpandRow 2
 
-        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(2, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Rename")
 

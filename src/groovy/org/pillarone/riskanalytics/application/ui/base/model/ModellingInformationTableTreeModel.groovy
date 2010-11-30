@@ -129,7 +129,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
 
-    private Object getValue(Parameterization parameterization, int columnIndex) {
+    public Object getValue(Parameterization parameterization, int columnIndex) {
         switch (columnIndex) {
             case STATE: return parameterization?.status?.getDisplayName()
             case TAGS:

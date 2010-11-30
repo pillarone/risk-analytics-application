@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class HistogramChartViewModel extends ChartViewModel {
 
-    int currentBinCount = Math.min((int) (series[0][0].size() / 5), 50)
+    int currentBinCount = -1
     static final int minBinCount = 1
     final int maxBinCount = 200
     double binSize
@@ -34,7 +34,8 @@ class HistogramChartViewModel extends ChartViewModel {
     public JFreeChart getChart() {
 
         HistogramDataset data = new HistogramDataset()
-        currentBinCount = getMinBinCount()
+        if (currentBinCount == -1)
+            currentBinCount = getMinBinCount()
         series.eachWithIndex {List observations, int keyFigureIndex ->
             observations.eachWithIndex {List<Double> periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex] && notStochasticSeries[seriesNames[keyFigureIndex], periodIndex] == null && periods.size() > 0 && currentBinCount != -1) {

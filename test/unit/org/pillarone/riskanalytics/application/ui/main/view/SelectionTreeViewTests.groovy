@@ -273,8 +273,13 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
                 default: return []
             }
         }
+
         treeModel.metaClass.getAllBatchRuns = {->
             return [new BatchRun(name: "test")]
+        }
+
+        treeModel.metaClass.getValue = {Parameterization p, int columnIndex ->
+            return "column " + columnIndex
         }
         treeModel.buildTreeNodes()
         return treeModel

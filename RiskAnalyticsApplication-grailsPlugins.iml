@@ -40,12 +40,12 @@
       <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/quartz-0.4.1/src/groovy" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/quartz-0.4.1/grails-app/services" isTestSource="false" />
     </content>
-    <content url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow">
-      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/src/java" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/src/groovy" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/grails-app/controllers" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/grails-app/domain" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/grails-app/services" isTestSource="false" />
+    <content url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow">
+      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/src/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/src/groovy" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/grails-app/controllers" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/grails-app/domain" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/grails-app/services" isTestSource="false" />
     </content>
     <content url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/spring-security-core-1.0.1">
       <sourceFolder url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/spring-security-core-1.0.1/src/java" isTestSource="false" />
@@ -76,14 +76,14 @@
           <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/quartz-0.4.1/lib" />
           <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/joda-time-0.5/lib" />
           <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/ulc-2008-u4-3/lib" />
-          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/lib" />
+          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
         <jarDirectory url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/jasper-0.9.5-riskanalytics/lib" recursive="false" />
         <jarDirectory url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/joda-time-0.5/lib" recursive="false" />
         <jarDirectory url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/quartz-0.4.1/lib" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.4-workflow/lib" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/lib" recursive="false" />
         <jarDirectory url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/ulc-2008-u4-3/lib" recursive="false" />
       </library>
     </orderEntry>

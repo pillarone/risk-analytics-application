@@ -47,7 +47,9 @@ class MultiDimensionalTabStarter implements IActionListener {
 
     public void actionPerformed(ActionEvent event) {
         ULCTableTree tree = event.source
-        def lastComponent = tree.getSelectedPath().lastPathComponent
+        // most probably necessary due to https://www.canoo.com/jira/browse/UBA-7909
+        // http://www.canoo.com/jira/browse/UBA-7580
+        def lastComponent = tree?.selectedPath?.lastPathComponent
 
         if (lastComponent instanceof MultiDimensionalParameterizationTableTreeNode) {
             TabIdentifier identifier = new TabIdentifier(path: tree.getSelectedPath(), columnIndex: tree.selectedColumn)
@@ -69,9 +71,11 @@ class MultiDimensionalTabStarter implements IActionListener {
                 tabbedPane.selectedIndex = index
             }
         } else {
-            int selectedRow = tree.selectedRow
-            if (selectedRow + 1 <= tree.rowCount) {
-                tree.selectionModel.setSelectionPath(tree.getPathForRow(selectedRow + 1))
+            if (tree.selectedRow) {
+                int selectedRow = tree.selectedRow
+                if (selectedRow + 1 <= tree.rowCount) {
+                    tree.selectionModel.setSelectionPath(tree.getPathForRow(selectedRow + 1))
+                }
             }
         }
     }

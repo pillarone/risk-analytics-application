@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
+import java.awt.Dimension
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 import com.ulcjava.base.application.*
-import com.ulcjava.base.application.util.*
 
 class AboutDialog {
 
@@ -62,20 +62,10 @@ class AboutDialog {
         String buildNo = "${getText("build#")}: ${infoProperties.getProperty("build.no", "N/A")}"
         pane.add(new ULCLabel(buildNo), ULCBoxPane.BOX_CENTER_TOP)
 
+        FollowLinkPane htmlPane = new FollowLinkPane()
         String url = getText("url")
-        ULCButton web = new ULCButton("<html><a href='${url}'>${url}</a></html>")
-        web.borderPainted = false
-        web.setForeground pane.getBackground()
-        web.setBackground pane.getBackground()
-        web.setCursor Cursor.HAND_CURSOR
-        web.setOpaque false
-        web.actionPerformed = {event ->
-            if (!UIUtils.isUnixOs()) {
-                ClientContext.showDocument("http://www.pillarone.org", "_new")
-            }
-        }
-        pane.add(web, ULCBoxPane.BOX_CENTER_TOP)
-
+        htmlPane.setText("<a href='${url}'>${url}</a>")
+        pane.add(htmlPane, ULCBoxPane.BOX_CENTER_TOP)
         pane
     }
 
@@ -120,7 +110,7 @@ class AboutDialog {
         ULCBoxPane pane = new ULCBoxPane(2, 0)
         pane.background = Color.white
         pane.border = BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        StringBuilder builder = new StringBuilder("<html><table><tr>");
+        StringBuilder builder = new StringBuilder("");
         builder.append("<p><b>")
         builder.append(getText("usedLibraries"))
         builder.append("</b></p><br>")
@@ -153,23 +143,24 @@ class AboutDialog {
         builder.append("<td align='left' ><a href='http://canoo.com/ulc'>http://canoo.com/ulc</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Apache Commons Math,<br> Logging</td>")
-        builder.append("   <td align='left' ><a href='http://commons.apache.org'>http://commons.apache.org</a></td>")
+        builder.append(" <td align='left' ><a href='http://commons.apache.org'>http://commons.apache.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >POI</td>")
-        builder.append("   <td align='left' ><a href='http://poi.apache.org'>http://poi.apache.org</a></td>")
+        builder.append(" <td align='left' ><a href='http://poi.apache.org'>http://poi.apache.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >SSJ</td>")
-        builder.append("   <td align='left' ><a href='http://www.iro.umontreal.ca/~simardr/ssj'>http://www.iro.umontreal.ca/~simardr/ssj</a></td>")
+        builder.append(" <td align='left' ><a href='http://www.iro.umontreal.ca/~simardr/ssj'>http://www.iro.umontreal.ca/~simardr/ssj</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >COLT</td>")
-        builder.append("   <td align='left' ><a href='http://acs.lbl.gov/~hoschek/colt'>http://acs.lbl.gov/~hoschek/colt</a></td>")
+        builder.append(" <td align='left' ><a href='http://acs.lbl.gov/~hoschek/colt'>http://acs.lbl.gov/~hoschek/colt</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >Lucene</td>")
-        builder.append("   <td align='left' ><a href='http://lucene.apache.org'>http://lucene.apache.org</a></td>")
+        builder.append(" <td align='left' ><a href='http://lucene.apache.org'>http://lucene.apache.org</a></td>")
         builder.append("</tr>")
         builder.append("<tr><td align='left' >java-wikipedia-parser</td>")
-        builder.append("   <td align='left' ><a href='http://code.google.com/p/java-wikipedia-parser'>http://code.google.com/p/java-wikipedia-parser</a></td>")
+        builder.append(" <td align='left' ><a href='http://code.google.com/p/java-wikipedia-parser'>http://code.google.com/p/java-wikipedia-parser</a></td>")
         builder.append("</tr>")
+        builder.append("</table>")
 
         FollowLinkPane htmlPane = new FollowLinkPane()
         htmlPane.setText(builder.toString())

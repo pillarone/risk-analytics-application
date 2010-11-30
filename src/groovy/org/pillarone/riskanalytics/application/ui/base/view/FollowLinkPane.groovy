@@ -15,14 +15,37 @@ class FollowLinkPane extends ULCHtmlPane {
         addHyperlinkListener(new OpenLinkListener())
     }
 
+    public void setText(String htmlText) {
+        super.setText(addCss(htmlText));
+    }
+
+    private String addCss(String htmlText) {
+        StringBuilder sb = new StringBuilder("<html>")
+        sb.append("<head><style type='text/css'>")
+        sb.append("body, a, p, td { font-family:sans-serif;font-size:10px;}")
+        sb.append("</style>")
+        sb.append("</head><body>")
+        sb.append(htmlText)
+        sb.append("</body></html>")
+        return sb.toString()
+    }
+
+
+
     class OpenLinkListener implements IHyperlinkListener {
 
         void linkActivated(HyperlinkEvent hyperlinkEvent) {
-            ClientContext.showDocument(hyperlinkEvent.getURL().toExternalForm(), "_new")
+            String url = null
+            try {
+                url = hyperlinkEvent.getURL().toExternalForm()
+            } catch (NullPointerException ex) {
+                url = hyperlinkEvent.getDescription()
+            }
+            if (url != null)
+                ClientContext.showDocument(url, "_new")
         }
 
         void linkError(HyperlinkEvent hyperlinkEvent) {
         }
     }
-}
-
+} 

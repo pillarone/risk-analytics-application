@@ -21,8 +21,7 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CommentPane {
-
-    protected ULCBoxPane content;
+    private ULCBoxPane content;
     FollowLinkPane label
     ULCLabel tags
     ULCButton editButton
@@ -51,14 +50,15 @@ class CommentPane {
         content.name = "CommentPane"
         content.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(getTitle());
-        border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
+        Font font = border.getTitleFont().deriveFont(Font.PLAIN)
+        border.setTitleFont(font);
         content.setBorder(border);
 
         label = new FollowLinkPane();
         if (searchText) label.name = "foundText"
         label.setText getLabelText()
 
-        label.setFont(label.getFont().deriveFont(Font.PLAIN));
+        label.setFont(font);
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
@@ -104,7 +104,7 @@ class CommentPane {
     }
 
     String getTitle() {
-        String username = comment.user ? comment.user.username : ""
+        String username = comment.user ? comment.user.userRealName : ""
         StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
         sb.append(" " + username)

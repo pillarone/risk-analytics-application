@@ -40,9 +40,8 @@ class SaveAsActionTests extends AbstractStandaloneTestCase {
 
         tree.doExpandRow 0
         tree.doExpandRow 1
-        tree.doExpandRow 2
 
-        ULCPopupMenuOperator popUpMenu = tree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popUpMenu = tree.callPopupOnCell(2, 0)
 
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Save as ...")

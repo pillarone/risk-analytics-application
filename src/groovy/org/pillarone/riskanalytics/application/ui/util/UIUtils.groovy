@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
@@ -22,6 +23,7 @@ class UIUtils {
     private static Log LOG = LogFactory.getLog(UIUtils)
 
     private static FontMetrics sFontMetrics
+    private static Font font
     public static String ICON_DIRECTORY = "/org/pillarone/riskanalytics/application/icons/"
 
     static int calculateTreeWidth(node) {
@@ -45,6 +47,13 @@ class UIUtils {
         }
 
         return sFontMetrics
+    }
+
+    public static Font getFont() {
+        if (font == null) {
+            font = new Font("SansSerif", Font.PLAIN, 12);
+        }
+        return font
     }
 
     private static int calculateTreeWidth(node, int columnIndex) {

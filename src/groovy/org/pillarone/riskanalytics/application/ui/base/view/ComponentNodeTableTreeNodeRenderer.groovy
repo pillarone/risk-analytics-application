@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationA
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.main.view.SubComponentMenuItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
@@ -56,7 +57,9 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
         addDynamicNodeMenu = new ULCPopupMenu()
-        addDynamicNodeMenu.add(new ULCMenuItem(new AddDynamicSubComponent(tree.rowHeaderTableTree, model)))
+        ULCMenuItem subComponentMenuItem = new SubComponentMenuItem(new AddDynamicSubComponent(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener(subComponentMenuItem)
+        addDynamicNodeMenu.add(subComponentMenuItem)
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         addDynamicNodeMenu.addSeparator()

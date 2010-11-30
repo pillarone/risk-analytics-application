@@ -18,7 +18,6 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
     protected void doStart() {
         new DBCleanUpService().cleanUp()
         LocaleResources.setTestMode()
-//        FileImportService.importModelsIfNeeded(["Application"])
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
 

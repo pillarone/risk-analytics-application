@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.core.model.Model
-
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
@@ -13,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.model.Model
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -80,10 +79,11 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     Model getSelectedModel() {
         DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
-        return getSelectedModel(itemNode)
+        return itemNode instanceof ItemNode ? getSelectedModel(itemNode) : null
     }
 
     Model getSelectedModel(DefaultMutableTableTreeNode itemNode) {
+        if (itemNode == null) return null
         DefaultMutableTableTreeNode modelNode = null
         while (modelNode == null) {
             if (itemNode instanceof ModelNode) {

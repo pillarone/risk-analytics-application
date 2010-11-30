@@ -13,6 +13,7 @@ import com.ulcjava.base.application.tree.TreePath;
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel;
 import com.ulcjava.base.shared.UlcEventCategories;
 import com.ulcjava.base.shared.UlcEventConstants;
+import com.ulcjava.base.shared.internal.IllegalArgumentException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,7 +66,6 @@ public class ULCFixedColumnTableTree extends ULCScrollPane {
             rowHeader.addColumn(new ULCTableTreeColumn(i, columnWidths[i]));
         }
 
-        //see PMO-919 and PMO-1013
         final ULCTableTree viewPort = new ULCHeaderFixedTableTree();
         viewPort.setAutoCreateColumnsFromModel(false);
         viewPort.setModel(model);
