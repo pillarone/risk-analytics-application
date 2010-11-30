@@ -7,11 +7,15 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.apache.commons.logging.LogFactory
+import org.apache.commons.logging.Log
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class SimulationAction extends SelectionTreeAction {
+
+    static Log LOG = LogFactory.getLog(SimulationAction)
 
     public SimulationAction(ULCTableTree tree, P1RATModel model) {
         super("RunSimulation", tree, model)

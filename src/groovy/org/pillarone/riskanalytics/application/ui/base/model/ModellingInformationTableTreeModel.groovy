@@ -25,11 +25,15 @@ import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.apache.commons.logging.LogFactory
+import org.apache.commons.logging.Log
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
+
+    static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     List<String> columnNames = ["Name", "State", "Tags", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
     SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
