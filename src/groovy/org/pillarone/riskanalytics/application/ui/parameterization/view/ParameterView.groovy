@@ -240,11 +240,13 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
     public void removeTabs() {
         int count = tabbedPane.getTabCount()
-        for (int i = 2; i < count; i++)
+        for (int i = count - 1; i > 1; i--) {
             tabbedPane.closeCloseableTab(i)
+        }
         tree.viewPortTableTree.getActionListeners().each {
-            if (it instanceof MultiDimensionalTabStarter)
+            if (it instanceof MultiDimensionalTabStarter) {
                 it.openTabs = [:]
+            }
         }
     }
 

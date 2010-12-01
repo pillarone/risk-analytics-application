@@ -7,6 +7,7 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -21,7 +22,7 @@ import com.ulcjava.base.application.*
  */
 class CommentPane {
     private ULCBoxPane content;
-    ULCLabel label
+    FollowLinkPane label
     ULCLabel tags
     ULCButton editButton
     ULCButton deleteButton
@@ -49,14 +50,15 @@ class CommentPane {
         content.name = "CommentPane"
         content.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(getTitle());
-        border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
+        Font font = border.getTitleFont().deriveFont(Font.PLAIN)
+        border.setTitleFont(font);
         content.setBorder(border);
 
-        label = new ULCLabel();
+        label = new FollowLinkPane();
         if (searchText) label.name = "foundText"
         label.setText getLabelText()
 
-        label.setFont(label.getFont().deriveFont(Font.PLAIN));
+        label.setFont(font);
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)

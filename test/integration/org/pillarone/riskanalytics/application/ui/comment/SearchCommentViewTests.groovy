@@ -1,15 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.comment
 
-import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
-import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.base.application.event.KeyEvent
-import java.awt.event.InputEvent
 import models.core.CoreModel
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -18,6 +10,16 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
+import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import com.ulcjava.base.application.ULCFrame
+import com.ulcjava.base.application.event.KeyEvent
+import java.awt.event.InputEvent
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import com.ulcjava.testframework.operator.*
 
 /**
@@ -79,9 +81,8 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         ULCComponentOperator commentPane = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('CommentPane'))
         assertNotNull commentPane
 
-        ULCLabelOperator label = new ULCLabelOperator(frameOperator, new ComponentByNameChooser('foundText'))
+        ULCComponentOperator label = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('foundText'))
         assertNotNull label
-        assertTrue label.getText().indexOf("span") != -1
 
         textFieldOperator.getFocus()
         textFieldOperator.typeText('test007')

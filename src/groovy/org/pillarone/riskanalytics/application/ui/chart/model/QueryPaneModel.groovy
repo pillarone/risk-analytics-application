@@ -234,7 +234,7 @@ class QueryPaneModel extends AbstractPresentationModel {
                 " AND s.period = " + criteria.selectedPeriod +
                 " AND s.path.pathName = '" + criteria.selectedPath + "'" +
                 " AND s.field.fieldName = '" + criteria.field + "'" +
-                " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.intepretedValue
+                " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.interpretedValue
         LOG.debug "Query: " + q
 
         //SingleValueResult.executeQuery(q)
@@ -244,7 +244,7 @@ class QueryPaneModel extends AbstractPresentationModel {
     }
 
     protected String createCriteriaSubQuerry(CriteriaViewModel model) {
-        return "sum(s.value) " + model.selectedComparator.toString() + " " + model.intepretedValue
+        return "sum(s.value) " + model.selectedComparator.toString() + " " + model.interpretedValue
     }
 
     public List createResultList() {
