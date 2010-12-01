@@ -239,7 +239,7 @@ class QueryPaneModel extends AbstractPresentationModel {
 
         //SingleValueResult.executeQuery(q)
         List list=ResultAccessor.getCriteriaConstrainedIterations(simulationRun,criteria.selectedPeriod,criteria.selectedPath
-        ,criteria.field,criteria.selectedComparator.toString(),criteria.intepretedValue);
+        ,criteria.field,criteria.selectedComparator.toString(),criteria.interpretedValue);
         return list;
     }
 
