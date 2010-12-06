@@ -29,6 +29,7 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
+        if (model.paramterTableTreeModel.readOnly) return
         def node = tree.selectedPath.lastPathComponent
         if (node && ComponentUtils.isDynamicComposedSubComponentNode(node)) {
             String path = getPathName(node.parent, "${node.name}")
