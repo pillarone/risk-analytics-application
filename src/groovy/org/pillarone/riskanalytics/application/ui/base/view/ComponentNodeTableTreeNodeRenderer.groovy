@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationA
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.main.view.LockSensitiveMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.SubComponentMenuItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
@@ -74,8 +75,15 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
-        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
-        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
+
+        LockSensitiveMenuItem treeNodeDuplicatorMenuItem = new LockSensitiveMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener treeNodeDuplicatorMenuItem
+        removeDynamicNodeMenu.add(treeNodeDuplicatorMenuItem)
+
+        LockSensitiveMenuItem treeNodeRenameMenuItem = new LockSensitiveMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener treeNodeRenameMenuItem
+        removeDynamicNodeMenu.add(treeNodeRenameMenuItem)
+
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         removeDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
@@ -83,7 +91,10 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
         removeDynamicNodeMenu.addSeparator()
-        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
+
+        LockSensitiveMenuItem removeDynamicSubComponentMenuItem = new LockSensitiveMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener removeDynamicSubComponentMenuItem
+        removeDynamicNodeMenu.add(removeDynamicSubComponentMenuItem)
 
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
@@ -100,7 +111,6 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         expandTreeMenuWithHelp.name = "popup.expand"
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeCollapser(tree)))
-        //expandTreeMenuWithHelp.addSeparator()
 
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
