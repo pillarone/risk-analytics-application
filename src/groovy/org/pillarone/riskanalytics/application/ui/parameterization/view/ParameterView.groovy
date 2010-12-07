@@ -117,21 +117,29 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         CheckBoxCellComponent checkBoxRenderer = new CheckBoxCellComponent();
 
         ULCPopupMenu menu = new ULCPopupMenu();
+        ULCPopupMenu mdpMenu = new ULCPopupMenu();
+        mdpMenu.add(new ULCMenuItem(new OpenMDPAction(tree)))
+
         TableTreeCopier copier = new TableTreeCopier();
         copier.setTable(tree);
         menu.add(new ULCMenuItem(copier));
+        mdpMenu.add(new ULCMenuItem(copier));
         TreeNodePaster paster = new TreeNodePaster();
         paster.setTree(tree);
         menu.add(new ULCMenuItem(paster));
+        mdpMenu.add(new ULCMenuItem(paster));
         InsertCommentAction insertComment = new InsertCommentAction(tree, (columnIndex - 1) % model.periodCount)
         insertComment.addCommentListener commentAndErrorView
         ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree, (columnIndex - 1) % model.periodCount, false)
         showCommentsAction.addCommentListener commentAndErrorView
 
+        mdpMenu.addSeparator()
+        mdpMenu.add(new ULCMenuItem(insertComment))
+        mdpMenu.add(new ULCMenuItem(showCommentsAction))
+
         menu.addSeparator()
         menu.add(new ULCMenuItem(insertComment))
         menu.add(new ULCMenuItem(showCommentsAction))
-        menu.addSeparator()
 
         defaultRenderer.setMenu(menu)
         doubleRenderer.setMenu(menu)
@@ -139,7 +147,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         dateRenderer.setMenu(menu)
         initComboBox(comboBoxRenderer, menu);
         initCheckBox(checkBoxRenderer, menu);
-        mdpRenderer.setMenu(menu)
+        mdpRenderer.setMenu(mdpMenu)
 
         Map renderers = new HashMap<Class, ITableTreeCellRenderer>();
         renderers.put(SimpleValueParameterizationTableTreeNode.class,
