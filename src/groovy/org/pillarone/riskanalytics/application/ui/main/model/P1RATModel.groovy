@@ -346,9 +346,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             modellingItem.id = null
             fireModelChanged()
             selectionTreeModel.addNodeForItem(modellingItem)
-            if (openNewVersion) {
-                notifyOpenDetailView(model, modellingItem)
-            }
+            notifyOpenDetailView(model, modellingItem)
         }
     }
 
