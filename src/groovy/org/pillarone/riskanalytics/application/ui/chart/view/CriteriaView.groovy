@@ -43,7 +43,13 @@ class CriteriaView {
             if (model.validate())
                 model.queryModel.query()
             else {
-                String errorName = valueIntepretationComboBox.model.selectedEnum == ValueInterpretationType.PERCENTILE ? "PercentalNumberNotValid" : "PercentalNumberNotValid"
+                String errorName = ''
+                if (valueIntepretationComboBox.model.selectedEnum == ValueInterpretationType.PERCENTILE) {
+                    errorName = 'PercentileNumberNotValid'
+                }
+                else if (valueIntepretationComboBox.model.selectedEnum == ValueInterpretationType.ORDER_STATISTIC) {
+                    errorName = 'ObservationNumberNotValid'
+                }
                 new I18NAlert(UlcUtilities.getWindowAncestor(content), errorName).show()
             }
 
