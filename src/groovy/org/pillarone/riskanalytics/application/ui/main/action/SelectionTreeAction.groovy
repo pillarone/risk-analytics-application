@@ -77,7 +77,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     Model getSelectedModel() {
         ITreeNode itemNode = tree?.selectionPath?.lastPathComponent
-        return itemNode instanceof ItemNode ? getSelectedModel(itemNode) : null
+        return getSelectedModel(itemNode)
     }
 
     Model getSelectedModel(ITreeNode itemNode) {
