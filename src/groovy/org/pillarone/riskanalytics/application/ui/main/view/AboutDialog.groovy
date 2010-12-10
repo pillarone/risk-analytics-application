@@ -1,7 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
-import java.awt.Dimension
+import com.ulcjava.base.application.util.BorderedComponentUtilities
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.application.util.Font
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
