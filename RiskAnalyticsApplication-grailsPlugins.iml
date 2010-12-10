@@ -65,6 +65,11 @@
     <orderEntry type="module-library" exported="">
       <library name="Grails User Library">
         <CLASSES>
+          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/jasper-0.9.5-riskanalytics/lib" />
+          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/quartz-0.4.1/lib" />
+          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/joda-time-0.5/lib" />
+          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/ulc-2008-u4-3/lib" />
+          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/lib" />
           <root url="jar://$USER_HOME$/.ivy2/cache/canoo/ulc-standalone-client/jars/ulc-standalone-client-2008-u4-3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/canoo/ulc-servlet-client/jars/ulc-servlet-client-2008-u4-3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/canoo/ulc-jnlp-client/jars/ulc-jnlp-client-2008-u4-3.jar!/" />
@@ -72,11 +77,6 @@
           <root url="jar://$USER_HOME$/.ivy2/cache/canoo/ulc-base-trusted/jars/ulc-base-trusted-2008-u4-3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/canoo/ulc-base-client/jars/ulc-base-client-2008-u4-3.jar!/" />
           <root url="jar://$USER_HOME$/.ivy2/cache/canoo/ulc-applet-client/jars/ulc-applet-client-2008-u4-3.jar!/" />
-          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/jasper-0.9.5-riskanalytics/lib" />
-          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/quartz-0.4.1/lib" />
-          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/joda-time-0.5/lib" />
-          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/ulc-2008-u4-3/lib" />
-          <root url="file://$MODULE_DIR$/../local-plugins/RiskAnalyticsApplication-v1.2/risk-analytics-core-1.1.1.6-workflow/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

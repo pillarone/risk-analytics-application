@@ -4,6 +4,8 @@ import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.netbeans.jemmy.operators.ComponentOperator
+import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -18,7 +20,7 @@ class CriteriaViewModel {
         this.@queryModel = queryModel
         this.@enablePeriodComboBox = enablePeriodComboBox
         keyFigureTypeModel = new DefaultComboBoxModel(queryModel.shortPaths)
-        comparatorModel = new EnumComboBoxModel(CriteriaComparator.values() as Object[], CriteriaComparator.GREATER_EQUALS, false)
+        comparatorModel = new EnumComboBoxModel(CriteriaComparator.values() as Object[], CriteriaComparator.GREATER_THAN, false)
         valueInterpretationModel = new EnumComboBoxModel(ValueInterpretationType.values() as Object[], ValueInterpretationType.ORDER_STATISTIC, true)
         createPeriodModel()
         selectedPeriod = queryModel.defaultPeriod
@@ -58,9 +60,9 @@ class CriteriaViewModel {
                 return this.@value
             case ValueInterpretationType.PERCENTILE:
                 return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
-            case ValueInterpretationType.ORDER_STATISTIC:
-                boolean countingFromLowerEnd = comparatorModel.selectedEnum == CriteriaComparator.LESS_THAN && comparatorModel.selectedEnum == CriteriaComparator.LESS_EQUALS
-                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value, countingFromLowerEnd)
+            case ValueInterpretationType.ORDER_STATISTIC :
+                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector, 
+                        field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem))
         }
     }
 
@@ -115,6 +117,24 @@ public enum CriteriaComparator {
 
     public String toString() {
         return displayName
+    }
+
+    public static CompareOperator getCompareOperator(String displayName) {
+        if (displayName.equals('<')) {
+            return CompareOperator.LESS_THAN
+        }
+        else if (displayName.equals('<=')) {
+            return CompareOperator.LESS_EQUALS
+        }
+        else if (displayName.equals('=')) {
+            return CompareOperator.EQUALS
+        }
+        else if (displayName.equals('>')) {
+            return CompareOperator.GREATER_THAN
+        }
+        else if (displayName.equals('>=')) {
+            return CompareOperator.GREATER_EQUALS
+        }
     }
 }
 
