@@ -1,15 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
-import org.pillarone.riskanalytics.core.workflow.Status
-
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.user.UserManagement
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.workflow.Status
 
 class StartWorkflowAction extends AbstractWorkflowAction {
 
@@ -35,6 +33,7 @@ class StartWorkflowAction extends AbstractWorkflowAction {
         }
         if (parameterization.status == Status.NONE) {
             dialog.okAction = okAction
+            dialog.selectDeal parameterization
             dialog.show()
         } else {
             super.doActionPerformed(event)

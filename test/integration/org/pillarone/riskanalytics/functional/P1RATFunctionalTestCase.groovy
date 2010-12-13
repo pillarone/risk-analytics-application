@@ -61,6 +61,10 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
         return new ULCTextFieldOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
+    ULCDialogOperator getDialogOperator(String name) {
+        return new ULCDialogOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
     ULCTableTreeOperator getSelectionTreeRowHeader() {
         ULCTableTreeOperator tableTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         assertNotNull tableTree

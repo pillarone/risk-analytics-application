@@ -71,6 +71,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, model)))
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
         parameterNodePopUpMenu.addSeparator()

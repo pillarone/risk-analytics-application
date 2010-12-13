@@ -1,33 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
-import com.ulcjava.base.application.ULCWindow
-import com.ulcjava.base.application.ULCDialog
-import com.ulcjava.base.application.ULCComboBox
-import com.ulcjava.base.application.ULCButton
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import com.ulcjava.base.application.DefaultComboBoxModel
-import org.pillarone.riskanalytics.core.remoting.ITransactionService
-import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
-import org.pillarone.riskanalytics.core.remoting.TransactionInfo
-import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.ULCLabel
-import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.event.IActionListener
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.util.LocaleResources
-
+import org.pillarone.riskanalytics.core.remoting.ITransactionService
+import org.pillarone.riskanalytics.core.remoting.TransactionInfo
+import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import com.ulcjava.base.application.*
 
 class DealLinkDialog {
+    ITransactionService transactionService
 
     private static class DealComboBoxModel extends DefaultComboBoxModel {
 
         private Map<String, Long> items = [:]
 
         public DealComboBoxModel() {
-            ITransactionService transactionService = RemotingUtils.getTransactionService()
-            for (TransactionInfo info in transactionService.allTransactions) {
+            for (TransactionInfo info in getAllTransactions()) {
                 addElement(info.name)
                 items.put(info.name, info.dealId)
             }
@@ -107,6 +97,24 @@ class DealLinkDialog {
 
     public hide() {
         dialog.visible = false
+    }
+
+    public void selectDeal(Parameterization parameterization) {
+        if (!parameterization.isLoaded()) {
+            parameterization.load()
+        }
+        if (parameterization.dealId == null) return
+
+        for (TransactionInfo info in getAllTransactions()) {
+            if (info.dealId == parameterization.dealId) {
+                dealSelection.setSelectedItem(info.name)
+            }
+        }
+    }
+
+    private static List<TransactionInfo> getAllTransactions() {
+        ITransactionService transactionService = RemotingUtils.getTransactionService()
+        return transactionService.allTransactions
     }
 
     /**
