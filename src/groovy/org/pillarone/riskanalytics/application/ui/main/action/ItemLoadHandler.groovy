@@ -44,31 +44,35 @@ class ItemLoadHandler implements IFileLoadHandler {
         importAction.userPreferences.setUserDirectory(paths, names)
         ExceptionSafe.protect {
 
-            names.eachWithIndex {String fileName, int index ->
+            names.findAll {it.indexOf(".groovy") != -1}.eachWithIndex {String fileName, int index ->
                 String itemName = names[index] - ".groovy"
                 List lines = inputStreams[index].readLines()
                 String fileContent = getFileContent(lines)
                 try {
                     ConfigObject data = new ConfigSlurper().parse(fileContent)
-                    spreadRanges(data)
-                    Model parentNodeModel = getModel(data)
-                    if (!parentNodeModel || parentNodeModel.class.name != data.model.name) {
-                        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "differentsModel", [data.model.getSimpleName(), parentNodeModel.class.getSimpleName()])
-                        alert.show()
-                    } else {
-                        VersionNumber versionNumber = getVersionNumber(itemName)
-                        ModellingItem newItem
-                        if (withVersionNumber && versionNumber)
-                            newItem = ModellingItemFactory.createParameterization(itemName, data, Parameterization.class, versionNumber)
-                        else
-                            newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
-
-                        if (newItem != null) {
-                            importAction.model.importItem(newItem, data.model)
-                        } else {
-                            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "lastVersionError")
+                    if (validate(data)) {
+                        spreadRanges(data)
+                        Model parentNodeModel = getModel(data)
+                        if (!parentNodeModel || parentNodeModel.class.name != data.model.name) {
+                            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "differentsModel", [data.model.getSimpleName(), parentNodeModel.class.getSimpleName()])
                             alert.show()
+                        } else {
+                            VersionNumber versionNumber = getVersionNumber(itemName)
+                            ModellingItem newItem
+                            if (withVersionNumber && versionNumber)
+                                newItem = ModellingItemFactory.createParameterization(itemName, data, Parameterization.class, versionNumber)
+                            else
+                                newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
+
+                            if (newItem != null) {
+                                importAction.model.importItem(newItem, data.model)
+                            } else {
+                                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "lastVersionError")
+                                alert.show()
+                            }
                         }
+                    } else {
+                        LOG.error "error by importing a parameterization $itemName : config object is not valid"
                     }
 
                 } catch (Throwable e) {
@@ -155,6 +159,13 @@ class ItemLoadHandler implements IFileLoadHandler {
             model.init()
         }
         return model
+    }
+
+    boolean validate(ConfigObject data) {
+        if (importAction instanceof ImportAllAction) {
+            return (data.containsKey("fileType") && data.fileType == 'Parameterization') || data.containsKey("applicationVersion")
+        }
+        return true
     }
 
 }
