@@ -128,7 +128,14 @@ class ResultIterationDataView implements IModelChangedListener {
     void attachListeners() {
         addCriteriaGroupButton.addActionListener([actionPerformed: { model.addCriteriaGroup() }] as IActionListener)
         queryButton.addActionListener([actionPerformed: {
-            model.validate() ? model.query() : new I18NAlert(UlcUtilities.getWindowAncestor(content), 'ObservationNumberNotValid').show()
+            if (model.validate()) {
+                model.query()
+            } else {
+                String error = model.getErrorMessage()
+                if (error) {
+                    new I18NAlert(UlcUtilities.getWindowAncestor(content), error).show()
+                }
+            }
         }] as IActionListener)
         groupColumnsByPeriodButton.addActionListener([actionPerformed: { updateOrder(false)}] as IActionListener)
         groupColumnsByPathButton.addActionListener([actionPerformed: {updateOrder(true)}] as IActionListener)

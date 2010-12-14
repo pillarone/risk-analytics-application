@@ -157,13 +157,23 @@ class QueryPaneModel extends AbstractPresentationModel {
     public boolean validate() {
         boolean isValid = true
         for (List group: criterias) {
-            for (ChartViewModel criteria: group) {
+            for (CriteriaViewModel criteria: group) {
                 isValid = isValid && criteria.validate()
             }
         }
         return isValid
     }
 
+    public String getErrorMessage() {
+        for (List group: criterias) {
+            for (CriteriaViewModel criteria: group) {
+                if (!criteria.validate()) {
+                    return criteria.getErrorMessage()
+                }
+            }
+        }
+        return null
+    }
 
     private List programmaticAnd(List groupList, List smallesList) {
         if (groupList.size() == 0) {
