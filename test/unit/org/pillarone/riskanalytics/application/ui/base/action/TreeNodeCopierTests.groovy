@@ -31,7 +31,7 @@ class TreeNodeCopierTests extends GroovyTestCase {
         TestTreeNodeCopier copier = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2], copyWithPath: true)
 
         String result = copier.writeNode(rootNode, 3)
-        def str = "[[a, b, c]]\ta\tb\tc\n[[a, b, c], [a1, b1, c1]]\t   a1\tb1\tc1\n"
+        def str = "[[a, b, c]]\ta\tb\tc\n[[a, b, c], [a1, b1, c1]]\t a1\tb1\tc1\n"
         assertEquals str, result
         LocaleResources.clearTestMode()
     }

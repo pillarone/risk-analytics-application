@@ -31,26 +31,18 @@ class CriteriaView {
     void attachListeners() {
         removeButton.addActionListener([actionPerformed: { model.remove() }] as IActionListener)
         valueField.addValueChangedListener([valueChanged: {e ->
-            double value = valueField.value
-            if (value != null) {
-                model.value = value
-            } else {
-                ULCAlert alert = new I18NAlert("InvalidNumberFormat")
-                alert.show()
+            model.value = valueField.value
+            if (!model.value || !model.queryModel.validate()) {
+                new I18NAlert(getErrorMessage(valueIntepretationComboBox.model.selectedEnum)).show()
+//                valueField.setText String.valueOf(CriteriaViewModel.DEFAULT_VALUE)
+//                model.value = CriteriaViewModel.DEFAULT_VALUE
             }
         }] as IValueChangedListener)
         valueField.addActionListener([actionPerformed: {
             if (model.validate())
                 model.queryModel.query()
             else {
-                String errorName = ''
-                if (valueIntepretationComboBox.model.selectedEnum == ValueInterpretationType.PERCENTILE) {
-                    errorName = 'PercentileNumberNotValid'
-                }
-                else if (valueIntepretationComboBox.model.selectedEnum == ValueInterpretationType.ORDER_STATISTIC) {
-                    errorName = 'ObservationNumberNotValid'
-                }
-                new I18NAlert(UlcUtilities.getWindowAncestor(content), errorName).show()
+                new I18NAlert(UlcUtilities.getWindowAncestor(content), getErrorMessage(valueIntepretationComboBox.model.selectedEnum)).show()
             }
 
 
@@ -110,5 +102,13 @@ class CriteriaView {
      */
     protected String getText(String key) {
         return LocaleResources.getString("CriteriaView." + key);
+    }
+
+    static String getErrorMessage(ValueInterpretationType selectedType) {
+        switch (selectedType) {
+            case ValueInterpretationType.PERCENTILE: return "PercentileNumberNotValid"
+            case ValueInterpretationType.ORDER_STATISTIC: return "ObservationNumberNotValid"
+            default: return "InvalidNumberFormat"
+        }
     }
 }

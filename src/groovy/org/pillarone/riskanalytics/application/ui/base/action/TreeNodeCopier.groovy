@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class TreeNodeCopier extends ResourceBasedAction {
 
-    static String space = "   "
+    static String space = " "
 
     ULCTableTree rowHeaderTree
     ULCTableTree viewPortTree
