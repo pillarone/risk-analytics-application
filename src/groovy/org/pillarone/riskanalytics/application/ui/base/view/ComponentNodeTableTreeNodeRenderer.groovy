@@ -145,6 +145,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, def node) {
+        setForeground(Color.black)
         if (node.comments && node.comments.size() > 0) {
             setFont(getFont().deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
@@ -156,23 +157,18 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
     void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
         Font font = getFont()
-        if (node.errorMessage == null) {
-            setForeground(Color.black)
-            setToolTipText(null)
-            setFont(font.deriveFont(Font.PLAIN))
-        } else {
+        if (node.errorMessage != null) {
             setForeground(Color.red)
             setToolTipText(node.errorMessage)
             setFont(font.deriveFont(Font.BOLD))
-        }
-        if (node.comments && node.comments.size() > 0) {
+        } else if (node.comments && node.comments.size() > 0) {
             setForeground(Color.black)
             setFont(font.deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
             setForeground(Color.black)
+            setToolTipText(null)
             setFont(font.deriveFont(Font.PLAIN))
-            setToolTipText("")
         }
     }
 
