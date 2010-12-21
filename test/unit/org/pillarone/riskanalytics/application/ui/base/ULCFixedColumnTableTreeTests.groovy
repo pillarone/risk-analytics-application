@@ -15,7 +15,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     ULCComponent createContentPane() {
         SimpleTableTreeNode rootNode = createRootNode()
         DefaultTableTreeModel model = new DefaultTableTreeModel(rootNode, ["one", "two", "three", "four", "five", "six"] as String[])
-        ULCFixedColumnTableTree tree = new ULCFixedColumnTableTree(model, 1, [500, 500, 500, 500, 500, 500] as int[])
+        ULCFixedColumnTableTree tree = new ULCFixedColumnTableTree(model, 2, [100, 100, 100, 100, 100, 100] as int[])
         tree.setCellSelectionEnabled true
         return tree
     }
@@ -23,7 +23,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     SimpleTableTreeNode createRootNode() {
         SimpleTableTreeNode rootNode = new SimpleTableTreeNode("root")
         List childdren = []
-        (1..100).each {
+        (1..10).each {
             TestTableTreeNode child = new TestTableTreeNode("child" + it, "child1Value At " + it)
             childdren << child
         }
@@ -37,7 +37,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     }
 
     public void testSleep() {
-//        Thread.sleep 1000000
+        Thread.sleep 300000
     }
 
     private void createChild(SimpleTableTreeNode child, int depth) {
