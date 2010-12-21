@@ -4,7 +4,6 @@ import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.netbeans.jemmy.operators.ComponentOperator
 import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
 
 class CriteriaViewModel {
@@ -56,9 +55,9 @@ class CriteriaViewModel {
 
     public double getInterpretedValue() {
         switch (valueInterpretationModel.selectedEnum) {
-            case ValueInterpretationType.ABSOLUTE:
+            case ValueInterpretationType.ABSOLUTE :
                 return this.@value
-            case ValueInterpretationType.PERCENTILE:
+            case ValueInterpretationType.PERCENTILE :
                 return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
             case ValueInterpretationType.ORDER_STATISTIC :
                 return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector, 
@@ -72,6 +71,16 @@ class CriteriaViewModel {
         }
         return true
     }
+
+    public String getErrorMessage() {
+        if (valueInterpretationModel.getSelectedEnum() != ValueInterpretationType.ABSOLUTE) {
+            if (value < 0 || value > 100) {
+                return CriteriaView.getErrorMessage(valueInterpretationModel.getSelectedEnum())
+            }
+        }
+        return null
+    }
+
 
     public void setValue(String s) {
         value = Double.parseDouble(s)
