@@ -2,11 +2,8 @@ package org.pillarone.riskanalytics.application.ui.base
 
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 
 /**
@@ -18,16 +15,15 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     ULCComponent createContentPane() {
         SimpleTableTreeNode rootNode = createRootNode()
         DefaultTableTreeModel model = new DefaultTableTreeModel(rootNode, ["one", "two", "three", "four", "five", "six"] as String[])
-        ULCFixedColumnTableTree tree = new ULCFixedColumnTableTree(model, 2, [500, 500, 500, 500, 500, 500] as int[])
-        tree.getRowHeaderTableTree().registerKeyboardAction(new TreeNodeExpander(tree: tree.getRowHeaderTableTree()), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true), ULCComponent.WHEN_FOCUSED);
-        tree.setCellSelectionEnabled false
+        ULCFixedColumnTableTree tree = new ULCFixedColumnTableTree(model, 2, [100, 100, 100, 100, 100, 100] as int[])
+        tree.setCellSelectionEnabled true
         return tree
     }
 
     SimpleTableTreeNode createRootNode() {
         SimpleTableTreeNode rootNode = new SimpleTableTreeNode("root")
         List childdren = []
-        (1..5).each {
+        (1..10).each {
             TestTableTreeNode child = new TestTableTreeNode("child" + it, "child1Value At " + it)
             childdren << child
         }
@@ -41,7 +37,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     }
 
     public void testSleep() {
-        Thread.sleep 1000000
+//        Thread.sleep 300000
     }
 
     private void createChild(SimpleTableTreeNode child, int depth) {
