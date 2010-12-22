@@ -122,6 +122,7 @@ class AddTagDialogITests extends P1RATAbstractStandaloneTestCase {
         Tag.withNewSession {Session session ->
             ParameterizationDAO parameterization = ParameterizationDAO.findByName("CoreAlternativeParameters")
             assertNotNull parameterization
+            //todo save changed data in database doesn't work correctly in cruise
 //            assertEquals 1, parameterization.tags.size()
         }
 

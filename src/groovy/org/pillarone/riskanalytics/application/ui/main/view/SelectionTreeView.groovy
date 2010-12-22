@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
@@ -61,7 +63,8 @@ class SelectionTreeView {
 
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
             it.setHeaderRenderer(new CenteredHeaderRenderer())
-//            it.setHeaderRenderer(new IconHeaderCellRenderer())
+            //todo ART-206 add filter dialog
+//            it.setHeaderRenderer(new FilteredCenteredHeaderRenderer())
         }
 
         MainSelectionTableTreeCellRenderer renderer = getPopUpRenderer(tree)
@@ -79,6 +82,15 @@ class SelectionTreeView {
         tree.rowHeaderTableTree.getSelectionModel().setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([p1RATModel.selectionTreeModel.root] as Object[])] as TreePath[], false);
+        tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
+            if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
+                ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
+                SelectionTreeHeaderDialog dialog = new SelectionTreeHeaderDialog(tree.viewPortTableTree, column.getModelIndex())
+                dialog.init()
+                dialog.dialog.setLocationRelativeTo(column.getHeaderRenderer())
+                dialog.dialog.setVisible true
+            }
+        }] as IActionListener)
     }
 
     public MainSelectionTableTreeCellRenderer getPopUpRenderer(ULCFixedColumnTableTree tree) {

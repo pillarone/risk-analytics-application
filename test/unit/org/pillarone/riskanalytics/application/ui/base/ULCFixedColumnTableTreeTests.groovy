@@ -37,7 +37,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     }
 
     public void testSleep() {
-        Thread.sleep 300000
+//        Thread.sleep 300000
     }
 
     private void createChild(SimpleTableTreeNode child, int depth) {
