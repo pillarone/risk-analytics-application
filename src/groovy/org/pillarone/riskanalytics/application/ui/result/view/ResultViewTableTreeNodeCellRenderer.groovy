@@ -128,7 +128,6 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
-        println "collector : ${node.collector}"
         if (node.childCount > 0)
             rendererComponent.setComponentPopupMenu(node.collector == SingleValueCollectingModeStrategy.IDENTIFIER ? singleResultNodePopup : resultNodePopup)
         else

@@ -31,7 +31,7 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
         SingleCollectorView view = new SingleCollectorView(model)
         view.init()
         if (view.content) {
-            tabbedPane.addTab("Single value view ", null, view.content)
+            tabbedPane.addTab("Single value view ", view.content)
             String toolTipText = "Single value view"
             tabbedPane.setToolTipTextAt(tabbedPane.tabCount - 1, toolTipText)
             tabbedPane.selectedIndex = tabbedPane.tabCount - 1

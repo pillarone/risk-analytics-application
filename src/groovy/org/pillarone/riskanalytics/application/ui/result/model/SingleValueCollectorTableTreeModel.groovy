@@ -15,42 +15,47 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
 
     static Log LOG = LogFactory.getLog(SingleValueCollectorTableTreeModel)
-    List<String> columnNames = ["Iteration", "Result"]
+    List<String> columnNames = ["Iteration"]
     ITableTreeNode root
     List<ResultTableTreeNode> nodes
 
     SingleValueTreeBuilder builder
-    List singleValueResults = []
+    Map singleValueResultsMap = [:]
     int iterations = 10
     SimulationRun simulationRun
+    def periodCount
 
     public SingleValueCollectorTableTreeModel(List nodes, SimulationRun simulationRun) {
-        this.nodes = nodes.sort {SimpleTableTreeNode node -> node.path }
+        this.nodes = nodes?.sort {SimpleTableTreeNode node -> node.path }
         this.simulationRun = simulationRun
+        this.periodCount = simulationRun?.periodCount
+        singleValueResultsMap = [:]
     }
 
     public void init() {
-        nodes.each { ResultTableTreeNode resultTableTreeNode ->
-            singleValueResults.addAll(ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun))
+        nodes.eachWithIndex { ResultTableTreeNode resultTableTreeNode, int nodeIndex ->
+            singleValueResultsMap[nodeIndex] = getList(ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun))
         }
-        builder = new SingleValueTreeBuilder(singleValueResults, iterations)
+        builder = new SingleValueTreeBuilder(singleValueResultsMap, iterations, nodes.size(), simulationRun.periodCount)
         builder.build()
         this.root = builder.root
     }
 
     int getColumnCount() {
-        return columnNames.size();
+        return 1 + periodCount * nodes.size();
     }
 
     public String getColumnName(int i) {
-        return columnNames[i]
+        int periodIndex = (i - 1) / nodes.size()
+        int nodeIndex = (i - 1) % nodes.size()
+        return i == 0 ? columnNames[0] : nodes[nodeIndex].getDisplayName() + " N${nodeIndex} P${periodIndex}"
     }
 
     Object getValueAt(Object node, int i) {
         if (i == 0) {
             return "${node.getValueAt(0)}".toString()
         } else if (node instanceof SingleCollectorIterationNode) {
-            return node.values[i]
+            return node.getValueAtIndex(i)
         }
         return ""
     }
@@ -73,6 +78,21 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
 
     public int getIndexOfChild(Object parent, Object child) {
         return parent.getIndex(child)
+    }
+
+    List getList(List list) {
+        def result = []
+
+        def iterationList = []
+        (1..iterations).each { int iteration ->
+            iterationList = []
+            (0..periodCount).each { int period ->
+                iterationList.addAll(list.findAll {it[3] == iteration}.findAll {it[4] == period})
+            }
+            result << iterationList
+        }
+        return result
+
     }
 
 
