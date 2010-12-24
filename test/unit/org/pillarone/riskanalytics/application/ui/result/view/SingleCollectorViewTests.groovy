@@ -2,7 +2,9 @@ package org.pillarone.riskanalytics.application.ui.result.view
 
 import com.ulcjava.base.application.ULCComponent
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.SingleValueCollectorTableTreeModel
+import org.pillarone.riskanalytics.application.ui.result.model.SingleValueTreeBuilder
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -23,9 +25,22 @@ class SingleCollectorViewTests extends AbstractP1RATTestCase {
     }
 
     private SingleValueCollectorTableTreeModel getMockModel() {
-        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel()
-        model.singleValueResults = [["path0", 0, "x", 0], ["path1", 1, "x", 1], ["path2", 2, "x", 2], ["path3", 3, "x", 3], ["path4", 4, "x", 4], ["path5", 5, "x", 5], ["path6", 6, "x", 6], ["path7", 7, "x", 7], ["path8", 8, "x", 8], ["path9", 9, "x", 9]]
-        model.iterations = 10
+        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(null, null)
+        model.singleValueResultsMap[0] = [[["net", 1.84783834, "paid", 1, 0], ["net", 11.04129301744273E7, "paid", 1, 0], ["net", 111.5637624293, "paid", 1, 0]]]
+        model.singleValueResultsMap[1] = [[["net", 2.84783834, "paid", 1, 0], ["net", 22.04129301744273E7, "paid", 1, 0], ["net", 222.5637624293, "paid", 1, 0]]]
+        model.iterations = 1
+        model.periodCount = 1
+        model.nodes = [new ResultTableTreeNode("node1"), new ResultTableTreeNode("node2")]
+        model.metaClass.setIterations = {->
+            model.iterations = 1
+        }
+        model.metaClass.init = {->
+            model.builder = new SingleValueTreeBuilder(model.singleValueResultsMap, model.iterations, 2, 1)
+            model.builder.build()
+        }
+
+
+
         return model
     }
 

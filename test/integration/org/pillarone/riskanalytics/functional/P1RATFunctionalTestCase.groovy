@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.functional
 
+import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -41,6 +42,10 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
         new ULCTableTreeOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
+    ULCTreeOperator getTreeOperatorByName(String name) {
+        new ULCTreeOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
     ULCButtonOperator getButtonOperator(String name) {
         new ULCButtonOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
@@ -57,7 +62,7 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
         return new ULCPopupMenuOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
-    ULCTextFieldOperator getTextFieldOperator(GString name) {
+    ULCTextFieldOperator getTextFieldOperator(String name) {
         return new ULCTextFieldOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
@@ -71,8 +76,20 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
         return tableTree
     }
 
+    ULCTreeOperator getSelectionTree() {
+        ULCTreeOperator tree = getTreeOperatorByName("selectionTree")
+        assertNotNull tree
+        return tree
+    }
+
     void popUpContextMenu(int row, String itemName, ULCTableTreeOperator tableTree) {
         ULCPopupMenuOperator parametrizationContextMenu = tableTree.callPopupOnCell(row, 0)
+        assertNotNull parametrizationContextMenu
+        parametrizationContextMenu.pushMenu(itemName)
+    }
+
+    void popUpContextMenu(TreePath treePath, String itemName, ULCTreeOperator tree) {
+        ULCPopupMenuOperator parametrizationContextMenu = tree.callPopupOnPath(treePath)
         assertNotNull parametrizationContextMenu
         parametrizationContextMenu.pushMenu(itemName)
     }

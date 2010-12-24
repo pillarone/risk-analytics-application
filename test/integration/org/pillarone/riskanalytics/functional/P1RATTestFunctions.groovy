@@ -2,8 +2,8 @@ package org.pillarone.riskanalytics.functional
 
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
+import com.ulcjava.testframework.operator.ULCTreeOperator
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.functional.main.ImportExportParametrizationTests
 
@@ -13,10 +13,10 @@ import org.pillarone.riskanalytics.functional.main.ImportExportParametrizationTe
 class P1RATTestFunctions extends P1RATFunctionalTestCase {
 
     public def importCoreAltenativeParameters() {
-        ULCTableTreeOperator tableTree = getSelectionTreeRowHeader()
+        ULCTreeOperator tableTree = getSelectionTree()
         TreePath parametrizationPath = tableTree.findPath(["Core", "Parameterization"] as String[])
         assertNotNull "path not found", parametrizationPath
-        popUpContextMenu(1, "Import (force)", tableTree)
+        popUpContextMenu(parametrizationPath, "Import (force)", tableTree)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
@@ -30,12 +30,12 @@ class P1RATTestFunctions extends P1RATFunctionalTestCase {
 
 
     public void exportCoreAltenativeParameters(String parameterizationName, String fileName) {
-        ULCTableTreeOperator tableTree = getSelectionTreeRowHeader()
+        ULCTreeOperator tableTree = getSelectionTree()
         TreePath parametrizationPath = tableTree.findPath(["Core", "Parameterization", parameterizationName] as String[])
         assertNotNull "path not found", parametrizationPath
         tableTree.doExpandRow 0
         tableTree.doExpandRow 1
-        popUpContextMenu(2, "Export", tableTree)
+        popUpContextMenu(parametrizationPath, "Export", tableTree)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()

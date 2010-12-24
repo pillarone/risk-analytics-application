@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationNode
+import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationRootNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -36,19 +37,19 @@ class SingleValueTreeBuilder {
     }
 
     private def createIterationNode(int iteration) {
-        DefaultMutableTableTreeNode iterationNode = createNode(String.valueOf(iteration))
+        SingleCollectorIterationRootNode iterationNode = createNode(iteration)
         singleResultsMap.each {k, v ->
             //-1, iteration started with 1,2,....
-            v[iteration - 1].each { def values ->
+            for (List values: v[iteration - 1]) {
                 SingleCollectorIterationNode node = new SingleCollectorIterationNode(values, k, selectedNodesSize, periodCount)
                 iterationNode.add(node)
             }
         }
-        iterationNode
+        return iterationNode
     }
 
-    private ITableTreeNode createNode(String name) {
-        new DefaultMutableTableTreeNode(name)
+    private ITableTreeNode createNode(int iteration) {
+        new SingleCollectorIterationRootNode(iteration, singleResultsMap, periodCount)
     }
 
 }

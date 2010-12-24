@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationNode
+import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationRootNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
@@ -21,7 +22,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
 
     SingleValueTreeBuilder builder
     Map singleValueResultsMap = [:]
-    int iterations = 10
+    int iterations = 0
     SimulationRun simulationRun
     def periodCount
 
@@ -33,8 +34,9 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void init() {
+        setIterations()
         nodes.eachWithIndex { ResultTableTreeNode resultTableTreeNode, int nodeIndex ->
-            singleValueResultsMap[nodeIndex] = getList(ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun))
+            singleValueResultsMap[nodeIndex] = convertList(ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun))
         }
         builder = new SingleValueTreeBuilder(singleValueResultsMap, iterations, nodes.size(), simulationRun.periodCount)
         builder.build()
@@ -54,7 +56,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     Object getValueAt(Object node, int i) {
         if (i == 0) {
             return "${node.getValueAt(0)}".toString()
-        } else if (node instanceof SingleCollectorIterationNode) {
+        } else if ((node instanceof SingleCollectorIterationNode) || (node instanceof SingleCollectorIterationRootNode)) {
             return node.getValueAtIndex(i)
         }
         return ""
@@ -80,19 +82,28 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
         return parent.getIndex(child)
     }
 
-    List getList(List list) {
+    /**
+     * convert list of single value result( pathName, value, fieldName, iteration, period) to
+     * list of list. The first list is aggregated by iteration and the second by period
+     * @param list
+     * @return list of list
+     */
+    List convertList(List list) {
         def result = []
-
         def iterationList = []
-        (1..iterations).each { int iteration ->
-            iterationList = []
-            (0..periodCount).each { int period ->
+        for (int iteration = 1; iteration <= iterations; iteration++) {
+            iterationList = [];
+            for (int period = 0; period < periodCount; period++) {
                 iterationList.addAll(list.findAll {it[3] == iteration}.findAll {it[4] == period})
             }
             result << iterationList
         }
         return result
 
+    }
+
+    public void setIterations() {
+        this.iterations = Math.min(simulationRun.iterations, 100)
     }
 
 

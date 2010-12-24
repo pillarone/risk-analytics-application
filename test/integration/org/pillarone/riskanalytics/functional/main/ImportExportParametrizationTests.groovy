@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.functional.main
 
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
+import com.ulcjava.testframework.operator.ULCTreeOperator
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.functional.P1RATTestFunctions
 
@@ -27,7 +27,7 @@ class ImportExportParametrizationTests extends P1RATTestFunctions {
     }
 
     private void verifyImport() {
-        ULCTableTreeOperator tableTree = getSelectionTreeRowHeader()
+        ULCTreeOperator tableTree = getSelectionTree()
         TreePath path = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull(path)
     }
