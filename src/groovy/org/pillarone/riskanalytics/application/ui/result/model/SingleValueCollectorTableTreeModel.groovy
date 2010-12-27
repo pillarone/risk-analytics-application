@@ -50,7 +50,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     public String getColumnName(int i) {
         int periodIndex = (i - 1) / nodes.size()
         int nodeIndex = (i - 1) % nodes.size()
-        return i == 0 ? columnNames[0] : nodes[nodeIndex].getDisplayName() + " N${nodeIndex} P${periodIndex}"
+        return i == 0 ? columnNames[0] : nodes[nodeIndex].getDisplayName() + " P${periodIndex}"
     }
 
     Object getValueAt(Object node, int i) {

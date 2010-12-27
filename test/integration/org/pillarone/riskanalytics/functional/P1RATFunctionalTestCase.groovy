@@ -89,6 +89,8 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
     }
 
     void popUpContextMenu(TreePath treePath, String itemName, ULCTreeOperator tree) {
+        tree.doExpandRow 0
+        tree.doExpandRow 1
         ULCPopupMenuOperator parametrizationContextMenu = tree.callPopupOnPath(treePath)
         assertNotNull parametrizationContextMenu
         parametrizationContextMenu.pushMenu(itemName)

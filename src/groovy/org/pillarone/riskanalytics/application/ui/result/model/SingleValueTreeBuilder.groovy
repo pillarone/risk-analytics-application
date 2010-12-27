@@ -18,7 +18,7 @@ class SingleValueTreeBuilder {
 
 
 
-    public SingleValueTreeBuilder(singleResultsMap, iterations, selectedNodesSize, int periodCount) {
+    public SingleValueTreeBuilder(Map singleResultsMap, int iterations, int selectedNodesSize, int periodCount) {
         this.singleResultsMap = singleResultsMap;
         this.iterations = iterations;
         this.selectedNodesSize = selectedNodesSize
