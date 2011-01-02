@@ -6,6 +6,7 @@ import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
@@ -25,7 +26,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     ModellingInformationTableTreeModel viewModel
 
     public void testView() {
-//        Thread.sleep 10000
+//        Thread.sleep 30000
     }
 
     public void testOpenItem() {
@@ -251,10 +252,11 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     private ModellingInformationTableTreeModel getMockTreeModel() {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel()
-        treeModel.metaClass.getAllModelClasses = {->
+        ModellingInformationTableTreeBuilder builder = new ModellingInformationTableTreeBuilder(treeModel)
+        builder.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
         }
-        treeModel.metaClass.getItemsForModel = {Class modelClass, Class clazz ->
+        builder.metaClass.getItemsForModel = {Class modelClass, Class clazz ->
             switch (clazz) {
                 case Parameterization:
                     Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
@@ -274,13 +276,14 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
             }
         }
 
-        treeModel.metaClass.getAllBatchRuns = {->
+        builder.metaClass.getAllBatchRuns = {->
             return [new BatchRun(name: "test")]
         }
 
         treeModel.metaClass.getValue = {Parameterization p, int columnIndex ->
             return "column " + columnIndex
         }
+        treeModel.builder = builder
         treeModel.buildTreeNodes()
         return treeModel
     }

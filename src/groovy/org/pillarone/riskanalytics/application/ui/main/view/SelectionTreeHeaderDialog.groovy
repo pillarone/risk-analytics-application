@@ -78,7 +78,6 @@ class SelectionTreeHeaderDialog {
 
     private void attachListeners() {
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
-            println " column : ${columnIndex}"
             dialog.dispose()
         }] as IActionListener)
     }
@@ -86,9 +85,9 @@ class SelectionTreeHeaderDialog {
     public void initFilter() {
         filterCheckBoxes = []
         filterCheckBoxes << new ULCCheckBox("All")
-        for (int i = 0; i < 10; i++) {
-            filterCheckBoxes << new ULCCheckBox("filter " + i)
+        List values = tableTree.model.getValues(columnIndex)
+        values.each {
+            filterCheckBoxes << new ULCCheckBox(it)
         }
-
     }
 }
