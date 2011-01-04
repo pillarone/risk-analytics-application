@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCDialog
+import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.AbstractDialogTestCase
 
 /**
@@ -14,7 +15,7 @@ class SelectionTreeHeaderDialogTests extends AbstractDialogTestCase {
     }
 
     ULCDialog createContentPane() {
-        SelectionTreeHeaderDialog headerDialog = new SelectionTreeHeaderDialog(null, 0)
+        SelectionTreeHeaderDialog headerDialog = new SelectionTreeHeaderDialog(new ULCTableTree(), -1)
         headerDialog.metaClass.initFilter = {->
             headerDialog.filterCheckBoxes = []
             headerDialog.filterCheckBoxes << new ULCCheckBox("All")
@@ -23,6 +24,9 @@ class SelectionTreeHeaderDialogTests extends AbstractDialogTestCase {
             }
         }
 
+        headerDialog.metaClass.getFilterPaneTitle = {->
+            return "Test"
+        }
         headerDialog.init()
         headerDialog.dialog.setVisible true
         return headerDialog.dialog;

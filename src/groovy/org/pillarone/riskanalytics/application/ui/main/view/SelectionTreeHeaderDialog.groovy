@@ -1,10 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilter
+import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
+import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -40,8 +44,8 @@ class SelectionTreeHeaderDialog {
         toolBar = new ULCToolBar()
         toolBar.setOrientation(ULCToolBar.VERTICAL)
 
-        ascOrder = new ULCToggleButton("ascending")
-        descOrder = new ULCToggleButton("descending")
+        ascOrder = new ULCToggleButton(new SelectionTreeRowSorterAction(tableTree.model, true, columnIndex))
+        descOrder = new ULCToggleButton(new SelectionTreeRowSorterAction(tableTree.model, false, columnIndex))
         applyButton = new ULCButton("apply")
         cancelButton = new ULCButton("cancel")
         content = new ULCBoxPane(1, 0)
@@ -50,20 +54,24 @@ class SelectionTreeHeaderDialog {
     }
 
     private void layoutComponents() {
-        toolBar.add(ascOrder)
-        toolBar.add(descOrder)
+        if (isOrderVisible()) {
+            toolBar.add(ascOrder)
+            toolBar.add(descOrder)
+            content.add(ULCBoxPane.BOX_EXPAND_TOP, ascOrder)
+            content.add(ULCBoxPane.BOX_EXPAND_TOP, descOrder)
+        }
 
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, ascOrder)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, descOrder)
-
-        ULCBoxPane filterPane = new ULCBoxPane(1, 0)
-        filterPane.setBorder BorderFactory.createTitledBorder("filter");
+        ULCBoxPane filterPane = new ULCBoxPane(2, 0)
+        filterPane.setBorder BorderFactory.createTitledBorder(getFilterPaneTitle());
         filterCheckBoxes.each {ULCCheckBox checkBox ->
             filterPane.add(ULCBoxPane.BOX_LEFT_TOP, checkBox)
+            filterPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         }
+        filterPane.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         ULCScrollPane scrollPane = new ULCScrollPane(filterPane)
         scrollPane.setPreferredSize new Dimension(160, 200)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollPane)
+
 
         ULCBoxPane buttonPane = new ULCBoxPane(2, 1)
         buttonPane.add(ULCBoxPane.BOX_RIGHT_BOTTOM, UIUtils.spaceAround(applyButton, 10, 0, 0, 0))
@@ -71,7 +79,6 @@ class SelectionTreeHeaderDialog {
         content.add(ULCBoxPane.BOX_RIGHT_BOTTOM, buttonPane)
 
         dialog.add(content)
-//        dialog.setLocationRelativeTo(parent)
         dialog.setUndecorated(true)
         dialog.pack()
         dialog.resizable = false
@@ -85,19 +92,51 @@ class SelectionTreeHeaderDialog {
                     checkBoxValues << checkBox.getText()
                 }
             }
-            println checkBoxValues
-            ParameterizationNodeFilter filter = new ParameterizationNodeFilter(checkBoxValues, columnIndex)
+            ParameterizationNodeFilter filter = new ParameterizationNodeFilter(checkBoxValues, filterCheckBoxes[0].selected ? -1 : columnIndex)
             tableTree.model.setFilter(filter)
+            dialog.dispose()
+        }] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: { ActionEvent ->
+            dialog.dispose()
+        }] as IActionListener)
+        ascOrder.addActionListener([actionPerformed: { ActionEvent ->
+            dialog.dispose()
+        }] as IActionListener)
+        descOrder.addActionListener([actionPerformed: { ActionEvent ->
             dialog.dispose()
         }] as IActionListener)
     }
 
     public void initFilter() {
         filterCheckBoxes = []
-        filterCheckBoxes << new ULCCheckBox("All")
+        ULCCheckBox allCheckBox = new ULCCheckBox("All")
+        allCheckBox.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
+            filterCheckBoxes.each {ULCCheckBox checkBox ->
+                checkBox.setSelected(allCheckBox.selected)
+            }
+        }] as IValueChangedListener)
+
+        filterCheckBoxes << allCheckBox
         List values = tableTree.model.getValues(columnIndex)
         values.each {
             filterCheckBoxes << new ULCCheckBox(it)
         }
     }
+
+    private boolean isOrderVisible() {
+        switch (columnIndex) {
+            case STATE: return true;
+            case OWNER: return true;
+            case LAST_UPDATER: return true;
+            case CREATION_DATE: return true;
+            case CREATION_DATE: return true;
+            case LAST_MODIFICATION_DATE: return true;
+            default: return false
+        }
+    }
+
+    public String getFilterPaneTitle() {
+        return "filter by: " + tableTree.model.getColumnName(columnIndex)
+    }
+
 }

@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -19,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultCon
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.*
 
@@ -159,6 +158,26 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
+    public void order(def comparator) {
+        root.childCount.times {childIndex ->
+            def modelNode = root.getChildAt(childIndex)
+            DefaultMutableTableTreeNode parameterizationNode = modelNode.getChildAt(0)
+            List nodes = []
+            parameterizationNode.childCount.times { parameterizationnodeIndex ->
+                ParameterizationNode node = parameterizationNode.getChildAt(parameterizationnodeIndex)
+                nodes << node
+            }
+
+            parameterizationNode.removeAllChildren()
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationNode) as Object[]))
+
+            nodes.sort(comparator)
+            nodes.each {
+                parameterizationNode.add(it)
+            }
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationNode) as Object[]))
+        }
+    }
 
     public void refresh() {
         root.removeAllChildren()

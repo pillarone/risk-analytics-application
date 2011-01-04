@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -32,8 +30,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     final static int REVIEW_COMMENT = 4
     final static int OWNER = 5
     final static int LAST_UPDATER = 6
-    final static int CREATER = 7
-    final static int LAST_MODIFICATOR = 8
+    final static int CREATION_DATE = 7
+    final static int LAST_MODIFICATION_DATE = 8
     final static int ASSIGNED_TO = 9
     final static int VISIBILITY = 10
 
@@ -136,8 +134,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             case REVIEW_COMMENT: value = WorkflowCommentDAO.countByParameterizationAndStatusNotEqual(parameterization.dao, IssueStatus.CLOSED); break;
             case OWNER: value = parameterization?.getCreator()?.username; break;
             case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username; break;
-            case CREATER: value = format.format(parameterization.getCreationDate()); break;
-            case LAST_MODIFICATOR: value = format.format(parameterization.getModificationDate()); break;
+            case CREATION_DATE: value = format.format(parameterization.getCreationDate()); break;
+            case LAST_MODIFICATION_DATE: value = format.format(parameterization.getModificationDate()); break;
             case ASSIGNED_TO: return "---"
             case VISIBILITY: return "---"
             default: return ""

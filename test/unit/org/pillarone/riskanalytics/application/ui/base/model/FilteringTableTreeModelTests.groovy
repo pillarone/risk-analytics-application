@@ -642,20 +642,22 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
     }
 
     void testFilteringParameterizationNodes() {
-        DefaultMutableTableTreeNode modelNode = new DefaultMutableTableTreeNode("root")
+        DefaultMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
+        DefaultMutableTableTreeNode modelNode = new DefaultMutableTableTreeNode("model")
         DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode("Parameterization", Parameterization)
         DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode("ResultTemplates", ResultConfiguration)
         DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode("Results", Simulation)
         modelNode.add(parameterizationsNode)
         modelNode.add(resultConfigurationsNode)
         modelNode.add(simulationsNode)
+        root.add(modelNode)
 
         Parameterization parameterization1 = new Parameterization("param1")
         ParameterizationNode parameterizationNode1 = new ParameterizationNode(parameterization1)
         parameterizationsNode.add parameterizationNode1
 
 
-        ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(root: modelNode)
+        ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(root: root)
         FilteringTableTreeModel filter = new FilteringTableTreeModel(model, new ParameterizationNodeFilter(null, -1))
 
         assertTrue filter.isAcceptedNode(modelNode)
