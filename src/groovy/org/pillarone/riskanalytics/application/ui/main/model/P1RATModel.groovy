@@ -5,16 +5,14 @@ import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
+import org.joda.time.DateTimeZone
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
@@ -34,14 +32,14 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.joda.time.DateTimeZone
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
     private List modelListeners
     private Map viewModelsInUse
-    ModellingInformationTableTreeModel selectionTreeModel
+    AbstractTableTreeModel selectionTreeModel
     def rootPaneForAlerts
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction
@@ -53,14 +51,15 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     static final Logger LOG = Logger.getLogger(P1RATModel)
 
     /** Setting the default time zone to UTC avoids problems in multi user context with different time zones
-     *  and switches off daylight saving capabilities and possible related problems. */
+     *  and switches off daylight saving capabilities and possible related problems.   */
     DateTimeZone utc = DateTimeZone.setDefault(DateTimeZone.UTC)
 
     public P1RATModel() {
         modelListeners = []
         viewModelsInUse = [:]
-        selectionTreeModel = new ModellingInformationTableTreeModel()
-        selectionTreeModel.buildTreeNodes()
+        ModellingInformationTableTreeModel modellingInformationTableTreeModel = new ModellingInformationTableTreeModel()
+        modellingInformationTableTreeModel.buildTreeNodes()
+        selectionTreeModel = new FilteringTableTreeModel(modellingInformationTableTreeModel, new ParameterizationNodeFilter(null, -1))
         startPollingTimer(pollingBatchSimulationAction)
     }
 

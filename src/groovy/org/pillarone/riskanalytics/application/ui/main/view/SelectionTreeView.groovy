@@ -6,7 +6,6 @@ import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
@@ -22,7 +21,6 @@ import org.pillarone.riskanalytics.application.ui.parameterization.view.Centered
  */
 class SelectionTreeView {
     NavigationBarTopPane navigationBarTopPane
-    AbstractTableTreeModel tableTreeModel
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     P1RATModel p1RATModel

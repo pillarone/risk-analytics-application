@@ -2,14 +2,16 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
+import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
-import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeModel
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class FilteringTableTreeModelTests extends GroovyTestCase {
 
@@ -637,6 +639,38 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
             model.nodesWereRemoved(child3, [0] as int[], [child31] as Object[])
         }
 
+    }
+
+    void testFilteringParameterizationNodes() {
+        DefaultMutableTableTreeNode modelNode = new DefaultMutableTableTreeNode("root")
+        DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode("Parameterization", Parameterization)
+        DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode("ResultTemplates", ResultConfiguration)
+        DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode("Results", Simulation)
+        modelNode.add(parameterizationsNode)
+        modelNode.add(resultConfigurationsNode)
+        modelNode.add(simulationsNode)
+
+        Parameterization parameterization1 = new Parameterization("param1")
+        ParameterizationNode parameterizationNode1 = new ParameterizationNode(parameterization1)
+        parameterizationsNode.add parameterizationNode1
+
+
+        ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(root: modelNode)
+        FilteringTableTreeModel filter = new FilteringTableTreeModel(model, new ParameterizationNodeFilter(null, -1))
+
+        assertTrue filter.isAcceptedNode(modelNode)
+        assertTrue filter.isAcceptedNode(parameterizationsNode)
+        assertTrue filter.isAcceptedNode(resultConfigurationsNode)
+        assertTrue filter.isAcceptedNode(simulationsNode)
+        assertTrue filter.isAcceptedNode(parameterizationNode1)
+
+        filter.setFilter(new ParameterizationNodeFilter(["test1", "test2"], 0))
+
+        parameterizationNode1.values[0] = "test2"
+        assertTrue filter.isAcceptedNode(parameterizationNode1)
+
+        parameterizationNode1.values[0] = "test3"
+        assertFalse filter.isAcceptedNode(parameterizationNode1)
     }
 
 

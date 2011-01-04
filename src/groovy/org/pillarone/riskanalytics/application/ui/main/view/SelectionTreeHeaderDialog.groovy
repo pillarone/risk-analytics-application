@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilter
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 
@@ -78,6 +79,15 @@ class SelectionTreeHeaderDialog {
 
     private void attachListeners() {
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
+            List checkBoxValues = []
+            filterCheckBoxes.each {ULCCheckBox checkBox ->
+                if (checkBox.selected) {
+                    checkBoxValues << checkBox.getText()
+                }
+            }
+            println checkBoxValues
+            ParameterizationNodeFilter filter = new ParameterizationNodeFilter(checkBoxValues, columnIndex)
+            tableTree.model.setFilter(filter)
             dialog.dispose()
         }] as IActionListener)
     }

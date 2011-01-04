@@ -24,10 +24,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
-    static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
-
     List<String> columnNames = ["Name", "State", "Tags", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
-    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
+
     final static int STATE = 1
     final static int TAGS = 2
     final static int COMMENTS = 3
@@ -39,9 +37,15 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     final static int ASSIGNED_TO = 9
     final static int VISIBILITY = 10
 
-    DefaultMutableTableTreeNode root
     def columnValues = [:]
     ModellingInformationTableTreeBuilder builder
+    DefaultMutableTableTreeNode root
+    List parameterizationNodes
+    ParameterizationNodeFilter filter
+
+    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
+
+    static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     public ModellingInformationTableTreeModel() {
         builder = new ModellingInformationTableTreeBuilder(this)
@@ -50,8 +54,27 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public def buildTreeNodes() {
         builder.buildTreeNodes()
         root = builder.root
+        extractNodeNames()
     }
 
+    protected void extractNodeNames() {
+        parameterizationNodes = []
+        collectChildNames(root, parameterizationNodes)
+    }
+
+    protected def collectChildNames(ParameterizationNode node, List parameterizationNodes) {
+        if (!parameterizationNodes.contains(node))
+            parameterizationNodes << node
+        node.childCount.times {
+            collectChildNames(node.getChildAt(it), parameterizationNodes)
+        }
+    }
+
+    protected def collectChildNames(ITableTreeNode node, List parameterizationNodes) {
+        node.childCount.times {
+            collectChildNames(node.getChildAt(it), parameterizationNodes)
+        }
+    }
 
     int getColumnCount() {
         return columnNames.size();
@@ -69,7 +92,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             if (!item.isLoaded())
                 item.load(false)
 
-            return getValue(item, i)
+            String value = getValue(item, i)
+            node.values[i] = value
+            return value
         }
         return ""
     }
@@ -131,7 +156,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         return values as List
     }
 
-    private void addColumnValue(Parameterization parameterization, int column, Object value) {
+    public void addColumnValue(Parameterization parameterization, int column, Object value) {
         if (columnValues[parameterization] == null)
             columnValues[parameterization] = new Object[columnNames.size() - 1]
         if (columnValues[parameterization][column] == null) {
