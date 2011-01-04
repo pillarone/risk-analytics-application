@@ -32,7 +32,7 @@ class LocaleResources {
     }
 
     static ResourceBundle getBundle(String bundleFilename) {
-        ResourceBundle.getBundle(bundleFilename, getLocale())
+        ResourceBundleFactory.getBundle(bundleFilename, getLocale())
     }
 
     static Set getBundles() {
