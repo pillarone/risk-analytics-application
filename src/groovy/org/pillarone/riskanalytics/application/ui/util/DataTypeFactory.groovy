@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.core.parameter.DoubleParameter
 import org.pillarone.riskanalytics.core.parameter.IntegerParameter
 import org.pillarone.riskanalytics.core.parameter.Parameter
 import com.ulcjava.base.application.datatype.*
+import org.pillarone.riskanalytics.application.ui.util.server.ULCFlexibleDateDataType
 
 public class DataTypeFactory {
 
@@ -57,7 +58,7 @@ public class DataTypeFactory {
         IDataType dateDataType = UserContext.getAttribute("dateDataType")
 
         if (dateDataType == null) {
-            dateDataType = new ULCDateDataType(getErrorManager(), SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, UIUtils.getClientLocale()).toPattern())
+            dateDataType = new ULCFlexibleDateDataType(getErrorManager(), ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"], SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, UIUtils.getClientLocale()).toPattern())
             UserContext.setAttribute("dateDataType", dateDataType)
         }
 
