@@ -36,12 +36,15 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     final static int VISIBILITY = 10
 
     def columnValues = [:]
+    int orderByColumn = -1
+    boolean ascOrder
     ModellingInformationTableTreeBuilder builder
     DefaultMutableTableTreeNode root
     List parameterizationNodes
     ParameterizationNodeFilter filter
 
     SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
+    static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy")
 
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
@@ -53,6 +56,12 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         builder.buildTreeNodes()
         root = builder.root
         extractNodeNames()
+    }
+
+    public void order(int column, boolean asc) {
+        orderByColumn = column
+        ascOrder = asc
+        builder.order(getComparator(column, asc))
     }
 
     protected void extractNodeNames() {
@@ -90,9 +99,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             if (!item.isLoaded())
                 item.load(false)
 
-            String value = getValue(item, i)
-            node.values[i] = value
-            return value
+            return getValue(item, node, i)
         }
         return ""
     }
@@ -118,47 +125,57 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
 
-    public Object getValue(Parameterization parameterization, int columnIndex) {
+    public Object getValue(Parameterization parameterization, ParameterizationNode node, int columnIndex) {
         def value = null
         switch (columnIndex) {
             case STATE:
-                value = parameterization?.status?.getDisplayName(); break;
+                value = parameterization?.status?.getDisplayName();
+                addColumnValue(parameterization, node, columnIndex, value); break;
             case TAGS:
                 String tags = ""
                 List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.id = ? ", [parameterization.id])
                 pTags.each {
                     tags += "${it}, "
                 }
-                value = tags; break;
-            case COMMENTS: value = CommentDAO.countByParameterization(parameterization.dao); break;
-            case REVIEW_COMMENT: value = WorkflowCommentDAO.countByParameterizationAndStatusNotEqual(parameterization.dao, IssueStatus.CLOSED); break;
-            case OWNER: value = parameterization?.getCreator()?.username; break;
-            case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username; break;
-            case CREATION_DATE: value = format.format(parameterization.getCreationDate()); break;
-            case LAST_MODIFICATION_DATE: value = format.format(parameterization.getModificationDate()); break;
+                value = tags;
+                addColumnValue(parameterization, node, columnIndex, value)
+                break;
+            case COMMENTS: value = CommentDAO.countByParameterization(parameterization.dao);
+                addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
+            case REVIEW_COMMENT: value = WorkflowCommentDAO.countByParameterizationAndStatusNotEqual(parameterization.dao, IssueStatus.CLOSED);
+                addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
+            case OWNER: value = parameterization?.getCreator()?.username;
+                addColumnValue(parameterization, node, columnIndex, value); break;
+            case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username;
+                addColumnValue(parameterization, node, columnIndex, value); break;
+            case CREATION_DATE: value = format.format(parameterization.getCreationDate());
+                addColumnValue(parameterization, node, columnIndex, parameterization.getCreationDate()); break;
+            case LAST_MODIFICATION_DATE: value = format.format(parameterization.getModificationDate());
+                addColumnValue(parameterization, node, columnIndex, parameterization.getModificationDate()); break;
             case ASSIGNED_TO: return "---"
             case VISIBILITY: return "---"
             default: return ""
 
         }
-        addColumnValue(parameterization, columnIndex, value)
         return value
     }
 
     public List getValues(int columnIndex) {
         Set values = new TreeSet()
         columnValues.each {Parameterization parameterization, def value ->
-            if (value[columnIndex])
-                values.add(value[columnIndex])
+            if (value[columnIndex]) {
+                values.add((value[columnIndex] instanceof Date) ? simpleDateFormat.format(value[columnIndex]) : value[columnIndex])
+            }
         }
         return values as List
     }
 
-    public void addColumnValue(Parameterization parameterization, int column, Object value) {
+    public void addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
         if (columnValues[parameterization] == null)
             columnValues[parameterization] = new Object[columnNames.size() - 1]
         if (columnValues[parameterization][column] == null) {
             columnValues[parameterization][column] = value
+            node.values[column] = value
         }
     }
 
@@ -209,6 +226,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     private def createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchRun batchRun) {
         builder.createAndInsertItemNode(node, batchRun)
+    }
+
+    private Comparator getComparator(int column, boolean ascOrder) {
+        return { x, y -> ascOrder ? x.values[column] <=> y.values[column] : y.values[column] <=> x.values[column] } as Comparator
     }
 
 

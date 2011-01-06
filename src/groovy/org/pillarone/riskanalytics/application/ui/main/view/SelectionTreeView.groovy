@@ -15,16 +15,17 @@ import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
 import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class SelectionTreeView {
-    NavigationBarTopPane navigationBarTopPane
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     P1RATModel p1RATModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
+    boolean ascOrder = true
 
     public SelectionTreeView(P1RATModel p1RATModel) {
         this.p1RATModel = p1RATModel
@@ -81,12 +82,22 @@ class SelectionTreeView {
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([p1RATModel.selectionTreeModel.root] as Object[])] as TreePath[], false);
         tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
-            if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
-                ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
-                SelectionTreeHeaderDialog dialog = new SelectionTreeHeaderDialog(tree.viewPortTableTree, column.getModelIndex())
+            ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
+            int columnIndex = column.getModelIndex()
+            if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
+            if (ActionEvent.META_MASK == event.getModifiers()) {
+                SelectionTreeHeaderDialog dialog
+                if (columnIndex == COMMENTS || columnIndex == REVIEW_COMMENT) {
+                    dialog = new RadioButtonDialog(tree.viewPortTableTree, columnIndex)
+                } else {
+                    dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
+                }
                 dialog.init()
                 dialog.dialog.setLocationRelativeTo(column.getHeaderRenderer())
                 dialog.dialog.setVisible true
+            } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
+                p1RATModel.selectionTreeModel.order(columnIndex, ascOrder)
+                ascOrder = !ascOrder
             }
         }] as IActionListener)
     }

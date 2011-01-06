@@ -51,7 +51,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     static final Logger LOG = Logger.getLogger(P1RATModel)
 
     /** Setting the default time zone to UTC avoids problems in multi user context with different time zones
-     *  and switches off daylight saving capabilities and possible related problems.   */
+     *  and switches off daylight saving capabilities and possible related problems.    */
     DateTimeZone utc = DateTimeZone.setDefault(DateTimeZone.UTC)
 
     public P1RATModel() {
@@ -59,7 +59,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         viewModelsInUse = [:]
         ModellingInformationTableTreeModel modellingInformationTableTreeModel = new ModellingInformationTableTreeModel()
         modellingInformationTableTreeModel.buildTreeNodes()
-        selectionTreeModel = new FilteringTableTreeModel(modellingInformationTableTreeModel, new ParameterizationNodeFilter(null, -1))
+        selectionTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
         startPollingTimer(pollingBatchSimulationAction)
     }
 

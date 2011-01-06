@@ -42,6 +42,12 @@ class NodeNameFilter implements ITableTreeFilter {
 }
 
 class ParameterizationNodeFilter implements ITableTreeFilter {
+
+    public static final int ALL = -1
+    public static final int WITHOUT_COMMENTS = 0
+    public static final int WITH_COMMENTS = 1
+    public String displayValue
+
     List values
     int column
 
@@ -55,19 +61,33 @@ class ParameterizationNodeFilter implements ITableTreeFilter {
     }
 
     boolean internalAcceptNode(ParameterizationNode node) {
-        if (column == -1) return true
-        boolean contains = values?.contains(node.values[column])
-        return contains
+        if (!values || values.size() == 0) return true
+        return contains(node.values[column])
     }
 
     boolean internalAcceptNode(WorkflowParameterizationNode node) {
-        if (column == -1) return true
-        boolean contains = values?.contains(node.values[column])
-        return contains
+        if (!values || values.size() == 0) return true
+        return contains(node.values[column])
     }
 
     boolean internalAcceptNode(ITableTreeNode node) {
         return true
+    }
+
+    private boolean contains(String value) {
+        return values?.contains(value)
+    }
+
+    private boolean contains(int value) {
+        switch (values[0]) {
+            case ALL: displayValue = "All"; return true
+            case WITHOUT_COMMENTS: displayValue = "Without comments"; return value == 0
+            case WITH_COMMENTS: displayValue = "With comments"; return value >= 1
+        }
+    }
+
+    private boolean contains(Date value) {
+        return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.format(value)} != null
     }
 
 }

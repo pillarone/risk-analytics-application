@@ -6,12 +6,12 @@ import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
-import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilter
+import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -240,7 +240,8 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     private P1RATModel getMockP1RATModel(def viewModel) {
         P1RATModel p1RATModel = new P1RATModel(viewModel)
-        p1RATModel.selectionTreeModel = new FilteringTableTreeModel(viewModel, new ParameterizationNodeFilter(null, -1))
+//        p1RATModel.selectionTreeModel = new FilteringTableTreeModel(viewModel, new ParameterizationNodeFilter(null, -1))
+        p1RATModel.selectionTreeModel = new MultiFilteringTableTreeModel(viewModel)
         p1RATModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
         }
         p1RATModel.metaClass.openItem = {Model pcModel, Parameterization item ->
@@ -286,8 +287,8 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
             return [new BatchRun(name: "test")]
         }
 
-        treeModel.metaClass.getValue = {Parameterization p, int columnIndex ->
-            treeModel.addColumnValue(p, columnIndex, p.name + " " + columnIndex)
+        treeModel.metaClass.getValue = {Parameterization p, ParameterizationNode node, int columnIndex ->
+            treeModel.addColumnValue(p, node, columnIndex, p.name + " " + columnIndex)
             return p.name + " " + columnIndex
         }
         treeModel.builder = builder
