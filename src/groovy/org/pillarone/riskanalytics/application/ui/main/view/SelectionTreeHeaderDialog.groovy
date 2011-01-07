@@ -66,9 +66,9 @@ abstract class SelectionTreeHeaderDialog {
                 descOrder.setBorder(BorderFactory.createLineBorder(Color.blue))
             }
         }
-        applyButton = new ULCButton("apply")
-        cancelButton = new ULCButton("cancel")
-        clearButton = new ULCButton("Clear all")
+        applyButton = new ULCButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "apply"))
+        cancelButton = new ULCButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "cancel"))
+        clearButton = new ULCButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "clearAll"))
         content = new ULCBoxPane(1, 0)
         content.setPreferredSize new Dimension(200, 300)
 
@@ -76,13 +76,13 @@ abstract class SelectionTreeHeaderDialog {
 
     private void layoutComponents() {
         ULCBoxPane buttonsPane = new ULCBoxPane(3, 0)
-        buttonsPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel("sorted by "))
+        buttonsPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(UIUtils.getText(SelectionTreeHeaderDialog.class, "sortedBy")))
         buttonsPane.add(ULCBoxPane.BOX_LEFT_TOP, ascOrder)
         buttonsPane.add(ULCBoxPane.BOX_LEFT_TOP, descOrder)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, buttonsPane)
+        content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
         if (model.filters.size() > 0) {
             ULCBoxPane filtersPane = new ULCBoxPane(2, 0)
-            filtersPane.setBorder BorderFactory.createTitledBorder("Already used filters : ");
+            filtersPane.setBorder BorderFactory.createTitledBorder(UIUtils.getText(SelectionTreeHeaderDialog.class, "alreadyUsed") + " : ");
             model.filters.each {ITableTreeFilter filter ->
                 if (filter.column != columnIndex) {
                     ULCCheckBox checkBox = new ULCCheckBox(getFilterValues(filter), true)
@@ -188,7 +188,7 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
     @Override
     ULCBoxPane addChoiceButton() {
         ULCBoxPane filterPane = new ULCBoxPane(2, 0)
-        filterPane.setBorder BorderFactory.createTitledBorder("filter by: " + getColumnName(columnIndex));
+        filterPane.setBorder BorderFactory.createTitledBorder(UIUtils.getText(SelectionTreeHeaderDialog.class, "filteredby") + ": " + getColumnName(columnIndex));
         filterRadioButtons.each {ULCRadioButton radioButton ->
             filterPane.add(ULCBoxPane.BOX_LEFT_TOP, radioButton)
             filterPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
@@ -212,7 +212,7 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
     void initFilter() {
         filterRadioButtons = []
         ULCButtonGroup commentButtonGroup = new ULCButtonGroup()
-        ULCRadioButton all = new ULCRadioButton("All")
+        ULCRadioButton all = new ULCRadioButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "all"))
         all.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (all.selected) {
                 filterValues[0] = ParameterizationNodeFilter.ALL
@@ -220,14 +220,14 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
         }] as IValueChangedListener)
         all.setGroup(commentButtonGroup)
         filterRadioButtons << all
-        ULCRadioButton with = new ULCRadioButton("with comments")
+        ULCRadioButton with = new ULCRadioButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "withComments"))
         with.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (with.selected)
                 filterValues[0] = ParameterizationNodeFilter.WITH_COMMENTS
         }] as IValueChangedListener)
         with.setGroup(commentButtonGroup)
         filterRadioButtons << with
-        ULCRadioButton without = new ULCRadioButton("without comments")
+        ULCRadioButton without = new ULCRadioButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "withoutComments"))
         without.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (without.selected)
                 filterValues[0] = ParameterizationNodeFilter.WITHOUT_COMMENTS
@@ -261,7 +261,7 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
     @Override
     ULCBoxPane addChoiceButton() {
         ULCBoxPane filterPane = new ULCBoxPane(2, 0)
-        filterPane.setBorder BorderFactory.createTitledBorder("filter by: " + getColumnName(columnIndex));
+        filterPane.setBorder BorderFactory.createTitledBorder(UIUtils.getText(SelectionTreeHeaderDialog.class, "filteredby") + ": " + getColumnName(columnIndex));
         filterCheckBoxes.each {ULCCheckBox checkBox ->
             filterPane.add(ULCBoxPane.BOX_LEFT_TOP, checkBox)
             filterPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
@@ -284,7 +284,7 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
     @Override
     void initFilter() {
         filterCheckBoxes = []
-        ULCCheckBox allCheckBox = new ULCCheckBox("All")
+        ULCCheckBox allCheckBox = new ULCCheckBox(UIUtils.getText(SelectionTreeHeaderDialog.class, "all"))
 
         allCheckBox.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (allCheckBox.selected) filterValues.clear()
