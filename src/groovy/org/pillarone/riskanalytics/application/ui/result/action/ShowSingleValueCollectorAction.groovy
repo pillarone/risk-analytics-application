@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.SingleValueCollectorTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorView
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 
@@ -32,8 +33,9 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
         SingleCollectorView view = new SingleCollectorView(model)
         view.init()
         if (view.content) {
-            tabbedPane.addTab("Single value view ", view.content)
-            String toolTipText = "Single value view"
+            String title = UIUtils.getText(this.class, "SingleValueViewTitle", [String.valueOf(model.getMaxIterations())])
+            tabbedPane.addTab(title, view.content)
+            String toolTipText = title
             tabbedPane.setToolTipTextAt(tabbedPane.tabCount - 1, toolTipText)
             tabbedPane.selectedIndex = tabbedPane.tabCount - 1
         }

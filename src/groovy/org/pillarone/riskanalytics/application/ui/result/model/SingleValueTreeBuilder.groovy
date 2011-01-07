@@ -36,13 +36,26 @@ class SingleValueTreeBuilder {
         }
     }
 
+
     private def createIterationNode(int iteration) {
         SingleCollectorIterationRootNode iterationNode = createNode(iteration)
+        def valueIndexNodesMap = [:]
         singleResultsMap.each {k, v ->
             //-1, iteration started with 1,2,....
-            for (List values: v[iteration - 1]) {
-                SingleCollectorIterationNode node = new SingleCollectorIterationNode(values, k, selectedNodesSize, periodCount)
-                iterationNode.add(node)
+            for (List values: findAll((List) v, SingleCollectorIterationNode.ITERATION_INDEX, iteration)) {
+                SingleCollectorIterationNode node
+                if (valueIndexNodesMap[values[SingleCollectorIterationNode.VALUE_INDEX]]) {
+                    node = valueIndexNodesMap[values[SingleCollectorIterationNode.VALUE_INDEX]]
+                    if (node.singleValueResults[k])
+                        node.singleValueResults[k] << values
+                    else
+                        node.singleValueResults[k] = [values]
+                } else {
+                    node = new SingleCollectorIterationNode(values, k, selectedNodesSize)
+                    iterationNode.add(node)
+                    valueIndexNodesMap[values[SingleCollectorIterationNode.VALUE_INDEX]] = node
+                }
+
             }
         }
         return iterationNode
@@ -50,6 +63,15 @@ class SingleValueTreeBuilder {
 
     private ITableTreeNode createNode(int iteration) {
         new SingleCollectorIterationRootNode(iteration, singleResultsMap, periodCount)
+    }
+
+    static List findAll(List list, int index, Object value) {
+        List result = new ArrayList()
+        for (Object obj: list) {
+            if (obj[index] == value)
+                result.add(obj)
+        }
+        return result
     }
 
 }

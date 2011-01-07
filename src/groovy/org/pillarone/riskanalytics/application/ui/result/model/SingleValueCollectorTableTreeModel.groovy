@@ -4,6 +4,7 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationRootNode
@@ -36,7 +37,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     public void init() {
         setIterations()
         nodes.eachWithIndex { ResultTableTreeNode resultTableTreeNode, int nodeIndex ->
-            singleValueResultsMap[nodeIndex] = convertList(ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun))
+            singleValueResultsMap[nodeIndex] = ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun)
         }
         builder = new SingleValueTreeBuilder(singleValueResultsMap, iterations, nodes.size(), simulationRun.periodCount)
         builder.build()
@@ -82,28 +83,17 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
         return parent.getIndex(child)
     }
 
-    /**
-     * convert list of single value result( pathName, value, fieldName, iteration, period) to
-     * list of list. The first list is aggregated by iteration and the second by period
-     * @param list
-     * @return list of list
-     */
-    List convertList(List list) {
-        def result = []
-        def iterationList = []
-        for (int iteration = 1; iteration <= iterations; iteration++) {
-            iterationList = [];
-            for (int period = 0; period < periodCount; period++) {
-                iterationList.addAll(list.findAll {it[3] == iteration}.findAll {it[4] == period})
-            }
-            result << iterationList
-        }
-        return result
-
-    }
 
     public void setIterations() {
-        this.iterations = Math.min(simulationRun.iterations, 100)
+        this.iterations = Math.min(simulationRun.iterations, getMaxIterations())
+    }
+
+    int getMaxIterations() {
+        int max = 100
+        try {
+            max = ApplicationHolder.application.config.singleValueResultMaxIterations
+        } catch (Exception ex) {}
+        return max
     }
 
 
