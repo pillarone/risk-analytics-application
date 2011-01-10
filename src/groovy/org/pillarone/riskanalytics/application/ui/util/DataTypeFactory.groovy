@@ -57,8 +57,8 @@ public class DataTypeFactory {
     static IDataType getDateDataType() {
         IDataType dateDataType = UserContext.getAttribute("dateDataType")
 
-        if (dateDataType == null) {
-            dateDataType = new ULCFlexibleDateDataType(getErrorManager(), ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"], SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, UIUtils.getClientLocale()).toPattern())
+        if (dateDataType == null) { //TODO: crashes when used with error manager in MDPs
+            dateDataType = new ULCFlexibleDateDataType(/*getErrorManager(),*/ ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"], SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, UIUtils.getClientLocale()).toPattern())
             UserContext.setAttribute("dateDataType", dateDataType)
         }
 
