@@ -19,7 +19,7 @@ public class UIFlexibleDateDataType extends UIDataType {
     protected Object doStringToObjectConversion(String s, Object o) throws DataTypeConversionException {
         try {
             return new SimpleDateFormat(displayFormat).parse(s);
-        } catch (ParseException ex) {
+        } catch (Exception ex) {
             //try the next format
         }
         for (String format : possibleFormats) {
@@ -27,7 +27,7 @@ public class UIFlexibleDateDataType extends UIDataType {
                 SimpleDateFormat dateFormat = new SimpleDateFormat(format);
                 dateFormat.setLenient(false);
                 return dateFormat.parse(s);
-            } catch (ParseException ex) {
+            } catch (Exception ex) {
                 //try the next format
             }
         }
