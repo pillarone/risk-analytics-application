@@ -96,9 +96,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             return "${node.getValueAt(0)}".toString()
         } else if (node instanceof ParameterizationNode) {
             Parameterization item = node.item
-            if (!item.isLoaded())
-                item.load(false)
-
             return getValue(item, node, i)
         }
         return ""

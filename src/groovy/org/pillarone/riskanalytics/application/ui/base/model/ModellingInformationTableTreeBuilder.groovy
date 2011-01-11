@@ -30,6 +30,10 @@ class ModellingInformationTableTreeBuilder {
     AbstractTableTreeModel model
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeBuilder)
 
+    static final int PARAMETERIZATION_NODE_INDEX = 0
+    static final int RESULT_CONFIGURATION_NODE_INDEX = 1
+    static final int SIMULATION_NODE_INDEX = 2
+
     public ModellingInformationTableTreeBuilder(model) {
         this.model = model;
         root = new DefaultMutableTableTreeNode("root")
@@ -40,9 +44,9 @@ class ModellingInformationTableTreeBuilder {
             Model model = modelClass.newInstance()
             model.init()
             ITableTreeNode modelNode = getModelNode(model)
-            DefaultMutableTableTreeNode parametrisationsNode = modelNode.getChildAt(0)
-            DefaultMutableTableTreeNode resultConfigurationsNode = modelNode.getChildAt(1)
-            DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(2)
+            DefaultMutableTableTreeNode parametrisationsNode = modelNode.getChildAt(PARAMETERIZATION_NODE_INDEX)
+            DefaultMutableTableTreeNode resultConfigurationsNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
+            DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
 
             getItemMap(getItemsForModel(modelClass, Parameterization), false).values().each { List<Parameterization> it ->
                 parametrisationsNode.add(createItemNodes(it))
@@ -161,21 +165,23 @@ class ModellingInformationTableTreeBuilder {
     public void order(def comparator) {
         root.childCount.times {childIndex ->
             def modelNode = root.getChildAt(childIndex)
-            DefaultMutableTableTreeNode parameterizationNode = modelNode.getChildAt(0)
-            List nodes = []
-            parameterizationNode.childCount.times { parameterizationnodeIndex ->
-                ParameterizationNode node = parameterizationNode.getChildAt(parameterizationnodeIndex)
-                nodes << node
-            }
+            if (modelNode instanceof ModelNode) {
+                DefaultMutableTableTreeNode parameterizationNode = modelNode.getChildAt(PARAMETERIZATION_NODE_INDEX)
+                List nodes = []
+                parameterizationNode.childCount.times { parameterizationnodeIndex ->
+                    ParameterizationNode node = parameterizationNode.getChildAt(parameterizationnodeIndex)
+                    nodes << node
+                }
 
-            parameterizationNode.removeAllChildren()
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationNode) as Object[]))
+                parameterizationNode.removeAllChildren()
+                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationNode) as Object[]))
 
-            nodes.sort(comparator)
-            nodes.each {
-                parameterizationNode.add(it)
+                nodes.sort(comparator)
+                nodes.each {
+                    parameterizationNode.add(it)
+                }
+                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationNode) as Object[]))
             }
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationNode) as Object[]))
         }
     }
 

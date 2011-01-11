@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -10,8 +12,6 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ModellingItemFactory {
 
@@ -410,8 +410,14 @@ class ModellingItemFactory {
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
             item.status = dao.status
-            if (modelClass != null)
+            if (modelClass != null) {
                 item.modelClass = modelClass
+                item.creator = dao.getCreator()
+                item.lastUpdater = dao.getLastUpdater()
+                item.creationDate = dao.getCreationDate()
+                item.modificationDate = dao.getModificationDate()
+                item.dao = dao
+            }
             getItemInstances()[key(Parameterization, dao.id)] = item
         }
         item
