@@ -115,6 +115,9 @@ class AddTagDialog {
 
         }] as IActionListener)
         applyButton.addActionListener([actionPerformed: {ActionEvent evt ->
+            if(!item.isLoaded()) {
+                item.load(true)
+            }
             item.setTags(tagListModel.getSelectedValues(tags.getSelectedIndices()))
             item.save()
             closeAction.call()
