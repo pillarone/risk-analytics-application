@@ -50,10 +50,16 @@ class ParameterizationNodeFilter implements ITableTreeFilter {
 
     List values
     int column
+    boolean allSelected = false
 
     public ParameterizationNodeFilter(List values, int column) {
         this.values = values;
         this.column = column
+    }
+
+    public ParameterizationNodeFilter(List values, int column, boolean all) {
+        this(values, column)
+        this.@allSelected = all
     }
 
     public boolean acceptNode(ITableTreeNode node) {
@@ -61,12 +67,12 @@ class ParameterizationNodeFilter implements ITableTreeFilter {
     }
 
     boolean internalAcceptNode(ParameterizationNode node) {
-        if (!values || values.size() == 0) return true
+        if (allSelected || !values || values.size() == 0) return true
         return contains(node.values[column])
     }
 
     boolean internalAcceptNode(WorkflowParameterizationNode node) {
-        if (!values || values.size() == 0) return true
+        if (allSelected || !values || values.size() == 0) return true
         return contains(node.values[column])
     }
 
@@ -75,7 +81,18 @@ class ParameterizationNodeFilter implements ITableTreeFilter {
     }
 
     private boolean contains(String value) {
-        return values?.contains(value)
+        boolean found = false
+        if (column == ModellingInformationTableTreeModel.TAGS) {
+            for (String tag: values) {
+                if (value != null && value.indexOf(tag) != -1) {
+                    found = true
+                    break
+                }
+            }
+        } else {
+            found = values?.contains(value);
+        }
+        return found
     }
 
     private boolean contains(int value) {

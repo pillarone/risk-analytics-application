@@ -30,6 +30,7 @@ abstract class SelectionTreeHeaderDialog {
     int columnIndex
     protected List filterValues
     MultiFilteringTableTreeModel model
+    ParameterizationNodeFilter filter
 
     public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex) {
         this.tableTree = tree
@@ -161,16 +162,20 @@ abstract class SelectionTreeHeaderDialog {
     }
 
     String getFilterValues(ParameterizationNodeFilter filter) {
-        StringBuilder sb = new StringBuilder("<html><b>" + getColumnName(filter.column) + "</b>: ");
+        StringBuilder sb = new StringBuilder("<html><b>" + getColumnName(filter.column) + "</b>:<br> ");
         if (filter.displayValue) {
             sb.append(filter.displayValue + "</html>")
         } else {
-            sb.append("<ul>")
-            filter.values.each { sb.append("<li>" + it + "</li>")}
-            sb.append("</ul></html>")
+            if (filter.allSelected)
+                sb.append(UIUtils.getText(SelectionTreeHeaderDialog.class, "all"))
+            else
+                filter.values.eachWithIndex {def it, int index ->
+                    sb.append(it)
+                    if (index < filter.values.size() - 1)
+                        sb.append(", ")
+                }
+            sb.append("</html>")
         }
-
-
         return sb.toString()
     }
 
@@ -183,6 +188,7 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
 
     public RadioButtonDialog(ULCTableTree tree, int columnIndex) {
         super(tree, columnIndex)
+        filter = model.getFilter(columnIndex)
     }
 
     @Override
@@ -201,8 +207,12 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
     protected void attachListeners() {
         super.attachListeners()
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
-            ParameterizationNodeFilter filter = new ParameterizationNodeFilter(filterValues, columnIndex)
-            model.addFilter(filter)
+            if (!filter) {
+                filter = new ParameterizationNodeFilter(filterValues, columnIndex)
+                model.addFilter(filter)
+            } else {
+                filter.values = filterValues
+            }
             model.applyFilter()
             dialog.dispose()
         }] as IActionListener)
@@ -238,12 +248,11 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
     }
 
     protected void selectValues() {
-        ParameterizationNodeFilter exist = model.filters.find { ParameterizationNodeFilter filter -> filter.column == columnIndex }
-        if (exist) {
-            filterRadioButtons[0].setSelected(exist.values[0] == ParameterizationNodeFilter.ALL)
-            filterRadioButtons[1].setSelected(exist.values[0] == ParameterizationNodeFilter.WITH_COMMENTS)
-            filterRadioButtons[2].setSelected(exist.values[0] == ParameterizationNodeFilter.WITHOUT_COMMENTS)
-            filterValues = exist.values
+        if (filter) {
+            filterRadioButtons[0].setSelected(filter.values[0] == ParameterizationNodeFilter.ALL)
+            filterRadioButtons[1].setSelected(filter.values[0] == ParameterizationNodeFilter.WITH_COMMENTS)
+            filterRadioButtons[2].setSelected(filter.values[0] == ParameterizationNodeFilter.WITHOUT_COMMENTS)
+            filterValues = filter.values
         }
     }
 
@@ -253,9 +262,11 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
 class CheckBoxDialog extends SelectionTreeHeaderDialog {
 
     private List<ULCCheckBox> filterCheckBoxes
+    boolean allSelected = false
 
     public CheckBoxDialog(ULCTableTree tree, int columnIndex) {
         super(tree, columnIndex)
+        filter = model.getFilter(columnIndex)
     }
 
     @Override
@@ -274,8 +285,13 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
     protected void attachListeners() {
         super.attachListeners()
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
-            ParameterizationNodeFilter filter = new ParameterizationNodeFilter(filterValues, columnIndex)
-            model.addFilter(filter)
+            if (!filter) {
+                filter = new ParameterizationNodeFilter(filterValues, columnIndex, allSelected)
+                model.addFilter(filter)
+            } else {
+                filter.allSelected = allSelected
+                filter.values = filterValues
+            }
             model.applyFilter()
             dialog.dispose()
         }] as IActionListener)
@@ -287,10 +303,12 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
         ULCCheckBox allCheckBox = new ULCCheckBox(UIUtils.getText(SelectionTreeHeaderDialog.class, "all"))
 
         allCheckBox.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
+            this.@allSelected = allCheckBox.selected
             if (allCheckBox.selected) filterValues.clear()
             filterCheckBoxes.each {ULCCheckBox checkBox ->
                 checkBox.setSelected(allCheckBox.selected)
             }
+
         }] as IValueChangedListener)
 
         filterCheckBoxes << allCheckBox
@@ -309,13 +327,13 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
     }
 
     protected void selectValues() {
-        ParameterizationNodeFilter exist = model.filters.find { ParameterizationNodeFilter filter -> filter.column == columnIndex }
-        if (exist) {
+        if (filter) {
             filterCheckBoxes.each {ULCCheckBox checkBox ->
-                def value = exist.values.find { it == checkBox.getText() }
-                checkBox.setSelected(value != null)
+                def value = filter.values.find { it == checkBox.getText() }
+                checkBox.setSelected(filter.allSelected || value != null)
             }
-            filterValues = exist.values
+            this.@allSelected = filter.allSelected
+            filterValues = filter.values
         }
     }
 

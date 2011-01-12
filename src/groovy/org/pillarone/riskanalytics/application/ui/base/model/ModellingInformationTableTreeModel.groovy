@@ -130,12 +130,16 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                 addColumnValue(parameterization, node, columnIndex, value); break;
             case TAGS:
                 String tags = ""
-                List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.id = ? ", [parameterization.id])
-                pTags.each {
-                    tags += "${it}, "
+                List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.id = ? ", [parameterization.dao.id])
+                pTags.eachWithIndex {it, int index ->
+                    tags += "${it}"
+                    if (index < pTags.size() - 1)
+                        tags += ", "
                 }
+
                 value = tags;
-                addColumnValue(parameterization, node, columnIndex, value)
+                if (value != "")
+                    addColumnValue(parameterization, node, columnIndex, value)
                 break;
             case COMMENTS: value = CommentDAO.countByParameterization(parameterization.dao);
                 addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
@@ -159,9 +163,17 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public List getValues(int columnIndex) {
         Set values = new TreeSet()
-        columnValues.each {Parameterization parameterization, def value ->
+        columnValues?.each {Parameterization parameterization, def value ->
             if (value[columnIndex]) {
-                values.add((value[columnIndex] instanceof Date) ? simpleDateFormat.format(value[columnIndex]) : value[columnIndex])
+                switch (columnIndex) {
+                    case TAGS:
+                        def tags = value[columnIndex]?.split(",");
+                        tags?.each { values.add(it.trim())}
+                        break;
+                    case CREATION_DATE:
+                    case LAST_MODIFICATION_DATE: values.add(simpleDateFormat.format(value[columnIndex])); break;
+                    default: values.add(value[columnIndex])
+                }
             }
         }
         return values as List
