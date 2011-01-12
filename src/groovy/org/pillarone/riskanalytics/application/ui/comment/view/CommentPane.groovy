@@ -21,7 +21,7 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CommentPane {
-    private ULCBoxPane content;
+    ULCBoxPane content;
     FollowLinkPane label
     ULCLabel tags
     ULCButton editButton

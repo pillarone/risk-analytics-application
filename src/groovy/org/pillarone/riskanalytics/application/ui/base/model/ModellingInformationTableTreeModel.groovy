@@ -11,7 +11,6 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
-import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -130,7 +129,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                 addColumnValue(parameterization, node, columnIndex, value); break;
             case TAGS:
                 String tags = ""
-                List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.id = ? ", [parameterization.dao.id])
+                List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.name = ? and pTag.parameterizationDAO.itemVersion = ? and pTag.parameterizationDAO.modelClassName = ? ",
+                        [parameterization.name, parameterization.versionNumber.toString(), parameterization.modelClass.name])
                 pTags.eachWithIndex {it, int index ->
                     tags += "${it}"
                     if (index < pTags.size() - 1)
@@ -141,9 +141,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                 if (value != "")
                     addColumnValue(parameterization, node, columnIndex, value)
                 break;
-            case COMMENTS: value = CommentDAO.countByParameterization(parameterization.dao);
+            case COMMENTS:
+                value = CommentDAO.executeQuery("select count(*) from ${CommentDAO.class.name} as comment where comment.parameterization.name = ? and comment.parameterization.itemVersion = ? and comment.parameterization.modelClassName = ?", [parameterization.name, parameterization.versionNumber.toString(), parameterization.modelClass.name])[0]
                 addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
-            case REVIEW_COMMENT: value = WorkflowCommentDAO.countByParameterizationAndStatusNotEqual(parameterization.dao, IssueStatus.CLOSED);
+            case REVIEW_COMMENT: value = WorkflowCommentDAO.executeQuery("select count(*) from ${WorkflowCommentDAO.class.name} as comment where comment.parameterization.name = ? and comment.parameterization.itemVersion = ? and comment.parameterization.modelClassName = ?", [parameterization.name, parameterization.versionNumber.toString(), parameterization.modelClass.name])[0]
                 addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
             case OWNER: value = parameterization?.getCreator()?.username;
                 addColumnValue(parameterization, node, columnIndex, value); break;
@@ -182,10 +183,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public void addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
         if (columnValues[parameterization] == null)
             columnValues[parameterization] = new Object[columnNames.size() - 1]
-        if (columnValues[parameterization][column] == null) {
-            columnValues[parameterization][column] = value
-            node.values[column] = value
-        }
+        columnValues[parameterization][column] = value
+        node.values[column] = value
     }
 
     public void refresh() {

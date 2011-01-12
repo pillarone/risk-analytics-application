@@ -192,8 +192,9 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public ITableTreeNode refresh(ModellingItem item) {
-        return findNodeForItem(findModelNode(item), item)
-        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+        def node = findNodeForItem(findModelNode(item), item)
+        model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+        return node
     }
 
     public void addNodeForItem(Simulation item) {

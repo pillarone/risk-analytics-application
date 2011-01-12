@@ -95,6 +95,10 @@ class ParameterizationNodeFilter implements ITableTreeFilter {
         return found
     }
 
+    private boolean contains(Long value) {
+        contains(value.intValue())
+    }
+
     private boolean contains(int value) {
         switch (values[0]) {
             case ALL: displayValue = "All"; return true
