@@ -40,6 +40,10 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
 
     }
 
+    public ITableTreeFilter getFilter(int columnIndex) {
+        return filters.find { ParameterizationNodeFilter filter -> filter.column == columnIndex }
+    }
+
     public void removeFilter(ITableTreeFilter filter) {
         filters.remove(filter)
     }

@@ -412,11 +412,14 @@ class ModellingItemFactory {
             item.status = dao.status
             if (modelClass != null) {
                 item.modelClass = modelClass
-                item.creator = dao.getCreator()
-                item.lastUpdater = dao.getLastUpdater()
+                item.creator = dao.creator
+                if (item.creator)
+                    item.creator.username = dao.creator.username
+                item.lastUpdater = dao.lastUpdater
+                if (item.lastUpdater)
+                    item.lastUpdater.username = dao.lastUpdater.username
                 item.creationDate = dao.getCreationDate()
                 item.modificationDate = dao.getModificationDate()
-                item.dao = dao
             }
             getItemInstances()[key(Parameterization, dao.id)] = item
         }

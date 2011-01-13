@@ -7,6 +7,7 @@ import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
@@ -115,13 +116,16 @@ class AddTagDialog {
 
         }] as IActionListener)
         applyButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            if(!item.isLoaded()) {
+            if (!item.isLoaded())
                 item.load(true)
-            }
-            item.setTags(tagListModel.getSelectedValues(tags.getSelectedIndices()))
+            Set values = tagListModel.getSelectedValues(tags.getSelectedIndices())
+            item.setTags(values)
             item.save()
             closeAction.call()
             DefaultMutableTableTreeNode node = tree?.selectedPath?.lastPathComponent
+            values?.each {
+                model.addColumnValue(item, node, ModellingInformationTableTreeModel.TAGS, it.toString())
+            }
             model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }] as IActionListener)
     }
