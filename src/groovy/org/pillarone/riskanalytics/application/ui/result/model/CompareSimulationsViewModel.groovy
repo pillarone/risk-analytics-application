@@ -39,15 +39,21 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         //all result paths for this simulation run
         ConfigObject allResults = ResultViewModel.initPostSimulationCalculations(item[0]?.simulationRun)
 
+        //List paths = ResultViewModel.obtainAllPaths(allResults."0")
+        //Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
+        Set paths = new HashSet()
+        //look through all periods, not all paths may have a result in the first period
+        for (Map<String, Map> periodResults in allResults.values()) {
+            paths.addAll(ResultViewModel.obtainAllPaths(periodResults))
+        }
 
-        List paths = ResultViewModel.obtainAllPaths(allResults."0")
-        Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
         Class modelClass = model.class
+        def simulationRun = item[0].simulationRun
 
         ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
 
         resultStructure.load()
-        builder = new ResultStructureTreeBuilder(collectors, modelClass, resultStructure, item[0])
+        builder = new ResultStructureTreeBuilder(ResultViewModel.obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item[0])
 
         def localTreeRoot = builder.buildTree()
 
@@ -57,7 +63,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
             ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
             resultsList << configObject
         }
-        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(localTreeRoot, item, meanAction.getFunction(), resultsList)//*.simulationRun
+        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(localTreeRoot, item, meanAction.getFunction(), resultsList)
         // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
         return new FilteringTableTreeModel(resultTreeTableModel, filter)
     }

@@ -2,10 +2,11 @@ package org.pillarone.riskanalytics.functional
 
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
+import com.ulcjava.testframework.operator.ULCTreeOperator
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.functional.main.ImportExportParametrizationTests
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com

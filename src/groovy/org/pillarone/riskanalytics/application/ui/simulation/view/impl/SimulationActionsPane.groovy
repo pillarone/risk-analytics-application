@@ -6,6 +6,7 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.logging.view.RealTimeLoggingView
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
@@ -221,6 +222,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
         content.addTab("Batch", batchPane)
+        content.addTab("Logging", new RealTimeLoggingView().getContent())
     }
 
     void initComponents() {

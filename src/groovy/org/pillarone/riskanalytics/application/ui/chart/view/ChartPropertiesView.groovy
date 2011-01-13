@@ -173,19 +173,12 @@ class ChangeChartColorFactory {
     }
 
     private static ChangeChartColorView createContent(ChartView chartView, def model) {
-        new ChangeChartColorView(chartView)
-    }
-
-    private static ChangeChartColorView createContent(ChartView chartView, ScatterChartViewModel model) {
-        new ChangePeriodColorView(chartView)
-    }
-
-    private static ChangeChartColorView createContent(ChartView chartView, StackedBarChartViewModel model) {
-        new ChangeSerieColorView(chartView)
-    }
-
-    private static ChangeChartColorView createContent(ChartView chartView, LineChartViewModel model) {
-        new ChangeSerieColorView(chartView)
+        switch (model.class) {
+            case ScatterChartViewModel: return new ChangePeriodColorView(chartView)
+            case StackedBarChartViewModel: return new ChangeSerieColorView(chartView)
+            case LineChartViewModel: return new ChangeSerieColorView(chartView)
+            default: return new ChangeChartColorView(chartView)
+        }
     }
 
 

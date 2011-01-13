@@ -15,9 +15,11 @@ import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.application.ui.result.action.OpenChartTab
 import org.pillarone.riskanalytics.application.ui.result.action.OpenPlotChartTab
 import org.pillarone.riskanalytics.application.ui.result.action.OpenResultIterationDataViewer
+import org.pillarone.riskanalytics.application.ui.result.action.ShowSingleValueCollectorAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import com.ulcjava.base.application.*
 
 enum ChartType {
@@ -31,7 +33,9 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     ULCPopupMenu nodePopup
     ULCPopupMenu nodeHelpPopup
     ULCPopupMenu defaultResultNodePopup
+    ULCPopupMenu defaultSingleResultNodePopup
     ULCPopupMenu resultNodePopup
+    ULCPopupMenu singleResultNodePopup
     ULCNumberDataType numberDataType
 
     public ResultViewTableTreeNodeCellRenderer(ULCCloseableTabbedPane tabbedPane, SimulationRun simulationRun, def tree, model, def resultView) {
@@ -45,7 +49,9 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         numberDataType.setMaxFractionDigits 2
 
         resultNodePopup = new ULCPopupMenu()
+        singleResultNodePopup = new ULCPopupMenu()
         defaultResultNodePopup = new ULCPopupMenu()
+        defaultSingleResultNodePopup = new ULCPopupMenu()
         nodePopup = new ULCPopupMenu()
         nodeHelpPopup = new ULCPopupMenu()
         OpenComponentHelp help = new OpenComponentHelp(this.tree.rowHeaderTableTree)
@@ -56,6 +62,13 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         defaultResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         defaultResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
+        defaultSingleResultNodePopup.add(createChartsMenu(defaultSingleResultNodePopup, tree))
+        defaultSingleResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
+        defaultSingleResultNodePopup.add(new ULCMenuItem(new ShowSingleValueCollectorAction(tabbedPane, tree, simulationRun)))
+        defaultSingleResultNodePopup.addSeparator()
+        defaultSingleResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
+        defaultSingleResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
+
         resultNodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
         resultNodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
         resultNodePopup.addSeparator()
@@ -64,6 +77,16 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         resultNodePopup.addSeparator()
         resultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
         resultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
+
+        singleResultNodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
+        singleResultNodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
+        singleResultNodePopup.addSeparator()
+        singleResultNodePopup.add(createChartsMenu(singleResultNodePopup, tree))
+        singleResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
+        singleResultNodePopup.add(new ULCMenuItem(new ShowSingleValueCollectorAction(tabbedPane, tree, simulationRun)))
+        singleResultNodePopup.addSeparator()
+        singleResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
+        singleResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
 
         nodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
         nodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
@@ -106,9 +129,9 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
         if (node.childCount > 0)
-            rendererComponent.setComponentPopupMenu(resultNodePopup)
+            rendererComponent.setComponentPopupMenu(node.collector == SingleValueCollectingModeStrategy.IDENTIFIER ? singleResultNodePopup : resultNodePopup)
         else
-            rendererComponent.setComponentPopupMenu(defaultResultNodePopup)
+            rendererComponent.setComponentPopupMenu(node.collector == SingleValueCollectingModeStrategy.IDENTIFIER ? defaultSingleResultNodePopup : defaultResultNodePopup)
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, def node) {

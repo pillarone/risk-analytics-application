@@ -31,11 +31,13 @@ class CriteriaView {
     void attachListeners() {
         removeButton.addActionListener([actionPerformed: { model.remove() }] as IActionListener)
         valueField.addValueChangedListener([valueChanged: {e ->
-            model.value = valueField.value
-            if (!model.value || !model.queryModel.validate()) {
+            if (valueField.value) {
+                model.value = valueField.value
+                if (!model.value || !model.queryModel.validate()) {
+                    new I18NAlert(getErrorMessage(valueIntepretationComboBox.model.selectedEnum)).show()
+                }
+            } else {
                 new I18NAlert(getErrorMessage(valueIntepretationComboBox.model.selectedEnum)).show()
-//                valueField.setText String.valueOf(CriteriaViewModel.DEFAULT_VALUE)
-//                model.value = CriteriaViewModel.DEFAULT_VALUE
             }
         }] as IValueChangedListener)
         valueField.addActionListener([actionPerformed: {

@@ -152,6 +152,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, def node) {
+        setForeground(Color.black)
         if (node.comments && node.comments.size() > 0) {
             setFont(getFont().deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
