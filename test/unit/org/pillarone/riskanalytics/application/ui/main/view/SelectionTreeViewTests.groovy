@@ -54,7 +54,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         ULCMenuItemOperator openItem = new ULCMenuItemOperator(popupMenuOperator, "Open")
         assertNotNull openItem
-        openItem.clickMouse()
     }
 
     public void testExportItem() {

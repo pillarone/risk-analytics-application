@@ -1,10 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCPollingTimer
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.event.IWindowListener
-import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -28,10 +24,10 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationCo
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
 
@@ -51,7 +47,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     static final Logger LOG = Logger.getLogger(P1RATModel)
 
     /** Setting the default time zone to UTC avoids problems in multi user context with different time zones
-     *  and switches off daylight saving capabilities and possible related problems.    */
+     *  and switches off daylight saving capabilities and possible related problems.           */
     DateTimeZone utc = DateTimeZone.setDefault(DateTimeZone.UTC)
 
     public P1RATModel() {
@@ -355,39 +351,12 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void openItem(Model model, Parameterization item) {
-        model = model.class.newInstance()
-        model.init()
-        item.dao.modelClassName = model.class.name
-        synchronized (item) {
-            item.daoClass.withTransaction {status ->
-                boolean usedInSimulation = item.isUsedInSimulation()
-                if (!usedInSimulation || !item.newVersionAllowed()) {
-                    item.load()
-                    notifyOpenDetailView(model, item)
-                } else {
-                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
-                    alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
-                    alert.show()
-                }
-            }
-        }
+        item.load()
+        notifyOpenDetailView(model, item)
     }
 
     public void openItem(Model model, ModellingItem item) {
-        boolean usedInSimulation = false
-        if (item instanceof ResultConfiguration) {
-            usedInSimulation = item.isUsedInSimulation()
-        }
-        if (!usedInSimulation) {
-            if (!item.isLoaded()) {
-                item.load()
-            }
-            notifyOpenDetailView(model, item)
-        } else {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
-            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
-            alert.show()
-        }
+        notifyOpenDetailView(model, item)
     }
 
     /**
@@ -395,9 +364,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
      * @param item can be used for a simulation page or a result view
      */
     public void openItem(Model model, Simulation item) {
-        if (!item.isLoaded()) {
-            item.load()
-        }
         // update parameter, result template and their version selection according correctly, if the item is not a result
         if (item.end == null) {
             viewModelsInUse?.each {k, v ->
@@ -414,6 +380,14 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             }
         }
         notifyOpenDetailView(model, item)
+    }
+
+    public void deleteDependingResults(Model model, ModellingItem item) {
+        List<SimulationRun> simulationRuns = item.getSimulations();
+        simulationRuns.each {SimulationRun simulationRun ->
+            simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
+        }
+        refresh()
     }
 
     public void addItem(BatchRun batchRun) {
