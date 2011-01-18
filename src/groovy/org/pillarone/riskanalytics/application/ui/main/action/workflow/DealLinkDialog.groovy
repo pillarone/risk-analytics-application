@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.remoting.ITransactionService
 import org.pillarone.riskanalytics.core.remoting.TransactionInfo
@@ -17,13 +18,16 @@ class DealLinkDialog {
         private Map<String, Long> items = [:]
 
         public DealComboBoxModel() {
+            String none = UIUtils.getText(DealLinkDialog.class, "none")
+            addElement(none)
+            items.put(none, null)
             for (TransactionInfo info in getAllTransactions()) {
                 addElement(info.name)
                 items.put(info.name, info.dealId)
             }
         }
 
-        public long getDealId() {
+        public Long getDealId() {
             return items[getSelectedItem()]
         }
     }
