@@ -330,6 +330,7 @@ class ModellingItemFactory {
         newItem.periodCount = item.periodCount
         newItem.periodLabels = item.periodLabels
         newItem.modelClass = item.modelClass
+        newItem.dealId = item.dealId
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
         def newId = newItem.save()

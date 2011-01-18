@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
+import models.application.ApplicationModel
 import models.core.CoreModel
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -13,7 +14,6 @@ import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.*
-import models.application.ApplicationModel
 
 class ModellingItemFactoryTests extends GroovyTestCase {
 
@@ -182,6 +182,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         parameterization.load()
         parameterization.periodLabels = ['p1', 'p2']
         parameterization.addComment(new Comment("path", 0))
+        parameterization.dealId = 3
         Parameterization copy = ModellingItemFactory.incrementVersion(parameterization)
 
         assertNotSame parameterization, copy
@@ -192,6 +193,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals 2, copy.periodLabels.size()
         assertTrue copy.periodLabels.contains('p1')
         assertTrue copy.periodLabels.contains('p2')
+        assertEquals 3, copy.dealId
 
         assertEquals parameterization.periodCount, copy.periodCount
         assertEquals parameterization.parameters.size(), copy.parameters.size()
