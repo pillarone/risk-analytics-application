@@ -2,24 +2,30 @@ package org.pillarone.riskanalytics.functional.main
 
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationSettingsPane
-import org.pillarone.riskanalytics.functional.P1RATTestFunctions
+import com.ulcjava.testframework.operator.ULCTreeOperator
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class RunSimulationTests extends P1RATTestFunctions {
+class RunSimulationTests extends AbstractFunctionalTestCase {
+
+    protected void setUp() {
+        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
+        super.setUp();
+    }
 
     public void testRunSimulation() {
-        importCoreAltenativeParameters()
-        popUpContextMenu(0, "Run simulation ...", getSelectionTreeRowHeader())
-        ULCTextFieldOperator iterations = getTextFieldOperator("${SimulationSettingsPane.getSimpleName()}.iterations")
+        ULCTableTreeOperator tableTree = getSelectionTreeRowHeader()
+        showPopupOnParameterizationGroupNode(tableTree, "Core", "Run simulation ...")
+        ULCTextFieldOperator iterations = getTextFieldOperator("iterations")
         iterations.typeText("10")
-        getButtonOperator("${SimulationActionsPane.getSimpleName()}.run").clickMouse()
-        ULCButtonOperator resultButton = getButtonOperator("${SimulationActionsPane.getSimpleName()}.openResults")
+        getButtonOperator("run").clickMouse()
+        ULCButtonOperator resultButton = getButtonOperator("openResults")
         wait({resultButton.isEnabled()}, 500, 5000)
-        getButtonOperator("${SimulationActionsPane.getSimpleName()}.openResults").clickMouse()
+        getButtonOperator("openResults").clickMouse()
         //TODO finish test
     }
 

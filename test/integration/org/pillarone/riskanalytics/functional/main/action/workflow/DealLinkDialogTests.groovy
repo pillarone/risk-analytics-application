@@ -6,12 +6,12 @@ import com.ulcjava.testframework.operator.ULCDialogOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.functional.P1RATTestFunctions
+import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class DealLinkDialogTests extends P1RATTestFunctions {
+class DealLinkDialogTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])

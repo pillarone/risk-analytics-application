@@ -22,13 +22,14 @@ public class LoggingManager {
         Person user = null
         try {
             user = UserContext.getCurrentUser()
-        } catch (Exception ex) {}
-        if (user) {
             event.setProperty("user", user.getUsername())
-//        event.setProperty("user", "testUser")
-            loggingEvents << event
-            fireAppendEvent(event)
+        } catch (Exception ex) {
+            event.setProperty("user", "testUser")
         }
+
+// event.setProperty("user", "testUser")
+        loggingEvents << event
+        fireAppendEvent(event)
 
     }
 
@@ -59,7 +60,7 @@ public class LoggingManager {
             Filter categoryNameFilter = [decide: {LoggingEvent event ->
                 if (event.categoryName.indexOf(categoryName) == 0) {
                     String userName = event.getProperty("user")
-                    if (userName != null && userName.equals(UserContext.getCurrentUser()?.getUsername())) {
+                    if (userName != null && (userName == "testUser" || userName.equals(UserContext.getCurrentUser()?.getUsername()))) {
                         return Filter.ACCEPT
                     }
                 }

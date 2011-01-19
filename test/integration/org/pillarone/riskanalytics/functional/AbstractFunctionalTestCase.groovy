@@ -10,7 +10,8 @@ import com.ulcjava.testframework.operator.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
+class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase {
+
     ULCFrameOperator mainFrameOperator
 
     protected void setUp() {
@@ -35,7 +36,7 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
         if (mainFrameOperator == null) {
             mainFrameOperator = new ULCFrameOperator("Risk Analytics")
         }
-        return mainFrameOperator;
+        return mainFrameOperator
     }
 
     ULCTableTreeOperator getTableTreeOperatorByName(String name) {
@@ -82,17 +83,30 @@ class P1RATFunctionalTestCase extends P1RATAbstractStandaloneTestCase {
         return tree
     }
 
-    void popUpContextMenu(int row, String itemName, ULCTableTreeOperator tableTree) {
-        ULCPopupMenuOperator parametrizationContextMenu = tableTree.callPopupOnCell(row, 0)
-        assertNotNull parametrizationContextMenu
-        parametrizationContextMenu.pushMenu(itemName)
+    protected showPopupOnParameterizationGroupNode(ULCTreeOperator tree, String modelName, String itemName) {
+        int modelRow = tree.findRow(modelName)
+        tree.doExpandRow modelRow
+        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization"] as String[])).pushMenu(itemName)
     }
 
-    void popUpContextMenu(TreePath treePath, String itemName, ULCTreeOperator tree) {
-        tree.doExpandRow 0
-        tree.doExpandRow 1
-        ULCPopupMenuOperator parametrizationContextMenu = tree.callPopupOnPath(treePath)
-        assertNotNull parametrizationContextMenu
-        parametrizationContextMenu.pushMenu(itemName)
+    protected showPopupOnParameterizationGroupNode(ULCTableTreeOperator tree, String modelName, String itemName) {
+        int modelRow = tree.findRow(modelName)
+        tree.doExpandRow modelRow
+        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization"] as String[])).pushMenu(itemName)
     }
+
+    protected showPopupOnParameterizationNode(ULCTreeOperator tree, String modelName, String parameterization, String itemName) {
+        int modelRow = tree.findRow(modelName)
+        tree.doExpandRow modelRow
+        tree.doExpandRow modelRow + 1
+        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization", parameterization] as String[])).pushMenu(itemName)
+    }
+
+    protected showPopupOnParameterizationNode(ULCTableTreeOperator tree, String modelName, String parameterization, String itemName) {
+        int modelRow = tree.findRow(modelName)
+        tree.doExpandRow modelRow
+        tree.doExpandRow modelRow + 1
+        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization", parameterization] as String[])).pushMenu(itemName)
+    }
+
 }

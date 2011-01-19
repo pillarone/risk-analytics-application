@@ -12,13 +12,13 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
-import org.pillarone.riskanalytics.functional.P1RATAbstractStandaloneTestCase
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class AddTagDialogITests extends P1RATAbstractStandaloneTestCase {
+class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     protected String getConfigurationResourceName() {
         return "/org/pillarone/riskanalytics/functional/resources/ULCApplicationConfiguration.xml"
