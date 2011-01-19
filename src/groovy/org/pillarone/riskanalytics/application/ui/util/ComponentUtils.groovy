@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.util
 
-import org.apache.commons.lang.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
@@ -23,10 +22,8 @@ class ComponentUtils {
     static String getSubComponentName(String name) {
         if (name.length() != 0) {
             List tokens = name.split(" ") as List
-            if (tokens.get(0) != 'sub') {
-                tokens.add(0, "sub")
-            }
-            name = StringUtils.uncapitalize(tokens.collect { StringUtils.capitalize(it)}.join(""))
+            tokens.add(0, "sub")
+            name = tokens.collect {it}.join("_")
         }
         return name
     }
