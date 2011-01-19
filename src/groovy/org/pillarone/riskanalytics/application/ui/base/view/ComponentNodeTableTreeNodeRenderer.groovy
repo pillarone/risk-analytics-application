@@ -136,6 +136,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
         setPopupMenu(component, node)
         customizeNode(component, node)
+        if (selected)
+            setForeground(Color.white)
         return component
 
     }
