@@ -16,7 +16,9 @@ public class RealTimeLoggingModel {
     DefaultListModel listModel = new DefaultListModel()
     List<LoggingEvent> pendingLoggingEvents
 
-    def RealTimeLoggingModel() {
+    private MyAppender appender
+
+    RealTimeLoggingModel() {
         pendingLoggingEvents = new ArrayList<LoggingEvent>()
         ULCPollingTimer timer = new ULCPollingTimer(1000, [actionPerformed: { ActionEvent event ->
             addPendingLoggingEvents()
@@ -24,10 +26,7 @@ public class RealTimeLoggingModel {
         }] as IActionListener)
         timer.start()
 
-        LoggingManager manager = LoggingAppender.getInstance().getLoggingManager()
-        MyAppender appender = new MyAppender()
-        manager.addAppender(appender)
-
+        appender = new MyAppender()
     }
 
     private addPendingLoggingEvents() {
@@ -45,13 +44,13 @@ public class RealTimeLoggingModel {
         }
     }
 
-    def void append(LoggingEvent loggingEvent) {
+    void append(LoggingEvent loggingEvent) {
         synchronized (pendingLoggingEvents) {
             pendingLoggingEvents.add(loggingEvent)
         }
     }
 
-    public void clear() {
+    void clear() {
         listModel.clear()
     }
 
@@ -61,6 +60,14 @@ public class RealTimeLoggingModel {
             sb.append(listModel.getElementAt(i))
         }
         return sb.toString()
+    }
+
+    void start() {
+        LoggingAppender.getInstance().getLoggingManager().addAppender(appender)
+    }
+
+    void stop() {
+        LoggingAppender.getInstance().getLoggingManager().removeAppender(appender)
     }
 
     private class MyAppender extends AppenderSkeleton {
