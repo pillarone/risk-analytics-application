@@ -1,10 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCPollingTimer
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.event.IWindowListener
-import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tree.ITreeNode
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
@@ -28,10 +24,10 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationCo
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
@@ -341,39 +337,42 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void openItem(Model model, Parameterization item) {
-        model = model.class.newInstance()
-        model.init()
-        item.dao.modelClassName = model.class.name
-        synchronized (item) {
-            item.daoClass.withTransaction {status ->
-                boolean usedInSimulation = item.isUsedInSimulation()
-                if (!usedInSimulation) {
-                    item.load()
-                    notifyOpenDetailView(model, item)
-                } else {
-                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
-                    alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
-                    alert.show()
-                }
-            }
-        }
+//        model = model.class.newInstance()
+//        model.init()
+//        item.dao.modelClassName = model.class.name
+//        synchronized (item) {
+//            item.daoClass.withTransaction {status ->
+//                boolean usedInSimulation = item.isUsedInSimulation()
+//                if (!usedInSimulation) {
+//                    item.load()
+//                    notifyOpenDetailView(model, item)
+//                } else {
+//                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
+//                    alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
+//                    alert.show()
+//                }
+//            }
+//        }
+        item.load()
+        notifyOpenDetailView(model, item)
     }
 
     public void openItem(Model model, ModellingItem item) {
-        boolean usedInSimulation = false
-        if (item instanceof ResultConfiguration) {
-            usedInSimulation = item.isUsedInSimulation()
-        }
-        if (!usedInSimulation) {
-            if (!item.isLoaded()) {
-                item.load()
-            }
-            notifyOpenDetailView(model, item)
-        } else {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
-            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
-            alert.show()
-        }
+        notifyOpenDetailView(model, item)
+//        boolean usedInSimulation = false
+//        if (item instanceof ResultConfiguration) {
+//            usedInSimulation = item.isUsedInSimulation()
+//        }
+//        if (!usedInSimulation) {
+//            if (!item.isLoaded()) {
+//                item.load()
+//            }
+//            notifyOpenDetailView(model, item)
+//        } else {
+//            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
+//            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
+//            alert.show()
+//        }
     }
 
     /**
@@ -381,9 +380,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
      * @param item can be used for a simulation page or a result view
      */
     public void openItem(Model model, Simulation item) {
-        if (!item.isLoaded()) {
-            item.load()
-        }
         // update parameter, result template and their version selection according correctly, if the item is not a result
         if (item.end == null) {
             viewModelsInUse?.each {k, v ->
@@ -400,6 +396,14 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             }
         }
         notifyOpenDetailView(model, item)
+    }
+
+    public void deleteDependingResults(Model model, ModellingItem item) {
+        List<SimulationRun> simulationRuns = item.getSimulations();
+        simulationRuns.each {SimulationRun simulationRun ->
+            simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
+        }
+        refresh()
     }
 
     public void addItem(BatchRun batchRun) {
