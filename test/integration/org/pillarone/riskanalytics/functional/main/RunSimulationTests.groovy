@@ -3,14 +3,13 @@ package org.pillarone.riskanalytics.functional.main
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import com.ulcjava.testframework.operator.ULCTreeOperator
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.functional.P1RATTestFunctions
+import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class RunSimulationTests extends P1RATTestFunctions {
+class RunSimulationTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
@@ -19,9 +18,7 @@ class RunSimulationTests extends P1RATTestFunctions {
 
     public void testRunSimulation() {
         ULCTreeOperator tableTree = getSelectionTree()
-        TreePath path = tableTree.findPath(["Core", "Parameterization"] as String[])
-        assertNotNull "path not found", path
-        popUpContextMenu(path, "Run simulation ...", tableTree)
+        showPopupOnParameterizationGroupNode(tableTree, "Core", "Run simulation ...")
         ULCTextFieldOperator iterations = getTextFieldOperator("iterations")
         iterations.typeText("10")
         getButtonOperator("run").clickMouse()
