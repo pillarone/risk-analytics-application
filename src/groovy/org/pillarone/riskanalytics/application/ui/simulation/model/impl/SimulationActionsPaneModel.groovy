@@ -14,11 +14,9 @@ import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
-import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
+import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationTask
-import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 
 /**
  * The view model for the SimulationActionsPane.
@@ -100,15 +98,15 @@ class SimulationActionsPaneModel {
     }
 
     String getSimulationStartTime() {
-        Date estimatedSimulationEnd = simulation.start
-        if (estimatedSimulationEnd != null) {
-            return dateFormat.format(estimatedSimulationEnd)
+        Date simulationStartTime = runner.simulation.start
+        if (simulationStartTime != null) {
+            return dateFormat.format(simulationStartTime)
         }
         return "-"
     }
 
     String getSimulationEndTime() {
-        Date estimatedSimulationEnd = simulation.end
+        Date estimatedSimulationEnd = runner.simulation.start
         if (estimatedSimulationEnd != null) {
             return dateFormat.format(estimatedSimulationEnd)
         }
@@ -153,7 +151,7 @@ class SimulationActionsPaneModel {
 
     String getErrorMessage() {
         HashSet<String> messages = new HashSet<String>();
-        for (Throwable simulationException:runner.getSimulationErrors()) {
+        for (Throwable simulationException: runner.getSimulationErrors()) {
             String exceptionMessage = simulationException.message
             if (exceptionMessage == null) {
                 exceptionMessage = simulationException.class.name
@@ -173,7 +171,7 @@ class SimulationActionsPaneModel {
                 text << s + " "
                 lineLength += (s.length() + 1)
             }
-            text <<"\n";
+            text << "\n";
         }
 
         return text.toString()
