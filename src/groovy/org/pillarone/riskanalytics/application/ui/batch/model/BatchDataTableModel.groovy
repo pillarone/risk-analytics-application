@@ -2,6 +2,8 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.table.AbstractTableModel
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchRunAction
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -10,6 +12,7 @@ import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.SimulationState
 
 public class BatchDataTableModel extends AbstractTableModel implements BatchTableListener {
     List<String> columnHeaders
@@ -22,6 +25,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     List<IP1RATModelListener> ip1RATModelListeners
 
     private final String SIMULATION_STATUS_COLUMN = UIUtils.getText(this.class, "SimulationStatus")
+    Log LOG = LogFactory.getLog(BatchDataTableModel)
 
     public BatchDataTableModel(BatchRun batchRun) {
         this.tableValues = new ArrayList<List<String>>()
@@ -29,7 +33,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         this.batchRun = batchRun
         init()
         pollingBatchRunAction = new PollingBatchRunAction(this)
-        startPollingTimer pollingBatchRunAction
+        startPollingTimer() //pollingBatchRunAction
         ip1RATModelListeners = []
     }
 
@@ -137,6 +141,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         tableValues << toList(batchRunSimulationRun)
         int index = tableValues.size() - 1
         fireTableRowsInserted(index, index);
+        startPollingTimer()
     }
 
     public void fireRowDeleted(SimulationRun run) {
@@ -157,17 +162,39 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         fireTableRowsUpdated Math.min(rowIndex, to), Math.max(rowIndex, to)
     }
 
-    private void startPollingTimer(PollingBatchRunAction pollingBatchRunAction) {
-        pollingBatchRunTimer = new ULCPollingTimer(2000, pollingBatchRunAction)
-        pollingBatchRunTimer.repeats = true
-        pollingBatchRunTimer.syncClientState = false
-        pollingBatchRunTimer.start()
+    private void startPollingTimer() {
+        if (!isAllExecuted()) {
+            if (!pollingBatchRunTimer) {
+                pollingBatchRunTimer = new ULCPollingTimer(2000, pollingBatchRunAction)
+                pollingBatchRunTimer.repeats = true
+                pollingBatchRunTimer.syncClientState = false
+            }
+            if (!pollingBatchRunTimer.isRunning()) {
+                LOG.info " starting pollingTimer"
+                pollingBatchRunTimer.start()
+            }
+        }
+    }
+
+    public void stopPollingTimer() {
+        if (isAllExecuted() && pollingBatchRunTimer.isRunning()) {
+            LOG.info " stopping pollingTimer"
+            pollingBatchRunTimer.stop()
+        }
     }
 
     public void openDetailView(Model model, Object item) {
         ip1RATModelListeners.each {IP1RATModelListener ip1RATModelListener ->
             ip1RATModelListener.openDetailView model, item
         }
+    }
+
+    private boolean isAllExecuted() {
+        for (BatchRunSimulationRun batchRunSimulationRun: batchRunSimulationRuns) {
+            if (batchRunSimulationRun.simulationState != SimulationState.FINISHED && batchRunSimulationRun.simulationState != SimulationState.ERROR)
+                return false
+        }
+        return true
     }
 
     private int getColumnIndex(String columnName) {

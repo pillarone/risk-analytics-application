@@ -54,7 +54,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         viewModelsInUse = [:]
         selectionTreeModel = new ModellingInformationTreeModel()
         pollingBatchSimulationAction = new PollingBatchSimulationAction()
-        startPollingTimer(pollingBatchSimulationAction)
+        startPollingTimer()
     }
 
 
@@ -512,7 +512,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
-    private void startPollingTimer(PollingBatchSimulationAction pollingBatchSimulationAction) {
+    private void startPollingTimer() {
         try {
             pollingBatchSimulationAction.addSimulationListener this
             pollingBatchSimulationTimer = new ULCPollingTimer(2000, pollingBatchSimulationAction)
