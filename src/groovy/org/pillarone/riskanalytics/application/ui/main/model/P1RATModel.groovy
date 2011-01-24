@@ -499,8 +499,8 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
-        ParameterViewModel viewModel = viewModelsInUse[simulation.parameterization]
-        ResultConfigurationViewModel templateViewModel = viewModelsInUse[simulation.template]
+        ParameterViewModel viewModel = getViewModel(simulation.parameterization, simulation.modelClass)
+        ResultConfigurationViewModel templateViewModel = getViewModel(simulation.template, simulation.modelClass)
         if (simulation.end != null) {
             selectionTreeModel.addNodeForItem(simulation)
             viewModel?.readOnly = true
@@ -561,9 +561,20 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
+    private def getViewModel(ModellingItem item, Class modelClass) {
+        def viewModel = null
+        viewModelsInUse?.each {k, v ->
+            if ((k instanceof Parameterization) || (k instanceof ResultConfiguration)) {
+                if (!viewModel && k.name == item.name && k.versionNumber == item.versionNumber && k.modelClass == modelClass) {
+                    viewModel = viewModelsInUse[k]
+                }
+            }
+
+        }
+        return viewModel
+    }
+
 }
-
-
 
 
 interface IP1RATModelListener {
