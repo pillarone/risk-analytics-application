@@ -3,7 +3,7 @@ import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.1.3.6-workflow"
+    def version = "1.1.3.7-workflow"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.3.4 > *"
     // the other plugins this plugin depends on
