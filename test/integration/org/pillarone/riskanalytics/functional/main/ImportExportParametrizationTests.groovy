@@ -2,21 +2,48 @@ package org.pillarone.riskanalytics.functional.main
 
 import com.ulcjava.testframework.operator.ULCTreeOperator
 import javax.swing.tree.TreePath
-import org.pillarone.riskanalytics.functional.P1RATTestFunctions
+import com.ulcjava.testframework.operator.ULCButtonOperator
+import com.ulcjava.testframework.operator.ULCTextFieldOperator
+import com.ulcjava.testframework.operator.ULCFileChooserOperator
+import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ImportExportParametrizationTests extends P1RATTestFunctions {
+class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
-        importCoreAltenativeParameters()
+        ULCTreeOperator tree = getSelectionTree()
+        showPopupOnParameterizationGroupNode(tree, "Core", "Import (force)")
+        ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
+        assertNotNull(fileChooserOperator)
+        ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
+        pathField.typeText(ImportExportParametrizationTests.getResource("CoreAlternativeParameters.groovy").getFile())
+        ULCButtonOperator button = fileChooserOperator.getApproveButton()
+        assertNotNull(button)
+        button.getFocus()
+        button.clickMouse()
+
         verifyImport()
     }
 
     public void testExportParametrization() {
         File testExportFile = File.createTempFile("testParameter", ".groovy")
-        exportCoreAltenativeParameters("CoreAlternativeParameters", testExportFile.getAbsolutePath())
+        String parameterizationName = "CoreAlternativeParameters"
+        String fileName = testExportFile.getAbsolutePath()
+
+        ULCTreeOperator tree = getSelectionTree()
+        TreePath parametrizationPath = tree.findPath(["Core", "Parameterization", parameterizationName] as String[])
+        assertNotNull "path not found", parametrizationPath
+        showPopupOnParameterizationNode(tree, "Core", parameterizationName, "Export")
+        ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
+        assertNotNull(fileChooserOperator)
+        ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
+        pathField.typeText(fileName)
+        ULCButtonOperator button = fileChooserOperator.getApproveButton()
+        assertNotNull(button)
+        button.getFocus()
+        button.clickMouse()
         verifyExport(testExportFile)
     }
 

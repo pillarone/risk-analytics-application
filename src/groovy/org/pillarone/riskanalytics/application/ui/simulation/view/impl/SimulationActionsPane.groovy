@@ -42,6 +42,8 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
     private ULCButton addToBatch
     private ULCLabel batchMessage
 
+    private RealTimeLoggingView loggingView
+
     SimulationActionsPaneModel model
     private Map<SimulationState, Closure> uiStates = [:]
 
@@ -222,7 +224,8 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
         content.addTab("Batch", batchPane)
-        content.addTab("Logging", new RealTimeLoggingView().getContent())
+        loggingView = new RealTimeLoggingView()
+        content.addTab("Logging", loggingView.getContent())
     }
 
     void initComponents() {
@@ -293,10 +296,12 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", I18NUtils.getExceptionText(this.model.errorMessage), "Ok")
             alert.show()
         }
+        loggingView.model.stop()
     }
 
     void simulationStart(Simulation simulation) {
         timer.start()
+        loggingView.model.start()
     }
 
     void simulationToBatchAdded() {
