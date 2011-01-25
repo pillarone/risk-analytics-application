@@ -59,21 +59,20 @@ class CriteriaView {
 
     void layoutComponents() {
         comparatorComboBox.setPreferredSize(new Dimension(50, 20))
-        valueField.setPreferredSize(new Dimension(150, 20))
-        valueIntepretationComboBox.setPreferredSize(new Dimension(150, 20))
-        periodComboBox.setPreferredSize(new Dimension(100, 20))
+        valueField.setPreferredSize(new Dimension(90, 20))
         periodComboBox.enabled = model.isEnablePeriodComboBox()
 
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, keyFigureTypeComboBox)
+        content.add(ULCBoxPane.BOX_RIGHT_EXPAND, keyFigureTypeComboBox)
         content.add(ULCBoxPane.BOX_RIGHT_EXPAND, comparatorComboBox)
         content.add(ULCBoxPane.BOX_RIGHT_EXPAND, valueField)
         content.add(ULCBoxPane.BOX_RIGHT_EXPAND, valueIntepretationComboBox)
         content.add(ULCBoxPane.BOX_RIGHT_EXPAND, periodComboBox)
         content.add(ULCBoxPane.BOX_RIGHT_EXPAND, removeButton)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
     void initComponents() {
-        content = new ULCBoxPane(6, 1)
+        content = new ULCBoxPane(7, 1)
         keyFigureTypeComboBox = new ULCComboBox(model.keyFigureTypeModel)
         comparatorComboBox = new ULCComboBox(model.comparatorModel)
 
