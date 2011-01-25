@@ -13,8 +13,8 @@ import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TablePaster
 import org.pillarone.riskanalytics.application.ui.base.action.TableSelectionFiller
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTableCellRenderer
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTable
+import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTableCellRenderer
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
 import com.ulcjava.base.application.*
@@ -26,6 +26,7 @@ class MultiDimensionalParameterView {
     ULCSpinner rowCount
     ULCSpinner columnCount
     ULCButton applyDimensionButton
+    ULCButton addRowButton
     ULCLabel path
 
     MultiDimensionalParameterView(MultiDimensionalParameterModel model) {
@@ -57,7 +58,10 @@ class MultiDimensionalParameterView {
         columnCount.name = 'columnCount'
         columnCount.enabled = model.tableModel.columnCountChangeable()
         applyDimensionButton = new ULCButton(getText("apply"))
+        addRowButton = new ULCButton(getText("addRow"))
+        addRowButton.name = "addRowButton"
         applyDimensionButton.enabled = (columnCount.enabled || rowCount.enabled) && !model.tableModel.readOnly
+        addRowButton.enabled = (columnCount.enabled || rowCount.enabled) && !model.tableModel.readOnly
 
         setRendererAndEditors()
         //set table header height
@@ -118,23 +122,26 @@ class MultiDimensionalParameterView {
     private ULCBoxPane getDimensionSection() {
         ULCBoxPane dimensionSection
         if (isMatrix()) {
-            dimensionSection = new ULCBoxPane(3, 1)
+            dimensionSection = new ULCBoxPane(4, 1)
             dimensionSection.add(new ULCLabel(getText("dimension")))
             dimensionSection.add(columnCount)
             dimensionSection.add(applyDimensionButton)
+            dimensionSection.add(addRowButton)
         } else if (model.tableModel.columnCountChangeable()) {
-            dimensionSection = new ULCBoxPane(3, 2)
+            dimensionSection = new ULCBoxPane(4, 2)
             dimensionSection.add(new ULCLabel(getText("rowCount")))
             dimensionSection.add(rowCount)
-            dimensionSection.add(new ULCFiller())
+            dimensionSection.add(2, new ULCFiller())
             dimensionSection.add(new ULCLabel(getText("columnCount")))
             dimensionSection.add(columnCount)
             dimensionSection.add(applyDimensionButton)
+            dimensionSection.add(addRowButton)
         } else {
-            dimensionSection = new ULCBoxPane(3, 1)
+            dimensionSection = new ULCBoxPane(4, 1)
             dimensionSection.add(new ULCLabel(getText("rowCount")))
             dimensionSection.add(rowCount)
             dimensionSection.add(applyDimensionButton)
+            dimensionSection.add(addRowButton)
         }
         return dimensionSection
     }
@@ -143,6 +150,15 @@ class MultiDimensionalParameterView {
         applyDimensionButton.addActionListener([actionPerformed: {
             if (isMatrix())
                 rowCount.value = columnCount.value
+            MultiDimensionalParameterDimension dimension = new MultiDimensionalParameterDimension(columnCount.value, rowCount.value)
+            model.tableModel.dimension = dimension
+        }] as IActionListener)
+        addRowButton.addActionListener([actionPerformed: {
+            rowCount.value = rowCount.value + 1
+            if (isMatrix()) {
+                columnCount.value = columnCount.value + 1
+            }
+
             MultiDimensionalParameterDimension dimension = new MultiDimensionalParameterDimension(columnCount.value, rowCount.value)
             model.tableModel.dimension = dimension
         }] as IActionListener)
