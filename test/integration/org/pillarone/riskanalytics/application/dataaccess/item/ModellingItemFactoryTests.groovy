@@ -22,6 +22,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
         new ModelFileImportService().compareFilesAndWriteToDB(['CoreModel'])
+        ModellingItemFactory.clear()
     }
 
     void testCreateItem() {
@@ -55,14 +56,14 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNotNull parameterization
         parameterization.load()
 
-        assertEquals 1, ModellingItemFactory.getParameterizationsForModel(CoreModel).size()
+        int currentCount = ModellingItemFactory.getParameterizationsForModel(CoreModel).size()
 
         Parameterization newVersion = ModellingItemFactory.incrementVersion(parameterization)
         newVersion.load()
 
-        assertEquals 2, ModellingItemFactory.getParameterizationsForModel(CoreModel).size()
+        assertEquals currentCount + 1, ModellingItemFactory.getParameterizationsForModel(CoreModel).size()
         List newParams = ModellingItemFactory.getNewestParameterizationsForModel(CoreModel)
-        assertEquals 1, newParams.size()
+        assertEquals currentCount, newParams.size()
         newParams.each {it.load()}
         assertTrue newParams.contains(newVersion)
         assertFalse newParams.contains(parameterization)

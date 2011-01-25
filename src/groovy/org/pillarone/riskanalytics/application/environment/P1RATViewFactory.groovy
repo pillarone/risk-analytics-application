@@ -9,10 +9,17 @@ import com.ulcjava.container.grails.UlcViewFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 abstract class P1RATViewFactory implements UlcViewFactory {
 
+    private Log LOG = LogFactory.getLog(P1RATViewFactory)
+
     public ULCRootPane create() {
+
+        LOG.info "Started session for user '${UserManagement.currentUser?.username}'"
 
         ULCClipboard.install()
         ULCRootPane frame = createRootPane()
