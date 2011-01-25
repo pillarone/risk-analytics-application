@@ -30,9 +30,6 @@ class OpenItemAction extends SelectionTreeAction {
             if (!item.isLoaded()) {
                 item.load()
             }
-            if (item instanceof Simulation) {
-                LOG.trace "Reading end time from simulation: ${System.identityHashCode(item)}: ${item.end?.time}"
-            }
             openItem(selectedModel, item)
         }
     }

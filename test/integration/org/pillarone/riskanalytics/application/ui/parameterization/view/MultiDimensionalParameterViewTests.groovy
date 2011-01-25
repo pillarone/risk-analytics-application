@@ -6,13 +6,13 @@ import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCSpinnerOperator
 import org.netbeans.jemmy.drivers.scrolling.ScrollAdjuster
-import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TestMultiDimensionalParameterModel
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 
 class MultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
 
@@ -65,6 +65,19 @@ class MultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
         apply.clickMouse()
 
         assertEquals 1, multiDimensionalParameter.valueColumnCount
+
+    }
+
+    void testAddRow() {
+        ULCFrameOperator frame = new ULCFrameOperator("test")
+        println "${ multiDimensionalParameter.valueRowCount}"
+        int rowCount = multiDimensionalParameter.valueRowCount
+        int columnCount = multiDimensionalParameter.valueColumnCount
+        ULCButtonOperator apply = new ULCButtonOperator(frame, new ComponentByNameChooser("addRowButton"))
+        apply.getFocus()
+        apply.clickMouse()
+        assertEquals rowCount + 1, multiDimensionalParameter.valueRowCount
+        assertEquals columnCount, multiDimensionalParameter.valueColumnCount
 
     }
 

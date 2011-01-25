@@ -34,8 +34,8 @@ public class RealTimeLoggingModel {
             LoggingManager manager = LoggingAppender.getInstance().getLoggingManager()
             List<String> messages = []
             for (int i = 0; i < pendingLoggingEvents.size(); i++) {
-                String userName = pendingLoggingEvents.get(i).getProperty("user")
-                if (userName != null && (userName == "testUser" || userName.equals(UserContext.getCurrentUser()?.getUsername()))) {
+                String userName = pendingLoggingEvents.get(i).getProperty(LoggingManager.USER_PROPERTY)
+                if (userName != null && (userName == LoggingManager.NO_USER || userName.equals(UserContext.getCurrentUser()?.getUsername()))) {
                     messages << manager.layout.format(pendingLoggingEvents.get(i))
                 }
             }

@@ -36,6 +36,12 @@ public class UIFixedColumnTableTree extends UIScrollPane {
         removeKeystrokes((TableTreeTable) viewPort.getComponent(0), new KeyStroke[]{
                 KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0)
         });
+        removeKeystrokes((TableTreeTable) rowHeader.getComponent(0), new KeyStroke[]{
+                KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK)
+        });
+        removeKeystrokes((TableTreeTable) viewPort.getComponent(0), new KeyStroke[]{
+                KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK)
+        });
         rowHeader.addTreeExpansionListener(new MyExpansionListener(viewPort));
         rowHeader.addTreeSelectionListener(new MySelectionListener(viewPort, rowHeader));
         viewPort.addTreeSelectionListener(new MySelectionListener(rowHeader, viewPort));
@@ -58,6 +64,8 @@ public class UIFixedColumnTableTree extends UIScrollPane {
         rowHeader.registerKeyboardAction(new RowHeaderTabAction(rowHeader, viewPort), KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, true), JComponent.WHEN_FOCUSED);
         viewPort.registerKeyboardAction(new ViewPortTabAction(rowHeader, viewPort), KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0, true), JComponent.WHEN_FOCUSED);
         viewPort.registerKeyboardAction(new LeftKeyAction(rowHeader, viewPort), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, true), JComponent.WHEN_FOCUSED);
+        rowHeader.registerKeyboardAction(new RowHeaderLeftTabAction(rowHeader, viewPort), KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK), JComponent.WHEN_FOCUSED);
+        viewPort.registerKeyboardAction(new ViewPortLeftTabAction(rowHeader, viewPort), KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK), JComponent.WHEN_FOCUSED);
     }
 
     private void removeKeystrokes(TableTreeTable component, KeyStroke[] keyStrokes) {
@@ -219,5 +227,63 @@ public class UIFixedColumnTableTree extends UIScrollPane {
                 }
             }
         }
+    }
+
+    private class RowHeaderLeftTabAction implements ActionListener {
+        JTableTree rowHeaderTableTree;
+        JTableTree viewPortTableTree;
+
+        public RowHeaderLeftTabAction(JTableTree rowHeaderTableTree, JTableTree viewPortTableTree) {
+            this.rowHeaderTableTree = rowHeaderTableTree;
+            this.viewPortTableTree = viewPortTableTree;
+        }
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            if (rowHeaderTableTree.getCellSelectionEnabled()) {
+                int selectedColumn = rowHeaderTableTree.getSelectedColumn();
+                int selectedRow = Math.max(rowHeaderTableTree.getSelectedRow(), viewPortTableTree.getSelectedRow());
+                if (selectedColumn == 0) {
+                    if (viewPortTableTree.getColumnCount() > 0) {
+                        int viewPortLastColumn = viewPortTableTree.getColumnCount() - 1;
+                        viewPortTableTree.requestFocus();
+                        viewPortTableTree.setColumnSelectionInterval(viewPortLastColumn, viewPortLastColumn);
+                        if (selectedRow > 0)
+                            selectedRow = selectedRow - 1;
+                        viewPortTableTree.setRowSelectionInterval(selectedRow, selectedRow);
+                    }
+                } else if (selectedColumn > 0) {
+                    rowHeaderTableTree.setColumnSelectionInterval(selectedColumn - 1, selectedColumn - 1);
+                }
+            }
+        }
+    }
+
+    private class ViewPortLeftTabAction implements ActionListener {
+        JTableTree rowHeaderTableTree;
+        JTableTree viewPortTableTree;
+
+        public ViewPortLeftTabAction(JTableTree rowHeaderTableTree, JTableTree viewPortTableTree) {
+            this.rowHeaderTableTree = rowHeaderTableTree;
+            this.viewPortTableTree = viewPortTableTree;
+        }
+
+        public void actionPerformed(ActionEvent actionEvent) {
+            if (viewPortTableTree.getCellSelectionEnabled()) {
+                int selectedColumn = viewPortTableTree.getSelectedColumn();
+                if (selectedColumn == 0) {
+                    if (rowHeaderTableTree.getColumnCount() > 0) {
+                        rowHeaderTableTree.requestFocus();
+                        int lastColumn = rowHeaderTableTree.getColumnCount() - 1;
+                        rowHeaderTableTree.setColumnSelectionInterval(lastColumn, lastColumn);
+                        int selectedRow = viewPortTableTree.getSelectedRow();
+                        rowHeaderTableTree.setRowSelectionInterval(selectedRow, selectedRow);
+                    }
+                } else if (selectedColumn > 0) {
+                    viewPortTableTree.setColumnSelectionInterval(selectedColumn - 1, selectedColumn - 1);
+                }
+            }
+        }
+
+
     }
 }
