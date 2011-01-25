@@ -36,16 +36,15 @@ class AddDynamicSubComponent extends ResourceBasedAction {
         DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = UIUtils.getText(this.class, "newDynamicSubComponent") + ": " + (node ? node.getDisplayName() : "dynamic component")
         dialog.okAction = {
+            Component component = node.component.createDefaultSubComponent()
             String name = dialog.nameInput.text.trim()
+            name = ComponentUtils.getSubComponentName(name)
+
             if (name.length() == 0 || !StringUtils.isAlphanumericSpace(name)) {
                 ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "IllegalSubComponentName")
                 alert.show()
                 return
             }
-            Component component = node.component.createDefaultSubComponent()
-            name = ComponentUtils.getSubComponentName(name)
-
-
             try {
                 component.name = name
                 tree.model.addComponentNode(node, component)

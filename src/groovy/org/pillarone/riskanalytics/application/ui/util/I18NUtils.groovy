@@ -257,8 +257,7 @@ public class I18NUtils {
         if (value.startsWith("out")) {
             value = value.substring(3)
         }
-        if (value.length() > 0 && value.charAt(0) == '_')
-            return value.replace("_", " ").trim()
+
         StringBuffer displayNameBuffer = new StringBuffer()
         //display name will be as the following formatted
         // HelloWORLD -> hello world

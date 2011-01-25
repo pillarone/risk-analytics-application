@@ -9,80 +9,34 @@ class ComponentUtilsTests extends GroovyTestCase {
 
     void testGetName() {
         String name = "HelloWorld"
+        name = ComponentUtils.getSubComponentName(name)
+        assertEquals "subHelloWorld", name
         name = I18NUtils.formatDisplayName(name)
         assertEquals "hello world", name
-
-        name = "subHelloworld"
-        name = I18NUtils.formatDisplayName(name)
-        assertEquals "helloworld", name
-
-        name = "subHelloWorld"
-        name = I18NUtils.formatDisplayName(name)
-        assertEquals "hello world", name
-
-        name = "subHELLOWORLD"
-        name = I18NUtils.formatDisplayName(name)
-        assertEquals "HELLOWORLD", name
-
-        name = "subHELLOWorld"
-        name = I18NUtils.formatDisplayName(name)
-        assertEquals "HELLO world", name
-
-        name = "Options 3 and 4"
-        name = ComponentUtils.getSubComponentName(name)
-        println "${name}"
-        assertEquals "sub_Options_3_and_4", name
-        name = I18NUtils.formatDisplayName(name)
-        println "${name}"
-        assertEquals "Options 3 and 4", name
-
-        name = "LOB 2"
-        name = ComponentUtils.getSubComponentName(name)
-        println "${name}"
-        assertEquals "sub_LOB_2", name
-        name = I18NUtils.formatDisplayName(name)
-        println "${name}"
-        assertEquals "LOB 2", name
-
-        //"LOB 2"
-        name = "Hello World"
-        name = ComponentUtils.getSubComponentName(name)
-        println "${name}"
-        assertEquals "sub_Hello_World", name
-        name = I18NUtils.formatDisplayName(name)
-        println "${name}"
-        assertEquals "Hello World", name
-
-        name = "HelloWorld"
-        name = ComponentUtils.getSubComponentName(name)
-        assertEquals "sub_HelloWorld", name
-        name = I18NUtils.formatDisplayName(name)
-        assertEquals "HelloWorld", name
 
         name = "helloworld"
         name = ComponentUtils.getSubComponentName(name)
-        assertEquals "sub_helloworld", name
+        assertEquals "subHelloworld", name
         name = I18NUtils.formatDisplayName(name)
         assertEquals "helloworld", name
 
         name = "hello world"
         name = ComponentUtils.getSubComponentName(name)
-        assertEquals "sub_hello_world", name
+        assertEquals "subHelloWorld", name
         name = I18NUtils.formatDisplayName(name)
         assertEquals "hello world", name
 
         name = "HELLOWORLD"
         name = ComponentUtils.getSubComponentName(name)
-        assertEquals "sub_HELLOWORLD", name
+        assertEquals "subHELLOWORLD", name
         name = I18NUtils.formatDisplayName(name)
         assertEquals "HELLOWORLD", name
 
         name = "HELLOWorld"
         name = ComponentUtils.getSubComponentName(name)
-        assertEquals "sub_HELLOWorld", name
+        assertEquals "subHELLOWorld", name
         name = I18NUtils.formatDisplayName(name)
-        assertEquals "HELLOWorld", name
-
+        assertEquals "HELLO world", name
     }
 
     void testIntersection() {
