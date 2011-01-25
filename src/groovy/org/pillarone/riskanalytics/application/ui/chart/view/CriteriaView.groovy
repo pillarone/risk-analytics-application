@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
 import org.pillarone.riskanalytics.application.ui.chart.model.ValueInterpretationType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 
 class CriteriaView {
@@ -83,27 +83,18 @@ class CriteriaView {
         valueIntepretationComboBox = new ULCComboBox(model.valueInterpretationModel)
         valueIntepretationComboBox.enabled = (model.selectedPeriod != null)
         periodComboBox = new ULCComboBox(model.periodModel)
-        removeButton = new ULCButton(getText("remove"))
+        removeButton = new ULCButton(UIUtils.getText(CriteriaView.class, "remove"))
 
-        keyFigureTypeComboBox.toolTipText = getText("path")
-        comparatorComboBox.toolTipText = getText("comperator")
-        valueField.toolTipText = getText("value")
-        valueIntepretationComboBox.toolTipText = getText("interpreteAs")
-        periodComboBox.toolTipText = getText("period")
-        removeButton.toolTipText = getText("removeTootltip")
+        keyFigureTypeComboBox.toolTipText = UIUtils.getText(CriteriaView.class, "path")
+        comparatorComboBox.toolTipText = UIUtils.getText(CriteriaView.class, "comperator")
+        valueField.toolTipText = UIUtils.getText(CriteriaView.class, "value")
+        valueIntepretationComboBox.toolTipText = UIUtils.getText(CriteriaView.class, "interpreteAs")
+        periodComboBox.toolTipText = UIUtils.getText(CriteriaView.class, "period")
+        removeButton.toolTipText = UIUtils.getText(CriteriaView.class, "removeTootltip")
 
         periodComboBox.name = "${content.name}/period"
     }
 
-    /**
-     * Utility method to get resource bundle entries for this class
-     *
-     * @param key
-     * @return the localized value corresponding to the key
-     */
-    protected String getText(String key) {
-        return LocaleResources.getString("CriteriaView." + key);
-    }
 
     static String getErrorMessage(ValueInterpretationType selectedType) {
         switch (selectedType) {
