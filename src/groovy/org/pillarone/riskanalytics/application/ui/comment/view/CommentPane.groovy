@@ -104,10 +104,11 @@ class CommentPane {
     }
 
     String getTitle() {
-        String username = comment.user ? comment.user.userRealName : ""
+        String username = comment.user ? comment.user.username : ""
         StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
-        sb.append(" " + username)
+        if (username != "")
+            sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
         sb.append(" " + simpleDateFormat.format(comment.lastChange))
         return sb.toString()
     }
