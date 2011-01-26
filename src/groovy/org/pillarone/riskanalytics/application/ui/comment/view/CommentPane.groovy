@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
 import be.devijver.wikipedia.Parser
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
@@ -12,8 +15,6 @@ import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentActi
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 
@@ -104,10 +105,11 @@ class CommentPane {
     }
 
     String getTitle() {
-        String username = comment.user ? comment.user.userRealName : ""
+        String username = comment.user ? comment.user.username : ""
         StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
-        sb.append(" " + username)
+        if (username != "")
+            sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
         sb.append(" " + simpleDateFormat.format(comment.lastChange))
         return sb.toString()
     }
