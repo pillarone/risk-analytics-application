@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.apache.log4j.MDC
 
 abstract class P1RATViewFactory implements UlcViewFactory {
 
@@ -19,6 +20,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     public ULCRootPane create() {
 
+        MDC.put("username", UserManagement.currentUser?.username)
         LOG.info "Started session for user '${UserManagement.currentUser?.username}'"
 
         ULCClipboard.install()
