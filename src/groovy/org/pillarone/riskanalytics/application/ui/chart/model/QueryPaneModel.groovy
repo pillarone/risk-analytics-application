@@ -234,19 +234,27 @@ class QueryPaneModel extends AbstractPresentationModel {
     }
 
     protected List queryResultsHQL(CriteriaViewModel criteria) {
-        String q = "SELECT s.iteration " +
-                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                "WHERE s.simulationRun.id = " + simulationRun.id +
-                " AND s.period = " + criteria.selectedPeriod +
-                " AND s.path.pathName = '" + criteria.selectedPath + "'" +
-                " AND s.field.fieldName = '" + criteria.field + "'" +
-                " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.interpretedValue
-        LOG.debug "Query: " + q
-        SingleValueResult.executeQuery(q)
+        try {
+            String q = "SELECT s.iteration " +
+                    "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                    "WHERE s.simulationRun.id = " + simulationRun.id +
+                    " AND s.period = " + criteria.selectedPeriod +
+                    " AND s.path.pathName = '" + criteria.selectedPath + "'" +
+                    " AND s.field.fieldName = '" + criteria.field + "'" +
+                    " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.interpretedValue
+            LOG.debug "Query: " + q
+            return SingleValueResult.executeQuery(q)
+        } catch (Exception ex) {
+            return []
+        }
     }
 
     protected String createCriteriaSubQuerry(CriteriaViewModel model) {
-        return "sum(s.value) " + model.selectedComparator.toString() + " " + model.interpretedValue
+        try {
+            return "sum(s.value) " + model.selectedComparator.toString() + " " + model.interpretedValue
+        } catch (Exception ex) {
+            return null
+        }
     }
 
     public List createResultList() {

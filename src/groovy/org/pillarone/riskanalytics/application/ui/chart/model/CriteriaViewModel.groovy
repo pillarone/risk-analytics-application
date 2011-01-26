@@ -54,7 +54,7 @@ class CriteriaViewModel {
         comparatorModel.selectedEnum = comparator
     }
 
-    public double getInterpretedValue() {
+    public double getInterpretedValue() throws Exception {
         switch (valueInterpretationModel.selectedEnum) {
             case ValueInterpretationType.ABSOLUTE:
                 return this.@value
@@ -68,14 +68,25 @@ class CriteriaViewModel {
 
     public boolean validate() {
         if (valueInterpretationModel.getSelectedEnum() != ValueInterpretationType.ABSOLUTE) {
-            if (value < 0 || value > 100) return false
+            return isValid(CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem), value)
         }
         return true
     }
 
+    public static boolean isValid(CompareOperator criteriaComparator, double value) {
+        switch (criteriaComparator) {
+            case CompareOperator.LESS_THAN: return (value >= 1 && value <= 101)
+            case CompareOperator.LESS_EQUALS: return (value >= 0 && value <= 100)
+            case CompareOperator.EQUALS: return (value >= 0 && value <= 100)
+            case CompareOperator.GREATER_THAN: return (value >= -1 && value <= 99)
+            case CompareOperator.GREATER_EQUALS: return (value >= 0 && value <= 100)
+            default: return false
+        }
+    }
+
     public String getErrorMessage() {
         if (valueInterpretationModel.getSelectedEnum() != ValueInterpretationType.ABSOLUTE) {
-            if (value < 0 || value > 100) {
+            if (!isValid(CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem), value)) {
                 return CriteriaView.getErrorMessage(valueInterpretationModel.getSelectedEnum())
             }
         }
@@ -145,6 +156,7 @@ public enum CriteriaComparator {
         else if (displayName.equals('>=')) {
             return CompareOperator.GREATER_EQUALS
         }
+        return null
     }
 }
 
