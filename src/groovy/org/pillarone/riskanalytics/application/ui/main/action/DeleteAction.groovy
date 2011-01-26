@@ -1,5 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
@@ -11,11 +16,6 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -30,7 +30,15 @@ class DeleteAction extends SelectionTreeAction {
     public void doActionPerformed(ActionEvent event) {
         def selectedItem = getSelectedItem()
         if (!selectedItem) return
-        removeItem(selectedItem)
+        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "deleteWarning", [tree.selectedPath.lastPathComponent])
+        alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+            def value = windowEvent.source.value
+            if (value.equals(alert.firstButtonLabel)) {
+                removeItem(selectedItem)
+            }
+        }] as IWindowListener)
+        alert.show()
+
     }
 
     private void removeItem(ModellingItem selectedItem) {
@@ -60,12 +68,6 @@ class DeleteAction extends SelectionTreeAction {
             if (value.equals(firstButtonValue)) {
                 model.deleteDependingResults(selectedModel, item)
                 model.removeItem(selectedModel, item)
-//                List<SimulationRun> simulationRuns = item.getSimulations();
-//                simulationRuns.each {SimulationRun simulationRun ->
-//                    simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
-//                }
-//                model.refresh();
-//                model.removeItem(selectedModel, item);
             }
         }
     }
