@@ -93,7 +93,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void initComponents() {
 
         content = new ULCBoxPane(2, 0)
-        model.rootPaneForAlerts = content
 
         selectionTree = new ULCTree(model.selectionTreeModel)
         initMenuBar()

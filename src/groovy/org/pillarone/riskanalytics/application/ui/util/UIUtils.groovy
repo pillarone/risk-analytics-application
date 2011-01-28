@@ -16,6 +16,8 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumPar
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import com.ulcjava.base.application.ULCRootPane
+import org.pillarone.riskanalytics.application.UserContext
 
 class UIUtils {
 
@@ -23,7 +25,8 @@ class UIUtils {
 
     private static FontMetrics sFontMetrics
     private static Font font
-    public static String ICON_DIRECTORY = "/org/pillarone/riskanalytics/application/icons/"
+    public static final String ICON_DIRECTORY = "/org/pillarone/riskanalytics/application/icons/"
+    public static final String ROOT_PANE = "rootPane"
 
     static int calculateTreeWidth(node) {
         return calculateTreeWidth(node, 0)
@@ -170,5 +173,12 @@ class UIUtils {
         return result
     }
 
+    public static ULCRootPane getRootPane() {
+        return UserContext.getAttribute(ROOT_PANE)
+    }
+
+    public static void setRootPane(ULCRootPane pane) {
+        UserContext.setAttribute(ROOT_PANE, pane)
+    }
 
 }
