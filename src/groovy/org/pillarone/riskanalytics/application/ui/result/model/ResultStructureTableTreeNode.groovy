@@ -1,14 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 
-/**
- * No additional functionality.
- * Used for identification only (for tree filtering for example)
- */
 class ResultStructureTableTreeNode extends SimpleTableTreeNode {
 
-    public ResultStructureTableTreeNode(String name) {
+    private Class modelClass
+
+    public ResultStructureTableTreeNode(String name, Class modelClass) {
         super(name);
+        this.modelClass = modelClass
     }
+
+    String getDisplayName() {
+        if (cachedDisplayName == null) {
+            cachedDisplayName = I18NUtils.getResultStructureString(modelClass, name)
+        }
+        return cachedDisplayName
+    }
+
+
 }

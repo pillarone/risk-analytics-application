@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
 import be.devijver.wikipedia.Parser
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
@@ -7,12 +10,11 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 
@@ -21,7 +23,7 @@ import com.ulcjava.base.application.*
  */
 class CommentPane {
     private ULCBoxPane content;
-    ULCLabel label
+    FollowLinkPane label
     ULCLabel tags
     ULCButton editButton
     ULCButton deleteButton
@@ -49,14 +51,15 @@ class CommentPane {
         content.name = "CommentPane"
         content.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(getTitle());
-        border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
+        Font font = border.getTitleFont().deriveFont(Font.PLAIN)
+        border.setTitleFont(font);
         content.setBorder(border);
 
-        label = new ULCLabel();
+        label = new FollowLinkPane();
         if (searchText) label.name = "foundText"
         label.setText getLabelText()
 
-        label.setFont(label.getFont().deriveFont(Font.PLAIN));
+        label.setFont(font);
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
@@ -102,10 +105,11 @@ class CommentPane {
     }
 
     String getTitle() {
-        String username = comment.user ? comment.user.userRealName : ""
+        String username = comment.user ? comment.user.username : ""
         StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
-        sb.append(" " + username)
+        if (username != "")
+            sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
         sb.append(" " + simpleDateFormat.format(comment.lastChange))
         return sb.toString()
     }

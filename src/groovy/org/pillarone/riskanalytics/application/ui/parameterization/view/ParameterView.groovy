@@ -10,9 +10,6 @@ import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodePaster
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
@@ -25,6 +22,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.base.action.*
 import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 
@@ -35,6 +33,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
     boolean tabbedPaneVisible = true
+    static double DIVIDER = 0.65
+    static double NO_DIVIDER = 1.0
 
     ParameterView(ParameterViewModel model) {
         super(model)
@@ -117,29 +117,37 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         CheckBoxCellComponent checkBoxRenderer = new CheckBoxCellComponent();
 
         ULCPopupMenu menu = new ULCPopupMenu();
+        ULCPopupMenu mdpMenu = new ULCPopupMenu();
+        mdpMenu.add(new ULCMenuItem(new OpenMDPAction(tree)))
+
         TableTreeCopier copier = new TableTreeCopier();
         copier.setTable(tree);
         menu.add(new ULCMenuItem(copier));
+        mdpMenu.add(new ULCMenuItem(copier));
         TreeNodePaster paster = new TreeNodePaster();
         paster.setTree(tree);
         menu.add(new ULCMenuItem(paster));
+        mdpMenu.add(new ULCMenuItem(paster));
         InsertCommentAction insertComment = new InsertCommentAction(tree, (columnIndex - 1) % model.periodCount)
         insertComment.addCommentListener commentAndErrorView
         ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree, (columnIndex - 1) % model.periodCount, false)
         showCommentsAction.addCommentListener commentAndErrorView
 
+        mdpMenu.addSeparator()
+        mdpMenu.add(new ULCMenuItem(insertComment))
+        mdpMenu.add(new ULCMenuItem(showCommentsAction))
+
         menu.addSeparator()
         menu.add(new ULCMenuItem(insertComment))
         menu.add(new ULCMenuItem(showCommentsAction))
-        menu.addSeparator()
 
-        initRenderer(defaultRenderer, menu);
-        initRenderer(doubleRenderer, menu);
-        initRenderer(integerRenderer, menu);
-        initRenderer(dateRenderer, menu);
+        defaultRenderer.setMenu(menu)
+        doubleRenderer.setMenu(menu)
+        integerRenderer.setMenu(menu)
+        dateRenderer.setMenu(menu)
         initComboBox(comboBoxRenderer, menu);
         initCheckBox(checkBoxRenderer, menu);
-        initRenderer(mdpRenderer, menu);
+        mdpRenderer.setMenu(mdpMenu)
 
         Map renderers = new HashMap<Class, ITableTreeCellRenderer>();
         renderers.put(SimpleValueParameterizationTableTreeNode.class,
@@ -197,6 +205,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         rowHeaderTree.registerKeyboardAction(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new AddDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_INSERT, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTree.registerKeyboardAction(new TreeNodeRename(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTree.registerKeyboardAction(new TreeCollapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
 
         def parameterization = model.getItem() as Parameterization
         parameterization.addModellingItemChangeListener([itemSaved: {item ->},
@@ -216,8 +226,9 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         splitPane.oneTouchExpandable = true
         splitPane.setResizeWeight(1)
         splitPane.setDividerSize(10)
-        splitPane.add(content); splitPane.add(commentAndErrorView.tabbedPane)
-        splitPane.setDividerLocation(0.65)
+        splitPane.add(content);
+        splitPane.add(commentAndErrorView.tabbedPane)
+        splitPane.setDividerLocation(DIVIDER)
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
         tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), contentPane)
@@ -237,20 +248,22 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
     public void removeTabs() {
         int count = tabbedPane.getTabCount()
-        for (int i = 2; i < count; i++)
+        for (int i = count - 1; i > 1; i--) {
             tabbedPane.closeCloseableTab(i)
+        }
         tree.viewPortTableTree.getActionListeners().each {
-            if (it instanceof MultiDimensionalTabStarter)
+            if (it instanceof MultiDimensionalTabStarter) {
                 it.openTabs = [:]
+            }
         }
     }
 
     public void commentsSelected() {
         this.tabbedPaneVisible = !tabbedPaneVisible
         if (this.tabbedPaneVisible)
-            splitPane.setDividerLocation(0.65)
+            splitPane.setDividerLocation(DIVIDER)
         else
-            splitPane.setDividerLocation(1.0)
+            splitPane.setDividerLocation(NO_DIVIDER)
     }
 
 

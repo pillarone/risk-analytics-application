@@ -18,6 +18,7 @@ public class TreeNodeDuplicator extends TreeNodeAction {
 
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+        if (model.paramterTableTreeModel.readOnly) return
         String oldPath = getPathName(node.parent, "${node.name}")
         String newPath = getPathName(node.parent, "$newName")
         ParameterHolderFactory.duplicateParameters(model.builder.item, oldPath, newPath)

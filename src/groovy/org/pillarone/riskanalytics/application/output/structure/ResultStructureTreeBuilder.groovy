@@ -14,7 +14,7 @@ class ResultStructureTreeBuilder {
     private static class NodeReplacement implements Comparable {
         String path
         String wildcard
-        List<String> replacements
+        Set<String> replacements
 
         int compareTo(Object o) {
             NodeReplacement nodeReplacement = o
@@ -90,27 +90,39 @@ class ResultStructureTreeBuilder {
     private void obtainReplacements(List<ResultNode> leafs) {
         for (ResultNode leaf in leafs) {
             if (leaf.resultPath.contains("[%")) {
-                String[] leafNodes = leaf.resultPath.split(":")
-                ResultNode currentNode = existingPathsRoot
-                for (int i = 1; i < leafNodes.length; i++) {
-                    String currentNodeName = leafNodes[i]
-                    if (currentNodeName.startsWith("[%")) {
-                        List<String> replacements = []
-                        for (ResultNode child in currentNode.childNodes) {
-                            if (child.name.startsWith("sub")) {
-                                replacements << child.name
-                            }
-                        }
-                        nodeReplacements << new NodeReplacement(path: leaf.path, wildcard: currentNodeName, replacements: replacements)
-                        currentNode = currentNode.getChildAt(0) //first dynamic subcomponent (all are the same)
-                    } else {
-                        currentNode = currentNode.getChildByName(currentNodeName)
-                        if (currentNode == null) { // path not collected
-                            break
-                        }
-                    }
+                obtainReplacementsRecursive(existingPathsRoot, leaf.resultPath.split(":"), 1, leaf.path)
+            }
+        }
+    }
 
+    private obtainReplacementsRecursive(ResultNode currentNode, String[] leafNodes, int level, String leafPath) {
+        if (level == leafNodes.length) {
+            return
+        }
+
+        String currentNodeName = leafNodes[level]
+        if (currentNodeName.startsWith("[%")) {
+            List<String> replacements = []
+            for (ResultNode child in currentNode.childNodes) {
+                if (child.name.startsWith("sub")) {
+                    replacements << child.name
                 }
+            }
+            NodeReplacement existingReplacement = nodeReplacements.find { it.path == leafPath && it.wildcard == currentNodeName}
+            if (existingReplacement == null) {
+                nodeReplacements << new NodeReplacement(path: leafPath, wildcard: currentNodeName, replacements: replacements)
+            } else {
+                existingReplacement.replacements.addAll(replacements)
+            }
+            level++
+            for (ResultNode child in currentNode.childNodes) {
+                obtainReplacementsRecursive(child, leafNodes, level, leafPath)
+            }
+        } else {
+            if (currentNode == null) return
+            currentNode = currentNode.getChildByName(currentNodeName)
+            if (currentNode != null) { // path collected
+                obtainReplacementsRecursive(currentNode, leafNodes, ++level, leafPath)
             }
         }
     }
@@ -164,9 +176,9 @@ class ResultStructureTreeBuilder {
         for (ResultNode child in node.childNodes) {
             SimpleTableTreeNode newNode
             if (child.resultPath == null || allPaths.get(child.resultPath) == null) {
-                newNode = new ResultStructureTableTreeNode(child.name)
+                newNode = new ResultStructureTableTreeNode(child.name, modelClass)
             } else {
-                newNode = new ResultTableTreeNode(child.name)
+                newNode = new ResultTableTreeNode(child.name, modelClass)
                 newNode.resultPath = child.resultPath
                 newNode.collector = allPaths.get(child.resultPath).getIdentifier()
             }
@@ -174,4 +186,5 @@ class ResultStructureTreeBuilder {
             createTree(child, newNode)
         }
     }
+
 }

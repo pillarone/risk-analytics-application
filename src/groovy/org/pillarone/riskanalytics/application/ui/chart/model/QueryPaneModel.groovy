@@ -1,14 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class QueryPaneModel extends AbstractPresentationModel {
 
@@ -121,7 +121,7 @@ class QueryPaneModel extends AbstractPresentationModel {
 
         if (criterias.empty) {
             simulationRun.iterations.times {
-                results << it
+                results << it + 1
             }
             return
         }
@@ -156,14 +156,24 @@ class QueryPaneModel extends AbstractPresentationModel {
 
     public boolean validate() {
         boolean isValid = true
-        for (List group : criterias) {
-            for (ChartViewModel criteria : group) {
+        for (List group: criterias) {
+            for (CriteriaViewModel criteria: group) {
                 isValid = isValid && criteria.validate()
             }
         }
         return isValid
     }
 
+    public String getErrorMessage() {
+        for (List group: criterias) {
+            for (CriteriaViewModel criteria: group) {
+                if (!criteria.validate()) {
+                    return criteria.getErrorMessage()
+                }
+            }
+        }
+        return null
+    }
 
     private List programmaticAnd(List groupList, List smallesList) {
         if (groupList.size() == 0) {
@@ -224,19 +234,27 @@ class QueryPaneModel extends AbstractPresentationModel {
     }
 
     protected List queryResultsHQL(CriteriaViewModel criteria) {
-        String q = "SELECT s.iteration " +
-                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                "WHERE s.simulationRun.id = " + simulationRun.id +
-                " AND s.period = " + criteria.selectedPeriod +
-                " AND s.path.pathName = '" + criteria.selectedPath + "'" +
-                " AND s.field.fieldName = '" + criteria.field + "'" +
-                " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.intepretedValue
-        LOG.debug "Query: " + q
-        SingleValueResult.executeQuery(q)
+        try {
+            String q = "SELECT s.iteration " +
+                    "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
+                    "WHERE s.simulationRun.id = " + simulationRun.id +
+                    " AND s.period = " + criteria.selectedPeriod +
+                    " AND s.path.pathName = '" + criteria.selectedPath + "'" +
+                    " AND s.field.fieldName = '" + criteria.field + "'" +
+                    " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.interpretedValue
+            LOG.debug "Query: " + q
+            return SingleValueResult.executeQuery(q)
+        } catch (Exception ex) {
+            return []
+        }
     }
 
     protected String createCriteriaSubQuerry(CriteriaViewModel model) {
-        return "sum(s.value) " + model.selectedComparator.toString() + " " + model.intepretedValue
+        try {
+            return "sum(s.value) " + model.selectedComparator.toString() + " " + model.interpretedValue
+        } catch (Exception ex) {
+            return null
+        }
     }
 
     public List createResultList() {

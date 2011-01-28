@@ -166,6 +166,57 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         assertEquals "ultimate", claimsGen.getChildAt(0).field
     }
 
+    void testDrillDown() {
+
+        //tests nested drilldown (not all 'dynamic components' are the same)
+        Closure mapping = {
+            model {
+                "[%reinsurance%]" {
+                    claims "Model:contracts:[%reinsurance%]:claimsGenerators:outTotal:ultimate", {
+                        "[%claims%]" "Model:contracts:[%reinsurance%]:claimsGenerators:[%claims%]:outClaims:ultimate"
+                    }
+                }
+            }
+        }
+        ICollectingModeStrategy aggregated = CollectingModeFactory.getStrategy(AggregatedCollectingModeStrategy.IDENTIFIER)
+
+        Map allPaths = [
+
+                "Model:contracts:subContractA:claimsGenerators:subFire:outClaims:ultimate": aggregated,
+                "Model:contracts:subContractB:claimsGenerators:subFlood:outClaims:ultimate": aggregated,
+        ]
+
+        ResultStructure resultStructure = new ResultStructure("name")
+        resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mapping)
+
+        ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, null, resultStructure, null)
+
+        SimpleTableTreeNode root = treeBuilder.buildTree()
+        assertEquals "model", root.getName()
+
+        assertEquals 2, root.childCount //contract a + b
+
+        SimpleTableTreeNode contractA = root.getChildAt(0)
+        assertEquals "subContractA", contractA.name
+
+        SimpleTableTreeNode claimsGen = contractA.getChildAt(0)
+        assertEquals 1, claimsGen.childCount //fire
+
+        assertEquals "subFire", claimsGen.getChildAt(0).name
+        assertEquals "Model:contracts:subContractA:claimsGenerators:subFire:outClaims", claimsGen.getChildAt(0).path
+        assertEquals "ultimate", claimsGen.getChildAt(0).field
+
+        SimpleTableTreeNode contractB = root.getChildAt(1)
+        assertEquals "subContractB", contractB.name
+
+        claimsGen = contractB.getChildAt(0)
+        assertEquals 1, claimsGen.childCount //flood
+
+        assertEquals "subFlood", claimsGen.getChildAt(0).name
+        assertEquals "Model:contracts:subContractB:claimsGenerators:subFlood:outClaims", claimsGen.getChildAt(0).path
+        assertEquals "ultimate", claimsGen.getChildAt(0).field
+    }
+
     void testNodeReplacementCompareTo() {
         String path = "claims:paid:[%lineOfBusiness%]:gross:[%claimsGenerator%]"
         String path2 = "claims:paid:[%lineOfBusiness%]:ceded:[%contract%]"

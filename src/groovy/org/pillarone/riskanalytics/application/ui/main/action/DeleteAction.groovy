@@ -13,7 +13,6 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -59,12 +58,14 @@ class DeleteAction extends SelectionTreeAction {
     private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
         synchronized (item) {
             if (value.equals(firstButtonValue)) {
-                List<SimulationRun> simulationRuns = item.getSimulations();
-                simulationRuns.each {SimulationRun simulationRun ->
-                    simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
-                }
-                model.refresh();
-                model.removeItem(selectedModel, item);
+                model.deleteDependingResults(selectedModel, item)
+                model.removeItem(selectedModel, item)
+//                List<SimulationRun> simulationRuns = item.getSimulations();
+//                simulationRuns.each {SimulationRun simulationRun ->
+//                    simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
+//                }
+//                model.refresh();
+//                model.removeItem(selectedModel, item);
             }
         }
     }

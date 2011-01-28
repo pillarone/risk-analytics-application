@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
@@ -15,13 +16,17 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumPar
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import com.ulcjava.base.application.ULCRootPane
+import org.pillarone.riskanalytics.application.UserContext
 
 class UIUtils {
 
     private static Log LOG = LogFactory.getLog(UIUtils)
 
     private static FontMetrics sFontMetrics
-    public static String ICON_DIRECTORY = "/org/pillarone/riskanalytics/application/icons/"
+    private static Font font
+    public static final String ICON_DIRECTORY = "/org/pillarone/riskanalytics/application/icons/"
+    public static final String ROOT_PANE = "rootPane"
 
     static int calculateTreeWidth(node) {
         return calculateTreeWidth(node, 0)
@@ -44,6 +49,13 @@ class UIUtils {
         }
 
         return sFontMetrics
+    }
+
+    public static Font getFont() {
+        if (font == null) {
+            font = new Font("SansSerif", Font.PLAIN, 12);
+        }
+        return font
     }
 
     private static int calculateTreeWidth(node, int columnIndex) {
@@ -161,5 +173,12 @@ class UIUtils {
         return result
     }
 
+    public static ULCRootPane getRootPane() {
+        return UserContext.getAttribute(ROOT_PANE)
+    }
+
+    public static void setRootPane(ULCRootPane pane) {
+        UserContext.setAttribute(ROOT_PANE, pane)
+    }
 
 }

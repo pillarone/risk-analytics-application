@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
 
@@ -48,7 +49,7 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
 
         frame.setContentPane(view.content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 

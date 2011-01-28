@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
@@ -10,9 +13,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -39,15 +39,21 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         //all result paths for this simulation run
         ConfigObject allResults = ResultViewModel.initPostSimulationCalculations(item[0]?.simulationRun)
 
+        //List paths = ResultViewModel.obtainAllPaths(allResults."0")
+        //Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
+        Set paths = new HashSet()
+        //look through all periods, not all paths may have a result in the first period
+        for (Map<String, Map> periodResults in allResults.values()) {
+            paths.addAll(ResultViewModel.obtainAllPaths(periodResults))
+        }
 
-        List paths = ResultViewModel.obtainAllPaths(allResults."0")
-        Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
         Class modelClass = model.class
+        def simulationRun = item[0].simulationRun
 
         ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
 
         resultStructure.load()
-        builder = new ResultStructureTreeBuilder(collectors, modelClass, resultStructure, item[0])
+        builder = new ResultStructureTreeBuilder(ResultViewModel.obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item[0])
 
         treeRoot = builder.buildTree()
 
@@ -57,7 +63,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
             ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
             resultsList << configObject
         }
-        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(treeRoot, item, meanAction.getFunction(), resultsList)//*.simulationRun
+        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(treeRoot, item, meanAction.getFunction(), resultsList)
         // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
         return new FilteringTableTreeModel(resultTreeTableModel, filter)
     }

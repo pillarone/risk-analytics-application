@@ -19,7 +19,7 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ImportAction extends SelectionTreeAction {
-    UserPreferences userPreferences
+    protected UserPreferences userPreferences
     ULCWindow ancestor
     boolean forceImport = false
     Log LOG = LogFactory.getLog(ImportAction)
@@ -55,7 +55,7 @@ class ImportAction extends SelectionTreeAction {
     }
 
     protected doAction(ITreeNode node) {
-        new I18NAlert("FunctionNotImplemented").show()
+        //do nothing when not on an ItemGroupNode
     }
 
     protected doAction(ItemGroupNode node) {

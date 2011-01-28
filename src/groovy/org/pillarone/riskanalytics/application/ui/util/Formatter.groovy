@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.util
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalCellRenderer
+import org.joda.time.DateTime
+import java.text.SimpleDateFormat
 
 /**
     Format a MultiDimensionalParam for the parameter view, where only an indication of the
@@ -40,6 +42,9 @@ public class Formatter {
         values = list.collect {
             if (it instanceof Number) {
                 return format.format(it)
+            }
+            else if (it instanceof DateTime) {
+                return new SimpleDateFormat('MMM dd, yyyy').format(it.toDate())
             } else {
                 return String.valueOf(it)
             }

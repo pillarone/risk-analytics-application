@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.util.HTMLUtilities
+import java.text.MessageFormat
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
@@ -221,6 +222,17 @@ public class I18NUtils {
         return LocaleResources.getBundle(resourceBundleName)
     }
 
+    public static String getResultStructureString(Class model, String property) {
+        try {
+            ResourceBundle bundle = getModelResourceBundle(model.simpleName - "Model")
+            return bundle.getString(property)
+        } catch (MissingResourceException e) {
+            return formatDisplayName(property)
+        } catch (NullPointerException e) {
+            return formatDisplayName(property)
+        }
+    }
+
     protected static ResourceBundle getResourceBundle(Class class2) {
         if (testMode) {
             return testResourceBundle
@@ -346,12 +358,14 @@ public class I18NUtils {
                     text = resourceBundle.getString(keys[0])
                 } catch (Exception ex) {}
                 if (text) {
+                    List args = []
                     keys.eachWithIndex {String key, int index ->
                         if (index > 0) {
-                            text = text.replace("[" + index + "]", key)
+                            args << key
                         }
                     }
-                    return text;
+                    if (args.size() > 0)
+                        text = MessageFormat.format(text, args.toArray())
                 }
             }
         } catch (Exception ex) {  /*ignore the exception*/}

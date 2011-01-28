@@ -1,14 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
+import com.ulcjava.base.application.IAction
+import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
-import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.util.KeyStroke
-import com.ulcjava.base.application.IAction
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author stefan.kunz (at) intuitive-collaboration (dot) com
@@ -21,8 +22,17 @@ public class TreeNodeRename extends TreeNodeAction {
     }
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+        if (model.paramterTableTreeModel.readOnly) return
         String oldPath = getPathName(node.parent, "${node.name}")
         String newPath = getPathName(node.parent, "$newName")
+
+        def oldComments = model?.item?.comments?.findAll {it.path.startsWith(model.model.name + ":" + oldPath)}
+        oldComments.each {Comment comment ->
+            Comment newComment = comment.clone()
+            newComment.path = comment.path.replace(oldPath, newPath)
+            model.item.removeComment(comment)
+            model.item.addComment(newComment)
+        }
 
         List<String> modifiedReferencePaths = ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath)
         Component component = node.parent.component.createDefaultSubComponent()

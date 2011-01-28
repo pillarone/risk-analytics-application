@@ -11,9 +11,12 @@ import com.ulcjava.base.application.util.HTMLUtilities
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationAndCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.main.view.LockSensitiveMenuItem
+import org.pillarone.riskanalytics.application.ui.main.view.SubComponentMenuItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
@@ -46,16 +49,23 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         insertComment.addCommentListener commentAndErrorView
         ShowCommentsAction showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, -1, false)
         showCommentsAction.addCommentListener commentAndErrorView
+        ShowValidationAndCommentsAction validationAndComments = new ShowValidationAndCommentsAction(tree.rowHeaderTableTree)
+        validationAndComments.addCommentListener commentAndErrorView
 
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
         addDynamicNodeMenu = new ULCPopupMenu()
-        addDynamicNodeMenu.add(new ULCMenuItem(new AddDynamicSubComponent(tree.rowHeaderTableTree, model)))
+        ULCMenuItem subComponentMenuItem = new SubComponentMenuItem(new AddDynamicSubComponent(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener(subComponentMenuItem)
+        addDynamicNodeMenu.add(subComponentMenuItem)
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         addDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         addDynamicNodeMenu.addSeparator()
+        addDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         addDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
+        addDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         addDynamicNodeMenu.addSeparator()
         addDynamicNodeMenu.add(new ULCMenuItem(help))
         addDynamicNodeMenu.name = "popup.expand"
@@ -63,37 +73,61 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu = new ULCPopupMenu()
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
-        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model)))
-        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model)))
         removeDynamicNodeMenu.addSeparator()
-        removeDynamicNodeMenu.add(new ULCMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model)))
+        removeDynamicNodeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+
+        LockSensitiveMenuItem treeNodeDuplicatorMenuItem = new LockSensitiveMenuItem(new TreeNodeDuplicator(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener treeNodeDuplicatorMenuItem
+        removeDynamicNodeMenu.add(treeNodeDuplicatorMenuItem)
+
+        LockSensitiveMenuItem treeNodeRenameMenuItem = new LockSensitiveMenuItem(new TreeNodeRename(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener treeNodeRenameMenuItem
+        removeDynamicNodeMenu.add(treeNodeRenameMenuItem)
+
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(insertComment))
         removeDynamicNodeMenu.add(new ULCMenuItem(showCommentsAction))
+        removeDynamicNodeMenu.add(new ULCMenuItem(validationAndComments))
         removeDynamicNodeMenu.addSeparator()
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
+        removeDynamicNodeMenu.addSeparator()
+
+        LockSensitiveMenuItem removeDynamicSubComponentMenuItem = new LockSensitiveMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model))
+        tree.addTreeSelectionListener removeDynamicSubComponentMenuItem
+        removeDynamicNodeMenu.add(removeDynamicSubComponentMenuItem)
 
         expandTreeMenu = new ULCPopupMenu()
         expandTreeMenu.name = "popup.expand"
         expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
+        expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(insertComment))
+        expandTreeMenu.add(new ULCMenuItem(showCommentsAction))
+        expandTreeMenu.add(new ULCMenuItem(validationAndComments))
 
         expandTreeMenuWithHelp = new ULCPopupMenu()
         expandTreeMenuWithHelp.name = "popup.expand"
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
         expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeCollapser(tree)))
-        //expandTreeMenuWithHelp.addSeparator()
 
+        expandTreeMenuWithHelp.addSeparator()
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
         expandTreeMenuWithHelp.add(new ULCMenuItem(showCommentsAction))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(validationAndComments))
         expandTreeMenuWithHelp.addSeparator()
         expandTreeMenuWithHelp.add(new ULCMenuItem(help))
 
         commentMenu = new ULCPopupMenu()
         commentMenu.name = "popup.comment"
+        commentMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        commentMenu.addSeparator()
         commentMenu.add(new ULCMenuItem(insertComment))
         commentMenu.add(new ULCMenuItem(showCommentsAction))
+        commentMenu.add(new ULCMenuItem(validationAndComments))
 
     }
 
@@ -102,6 +136,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
         setPopupMenu(component, node)
         customizeNode(component, node)
+        if (selected)
+            setForeground(Color.white)
         return component
 
     }
@@ -111,6 +147,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void customizeNode(IRendererComponent rendererComponent, def node) {
+        setForeground(Color.black)
         if (node.comments && node.comments.size() > 0) {
             setFont(getFont().deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
@@ -122,23 +159,18 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
     void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
         Font font = getFont()
-        if (node.errorMessage == null) {
-            setForeground(Color.black)
-            setToolTipText(null)
-            setFont(font.deriveFont(Font.PLAIN))
-        } else {
+        if (node.errorMessage != null) {
             setForeground(Color.red)
             setToolTipText(node.errorMessage)
             setFont(font.deriveFont(Font.BOLD))
-        }
-        if (node.comments && node.comments.size() > 0) {
+        } else if (node.comments && node.comments.size() > 0) {
             setForeground(Color.black)
             setFont(font.deriveFont(Font.BOLD))
             setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
         } else {
             setForeground(Color.black)
+            setToolTipText(null)
             setFont(font.deriveFont(Font.PLAIN))
-            setToolTipText("")
         }
     }
 

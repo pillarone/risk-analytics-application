@@ -39,7 +39,7 @@ class P1RATApplication extends AbstractApplication {
         P1RATMainView mainView = new P1RATMainView(p1RATModel)
         mainFrame.contentPane.add(mainView.content)
         mainFrame.menuBar = mainView.menuBar
-        ExceptionSafe.rootPane = mainFrame
+        UIUtils.setRootPane(mainFrame)
         mainFrame.visible = true
         mainFrame.toFront()
         mainFrame.addWindowListener([windowClosing: {WindowEvent e -> mainFrame.visible = false; handleEvent(e)}] as IWindowListener)

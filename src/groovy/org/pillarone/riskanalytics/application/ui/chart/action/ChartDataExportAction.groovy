@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.chart.view.ChartView
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class ChartDataExportAction extends ResourceBasedAction {
@@ -40,7 +41,7 @@ class ChartDataExportAction extends ResourceBasedAction {
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {
                             exporter.export view.model.dataTable
-                            exporter.addTab "Simulation Settngs", view.model.simulationSettings
+                            exporter.addTab UIUtils.getText(this.class, "SimulationSettings"), view.model.simulationSettings
                             exporter.writeWorkBook stream
                         } catch (UnsupportedOperationException t) {
                             LOG.error t.toString()

@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.base.application.event.ITreeSelectionListener
-import com.ulcjava.base.application.event.TreeSelectionEvent
 import com.ulcjava.base.application.tree.DefaultTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
@@ -47,31 +45,34 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         this.tree = tree
         this.model = model
         parameterNodePopUpMenu = new ULCPopupMenu()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new OpenItemAction(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new RenameAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new SimulationAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new SaveAsAction(tree, model)))
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new CreateNewMajorVersion(tree, model)))
         ULCMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
+        parameterNodePopUpMenu.addSeparator()
+        parameterNodePopUpMenu.add(new SingleSelectMenuItem(new DeleteAction(tree, model)))
 
         simulationNodePopUpMenu = new ULCPopupMenu()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+        simulationNodePopUpMenu.add(new SingleSelectMenuItem(new OpenItemAction(tree, model)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
+        simulationNodePopUpMenu.add(new SingleSelectMenuItem(new RenameAction(tree, model)))
         ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, model))
         tree.addTreeSelectionListener(compareSimulationMenuItem)
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
+
 
         ULCMenu reportsMenu = new ReportMenu("Reports")
         reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, model)))
         reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Actuary Summary", tree, model)))
         tree.addTreeSelectionListener(reportsMenu)
         simulationNodePopUpMenu.add(reportsMenu)
+        simulationNodePopUpMenu.addSeparator()
+        simulationNodePopUpMenu.add(new SingleSelectMenuItem(new DeleteAction(tree, model)))
 
         groupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
@@ -109,6 +110,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, model)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, model)))
+        batchesNodePopUpMenu.addSeparator()
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteBatchAction(tree, model)))
 
         batchesRootNodePopUpMenu = new ULCPopupMenu()
@@ -219,53 +221,3 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 }
 
-class ReportMenu extends ULCMenu implements ITreeSelectionListener {
-    List actions = []
-
-    public ReportMenu(String name) {
-        super(name)
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        boolean enable = false
-        actions.each {GenerateReportAction action ->
-            enable = enable || action.isEnabled()
-        }
-        setEnabled(enable)
-    }
-
-    public ULCMenuItem add(ULCMenuItem ulcMenuItem) {
-        ULCMenuItem retValue = super.add(ulcMenuItem)
-        actions << ulcMenuItem.action
-        return retValue
-    }
-
-}
-
-class CompareSimulationMenuItem extends ULCMenuItem implements ITreeSelectionListener {
-    def compareSimulationsAction
-
-    def CompareSimulationMenuItem(compareSimulationsAction) {
-        super(compareSimulationsAction);
-        this.compareSimulationsAction = compareSimulationsAction;
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        setEnabled(compareSimulationsAction.isEnabled())
-    }
-
-}
-
-class CompareParameterizationMenuItem extends ULCMenuItem implements ITreeSelectionListener {
-    def compareParameterizationsAction
-
-    public CompareParameterizationMenuItem(compareParameterizationsAction) {
-        super(compareParameterizationsAction)
-        this.compareParameterizationsAction = compareParameterizationsAction
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        setEnabled(compareParameterizationsAction.isEnabled())
-    }
-
-}

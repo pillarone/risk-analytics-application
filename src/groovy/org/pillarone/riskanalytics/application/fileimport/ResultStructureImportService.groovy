@@ -28,8 +28,8 @@ class ResultStructureImportService extends FileImportService {
         LOG.info "All available model ${allModels*.simpleName}"
         for (String modelClassName in modelFilter) {
             Class modelClass = allModels.find { it.name.endsWith(modelClassName)}
-            if (ResultStructureDAO.countByModelClassName(modelClass.name) == 0) {
-                LOG.info "No result structure found for model ${modelClass.simpleName} - importing default"
+            if (ResultStructureDAO.countByModelClassNameAndNameLike(modelClass.name, DEFAULT_NAME) == 0) {
+                LOG.info "No default result structure found for model ${modelClass.simpleName} - importing default"
                 DefaultResultStructureBuilder.create(DEFAULT_NAME, modelClass).save()
             }
         }
