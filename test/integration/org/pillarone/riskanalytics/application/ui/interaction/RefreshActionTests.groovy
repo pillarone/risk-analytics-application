@@ -47,7 +47,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnCell(2, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Save as ...")
 
@@ -102,6 +102,16 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         popUpMenu.pushMenu("Delete")
 
         assertNotNull "path not found", path
+        ULCDialogOperator alertDialog = new ULCDialogOperator(frame1, new ComponentByNameChooser('AlertDialog'))
+        assertNotNull alertDialog
+
+        ULCButtonOperator okButton = new ULCButtonOperator(alertDialog, new ComponentByNameChooser('AlertDialog.ok'))
+        assertNotNull okButton
+
+        okButton.getFocus()
+        okButton.clickMouse()
+
+
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
         path = tree1.findPath(["Core", "Parameterization"] as String[])

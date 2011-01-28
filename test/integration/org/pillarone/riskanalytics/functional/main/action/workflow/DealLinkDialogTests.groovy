@@ -24,9 +24,7 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
         ULCTableTreeOperator tableTree = getSelectionTreeRowHeader()
         TreePath parametrizationPath = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", parametrizationPath
-        tableTree.doExpandRow 0
-        tableTree.doExpandRow 1
-        popUpContextMenu(2, "Choose deal", getSelectionTreeRowHeader())
+        showPopupOnParameterizationNode(tableTree, "Core", null, "Choose deal")
 
         ULCDialogOperator dialog = getDialogOperator("dealDialog")
         assertNotNull dialog

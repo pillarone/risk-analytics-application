@@ -1,10 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
@@ -15,12 +10,20 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class DeleteAction extends SelectionTreeAction {
+    Closure okAction = { def selectedItem -> removeItem(selectedItem)}
 
     public DeleteAction(ULCTableTree tree, P1RATModel model) {
         super("Delete", tree, model)
@@ -30,15 +33,9 @@ class DeleteAction extends SelectionTreeAction {
     public void doActionPerformed(ActionEvent event) {
         def selectedItem = getSelectedItem()
         if (!selectedItem) return
-        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "deleteWarning", [tree.selectedPath.lastPathComponent])
-        alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
-            def value = windowEvent.source.value
-            if (value.equals(alert.firstButtonLabel)) {
-                removeItem(selectedItem)
-            }
-        }] as IWindowListener)
-        alert.show()
-
+        AlertDialog dialog = new AlertDialog(tree, selectedItem, UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [tree?.selectedPath?.lastPathComponent.toString()]), okAction)
+        dialog.init()
+        dialog.show()
     }
 
     private void removeItem(ModellingItem selectedItem) {

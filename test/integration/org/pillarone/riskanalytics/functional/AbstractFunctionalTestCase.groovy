@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.functional
 
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -92,7 +91,9 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
     protected showPopupOnParameterizationGroupNode(ULCTableTreeOperator tree, String modelName, String itemName) {
         int modelRow = tree.findRow(modelName)
         tree.doExpandRow modelRow
-        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization"] as String[])).pushMenu(itemName)
+        // callPopupOnPath doesn't work on tableTree
+//        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization"] as String[])).pushMenu(itemName)
+        tree.callPopupOnCell(modelRow + 1, 0).pushMenu(itemName)
     }
 
     protected showPopupOnParameterizationNode(ULCTreeOperator tree, String modelName, String parameterization, String itemName) {
@@ -106,7 +107,7 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         int modelRow = tree.findRow(modelName)
         tree.doExpandRow modelRow
         tree.doExpandRow modelRow + 1
-        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization", parameterization] as String[])).pushMenu(itemName)
+        tree.callPopupOnCell(modelRow + 2, 0).pushMenu(itemName)
     }
 
 }

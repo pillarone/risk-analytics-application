@@ -47,4 +47,9 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
     public void removeFilter(ITableTreeFilter filter) {
         filters.remove(filter)
     }
+
+    public void refresh() {
+        filters.clear()
+        model.refresh()
+    }
 }
