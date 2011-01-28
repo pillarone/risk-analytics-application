@@ -5,6 +5,7 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import com.ulcjava.testframework.operator.ULCTreeOperator
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
+import com.ulcjava.base.application.event.KeyEvent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -17,8 +18,8 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
     }
 
     public void testRunSimulation() {
-        ULCTreeOperator tableTree = getSelectionTree()
-        showPopupOnParameterizationGroupNode(tableTree, "Core", "Run simulation ...")
+        ULCTreeOperator tree = getSelectionTree()
+        pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK)
         ULCTextFieldOperator iterations = getTextFieldOperator("iterations")
         iterations.typeText("10")
         getButtonOperator("run").clickMouse()
