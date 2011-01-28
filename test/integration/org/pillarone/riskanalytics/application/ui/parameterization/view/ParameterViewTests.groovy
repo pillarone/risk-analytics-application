@@ -30,6 +30,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class ParameterViewTests extends AbstractSimpleFunctionalTest {
 
@@ -57,7 +58,7 @@ class ParameterViewTests extends AbstractSimpleFunctionalTest {
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         frame.setContentPane(new ParameterView(parameterViewModel).content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 

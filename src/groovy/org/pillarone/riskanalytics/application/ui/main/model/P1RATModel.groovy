@@ -35,7 +35,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     private List modelListeners
     private Map viewModelsInUse
     ModellingInformationTreeModel selectionTreeModel
-    def rootPaneForAlerts
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction
     def switchActions = []
@@ -347,7 +346,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 //                    item.load()
 //                    notifyOpenDetailView(model, item)
 //                } else {
-//                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
+//                    ULCAlert alert = new I18NAlert(UIUtils.getRootPane(), "ItemAlreadyUsed")
 //                    alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
 //                    alert.show()
 //                }
@@ -369,7 +368,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 //            }
 //            notifyOpenDetailView(model, item)
 //        } else {
-//            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(rootPaneForAlerts), "ItemAlreadyUsed")
+//            ULCAlert alert = new I18NAlert(UIUtils.getRootPane(), "ItemAlreadyUsed")
 //            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
 //            alert.show()
 //        }
