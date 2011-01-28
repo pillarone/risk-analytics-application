@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import com.ulcjava.testframework.operator.*
+import com.ulcjava.base.application.event.KeyEvent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -83,18 +84,9 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         return tree
     }
 
-    protected showPopupOnParameterizationGroupNode(ULCTreeOperator tree, String modelName, String itemName) {
-        int modelRow = tree.findRow(modelName)
-        tree.doExpandRow modelRow
-        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization"] as String[])).pushMenu(itemName)
-
-    }
-
-    protected showPopupOnParameterizationNode(ULCTreeOperator tree, String modelName, String parameterization, String itemName) {
-        int modelRow = tree.findRow(modelName)
-        tree.doExpandRow modelRow
-        tree.doExpandRow modelRow + 1
-        tree.callPopupOnPath(tree.findPath([modelName, "Parameterization", parameterization] as String[])).pushMenu(itemName)
+    protected pushKeyOnPath(ULCTreeOperator tree, TreePath path, int key, int mask) {
+        tree.doExpandPath(path)
+        tree.pushKey(key, mask)
     }
 
 }

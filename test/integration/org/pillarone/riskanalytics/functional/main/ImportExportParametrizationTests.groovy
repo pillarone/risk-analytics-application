@@ -6,6 +6,7 @@ import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
+import com.ulcjava.base.application.event.KeyEvent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -14,7 +15,7 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
         ULCTreeOperator tree = getSelectionTree()
-        showPopupOnParameterizationGroupNode(tree, "Core", "Import (force)")
+        pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
@@ -35,7 +36,13 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
         ULCTreeOperator tree = getSelectionTree()
         TreePath parametrizationPath = tree.findPath(["Core", "Parameterization", parameterizationName] as String[])
         assertNotNull "path not found", parametrizationPath
-        showPopupOnParameterizationNode(tree, "Core", parameterizationName, "Export")
+
+        //tree.doExpandPath opens parameterization...
+        tree.doExpandRow(0)
+        tree.doExpandRow(1)
+        tree.clickOnPath(parametrizationPath)
+
+        tree.pushKey(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
