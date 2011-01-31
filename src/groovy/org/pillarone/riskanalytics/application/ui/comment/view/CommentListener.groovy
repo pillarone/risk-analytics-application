@@ -21,5 +21,7 @@ public interface CommentListener {
 
 interface NavigationListener {
 
-    void commentsSelected()
+    void showHiddenComments()
+
+    void showComments()
 }

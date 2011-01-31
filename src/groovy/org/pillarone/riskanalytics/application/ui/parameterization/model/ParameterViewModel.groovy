@@ -171,7 +171,13 @@ class ParameterViewModel extends AbstractModellingModel {
 
     void navigationSelected(boolean comment) {
         navigationListeners.each {NavigationListener listener ->
-            listener.commentsSelected()
+            listener.showHiddenComments()
+        }
+    }
+
+    void showCommentsTab() {
+        navigationListeners.each {NavigationListener listener ->
+            listener.showComments()
         }
     }
 
