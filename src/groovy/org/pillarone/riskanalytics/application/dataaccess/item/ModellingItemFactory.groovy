@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
+import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
 
 class ModellingItemFactory {
@@ -184,6 +185,7 @@ class ModellingItemFactory {
                 return null
             }
         }
+        item.creator = UserManagement.currentUser
         def id = item.save()
         getItemInstances()[key(itemClass, id)] = item
 
@@ -193,6 +195,7 @@ class ModellingItemFactory {
     static ModellingItem createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
         def item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
         item.versionNumber = versionNumber
+        item.creator = UserManagement.currentUser
         def id = item.save()
         getItemInstances()[key(itemClass, id)] = item
         item
