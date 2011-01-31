@@ -2,13 +2,11 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class QueryPaneModel extends AbstractPresentationModel {
 
@@ -32,30 +30,13 @@ class QueryPaneModel extends AbstractPresentationModel {
         this.@enablePeriodComboBox = enablePeriodComboBox
         this.@simulationRun = simulationRun
         this.@nodes = nodes.sort {SimpleTableTreeNode node -> node.path }
-        loadPeriodLabels(showPeriodLabels)
+        periodLabels = loadPeriodLabels(simulationRun, showPeriodLabels)
         criterias = [[new CriteriaViewModel(this, enablePeriodComboBox)]]
         if (autoQueryOnCreate) {
             query()
         }
     }
 
-    protected loadPeriodLabels(boolean showPeriodLabels) {
-        periodLabels = []
-        if (showPeriodLabels) {
-            SimulationRun.withTransaction {status ->
-                SimulationRun simulationRun = SimulationRun.get(simulationRun.id)
-                Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
-                parameterization.load(false)
-                simulationRun.periodCount.times {int index ->
-                    periodLabels << parameterization.getPeriodLabel(index)
-                }
-            }
-        } else {
-            simulationRun.periodCount.times {int index ->
-                periodLabels << "P" + index
-            }
-        }
-    }
 
     public List<String> getPaths() {
         nodes.path

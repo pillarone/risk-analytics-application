@@ -29,7 +29,7 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
         List nodes = paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
-        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(nodes, simulationRun)
+        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(nodes, simulationRun, true)
         SingleCollectorView view = new SingleCollectorView(model)
         view.init()
         if (view.content) {
