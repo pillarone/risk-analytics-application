@@ -23,7 +23,7 @@ import com.ulcjava.testframework.operator.ULCTextAreaOperator
 class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
     SimulationSettingsPane pane
-    Parameterization extraParameterization
+
 
     protected void doStart() {
         LocaleResources.setTestMode()
@@ -32,7 +32,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         FileImportService.importModelsIfNeeded(["Core"])
         Parameterization parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('CoreParameters'))
         parameterization.load()
-        extraParameterization = ModellingItemFactory.incrementVersion(parameterization)
+        Parameterization extraParameterization = ModellingItemFactory.incrementVersion(parameterization)
         extraParameterization.save()
 
 
@@ -48,7 +48,6 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
     public void stop() {
         LocaleResources.clearTestMode()
-        extraParameterization.delete()
     }
 
     public void testRandomSeed() {

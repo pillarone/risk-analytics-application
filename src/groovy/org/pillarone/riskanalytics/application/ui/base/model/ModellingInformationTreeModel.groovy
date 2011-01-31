@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 class ModellingInformationTreeModel extends DefaultTreeModel {
 
@@ -248,7 +249,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         for (int i = 0; i < node.childCount; i++) {
             if (item.name.equals(node.getChildAt(i).item.name)) {
                 parameterNameFound = true
-                if (item.properties.containsKey("versionNumber") && item.versionNumber.level > 1) {
+                if (GroovyUtils.getProperties(item).containsKey("versionNumber") && item.versionNumber.level > 1) {
                     insertSubversionItemNode(node.getChildAt(i), createNode(item))
                 } else {
                     DefaultMutableTreeNode childNode = node.getChildAt(i)
@@ -260,7 +261,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
                     children.each {newNode.add(it)}
                     childNode.removeAllChildren()
                     childNode.leaf = true
-                    if (childNode.item.properties.containsKey("versionNumber") && childNode.item.versionNumber.level == 1) {
+                    if (GroovyUtils.getProperties(childNode.item).containsKey("versionNumber") && childNode.item.versionNumber.level == 1) {
                         newNode.insert(childNode, 0)
                     } else {
                         insertSubversionItemNode(newNode, childNode)
@@ -287,7 +288,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     private void insertSubversionItemNode(DefaultMutableTreeNode node, DefaultMutableTreeNode newItemNode) {
         node.childCount.times {
             def childNode = node.getChildAt(it)
-            if (newItemNode.item.properties.containsKey("versionNumber") && newItemNode.item.versionNumber.toString().startsWith(childNode.item.versionNumber.toString())) {
+            if (GroovyUtils.getProperties(newItemNode.item).containsKey("versionNumber") && newItemNode.item.versionNumber.toString().startsWith(childNode.item.versionNumber.toString())) {
                 if (newItemNode.item.versionNumber.isDirectChildVersionOf(childNode.item.versionNumber)) {
                     childNode.leaf = false
                     newItemNode.leaf = true
