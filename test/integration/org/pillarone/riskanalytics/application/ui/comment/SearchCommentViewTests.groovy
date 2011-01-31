@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -56,7 +57,7 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 

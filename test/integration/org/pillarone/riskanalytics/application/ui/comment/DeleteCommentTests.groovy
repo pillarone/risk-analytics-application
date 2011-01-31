@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -52,7 +53,7 @@ class DeleteCommentTests extends AbstractSimpleFunctionalTest {
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 

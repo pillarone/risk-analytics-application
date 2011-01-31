@@ -251,7 +251,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
                 (int) (c.getGreen() * 0.7),
                 (int) (c.getBlue() * 0.7))
 
-        final double HEIGHT = maxY * 0.1
+        final double HEIGHT = maxY * 0.3
 
         XYLineAnnotation meanLine = new XYLineAnnotation(mean, 0, mean, (maxY + HEIGHT * i) / 20, new BasicStroke(1.0f), meanColor)
         chart.getXYPlot().addAnnotation(meanLine)

@@ -55,7 +55,7 @@ class ImportAction extends SelectionTreeAction {
     }
 
     protected doAction(ITreeNode node) {
-        new I18NAlert("FunctionNotImplemented").show()
+        //do nothing when not on an ItemGroupNode
     }
 
     protected doAction(ItemGroupNode node) {

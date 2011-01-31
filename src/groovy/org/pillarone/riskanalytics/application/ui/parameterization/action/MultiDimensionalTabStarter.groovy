@@ -8,7 +8,6 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterView
@@ -60,8 +59,6 @@ class MultiDimensionalTabStarter implements IActionListener {
                 MultiDimensionalParameterModel model = new MultiDimensionalParameterModel(tree.model, lastComponent, tree.selectedColumn + 1)
                 model.tableModel.readOnly = parameterView.model.treeModel.readOnly
                 ClientContext.setModelUpdateMode(model.tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
-                model.tableModel.addListener([modelChanged: { parameterView.model.item.changed = true }] as IModelChangedListener)
-                parameterView.model.item.changed = false
                 tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), new MultiDimensionalParameterView(model).content)
                 int currentTab = tabbedPane.tabCount - 1
                 tabbedPane.selectedIndex = currentTab

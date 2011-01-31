@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -48,7 +49,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 

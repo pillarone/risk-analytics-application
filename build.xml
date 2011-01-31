@@ -15,7 +15,7 @@
     <property name="dist.dir" value="dist"/>
     <property name="target.dir" value="target"/>
     <property name="webapp.lib.dir" value="web-app/lib"/>
-    <property name="ulcPlugIn.webapp.lib.dir" value="${plugin.dir}/ulc-2008-u4-3/web-app/lib"/>
+    <property name="ulcPlugIn.webapp.lib.dir" value="${plugin.dir}/ulc-2008-u4-4.1/web-app/lib"/>
     <property name="doc.dir" value="docs"/>
 
     <condition property="grails" value="${GRAILS_HOME}/bin/grails.bat">

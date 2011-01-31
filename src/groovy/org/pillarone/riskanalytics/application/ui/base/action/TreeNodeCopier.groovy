@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class TreeNodeCopier extends ResourceBasedAction {
 
-    static String space = "   "
+    static String space = " "
 
     ULCTableTree rowHeaderTree
     ULCTableTree viewPortTree
@@ -34,7 +34,7 @@ class TreeNodeCopier extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        ITableTreeNode node = rowHeaderTree.selectedPath.lastPathComponent
+        List nodes = rowHeaderTree.selectedPaths*.lastPathComponent
 
         StringBuffer content = new StringBuffer()
         int columnCount = model.columnCount
@@ -42,7 +42,9 @@ class TreeNodeCopier extends ResourceBasedAction {
         columnOrder = [0]
 
         content.append(writeHeader())
-        content.append(writeNode(node, columnCount))
+        nodes?.each {def node ->
+            content.append(writeNode(node, columnCount))
+        }
         ULCClipboard.getClipboard().content = content.toString()
     }
 

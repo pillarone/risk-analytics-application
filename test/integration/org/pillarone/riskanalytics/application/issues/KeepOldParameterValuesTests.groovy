@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
 
@@ -40,7 +41,7 @@ public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         frame.setContentPane(new ParameterView(parameterViewModel).content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 

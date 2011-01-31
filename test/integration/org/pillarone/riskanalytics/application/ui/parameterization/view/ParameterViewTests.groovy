@@ -18,7 +18,6 @@ import java.awt.datatransfer.StringSelection
 import java.awt.event.InputEvent
 import java.text.DecimalFormat
 import models.core.CoreModel
-
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
@@ -30,6 +29,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class ParameterViewTests extends AbstractSimpleFunctionalTest {
 
@@ -57,7 +57,7 @@ class ParameterViewTests extends AbstractSimpleFunctionalTest {
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         frame.setContentPane(new ParameterView(parameterViewModel).content)
         ULCClipboard.install()
-        ExceptionSafe.rootPane = frame
+        UIUtils.setRootPane(frame)
         frame.visible = true
     }
 
@@ -220,7 +220,7 @@ class ParameterViewTests extends AbstractSimpleFunctionalTest {
         expandItem.clickMouse()
         assertTrue componentTree.isExpanded(0)
 
-        assertEquals "subcomponent", componentTree.getValueAt(2, 0)
+        assertEquals "parameter object", componentTree.getValueAt(2, 0)
 
         componentTree.doCollapseRow 3
         assertTrue componentTree.isCollapsed(3)

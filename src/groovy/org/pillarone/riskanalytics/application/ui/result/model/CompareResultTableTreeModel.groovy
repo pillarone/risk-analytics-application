@@ -1,6 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 import com.ulcjava.base.application.datatype.ULCNumberDataType
+import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.NodeNameFunction
@@ -9,8 +13,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeM
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -29,6 +31,8 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     List periodLabels = []
 
     boolean orderByKeyfigure
+
+    private NumberFormat numberFormat = NumberFormat.getInstance()
 
     public CompareResultTableTreeModel(SimpleTableTreeNode rootNode, List<Simulation> simulations, IFunction mean, List<ConfigObject> resultsList) {
         super();
@@ -80,7 +84,19 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     protected boolean loadAsynchronous(int column, Object node) {
-        column > 0 && node instanceof ResultTableTreeNode
+        try {
+            boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
+            if (isResultCell) {
+                int periodIndex = getPeriodIndex(column)
+                ResultFunction currentFunction = getFunction(column).clone()
+                boolean isPreCalculated = isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
+                return !isPreCalculated
+            } else {
+                return false
+            }
+        } catch (Exception ex) {
+            return true
+        }
     }
 
     int getSimulationRunIndex(int column) {

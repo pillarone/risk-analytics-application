@@ -92,7 +92,7 @@ class ExceptionSafe {
         }
         String title = titles[key]
         String text = getMessage(e, key)
-        ULCAlert alert = new ULCAlert(rootPane, title, text, "OK")
+        ULCAlert alert = new ULCAlert(UIUtils.getRootPane(), title, text, "OK")
         alert.messageType = errorLevel[key]
         alert.show()
     }

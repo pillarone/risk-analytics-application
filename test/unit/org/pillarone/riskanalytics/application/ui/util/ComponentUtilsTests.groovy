@@ -12,19 +12,26 @@ class ComponentUtilsTests extends GroovyTestCase {
         name = ComponentUtils.getSubComponentName(name)
         assertEquals "subHelloWorld", name
         name = I18NUtils.formatDisplayName(name)
-        assertEquals "hello world", name
+        assertEquals "Hello World", name
+
+        name = "helloWorld"
+        name = ComponentUtils.getSubComponentName(name)
+        assertEquals "subHelloWorld", name
+        name = I18NUtils.formatDisplayName(name)
+        assertEquals "Hello World", name
+
+        name = "Helloworld"
+        name = ComponentUtils.getSubComponentName(name)
+        assertEquals "subHelloworld", name
+        name = I18NUtils.formatDisplayName(name)
+        assertEquals "Helloworld", name
+
 
         name = "helloworld"
         name = ComponentUtils.getSubComponentName(name)
         assertEquals "subHelloworld", name
         name = I18NUtils.formatDisplayName(name)
-        assertEquals "helloworld", name
-
-        name = "hello world"
-        name = ComponentUtils.getSubComponentName(name)
-        assertEquals "subHelloWorld", name
-        name = I18NUtils.formatDisplayName(name)
-        assertEquals "hello world", name
+        assertEquals "Helloworld", name
 
         name = "HELLOWORLD"
         name = ComponentUtils.getSubComponentName(name)
@@ -36,7 +43,9 @@ class ComponentUtilsTests extends GroovyTestCase {
         name = ComponentUtils.getSubComponentName(name)
         assertEquals "subHELLOWorld", name
         name = I18NUtils.formatDisplayName(name)
-        assertEquals "HELLO world", name
+        assertEquals "HELLO World", name
+
+
     }
 
     void testIntersection() {

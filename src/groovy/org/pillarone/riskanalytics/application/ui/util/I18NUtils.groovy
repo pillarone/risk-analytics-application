@@ -243,13 +243,24 @@ public class I18NUtils {
         return LocaleResources.getBundle(resourceBundleName)
     }
 
+    /**
+     * display name will be as the following formatted:
+     * HelloWorld -> Hello World
+     * helloWorld -> hello World
+     * Helloworld -> Helloworld
+     * helloworld -> helloworld
+     * HELLOWORLD -> HELLOWORLD
+     * HELLOWorld -> HELLO World
+     * @param value
+     * @return
+     */
     public static String formatDisplayName(String value) {
         if (value == null) {
             value = ""
         }
 
         if (value.startsWith("sub")) {
-            value = value.substring(3)
+            return formatSubComponentName(value.substring(3))
         }
         if (value.startsWith("parm")) {
             value = value.substring(4)
@@ -258,11 +269,11 @@ public class I18NUtils {
             value = value.substring(3)
         }
 
+        return formatComponentName(value)
+    }
+
+    private static String formatComponentName(String value) {
         StringBuffer displayNameBuffer = new StringBuffer()
-        //display name will be as the following formatted
-        // HelloWORLD -> hello world
-        // HELLOWorld -> HELLO world
-        // HELLOWORLD -> HELLOWORLD
         value.eachWithIndex {String it, int index ->
             char c = -1
             if (index + 1 < value.length())
@@ -278,6 +289,27 @@ public class I18NUtils {
             }
         }
         return displayNameBuffer.toString()
+    }
+
+    private static String formatSubComponentName(String value) {
+        StringBuffer displayNameBuffer = new StringBuffer()
+        value = value.replaceAll("_", " ")
+        value.getChars().eachWithIndex {Character it, int index ->
+            char c = -1
+            if (index + 1 < value.length())
+                c = value.charAt(index + 1)
+            if (it.isUpperCase() && c != -1 && c.isLowerCase()) {
+                if (index > 0 && index < value.length() - 1) {
+                    displayNameBuffer << " " + it
+                } else {
+                    displayNameBuffer << it
+                }
+            } else {
+                displayNameBuffer << it
+            }
+        }
+        value = displayNameBuffer.toString()
+        return value.replaceAll("  ", " ")
     }
 
     public static String getPropertyDisplayName(Model model, String propertyName) {

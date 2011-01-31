@@ -66,7 +66,16 @@ class CompareParameterViewModel extends AbstractModellingModel {
     }
 
     private Object getFirstObject() {
-        return (item.get(0) instanceof Parameterization) ? item.get(0) : item.get(0).item
+        if (item.get(0) instanceof Parameterization) {
+            Parameterization source = item.get(0)
+            Parameterization cloned = new Parameterization(source.name)
+            cloned.versionNumber = source.versionNumber.clone()
+            source.getParameters().each {ParameterHolder parameter ->
+                cloned.addParameter parameter.clone()
+            }
+            return cloned
+        }
+        return item.get(0).item
     }
 
 

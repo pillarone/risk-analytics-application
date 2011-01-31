@@ -93,7 +93,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void initComponents() {
 
         content = new ULCBoxPane(2, 0)
-        model.rootPaneForAlerts = content
 
         selectionTree = new ULCTree(model.selectionTreeModel)
         initMenuBar()
@@ -150,6 +149,9 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
         selectionTree.registerKeyboardAction(new DeleteAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
         selectionTree.registerKeyboardAction(new RenameAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+        selectionTree.registerKeyboardAction(new ImportAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        selectionTree.registerKeyboardAction(new ExportItemAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        selectionTree.registerKeyboardAction(new SimulationAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
     }
 
 

@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
-import org.netbeans.jemmy.operators.ComponentOperator
+import org.pillarone.riskanalytics.application.ui.chart.view.CriteriaView
 import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -54,24 +54,45 @@ class CriteriaViewModel {
         comparatorModel.selectedEnum = comparator
     }
 
-    public double getInterpretedValue() {
+    public double getInterpretedValue() throws Exception {
         switch (valueInterpretationModel.selectedEnum) {
-            case ValueInterpretationType.ABSOLUTE :
+            case ValueInterpretationType.ABSOLUTE:
                 return this.@value
-            case ValueInterpretationType.PERCENTILE :
+            case ValueInterpretationType.PERCENTILE:
                 return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
-            case ValueInterpretationType.ORDER_STATISTIC :
-                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector, 
+            case ValueInterpretationType.ORDER_STATISTIC:
+                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector,
                         field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem))
         }
     }
 
     public boolean validate() {
         if (valueInterpretationModel.getSelectedEnum() != ValueInterpretationType.ABSOLUTE) {
-            if (value < 0 || value > 100) return false
+            return isValid(CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem), value)
         }
         return true
     }
+
+    public static boolean isValid(CompareOperator criteriaComparator, double value) {
+        switch (criteriaComparator) {
+            case CompareOperator.LESS_THAN: return (value >= 1 && value <= 101)
+            case CompareOperator.LESS_EQUALS: return (value >= 0 && value <= 100)
+            case CompareOperator.EQUALS: return (value >= 0 && value <= 100)
+            case CompareOperator.GREATER_THAN: return (value >= -1 && value <= 99)
+            case CompareOperator.GREATER_EQUALS: return (value >= 0 && value <= 100)
+            default: return false
+        }
+    }
+
+    public String getErrorMessage() {
+        if (valueInterpretationModel.getSelectedEnum() != ValueInterpretationType.ABSOLUTE) {
+            if (!isValid(CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem), value)) {
+                return CriteriaView.getErrorMessage(valueInterpretationModel.getSelectedEnum())
+            }
+        }
+        return null
+    }
+
 
     public void setValue(String s) {
         value = Double.parseDouble(s)
@@ -135,6 +156,7 @@ public enum CriteriaComparator {
         else if (displayName.equals('>=')) {
             return CompareOperator.GREATER_EQUALS
         }
+        return null
     }
 }
 
