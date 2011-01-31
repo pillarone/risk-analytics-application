@@ -25,7 +25,7 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
         getButtonOperator("run").clickMouse()
         ULCButtonOperator resultButton = getButtonOperator("openResults")
         wait({resultButton.isEnabled()}, 500, 5000)
-        getButtonOperator("openResults").clickMouse()
+//        getButtonOperator("openResults").clickMouse()
         //TODO finish test
     }
 
