@@ -23,7 +23,6 @@ class CommentAndErrorView implements CommentListener {
     ULCBoxPane content
     private ParameterViewModel model;
     Map openItems
-//    boolean tabbedPaneVisible = true
 
 
     public CommentAndErrorView(ParameterViewModel model) {
@@ -32,7 +31,6 @@ class CommentAndErrorView implements CommentListener {
         layoutComponents()
         attachListeners()
         openItems = [:]
-//        this.model.addNavigationListener this
     }
 
     protected void initComponents() {
@@ -80,6 +78,7 @@ class CommentAndErrorView implements CommentListener {
     }
 
     public void addNewCommentView(String path, int periodIndex) {
+        model.showCommentsTab()
         NewCommentView view = new NewCommentView(this, path, periodIndex)
         openItems[view.content] = view
         String tabTitle = getDisplayName(model, path)
@@ -116,6 +115,7 @@ class CommentAndErrorView implements CommentListener {
     }
 
     public void showCommentsView(String path, int periodIndex) {
+        model.showCommentsTab()
         String tabTitle = path ? getDisplayName(model, path) : UIUtils.getText(CommentSearchPane.class, "comments")
         int index = getTabIndex(null, path, UIUtils.getText(CommentSearchPane.class, "comments"))
         if (index >= 0 && (!path || tabbedPane.getToolTipTextAt(index) == getDisplayPath(model, path))) {
@@ -134,6 +134,7 @@ class CommentAndErrorView implements CommentListener {
     }
 
     public void showErrorsView() {
+        model.showCommentsTab()
         String tabTitle = UIUtils.getText(this.class, "Validations")
         int index = tabbedPane.indexOfTab(tabTitle)
         if (index >= 0) {
