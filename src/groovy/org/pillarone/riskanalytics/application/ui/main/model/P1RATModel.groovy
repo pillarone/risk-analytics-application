@@ -370,9 +370,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public void deleteDependingResults(Model model, ModellingItem item) {
         List<SimulationRun> simulationRuns = item.getSimulations();
         simulationRuns.each {SimulationRun simulationRun ->
-            simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
+            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun.name, item.modelClass)
+            if (simulation) {
+                removeItem(model, simulation)
+            }
         }
-        refresh()
     }
 
     public void addItem(BatchRun batchRun) {

@@ -60,12 +60,6 @@ class DeleteAction extends SelectionTreeAction {
             if (value.equals(firstButtonValue)) {
                 model.deleteDependingResults(selectedModel, item)
                 model.removeItem(selectedModel, item)
-//                List<SimulationRun> simulationRuns = item.getSimulations();
-//                simulationRuns.each {SimulationRun simulationRun ->
-//                    simulationRun.deleteSimulationService.deleteSimulation(simulationRun);
-//                }
-//                model.refresh();
-//                model.removeItem(selectedModel, item);
             }
         }
     }
