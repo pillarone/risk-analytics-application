@@ -169,4 +169,8 @@ class SimulationActionsPaneModel {
         return text.toString()
     }
 
+    void newBatchAdded(BatchRun batchRun) {
+        batchRunComboBoxModel.addItem(batchRun)
+    }
+
 }

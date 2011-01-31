@@ -19,9 +19,9 @@ import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulation
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
-import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.BatchRun
@@ -336,42 +336,12 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void openItem(Model model, Parameterization item) {
-//        model = model.class.newInstance()
-//        model.init()
-//        item.dao.modelClassName = model.class.name
-//        synchronized (item) {
-//            item.daoClass.withTransaction {status ->
-//                boolean usedInSimulation = item.isUsedInSimulation()
-//                if (!usedInSimulation) {
-//                    item.load()
-//                    notifyOpenDetailView(model, item)
-//                } else {
-//                    ULCAlert alert = new I18NAlert(UIUtils.getRootPane(), "ItemAlreadyUsed")
-//                    alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
-//                    alert.show()
-//                }
-//            }
-//        }
         item.load()
         notifyOpenDetailView(model, item)
     }
 
     public void openItem(Model model, ModellingItem item) {
         notifyOpenDetailView(model, item)
-//        boolean usedInSimulation = false
-//        if (item instanceof ResultConfiguration) {
-//            usedInSimulation = item.isUsedInSimulation()
-//        }
-//        if (!usedInSimulation) {
-//            if (!item.isLoaded()) {
-//                item.load()
-//            }
-//            notifyOpenDetailView(model, item)
-//        } else {
-//            ULCAlert alert = new I18NAlert(UIUtils.getRootPane(), "ItemAlreadyUsed")
-//            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, alert.secondButtonLabel, model, item)}] as IWindowListener)
-//            alert.show()
-//        }
     }
 
     /**
@@ -408,9 +378,8 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public void addItem(BatchRun batchRun) {
         selectionTreeModel.addNodeForItem(batchRun)
         viewModelsInUse.each {k, v ->
-            if (v instanceof AbstractConfigurationModel) {
-                ((AbstractConfigurationModel) v).itemsComboBoxModel.addItem batchRun
-            }
+            if (v instanceof BatchListener)
+                v.newBatchAdded(batchRun)
         }
     }
 
