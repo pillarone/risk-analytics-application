@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.environment.jnlp.P1RATFrameViewFa
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import com.ulcjava.testframework.operator.*
+import com.ulcjava.base.application.event.KeyEvent
 
 class RefreshActionTests extends AbstractSimpleFunctionalTest {
 
@@ -45,9 +46,8 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreMultiPeriodParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
-        assertNotNull popUpMenu
-        popUpMenu.pushMenu("Save as ...")
+        tree1.clickOnPath(pathForRename)
+        tree1.pushKey(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame1, new ComponentByNameChooser('renameDialog'))
         assertNotNull renameDialog
@@ -99,9 +99,8 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath path = tree1.findPath(["Core", "Parameterization"] as String[])
         int childCountBeforeInsert = tree1.getChildCount(path)
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
-        assertNotNull popUpMenu
-        popUpMenu.pushMenu("Delete")
+        tree1.clickOnPath(pathForRename)
+        tree1.pushKey(KeyEvent.VK_DELETE)
 
         assertNotNull "path not found", path
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
@@ -120,9 +119,8 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreMultiPeriodParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        ULCPopupMenuOperator popUpMenu = tree1.callPopupOnPath(pathForRename)
-        assertNotNull popUpMenu
-        popUpMenu.pushMenu("Rename")
+        tree1.clickOnPath(pathForRename)
+        tree1.pushKey(KeyEvent.VK_F2)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame1, new ComponentByNameChooser('renameDialog'))
         assertNotNull renameDialog

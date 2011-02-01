@@ -1,44 +1,30 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
-import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
+import com.ulcjava.base.application.event.KeyEvent
 import javax.swing.tree.TreePath
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.P1RATApplication
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.core.output.DBCleanUpService
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 import com.ulcjava.testframework.operator.*
 
-class SaveAsActionTests extends AbstractStandaloneTestCase {
+class SaveAsActionTests extends AbstractFunctionalTestCase {
 
 
     protected void setUp() {
-        FileImportService.importModelsIfNeeded(["Application"])
-        ModellingItemFactory.clear()
-        LocaleResources.setTestMode()
-        super.setUp();
-    }
-
-    protected void tearDown() {
-        super.tearDown();
-        LocaleResources.clearTestMode()
-        new DBCleanUpService().cleanUp()
-    }
-
-    protected Class getApplicationClass() {
-        return P1RATApplication
+        new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
+        super.setUp()
     }
 
     void testSaveAsParameter() {
-        ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
-        ULCTreeOperator tree = new ULCTreeOperator(frame, new ComponentByNameChooser("selectionTree"))
+        ULCFrameOperator frame = getMainFrameOperator()
+        ULCTreeOperator tree = getSelectionTree()
 
-        TreePath pathForRename = tree.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        ULCPopupMenuOperator popUpMenu = tree.callPopupOnPath(pathForRename)
-        assertNotNull popUpMenu
-        popUpMenu.pushMenu("Save as ...")
+        tree.doExpandRow(0)
+        tree.doExpandRow(1)
+        tree.clickOnPath(pathForRename)
+        tree.pushKey(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('renameDialog'))
         assertNotNull renameDialog
@@ -55,12 +41,11 @@ class SaveAsActionTests extends AbstractStandaloneTestCase {
         okButton.getFocus()
         okButton.clickMouse()
 
-        TreePath oldPath = tree.findPath(["Application", "Parameterization", "ApplicationParameters"] as String[])
+        TreePath oldPath = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "old path not found", oldPath
 
-        TreePath newPath = tree.findPath(["Application", "Parameterization", "SavedAsParameters v1"] as String[])
+        TreePath newPath = tree.findPath(["Core", "Parameterization", "SavedAsParameters v1"] as String[])
         assertNotNull "new path not found", newPath
     }
 
-    // TODO (Apr 16, 2009, msh): Test saveAs of other items
 }
