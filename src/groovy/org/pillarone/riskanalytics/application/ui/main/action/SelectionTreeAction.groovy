@@ -40,6 +40,20 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return itemNode instanceof ItemNode ? itemNode.item : null
     }
 
+    Object getNextSelectedItem() {
+        ITreeNode itemNode = tree.selectionPath?.lastPathComponent
+        ITreeNode parent = itemNode.parent
+        if (parent.childCount > 1) {
+            int itemNodeIndex = parent.getIndex(itemNode)
+            if (itemNodeIndex < parent.childCount - 1) {
+                return parent.getChildAt(itemNodeIndex + 1)
+            } else {
+                return parent.getChildAt(itemNodeIndex - 1)
+            }
+        }
+        return parent
+    }
+
     List getSelectedObjects(Class itemClass) {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectionPaths) {
