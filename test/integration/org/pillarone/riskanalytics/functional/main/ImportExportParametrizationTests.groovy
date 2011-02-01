@@ -7,6 +7,9 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 import com.ulcjava.base.application.event.KeyEvent
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import models.core.CoreModel
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -15,6 +18,12 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
         ULCTreeOperator tree = getSelectionTree()
+        importFile(tree)
+
+        verifyImport()
+    }
+
+    private void importFile(ULCTreeOperator tree) {
         pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
@@ -24,8 +33,6 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
         assertNotNull(button)
         button.getFocus()
         button.clickMouse()
-
-        verifyImport()
     }
 
     public void testExportParametrization() {
@@ -34,6 +41,7 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
         String fileName = testExportFile.getAbsolutePath()
 
         ULCTreeOperator tree = getSelectionTree()
+        importFile(tree)
         TreePath parametrizationPath = tree.findPath(["Core", "Parameterization", parameterizationName] as String[])
         assertNotNull "path not found", parametrizationPath
 
@@ -65,6 +73,5 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
         TreePath path = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull(path)
     }
-
 
 }

@@ -5,6 +5,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationRootNode
@@ -26,12 +27,14 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     int iterations = 0
     SimulationRun simulationRun
     def periodCount
+    List periodLabels = []
 
-    public SingleValueCollectorTableTreeModel(List nodes, SimulationRun simulationRun) {
+    public SingleValueCollectorTableTreeModel(List nodes, SimulationRun simulationRun, boolean showPeriodLabel) {
         this.nodes = nodes?.sort {SimpleTableTreeNode node -> node.path }
         this.simulationRun = simulationRun
         this.periodCount = simulationRun?.periodCount
         singleValueResultsMap = [:]
+        periodLabels = AbstractPresentationModel.loadPeriodLabels(simulationRun, showPeriodLabel)
     }
 
     public void init() {
@@ -51,7 +54,11 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     public String getColumnName(int i) {
         int periodIndex = (i - 1) / nodes.size()
         int nodeIndex = (i - 1) % nodes.size()
-        return i == 0 ? columnNames[0] : nodes[nodeIndex].getDisplayName() + " P${periodIndex}"
+        return i == 0 ? columnNames[0] : getShortPath(nodes[nodeIndex]) + " " + periodLabels[periodIndex]
+    }
+
+    public String getShortPath(ResultTableTreeNode node) {
+        return node.getShortDisplayPath(nodes)
     }
 
     Object getValueAt(Object node, int i) {

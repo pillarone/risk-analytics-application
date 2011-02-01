@@ -2,6 +2,11 @@ package org.pillarone.riskanalytics.application
 
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.ModelStructureDAO
+import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -22,6 +27,22 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
 
     void testInitialization() {
         assertNull "Error during doStart(): ${throwable?.message}", throwable
+    }
+
+    protected void tearDown() {
+        Thread cleanUpThread = new Thread(
+                [run: {
+                    SimulationRun.list()*.delete()
+                    ResultStructureDAO.list()*.delete()
+                    ResultConfigurationDAO.list()*.delete()
+                    ParameterizationDAO.list()*.delete()
+                    ModelStructureDAO.list()*.delete()
+                }] as Runnable
+        )
+        cleanUpThread.start()
+        cleanUpThread.join()
+        super.tearDown()
+
     }
 
 }

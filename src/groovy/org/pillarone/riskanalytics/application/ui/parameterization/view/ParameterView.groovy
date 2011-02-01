@@ -32,7 +32,6 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     PropertiesView propertiesView
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
-    boolean tabbedPaneVisible = true
     static double DIVIDER = 0.65
     static double NO_DIVIDER = 1.0
 
@@ -258,12 +257,17 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         }
     }
 
-    public void commentsSelected() {
-        this.tabbedPaneVisible = !tabbedPaneVisible
-        if (this.tabbedPaneVisible)
+    public void showHiddenComments() {
+        if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1)
             splitPane.setDividerLocation(DIVIDER)
         else
             splitPane.setDividerLocation(NO_DIVIDER)
+    }
+
+    public void showComments() {
+        if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1) {
+            splitPane.setDividerLocation(DIVIDER)
+        }
     }
 
 

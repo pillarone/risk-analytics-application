@@ -152,6 +152,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         selectionTree.registerKeyboardAction(new ImportAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         selectionTree.registerKeyboardAction(new ExportItemAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         selectionTree.registerKeyboardAction(new SimulationAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        selectionTree.registerKeyboardAction(new SaveAsAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
     }
 
 

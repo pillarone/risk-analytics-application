@@ -14,7 +14,7 @@ class SingleCollectorViewTests extends AbstractP1RATTestCase {
     SingleValueCollectorTableTreeModel singleValueCollectorTableTreeModel
 
     public void testView() {
-        Thread.sleep 10000
+        Thread.sleep 1000
     }
 
     ULCComponent createContentPane() {
@@ -25,7 +25,7 @@ class SingleCollectorViewTests extends AbstractP1RATTestCase {
     }
 
     private SingleValueCollectorTableTreeModel getMockModel() {
-        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(null, null)
+        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(null, null, false)
         model.singleValueResultsMap[0] = [[["net", 1.84783834, "paid", 1, 0], ["net", 11.04129301744273E7, "paid", 1, 0], ["net", 111.5637624293, "paid", 1, 0]]]
         model.singleValueResultsMap[1] = [[["net", 2.84783834, "paid", 1, 0], ["net", 22.04129301744273E7, "paid", 1, 0], ["net", 222.5637624293, "paid", 1, 0]]]
         model.iterations = 1

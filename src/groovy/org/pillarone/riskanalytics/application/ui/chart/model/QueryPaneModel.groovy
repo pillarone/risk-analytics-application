@@ -33,30 +33,13 @@ class QueryPaneModel extends AbstractPresentationModel {
         this.@enablePeriodComboBox = enablePeriodComboBox
         this.@simulationRun = simulationRun
         this.@nodes = nodes.sort {SimpleTableTreeNode node -> node.path }
-        loadPeriodLabels(showPeriodLabels)
+        periodLabels = loadPeriodLabels(simulationRun, showPeriodLabels)
         criterias = [[new CriteriaViewModel(this, enablePeriodComboBox)]]
         if (autoQueryOnCreate) {
             query()
         }
     }
 
-    protected loadPeriodLabels(boolean showPeriodLabels) {
-        periodLabels = []
-        if (showPeriodLabels) {
-            SimulationRun.withTransaction {status ->
-                SimulationRun simulationRun = SimulationRun.get(simulationRun.id)
-                Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
-                parameterization.load(false)
-                simulationRun.periodCount.times {int index ->
-                    periodLabels << parameterization.getPeriodLabel(index)
-                }
-            }
-        } else {
-            simulationRun.periodCount.times {int index ->
-                periodLabels << "P" + index
-            }
-        }
-    }
 
     public List<String> getPaths() {
         nodes.path
