@@ -6,9 +6,11 @@ import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentListener
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
+import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
@@ -23,14 +25,16 @@ class ParameterViewModel extends AbstractModellingModel {
     ParameterizationTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
 
-    private List<ParameterValidationError> validationErrors = []
+    List<ParameterValidationError> validationErrors = []
     private List<ChangedCommentListener> changedCommentListeners
+    private List<TabbedPaneChangeListener> tabbedPaneChangeListeners
     private List<NavigationListener> navigationListeners
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
         propertiesViewModel = new PropertiesViewModel(parameterization)
         changedCommentListeners = []
+        tabbedPaneChangeListeners = []
         navigationListeners = []
     }
 
@@ -130,6 +134,20 @@ class ParameterViewModel extends AbstractModellingModel {
     void removeChangedCommentListener(ChangedCommentListener listener) {
         changedCommentListeners.remove(listener)
         paramterTableTreeModel.removeChangedCommentListener listener
+    }
+
+    void addTabbedPaneChangeListener(TabbedPaneChangeListener listener) {
+        tabbedPaneChangeListeners << listener
+    }
+
+    void removeTabbedPaneChangeListener(TabbedPaneChangeListener listener) {
+        tabbedPaneChangeListeners.remove listener
+    }
+
+    void tabbedPaneChanged(CommentFilter filter) {
+        tabbedPaneChangeListeners.each {TabbedPaneChangeListener listener ->
+            listener.tabbedPaneChanged(filter)
+        }
     }
 
     void addNavigationListener(NavigationListener listener) {

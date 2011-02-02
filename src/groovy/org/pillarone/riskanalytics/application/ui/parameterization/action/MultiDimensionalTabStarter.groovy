@@ -8,6 +8,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.shared.UlcEventConstants
+import org.pillarone.riskanalytics.application.ui.comment.model.CommentPathFilter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterView
@@ -30,6 +31,7 @@ class MultiDimensionalTabStarter implements IActionListener {
                 [tabClosing: {
                     TabEvent event ->
                     int index = event.getTabClosingIndex()
+                    parameterView.commentFilters[index] = null
 
                     for (Iterator it = openTabs.iterator(); it.hasNext();) {
                         Map.Entry entry = it.next();
@@ -64,6 +66,7 @@ class MultiDimensionalTabStarter implements IActionListener {
                 tabbedPane.selectedIndex = currentTab
                 tabbedPane.setToolTipTextAt(currentTab, model.getPathAsString())
                 openTabs.put(new TabIdentifier(path: tree.getSelectedPath(), columnIndex: tree.selectedColumn), currentTab)
+                parameterView.addCommentFilter(currentTab, new CommentPathFilter(tree?.selectedPath?.lastPathComponent?.path))//commentFilters[currentTab] = new CommentPathFilter(tree?.selectedPath?.lastPathComponent?.path)
             } else {
                 tabbedPane.selectedIndex = index
             }

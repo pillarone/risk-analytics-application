@@ -147,6 +147,10 @@ class CommentSearchPane {
         if (resultView.isVisible())
             resultView.order(orderBy, order)
     }
+
+    public void setVisible(boolean visible) {
+        content.setVisible(visible)
+    }
 }
 
 

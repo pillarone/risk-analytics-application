@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
+import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
@@ -12,7 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ShowCommentsView implements ChangedCommentListener {
+class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListener {
     private ULCBoxPane content;
     private ULCBoxPane container;
     private CommentAndErrorView commentAndErrorView
@@ -74,6 +75,15 @@ class ShowCommentsView implements ChangedCommentListener {
         addComments(getAllComments())
     }
 
+    void tabbedPaneChanged(CommentFilter filter) {
+        if (filter == null) {
+            updateCommentVisualization()
+            return
+        }
+        clear()
+        addComments(getAllComments().findAll {filter.accept(it)})
+    }
+
     void order(String orderBy, String order) {
         def comparator = { x, y -> if ("asc" == order) x.properties[orderBy] <=> y.properties[orderBy] else y.properties[orderBy] <=> x.properties[orderBy] } as Comparator
         if (!comments || comments.size() == 0)
@@ -100,4 +110,8 @@ class ShowCommentsView implements ChangedCommentListener {
 
 interface ChangedCommentListener {
     void updateCommentVisualization()
+}
+
+interface TabbedPaneChangeListener {
+    void tabbedPaneChanged(CommentFilter filter)
 }
