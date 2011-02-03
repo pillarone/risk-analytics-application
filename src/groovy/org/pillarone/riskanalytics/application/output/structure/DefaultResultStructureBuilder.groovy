@@ -1,14 +1,14 @@
 package org.pillarone.riskanalytics.application.output.structure
 
+import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.core.packets.PacketList
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.packets.MultiValuePacket
 import org.pillarone.riskanalytics.core.packets.Packet
-import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
-import java.lang.reflect.Field
-
+import org.pillarone.riskanalytics.core.packets.PacketList
+import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 
 class DefaultResultStructureBuilder {
 
@@ -123,7 +123,9 @@ class DefaultResultStructureBuilder {
     private static boolean hasPacketListValidOutput(PacketList packetList) {
         Class packetType = packetList.getType()
         Packet packet = packetType.newInstance()
-        return !packet.valuesToSave.keySet().isEmpty()
+        if ((packet instanceof SingleValuePacket) || (packet instanceof MultiValuePacket))
+            return !packet.valuesToSave.keySet().isEmpty()
+        return false
     }
 
 }
