@@ -29,7 +29,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
 import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsViewDialog
-import org.pillarone.riskanalytics.application.ui.simulation.view.CalculationConfigurationView
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -282,6 +282,21 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         return view.content
     }
 
+    protected ULCComponent createDetailView(Simulation currentItem, DeterministicModel simulationModel) {
+        def view
+        if (currentItem.start == null) {
+            view = new CalculationConfigurationView(model.getSimulationConfigurationModel(currentItem, simulationModel))
+        } else {
+            ResultViewModel resultViewModel = model.getResultViewModel(currentItem, simulationModel)
+            view = new DeterministicResultView(null)
+            view.p1ratModel = model
+            view.model = resultViewModel
+
+            resultViewModel.addFunctionListener(view)
+        }
+        return view.content
+    }
+
     protected ULCComponent createDetailView(BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
         if (batchRun.id != null) {
             BatchView view = new BatchView(this.model, batchRun, tabbedPane)
@@ -308,24 +323,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     protected ULCComponent createCompareView(List simulations, DeterministicModel simulationModel) {
         compareSimulationsViewModel = model.getCompareSimulationsViewModel(simulations, simulationModel)
         view = new CompareDeterministicsView(compareSimulationsViewModel)
-        return view.content
-    }
-
-
-
-
-    protected ULCComponent createDetailView(Simulation currentItem, DeterministicModel simulationModel) {
-        def view
-        if (currentItem.start == null) {
-            view = new CalculationConfigurationView(model.getSimulationConfigurationModel(currentItem, simulationModel))
-        } else {
-            ResultViewModel resultViewModel = model.getResultViewModel(currentItem, simulationModel)
-            view = new DeterministicResultView(null)
-            view.p1ratModel = model
-            view.model = resultViewModel
-
-            resultViewModel.addFunctionListener(view)
-        }
         return view.content
     }
 

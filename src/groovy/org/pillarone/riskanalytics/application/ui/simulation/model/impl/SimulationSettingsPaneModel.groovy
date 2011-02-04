@@ -60,12 +60,12 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     RandomSeedAction randomSeedAction
     ReloadParameterizationListModelAction reloadParameterizationListModelAction
     ReloadResultConfigurationListModelAction reloadResultConfigurationListModelAction
-    private ChangeOutputStrategyAction changeOutputStrategyAction
-    private ChangeResultLocationAction changeResultLocationAction
+    ChangeOutputStrategyAction changeOutputStrategyAction
+    ChangeResultLocationAction changeResultLocationAction
 
-    private File resultLocation
-    private Class modelClass
-    private Model modelInstance
+    File resultLocation
+    Class modelClass
+    Model modelInstance
 
     private List<ISimulationValidationListener> listeners = []
 
@@ -201,9 +201,17 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
             configuration.load()
         }
         simulation.template = configuration
-        simulation.numberOfIterations = numberOfIterations
-        simulation.periodCount = parameterization.periodCount
         simulation.beginOfFirstPeriod = beginOfFirstPeriod
+        simulation.modelVersionNumber = ModellingItemFactory.getNewestModelItem(modelClass.simpleName).versionNumber // ???
+        simulation.structure = ModelStructure.getStructureForModel(modelClass)
+
+        initConfigParameters(simulation, parameterization.periodCount)
+        return simulation
+    }
+
+    public void initConfigParameters(Simulation simulation, int periodCount) {
+        simulation.numberOfIterations = numberOfIterations
+        simulation.periodCount = periodCount
         if (randomSeed != null) {
             simulation.randomSeed = randomSeed
         } else {
@@ -211,10 +219,6 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
             long millisE5 = millis / 1E5
             simulation.randomSeed = millis - millisE5 * 1E5
         }
-        simulation.modelVersionNumber = ModellingItemFactory.getNewestModelItem(modelClass.simpleName).versionNumber // ???
-        simulation.structure = ModelStructure.getStructureForModel(modelClass)
-
-        return simulation
     }
 
     /**

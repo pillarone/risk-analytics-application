@@ -19,9 +19,9 @@ import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulation
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
-import org.pillarone.riskanalytics.application.ui.simulation.model.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.BatchRun
@@ -148,8 +148,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         if (viewModelsInUse.containsKey(item) && viewModelsInUse[item] instanceof CalculationConfigurationModel) {
             return viewModelsInUse[item]
         }
-        CalculationConfigurationModel model = new CalculationConfigurationModel(this, simulationModel.class, item?.parameterization, item?.template)
-        model.addSimulationListener(this)
+        CalculationConfigurationModel model = new CalculationConfigurationModel(simulationModel.class, this)
+        model.settingsPaneModel.selectedParameterization = item.parameterization
+        model.settingsPaneModel.selectedResultConfiguration = item.template
+        model.actionsPaneModel.addSimulationListener(this)
+        addModelChangedListener(model.settingsPaneModel)
         registerModel(item, model)
 
         return model
