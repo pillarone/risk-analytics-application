@@ -38,23 +38,26 @@ class SimulationSettingsPane {
 
     ULCBoxPane content
 
-    private ULCTextField simulationName
-    private ULCTextArea comment
-    private ULCComboBox modelComboBox
-    private ULCComboBox parametrizationNamesComboBox
-    private ULCComboBox parameterizationVersionsComboBox
-    private ULCComboBox resultConfigurationNamesComboBox
-    private ULCComboBox resultConfigurationVersionsComboBox
-    private ULCComboBox outputStrategy
-    private ULCTextField resultLocation
-    private ULCButton changeLocationButton
-    private ULCSpinner beginOfFirstPeriod
-    private ULCCheckBox userDefinedRandomSeed
-    private ULCTextField randomSeed
-    private ULCTextField numberOfIterations
+    protected ULCTextField simulationName
+    protected ULCTextArea comment
+    protected ULCComboBox modelComboBox
+    protected ULCComboBox parametrizationNamesComboBox
+    protected ULCComboBox parameterizationVersionsComboBox
+    protected ULCComboBox resultConfigurationNamesComboBox
+    protected ULCComboBox resultConfigurationVersionsComboBox
+    protected ULCComboBox outputStrategy
+    protected ULCTextField resultLocation
+    protected ULCButton changeLocationButton
+    protected ULCSpinner beginOfFirstPeriod
+    protected ULCCheckBox userDefinedRandomSeed
+    protected ULCTextField randomSeed
+    protected ULCTextField numberOfIterations
 
     SimulationSettingsPaneModel model
     final private Dimension dimension = new Dimension(100, 20)
+
+    public SimulationSettingsPane() {
+    }
 
     public SimulationSettingsPane(SimulationSettingsPaneModel model) {
         this.model = model
@@ -63,9 +66,7 @@ class SimulationSettingsPane {
         attachListeners()
     }
 
-    private void attachListeners() {
-        randomSeed.addValueChangedListener(model.randomSeedAction)
-        userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
+    protected void attachListeners() {
         parametrizationNamesComboBox.addActionListener(model.reloadParameterizationListModelAction)
         parameterizationVersionsComboBox.addActionListener([actionPerformed: {e ->
             ParameterizationVersionsListModel listModel = parameterizationVersionsComboBox.model
@@ -87,20 +88,9 @@ class SimulationSettingsPane {
 
         simulationName.addValueChangedListener([valueChanged: {e -> model.simulationName = simulationName.text }] as IValueChangedListener)
         comment.addValueChangedListener([valueChanged: {e -> model.comment = comment.text }] as IValueChangedListener)
-        numberOfIterations.addKeyListener([keyTyped: {e ->
-            def value = numberOfIterations.value
-            if (value && (value instanceof Number) && value < Integer.MAX_VALUE)
-                model.numberOfIterations = value
-            else if (value) {
-                new I18NAlert("IterationNumberNotValid").show()
-                numberOfIterations.setValue(model.numberOfIterations)
-            } else {
-                model.numberOfIterations = null
-            }
-        }] as IKeyListener)
     }
 
-    private void initComponents() {
+    protected void initComponents() {
         simulationName = new ULCTextField(model.simulationName)
         simulationName.setPreferredSize(new Dimension(150, 20))
         simulationName.name = "simulationName"
@@ -139,25 +129,9 @@ class SimulationSettingsPane {
         changeLocationButton.name = "changeLocation"
         changeLocationButton.setPreferredSize(dimension)
 
-        userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)
-        userDefinedRandomSeed.name = "userDefinedRandomSeed"
-        randomSeed = new ULCTextField()
-        randomSeed.setPreferredSize(dimension)
-        randomSeed.enabler = userDefinedRandomSeed
-        randomSeed.name = "randomSeed"
-        randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
-
-        numberOfIterations = new ULCTextField()
-        numberOfIterations.name = "iterations"
-        numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
-
-        if (model.requiresStartDate()) {
-            beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
-            beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
-        }
     }
 
-    private void layoutComponents() {
+    protected void layoutComponents() {
         content = boxLayout(model.getText(SIMULATION_SETTINGS_KEY)) {ULCBoxPane pane ->
             ULCBoxPane innerPane = new ULCBoxPane(3, 0)
 
@@ -187,39 +161,78 @@ class SimulationSettingsPane {
             innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultLocation, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
             innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(changeLocationButton, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RANDOM_SEED_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-
-            if (model.requiresStartDate()) {
-                innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
-                innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            }
-
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(ITERATIONS_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            initConfigProperties(innerPane)
 
             pane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
         }
+    }
+
+    protected initConfigProperties(ULCBoxPane innerPane) {
+        userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)
+        userDefinedRandomSeed.name = "userDefinedRandomSeed"
+        randomSeed = new ULCTextField()
+        randomSeed.setPreferredSize(dimension)
+        randomSeed.enabler = userDefinedRandomSeed
+        randomSeed.name = "randomSeed"
+        randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
+
+        numberOfIterations = new ULCTextField()
+        numberOfIterations.name = "iterations"
+        numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
+        if (model.requiresStartDate()) {
+            beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
+            beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
+        }
+
+        randomSeed.addValueChangedListener(model.randomSeedAction)
+        userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
+
+        numberOfIterations.addKeyListener([keyTyped: {e ->
+            def value = numberOfIterations.value
+            if (value && (value instanceof Number) && value < Integer.MAX_VALUE)
+                model.numberOfIterations = value
+            else if (value) {
+                new I18NAlert("IterationNumberNotValid").show()
+                numberOfIterations.setValue(model.numberOfIterations)
+            } else {
+                model.numberOfIterations = null
+            }
+        }] as IKeyListener)
+
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RANDOM_SEED_KEY) + ":"))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+
+        if (model.requiresStartDate()) {
+            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
+            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        }
+
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(ITERATIONS_KEY) + ":"))
+        innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
     }
 
     /**
      * disables the entire UI (for example during a simulation)
      */
     void disable() {
-        beginOfFirstPeriod?.enabled = false
         changeLocationButton.enabled = false
         comment.enabled = false
         modelComboBox.enabled = false
-        numberOfIterations.enabled = false
         outputStrategy.enabled = false
         parametrizationNamesComboBox.enabled = false
         parameterizationVersionsComboBox.enabled = false
         resultConfigurationNamesComboBox.enabled = false
         resultConfigurationVersionsComboBox.enabled = false
-        randomSeed.enabled = false
         resultLocation.enabled = false
         simulationName.enabled = false
+        disableConfigProperties()
+    }
+
+    protected void disableConfigProperties() {
+        beginOfFirstPeriod?.enabled = false
+        numberOfIterations.enabled = false
+        randomSeed.enabled = false
         userDefinedRandomSeed.enabled = false
     }
 
@@ -228,19 +241,23 @@ class SimulationSettingsPane {
      */
     void enable() {
         boolean fileMode = model.getOutputStrategy() instanceof FileOutput
-        beginOfFirstPeriod?.enabled = true
         changeLocationButton.enabled = fileMode
         comment.enabled = true
         modelComboBox.enabled = false
-        numberOfIterations.enabled = true
         outputStrategy.enabled = true
         parametrizationNamesComboBox.enabled = true
         parameterizationVersionsComboBox.enabled = true
         resultConfigurationNamesComboBox.enabled = true
         resultConfigurationVersionsComboBox.enabled = true
-        randomSeed.enabled = userDefinedRandomSeed.isSelected()
         resultLocation.enabled = fileMode
         simulationName.enabled = true
+        enableConfigProperties()
+    }
+
+    protected void enableConfigProperties() {
+        beginOfFirstPeriod?.enabled = true
+        numberOfIterations.enabled = true
+        randomSeed.enabled = userDefinedRandomSeed.isSelected()
         userDefinedRandomSeed.enabled = true
     }
 

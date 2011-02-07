@@ -1,13 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.ULCBoxPane
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import com.ulcjava.base.application.ULCFiller
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * The SimulationConfigurationView which combines a settings pane (to define a simulation)
@@ -17,10 +15,13 @@ class SimulationConfigurationView implements ISimulationListener {
 
     ULCBoxPane content
 
-    private SimulationSettingsPane settingsPane
-    private SimulationActionsPane actionsPane
+    protected SimulationSettingsPane settingsPane
+    protected SimulationActionsPane actionsPane
 
-    private SimulationConfigurationModel model
+    protected SimulationConfigurationModel model
+
+    public SimulationConfigurationView() {
+    }
 
     public SimulationConfigurationView(SimulationConfigurationModel model) {
         this.model = model
@@ -39,7 +40,7 @@ class SimulationConfigurationView implements ISimulationListener {
         holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, settingsPane.content)
         holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, actionsPane.content)
 
-        content = new ULCBoxPane(1,2)
+        content = new ULCBoxPane(1, 2)
         content.add(ULCBoxPane.BOX_LEFT_TOP, holder)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
