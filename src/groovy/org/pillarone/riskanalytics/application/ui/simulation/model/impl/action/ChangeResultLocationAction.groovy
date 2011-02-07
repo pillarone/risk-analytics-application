@@ -7,11 +7,9 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.simulation.model.AbstractConfigurationModel
-
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.UserPreferences
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 
 public class ChangeResultLocationAction extends ResourceBasedAction {
 
@@ -19,7 +17,7 @@ public class ChangeResultLocationAction extends ResourceBasedAction {
     private UserPreferences userPreferences
     private Closure action
 
-    public ChangeResultLocationAction(SimulationSettingsPaneModel model,Closure action) {
+    public ChangeResultLocationAction(SimulationSettingsPaneModel model, Closure action) {
         super("ChangeResultLocation");
         this.model = model;
         this.action = action
@@ -39,15 +37,15 @@ public class ChangeResultLocationAction extends ResourceBasedAction {
         config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.RESULT_DIR_KEY))
 
         ClientContext.chooseFile([
-            onSuccess: {filePaths, fileNames ->
-                String location = filePaths[0]
-                userPreferences.setUserDirectory(UserPreferences.RESULT_DIR_KEY,location)
-                model.resultLocation = location
-                model.outputStrategies.getStrategy().resultLocation = location
-                action.call()
-            },
-            onFailure: {reason, description ->
-            }] as IFileChooseHandler, config, ancestor)
+                onSuccess: {filePaths, fileNames ->
+                    String location = filePaths[0]
+                    userPreferences.setUserDirectory(UserPreferences.RESULT_DIR_KEY, location)
+                    model.resultLocation = location
+                    model.outputStrategies.getStrategy().resultLocation = location
+                    action.call()
+                },
+                onFailure: {reason, description ->
+                }] as IFileChooseHandler, config, ancestor)
 
 
     }

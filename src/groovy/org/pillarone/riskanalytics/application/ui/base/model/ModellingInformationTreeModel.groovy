@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import com.ulcjava.base.application.tree.DefaultMutableTreeNode
 import com.ulcjava.base.application.tree.DefaultTreeModel
 import com.ulcjava.base.application.tree.ITreeNode
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
@@ -13,10 +15,8 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-import org.pillarone.riskanalytics.core.simulation.item.*
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class ModellingInformationTreeModel extends DefaultTreeModel {
 
@@ -365,7 +365,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
     private boolean nodeMatches(item, SimulationNode node) {
-        return node.item == item
+        return node.item == item || node.item.id == item.id
     }
 
     private boolean nodeMatches(item, BatchRunNode node) {

@@ -3,7 +3,7 @@ import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.2-kti"
+    def version = "1.3-ALPHA-1-kti"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.3.4 > *"
     // the other plugins this plugin depends on
@@ -24,6 +24,8 @@ ULC view
 '''
 
     def documentation = "http://www.pillarone.org"
+
+    def groupId = "org.pillarone"
 
     def doWithWebDescriptor = {xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before

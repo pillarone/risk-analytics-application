@@ -1,7 +1,8 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -10,8 +11,6 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
 class ModellingItemFactory {
 
@@ -242,17 +241,6 @@ class ModellingItemFactory {
         return true
     }
 
-    static boolean delete(Simulation simulation) {
-        try {
-            SimulationRun.withTransaction {status ->
-                def run = BatchRunSimulationRun.findBySimulationRun(simulation.getSimulationRun())
-                if (run)
-                    run.delete()
-                simulation.delete()
-            }
-        } catch (Exception) {return false}
-        return true
-    }
 
     static ModellingItem copyItem(ModellingItem oldItem, String newName) {
         ModellingItem newItem = oldItem.class.newInstance([newName] as Object[])

@@ -8,6 +8,9 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.tree.DefaultTreeModel
+import com.ulcjava.base.application.tree.ITreeNode
+import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -29,8 +32,10 @@ class DeleteAction extends SelectionTreeAction {
 
     public void doActionPerformed(ActionEvent event) {
         def selectedItem = getSelectedItem()
+        ITreeNode nextItemNode = getNextSelectedItem()
         if (!selectedItem) return
         removeItem(selectedItem)
+        tree.addSelectionPath(new TreePath(DefaultTreeModel.getPathToRoot(nextItemNode) as Object[]))
     }
 
     private void removeItem(ModellingItem selectedItem) {

@@ -4,7 +4,9 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import com.ulcjava.base.application.event.ISelectionChangedListener
 import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.event.SelectionChangedEvent
 import com.ulcjava.base.application.tabletree.ITableTreeCellEditor
 import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
@@ -12,6 +14,7 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
@@ -34,10 +37,12 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
     ULCSplitPane splitPane
     static double DIVIDER = 0.65
     static double NO_DIVIDER = 1.0
+    def commentFilters
 
     ParameterView(ParameterViewModel model) {
         super(model)
         model.addNavigationListener this
+        commentFilters = [:]
     }
 
     protected void initTree() {
@@ -191,6 +196,14 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
             event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())
             event.getClosableTabbedPane().selectedIndex = 0
         }] as ITabListener)
+        tabbedPane.addSelectionChangedListener([selectionChanged: { SelectionChangedEvent event ->
+            if (commentFilters) {
+                ULCTabbedPane tabbedPane = (ULCTabbedPane) event.getSource();
+                int selection = tabbedPane.getSelectedIndex();
+                model?.tabbedPaneChanged(commentFilters[selection])
+                showHiddenCommentToolBar(selection)
+            }
+        }] as ISelectionChangedListener)
 
         super.initComponents();
         attachListeners()
@@ -220,23 +233,24 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
     protected ULCContainer layoutContent(ULCContainer content) {
         ULCBoxPane contentPane = new ULCBoxPane(1, 1)
-
         splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
         splitPane.oneTouchExpandable = true
         splitPane.setResizeWeight(1)
         splitPane.setDividerSize(10)
-        splitPane.add(content);
-        splitPane.add(commentAndErrorView.tabbedPane)
+
         splitPane.setDividerLocation(DIVIDER)
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
-        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), contentPane)
+        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
         propertiesView = new PropertiesView(model.propertiesViewModel)
         tabbedPane.addTab(propertiesView.getText("properties"), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
+        splitPane.add(tabbedPane);
+        splitPane.add(commentAndErrorView.tabbedPane)
 
-        return tabbedPane
+
+        return splitPane
 
 
     }
@@ -270,6 +284,15 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         }
     }
 
+    public void addCommentFilter(int tabbedPaneIndex, CommentFilter filter) {
+        commentFilters[tabbedPaneIndex] = filter
+        model?.tabbedPaneChanged(filter)
+        showHiddenCommentToolBar(tabbedPaneIndex)
+    }
+
+    private void showHiddenCommentToolBar(int tabbedPaneIndex) {
+        commentAndErrorView.commentSearchPane.setVisible(tabbedPaneIndex <= 1)
+    }
 
 }
 

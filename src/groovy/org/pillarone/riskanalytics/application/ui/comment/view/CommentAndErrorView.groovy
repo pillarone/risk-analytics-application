@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 class CommentAndErrorView implements CommentListener {
 
     ULCCloseableTabbedPane tabbedPane
+    CommentSearchPane commentSearchPane
     ErrorPane errorPane
     ULCBoxPane content
     private ParameterViewModel model;
@@ -42,10 +43,12 @@ class CommentAndErrorView implements CommentListener {
         ShowCommentsView view = new ShowCommentsView(this, null)
         view.addAllComments()
         model.addChangedCommentListener view
+        model.addTabbedPaneChangeListener view
+        model.addTabbedPaneChangeListener errorPane
         ShowCommentsView result = new ShowCommentsView(this, null)
         model.addChangedCommentListener result
         content = new ULCBoxPane(1, 2)
-        CommentSearchPane commentSearchPane = new CommentSearchPane(view, errorPane, result, model)
+        commentSearchPane = new CommentSearchPane(view, errorPane, result, model)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, commentSearchPane.content)
         ULCBoxPane scrolledPane = new ULCBoxPane(1, 3)
         scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, errorPane.container)
