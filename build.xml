@@ -34,7 +34,7 @@
         <echo message="user.language: ${user.language}, user.country: ${user.country}"/>
     </target>
 
-    <target name="cruise" depends="clean,compile,test,jar-client"
+    <target name="cruise" depends="clean,compile,test"
             description="to be started by the CruiseControl build server"/>
 
 
@@ -152,7 +152,7 @@
         </signjar>
     </target>
 
-    <target name="release-plugin" depends="clean, compile" description="Releases the plugin in our P1 plugin repository.">
+    <target name="release-plugin" depends="clean, compile, jar-client" description="Releases the plugin in our P1 plugin repository.">
         <exec executable="${grails}" failonerror="true" resolveexecutable="true">
             <arg value="deploy-plugin"/>
             <arg value="--repository=pillarone"/>
