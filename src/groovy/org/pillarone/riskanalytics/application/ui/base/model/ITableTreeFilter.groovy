@@ -82,7 +82,14 @@ class ParameterizationNodeFilter implements ITableTreeFilter {
 
     private boolean contains(String value) {
         boolean found = false
-        if (column == ModellingInformationTableTreeModel.TAGS) {
+        if (column == ModellingInformationTableTreeModel.NAME) {
+            for (String name: values) {
+                if (value != null && value.indexOf(name) != -1) {
+                    found = true
+                    break
+                }
+            }
+        } else if (column == ModellingInformationTableTreeModel.TAGS) {
             for (String tag: values) {
                 if (value != null && value.indexOf(tag) != -1) {
                     found = true

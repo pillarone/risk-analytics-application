@@ -65,7 +65,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     ULCButtonGroup windowMenuItemGroup
     SelectionTreeView selectionTreeView
     //todo fja implentation of toolbar action for the navigation bar
-//    NavigationBarTopPane navigationBarTopPane
+    NavigationBarTopPane navigationBarTopPane
 
     ULCLabel lockedLabel
 
@@ -232,8 +232,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         toolBar.add(runButton)
         toolBar.addSeparator()
 
-//        navigationBarTopPane = new NavigationBarTopPane(toolBar)
-//        navigationBarTopPane.init()
+        navigationBarTopPane = new NavigationBarTopPane(toolBar, model.selectionTreeModel)
+        navigationBarTopPane.init()
 
         rightToolBar = new ULCToolBar()
         rightToolBar.floatable = false

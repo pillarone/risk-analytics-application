@@ -23,6 +23,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     List<String> columnNames = ["Name", "State", "Tags", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
 
+    final static int NAME = 0
     final static int STATE = 1
     final static int TAGS = 2
     final static int COMMENTS = 3
@@ -91,8 +92,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     Object getValueAt(Object node, int i) {
+
         if (i == 0) {
-            return "${node.getValueAt(0)}".toString()
+            String value = "${node.getValueAt(0)}".toString()
+            if (node instanceof ParameterizationNode) {
+                Parameterization item = node.item
+                addColumnValue(item, node, 0, value);
+            }
+            return value
         } else if (node instanceof ParameterizationNode) {
             Parameterization item = node.item
             return getValue(item, node, i)
