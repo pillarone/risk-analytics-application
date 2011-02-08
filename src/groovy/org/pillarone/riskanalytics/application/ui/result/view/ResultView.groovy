@@ -9,6 +9,7 @@ import com.ulcjava.base.application.ULCButton
 import com.ulcjava.base.application.ULCToolBar
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
+import org.pillarone.riskanalytics.application.dataaccess.function.Mean
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
@@ -49,7 +50,7 @@ class ResultView extends AbstractModellingFunctionView {
 
         tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
         model.periodCount.times {int index ->
-            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, tree.viewPortTableTree)
+            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, tree.viewPortTableTree, new Mean())
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column

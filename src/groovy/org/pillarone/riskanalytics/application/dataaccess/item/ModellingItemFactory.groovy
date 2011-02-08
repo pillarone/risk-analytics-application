@@ -1,8 +1,7 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -11,6 +10,9 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 class ModellingItemFactory {
 
@@ -183,6 +185,7 @@ class ModellingItemFactory {
                 return null
             }
         }
+        item.creator = UserManagement.currentUser
         def id = item.save()
         getItemInstances()[key(itemClass, id)] = item
 
@@ -192,6 +195,7 @@ class ModellingItemFactory {
     static ModellingItem createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
         def item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
         item.versionNumber = versionNumber
+        item.creator = UserManagement.currentUser
         def id = item.save()
         getItemInstances()[key(itemClass, id)] = item
         item
@@ -318,6 +322,7 @@ class ModellingItemFactory {
         newItem.periodCount = item.periodCount
         newItem.periodLabels = item.periodLabels
         newItem.modelClass = item.modelClass
+        newItem.dealId = item.dealId
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
         def newId = newItem.save()
@@ -397,8 +402,18 @@ class ModellingItemFactory {
             item.versionNumber = new VersionNumber(dao.itemVersion)
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
-            if (modelClass != null)
+            item.status = dao.status
+            if (modelClass != null) {
                 item.modelClass = modelClass
+                item.creator = dao.creator
+                if (item.creator)
+                    item.creator.username = dao.creator.username
+                item.lastUpdater = dao.lastUpdater
+                if (item.lastUpdater)
+                    item.lastUpdater.username = dao.lastUpdater.username
+                item.creationDate = dao.getCreationDate()
+                item.modificationDate = dao.getModificationDate()
+            }
             getItemInstances()[key(Parameterization, dao.id)] = item
         }
         item

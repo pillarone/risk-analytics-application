@@ -3,11 +3,8 @@ package org.pillarone.riskanalytics.application.ui.settings.view
 import com.ulcjava.base.application.ULCFrame
 import groovy.mock.interceptor.MockFor
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.ui.settings.model.LanguagesValues
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
 import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.testframework.operator.*
 import org.pillarone.riskanalytics.core.user.UserSettings
 
 /**
@@ -42,10 +39,10 @@ public class UserSettingsViewDialogTests extends AbstractSimpleFunctionalTest {
     /* public void testSaveLanguage() {
         userManagement.use {
 //            clientContext.use {
-                ULCFrameOperator frameOperator = new ULCFrameOperator("testFrame")
-                assertNotNull frameOperator
+                ULCFrameOperator mainFrameOperator = new ULCFrameOperator("testFrame")
+                assertNotNull mainFrameOperator
 
-                ULCDialogOperator dialogOperator = new ULCDialogOperator(frameOperator, new ComponentByNameChooser("UserSettingsViewDialog"))
+                ULCDialogOperator dialogOperator = new ULCDialogOperator(mainFrameOperator, new ComponentByNameChooser("UserSettingsViewDialog"))
                 assertNotNull dialogOperator
 
                 ULCLabelOperator warningLabelOperator = new ULCLabelOperator(dialogOperator, new ComponentByNameChooser("messageLabel"))

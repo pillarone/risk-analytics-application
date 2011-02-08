@@ -20,7 +20,7 @@ class ImportAllAction extends ImportAction {
     P1RATMainView p1RATMainView
     Log LOG = LogFactory.getLog(ImportAllAction)
 
-    public ImportAllAction(ULCTree tree, P1RATModel model, String actionName) {
+    public ImportAllAction(ULCTableTree tree, P1RATModel model, String actionName) {
         super(tree, model, actionName)
     }
 

@@ -12,16 +12,21 @@ import org.pillarone.riskanalytics.application.ui.batch.action.DeleteBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.RejectWorkflowAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToProductionAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 
@@ -40,6 +45,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     ULCTree tree
     P1RATModel model
 
+    private Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
 
     public MainSelectionTreeCellRenderer(ULCTree tree, P1RATModel model) {
         this.tree = tree
@@ -56,6 +62,49 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new SingleSelectMenuItem(new DeleteAction(tree, model)))
+
+        ULCPopupMenu dataEntry = new ULCPopupMenu()
+        dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, model)))
+        dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
+        dataEntry.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.DATA_ENTRY, dataEntry)
+
+        ULCPopupMenu rejected = new ULCPopupMenu()
+        rejected.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        rejected.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        rejected.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        rejected.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
+        rejected.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.REJECTED, rejected)
+
+        ULCPopupMenu inReview = new ULCPopupMenu()
+        inReview.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        inReview.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inReview.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        inReview.add(new ULCMenuItem(new SendToProductionAction(tree, model)))
+        inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, model)))
+        inReview.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
+        inReview.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.IN_REVIEW, inReview)
+
+        ULCPopupMenu inProduction = new ULCPopupMenu()
+        inProduction.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
+        tree.addTreeSelectionListener(compareParameterizationMenuItem)
+        inProduction.add(compareParameterizationMenuItem)
+        workflowMenus.put(Status.IN_PRODUCTION, inProduction)
 
         simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new SingleSelectMenuItem(new OpenItemAction(tree, model)))
@@ -137,6 +186,10 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         component.setComponentPopupMenu(parameterNodePopUpMenu)
     }
 
+    void setPopUpMenu(ULCComponent component, WorkflowParameterizationNode node) {
+        component.setComponentPopupMenu(workflowMenus.get(node.status))
+    }
+
     void setPopUpMenu(ULCComponent component, ResultConfigurationNode node) {
         component.setComponentPopupMenu(parameterNodePopUpMenu)
     }
@@ -177,7 +230,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     void setToolTip(ULCComponent component, ParameterizationNode node) {
-        component.setToolTipText String.valueOf("")
+        component.setToolTipText node.item.status == Status.NONE ? String.valueOf("") : node.item.status.displayName
     }
 
     void setToolTip(ULCComponent component, ResultConfigurationNode node) {
@@ -220,4 +273,6 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         component.setComponentPopupMenu(batchesRootNodePopUpMenu)
     }
 }
+
+
 

@@ -16,14 +16,17 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
 
     void testSaveAsParameter() {
         ULCFrameOperator frame = getMainFrameOperator()
-        ULCTreeOperator tree = getSelectionTree()
+        ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
 
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
         tree.doExpandRow(0)
         tree.doExpandRow(1)
-        tree.clickOnPath(pathForRename)
+
+        int row = tree.getRowForPath(pathForRename)
+        tree.selectCell(row, 0)
+
         tree.pushKey(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('renameDialog'))

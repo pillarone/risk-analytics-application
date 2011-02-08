@@ -2,7 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCTree
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.KeyEvent
@@ -20,7 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
  */
 class RenameAction extends SelectionTreeAction {
 
-    public RenameAction(ULCTree tree, P1RATModel model) {
+    public RenameAction(ULCTableTree tree, P1RATModel model) {
         super("Rename", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }

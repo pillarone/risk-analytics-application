@@ -14,6 +14,7 @@ class ItemListModel<T> extends DefaultListModel {
     }
 
     int[] getSelectedIndices(List<T> items) {
+        if (!items) return [] as int[]
         int[] selectedItems = new int[items.size()]
         items.eachWithIndex {T item, int index ->
             selectedItems[index] = indexOf(item)
@@ -28,5 +29,11 @@ class ItemListModel<T> extends DefaultListModel {
         }
         return tags
     }
+
+    public void add(Object o, def value) {
+        super.add(o);
+        values.add(value)
+    }
+
 
 }

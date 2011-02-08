@@ -2,9 +2,10 @@ package org.pillarone.riskanalytics.application.reports
 
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import javax.swing.tree.TreePath
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.P1RATApplication
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import com.ulcjava.testframework.operator.*
 
 public class ReportTests extends AbstractStandaloneTestCase {
@@ -73,7 +74,7 @@ public class ReportTests extends AbstractStandaloneTestCase {
 
         popUpMenu.pushMenu(["Run Simulation"] as String[])
 
-        ULCButtonOperator runButton = new ULCButtonOperator(frame, "run")
+        ULCButtonOperator runButton = new ULCButtonOperator(frame, "${SimulationActionsPane.getSimpleName()}.run")
         assertNotNull runButton
         ULCButtonOperator stopButton = new ULCButtonOperator(frame, "stop")
         assertNotNull stopButton

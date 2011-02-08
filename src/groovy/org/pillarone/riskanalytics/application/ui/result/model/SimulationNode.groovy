@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 
 class SimulationNode extends ItemNode {
     //checkBox selected simulations
-    boolean display=true
+    boolean display = true
     // flag for hidden/display simulations
-    boolean hidden= false
+    boolean hidden = false
 
     public SimulationNode(Simulation simulation) {
         super(simulation, false, true)
@@ -16,7 +16,7 @@ class SimulationNode extends ItemNode {
     public void setUserObject(Object userObject) {
         if (renameable) {
             item.rename(userObject)
-            super.setUserObject("${item.name}")
+            setValueAt("${item.name}".toString(), 0)
         }
     }
 }

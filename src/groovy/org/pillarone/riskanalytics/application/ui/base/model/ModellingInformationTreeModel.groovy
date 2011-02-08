@@ -1,50 +1,59 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import com.ulcjava.base.application.tree.DefaultMutableTreeNode
-import com.ulcjava.base.application.tree.DefaultTreeModel
-import com.ulcjava.base.application.tree.ITreeNode
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.*
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.workflow.Status
+
+import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import com.ulcjava.base.application.tree.DefaultMutableTreeNode
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.util.GroovyUtils
-import org.pillarone.riskanalytics.core.simulation.item.*
 
-class ModellingInformationTreeModel extends DefaultTreeModel {
+class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
     private static Log LOG = LogFactory.getLog(ModellingInformationTreeModel)
 
     public ModellingInformationTreeModel() {
         super(new DefaultMutableTreeNode("root"))
-        buildTreeNodes()
     }
 
-    private def buildTreeNodes() {
-        ModelStructure.findAllModelClasses().each {Class modelClass ->
+    public def buildTreeNodes() {
+        getAllModelClasses().each {Class modelClass ->
             Model model = modelClass.newInstance()
             model.init()
-            ITreeNode modelNode = getModelNode(model)
+            ITableTreeNode modelNode = getModelNode(model)
             DefaultMutableTreeNode parametrisationsNode = modelNode.getChildAt(0)
+            ItemGroupNode normalNode = parametrisationsNode.getChildAt(0)
+            ItemGroupNode workflowNode = parametrisationsNode.getChildAt(1)
             DefaultMutableTreeNode resultConfigurationsNode = modelNode.getChildAt(1)
             DefaultMutableTreeNode simulationsNode = modelNode.getChildAt(2)
 
-            getItemMap(ModellingItemFactory.getParameterizationsForModel(modelClass)).values().each {
-                parametrisationsNode.add(createItemNodes(it))
+            getItemMap(getItemsForModel(modelClass, Parameterization), false).values().each { List<Parameterization> it ->
+                normalNode.add(createItemNodes(it))
+            }
+            getItemMap(getItemsForModel(modelClass, Parameterization), true).values().each { List<Parameterization> it ->
+                workflowNode.add(createItemNodes(it))
             }
 
-            getItemMap(ModellingItemFactory.getResultConfigurationsForModel(modelClass)).values().each {
+            getItemMap(getItemsForModel(modelClass, ResultConfiguration), false).values().each {
                 resultConfigurationsNode.add(createItemNodes(it))
             }
 
-            List simulationsForModel = ModellingItemFactory.getActiveSimulationsForModel(modelClass)
+            List simulationsForModel = getItemsForModel(modelClass, Simulation)//ModellingItemFactory.getActiveSimulationsForModel(modelClass)
             if (simulationsForModel.size() == 0) {
                 simulationsNode.leaf = true
             }
@@ -60,8 +69,21 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         root.add(createBatchNode())
     }
 
-    private ITreeNode getModelNode(Model model) {
-        ITreeNode modelNode = null
+    public List getItemsForModel(Class modelClass, Class clazz) {
+        switch (clazz) {
+            case Parameterization: return ModellingItemFactory.getParameterizationsForModel(modelClass)
+            case ResultConfiguration: return ModellingItemFactory.getResultConfigurationsForModel(modelClass)
+            case Simulation: return ModellingItemFactory.getActiveSimulationsForModel(modelClass)
+            default: return []
+        }
+    }
+
+    public List getAllModelClasses() {
+        return ModelStructure.findAllModelClasses()
+    }
+
+    private ITableTreeNode getModelNode(Model model) {
+        ITableTreeNode modelNode = null
 
         for (int i = 0; i < root.childCount && modelNode == null; i++) {
             ItemNode candidate = root.getChildAt(i)
@@ -73,6 +95,8 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         if (modelNode == null) {
             modelNode = new ModelNode(model)
             DefaultMutableTreeNode parameterizationsNode = new ItemGroupNode(getText("Parameterization"), Parameterization)
+            parameterizationsNode.add(new ItemGroupNode(getText("Normal"), Parameterization))
+            parameterizationsNode.add(new ItemGroupNode(getText("Workflow"), Parameterization))
             DefaultMutableTreeNode resultConfigurationsNode = new ItemGroupNode(getText("ResultTemplates"), ResultConfiguration)
             DefaultMutableTreeNode simulationsNode = new ItemGroupNode(getText("Results"), Simulation)
             modelNode.add(parameterizationsNode)
@@ -83,8 +107,13 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         return modelNode
     }
 
-    private Map getItemMap(items) {
+    private Map getItemMap(items, boolean workflow) {
         Map map = [:]
+        if (workflow) {
+            items = items.findAll { it.versionNumber.toString().startsWith("R")}
+        } else {
+            items = items.findAll { !it.versionNumber.toString().startsWith("R")}
+        }
         items.each {
             def list = map.get(it.name)
             if (!list) {
@@ -138,26 +167,28 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
     public void refresh(ModellingItem item) {
-        ITreeNode node = findNodeForItem(findModelNode(item), item)
+        ITableTreeNode node = findNodeForItem(findModelNode(item), item)
         nodeChanged node
     }
 
-    public void addNodeForItem(Simulation item) {
-        ITreeNode groupNode = findGroupNode(item, findModelNode(item))
+    public def addNodeForItem(Simulation item) {
+        ITableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         groupNode.leaf = false
         insertNodeInto(createNode(item), groupNode, groupNode.childCount)
+        return groupNode
     }
 
-    public void addNodeForItem(ModellingItem item) {
-        ITreeNode groupNode = findGroupNode(item, findModelNode(item))
+    public def addNodeForItem(ModellingItem item) {
+        ITableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         createAndInsertItemNode(groupNode, item)
-        nodeStructureChanged(groupNode)
+//        nodeStructureChanged(groupNode)
+        return groupNode
     }
 
-    public void addNodeForItem(BatchRun batchRun) {
-        ITreeNode groupNode = findBatchRootNode()
+    public def addNodeForItem(BatchRun batchRun) {
+        ITableTreeNode groupNode = findBatchRootNode()
         createAndInsertItemNode(groupNode, batchRun)
-        nodeStructureChanged(groupNode)
+        return groupNode
     }
 
 
@@ -167,7 +198,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
     public void removeNodeForItem(ModellingItem item) {
-        ITreeNode groupNode = findGroupNode(item, findModelNode(item))
+        ITableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         def itemNode = findNodeForItem(groupNode, item)
         if (itemNode instanceof SimulationNode) {
             itemNode.removeAllChildren()
@@ -194,14 +225,14 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
     public void removeNodeForItem(BatchRun batchRun) {
-        ITreeNode groupNode = findBatchRootNode()
+        ITableTreeNode groupNode = findBatchRootNode()
         def itemNode = findNodeForItem(groupNode, batchRun)
         removeNodeFromParent(itemNode)
         nodeStructureChanged(groupNode)
     }
 
     public void refreshBatchNode() {
-        ITreeNode batchNode = findBatchRootNode()
+        ITableTreeNode batchNode = findBatchRootNode()
 
         removeNodeFromParent(batchNode)
         nodeStructureChanged(root)
@@ -233,14 +264,25 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
 
 
     private ItemGroupNode findGroupNode(ModellingItem item, ModelNode modelNode) {
-        ITreeNode groupNode = null
+        ITableTreeNode groupNode = null
         for (int i = 0; i < modelNode.childCount && groupNode == null; i++) {
-            ITreeNode childNode = modelNode.getChildAt(i)
+            ITableTreeNode childNode = modelNode.getChildAt(i)
             if (childNode.itemClass == item.class) {
                 groupNode = childNode
             }
         }
         groupNode
+    }
+
+    private ItemGroupNode findGroupNode(Parameterization item, ModelNode modelNode) {
+        ItemGroupNode groupNode = null
+        for (int i = 0; i < modelNode.childCount && groupNode == null; i++) {
+            ItemGroupNode childNode = modelNode.getChildAt(i)
+            if (childNode.itemClass == Parameterization) {
+                groupNode = childNode
+            }
+        }
+        return item.status == Status.NONE ? groupNode.getChildAt(0) : groupNode.getChildAt(1)
     }
 
     private def createAndInsertItemNode(DefaultMutableTreeNode node, ModellingItem item) {
@@ -300,8 +342,8 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
 
-    ITreeNode findNodeForItem(ITreeNode node, Object item) {
-        ITreeNode nodeForItem = null
+    ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
+        ITableTreeNode nodeForItem = null
         if (nodeMatches(item, node)) {
             nodeForItem = node
         } else {
@@ -313,23 +355,24 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         return nodeForItem
     }
 
-    private ITreeNode createNode(String name) {
-        new DefaultMutableTreeNode(name)
+
+    private ITableTreeNode createNode(String name) {
+        new DefaultMutableTableTreeNode(name)
     }
 
-    private ITreeNode createNode(Parameterization item) {
-        return new ParameterizationNode(item)
+    private ITableTreeNode createNode(Parameterization item) {
+        return item.status == Status.NONE ? new ParameterizationNode(item) : new WorkflowParameterizationNode(item)
     }
 
-    private ITreeNode createNode(ResultConfiguration item) {
+    private ITableTreeNode createNode(ResultConfiguration item) {
         return new ResultConfigurationNode(item)
     }
 
-    private ITreeNode createNode(BatchRun batchRun) {
+    private ITableTreeNode createNode(BatchRun batchRun) {
         return new BatchRunNode(batchRun)
     }
 
-    private ITreeNode createNode(Simulation item) {
+    private ITableTreeNode createNode(Simulation item) {
         SimulationNode node = new SimulationNode(item)
         if (!item.isLoaded()) {
             item.load()
@@ -344,17 +387,25 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
         return node
     }
 
-    private ITreeNode createBatchNode() {
+    private ITableTreeNode createBatchNode() {
         BatchRootNode batchesNode = new BatchRootNode("Batches")
-        List<BatchRun> batchRuns = BatchRunner.getService().getAllBatchRuns()
+        List<BatchRun> batchRuns = getAllBatchRuns()
         batchRuns?.each {BatchRun batchRun ->
             batchesNode.add(createNode(batchRun))
         }
         return batchesNode
     }
 
+    protected List<BatchRun> getAllBatchRuns() {
+        BatchRunner.getService().getAllBatchRuns()
+    }
+
 
     private boolean nodeMatches(item, ParameterizationNode node) {
+        return node.item == item
+    }
+
+    private boolean nodeMatches(item, WorkflowParameterizationNode node) {
         return node.item == item
     }
 
@@ -371,7 +422,7 @@ class ModellingInformationTreeModel extends DefaultTreeModel {
     }
 
 
-    private boolean nodeMatches(item, ITreeNode node) {
+    private boolean nodeMatches(item, ITableTreeNode node) {
         return false
     }
 

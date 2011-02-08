@@ -10,6 +10,7 @@ import com.ulcjava.base.application.event.KeyEvent
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import models.core.CoreModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -17,13 +18,13 @@ import org.pillarone.riskanalytics.core.ParameterizationDAO
 class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
-        ULCTreeOperator tree = getSelectionTree()
+        ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
         importFile(tree)
 
         verifyImport()
     }
 
-    private void importFile(ULCTreeOperator tree) {
+    private void importFile(ULCTableTreeOperator tree) {
         pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
@@ -40,7 +41,7 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
         String parameterizationName = "CoreAlternativeParameters"
         String fileName = testExportFile.getAbsolutePath()
 
-        ULCTreeOperator tree = getSelectionTree()
+        ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
         importFile(tree)
         TreePath parametrizationPath = tree.findPath(["Core", "Parameterization", parameterizationName] as String[])
         assertNotNull "path not found", parametrizationPath
@@ -48,7 +49,8 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
         //tree.doExpandPath opens parameterization...
         tree.doExpandRow(0)
         tree.doExpandRow(1)
-        tree.clickOnPath(parametrizationPath)
+        int row = tree.getRowForPath(parametrizationPath)
+        tree.selectCell(row, 0)
 
         tree.pushKey(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
@@ -69,7 +71,7 @@ class ImportExportParametrizationTests extends AbstractFunctionalTestCase {
     }
 
     private void verifyImport() {
-        ULCTreeOperator tableTree = getSelectionTree()
+        ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
         TreePath path = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull(path)
     }

@@ -2,40 +2,47 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCTree
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.tree.DefaultTreeModel
-import com.ulcjava.base.application.tree.ITreeNode
-import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class DeleteAction extends SelectionTreeAction {
 
-    public DeleteAction(ULCTree tree, P1RATModel model) {
+    Closure okAction = { def selectedItem, def nextItemToSelect ->
+        removeItem(selectedItem)
+        tree.addPathSelection(new TreePath(DefaultTableTreeModel.getPathToRoot(nextItemToSelect) as Object[]))
+    }
+
+    public DeleteAction(ULCTableTree tree, P1RATModel model) {
         super("Delete", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true));
     }
 
     public void doActionPerformed(ActionEvent event) {
         def selectedItem = getSelectedItem()
-        ITreeNode nextItemNode = getNextSelectedItem()
         if (!selectedItem) return
-        removeItem(selectedItem)
-        tree.addSelectionPath(new TreePath(DefaultTreeModel.getPathToRoot(nextItemNode) as Object[]))
+        AlertDialog dialog = new AlertDialog(tree, selectedItem,getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [tree?.selectedPath?.lastPathComponent?.toString()]), okAction)
+        dialog.init()
+        dialog.show()
     }
 
     private void removeItem(ModellingItem selectedItem) {

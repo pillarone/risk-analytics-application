@@ -10,6 +10,7 @@ import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
 import java.awt.image.BufferedImage
+import javax.swing.ImageIcon
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumParameterizationTableTreeNode
@@ -107,6 +108,13 @@ class UIUtils {
         URL url = new UIUtils().class.getResource(ICON_DIRECTORY + fileName)
         if (url) {
             return new ULCIcon(url)
+        }
+    }
+
+    public static ImageIcon getImageIcon(String fileName) {
+        URL url = new UIUtils().class.getResource(ICON_DIRECTORY + fileName)
+        if (url) {
+            return new ImageIcon(url)
         }
     }
 

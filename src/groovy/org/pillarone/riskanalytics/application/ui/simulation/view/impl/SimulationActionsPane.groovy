@@ -250,7 +250,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
         Dimension buttonSize = new Dimension(140, 20)
         run = new ULCButton(model.runSimulationAction)
-        run.name = "run"
+        run.name = "${SimulationActionsPane.getSimpleName()}.run"
         run.preferredSize = buttonSize
         stop = new ULCButton(model.stopSimulationAction)
         stop.name = "stop"
@@ -259,7 +259,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         cancel.name = "cancel"
         cancel.preferredSize = buttonSize
         openResults = new ULCButton(model.openResultsAction)
-        openResults.name = "openResults"
+        openResults.name = "${SimulationActionsPane.getSimpleName()}.openResults"
         openResults.preferredSize = buttonSize
 
         availableBatchRuns = new ULCComboBox(model.batchRunComboBoxModel)

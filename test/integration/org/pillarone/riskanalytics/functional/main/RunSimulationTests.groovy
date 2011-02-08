@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.functional.main
 
 import com.ulcjava.testframework.operator.ULCButtonOperator
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
-import com.ulcjava.testframework.operator.ULCTreeOperator
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationSettingsPane
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 import com.ulcjava.base.application.event.KeyEvent
@@ -18,14 +20,14 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
     }
 
     public void testRunSimulation() {
-        ULCTreeOperator tree = getSelectionTree()
-        pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK)
+        ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
+        pushKeyOnPath(tableTree, tableTree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK)
         ULCTextFieldOperator iterations = getTextFieldOperator("iterations")
         iterations.typeText("10")
-        getButtonOperator("run").clickMouse()
-        ULCButtonOperator resultButton = getButtonOperator("openResults")
+        getButtonOperator("${SimulationActionsPane.getSimpleName()}.run").clickMouse()
+        ULCButtonOperator resultButton = getButtonOperator("${SimulationActionsPane.getSimpleName()}.openResults")
         wait({resultButton.isEnabled()}, 500, 5000)
-//        getButtonOperator("openResults").clickMouse()
+//        getButtonOperator("${SimulationActionsPane.getSimpleName()}.openResults").clickMouse()
         //TODO finish test
     }
 

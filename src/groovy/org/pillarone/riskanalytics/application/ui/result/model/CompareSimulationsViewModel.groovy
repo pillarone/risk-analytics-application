@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
@@ -13,6 +10,9 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -55,7 +55,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         resultStructure.load()
         builder = new ResultStructureTreeBuilder(ResultViewModel.obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item[0])
 
-        treeRoot = builder.buildTree()
+        def localTreeRoot = builder.buildTree()
 
         MeanAction meanAction = new MeanAction(this, null)
         List<ConfigObject> resultsList = []
@@ -63,7 +63,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
             ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
             resultsList << configObject
         }
-        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(treeRoot, item, meanAction.getFunction(), resultsList)
+        ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(localTreeRoot, item, meanAction.getFunction(), resultsList)
         // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
         return new FilteringTableTreeModel(resultTreeTableModel, filter)
     }

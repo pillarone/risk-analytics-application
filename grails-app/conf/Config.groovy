@@ -33,6 +33,9 @@ userLogin = false
 // Fields can contain any of the allowed values: Sec Min Hour dayOfMonth month dayOfWeek Year
 // Fire every 60 minutes
 batchCron = "0 0/10 * * * ?"
+transactionServiceUrl = "rmi://localhost:1099/TransactionService"
+resultServiceRegistryPort=1099
+
 environments {
     development {
         models = ["CoreModel", 'ApplicationModel']

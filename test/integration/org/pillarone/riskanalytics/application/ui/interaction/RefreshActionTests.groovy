@@ -38,7 +38,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
 
     void testRefreshAfterInsert() {
         ULCFrameOperator frame1 = new ULCFrameOperator("first")
-        ULCTreeOperator tree1 = new ULCTreeOperator(frame1, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree1 = new ULCTableTreeOperator(frame1, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
@@ -46,7 +46,9 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreMultiPeriodParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        tree1.clickOnPath(pathForRename)
+        int row = tree1.getRowForPath(pathForRename)
+        tree1.selectCell(row, 0)
+        sleep 1000
         tree1.pushKey(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame1, new ComponentByNameChooser('renameDialog'))
@@ -65,30 +67,26 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         okButton.clickMouse()
         renameDialog.close()
 
-
-
-
-
         ULCFrameOperator frame2 = new ULCFrameOperator("second")
         frame2.getUIFrame().getBasicComponent().toFront()
 
-        ULCTreeOperator tree2 = new ULCTreeOperator(frame2, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree2 = new ULCTableTreeOperator(frame2, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree2.doExpandRow 0
         tree2.doExpandRow 1
-
 
         TreePath path = tree2.findPath(["Core", "Parameterization"] as String[])
         assertNotNull "path not found", path
         int childCountBeforeInsert = tree2.getChildCount(path)
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame2, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
+
         path = tree2.findPath(["Core", "Parameterization"] as String[])
         assertEquals "childCount after refresh", childCountBeforeInsert + 1, tree2.getChildCount(path)
     }
 
     void testRefreshAfterDelete() {
         ULCFrameOperator frame1 = new ULCFrameOperator("first")
-        ULCTreeOperator tree1 = new ULCTreeOperator(frame1, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree1 = new ULCTableTreeOperator(frame1, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
@@ -99,10 +97,22 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath path = tree1.findPath(["Core", "Parameterization"] as String[])
         int childCountBeforeInsert = tree1.getChildCount(path)
 
-        tree1.clickOnPath(pathForRename)
+        int row = tree1.getRowForPath(pathForRename)
+        tree1.selectCell(row,0)
+        sleep 1000
         tree1.pushKey(KeyEvent.VK_DELETE)
 
         assertNotNull "path not found", path
+        ULCDialogOperator alertDialog = new ULCDialogOperator(frame1, new ComponentByNameChooser('AlertDialog'))
+        assertNotNull alertDialog
+
+        ULCButtonOperator okButton = new ULCButtonOperator(alertDialog, new ComponentByNameChooser('AlertDialog.ok'))
+        assertNotNull okButton
+
+        okButton.getFocus()
+        okButton.clickMouse()
+
+
         ULCButtonOperator refreshButton = new ULCButtonOperator(frame1, new ComponentByNameChooser("refresh"))
         refreshButton.clickMouse()
         path = tree1.findPath(["Core", "Parameterization"] as String[])
@@ -111,7 +121,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
 
     void testRefreshAfterRename() {
         ULCFrameOperator frame1 = new ULCFrameOperator("first")
-        ULCTreeOperator tree1 = new ULCTreeOperator(frame1, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree1 = new ULCTableTreeOperator(frame1, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree1.doExpandRow 0
         tree1.doExpandRow 1
 
@@ -119,7 +129,9 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         TreePath pathForRename = tree1.findPath(["Core", "Parameterization", "CoreMultiPeriodParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        tree1.clickOnPath(pathForRename)
+        int row = tree1.getRowForPath(pathForRename)
+        tree1.selectCell(row, 0)
+        sleep 1000
         tree1.pushKey(KeyEvent.VK_F2)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame1, new ComponentByNameChooser('renameDialog'))
@@ -143,7 +155,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frame2 = new ULCFrameOperator("second")
         frame2.getUIFrame().getBasicComponent().toFront()
 
-        ULCTreeOperator tree2 = new ULCTreeOperator(frame2, new ComponentByNameChooser("selectionTree"))
+        ULCTableTreeOperator tree2 = new ULCTableTreeOperator(frame2, new ComponentByNameChooser("selectionTreeRowHeader"))
         tree2.doExpandRow 0
         tree2.doExpandRow 1
 

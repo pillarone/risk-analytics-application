@@ -15,7 +15,6 @@ import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
@@ -42,6 +41,7 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -64,7 +64,9 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     ULCCardPane modelPane
     ULCMenu windowMenu
     ULCButtonGroup windowMenuItemGroup
-    ULCTree selectionTree
+    SelectionTreeView selectionTreeView
+    //todo fja implentation of toolbar action for the navigation bar
+//    NavigationBarTopPane navigationBarTopPane
 
     ULCLabel lockedLabel
 
@@ -94,28 +96,25 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
         content = new ULCBoxPane(2, 0)
 
-        selectionTree = new ULCTree(model.selectionTreeModel)
+        selectionTreeView = new SelectionTreeView(model)
         initMenuBar()
 
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
 
-        selectionTree.name = "selectionTree"
-        selectionTree.rootVisible = false
-        selectionTree.showsRootHandles = true
-        selectionTree.editable = false
-        selectionTree.setCellRenderer(new MainSelectionTreeCellRenderer(selectionTree, model))
 
     }
 
     void layoutComponents() {
-        ULCScrollPane treeScrollPane = new ULCScrollPane(selectionTree)
+        ULCScrollPane treeScrollPane = new ULCScrollPane(selectionTreeView.content)
         treeScrollPane.minimumSize = new Dimension(200, 600)
         modelPane.minimumSize = new Dimension(600, 600)
         treePane.add(ULCBoxPane.BOX_EXPAND_EXPAND, treeScrollPane)
         ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.HORIZONTAL_SPLIT)
+        splitPane.oneTouchExpandable = true
+        splitPane.setResizeWeight(1)
         splitPane.dividerLocation = 200
-        splitPane.dividerSize = 5
+        splitPane.dividerSize = 10
 
         splitPane.setLeftComponent(treePane)
         splitPane.setRightComponent(modelPane)
@@ -145,15 +144,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void attachListeners() {
         model.addModelListener(this)
         model.addPropertyChangeListener("currentItem", this)
-        //add action listener
-        selectionTree.addActionListener(new TreeDoubleClickAction(selectionTree, model))
-        selectionTree.registerKeyboardAction(new DeleteAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
-        selectionTree.registerKeyboardAction(new RenameAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
-        selectionTree.registerKeyboardAction(new ImportAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        selectionTree.registerKeyboardAction(new ExportItemAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        selectionTree.registerKeyboardAction(new SimulationAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        selectionTree.registerKeyboardAction(new SaveAsAction(selectionTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-    }
+     }
 
 
     private def initMenuBar() {
@@ -163,7 +154,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         importAllAction = new ImportAllAction(this, model, "ImportAllParameterizations")
         saveAction = new SaveAction(model)
         settingsAction = new ShowUserSettingsAction(this)
-        runAction = new SimulationAction(selectionTree, model)
+        runAction = new SimulationAction(null, model)
         syncMenuBar()
         menuBar = new ULCMenuBar()
         ULCMenu fileMenu = new ULCMenu(getText("File"))
@@ -238,6 +229,10 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         toolBar.add(refreshButton)
         toolBar.add(saveButton)
         toolBar.add(runButton)
+        toolBar.addSeparator()
+
+//        navigationBarTopPane = new NavigationBarTopPane(toolBar)
+//        navigationBarTopPane.init()
 
         rightToolBar = new ULCToolBar()
         rightToolBar.floatable = false
@@ -665,7 +660,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (item == model.currentItem) {
             syncMenuBar()
         }
-        runAction.enabled = selectionTree?.selectionPath?.lastPathComponent != null
+//        runAction.enabled = selectionTree?.selectionPath?.lastPathComponent != null
     }
 
     public void itemSaved(ModellingItem item) {
@@ -679,10 +674,10 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (model.currentItem) {
             runAction.enabled = !((model.currentItem instanceof Simulation) || (model.currentItem instanceof BatchRun))
             if (model.currentItem instanceof Parameterization || model.currentItem instanceof ResultConfiguration) {
-                if (model.currentItem.isUsedInSimulation()) {
-                    lockedLabel.icon = UIUtils.getIcon("locked-active.png")
-                } else {
+                if (model.currentItem.isEditable()) {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")
+                } else {
+                    lockedLabel.icon = UIUtils.getIcon("locked-active.png")
                 }
             } else {
                 lockedLabel.icon = UIUtils.getIcon("clear.png")

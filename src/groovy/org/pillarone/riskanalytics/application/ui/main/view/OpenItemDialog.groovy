@@ -15,7 +15,7 @@ import com.ulcjava.base.application.*
  */
 class OpenItemDialog {
     private ULCWindow parent
-    ULCTree tree
+    ULCTableTree tree
     Model model
     P1RATModel p1RATModel
     ULCDialog dialog
@@ -30,7 +30,7 @@ class OpenItemDialog {
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
 
 
-    public OpenItemDialog(ULCTree tree, Model model, P1RATModel p1RATModel, ModellingItem item) {
+    public OpenItemDialog(ULCTableTree tree, Model model, P1RATModel p1RATModel, ModellingItem item) {
         this.tree = tree
         this.model = model
         this.item = item
@@ -114,4 +114,3 @@ class OpenItemDialog {
         dialog.setVisible(visible)
     }
 }
-

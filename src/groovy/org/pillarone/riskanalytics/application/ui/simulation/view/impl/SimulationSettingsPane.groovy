@@ -6,7 +6,6 @@ import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.util.Font
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
@@ -38,20 +37,20 @@ class SimulationSettingsPane {
 
     ULCBoxPane content
 
-    protected ULCTextField simulationName
-    protected ULCTextArea comment
-    protected ULCComboBox modelComboBox
-    protected ULCComboBox parametrizationNamesComboBox
-    protected ULCComboBox parameterizationVersionsComboBox
-    protected ULCComboBox resultConfigurationNamesComboBox
-    protected ULCComboBox resultConfigurationVersionsComboBox
-    protected ULCComboBox outputStrategy
-    protected ULCTextField resultLocation
-    protected ULCButton changeLocationButton
-    protected ULCSpinner beginOfFirstPeriod
-    protected ULCCheckBox userDefinedRandomSeed
-    protected ULCTextField randomSeed
-    protected ULCTextField numberOfIterations
+    private ULCTextField simulationName
+    private ULCTextArea comment
+    private ULCComboBox modelComboBox
+    private ULCComboBox parametrizationNamesComboBox
+    private ULCComboBox parameterizationVersionsComboBox
+    private ULCComboBox resultConfigurationNamesComboBox
+    private ULCComboBox resultConfigurationVersionsComboBox
+    private ULCComboBox outputStrategy
+    private ULCTextField resultLocation
+    private ULCButton changeLocationButton
+    private ULCSpinner beginOfFirstPeriod
+    private ULCCheckBox userDefinedRandomSeed
+    private ULCTextField randomSeed
+    private ULCTextField numberOfIterations
 
     SimulationSettingsPaneModel model
     final private Dimension dimension = new Dimension(100, 20)
