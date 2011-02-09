@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.core.remoting.TransactionInfo
 import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
+import org.joda.time.DateTime
 
 class DealLinkDialog {
     ITransactionService transactionService
@@ -39,6 +40,8 @@ class DealLinkDialog {
     DealComboBoxModel dealSelectionModel
     private ULCButton okButton
     private ULCButton cancelButton
+    private ValuationDatePane valuationDatePane
+    ValuationDatePaneModel valuationDatePaneModel
 
     Closure okAction
 
@@ -61,6 +64,8 @@ class DealLinkDialog {
         okButton = new ULCButton(getText("okButton"))
         okButton.name = 'okButton'
         cancelButton = new ULCButton(getText("cancelButton"))
+        valuationDatePaneModel = new ValuationDatePaneModel()
+        valuationDatePane = new ValuationDatePane(valuationDatePaneModel)
 
     }
 
@@ -70,6 +75,8 @@ class DealLinkDialog {
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("Deal") + ":"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, dealSelection)
+        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("Date") + ":"))
+        content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, valuationDatePane.content)
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         okButton.setPreferredSize(new Dimension(120, 20))
@@ -106,6 +113,9 @@ class DealLinkDialog {
     public void selectDeal(Parameterization parameterization) {
         if (!parameterization.isLoaded()) {
             parameterization.load()
+        }
+        if (parameterization.valuationDate != null) {
+            valuationDatePaneModel.setDate(new DateTime(parameterization.valuationDate))
         }
         if (parameterization.dealId == null) return
 

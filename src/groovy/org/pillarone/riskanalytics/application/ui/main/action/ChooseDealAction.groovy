@@ -26,6 +26,7 @@ class ChooseDealAction extends SelectionTreeAction {
         Closure okAction = {
             ExceptionSafe.protect {
                 parameterization.dealId = dialog.dealSelectionModel.dealId
+                parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate.toDate()
                 parameterization.save()
             }
         }

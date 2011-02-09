@@ -22,7 +22,7 @@ grails.project.dependency.resolution = {
 
     mavenRepo "https://build.intuitive-collaboration.com/maven/plugins/"
 
-    String  ulcVersion = "2008-u4-4.1"
+    String ulcVersion = "2008-u4-4.1"
 
     plugins {
         runtime ":background-thread:1.3"
@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
         runtime "org.pillarone:jasper:0.9.5-riskanalytics"
         compile "com.canoo:ulc:${ulcVersion}"
 
-        runtime "org.pillarone:risk-analytics-core:1.3-ALPHA-2"
+        runtime "org.pillarone:risk-analytics-core:1.3-ALPHA-2.1"
 
     }
 

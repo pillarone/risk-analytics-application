@@ -28,6 +28,7 @@ class StartWorkflowAction extends AbstractWorkflowAction {
                     parameterization.load()
                 }
                 parameterization.dealId = dialog.dealSelectionModel.dealId
+                parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate.toDate()
                 super.doActionPerformed(event)
             }
         }
