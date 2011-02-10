@@ -6,6 +6,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.SimpleDateFormat
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.model.ChangeIndexerListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
@@ -43,6 +44,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     DefaultMutableTableTreeNode root
     List parameterizationNodes
     ModellingItemNodeFilter filter
+    List<ChangeIndexerListener> changeIndexerListeners
 
     SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
     static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy")
@@ -51,6 +53,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public ModellingInformationTableTreeModel() {
         builder = new ModellingInformationTableTreeBuilder(this)
+        changeIndexerListeners = []
     }
 
     public def buildTreeNodes() {
@@ -93,14 +96,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     Object getValueAt(Object node, int i) {
-
         if (i == 0) {
-            String value = "${node.getValueAt(0)}".toString()
-            if (node instanceof ItemNode) {
-                def item = node.item
-                addColumnValue(item, node, 0, value);
-            }
-            return value
+            return "${node.getValueAt(0)}".toString()
         } else if (node instanceof ItemNode) {
             return getValue(node.item, node, i)
         }
@@ -132,6 +129,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         def value = null
         try {
             switch (columnIndex) {
+                case NAME: value = "${node.getValueAt(0)}".toString(); break;
                 case STATE: value = parameterization?.status?.getDisplayName(); break;
                 case TAGS: value = parameterization?.tags?.join(","); break;
                 case COMMENTS: value = parameterization.getSize(CommentDAO); break;
@@ -154,6 +152,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public Object getValue(def item, ItemNode node, int columnIndex) {
         if (item instanceof ModellingItem) {
             switch (columnIndex) {
+                case NAME: return "${node.getValueAt(0)}".toString()
                 case COMMENTS:
                 case REVIEW_COMMENT: return 0;
                 case OWNER: return item?.getCreator()?.username;
@@ -213,22 +212,27 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void refresh() {
+        indexerChanged()
         builder.refresh()
     }
 
     public void refresh(ModellingItem item) {
+        indexerChanged()
         builder.refresh(item)
     }
 
     public void addNodeForItem(Simulation item) {
+        indexerChanged()
         builder.addNodeForItem item
     }
 
     public def addNodeForItem(ModellingItem item) {
+        indexerChanged()
         builder.addNodeForItem(item)
     }
 
     public def addNodeForItem(BatchRun batchRun) {
+        indexerChanged()
         builder.addNodeForItem batchRun
     }
 
@@ -238,10 +242,12 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void removeAllGroupNodeChildren(ItemGroupNode groupNode) {
         builder.removeAllGroupNodeChildren groupNode
+        indexerChanged()
     }
 
     public void removeNodeForItem(ModellingItem item) {
         builder.removeNodeForItem item
+        indexerChanged()
     }
 
     public void removeNodeForItem(BatchRun batchRun) {
@@ -254,6 +260,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
 
     private def createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingItem item) {
+        indexerChanged()
         builder.createAndInsertItemNode(node, item)
     }
 
@@ -265,5 +272,16 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         return { x, y -> ascOrder ? x.values[column] <=> y.values[column] : y.values[column] <=> x.values[column] } as Comparator
     }
 
+    public void addChangeIndexerListener(ChangeIndexerListener listener) {
+        changeIndexerListeners << listener
+    }
 
+    public void removeChangeIndexerListener(ChangeIndexerListener listener) {
+        changeIndexerListeners.remove(listener)
+    }
+
+    public void indexerChanged() {
+        for (ChangeIndexerListener listener: changeIndexerListeners)
+            listener.indexChanged()
+    }
 }

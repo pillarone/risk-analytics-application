@@ -18,13 +18,14 @@ import org.pillarone.riskanalytics.core.ParameterizationDAO
  * @author fouad.jaada@intuitive-collaboration.com
  */
 
-class ModellingItemSearchBean {
+class ModellingItemSearchBean implements ChangeIndexerListener {
 
     ModellingItemIndexer indexer = null
     private QueryParser parser = null;
     private static Log LOG = LogFactory.getLog(ModellingItemSearchBean)
     static final String SEPARATOR = " +++ "
     static final String SQL_SEPARATOR = "' " + SEPARATOR + " '"
+    boolean reInitIndexer = false
 
     public List<String> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
@@ -50,10 +51,11 @@ class ModellingItemSearchBean {
     }
 
     private void initIndexer() throws IOException {
-        if (!indexer) {
+        if (!indexer || reInitIndexer) {
             List<String> names = getModellingItemNames()
             indexer = new ModellingItemIndexer(names)
             parser = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer)
+            reInitIndexer = false
         }
     }
 
@@ -135,5 +137,14 @@ class ModellingItemSearchBean {
         return names
     }
 
+    void indexChanged() {
+        reInitIndexer = true
+    }
 
+
+}
+
+private interface ChangeIndexerListener {
+
+    void indexChanged()
 }

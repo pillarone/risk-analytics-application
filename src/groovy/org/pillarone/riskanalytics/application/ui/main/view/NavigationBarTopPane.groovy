@@ -36,6 +36,7 @@ class NavigationBarTopPane {
         this.toolBar = toolBar
         this.searchBean = new ModellingItemSearchBean()
         this.tableTreeModel = tableTreeModel
+        this.tableTreeModel.addChangeIndexerListener(this.searchBean)
     }
 
     public void init() {
