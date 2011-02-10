@@ -208,8 +208,10 @@ class ModellingItemFactory {
     }
 
     static List getResultConfigurationsForModel(Class modelClass) {
-        ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it, modelClass)
+        ResultConfigurationDAO.withTransaction { status ->
+            ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
+                getItem(it, modelClass)
+            }
         }
     }
 
