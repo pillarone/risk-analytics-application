@@ -384,11 +384,15 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private ITableTreeNode createNode(Parameterization item) {
-        return item.status == Status.NONE ? new ParameterizationNode(item) : new WorkflowParameterizationNode(item)
+        ParameterizationNode node = item.status == Status.NONE ? new ParameterizationNode(item) : new WorkflowParameterizationNode(item)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
+        return node
     }
 
     private ITableTreeNode createNode(ResultConfiguration item) {
-        return new ResultConfigurationNode(item)
+        ResultConfigurationNode node = new ResultConfigurationNode(item)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
+        return node
     }
 
     private ITableTreeNode createNode(BatchRun batchRun) {

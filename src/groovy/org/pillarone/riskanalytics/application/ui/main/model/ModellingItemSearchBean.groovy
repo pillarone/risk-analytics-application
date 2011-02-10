@@ -22,22 +22,23 @@ class ModellingItemSearchBean {
     ModellingItemIndexer indexer = null
     private QueryParser parser = null;
     private static Log LOG = LogFactory.getLog(ModellingItemSearchBean)
-    static final String SEPARATOR = "TAG_SEPARTOR"
+    static final String SEPARATOR = " +++ "
     static final String SQL_SEPARATOR = "' " + SEPARATOR + " '"
 
     public List<String> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
         List<String> result = []
+        String escapedQuery = QueryParser.escape(queryString)
         // the "title" arg specifies the default field to use
         // when no field is explicitly specified in the query.
-        Query q = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer).parse(queryString);
+        Query q = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer).parse(escapedQuery);
 
         // 3. search
-        int hitsPerPage = 10;
+        int hitsPerPage = 100;
         IndexSearcher searcher = new IndexSearcher(indexer.index);
-        TopDocs rs = searcher.search(q, null, 10);
+        TopDocs rs = searcher.search(q, null, hitsPerPage);
 
-        for (int i = 0; i < rs.totalHits; ++i) {
+        for (int i = 0; i < rs.totalHits && i < hitsPerPage; ++i) {
             Document hit = searcher.doc(rs.scoreDocs[i].doc);
             result << hit.get(ModellingItemIndexer.SEARCH_TEXT_TITLE)
         }
@@ -59,15 +60,76 @@ class ModellingItemSearchBean {
         List<String> names = []
         long currentTime = System.currentTimeMillis()
         SessionFactory sessionFactory = ApplicationHolder.getApplication().getMainContext().getBean('sessionFactory')
+        names.addAll(getParameterizationNames(sessionFactory))
+        names.addAll(getResultConfigurationNames(sessionFactory, "model_class_name"))
+        names.addAll(getRunNames(sessionFactory, "model"))
+        LOG.info "read modellingItem names tooks ${System.currentTimeMillis() - currentTime} ms"
+        return names
+    }
+
+    private List getParameterizationNames(SessionFactory sessionFactory) {
         StringBuilder sb = new StringBuilder("SELECT concat_ws( " + SQL_SEPARATOR)
-        sb.append(" ,p.name, (select GROUP_CONCAT(t.name)  from parameterization_tag ptag, tag t")
-        sb.append(" where ptag.parameterizationdao_id = p.id and t.id = ptag.tag_id) ) FROM parameterizationdao p")
+        sb.append(" ,dao.name, (select GROUP_CONCAT(t.name)  from parameterization_tag ptag, tag t")
+        sb.append(" where ptag.parameterizationdao_id = dao.id and t.id = ptag.tag_id) ")
+        sb.append(" ,(select GROUP_CONCAT(run.name) from simulation_run run where run.parameterization_id = dao.id) )")
+        sb.append(" FROM parameterizationdao dao ")
+        String whereClause = clauseByModel("model_class_name")
+        if (whereClause) {
+            sb.append(" where " + whereClause)
+        }
+        return getNames(sessionFactory, sb)
+    }
+
+    private List getRunNames(SessionFactory sessionFactory, String modelClass) {
+        //SELECT concat_ws(' /// ',run.name, p.name, r.name ) FROM simulation_run as run, parameterizationdao as p, result_configurationdao r
+        // where run.parameterization_id = p.id and run.result_configuration_id = r.id
+        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
+        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
+        sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
+        String whereClause = clauseByModel(modelClass)
+        if (whereClause) {
+            sb.append(" and (" + whereClause + ")")
+        }
+        return getNames(sessionFactory, sb)
+    }
+
+    private List getResultConfigurationNames(SessionFactory sessionFactory, String modelClass) {
+        //SELECT concat_ws(' /// ', r.name, (select group_concat(run.name) from simulation_run run
+        // where run.result_configuration_id = r.id)) FROM result_configurationdao r;
+        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
+        sb.append(", dao.name, (select group_concat(run.name) from simulation_run run ")
+        sb.append(" where run.result_configuration_id = dao.id)) FROM result_configurationdao as dao ")
+        String whereClause = clauseByModel(modelClass)
+        if (whereClause) {
+            sb.append(" where (" + whereClause + ")")
+        }
+        return getNames(sessionFactory, sb)
+    }
+
+
+
+    private String clauseByModel(String modelClass) {
+        StringBuilder sb = new StringBuilder("")
+        List models = ApplicationHolder.application.getConfig()?.models
+        if (models && models.size() > 0) {
+            models.eachWithIndex {String modelName, int index ->
+                sb.append(" dao." + modelClass + " like '%." + modelName + "'")
+                if (index < models.size() - 1)
+                    sb.append(" or ")
+            }
+        }
+        return sb.toString()
+    }
+
+    private List getNames(SessionFactory sessionFactory, StringBuilder sb) {
         SQLQuery query = sessionFactory.currentSession.createSQLQuery(sb.toString())
+        List<String> names = []
         List objects = query.list()
         for (Object name in objects) {
             names << name
         }
-        LOG.info "read modellingItem names tooks ${System.currentTimeMillis() - currentTime} ms"
         return names
     }
+
+
 }

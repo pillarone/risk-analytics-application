@@ -10,6 +10,7 @@ import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
 import java.awt.image.BufferedImage
+import java.text.SimpleDateFormat
 import javax.swing.ImageIcon
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -176,6 +177,14 @@ class UIUtils {
         body(inner)
         result.add ULCBoxPane.BOX_EXPAND_EXPAND, spaceAround(inner, 0, 5, 5, 5, ULCBoxPane.BOX_EXPAND_EXPAND)
         return result
+    }
+
+    public static format(SimpleDateFormat format, Date date) {
+        try {
+            return format.format(date)
+        } catch (Exception ex) {
+            return null
+        }
     }
 
 

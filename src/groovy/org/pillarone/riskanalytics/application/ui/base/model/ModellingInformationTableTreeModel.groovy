@@ -7,9 +7,10 @@ import java.text.SimpleDateFormat
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
+import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -41,7 +42,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     ModellingInformationTableTreeBuilder builder
     DefaultMutableTableTreeNode root
     List parameterizationNodes
-    ParameterizationNodeFilter filter
+    ModellingItemNodeFilter filter
 
     SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
     static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy")
@@ -95,14 +96,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
         if (i == 0) {
             String value = "${node.getValueAt(0)}".toString()
-            if (node instanceof ParameterizationNode) {
-                Parameterization item = node.item
+            if (node instanceof ItemNode) {
+                def item = node.item
                 addColumnValue(item, node, 0, value);
             }
             return value
-        } else if (node instanceof ParameterizationNode) {
-            Parameterization item = node.item
-            return getValue(item, node, i)
+        } else if (node instanceof ItemNode) {
+            return getValue(node.item, node, i)
         }
         return ""
     }
@@ -131,42 +131,38 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public Object getValue(Parameterization parameterization, ParameterizationNode node, int columnIndex) {
         def value = null
         switch (columnIndex) {
-            case STATE:
-                value = parameterization?.status?.getDisplayName();
-                addColumnValue(parameterization, node, columnIndex, value); break;
-            case TAGS:
-                String tags = ""
-                List pTags = ParameterizationTag.executeQuery("select pTag.tag.name from ${ParameterizationTag.class.name} as pTag where pTag.parameterizationDAO.name = ? and pTag.parameterizationDAO.itemVersion = ? and pTag.parameterizationDAO.modelClassName = ? ",
-                        [parameterization.name, parameterization.versionNumber.toString(), parameterization.modelClass.name])
-                pTags.eachWithIndex {it, int index ->
-                    tags += "${it}"
-                    if (index < pTags.size() - 1)
-                        tags += ", "
-                }
-
-                value = tags;
-                if (value != "")
-                    addColumnValue(parameterization, node, columnIndex, value)
-                break;
-            case COMMENTS:
-                value = CommentDAO.executeQuery("select count(*) from ${CommentDAO.class.name} as comment where comment.parameterization.name = ? and comment.parameterization.itemVersion = ? and comment.parameterization.modelClassName = ?", [parameterization.name, parameterization.versionNumber.toString(), parameterization.modelClass.name])[0]
-                addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
-            case REVIEW_COMMENT: value = WorkflowCommentDAO.executeQuery("select count(*) from ${WorkflowCommentDAO.class.name} as comment where comment.parameterization.name = ? and comment.parameterization.itemVersion = ? and comment.parameterization.modelClassName = ?", [parameterization.name, parameterization.versionNumber.toString(), parameterization.modelClass.name])[0]
-                addColumnValue(parameterization, node, columnIndex, value ? value : 0); break;
-            case OWNER: value = parameterization?.getCreator()?.username;
-                addColumnValue(parameterization, node, columnIndex, value); break;
-            case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username;
-                addColumnValue(parameterization, node, columnIndex, value); break;
-            case CREATION_DATE: value = format.format(parameterization.getCreationDate());
-                addColumnValue(parameterization, node, columnIndex, parameterization.getCreationDate()); break;
-            case LAST_MODIFICATION_DATE: value = format.format(parameterization.getModificationDate());
-                addColumnValue(parameterization, node, columnIndex, parameterization.getModificationDate()); break;
+            case STATE: value = parameterization?.status?.getDisplayName(); break;
+            case TAGS: value = parameterization?.tags?.join(","); break;
+            case COMMENTS: value = parameterization.getSize(CommentDAO); break;
+            case REVIEW_COMMENT: value = parameterization.getSize(WorkflowCommentDAO); break;
+            case OWNER: value = parameterization?.getCreator()?.username; break;
+            case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username; break;
+            case CREATION_DATE: value = UIUtils.format(format, parameterization.getCreationDate()); break;
+            case LAST_MODIFICATION_DATE: value = UIUtils.format(format, parameterization.getModificationDate()); break;
             case ASSIGNED_TO: return "---"
             case VISIBILITY: return "---"
             default: return ""
 
         }
         return value
+    }
+
+    public Object getValue(def item, ItemNode node, int columnIndex) {
+        if (item instanceof ModellingItem) {
+            switch (columnIndex) {
+                case COMMENTS:
+                case REVIEW_COMMENT: return 0;
+                case OWNER: return item?.getCreator()?.username;
+                case LAST_UPDATER: return item?.getLastUpdater()?.username;
+                case CREATION_DATE: return UIUtils.format(format, item.getCreationDate());
+                case LAST_MODIFICATION_DATE: return UIUtils.format(format, item.getModificationDate());
+                case ASSIGNED_TO: return "---"
+                case VISIBILITY: return "---"
+                default: return ""
+
+            }
+        }
+        return null
     }
 
     public List getValues(int columnIndex) {
@@ -179,7 +175,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                         tags?.each { values.add(it.trim())}
                         break;
                     case CREATION_DATE:
-                    case LAST_MODIFICATION_DATE: values.add(simpleDateFormat.format(value[columnIndex])); break;
+                    case LAST_MODIFICATION_DATE: values.add(UIUtils.format(simpleDateFormat, value[columnIndex])); break;
                     default: values.add(value[columnIndex])
                 }
             }
@@ -187,11 +183,29 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         return values as List
     }
 
+    public void putValues(ItemNode node) {
+        for (int column = 0; column < columnNames.size() - 2; column++) {
+            addColumnValue(node.item, node, column, getValue(node.item, node, column))
+        }
+    }
+
     public void addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
         if (columnValues[parameterization] == null)
             columnValues[parameterization] = new Object[columnNames.size() - 1]
         columnValues[parameterization][column] = value
         node.values[column] = value
+    }
+
+    public void addColumnValue(def item, SimulationNode node, int column, Object value) {
+        node.values[column] = value
+    }
+
+    public void addColumnValue(def item, ResultConfigurationNode node, int column, Object value) {
+        node.values[column] = value
+    }
+
+    public void addColumnValue(def item, def node, int column, Object value) {
+
     }
 
     public void refresh() {

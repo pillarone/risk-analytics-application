@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -18,6 +19,7 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
     @Override
     protected boolean isAcceptedNode(ITableTreeNode node) {
         if (!filters || filters.size() == 0) return true
+        if (isNotInitialized(node)) return true
         for (ITableTreeFilter filter: filters) {
             boolean nodeAccepted = filter.acceptNode(node)
             if (!nodeAccepted) {
@@ -40,8 +42,14 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
 
     }
 
+    public void applyFilter(ITableTreeFilter filter) {
+        filters.clear()
+        addFilter(filter)
+        applyFilter()
+    }
+
     public ITableTreeFilter getFilter(int columnIndex) {
-        return filters.find { ParameterizationNodeFilter filter -> filter.column == columnIndex }
+        return filters.find { ModellingItemNodeFilter filter -> filter.column == columnIndex }
     }
 
     public void removeFilter(ITableTreeFilter filter) {
@@ -51,5 +59,10 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
     public void refresh() {
         filters.clear()
         model.refresh()
+    }
+
+    private boolean isNotInitialized(ITableTreeNode node) {
+        if (node instanceof ParameterizationNode && (!node.values || ((ParameterizationNode) node).values.isEmpty())) return true
+        return false
     }
 }

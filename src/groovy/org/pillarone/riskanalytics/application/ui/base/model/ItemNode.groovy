@@ -6,6 +6,7 @@ class ItemNode extends DefaultMutableTableTreeNode {
 
     Object item
     boolean renameable
+    Map values = [:]
 
     def ItemNode(item, leaf = true, renameable = true) {
         super([item.name] as Object[])

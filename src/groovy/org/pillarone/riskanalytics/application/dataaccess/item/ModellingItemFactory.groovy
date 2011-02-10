@@ -424,6 +424,7 @@ class ModellingItemFactory {
                     item.lastUpdater.username = dao.lastUpdater.username
                 item.creationDate = dao.getCreationDate()
                 item.modificationDate = dao.getModificationDate()
+                item.tags = dao.tags*.tag
             }
             getItemInstances()[key(Parameterization, dao.id)] = item
         }
@@ -445,8 +446,17 @@ class ModellingItemFactory {
         if (!item) {
             item = new ResultConfiguration(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
-            if (modelClass != null)
+            if (modelClass != null) {
                 item.modelClass = modelClass
+                item.creator = dao.creator
+                if (item.creator)
+                    item.creator.username = dao.creator.username
+                item.lastUpdater = dao.lastUpdater
+                if (item.lastUpdater)
+                    item.lastUpdater.username = dao.lastUpdater.username
+                item.creationDate = dao.getCreationDate()
+                item.modificationDate = dao.getModificationDate()
+            }
             getItemInstances()[key(ResultConfiguration, dao.id)] = item
         }
         item
