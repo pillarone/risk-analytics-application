@@ -41,7 +41,6 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -66,7 +65,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     ULCButtonGroup windowMenuItemGroup
     SelectionTreeView selectionTreeView
     //todo fja implentation of toolbar action for the navigation bar
-//    NavigationBarTopPane navigationBarTopPane
+    NavigationBarTopPane navigationBarTopPane
 
     ULCLabel lockedLabel
 
@@ -144,7 +143,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     void attachListeners() {
         model.addModelListener(this)
         model.addPropertyChangeListener("currentItem", this)
-     }
+    }
 
 
     private def initMenuBar() {
@@ -231,8 +230,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         toolBar.add(runButton)
         toolBar.addSeparator()
 
-//        navigationBarTopPane = new NavigationBarTopPane(toolBar)
-//        navigationBarTopPane.init()
+        navigationBarTopPane = new NavigationBarTopPane(toolBar, model.selectionTreeModel)
+        navigationBarTopPane.init()
 
         rightToolBar = new ULCToolBar()
         rightToolBar.floatable = false

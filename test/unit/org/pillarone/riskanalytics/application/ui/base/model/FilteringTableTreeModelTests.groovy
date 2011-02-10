@@ -658,7 +658,7 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
 
 
         ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(root: root)
-        FilteringTableTreeModel filter = new FilteringTableTreeModel(model, new ParameterizationNodeFilter(null, -1))
+        FilteringTableTreeModel filter = new FilteringTableTreeModel(model, new ModellingItemNodeFilter(null, -1))
 
         assertTrue filter.isAcceptedNode(modelNode)
         assertTrue filter.isAcceptedNode(parameterizationsNode)
@@ -666,7 +666,7 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
         assertTrue filter.isAcceptedNode(simulationsNode)
         assertTrue filter.isAcceptedNode(parameterizationNode1)
 
-        filter.setFilter(new ParameterizationNodeFilter(["test1", "test2"], 0))
+        filter.setFilter(new ModellingItemNodeFilter(["test1", "test2"], 0))
 
         parameterizationNode1.values[0] = "test2"
         assertTrue filter.isAcceptedNode(parameterizationNode1)

@@ -6,8 +6,8 @@ import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilter
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
@@ -30,7 +30,7 @@ abstract class SelectionTreeHeaderDialog {
     int columnIndex
     protected List filterValues
     MultiFilteringTableTreeModel model
-    ParameterizationNodeFilter filter
+    ModellingItemNodeFilter filter
 
     public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex) {
         this.tableTree = tree
@@ -161,7 +161,7 @@ abstract class SelectionTreeHeaderDialog {
         return tableTree.model.getColumnName(column)
     }
 
-    String getFilterValues(ParameterizationNodeFilter filter) {
+    String getFilterValues(ModellingItemNodeFilter filter) {
         StringBuilder sb = new StringBuilder("<html><b>" + getColumnName(filter.column) + "</b>:<br> ");
         if (filter.displayValue) {
             sb.append(filter.displayValue + "</html>")
@@ -208,7 +208,7 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
         super.attachListeners()
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
             if (!filter) {
-                filter = new ParameterizationNodeFilter(filterValues, columnIndex)
+                filter = new ModellingItemNodeFilter(filterValues, columnIndex)
                 model.addFilter(filter)
             } else {
                 filter.values = filterValues
@@ -225,7 +225,7 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
         ULCRadioButton all = new ULCRadioButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "all"))
         all.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (all.selected) {
-                filterValues[0] = ParameterizationNodeFilter.ALL
+                filterValues[0] = ModellingItemNodeFilter.ALL
             }
         }] as IValueChangedListener)
         all.setGroup(commentButtonGroup)
@@ -233,14 +233,14 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
         ULCRadioButton with = new ULCRadioButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "withComments"))
         with.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (with.selected)
-                filterValues[0] = ParameterizationNodeFilter.WITH_COMMENTS
+                filterValues[0] = ModellingItemNodeFilter.WITH_COMMENTS
         }] as IValueChangedListener)
         with.setGroup(commentButtonGroup)
         filterRadioButtons << with
         ULCRadioButton without = new ULCRadioButton(UIUtils.getText(SelectionTreeHeaderDialog.class, "withoutComments"))
         without.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             if (without.selected)
-                filterValues[0] = ParameterizationNodeFilter.WITHOUT_COMMENTS
+                filterValues[0] = ModellingItemNodeFilter.WITHOUT_COMMENTS
         }] as IValueChangedListener)
         without.setGroup(commentButtonGroup)
         filterRadioButtons << without
@@ -249,9 +249,9 @@ class RadioButtonDialog extends SelectionTreeHeaderDialog {
 
     protected void selectValues() {
         if (filter) {
-            filterRadioButtons[0].setSelected(filter.values[0] == ParameterizationNodeFilter.ALL)
-            filterRadioButtons[1].setSelected(filter.values[0] == ParameterizationNodeFilter.WITH_COMMENTS)
-            filterRadioButtons[2].setSelected(filter.values[0] == ParameterizationNodeFilter.WITHOUT_COMMENTS)
+            filterRadioButtons[0].setSelected(filter.values[0] == ModellingItemNodeFilter.ALL)
+            filterRadioButtons[1].setSelected(filter.values[0] == ModellingItemNodeFilter.WITH_COMMENTS)
+            filterRadioButtons[2].setSelected(filter.values[0] == ModellingItemNodeFilter.WITHOUT_COMMENTS)
             filterValues = filter.values
         }
     }
@@ -286,7 +286,7 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
         super.attachListeners()
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
             if (!filter) {
-                filter = new ParameterizationNodeFilter(filterValues, columnIndex, allSelected)
+                filter = new ModellingItemNodeFilter(filterValues, columnIndex, allSelected)
                 model.addFilter(filter)
             } else {
                 filter.allSelected = allSelected

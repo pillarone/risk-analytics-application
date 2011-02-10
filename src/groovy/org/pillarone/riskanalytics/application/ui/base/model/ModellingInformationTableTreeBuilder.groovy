@@ -18,9 +18,9 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -385,11 +385,15 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private ITableTreeNode createNode(Parameterization item) {
-        return item.status == Status.NONE ? new ParameterizationNode(item) : new WorkflowParameterizationNode(item)
+        ParameterizationNode node = item.status == Status.NONE ? new ParameterizationNode(item) : new WorkflowParameterizationNode(item)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
+        return node
     }
 
     private ITableTreeNode createNode(ResultConfiguration item) {
-        return new ResultConfigurationNode(item)
+        ResultConfigurationNode node = new ResultConfigurationNode(item)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
+        return node
     }
 
     private ITableTreeNode createNode(BatchRun batchRun) {
