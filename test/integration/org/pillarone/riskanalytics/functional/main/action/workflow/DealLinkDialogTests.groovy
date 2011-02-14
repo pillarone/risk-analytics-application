@@ -50,6 +50,7 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
         okButton.clickMouse()
 
         tableTree.selectCell(row, 0)
+        sleep 1000
         tableTree.pushKey(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK)
 
         dialog = getDialogOperator("dealDialog")
