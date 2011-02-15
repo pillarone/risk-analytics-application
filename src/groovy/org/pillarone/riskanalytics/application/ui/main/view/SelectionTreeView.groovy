@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
@@ -11,17 +12,10 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
-import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
-import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
-import org.pillarone.riskanalytics.application.ui.main.action.SaveAsAction
-import org.pillarone.riskanalytics.application.ui.main.action.SimulationAction
-import org.pillarone.riskanalytics.application.ui.main.action.ExportItemAction
-import org.pillarone.riskanalytics.application.ui.main.action.ImportAction
-import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.main.action.ChooseDealAction
+import org.pillarone.riskanalytics.application.ui.main.action.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -68,7 +62,7 @@ class SelectionTreeView {
 
         def columnsWidths = 120
 
-        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([TREE_FIRST_COLUMN_WIDTH] + [columnsWidths] * 10) as int[])
+        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([TREE_FIRST_COLUMN_WIDTH] + [columnsWidths] * (p1RATModel.selectionTreeModel.columnCount - 1)) as int[])
         tree.name = "selectionTableTree"
         tree.viewPortTableTree.setRootVisible(false);
         tree.viewPortTableTree.showsRootHandles = true
@@ -96,7 +90,7 @@ class SelectionTreeView {
         tree.getRowHeaderTableTree().expandPaths([new TreePath([p1RATModel.selectionTreeModel.root] as Object[])] as TreePath[], false);
         tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
             ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
-            int columnIndex = column.getModelIndex()
+            int columnIndex = p1RATModel.selectionTreeModel.getColumnIndex(column.getModelIndex())
             if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
             if (ActionEvent.META_MASK == event.getModifiers()) {
                 SelectionTreeHeaderDialog dialog

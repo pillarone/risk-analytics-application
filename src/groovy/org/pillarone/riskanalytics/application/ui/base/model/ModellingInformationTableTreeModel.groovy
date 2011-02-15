@@ -6,12 +6,14 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.SimpleDateFormat
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.model.ChangeIndexerListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -25,17 +27,17 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     List<String> columnNames = ["Name", "State", "Tags", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
 
-    final static int NAME = 0
-    final static int STATE = 1
-    final static int TAGS = 2
-    final static int COMMENTS = 3
-    final static int REVIEW_COMMENT = 4
-    final static int OWNER = 5
-    final static int LAST_UPDATER = 6
-    final static int CREATION_DATE = 7
-    final static int LAST_MODIFICATION_DATE = 8
-    final static int ASSIGNED_TO = 9
-    final static int VISIBILITY = 10
+    public static int NAME = 0
+    public static int STATE = 1
+    public static int TAGS = 2
+    public static int COMMENTS = 3
+    public static int REVIEW_COMMENT = 4
+    public static int OWNER = 5
+    public static int LAST_UPDATER = 6
+    public static int CREATION_DATE = 7
+    public static int LAST_MODIFICATION_DATE = 8
+    public static int ASSIGNED_TO = 9
+    public static int VISIBILITY = 10
 
     def columnValues = [:]
     int orderByColumn = -1
@@ -54,6 +56,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public ModellingInformationTableTreeModel() {
         builder = new ModellingInformationTableTreeBuilder(this)
         changeIndexerListeners = []
+    }
+
+    public static ModellingInformationTableTreeModel getInstance() {
+        if (UserContext.isStandAlone()) {
+            return new StandaloneTableTreeModel()
+        } else {
+            return new ModellingInformationTableTreeModel()
+        }
     }
 
     public def buildTreeNodes() {
@@ -92,8 +102,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public String getColumnName(int i) {
-        return UIUtils.getText(this.class, columnNames[i])
+        return UIUtils.getText(this.class, this.columnNames[getColumnIndex(i)])
     }
+
+    public String getColumnFilterName(int i) {
+        return UIUtils.getText(this.class, this.columnNames[i])
+    }
+
 
     Object getValueAt(Object node, int i) {
         if (i == 0) {
@@ -170,18 +185,30 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public List getValues(int columnIndex) {
         Set values = new TreeSet()
-        columnValues?.each {Parameterization parameterization, def value ->
-            if (value[columnIndex]) {
-                switch (columnIndex) {
-                    case TAGS:
-                        def tags = value[columnIndex]?.split(",");
-                        tags?.each { values.add(it.trim())}
-                        break;
-                    case CREATION_DATE:
-                    case LAST_MODIFICATION_DATE: values.add(UIUtils.format(simpleDateFormat, value[columnIndex])); break;
-                    default: values.add(value[columnIndex])
+        if (columnIndex == TAGS) {
+            ParameterizationTag.withTransaction {status ->
+                Collection all = ParameterizationTag.findAll()
+                all.each {
+                    String tagName = it.tag.name
+                    values.add(tagName)
                 }
             }
+        } else {
+            columnValues?.each {Parameterization parameterization, def value ->
+                if (value[columnIndex]) {
+                    switch (columnIndex) {
+                        case CREATION_DATE:
+                        case LAST_MODIFICATION_DATE:
+                            if (value[columnIndex] instanceof Date)
+                                values.add(UIUtils.format(simpleDateFormat, value[columnIndex]))
+                            else
+                                values.add(value[columnIndex]);
+                            break;
+                        default: values.add(value[columnIndex]); break;
+                    }
+                }
+            }
+
         }
         return values as List
     }
@@ -283,5 +310,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public void indexerChanged() {
         for (ChangeIndexerListener listener: changeIndexerListeners)
             listener.indexChanged()
+    }
+
+    public int getColumnIndex(int column) {
+        return column
     }
 }

@@ -7,7 +7,6 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
-import org.joda.time.DateTimeZone
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
@@ -48,7 +47,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public P1RATModel() {
         modelListeners = []
         viewModelsInUse = [:]
-        ModellingInformationTableTreeModel modellingInformationTableTreeModel = new ModellingInformationTableTreeModel()
+        ModellingInformationTableTreeModel modellingInformationTableTreeModel = ModellingInformationTableTreeModel.getInstance()
         modellingInformationTableTreeModel.buildTreeNodes()
         selectionTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
         startPollingTimer(pollingBatchSimulationAction)

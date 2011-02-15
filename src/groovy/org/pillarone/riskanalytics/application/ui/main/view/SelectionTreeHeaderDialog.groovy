@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getCREATION_DATE
+import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getLAST_MODIFICATION_DATE
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
@@ -11,8 +13,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTable
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
-import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getCREATION_DATE
-import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getLAST_MODIFICATION_DATE
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -147,18 +147,9 @@ abstract class SelectionTreeHeaderDialog {
     }
 
 
-    private boolean isDate() {
-        switch (columnIndex) {
-            case CREATION_DATE: return true;
-            case CREATION_DATE: return true;
-            case LAST_MODIFICATION_DATE: return true;
-            default: return false
-        }
-    }
-
 
     public String getColumnName(int column) {
-        return tableTree.model.getColumnName(column)
+        return tableTree.model.getColumnFilterName(column)
     }
 
     String getFilterValues(ModellingItemNodeFilter filter) {
