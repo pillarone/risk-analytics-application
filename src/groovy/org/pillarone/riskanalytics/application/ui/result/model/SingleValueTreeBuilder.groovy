@@ -15,11 +15,13 @@ class SingleValueTreeBuilder {
     int selectedNodesSize
     int periodCount
     DefaultMutableTableTreeNode root
+    int fromIteration
 
 
 
-    public SingleValueTreeBuilder(Map singleResultsMap, int iterations, int selectedNodesSize, int periodCount) {
+    public SingleValueTreeBuilder(Map singleResultsMap, int fromIteration, int iterations, int selectedNodesSize, int periodCount) {
         this.singleResultsMap = singleResultsMap;
+        this.fromIteration = fromIteration
         this.iterations = iterations;
         this.selectedNodesSize = selectedNodesSize
         this.periodCount = periodCount
@@ -31,7 +33,7 @@ class SingleValueTreeBuilder {
     }
 
     public def buildTreeNodes() {
-        (1..iterations).each {int iteration ->
+        (fromIteration..iterations).each {int iteration ->
             root.add(createIterationNode(iteration))
         }
     }

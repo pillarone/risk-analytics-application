@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -14,6 +15,7 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     int periodCount
     ResultIterationDataTableModel resultTableModel
     ResultView resultView
+    Boolean isSingleValue
 
     public ResultIterationDataViewModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate, boolean enablePeriodComboBox = true, boolean showPeriodLabels = true, ResultView resultView) {
         super(simulationRun, nodes, false, enablePeriodComboBox, showPeriodLabels)
@@ -139,6 +141,13 @@ class ResultIterationDataViewModel extends QueryPaneModel {
         resultTableModel.numberDataType.minFractionDigits = resultTableModel.numberDataType.minFractionDigits + adjustment
         resultTableModel.fireModelChanged()
         fireModelChanged()
+    }
+
+    boolean isSingle() {
+        if (isSingleValue == null) {
+            isSingleValue = nodes.any {ResultTableTreeNode node -> node.collector == SingleValueCollectingModeStrategy.IDENTIFIER }
+        }
+        return isSingleValue
     }
 
 

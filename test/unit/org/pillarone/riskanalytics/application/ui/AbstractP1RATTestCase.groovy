@@ -38,6 +38,10 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         new ULCTableTreeOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
+    ULCTextFieldOperator getTextFieldOperator(String name) {
+        new ULCTextFieldOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
     ULCButtonOperator getButtonOperator(String name) {
         new ULCButtonOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }

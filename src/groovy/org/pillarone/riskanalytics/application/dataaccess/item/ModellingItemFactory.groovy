@@ -417,7 +417,9 @@ class ModellingItemFactory {
                     item.lastUpdater.username = dao.lastUpdater.username
                 item.creationDate = dao.getCreationDate()
                 item.modificationDate = dao.getModificationDate()
-                item.tags = dao.tags*.tag
+                try {
+                    item.tags = dao.tags*.tag
+                } catch (Exception ex) {}
             }
             getItemInstances()[key(Parameterization, dao.id)] = item
         }

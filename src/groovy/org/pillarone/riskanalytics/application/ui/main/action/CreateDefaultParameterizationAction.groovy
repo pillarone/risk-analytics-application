@@ -39,10 +39,13 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
             } else {
                 try {
                     int periodCount = hasOneParameterColumnOnly ? 1 : (Integer) dialog.periodCount.value
-                    def param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
-                    param.name = dialog.nameInput.text
-                    param.save()
-                    param = ModellingItemFactory.getItem(param.dao, param.modelClass)
+                    def param
+                    ParameterizationDAO.withTransaction {status ->
+                        param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
+                        param.name = dialog.nameInput.text
+                        param.save()
+                        param = ModellingItemFactory.getItem(param.dao, param.modelClass)
+                    }
                     dialog.hide()
 
                     model.selectionTreeModel.addNodeForItem(param)
