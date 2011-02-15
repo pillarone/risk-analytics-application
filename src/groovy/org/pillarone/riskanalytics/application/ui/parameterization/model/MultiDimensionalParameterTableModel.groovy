@@ -132,9 +132,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
             return
         }
         if (value instanceof Date) {
-            GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTime((Date) value);
-            value = new DateTime(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), 0,0,0,0)
+            value = new DateTime(value.time)
 
         }
         if (value && (value instanceof String) && value.isNumber()) {

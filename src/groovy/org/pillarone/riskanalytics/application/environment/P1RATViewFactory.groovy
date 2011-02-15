@@ -8,12 +8,12 @@ import com.ulcjava.base.application.util.BorderedComponentUtilities
 import com.ulcjava.container.grails.UlcViewFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.canoo.ulc.community.locale.server.ULCClientTimeZoneSetter
 
 abstract class P1RATViewFactory implements UlcViewFactory {
 
@@ -26,6 +26,8 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         } catch (Exception ex) {
             // put a user in MDC causes an exception in integration Test
         }
+
+        ULCClientTimeZoneSetter.setDefaultTimeZone(TimeZone.getTimeZone("UTC"))
 
         ULCClipboard.install()
         ULCRootPane frame = createRootPane()
