@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.client.WindowsTextFieldUI;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.text.html.parser.ParserDelegator;
 
 //import apple.laf.CUIAquaLookAndFeel;
 //import apple.laf.CUIAquaTextField;
@@ -23,6 +24,9 @@ public class UIManagerHelper {
         else setSystemLookAndFeel();
 
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+
+        //workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6993073
+        new ParserDelegator();
     }
 
 
