@@ -13,8 +13,8 @@ import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.action.TablePaster
 import org.pillarone.riskanalytics.application.ui.base.action.TableSelectionFiller
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
+import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalParameterTableCellRenderer
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTable
-import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTableCellRenderer
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
 import com.ulcjava.base.application.*
@@ -80,7 +80,7 @@ class MultiDimensionalParameterView {
             } else {
                 column.minWidth = getColumnWidth(index)
             }
-            column.setCellRenderer(new MultiDimensionalTableCellRenderer(index, table))
+            column.setCellRenderer(new MultiDimensionalParameterTableCellRenderer(column: index))
             column.setCellEditor(new MultiDimensionalParameterTableCellEditor(column: index))
             column.resizable = true
             column.setHeaderValue("")
