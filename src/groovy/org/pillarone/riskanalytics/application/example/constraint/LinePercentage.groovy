@@ -15,7 +15,7 @@ class LinePercentage implements IMultiDimensionalConstraints {
             return value instanceof String
         }
         else {
-            return value instanceof Double || value instanceof BigDecimal
+            return value instanceof Double || value instanceof Integer
         }
     }
 
@@ -24,7 +24,7 @@ class LinePercentage implements IMultiDimensionalConstraints {
     }
 
     Class getColumnType(int column) {
-        return column == 0 ? ITestComponentMarker : BigDecimal
+        return column == 0 ? ITestComponentMarker : Double
     }
 
     Integer getColumnIndex(Class marker) {
