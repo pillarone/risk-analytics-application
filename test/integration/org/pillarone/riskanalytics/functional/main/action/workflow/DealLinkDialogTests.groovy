@@ -1,18 +1,12 @@
 package org.pillarone.riskanalytics.functional.main.action.workflow
 
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCButtonOperator
-import com.ulcjava.testframework.operator.ULCDialogOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
+import com.ulcjava.base.application.event.KeyEvent
 import javax.swing.tree.TreePath
+import org.netbeans.jemmy.drivers.scrolling.ScrollAdjuster
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
-import com.ulcjava.base.application.event.KeyEvent
-import org.netbeans.jemmy.drivers.scrolling.ScrollAdjuster
-import com.ulcjava.testframework.operator.ULCSpinnerOperator
-import com.ulcjava.testframework.operator.ULCComboBoxOperator
-import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.ParameterizationDAO
+import com.ulcjava.testframework.operator.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,8 +15,17 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
+        LocaleResources.setTestMode()
         super.setUp();
+
     }
+
+    @Override protected void tearDown() {
+        LocaleResources.clearTestMode()
+        super.tearDown()
+    }
+
+
 
     public void testChooseDeal() {
         ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
@@ -32,7 +35,6 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
         int row = tableTree.getRowForPath(parametrizationPath)
         tableTree.selectCell(row, 0)
         tableTree.pushKey(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK)
-
 
         ULCDialogOperator dialog = getDialogOperator("dealDialog")
         assertNotNull dialog

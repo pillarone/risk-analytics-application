@@ -31,6 +31,7 @@ class NavigationBarTopPane {
     ModellingItemSearchBean searchBean
     AbstractTableTreeModel tableTreeModel
     Log LOG = LogFactory.getLog(NavigationBarTopPane)
+    boolean standalone = false
 
     public NavigationBarTopPane(ULCToolBar toolBar, AbstractTableTreeModel tableTreeModel) {
         this.toolBar = toolBar
@@ -47,6 +48,7 @@ class NavigationBarTopPane {
 
 
     protected void initComponents() {
+        standalone = UserContext.isStandAlone()
         myStuffButton = new ULCToggleButton(UIUtils.getText(this.class, "MyStuff"))
         myStuffButton.setPreferredSize new Dimension(100, 20)
         myStuffButton.setSelected(false)
@@ -70,10 +72,12 @@ class NavigationBarTopPane {
     }
 
     protected void layoutComponents() {
-        toolBar.add(myStuffButton);
-        toolBar.addSeparator()
-        toolBar.add(assignedToMeButton);
-        toolBar.addSeparator()
+        if (!standalone) {
+            toolBar.add(myStuffButton);
+            toolBar.addSeparator()
+            toolBar.add(assignedToMeButton);
+            toolBar.addSeparator()
+        }
         toolBar.add(searchTextField);
         toolBar.add(clearButton)
         toolBar.add(noResults);
