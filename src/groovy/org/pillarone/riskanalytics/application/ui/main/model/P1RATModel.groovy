@@ -29,6 +29,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -89,6 +90,17 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
 
         ResultViewModel model = new ResultViewModel(simulationModel, ModelStructure.getStructureForModel(simulationModel.class), item)
+        registerModel(item, model)
+
+        return model
+    }
+
+    public ResultViewModel getResultViewModel(Simulation item, DeterministicModel simulationModel) {
+        if (viewModelsInUse.containsKey(item)) {
+            return viewModelsInUse[item]
+        }
+
+        ResultViewModel model = new DeterministicResultViewModel(simulationModel, ModelStructure.getStructureForModel(simulationModel.class), item)
         registerModel(item, model)
 
         return model

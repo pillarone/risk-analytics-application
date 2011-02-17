@@ -35,11 +35,11 @@ userLogin = false
 // Fire every 60 minutes
 batchCron = "0 0/10 * * * ?"
 transactionServiceUrl = "rmi://localhost:1099/TransactionService"
-resultServiceRegistryPort=1099
+resultServiceRegistryPort = 1099
 
 environments {
     development {
-        models = ["CoreModel", 'ApplicationModel']
+        models = ["CoreModel", 'ApplicationModel', 'DeterministicApplicationModel']
 
         ExceptionSafeOut = System.out
         log4j = {
