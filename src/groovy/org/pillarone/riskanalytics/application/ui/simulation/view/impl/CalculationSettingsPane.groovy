@@ -25,7 +25,6 @@ class CalculationSettingsPane extends SimulationSettingsPane {
         attachListeners()
     }
 
-
     @Override
     protected initConfigProperties(ULCBoxPane innerPane) {
         periodCount = new ULCTextField(name: "periodCount")
@@ -50,12 +49,12 @@ class CalculationSettingsPane extends SimulationSettingsPane {
 
     @Override
     protected void disableConfigProperties() {
-        periodCount.enabled = true
+        periodCount.enabled = false
     }
 
     @Override
     protected void enableConfigProperties() {
-        periodCount.enabled = false
+        periodCount.enabled = true
     }
 
 

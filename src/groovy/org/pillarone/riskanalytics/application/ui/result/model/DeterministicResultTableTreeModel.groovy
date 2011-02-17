@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
 public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
 
@@ -22,13 +23,16 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
     private List<String> columnNames = []
     ULCNumberDataType numberDataType
 
+    private ConfigObject allResults
+
     /**
      * Uses a ContinuousPeriodCounter to create the column names.
      * The begin of the first period can be obtained from the simulation run.
      * The period length is fix per model.
      */
-    public DeterministicResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization) {
+    public DeterministicResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, ConfigObject allResults) {
         this.root = rootNode
+        this.allResults = allResults
         this.simulationRun = simulationRun
         this.parameterization = parameterization
         DeterministicModel model = (DeterministicModel) parameterization.modelClass.newInstance()
@@ -57,16 +61,11 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
     }
 
     def valuefOfNode(ResultTableTreeNode node, period) {
-        return getNodeValues(node)[period]
-    }
+        Map periodMap = allResults[period.toString()]
+        Map pathMap = periodMap[node.path]
+        Map fieldMap = pathMap[node.field]
 
-    List getNodeValues(node) {
-        List values = nodeValuesCache[node]
-        if (values == null) {
-            values = DeterminsiticResultAccessor.getAllPeriodValuesFromView(simulationRun, node.field, node.collector, node.path)
-            nodeValuesCache[node] = values
-        }
-        return values
+        return fieldMap[PostSimulationCalculation.MEAN]
     }
 
     public Object getRoot() {
