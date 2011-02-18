@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad jaada
@@ -95,8 +96,19 @@ public class TreeDoubleClickAction extends SelectionTreeAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        def item = getSelectedItem()
-        (item != null && (item instanceof BatchRun)) ? openBatchAction.doActionPerformed(event) : openItemAction.doActionPerformed(event)
+       delegate(getSelectedItem(), event)
+    }
+
+    protected void delegate(def item, event) {
+
+    }
+
+    protected void delegate(ModellingItem item, event) {
+        openItemAction.doActionPerformed(event)
+    }
+
+    protected void delegate(BatchRun item, event) {
+        openBatchAction.doActionPerformed(event)
     }
 
 
