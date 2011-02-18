@@ -22,7 +22,6 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton minButton
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
-    ULCComboBox selectView
 
     private int nextModelIndex = 0
 
@@ -43,30 +42,6 @@ class StochasticResultView extends ResultView {
         def function = meanButton.action.function
         menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
     }
-
-    public ULCBoxPane createSelectionPane() {
-        selectView = new ULCComboBox(model.selectionViewModel)
-        selectView.name = "selectView"
-        selectView.setPreferredSize(new Dimension(120, 20))
-        selectView.addActionListener(new ApplySelectionAction(model, this))
-
-        filterSelection = new ULCComboBox()
-        filterSelection.name = "filter"
-        filterSelection.addItem(getText("all"))
-        model.nodeNames.each {
-            filterSelection.addItem it
-        }
-
-        filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
-
-        ULCBoxPane filters = new ULCBoxPane(3, 1)
-        filters.add(ULCBoxPane.BOX_EXPAND_CENTER, selectView)
-        filters.add(filterLabel)
-        filters.add(filterSelection)
-        return filters
-    }
-
-
 
     protected ULCContainer layoutContent(ULCContainer content) {
         tabbedPane.removeAll()
