@@ -43,8 +43,10 @@ public class ResultConfigurationNameListModel extends DefaultComboBoxModel {
 
     @Override
     void setSelectedItem(Object o) {
-        userPreferences.setDefaultResult(modelClass.name, o)
-        super.setSelectedItem(o)
+        if (o) {
+            userPreferences.setDefaultResult(modelClass.name, o)
+            super.setSelectedItem(o)
+        }
     }
 
     Object getDefaultItem(String modelClassName) {
