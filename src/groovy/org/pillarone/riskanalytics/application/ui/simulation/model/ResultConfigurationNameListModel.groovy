@@ -34,7 +34,7 @@ public class ResultConfigurationNameListModel extends DefaultComboBoxModel {
                 distinct("name")
             }
         }
-        Object defaultItem = getDefaultItem(modelClass.name)
+        Object defaultItem = getDefaultResultConfiguration(params, modelClass.name)
         params.each {
             addElement(it)
         }
@@ -47,8 +47,12 @@ public class ResultConfigurationNameListModel extends DefaultComboBoxModel {
         super.setSelectedItem(o)
     }
 
-    Object getDefaultItem(String modelClassName) {
-        return userPreferences.getDefaultResult(modelClassName)
+    Object getDefaultResultConfiguration(def params, String modelClassName) {
+        String defaultResultConfiguration = userPreferences.getDefaultResult(modelClassName)
+        if (!defaultResultConfiguration) {
+            defaultResultConfiguration = modelClass.newInstance().getDefaultResultConfiguration()
+        }
+        return params?.contains(defaultResultConfiguration) ? defaultResultConfiguration : null
     }
 
     void setDefaultItem(String modelClassName, String defaultResult) {
