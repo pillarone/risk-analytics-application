@@ -3,16 +3,17 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import java.text.DateFormat
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.dataaccess.DeterminsiticResultAccessor
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeFormat
 
 public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
 
@@ -37,10 +38,10 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
         this.parameterization = parameterization
         DeterministicModel model = (DeterministicModel) parameterization.modelClass.newInstance()
         IPeriodCounter columnLabelGenerator = new ContinuousPeriodCounter(simulationRun.beginOfFirstPeriod, model.periodLength)
-        def dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, UIUtils.getClientLocale())
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forStyle("S-").withLocale(UIUtils.getClientLocale())
         getColumnCount().times {it ->
-            GregorianCalendar end = columnLabelGenerator.getCurrentPeriodEnd().toGregorianCalendar()
-            columnNames << dateFormat.format(end.time)
+            DateTime end = columnLabelGenerator.getCurrentPeriodEnd().minusDays(1)
+            columnNames << end.toString(dateTimeFormatter)
             columnLabelGenerator++
         }
     }
