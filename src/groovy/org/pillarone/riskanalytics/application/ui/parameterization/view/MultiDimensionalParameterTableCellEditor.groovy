@@ -34,6 +34,7 @@ class MultiDimensionalParameterTableCellEditor extends DefaultCellEditor {
     }
 
     protected IDataType getDataType(ConstrainedMultiDimensionalParameter parameter, def value) {
+        if (column == 0) return null        // as the first column contains the row index
         Class columnType = parameter.constraints.getColumnType(column - 1)
         switch (columnType) {
             case Integer:
