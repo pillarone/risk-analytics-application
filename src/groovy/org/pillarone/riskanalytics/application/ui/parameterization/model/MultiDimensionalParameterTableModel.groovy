@@ -12,7 +12,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     private boolean bulkChange = false
     private List changedCells
 
-    private AbstractMultiDimensionalParameter multiDimensionalParam
+    AbstractMultiDimensionalParameter multiDimensionalParam
     private List listeners
     private boolean indexed = false
 
@@ -133,9 +133,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         }
         if (value instanceof Date) {
             value = new DateTime(value.time)
-        }
-        if (value && (value instanceof String) && value.isNumber()) {
-            value = getTypedValue(value)
+
         }
 
         Object oldValue = getValueAt(rowIndex, columnIndex)
@@ -227,14 +225,6 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         if (index < 0) return 0
         return Math.min(index, max)
     }
-
-    private Object getTypedValue(Object value) {
-        if (value.isBigDecimal()) return value.asType(BigDecimal)
-        if (value.isDouble()) return value.asType(Double)
-        if (value.isInteger()) return value.asType(Integer)
-        return value
-    }
-
 
 }
 

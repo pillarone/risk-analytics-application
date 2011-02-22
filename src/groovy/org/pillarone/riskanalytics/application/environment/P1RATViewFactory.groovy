@@ -13,17 +13,21 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.user.Person
+import com.canoo.ulc.community.locale.server.ULCClientTimeZoneSetter
 
 abstract class P1RATViewFactory implements UlcViewFactory {
 
     private Log LOG = LogFactory.getLog(P1RATViewFactory)
 
     public ULCRootPane create() {
-
-        Person user = UserManagement.currentUser
-        MDC.put("username", user ? user.username : "")
         LOG.info "Started session for user '${UserManagement.currentUser?.username}'"
+        try {
+            MDC.put("username", UserManagement.currentUser?.username)
+        } catch (Exception ex) {
+            // put a user in MDC causes an exception in integration Test
+        }
+
+        ULCClientTimeZoneSetter.setDefaultTimeZone(TimeZone.getTimeZone("UTC"))
 
         ULCClipboard.install()
         ULCRootPane frame = createRootPane()

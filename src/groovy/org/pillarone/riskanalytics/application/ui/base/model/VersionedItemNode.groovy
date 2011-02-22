@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-
 class VersionedItemNode extends ItemNode {
 
     public VersionedItemNode(item, leaf) {
@@ -15,7 +13,7 @@ class VersionedItemNode extends ItemNode {
     public void setUserObject(Object userObject) {
         if (renameable) {
             item.rename(userObject)
-            super.setUserObject("${item.name} v${item.versionNumber.toString()}")
+            setValueAt("${item.name} v${item.versionNumber.toString()}".toString(), 0)
         }
     }
 

@@ -1,10 +1,10 @@
 package org.pillarone.riskanalytics.application.reports
 
+import javax.sql.DataSource
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import net.sf.jasperreports.engine.export.JRPdfExporter
-import net.sf.jasperreports.engine.*
-import javax.sql.DataSource
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import net.sf.jasperreports.engine.*
 
 class ReportHelper {
 

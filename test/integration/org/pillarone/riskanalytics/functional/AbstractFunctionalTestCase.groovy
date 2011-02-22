@@ -1,12 +1,11 @@
 package org.pillarone.riskanalytics.functional
 
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import com.ulcjava.testframework.operator.*
-import com.ulcjava.base.application.event.KeyEvent
+import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -72,20 +71,14 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         return new ULCDialogOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
-    ULCTableTreeOperator getSelectionTreeRowHeader() {
-        ULCTableTreeOperator tableTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        assertNotNull tableTree
-        return tableTree
+    ULCTableTreeOperator getSelectionTableTreeRowHeader() {
+        return getTableTreeOperatorByName("selectionTreeRowHeader")
     }
 
-    ULCTreeOperator getSelectionTree() {
-        ULCTreeOperator tree = getTreeOperatorByName("selectionTree")
-        assertNotNull tree
-        return tree
-    }
+    protected pushKeyOnPath(ULCTableTreeOperator tree, TreePath path, int key, int mask) {
 
-    protected pushKeyOnPath(ULCTreeOperator tree, TreePath path, int key, int mask) {
-        tree.doExpandPath(path)
+        int row = tree.getRowForPath(path)
+        tree.selectCell(row, 0)
         tree.pushKey(key, mask)
     }
 

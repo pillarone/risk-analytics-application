@@ -1,23 +1,21 @@
 package org.pillarone.riskanalytics.application.ui.util
 
-import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
 import java.awt.image.BufferedImage
+import java.text.SimpleDateFormat
+import javax.swing.ImageIcon
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.base.application.ULCRootPane
-import org.pillarone.riskanalytics.application.UserContext
+import com.ulcjava.base.application.*
 
 class UIUtils {
 
@@ -110,6 +108,13 @@ class UIUtils {
         }
     }
 
+    public static ImageIcon getImageIcon(String fileName) {
+        URL url = new UIUtils().class.getResource(ICON_DIRECTORY + fileName)
+        if (url) {
+            return new ImageIcon(url)
+        }
+    }
+
 
     public static ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right, String alignment = null) {
         ULCBoxPane deco = new ULCBoxPane()
@@ -179,6 +184,14 @@ class UIUtils {
 
     public static void setRootPane(ULCRootPane pane) {
         UserContext.setAttribute(ROOT_PANE, pane)
+    }
+
+    public static format(SimpleDateFormat format, Date date) {
+        try {
+            return format.format(date)
+        } catch (Exception ex) {
+            return null
+        }
     }
 
 }

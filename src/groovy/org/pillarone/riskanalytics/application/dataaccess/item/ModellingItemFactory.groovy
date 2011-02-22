@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
+import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
 
 class ModellingItemFactory {
@@ -41,9 +42,12 @@ class ModellingItemFactory {
     }
 
     static List getParameterizationsForModel(Class modelClass) {
-        ParameterizationDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it, modelClass)
+        ParameterizationDAO.withTransaction { status ->
+            ParameterizationDAO.findAllByModelClassName(modelClass.name).collect {
+                getItem(it, modelClass)
+            }
         }
+
     }
 
     static List getNewestParameterizationsForModel(Class modelClass) {
@@ -183,6 +187,7 @@ class ModellingItemFactory {
                 return null
             }
         }
+        item.creator = UserManagement.currentUser
         def id = item.save()
         getItemInstances()[key(itemClass, id)] = item
 
@@ -192,6 +197,7 @@ class ModellingItemFactory {
     static ModellingItem createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
         def item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
         item.versionNumber = versionNumber
+        item.creator = UserManagement.currentUser
         def id = item.save()
         getItemInstances()[key(itemClass, id)] = item
         item
@@ -202,8 +208,10 @@ class ModellingItemFactory {
     }
 
     static List getResultConfigurationsForModel(Class modelClass) {
-        ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it, modelClass)
+        ResultConfigurationDAO.withTransaction { status ->
+            ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
+                getItem(it, modelClass)
+            }
         }
     }
 
@@ -318,6 +326,7 @@ class ModellingItemFactory {
         newItem.periodCount = item.periodCount
         newItem.periodLabels = item.periodLabels
         newItem.modelClass = item.modelClass
+        newItem.dealId = item.dealId
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
         def newId = newItem.save()
@@ -397,8 +406,21 @@ class ModellingItemFactory {
             item.versionNumber = new VersionNumber(dao.itemVersion)
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
-            if (modelClass != null)
+            item.status = dao.status
+            if (modelClass != null) {
                 item.modelClass = modelClass
+                item.creator = dao.creator
+                if (item.creator)
+                    item.creator.username = dao.creator.username
+                item.lastUpdater = dao.lastUpdater
+                if (item.lastUpdater)
+                    item.lastUpdater.username = dao.lastUpdater.username
+                item.creationDate = dao.getCreationDate()
+                item.modificationDate = dao.getModificationDate()
+                try {
+                    item.tags = dao.tags*.tag
+                } catch (Exception ex) {}
+            }
             getItemInstances()[key(Parameterization, dao.id)] = item
         }
         item
@@ -419,8 +441,17 @@ class ModellingItemFactory {
         if (!item) {
             item = new ResultConfiguration(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
-            if (modelClass != null)
+            if (modelClass != null) {
                 item.modelClass = modelClass
+                item.creator = dao.creator
+                if (item.creator)
+                    item.creator.username = dao.creator.username
+                item.lastUpdater = dao.lastUpdater
+                if (item.lastUpdater)
+                    item.lastUpdater.username = dao.lastUpdater.username
+                item.creationDate = dao.getCreationDate()
+                item.modificationDate = dao.getModificationDate()
+            }
             getItemInstances()[key(ResultConfiguration, dao.id)] = item
         }
         item

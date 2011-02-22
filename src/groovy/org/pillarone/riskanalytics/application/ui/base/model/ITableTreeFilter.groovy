@@ -1,8 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 
 interface ITableTreeFilter {
@@ -40,3 +38,4 @@ class NodeNameFilter implements ITableTreeFilter {
     }
 
 }
+

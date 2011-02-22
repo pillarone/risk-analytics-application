@@ -24,10 +24,11 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
 
     SingleValueTreeBuilder builder
     Map singleValueResultsMap = [:]
-    int iterations = 0
+    int iterations = 100
     SimulationRun simulationRun
     def periodCount
     List periodLabels = []
+    int fromIteration = 1
 
     public SingleValueCollectorTableTreeModel(List nodes, SimulationRun simulationRun, boolean showPeriodLabel) {
         this.nodes = nodes?.sort {SimpleTableTreeNode node -> node.path }
@@ -38,13 +39,21 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void init() {
-        setIterations()
+
         nodes.eachWithIndex { ResultTableTreeNode resultTableTreeNode, int nodeIndex ->
-            singleValueResultsMap[nodeIndex] = ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun)
+            if (!singleValueResultsMap[nodeIndex])
+                singleValueResultsMap[nodeIndex] = ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun)
         }
-        builder = new SingleValueTreeBuilder(singleValueResultsMap, iterations, nodes.size(), simulationRun.periodCount)
+        builder = new SingleValueTreeBuilder(singleValueResultsMap, fromIteration, iterations, nodes.size(), simulationRun.periodCount)
         builder.build()
         this.root = builder.root
+    }
+
+    public void apply(int fromIndex, int toIndex) {
+        fromIteration = fromIndex
+        iterations = toIndex
+        init()
+        structureChanged()
     }
 
     int getColumnCount() {
@@ -90,12 +99,11 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
         return parent.getIndex(child)
     }
 
-
-    public void setIterations() {
-        this.iterations = Math.min(simulationRun.iterations, getMaxIterations())
+    int getMaxIteration() {
+        return simulationRun.iterations
     }
 
-    int getMaxIterations() {
+    int getIterationsStep() {
         int max = 100
         try {
             max = ApplicationHolder.application.config.singleValueResultMaxIterations

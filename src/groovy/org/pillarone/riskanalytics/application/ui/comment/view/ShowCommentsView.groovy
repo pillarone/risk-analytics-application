@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -42,11 +43,18 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
         model.commentsChanged(allComments)
     }
 
-
     public void addComment(Comment comment, String searchText = null) {
-        CommentPane commentPane = new CommentPane(model, comment, searchText)
+        CommentPane commentPane = createCommentPane(comment, searchText)
         commentPane.addCommentListener commentAndErrorView
         container.add(ULCBoxPane.BOX_EXPAND_TOP, commentPane.content)
+    }
+
+    protected CommentPane createCommentPane(Comment comment, String searchText) {
+        return new CommentPane(model, comment, searchText)
+    }
+
+    protected CommentPane createCommentPane(WorkflowComment comment, String searchText) {
+        return new WorkflowCommentPane(model, comment, searchText)
     }
 
     public void addComments(Collection<Comment> comments, String searchText = null) {
@@ -62,7 +70,6 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
             around.setBackground(Color.white)
             container.add(ULCBoxPane.BOX_LEFT_TOP, around)
         }
-
         container.add(ULCBoxPane.BOX_EXPAND_EXPAND, ULCFiller.createVerticalGlue());
     }
 

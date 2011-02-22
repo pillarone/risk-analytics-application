@@ -56,7 +56,7 @@ class CompareSimulationsCriteriaView {
     }
 
     private def initView(def model) {
-        if (model) {
+        if (model != null) {
             initComponents()
             layoutComponents()
             attachListeners()
@@ -169,6 +169,7 @@ class CompareSimulationsCriteriaView {
     private void addSimulationsComboBox(ULCBoxPane pane) {
         ItemsComboBoxModel<Simulation> simulationsComboBoxModel = new ItemsComboBoxModel<Simulation>(model.item)
         simulationsComboBox = new ULCComboBox(simulationsComboBoxModel)
+        simulationsComboBox.name = "${CompareSimulationsCriteriaView.class.getSimpleName()}.simulationComboBox"
         simulationsComboBox.setMinimumSize(new Dimension(160, 20))
         ULCLabel simulationsComboBoxLabel = new ULCLabel(getText(this.class, "ReferenceResult") + ": ")
         pane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(simulationsComboBoxLabel, 5, 10, 0, 0))

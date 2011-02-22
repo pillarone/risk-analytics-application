@@ -4,6 +4,7 @@ import com.ulcjava.base.application.DefaultListModel
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
 import org.pillarone.riskanalytics.application.UserContext
@@ -24,6 +25,7 @@ public class RealTimeLoggingModel {
             addPendingLoggingEvents()
 
         }] as IActionListener)
+        timer.syncClientState = false
         timer.start()
 
         appender = new MyAppender()

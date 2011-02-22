@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.result.action
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.SingleValueCollectorTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorView
@@ -18,6 +19,8 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
     ULCCloseableTabbedPane tabbedPane
     def rowHeaderTableTree
     SimulationRun simulationRun
+    Integer iteration
+    List nodes
 
     public ShowSingleValueCollectorAction(ULCCloseableTabbedPane tabbedPane, def rowHeaderTableTree, SimulationRun simulationRun) {
         super("ShowSingleValueCollector");
@@ -26,19 +29,38 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
         this.simulationRun = simulationRun
     }
 
+    public ShowSingleValueCollectorAction(ResultIterationDataViewModel iterationDataViewModel, int iteration) {
+        super("ShowSingleValueCollector");
+        this.tabbedPane = iterationDataViewModel.resultView.tabbedPane
+        this.simulationRun = iterationDataViewModel.simulationRun
+        this.nodes = iterationDataViewModel.nodes
+        this.iteration = iteration
+    }
+
     void doActionPerformed(ActionEvent event) {
-        def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
-        List nodes = paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
+        List nodes = getNodes()
         SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(nodes, simulationRun, true)
+        if (iteration) {
+            model.fromIteration = iteration
+            model.iterations = iteration
+        }
         SingleCollectorView view = new SingleCollectorView(model)
         view.init()
         if (view.content) {
-            String title = UIUtils.getText(this.class, "SingleValueViewTitle", [String.valueOf(model.getMaxIterations())])
+            String title = UIUtils.getText(this.class, "SingleValueViewTitle")
             tabbedPane.addTab(title, view.content)
             String toolTipText = title
             tabbedPane.setToolTipTextAt(tabbedPane.tabCount - 1, toolTipText)
             tabbedPane.selectedIndex = tabbedPane.tabCount - 1
         }
+    }
+
+    List getNodes() {
+        if (!nodes) {
+            def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
+            nodes = paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
+        }
+        return nodes
     }
 
 

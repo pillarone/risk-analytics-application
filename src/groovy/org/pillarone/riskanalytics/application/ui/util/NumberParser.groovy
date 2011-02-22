@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.util
 
 import java.text.NumberFormat
 import org.springframework.util.NumberUtils
+import java.text.DecimalFormatSymbols
 
 /**
  * This NumberParser converts the given String into a:
@@ -18,9 +19,13 @@ public class NumberParser {
     private Locale locale
     NumberFormat format
 
+    private String regex
+
     public NumberParser(Locale locale) {
         this.locale = locale
         this.format = NumberFormat.getInstance(locale)
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(locale)
+        regex = "${symbols.minusSign}?[\\d${symbols.groupingSeparator}]*([${symbols.decimalSeparator}][\\d]*)?(${symbols.exponentSeparator}[\\d]*)?"
     }
 
     public def parse(String value) {
@@ -57,6 +62,6 @@ public class NumberParser {
     }
 
     public boolean isString(String value) {
-        return value =~ /d*[a-zA-Z\\-]+/
+        return !(value ==~ regex)
     }
 }

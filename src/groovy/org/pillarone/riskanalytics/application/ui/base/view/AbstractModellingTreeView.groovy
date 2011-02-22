@@ -39,7 +39,7 @@ abstract class AbstractModellingTreeView {
     }
 
     private def initView(def model) {
-        if (model) {
+        if (model != null) {
             initComponents()
             layoutComponents()
             attachListeners()
@@ -184,9 +184,9 @@ abstract class AbstractModellingTreeView {
     }
 
 
-    private void nodeChanged() {
+    protected void nodeChanged() {
         List nodes = []
-        findNodes(model.treeRoot, nodes)
+        findNodes(model.getTreeModel().getRoot(), nodes)
         for (ITableTreeNode node in nodes) {
             for (int i = 1; i < tree.viewPortTableTree.columnCount; i++) {
                 model.treeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), i)

@@ -44,21 +44,20 @@ public class MultiDimensionalCellRenderer extends BasicCellRenderer {
                     text.append("<td>");
                     if (isTitleCell(value, row, col)) {
                         text.append("<b>");
-                        if (col == DISPLAY_MAX_COLUMN_COUNT){
-                            text.append(""+ (columnCount-DISPLAY_MAX_COLUMN_COUNT) +" more...");
+                        if (col == DISPLAY_MAX_COLUMN_COUNT) {
+                            text.append("" + (columnCount - DISPLAY_MAX_COLUMN_COUNT) + " more...");
                         } else {
                             text.append(value.getValueAt(row, col));
                         }
                         text.append("</b>");
                     } else {
-                        if (col == DISPLAY_MAX_COLUMN_COUNT){
+                        if (col == DISPLAY_MAX_COLUMN_COUNT) {
                             text.append("...");
                         } else {
                             Object item = value.getValueAt(row, col);
                             if (item instanceof DateTime) {
                                 text.append(new SimpleDateFormat("MMM dd, yyyy").format(((DateTime) item).toDate()));
-                            }
-                            else {
+                            } else {
                                 text.append(item);
                             }
                         }

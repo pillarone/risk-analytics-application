@@ -10,9 +10,7 @@ class DateParameterizationTableTreeNode extends ParameterizationTableTreeNode {
 
 
     public void setValueAt(Object value, int column) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        calendar.setTime((Date) value);
-        parameter.get(column - 1)?.value = new DateTime(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DAY_OF_MONTH), 0,0,0,0)
+        parameter.get(column - 1)?.value = new DateTime(value)
     }
 
     public Object getExpandedCellValue(int column) {

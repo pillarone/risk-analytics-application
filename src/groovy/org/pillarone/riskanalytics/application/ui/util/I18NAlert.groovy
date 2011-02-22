@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCRootPane
+import java.text.MessageFormat
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
 public class I18NAlert extends ULCAlert {
@@ -31,11 +32,7 @@ public class I18NAlert extends ULCAlert {
     protected readValues() {
         title = bundle.getString(key + "." + "title")
         message = bundle.getString(key + "." + "message")
-        if (args && args.size() > 0) {
-            args.eachWithIndex {it, int index ->
-                message = message.replace("[" + index + "]", it)
-            }
-        }
+        message = MessageFormat.format(message, args as String[])
         firstButtonLabel = bundle.getString(key + "." + "button1Message")
         String secondLabel = bundle.getString(key + "." + "button2Message")
         String thirdLabel = bundle.getString(key + "." + "button3Message")

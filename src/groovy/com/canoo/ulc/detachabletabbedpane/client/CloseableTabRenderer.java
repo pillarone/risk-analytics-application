@@ -170,6 +170,13 @@ public class CloseableTabRenderer implements Icon {
                 e.consume();
             }
         }
+
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isMiddleMouseButton(e) && !e.isConsumed() && activeClosableArea.contains(e.getX(), e.getY())) {
+                tabbedPane.triggerClosingTab(referringComponent);
+                e.consume();
+            }
+        }
     }
 
 

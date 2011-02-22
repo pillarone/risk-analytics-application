@@ -1,8 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import com.ulcjava.base.application.tree.DefaultMutableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.core.BatchRun
+
+import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 
 /**
  * @author fouad jaada
@@ -15,9 +16,9 @@ public class BatchRunNode extends ItemNode {
     }
 }
 
-class BatchRootNode extends DefaultMutableTreeNode {
+class BatchRootNode extends DefaultMutableTableTreeNode {
 
     public BatchRootNode(String name) {
-        super(name);
+        super([name] as Object[]);
     }
 }

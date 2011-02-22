@@ -4,18 +4,15 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.NodeNameFilter
+import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 
 abstract class AbstractModellingModel {
 
     int periodCount
-    ITableTreeNode treeRoot
+    //TODO maybe redundant, check
+    //ITableTreeNode treeRoot
     Model model
     String structureFileName
     String modellingFileName
@@ -41,8 +38,9 @@ abstract class AbstractModellingModel {
 
     }
 
-    protected changeUpdateMode(def model) {
-        ClientContext.setModelUpdateMode(model, UlcEventConstants.SYNCHRONOUS_MODE)
+    protected changeUpdateMode(def tableTreeModel) {
+        //for tests without ULCApplication this will throw NullPointException, so you have to overwrite this method
+        ClientContext.setModelUpdateMode(tableTreeModel, UlcEventConstants.SYNCHRONOUS_MODE)
     }
 
     protected abstract ITableTreeModel buildTree()

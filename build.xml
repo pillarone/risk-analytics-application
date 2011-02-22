@@ -8,7 +8,7 @@
     <property file="${user.home}/cert.properties"/>
 
     <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}"/>
-    <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-v1.1"/>
+    <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-master"/>
     <property name="classes.prod.dir" value="${build.prod.dir}/classes"/>
     <property name="resources.prod.dir" value="src/java"/>
 
@@ -60,7 +60,13 @@
 
 
     <target name="compile" depends="init" description="--> Compiles a Grails application">
-        <grails command="compile" jvmargs="-Xmx1024m -XX:MaxPermSize=512m"/>
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="compile"/>
+            <arg value="--non-interactive"/>
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+            <env key="JAVA_OPTS"
+                 value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
+        </exec>
     </target>
 
 
@@ -146,13 +152,15 @@
 
         <!-- has to be replaced with a trusted certificate issued for the builder of the jar files -->
         <!-- this is a self signed certificate and won't work with a strict security policy -->
-        <signjar alias="${signjar.alias}" keystore="${signjar.keystore}" storepass="${signjar.storepass}" keypass="${signjar.keypass}" lazy="false">
+        <signjar alias="${signjar.alias}" keystore="${signjar.keystore}" storepass="${signjar.storepass}"
+                 keypass="${signjar.keypass}" lazy="false">
             <fileset dir="${webapp.lib.dir}" includes="${app.name}*.jar"/>
             <fileset dir="${ulcPlugIn.webapp.lib.dir}" includes="**/*.jar"/>
         </signjar>
     </target>
 
-    <target name="release-plugin" depends="clean, compile, jar-client" description="Releases the plugin in our P1 plugin repository.">
+    <target name="release-plugin" depends="clean, compile, jar-client"
+            description="Releases the plugin in our P1 plugin repository.">
         <exec executable="${grails}" failonerror="true" resolveexecutable="true">
             <arg value="deploy-plugin"/>
             <arg value="--repository=pillarone"/>

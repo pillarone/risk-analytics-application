@@ -3,15 +3,17 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import java.text.DateFormat
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.dataaccess.DeterminsiticResultAccessor
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeFormat
 
 public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
 
@@ -22,21 +24,24 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
     private List<String> columnNames = []
     ULCNumberDataType numberDataType
 
+    private ConfigObject allResults
+
     /**
      * Uses a ContinuousPeriodCounter to create the column names.
      * The begin of the first period can be obtained from the simulation run.
      * The period length is fix per model.
      */
-    public DeterministicResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization) {
+    public DeterministicResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, ConfigObject allResults) {
         this.root = rootNode
+        this.allResults = allResults
         this.simulationRun = simulationRun
         this.parameterization = parameterization
         DeterministicModel model = (DeterministicModel) parameterization.modelClass.newInstance()
         IPeriodCounter columnLabelGenerator = new ContinuousPeriodCounter(simulationRun.beginOfFirstPeriod, model.periodLength)
-        def dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, UIUtils.getClientLocale())
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forStyle("S-").withLocale(UIUtils.getClientLocale())
         getColumnCount().times {it ->
-            GregorianCalendar end = columnLabelGenerator.getCurrentPeriodEnd().toGregorianCalendar()
-            columnNames << dateFormat.format(end.time)
+            DateTime end = columnLabelGenerator.getCurrentPeriodEnd().minusDays(1)
+            columnNames << end.toString(dateTimeFormatter)
             columnLabelGenerator++
         }
     }
@@ -57,16 +62,11 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
     }
 
     def valuefOfNode(ResultTableTreeNode node, period) {
-        return getNodeValues(node)[period]
-    }
+        Map periodMap = allResults[period.toString()]
+        Map pathMap = periodMap[node.path]
+        Map fieldMap = pathMap[node.field]
 
-    List getNodeValues(node) {
-        List values = nodeValuesCache[node]
-        if (values == null) {
-            values = DeterminsiticResultAccessor.getAllPeriodValuesFromView(simulationRun, node.field, node.collector, node.path)
-            nodeValuesCache[node] = values
-        }
-        return values
+        return fieldMap[PostSimulationCalculation.MEAN]
     }
 
     public Object getRoot() {

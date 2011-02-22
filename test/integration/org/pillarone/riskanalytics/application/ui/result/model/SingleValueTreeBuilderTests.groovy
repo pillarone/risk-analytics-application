@@ -21,7 +21,7 @@ class SingleValueTreeBuilderTests extends GroovyTestCase {
         Map singleValueResultsMap = [:]
         singleValueResultsMap[0] = [["net", 1, "paid", 1, 0, 0], ["net", 11, "paid", 1, 0, 1], ["net", 111, "paid", 1, 0, 2]]
         singleValueResultsMap[1] = [["net", 2, "paid", 1, 0, 0], ["net", 22, "paid", 1, 0, 1], ["net", 222, "paid", 1, 0, 2]]
-        SingleValueTreeBuilder builder = new SingleValueTreeBuilder(singleValueResultsMap, 1, 2, 1)
+        SingleValueTreeBuilder builder = new SingleValueTreeBuilder(singleValueResultsMap, 1, 1, 2, 1)
         builder.build()
 
         assertNotNull builder.root

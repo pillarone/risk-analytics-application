@@ -12,6 +12,7 @@ public class UserPreferences {
     final static String IMPORT_DIR_KEY = "import_directory"
     final static String RESULT_DIR_KEY = "result_directory"
     final static String EXPORT_DIR_KEY = "export_directory"
+    final static String DEFAULT_RESULT = "default_result"
     final static String USER_PREFERRED_LANG = "userPreferredLanguage"
 
 
@@ -38,6 +39,14 @@ public class UserPreferences {
 
     public String getLanguage() {
         return userPrefs.get(USER_PREFERRED_LANG, null)
+    }
+
+    public void setDefaultResult(String modelClassName, String resultName) {
+        userPrefs.put(DEFAULT_RESULT + "_${modelClassName}", resultName)
+    }
+
+    public String getDefaultResult(String modelClassName) {
+        userPrefs.get(DEFAULT_RESULT + "_${modelClassName}", null)
     }
 
     public static String getUserDirectory() {

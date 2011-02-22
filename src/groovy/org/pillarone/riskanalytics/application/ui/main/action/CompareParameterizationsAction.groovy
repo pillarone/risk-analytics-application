@@ -2,7 +2,8 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import com.ulcjava.base.application.ULCTree
+
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 
@@ -11,7 +12,7 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
  */
 class CompareParameterizationsAction extends SelectionTreeAction {
 
-    public CompareParameterizationsAction(ULCTree tree, P1RATModel model) {
+    public CompareParameterizationsAction(ULCTableTree tree, P1RATModel model) {
         super("CompareParameterizations", tree, model)
     }
 

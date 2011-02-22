@@ -1,13 +1,10 @@
 package org.pillarone.riskanalytics.application.reports
 
 import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
-
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 public abstract class CapitalEagleReportModel implements ReportModel {
 

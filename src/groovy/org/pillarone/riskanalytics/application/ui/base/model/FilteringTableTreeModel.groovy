@@ -6,7 +6,6 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
-import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
 
 class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTreeModelListener {
 
@@ -28,7 +27,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
         applyFilter()
     }
 
-    protected void applyFilter() {
+    public void applyFilter() {
         synchronizeFilteredTree(model.root, filteredRoot)
     }
 

@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.dataaccess.function.*
+import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 
 abstract class AbstractResultAction extends ResourceBasedAction {
 
@@ -257,9 +258,9 @@ class FractionAbsoluteDifferenceAction extends CheckboxAction {
 class ApplySelectionAction extends ResourceBasedAction {
 
     ResultViewModel model
-    StochasticResultView resultView
+    ResultView resultView
 
-    public ApplySelectionAction(model, StochasticResultView view) {
+    public ApplySelectionAction(model, ResultView view) {
         super("ApplySelectionAction")
         this.model = model
         this.resultView = view

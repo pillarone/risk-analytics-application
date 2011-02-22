@@ -32,3 +32,4 @@ public class ULCClientLocaleSetter extends ULCProxy {
         return "com.canoo.ulc.community.locale.client.UIClientLocaleSetter";
     }
 }
+

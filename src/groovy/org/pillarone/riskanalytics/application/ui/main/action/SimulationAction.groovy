@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ULCTree
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.model.Model
@@ -15,9 +15,9 @@ import org.apache.commons.logging.Log
  */
 class SimulationAction extends SelectionTreeAction {
 
-    Log LOG = LogFactory.getLog(SimulationAction)
+    static Log LOG = LogFactory.getLog(SimulationAction)
 
-    public SimulationAction(ULCTree tree, P1RATModel model) {
+    public SimulationAction(ULCTableTree tree, P1RATModel model) {
         super("RunSimulation", tree, model)
     }
 

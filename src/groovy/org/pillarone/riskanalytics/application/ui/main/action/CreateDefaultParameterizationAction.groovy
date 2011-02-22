@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ULCTree
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
@@ -20,7 +20,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateDefaultParameterizationAction)
 
-    public CreateDefaultParameterizationAction(ULCTree tree, P1RATModel model) {
+    public CreateDefaultParameterizationAction(ULCTableTree tree, P1RATModel model) {
         super("CreateDefaultParameterization", tree, model)
     }
 
@@ -39,10 +39,13 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
             } else {
                 try {
                     int periodCount = hasOneParameterColumnOnly ? 1 : (Integer) dialog.periodCount.value
-                    def param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
-                    param.name = dialog.nameInput.text
-                    param.save()
-                    param = ModellingItemFactory.getItem(param.dao, param.modelClass)
+                    def param
+                    ParameterizationDAO.withTransaction {status ->
+                        param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
+                        param.name = dialog.nameInput.text
+                        param.save()
+                        param = ModellingItemFactory.getItem(param.dao, param.modelClass)
+                    }
                     dialog.hide()
 
                     model.selectionTreeModel.addNodeForItem(param)

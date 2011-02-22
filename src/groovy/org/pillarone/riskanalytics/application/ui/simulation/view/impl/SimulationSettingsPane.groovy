@@ -6,7 +6,6 @@ import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.util.Font
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
@@ -129,6 +128,11 @@ class SimulationSettingsPane {
         changeLocationButton.name = "changeLocation"
         changeLocationButton.setPreferredSize(dimension)
 
+        if (model.requiresStartDate()) {
+            beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
+            beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
+        }
+
     }
 
     protected void layoutComponents() {
@@ -164,6 +168,11 @@ class SimulationSettingsPane {
             initConfigProperties(innerPane)
 
             pane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
+
+            if (model.requiresStartDate()) {
+                innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
+                innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+            }
         }
     }
 
@@ -179,10 +188,6 @@ class SimulationSettingsPane {
         numberOfIterations = new ULCTextField()
         numberOfIterations.name = "iterations"
         numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
-        if (model.requiresStartDate()) {
-            beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
-            beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
-        }
 
         randomSeed.addValueChangedListener(model.randomSeedAction)
         userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
@@ -202,11 +207,6 @@ class SimulationSettingsPane {
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RANDOM_SEED_KEY) + ":"))
         innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-
-        if (model.requiresStartDate()) {
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-        }
 
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(ITERATIONS_KEY) + ":"))
         innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))

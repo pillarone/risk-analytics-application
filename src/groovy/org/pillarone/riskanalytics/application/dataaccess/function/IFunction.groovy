@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
@@ -13,7 +14,7 @@ interface IFunction extends Cloneable {
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node)
 }
 
-/** A Function for Result views      */
+/** A Function for Result views           */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -94,6 +95,18 @@ class Mean extends ResultFunction {
             return i18nName
         }
     }
+
+    public boolean equals(Object obj) {
+        return obj && getName().equals(obj.getName())
+    }
+
+    public int hashCode() {
+        HashCodeBuilder hcb = new HashCodeBuilder()
+        hcb.append(name)
+        return hcb.toHashCode();
+    }
+
+
 }
 
 class Min extends ResultFunction {

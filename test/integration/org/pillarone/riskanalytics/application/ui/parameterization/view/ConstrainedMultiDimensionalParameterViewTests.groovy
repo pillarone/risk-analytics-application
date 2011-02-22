@@ -26,7 +26,7 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
-        def mdp = new ConstrainedMultiDimensionalParameter([['hierarchy component', 'hierarchy component', 'hierarchy component'], [1d, 2d, 3d]], ['line', 'percentage'], ConstraintsFactory.getConstraints(LinePercentage.IDENTIFIER))
+        def mdp = new ConstrainedMultiDimensionalParameter([['hierarchy component', 'hierarchy component', 'hierarchy component'], [new Integer(1), 2d, 3d]], ['line', 'percentage'], ConstraintsFactory.getConstraints(LinePercentage.IDENTIFIER))
         Model simulationModel = new ApplicationModel()
         simulationModel.init()
         simulationModel.injectComponentNames()
@@ -52,6 +52,9 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
 
         operator = table.clickForEdit(1, 2) as ULCTextFieldOperator
         assertEquals "1", operator.getText()
+
+        //A double data type is created (based on MDP constraint info), despite the actual value being an integer
+        assertFalse operator.getUITextField().fDataType.integer
         operator.enterText("2")
     }
 

@@ -25,7 +25,6 @@ class CompareParameterViewModel extends AbstractModellingModel {
         Parameterization firstParameterization = getFirstObject()
         aggregateParameters(firstParameterization)
         builder = new CompareParameterizationTreeBuilder(model, structure, firstParameterization, getItems())
-        treeRoot = builder.root
         periodCount = builder.minPeriod
         paramterTableTreeModel = new CompareParameterizationTableTreeModel(builder, getItems())
         paramterTableTreeModel.simulationModel = model

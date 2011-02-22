@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
         runtime "org.pillarone:jasper:0.9.5-riskanalytics"
         compile "com.canoo:ulc:${ulcVersion}"
 
-        runtime "org.pillarone:risk-analytics-core:1.3-ALPHA-1-kti"
+        runtime "org.pillarone:risk-analytics-core:1.3-ALPHA-2.7-kti"
 
     }
 

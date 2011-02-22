@@ -1,14 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
 import com.ulcjava.base.application.ULCPollingTimer
-import com.ulcjava.base.application.tree.ITreeNode
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import com.ulcjava.base.application.tree.TreePath
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTreeModel
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
@@ -28,13 +27,15 @@ import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
     private List modelListeners
     private Map viewModelsInUse
-    ModellingInformationTreeModel selectionTreeModel
+    AbstractTableTreeModel selectionTreeModel
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction
     def switchActions = []
@@ -47,11 +48,19 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     public P1RATModel() {
         modelListeners = []
         viewModelsInUse = [:]
-        selectionTreeModel = new ModellingInformationTreeModel()
+        ModellingInformationTableTreeModel modellingInformationTableTreeModel = ModellingInformationTableTreeModel.getInstance()
+        modellingInformationTableTreeModel.buildTreeNodes()
+        selectionTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
         pollingBatchSimulationAction = new PollingBatchSimulationAction()
         startPollingTimer()
     }
 
+    public P1RATModel(ModellingInformationTableTreeModel tableTreeModel) {
+        modelListeners = []
+        viewModelsInUse = [:]
+        selectionTreeModel = tableTreeModel
+//        startPollingTimer(pollingBatchSimulationAction)
+    }
 
 
     public ParameterViewModel getParameterViewModel(Parameterization item, Model simulationModel) {
@@ -82,6 +91,17 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
 
         ResultViewModel model = new ResultViewModel(simulationModel, ModelStructure.getStructureForModel(simulationModel.class), item)
+        registerModel(item, model)
+
+        return model
+    }
+
+    public ResultViewModel getResultViewModel(Simulation item, DeterministicModel simulationModel) {
+        if (viewModelsInUse.containsKey(item)) {
+            return viewModelsInUse[item]
+        }
+
+        ResultViewModel model = new DeterministicResultViewModel(simulationModel, ModelStructure.getStructureForModel(simulationModel.class), item)
         registerModel(item, model)
 
         return model
@@ -243,20 +263,22 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void renameItem(Simulation item, String name) {
-        ITreeNode itemNode = selectionTreeModel.findNodeForItem(selectionTreeModel.root, item)
+        ITableTreeNode itemNode = selectionTreeModel.findNodeForItem(selectionTreeModel.root, item)
         closeItem(item.modelClass.newInstance(), item)
         itemNode.userObject = name
-        selectionTreeModel.nodesChanged(itemNode.parent, itemNode.parent.getIndex(itemNode))
+//        selectionTreeModel.nodesChanged(itemNode.parent, itemNode.parent.getIndex(itemNode))
+        selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
 
     public void renameItem(ModellingItem item, String name) {
         item.daoClass.withTransaction {status ->
             item.load()
-            ITreeNode itemNode = selectionTreeModel.findNodeForItem(selectionTreeModel.root, item)
+            ITableTreeNode itemNode = selectionTreeModel.findNodeForItem(selectionTreeModel.root, item)
             closeItem(item.modelClass.newInstance(), item)
 
             itemNode.userObject = name
-            selectionTreeModel.nodeChanged(itemNode)
+
+            selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
 
             renameAllChildren(itemNode, name)
             Class modelClass = item.modelClass != null ? item.modelClass : Model
@@ -264,13 +286,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
-    private void renameAllChildren(ITreeNode itemNode, String name) {
+    private void renameAllChildren(ITableTreeNode itemNode, String name) {
         itemNode.childCount.times {
             def childNode = itemNode.getChildAt(it)
             closeItem(itemNode.item.modelClass.newInstance(), childNode.item)
 
             childNode.userObject = name
-            selectionTreeModel.nodeChanged(childNode)
+            selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
 
             renameAllChildren(childNode, name)
         }

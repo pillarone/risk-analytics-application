@@ -1,23 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
-import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import models.core.CoreModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.core.output.NoOutput
+import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.SimulationState
-import com.ulcjava.testframework.operator.ULCButtonOperator
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCProgressBarOperator
-import com.ulcjava.testframework.operator.ULCLabelOperator
-
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import com.ulcjava.testframework.operator.*
 import static org.pillarone.riskanalytics.core.simulation.SimulationState.*
-import org.pillarone.riskanalytics.core.output.NoOutput
 
 class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
 
@@ -57,10 +52,10 @@ class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frame = new ULCFrameOperator("test")
         assertNotNull frame
 
-        ULCButtonOperator run = new ULCButtonOperator(frame, new ComponentByNameChooser("run"))
+        ULCButtonOperator run = new ULCButtonOperator(frame, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.run"))
         ULCButtonOperator stop = new ULCButtonOperator(frame, new ComponentByNameChooser("stop"))
         ULCButtonOperator cancel = new ULCButtonOperator(frame, new ComponentByNameChooser("cancel"))
-        ULCButtonOperator openResults = new ULCButtonOperator(frame, new ComponentByNameChooser("openResults"))
+        ULCButtonOperator openResults = new ULCButtonOperator(frame, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.openResults"))
         ULCProgressBarOperator progress = new ULCProgressBarOperator(frame, new ComponentByNameChooser("progress"))
         ULCLabelOperator startTime = new ULCLabelOperator(frame, new ComponentByNameChooser("startTime"))
         ULCLabelOperator endTime = new ULCLabelOperator(frame, new ComponentByNameChooser("endTime"))
@@ -113,10 +108,10 @@ class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frame = new ULCFrameOperator("test")
         assertNotNull frame
 
-        ULCButtonOperator run = new ULCButtonOperator(frame, new ComponentByNameChooser("run"))
+        ULCButtonOperator run = new ULCButtonOperator(frame, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.run"))
         ULCButtonOperator stop = new ULCButtonOperator(frame, new ComponentByNameChooser("stop"))
         ULCButtonOperator cancel = new ULCButtonOperator(frame, new ComponentByNameChooser("cancel"))
-        ULCButtonOperator openResults = new ULCButtonOperator(frame, new ComponentByNameChooser("openResults"))
+        ULCButtonOperator openResults = new ULCButtonOperator(frame, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.openResults"))
         ULCProgressBarOperator progress = new ULCProgressBarOperator(frame, new ComponentByNameChooser("progress"))
         ULCLabelOperator startTime = new ULCLabelOperator(frame, new ComponentByNameChooser("startTime"))
         ULCLabelOperator endTime = new ULCLabelOperator(frame, new ComponentByNameChooser("endTime"))
@@ -151,10 +146,10 @@ class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frame = new ULCFrameOperator("test")
         assertNotNull frame
 
-        ULCButtonOperator run = new ULCButtonOperator(frame, new ComponentByNameChooser("run"))
+        ULCButtonOperator run = new ULCButtonOperator(frame, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.run"))
         ULCButtonOperator stop = new ULCButtonOperator(frame, new ComponentByNameChooser("stop"))
         ULCButtonOperator cancel = new ULCButtonOperator(frame, new ComponentByNameChooser("cancel"))
-        ULCButtonOperator openResults = new ULCButtonOperator(frame, new ComponentByNameChooser("openResults"))
+        ULCButtonOperator openResults = new ULCButtonOperator(frame, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.openResults"))
         ULCProgressBarOperator progress = new ULCProgressBarOperator(frame, new ComponentByNameChooser("progress"))
         ULCLabelOperator startTime = new ULCLabelOperator(frame, new ComponentByNameChooser("startTime"))
         ULCLabelOperator endTime = new ULCLabelOperator(frame, new ComponentByNameChooser("endTime"))

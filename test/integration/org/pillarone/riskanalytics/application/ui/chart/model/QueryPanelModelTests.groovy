@@ -3,12 +3,7 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.core.output.FieldMapping
-import org.pillarone.riskanalytics.core.output.PathMapping
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.output.*
 
 class QueryPanelModelTests extends GroovyTestCase {
 

@@ -22,7 +22,7 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CommentPane {
-    private ULCBoxPane content;
+    ULCBoxPane content;
     FollowLinkPane label
     ULCLabel tags
     ULCButton editButton
@@ -32,7 +32,7 @@ class CommentPane {
     int periodIndex
     EditCommentAction editCommentAction
     RemoveCommentAction removeCommentAction
-    private ParameterViewModel model
+    protected ParameterViewModel model
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat('dd.MM.yyyy HH:mm')
     String searchText = null
 

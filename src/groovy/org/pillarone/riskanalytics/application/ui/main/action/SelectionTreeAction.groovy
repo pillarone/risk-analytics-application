@@ -1,8 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.IAction
-import com.ulcjava.base.application.ULCTree
-import com.ulcjava.base.application.tree.ITreeNode
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
@@ -11,10 +12,11 @@ import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
+import com.ulcjava.base.application.tree.ITreeNode
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
-    ULCTree tree
+    ULCTableTree tree
     P1RATModel model
 
     def SelectionTreeAction(name, tree, P1RATModel model) {
@@ -36,13 +38,13 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     }
 
     Object getSelectedItem() {
-        ITreeNode itemNode = tree.selectionPath?.lastPathComponent
+        DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
         return itemNode instanceof ItemNode ? itemNode.item : null
     }
 
     Object getNextSelectedItem() {
-        ITreeNode itemNode = tree.selectionPath?.lastPathComponent
-        ITreeNode parent = itemNode.parent
+        ITableTreeNode itemNode = tree.selectedPath?.lastPathComponent
+        ITableTreeNode parent = itemNode.parent
         if (parent.childCount > 1) {
             int itemNodeIndex = parent.getIndex(itemNode)
             if (itemNodeIndex < parent.childCount - 1) {
@@ -56,13 +58,14 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     List getSelectedObjects(Class itemClass) {
         List selectedObjects = []
-        for (TreePath selectedPath in tree.selectionPaths) {
+        for (TreePath selectedPath in tree.selectedPaths) {
             for (Object node in selectedPath.getPath()) {
                 if (node instanceof ItemGroupNode) {
                     if (node.itemClass == itemClass && selectedPath?.lastPathComponent != null) {
                         Object lastNode = selectedPath.lastPathComponent
                         if (lastNode instanceof ItemNode) {
                             selectedObjects.add(lastNode)
+                            break
                         }
                     }
                 }
@@ -73,7 +76,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     List getAllSelectedObjects() {
         List selectedObjects = []
-        for (TreePath selectedPath in tree.selectionPaths) {
+        for (TreePath selectedPath in tree.selectedPaths) {
             for (Object node in selectedPath.getPath()) {
                 if (node instanceof ItemGroupNode) {
                     if (selectedPath?.lastPathComponent != null) {
@@ -90,13 +93,13 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
 
     Model getSelectedModel() {
-        ITreeNode itemNode = tree?.selectionPath?.lastPathComponent
+        DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
         return getSelectedModel(itemNode)
     }
 
-    Model getSelectedModel(ITreeNode itemNode) {
+    Model getSelectedModel(DefaultMutableTableTreeNode itemNode) {
         if (itemNode == null) return null
-        ITreeNode modelNode = null
+        DefaultMutableTableTreeNode modelNode = null
         while (modelNode == null) {
             if (itemNode instanceof ModelNode) {
                 modelNode = itemNode
@@ -112,8 +115,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     }
 
     ItemGroupNode getSelectedItemGroupNode() {
-        ITreeNode itemNode = tree.selectionPath.lastPathComponent
-        ITreeNode groupNode = null
+        ITableTreeNode itemNode = tree.selectedPath.lastPathComponent
+        ITableTreeNode groupNode = null
         while (groupNode == null) {
             if (itemNode instanceof ItemGroupNode) {
                 groupNode = itemNode

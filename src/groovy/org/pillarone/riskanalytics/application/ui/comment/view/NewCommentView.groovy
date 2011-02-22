@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
 
 /**
@@ -27,14 +28,14 @@ class NewCommentView {
     String path
     static int MAX_CHARS = 4080
 
-    private ParameterViewModel model;
+    ParameterViewModel model;
     protected CommentAndErrorView commentAndErrorView
     ItemListModel<Tag> tagListModel
 
     public NewCommentView(CommentAndErrorView commentAndErrorView) {
         this.commentAndErrorView = commentAndErrorView
         this.model = commentAndErrorView.model
-        List allTags = Tag.findAll()
+        List allTags = Tag.findAllByTagType(EnumTagType.COMMENT)
         this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), allTags)
     }
 
@@ -42,7 +43,7 @@ class NewCommentView {
         this(commentAndErrorView)
         this.periodIndex = periodIndex
         this.path = path
-        List allTags = Tag.findAll()
+        List allTags = Tag.findAllByTagType(EnumTagType.COMMENT)
         this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), allTags)
 
         initComponents()
@@ -93,11 +94,15 @@ class NewCommentView {
         return pane
     }
 
+    protected Comment createComment(String path, int periodIndex) {
+        return new Comment(path, periodIndex)
+    }
+
     protected void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
             String text = commentTextArea.getText()
             if (text && text.length() > 0 && text.length() < MAX_CHARS) {
-                Comment comment = new Comment(path, periodIndex)
+                Comment comment = createComment(path, periodIndex)
                 comment.lastChange = new Date()
                 comment.comment = commentTextArea.getText()
                 tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->

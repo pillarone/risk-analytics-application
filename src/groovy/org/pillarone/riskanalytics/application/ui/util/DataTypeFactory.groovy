@@ -97,6 +97,7 @@ public class DataTypeFactory {
         IDataType floatingPointDataTypeForEdit = UserContext.getAttribute("floatingPointDataTypeForEdit")
         if (floatingPointDataTypeForEdit == null) {
             floatingPointDataTypeForEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
+            floatingPointDataTypeForEdit.classType = Double
             floatingPointDataTypeForEdit.integer = false
             floatingPointDataTypeForEdit.minFractionDigits = 0
             floatingPointDataTypeForEdit.maxFractionDigits = 20

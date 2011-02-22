@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class ParameterizationNode extends VersionedItemNode {
 
+
     public ParameterizationNode(Parameterization parametrization) {
         super(parametrization, false)
     }

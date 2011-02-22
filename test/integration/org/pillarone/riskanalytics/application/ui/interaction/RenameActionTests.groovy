@@ -2,9 +2,9 @@ package org.pillarone.riskanalytics.application.ui.interaction
 
 import com.ulcjava.base.application.event.KeyEvent
 import javax.swing.tree.TreePath
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 import com.ulcjava.testframework.operator.*
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 
 class RenameActionTests extends AbstractFunctionalTestCase {
 
@@ -15,7 +15,7 @@ class RenameActionTests extends AbstractFunctionalTestCase {
 
     void testRenameParameter() {
         ULCFrameOperator frame = getMainFrameOperator()
-        ULCTreeOperator tree = getSelectionTree()
+        ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
 
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "path not found", pathForRename
@@ -24,7 +24,10 @@ class RenameActionTests extends AbstractFunctionalTestCase {
 
         tree.doExpandRow(0)
         tree.doExpandRow(1)
-        tree.clickOnPath(pathForRename)
+
+        int row = tree.getRowForPath(pathForRename)
+        tree.selectCell(row, 0)
+
         tree.pushKey(KeyEvent.VK_F2)
 
         ULCDialogOperator renameDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('renameDialog'))

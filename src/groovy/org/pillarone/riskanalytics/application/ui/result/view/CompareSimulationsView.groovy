@@ -50,7 +50,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         tree.rowHeaderTableTree.name = "resultDescriptorTreeRowHeader"
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = UIUtils.getText(this.class, "NameColumnHeader")
         tree.setCellSelectionEnabled true
-
+        tree.name = "CompareSimulationViewTree"
         tree.rowHeaderTableTree.columnModel.getColumns().eachWithIndex {it, i ->
             if (i == 0) {
                 it.setCellRenderer(new CompareResultsTreeNodeCellRenderer(tree))

@@ -19,6 +19,7 @@ class CalculationSettingsPaneModel extends SimulationSettingsPaneModel {
         simulation.numberOfIterations = 1
         simulation.periodCount = periodCount
         simulation.randomSeed = randomSeed
+        simulation.periodCount = this.periodCount
     }
 
     void setPeriodCount(Integer i) {

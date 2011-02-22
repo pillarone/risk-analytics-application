@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
 import java.text.NumberFormat
+import java.text.DecimalFormatSymbols
 
 class NumberParserTests extends GroovyTestCase {
 
@@ -13,28 +14,35 @@ class NumberParserTests extends GroovyTestCase {
     }
 
     void testParse_DefaultLocale() {
-        parseValuesWithLocale([2, 20000, 2.0, 20000.20, "foo", "", null], Locale.defaultLocale)
+        parseValuesWithLocale([2, 20000, 2.0, 20000.20, 1E3, -1.23E4, "foo", "", null], Locale.defaultLocale)
     }
 
     void testParse_Locale_EN() {
-        parseValuesWithLocale([2, 20000, 2.0, 20000.20, "foo", "", null], Locale.ENGLISH)
+        parseValuesWithLocale([2, 20000, 2.0, 20000.20, 1E3, -1.23E4, "foo", "", null], Locale.ENGLISH)
     }
 
     void testParse_Locale_DE() {
-        parseValuesWithLocale([2, 20000, 2.0, 20000.20, "foo", "", null], Locale.GERMANY)
+        parseValuesWithLocale([2, 20000, 2.0, 20000.20, 1E3, -1.23E4, "foo", "", null], Locale.GERMANY)
     }
 
     void testParse_Locale_DE_CH() {
-        parseValuesWithLocale([2, 20000, 2.0, 20000.20, "foo", ""], new Locale("de", "ch"))
+        parseValuesWithLocale([2, 20000, 2.0, 20000.20, 1E3, -1.23E4, "foo", ""], new Locale("de", "ch"))
     }
 
     void testIsString() {
         NumberParser parser = new NumberParser(Locale.defaultLocale)
+        def groupingSeparator = new DecimalFormatSymbols(Locale.default).groupingSeparator
         assertTrue '3A-56739', parser.isString('3A-56739')
         assertTrue '2008-01-01', parser.isString('2008-01-01')
         assertFalse '200.25', parser.isString('200.25')
-        assertFalse "2'008.01", parser.isString("2'008.01")
+        assertFalse "2${groupingSeparator}008.01", parser.isString("2${groupingSeparator}008.01")
         assertTrue "foo bar", parser.isString("foo bar")
+        assertFalse parser.isString("-1")
+        assertFalse parser.isString("-1.23")
+        assertFalse parser.isString("-1E3")
+        assertFalse parser.isString("1E3")
+        assertFalse parser.isString("-1.23E3")
+        assertFalse parser.isString("1.23E3")
     }
 
     private def parseValuesWithLocale(List values, Locale locale) {
