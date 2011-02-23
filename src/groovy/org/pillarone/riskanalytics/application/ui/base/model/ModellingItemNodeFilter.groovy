@@ -51,7 +51,7 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
 
     boolean internalAcceptNode(SimulationNode node) {
         if (allSelected || !values || values.size() == 0) return true
-        return contains(node.values[column])
+        return contains(node.values[0])
     }
 
     boolean internalAcceptNode(ITableTreeNode node) {
@@ -63,14 +63,14 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
         if (column == ModellingInformationTableTreeModel.NAME) {
             if (values.size() == 0) return false
             for (String name: values) {
-                if (value != null && value.indexOf(name) != -1) {
+                if (value != null && value == name) {
                     found = true
                     break
                 }
             }
         } else if (column == ModellingInformationTableTreeModel.TAGS) {
             for (String tag: values) {
-                if (value != null && value.indexOf(tag) != -1) {
+                if (value != null && value == tag) {
                     found = true
                     break
                 }

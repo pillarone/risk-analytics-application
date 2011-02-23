@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.util.GroovyUtils
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.*
+
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -413,6 +414,7 @@ class ModellingInformationTableTreeBuilder {
 
         node.add(paramsNode)
         node.add(templateNode)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
         return node
     }
 

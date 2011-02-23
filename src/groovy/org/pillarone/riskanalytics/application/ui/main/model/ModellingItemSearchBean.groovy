@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.lucene.document.Document
@@ -12,7 +13,6 @@ import org.apache.lucene.util.Version
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.hibernate.SQLQuery
 import org.hibernate.SessionFactory
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -30,10 +30,12 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
     public List<String> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
         List<String> result = []
-        String escapedQuery = QueryParser.escape(queryString)
+        String escapedQuery = escapeQuery(queryString)
         // the "title" arg specifies the default field to use
         // when no field is explicitly specified in the query.
-        Query q = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer).parse(escapedQuery);
+        QueryParser parser = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer)
+        parser.setAllowLeadingWildcard(true);
+        Query q = parser.parse(escapedQuery);
 
         // 3. search
         int hitsPerPage = 100;
@@ -132,6 +134,8 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         List<String> names = []
         List objects = query.list()
         for (Object name in objects) {
+            if (name.indexOf(",") != -1)
+                name = name.replaceAll(",", SEPARATOR)
             names << name
         }
         return names
@@ -139,6 +143,22 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
     void indexChanged() {
         reInitIndexer = true
+    }
+
+    private String escapeQuery(String query) {
+        try {
+            String escapeChars = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\\"\\'\\#]";
+            query = query.replaceAll(escapeChars, " ")
+            List queries = query.split()
+            String escapedQuery = ""
+            for (String st: queries) {
+                escapedQuery += "*" + st + "* "
+            }
+            return escapedQuery
+        } catch (Exception ex) {
+            return QueryParser.escape(query)
+        }
+
     }
 
 
