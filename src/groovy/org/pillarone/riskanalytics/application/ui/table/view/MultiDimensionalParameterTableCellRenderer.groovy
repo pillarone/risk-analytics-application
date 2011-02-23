@@ -14,6 +14,7 @@ import com.ulcjava.base.application.datatype.IDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterTableModel
+import org.joda.time.DateTime
 
 class MultiDimensionalParameterTableCellRenderer extends DefaultTableCellRenderer {
 
@@ -73,6 +74,8 @@ class MultiDimensionalParameterTableCellRenderer extends DefaultTableCellRendere
             case Double:
                 return DataTypeFactory.getDoubleDataTypeForNonEdit()
             case Date:
+                return DataTypeFactory.getDateDataType()
+            case DateTime:
                 return DataTypeFactory.getDateDataType()
         }
         return null
