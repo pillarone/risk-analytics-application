@@ -168,6 +168,15 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         }
     }
 
+    @Override
+    void fireTableStructureChanged() {
+        if (!bulkChange) {
+            super.fireTableStructureChanged()
+        }
+    }
+
+
+
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         if (columnIndex == 0) {
             return false

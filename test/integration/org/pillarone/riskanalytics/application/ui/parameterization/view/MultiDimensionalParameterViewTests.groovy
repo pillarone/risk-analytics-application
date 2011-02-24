@@ -70,7 +70,6 @@ class MultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
 
     void testAddRow() {
         ULCFrameOperator frame = new ULCFrameOperator("test")
-        println "${ multiDimensionalParameter.valueRowCount}"
         int rowCount = multiDimensionalParameter.valueRowCount
         int columnCount = multiDimensionalParameter.valueColumnCount
         ULCButtonOperator apply = new ULCButtonOperator(frame, new ComponentByNameChooser("addRowButton"))
