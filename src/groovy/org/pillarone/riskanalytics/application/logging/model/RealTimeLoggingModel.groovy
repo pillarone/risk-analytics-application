@@ -18,15 +18,15 @@ public class RealTimeLoggingModel {
     List<LoggingEvent> pendingLoggingEvents
 
     private MyAppender appender
+    private ULCPollingTimer timer
 
     RealTimeLoggingModel() {
         pendingLoggingEvents = new ArrayList<LoggingEvent>()
-        ULCPollingTimer timer = new ULCPollingTimer(1000, [actionPerformed: { ActionEvent event ->
+        timer = new ULCPollingTimer(1000, [actionPerformed: { ActionEvent event ->
             addPendingLoggingEvents()
 
         }] as IActionListener)
         timer.syncClientState = false
-        timer.start()
 
         appender = new MyAppender()
     }
@@ -65,11 +65,13 @@ public class RealTimeLoggingModel {
     }
 
     void start() {
+        timer.start()
         LoggingAppender.getInstance().getLoggingManager().addAppender(appender)
     }
 
     void stop() {
         LoggingAppender.getInstance().getLoggingManager().removeAppender(appender)
+        timer.stop()
     }
 
     private class MyAppender extends AppenderSkeleton {
