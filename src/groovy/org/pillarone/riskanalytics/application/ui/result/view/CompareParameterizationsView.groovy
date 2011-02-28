@@ -34,6 +34,17 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
 
         CompareParameterizationRenderer cRenderer = new CompareParameterizationRenderer()
         tree.viewPortTableTree.name = "parameterTreeContent"
+        def clonedColumns = []
+        //remove columns for cloned parameterization
+        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
+            if (index % model.items.size() == 0) {
+                clonedColumns.add(it)
+            }
+        }
+        clonedColumns.each {
+            tree.viewPortTableTree.columnModel.removeColumn it
+        }
+
 
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
 
