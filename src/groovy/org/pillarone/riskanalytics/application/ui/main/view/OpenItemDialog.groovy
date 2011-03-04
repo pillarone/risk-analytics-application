@@ -86,7 +86,6 @@ class OpenItemDialog {
             item.daoClass.withTransaction {status ->
                 item.load()
                 modellingItem = ModellingItemFactory.incrementVersion(item)
-                modellingItem.id = null
                 p1RATModel.fireModelChanged()
                 p1RATModel.selectionTreeModel.addNodeForItem(modellingItem)
             }
