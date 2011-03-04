@@ -10,6 +10,7 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
@@ -32,6 +33,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     ULCCloseableTabbedPane tabbedPane
     CompareSimulationsCriteriaView criteriaView
     P1RATMainView p1RATMainView
+    ULCComboBox selectView
 
 
     public static int space = 3
@@ -59,6 +61,29 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         }
         tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
         addColumns()
+    }
+
+    public ULCBoxPane createSelectionPane() {
+        selectView = new ULCComboBox(model.selectionViewModel)
+        selectView.name = "selectView"
+        selectView.setMinimumSize(new Dimension(120, 20))
+        selectView.addActionListener(new ApplySelectionAction(model, this))
+
+        filterSelection = new ULCComboBox()
+        filterSelection.name = "filter"
+        filterSelection.addItem(getText("all"))
+        model.nodeNames.each {
+            filterSelection.addItem it
+        }
+
+        filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
+
+        ULCBoxPane filters = new ULCBoxPane(4, 1)
+        filters.add(selectView)
+        filters.add(filterLabel)
+        filters.add(filterSelection)
+        filters.add(ULCBoxPane.BOX_EXPAND_CENTER, new ULCFiller())
+        return filters
     }
 
     public void functionAdded(IFunction function) {

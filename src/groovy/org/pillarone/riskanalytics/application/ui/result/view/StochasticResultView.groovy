@@ -46,7 +46,7 @@ class StochasticResultView extends ResultView {
     public ULCBoxPane createSelectionPane() {
         selectView = new ULCComboBox(model.selectionViewModel)
         selectView.name = "selectView"
-        selectView.setPreferredSize(new Dimension(120, 20))
+        selectView.setMinimumSize(new Dimension(120, 20))
         selectView.addActionListener(new ApplySelectionAction(model, this))
 
         filterSelection = new ULCComboBox()
@@ -59,7 +59,7 @@ class StochasticResultView extends ResultView {
         filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
 
         ULCBoxPane filters = new ULCBoxPane(3, 1)
-        filters.add(ULCBoxPane.BOX_EXPAND_CENTER, selectView)
+        filters.add(ULCBoxPane.BOX_LEFT_CENTER, selectView)
         filters.add(filterLabel)
         filters.add(filterSelection)
         return filters

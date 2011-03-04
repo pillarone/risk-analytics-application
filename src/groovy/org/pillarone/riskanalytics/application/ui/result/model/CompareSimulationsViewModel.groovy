@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.tabletree.ITableTreeModel
+import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
@@ -13,6 +11,14 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
+import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.CollectingModeFactory
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -21,9 +27,16 @@ import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionLi
 public class CompareSimulationsViewModel extends AbstractModellingModel {
 
     private List<ICompareFunctionListener> listeners = []
+    List resultStructures
+    ItemsComboBoxModel selectionViewModel
+    ConfigObject allResults = null
+    List<ConfigObject> resultsList
 
     public CompareSimulationsViewModel(Model model, ModelStructure structure, List simulations) {
         super(model, simulations*.item, structure)
+        model.init()
+        buildTreeStructure()
+        selectionViewModel = new ItemsComboBoxModel(resultStructures)
     }
 
     void addFunctionListener(ICompareFunctionListener listener) {
@@ -34,13 +47,17 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         listeners.remove(listener)
     }
 
-    protected ITableTreeModel buildTree() {
+    @Override protected ITableTreeModel buildTree() {
+        return null
+    }
+
+
+    private ITableTreeModel buildTreeStructure(ResultStructure resultStructure = null) {
         //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
         //all result paths for this simulation run
-        ConfigObject allResults = ResultViewModel.initPostSimulationCalculations(item[0]?.simulationRun)
+        if (!allResults)
+            allResults = initPostSimulationCalculations(item*.simulationRun)
 
-        //List paths = ResultViewModel.obtainAllPaths(allResults."0")
-        //Map collectors = ResultViewModel.obtainsCollectors(item[0]?.simulationRun, paths)
         Set paths = new HashSet()
         //look through all periods, not all paths may have a result in the first period
         for (Map<String, Map> periodResults in allResults.values()) {
@@ -48,24 +65,79 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         }
 
         Class modelClass = model.class
-        def simulationRun = item[0].simulationRun
+        if (!resultStructures) {
+            resultStructures = ModellingItemFactory.getResultStructuresForModel(modelClass)
+        }
 
-        ResultStructure resultStructure = ModellingItemFactory.getResultStructuresForModel(modelClass)[0]
+        if (!resultStructure)
+            resultStructure = resultStructures[0]
 
         resultStructure.load()
-        builder = new ResultStructureTreeBuilder(ResultViewModel.obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item[0])
+        builder = new ResultStructureTreeBuilder(obtainsCollectors(item*.simulationRun, paths.toList()), modelClass, resultStructure, item[0])
 
         treeRoot = builder.buildTree()
 
         MeanAction meanAction = new MeanAction(this, null)
         List<ConfigObject> resultsList = []
-        item.each {
-            ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
-            resultsList << configObject
+        if (!resultsList) {
+            resultsList = []
+            item.each {
+                ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
+                resultsList << configObject
+            }
         }
         ITableTreeModel resultTreeTableModel = new CompareResultTableTreeModel(treeRoot, item, meanAction.getFunction(), resultsList)
-        // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
-        return new FilteringTableTreeModel(resultTreeTableModel, filter)
+        treeModel = new FilteringTableTreeModel(resultTreeTableModel, filter)
+    }
+
+    public static Map<String, ICollectingModeStrategy> obtainsCollectors(List<SimulationRun> simulationRuns, List allPaths) {
+        Map<String, ICollectingModeStrategy> result = [:]
+        StringBuilder query = new StringBuilder("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p where ")
+        simulationRuns.eachWithIndex {SimulationRun simulationRun, int index ->
+            query.append(" p.run.id = '" + simulationRun.id + "' ")
+            if (index < simulationRuns.size() - 1)
+                query.append(" or ")
+        }
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery(query.toString())
+        for (Object[] psc in calculations) {
+            String path = "${psc[0]}:${psc[1]}"
+            String collector = psc[2]
+            if (allPaths.contains(path)) {
+                result.put(path, CollectingModeFactory.getStrategy(collector))
+            }
+        }
+
+        return result
+    }
+
+    /**
+     * Loads all PostSimulationCalculations of a simulation and stores them in a map.
+     * This is faster than creating a query for every cell when the result is needed.
+     */
+    public static ConfigObject initPostSimulationCalculations(List<SimulationRun> simulationRuns) {
+        NumberFormat numberFormat = NumberFormat.getInstance()
+        ConfigObject results = new ConfigObject()
+        StringBuilder query = new StringBuilder("SELECT period, path.pathName, field.fieldName, keyFigure, keyFigureParameter, result FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p where ")
+        simulationRuns.eachWithIndex {SimulationRun simulationRun, int index ->
+            query.append(" p.run.id = '" + simulationRun.id + "' ")
+            if (index < simulationRuns.size() - 1)
+                query.append(" or ")
+        }
+        query.append(" order by p.keyFigureParameter asc")
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery(query.toString())
+        for (Object[] psc in calculations) {
+            Map periodMap = results[psc[0].toString()]
+            Map pathMap = periodMap[psc[1]]
+            Map fieldMap = pathMap[psc[2]]
+            Map keyFigureMap = fieldMap[psc[3]]
+            BigDecimal keyFigureParameter = psc[4]
+            String param = keyFigureParameter != null ? numberFormat.format(keyFigureParameter) : "null"
+            if (!keyFigureMap.containsKey(param)) {
+                keyFigureMap[param] = psc[5]
+            }
+        }
+
+        return results
     }
 
     /**
@@ -148,6 +220,11 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         for (ICompareFunctionListener listener in listeners) {
             listener.refreshNodes()
         }
+    }
+
+
+    public void resultStructureChanged() {
+        buildTreeStructure(selectionViewModel.getSelectedObject())
     }
 
 }

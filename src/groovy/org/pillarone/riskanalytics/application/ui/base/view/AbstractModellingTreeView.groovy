@@ -117,7 +117,10 @@ abstract class AbstractModellingTreeView {
     private void layoutComponents() {
         ULCBoxPane toolbarBox = new ULCBoxPane(1, 0, 5, 5)
         toolbarBox.add(new ULCFiller(0, 0))
-        toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, selectionToolbar)
+        ULCBoxPane pane = new ULCBoxPane(2, 0)
+        pane.add(selectionToolbar)
+        pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        toolbarBox.add(ULCBoxPane.BOX_EXPAND_TOP, pane)
         toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, toolbar)
         toolbarBox.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
         viewComponent = layoutContent(toolbarBox)
