@@ -352,10 +352,9 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         item.daoClass.withTransaction {status ->
             item.load()
             ModellingItem modellingItem = ModellingItemFactory.incrementVersion(item)
-            modellingItem.id = null
             fireModelChanged()
             selectionTreeModel.addNodeForItem(modellingItem)
-            notifyOpenDetailView(model, modellingItem)
+            openItem(model, modellingItem)
         }
     }
 
@@ -432,28 +431,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
 
         notifyOpenDetailView(model, parameterizations)
-    }
-
-    private void handleEvent(String value, String firstButtonValue, String secondButtonValue, Model model, ModellingItem item) {
-        //in case hibernate collections are accessed by the simulation at the same time
-        synchronized (item) {
-            if (value.equals(firstButtonValue)) {
-                ModellingItem modellingItem
-                item.daoClass.withTransaction {status ->
-                    item.load()
-                    modellingItem = ModellingItemFactory.incrementVersion(item)
-                    modellingItem.id = null
-                    fireModelChanged()
-                    selectionTreeModel.addNodeForItem(modellingItem)
-                }
-                openItem(model, modellingItem)
-            } else if (value.equals(secondButtonValue)) {
-                item.daoClass.withTransaction {status ->
-                    item.load()
-                    notifyOpenDetailView(model, item)
-                }
-            }
-        }
     }
 
     public void closeItem(Model model, ModellingItem item) {
