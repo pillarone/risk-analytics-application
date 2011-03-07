@@ -39,7 +39,6 @@ class DeterministicResultViewModelTests extends GroovyTestCase {
         simulationRun.periodCount = 2
         simulationRun.iterations = 5
         simulationRun.randomSeed = 0
-        simulationRun.modelVersionNumber = "1"
         simulationRun.beginOfFirstPeriod = new DateTime()
 
         simulationRun = simulationRun.save(flush: true)

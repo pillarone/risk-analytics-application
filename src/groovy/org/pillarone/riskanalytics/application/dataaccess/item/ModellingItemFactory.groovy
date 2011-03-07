@@ -351,6 +351,7 @@ class ModellingItemFactory {
         if (item.srcCode != null) {
             newItem.srcCode = item.srcCode
             newItem.versionNumber = VersionNumber.incrementVersion(item)
+            newItem.modelClass = item.modelClass
         }
         def newID = newItem.save()
         newItem.load()

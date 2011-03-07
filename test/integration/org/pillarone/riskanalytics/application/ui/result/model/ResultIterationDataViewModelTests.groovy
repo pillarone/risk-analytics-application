@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.output.*
+import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 
 class ResultIterationDataViewModelTests extends GroovyTestCase {
 
@@ -33,7 +34,6 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         simulationRun.periodCount = 2
         simulationRun.iterations = 5
         simulationRun.randomSeed = 0
-        simulationRun.modelVersionNumber = "1"
 
         simulationRun = simulationRun.save(flush: true)
 
