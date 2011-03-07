@@ -4,7 +4,6 @@ import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
-import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
@@ -177,7 +176,7 @@ class RemoveFunctionAction extends AbstractAction {
     private ULCToggleButton button
 
     public RemoveFunctionAction(ResultViewModel model, IFunction function, ULCToggleButton button) {
-        super("Remove " + function.name);
+        super(UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.name]));
         this.function = function
         this.model = model
         this.button = button

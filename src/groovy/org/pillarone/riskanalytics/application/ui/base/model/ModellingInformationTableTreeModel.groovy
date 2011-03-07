@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -107,11 +108,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public String getColumnName(int i) {
-        return UIUtils.getText(this.class, this.columnNames[getColumnIndex(i)])
+        return UIUtils.getText(ModellingInformationTableTreeModel.class, this.columnNames[getColumnIndex(i)])
     }
 
     public String getColumnFilterName(int i) {
-        return UIUtils.getText(this.class, this.columnNames[i])
+        return UIUtils.getText(ModellingInformationTableTreeModel.class, this.columnNames[i])
     }
 
 
