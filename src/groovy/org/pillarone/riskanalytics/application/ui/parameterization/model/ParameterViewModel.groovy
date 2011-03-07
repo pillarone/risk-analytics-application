@@ -1,5 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
+import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
@@ -12,13 +19,6 @@ import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorVi
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
-import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class ParameterViewModel extends AbstractModellingModel {
 
@@ -184,6 +184,10 @@ class ParameterViewModel extends AbstractModellingModel {
             node.comments << comment
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
+    }
+
+    boolean isNotEmpty(String path) {
+        return item.comments.any {it.path == path && !it.deleted && commentIsVisible(it)}
     }
 
     void navigationSelected(boolean comment) {
