@@ -118,5 +118,9 @@ class SelectionTreeView {
         return renderer
     }
 
+    ULCTableTree getSelectionTree() {
+        return tree.rowHeaderTableTree
+    }
+
 
 }

@@ -2,13 +2,13 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.apache.commons.logging.LogFactory
-import org.apache.commons.logging.Log
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
