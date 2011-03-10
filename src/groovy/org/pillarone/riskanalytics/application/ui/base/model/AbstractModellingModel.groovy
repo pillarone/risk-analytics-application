@@ -87,4 +87,8 @@ abstract class AbstractModellingModel {
         return "Q$periodIndex".toString()
     }
 
+    public void saveItem() {
+
+    }
+
 }

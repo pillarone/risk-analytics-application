@@ -1,12 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
-import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
@@ -18,7 +11,15 @@ import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentLis
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
+import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class ParameterViewModel extends AbstractModellingModel {
 
@@ -29,6 +30,7 @@ class ParameterViewModel extends AbstractModellingModel {
     private List<ChangedCommentListener> changedCommentListeners
     private List<TabbedPaneChangeListener> tabbedPaneChangeListeners
     private List<NavigationListener> navigationListeners
+    public P1RATModel p1RATModel
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
@@ -47,6 +49,11 @@ class ParameterViewModel extends AbstractModellingModel {
                 [valueChanged: {Object node, int column -> item.changed = true}] as TableTreeValueChangedListener)
         paramterTableTreeModel.readOnly = !item.isEditable()
         return paramterTableTreeModel
+    }
+
+    @Override
+    public void saveItem() {
+        p1RATModel.saveItem(item)
     }
 
     void save() {

@@ -142,6 +142,8 @@ abstract class AbstractModellingTreeView {
         viewPortTree.registerKeyboardAction(new TreeNodePaster(tree: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeSelectionFiller(tree: viewPortTree, model: viewPortTree.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TableTreeCopier(table: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        IActionListener saveAction = [actionPerformed: {ActionEvent event -> model.saveItem()  }] as IActionListener
+        content.registerKeyboardAction(saveAction, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
 
 
         viewPortTree.tableTreeHeader.addActionListener([actionPerformed: {ActionEvent e ->
@@ -203,12 +205,12 @@ abstract class AbstractModellingTreeView {
         }
     }
 
-    /**
-     * Utility method to get resource bundle entries for this class
-     *
-     * @param key
-     * @return the localized value corresponding to the key
-     */
+/**
+ * Utility method to get resource bundle entries for this class
+ *
+ * @param key
+ * @return the localized value corresponding to the key
+ */
     protected String getText(String key) {
         return LocaleResources.getString("AbstractModellingTreeView." + key);
     }

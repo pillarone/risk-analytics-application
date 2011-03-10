@@ -37,7 +37,8 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     }
 
     public void itemSaved(ModellingItem item) {
-
+        String title = "$item.name v${item.versionNumber.toString()}"
+        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title + " *", title)
     }
 }
 

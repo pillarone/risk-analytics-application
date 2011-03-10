@@ -105,10 +105,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     void layoutComponents() {
-        ULCScrollPane treeScrollPane = new ULCScrollPane(selectionTreeView.content)
-        treeScrollPane.minimumSize = new Dimension(200, 600)
         modelPane.minimumSize = new Dimension(600, 600)
-        treePane.add(ULCBoxPane.BOX_EXPAND_EXPAND, treeScrollPane)
+        treePane.add(ULCBoxPane.BOX_EXPAND_EXPAND, selectionTreeView.content)
         ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.HORIZONTAL_SPLIT)
         splitPane.oneTouchExpandable = true
         splitPane.setResizeWeight(1)
