@@ -70,10 +70,8 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
             }
         } else if (column == ModellingInformationTableTreeModel.TAGS) {
             for (String tag: values) {
-                if (value != null && value == tag) {
-                    found = true
-                    break
-                }
+                found = contains(tag, value)
+                if (found) break;
             }
         } else {
             found = values?.contains(value);
@@ -95,6 +93,11 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
 
     private boolean contains(Date value) {
         return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.format(value)} != null
+    }
+
+    private boolean contains(String tag, String value) {
+        if (!value) return false
+        return value.split(",").any { it == tag}
     }
 
 }
