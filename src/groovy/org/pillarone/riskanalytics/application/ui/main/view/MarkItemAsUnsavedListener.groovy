@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     ULCCloseableTabbedPane tabbedPane
     int paneIndex
+    static String UNSAVED_MARK = " *"
 
     public MarkItemAsUnsavedListener(ULCCloseableTabbedPane tabbedPane, int paneIndex) {
         this.@tabbedPane = tabbedPane
@@ -31,14 +32,14 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
         String title = "$item.name v${item.versionNumber.toString()}"
         String newTitle = title
         if (item.isChanged()) {
-            newTitle += " *"
+            newTitle += UNSAVED_MARK
         }
         TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title, newTitle)
     }
 
     public void itemSaved(ModellingItem item) {
         String title = "$item.name v${item.versionNumber.toString()}"
-        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title + " *", title)
+        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title + UNSAVED_MARK, title)
     }
 }
 
