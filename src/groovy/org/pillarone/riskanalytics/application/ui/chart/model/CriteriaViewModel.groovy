@@ -3,8 +3,9 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.application.ui.chart.view.CriteriaView
 import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -55,12 +56,12 @@ class CriteriaViewModel {
 
     public double getInterpretedValue() throws Exception {
         switch (valueInterpretationModel.selectedEnum) {
-            case ValueInterpretationType.ABSOLUTE :
+            case ValueInterpretationType.ABSOLUTE:
                 return this.@value
-            case ValueInterpretationType.PERCENTILE :
+            case ValueInterpretationType.PERCENTILE:
                 return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
-            case ValueInterpretationType.ORDER_STATISTIC :
-                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector, 
+            case ValueInterpretationType.ORDER_STATISTIC:
+                return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector,
                         field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem))
         }
     }
