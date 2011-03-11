@@ -18,9 +18,13 @@ class SendToProductionAction extends AbstractWorkflowAction {
         Status.IN_PRODUCTION
     }
 
-    protected String requiredRole() {
-        UserManagement.REVIEWER_ROLE
+
+    @Override
+    protected List allowedRoles() {
+        return [UserManagement.REVIEWER_ROLE]
     }
+
+
 
     protected boolean isActionEnabled() {
         def item = getSelectedItem()

@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
@@ -12,7 +13,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
-import com.ulcjava.base.application.tree.ITreeNode
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -125,6 +127,26 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
             }
         }
         return groupNode
+    }
+
+    boolean isEnabled() {
+        return super.isEnabled() && accessAllowed()
+    }
+
+    final boolean accessAllowed() {
+        if (UserContext.isStandAlone()) return true
+        List actionAllowedRoles = allowedRoles()
+        if (!actionAllowedRoles || actionAllowedRoles.size() == 0) return true
+        try {
+            Person user = UserManagement.getCurrentUser()
+            List authorities = user.getAuthorities()*.authority
+            return user != null && authorities.any { actionAllowedRoles.contains(it)}
+        } catch (Exception ex) {}
+        return false
+    }
+
+    protected List allowedRoles() {
+        return []
     }
 }
 

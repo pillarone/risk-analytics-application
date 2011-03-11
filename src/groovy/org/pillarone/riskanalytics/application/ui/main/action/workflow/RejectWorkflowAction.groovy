@@ -1,9 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
-import org.pillarone.riskanalytics.core.user.UserManagement
-
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 class RejectWorkflowAction extends StartWorkflowAction {
 
@@ -11,8 +10,9 @@ class RejectWorkflowAction extends StartWorkflowAction {
         super("RejectWorkflow", tree, model);
     }
 
-    protected String requiredRole() {
-        UserManagement.REVIEWER_ROLE
+    @Override
+    protected List allowedRoles() {
+        return [UserManagement.REVIEWER_ROLE]
     }
 
 
