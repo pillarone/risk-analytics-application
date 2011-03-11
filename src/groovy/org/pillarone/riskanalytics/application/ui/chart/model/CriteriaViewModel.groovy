@@ -75,11 +75,11 @@ class CriteriaViewModel {
 
     public static boolean isValid(CompareOperator criteriaComparator, double value) {
         switch (criteriaComparator) {
-            case CompareOperator.LESS_THAN: return (value >= 1 && value <= 101)
-            case CompareOperator.LESS_EQUALS: return (value >= 0 && value <= 100)
-            case CompareOperator.EQUALS: return (value >= 0 && value <= 100)
-            case CompareOperator.GREATER_THAN: return (value >= -1 && value <= 99)
-            case CompareOperator.GREATER_EQUALS: return (value >= 0 && value <= 100)
+            case CompareOperator.LESS_THAN: return (value > 0 && value <= 100)
+            case CompareOperator.LESS_EQUALS: return (value > 0 && value < 100)
+            case CompareOperator.EQUALS: return (value > 0 && value < 100)
+            case CompareOperator.GREATER_THAN: return (value >= 0 && value < 100)
+            case CompareOperator.GREATER_EQUALS: return (value > 0 && value < 100)
             default: return false
         }
     }
