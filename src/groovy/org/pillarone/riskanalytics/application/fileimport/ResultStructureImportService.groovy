@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AssignableTypeFilter
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 class ResultStructureImportService extends FileImportService {
 
@@ -51,7 +52,9 @@ class ResultStructureImportService extends FileImportService {
     }
 
     String prepare(URL file, String itemName) {
-        currentConfigObject = new ConfigSlurper().parse(readFromURL(file))
+        GroovyUtils.parseGroovyScript readFromURL(file), { ConfigObject config ->
+            currentConfigObject = config
+        }
         String name = itemName - ".groovy"
         if (currentConfigObject.containsKey('displayName')) {
             name = currentConfigObject.displayName
