@@ -242,8 +242,58 @@ class QueryPaneModel extends AbstractPresentationModel {
         List lastQueryResults = []
         List resultsPerPathAndPeriod = []
         List iterations = new ArrayList(results)
+        if (iterations.size() == 0) {
+            return []
+        }
         iterations = iterations.sort()
 
+        List<List<Integer>> splitUpIterations = getSplitUpIterations(iterations)
+
+        if (orderByPath) {
+            nodes.each {ResultTableTreeNode node ->
+                simulationRun.periodCount.times {int period ->
+                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, splitUpIterations)
+                }
+            }
+        } else {
+            simulationRun.periodCount.times {int period ->
+                nodes.each {ResultTableTreeNode node ->
+                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, splitUpIterations)
+                }
+            }
+        }
+
+        iterations.eachWithIndex {int iterationNumber, int index ->
+            List row = []
+            row << iterationNumber
+            resultsPerPathAndPeriod.each {List pathResults ->
+                row << pathResults[index]
+            }
+            lastQueryResults << row
+        }
+
+        return lastQueryResults
+    }
+
+    private void addResultsPerPathAndPeriod(ResultTableTreeNode node, int period, List resultsPerPathAndPeriod, List<List<Integer>> splitUpIterations) {
+        String path = node.path
+        String field = node.field
+        List periodList = []
+
+        for (List<Integer> list in splitUpIterations) {
+            StringBuilder query = new StringBuilder("SELECT  sum(s.value) ")
+            query.append("FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s ")
+            query.append("WHERE s.simulationRun.id = " + simulationRun.id)
+            query.append(" AND s.period = " + period)
+            query.append(" AND s.path.pathName = '" + path + "'")
+            query.append(" AND s.field.fieldName = '" + field + "'")
+            query.append(" AND s.iteration in (:list) GROUP BY s.iteration ORDER BY s.iteration asc")
+            periodList.addAll(SingleValueResult.executeQuery(query.toString(), ["list": list]))
+        }
+        resultsPerPathAndPeriod << periodList
+    }
+
+    List getSplitUpIterations(List iterations) {
         //do not use more than 1000 ids in the in clause
         List<List<Integer>> splitUpIterations = []
         if (iterations.size() > 1000) {
@@ -257,61 +307,8 @@ class QueryPaneModel extends AbstractPresentationModel {
         } else {
             splitUpIterations << iterations
         }
-
-        if (iterations.size() == 0) {
-            return []
-        }
-
-        if (orderByPath) {
-            nodes.each {ResultTableTreeNode node ->
-                String path = node.path
-                String field = node.field
-                simulationRun.periodCount.times {int period ->
-                    List periodList = []
-                    for (List<Integer> list in splitUpIterations) {
-                        String q = "SELECT s.value " +
-                                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                                "WHERE s.simulationRun.id = " + simulationRun.id +
-                                " AND s.period = " + period +
-                                " AND s.path.pathName = '" + path + "'" +
-                                " AND s.field.fieldName = '" + field + "'" +
-                                " AND s.iteration in (:list) ORDER BY s.iteration"
-                        periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
-                    }
-                    resultsPerPathAndPeriod << periodList
-                }
-            }
-        } else {
-            simulationRun.periodCount.times {int period ->
-                nodes.each {ResultTableTreeNode node ->
-                    String path = node.path
-                    String field = node.field
-                    List periodList = []
-                    for (List<Integer> list in splitUpIterations) {
-                        String q = "SELECT s.value " +
-                                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                                "WHERE s.simulationRun.id = " + simulationRun.id +
-                                " AND s.period = " + period +
-                                " AND s.path.pathName = '" + path + "'" +
-                                " AND s.field.fieldName = '" + field + "'" +
-                                " AND s.iteration in (:list) ORDER BY s.iteration"
-                        periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
-                    }
-                    resultsPerPathAndPeriod << periodList
-                }
-            }
-        }
-
-
-        iterations.eachWithIndex {int iterationNumber, int index ->
-            List row = []
-            row << iterationNumber
-            resultsPerPathAndPeriod.each {List pathResults ->
-                row << pathResults[index]
-            }
-            lastQueryResults << row
-        }
-
-        return lastQueryResults
+        return splitUpIterations
     }
+
+
 }
