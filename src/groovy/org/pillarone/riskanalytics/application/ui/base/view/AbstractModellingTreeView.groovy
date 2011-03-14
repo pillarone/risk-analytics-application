@@ -14,6 +14,7 @@ import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
@@ -30,6 +31,7 @@ abstract class AbstractModellingTreeView {
     ULCComboBox filterSelection
     ULCToolBar toolbar
     ULCToolBar selectionToolbar
+    IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert("CtrlA").show() }] as IActionListener
 
 
     public AbstractModellingTreeView(def model) {
