@@ -366,7 +366,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         }
         assertTrue pathFound
 
-        assertEquals initialParameterCount + 4, Parameter.count()
+        assertEquals initialParameterCount + 8, Parameter.count()
     }
 
     void testAddDynamicComponentMultiPeriod() {
@@ -391,12 +391,12 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals 2, dynamicNode.childCount
         parameterization.save()
 
-        def parms = parameterization.parameters.findAll {it -> it.path.contains("subTestComponent")}.sort {it.periodIndex}
+        def parms = parameterization.parameters.findAll {it -> it.path.contains("subTestComponent:parmParameterObject")}.sort {it.periodIndex}
         assertEquals 2, parms.size()
         assertEquals 0, parms[0].periodIndex
         assertEquals 1, parms[1].periodIndex
 
-        assertEquals initialParameterCount + 8, Parameter.count()
+        assertEquals initialParameterCount + 16, Parameter.count()
     }
 
     void testRemoveDynamicComponent() {

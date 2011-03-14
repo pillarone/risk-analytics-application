@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -49,30 +50,32 @@ class ItemLoadHandler implements IFileLoadHandler {
                 List lines = inputStreams[index].readLines()
                 String fileContent = getFileContent(lines)
                 try {
-                    ConfigObject data = new ConfigSlurper().parse(fileContent)
-                    if (validate(data)) {
-                        spreadRanges(data)
-                        Model parentNodeModel = getModel(data)
-                        if (!parentNodeModel || parentNodeModel.class.name != data.model.name) {
-                            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "differentsModel", [data.model.getSimpleName(), parentNodeModel.class.getSimpleName()])
-                            alert.show()
-                        } else {
-                            VersionNumber versionNumber = getVersionNumber(itemName)
-                            ModellingItem newItem
-                            if (withVersionNumber && versionNumber)
-                                newItem = ModellingItemFactory.createParameterization(itemName, data, Parameterization.class, versionNumber)
-                            else
-                                newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
-
-                            if (newItem != null) {
-                                importAction.model.importItem(newItem, data.model)
-                            } else {
-                                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "lastVersionError")
+                    GroovyUtils.parseGroovyScript fileContent, { ConfigObject data ->
+                        if (validate(data)) {
+                            spreadRanges(data)
+                            Model parentNodeModel = getModel(data)
+                            if (!parentNodeModel || parentNodeModel.class.name != data.model.name) {
+                                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "differentsModel", [data.model.getSimpleName(), parentNodeModel.class.getSimpleName()])
                                 alert.show()
+                            } else {
+                                VersionNumber versionNumber = getVersionNumber(itemName)
+                                ModellingItem newItem
+                                if (withVersionNumber && versionNumber)
+                                    newItem = ModellingItemFactory.createParameterization(itemName, data, Parameterization.class, versionNumber)
+                                else
+                                    newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
+
+                                if (newItem != null) {
+                                    importAction.model.importItem(newItem, data.model)
+                                } else {
+                                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "lastVersionError")
+                                    alert.show()
+                                }
                             }
                         }
-                    } else {
-                        LOG.error "error by importing a parameterization $itemName : config object is not valid"
+                        else {
+                            LOG.error "error by importing a parameterization $itemName : config object is not valid"
+                        }
                     }
 
                 } catch (Throwable e) {
