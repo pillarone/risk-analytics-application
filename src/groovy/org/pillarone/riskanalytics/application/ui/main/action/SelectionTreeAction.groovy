@@ -97,7 +97,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     Model getSelectedModel(ITreeNode itemNode) {
         if (itemNode == null) return null
         ITreeNode modelNode = null
-        while (modelNode == null) {
+        while (modelNode == null && itemNode?.parent) {
             if (itemNode instanceof ModelNode) {
                 modelNode = itemNode
             } else {
