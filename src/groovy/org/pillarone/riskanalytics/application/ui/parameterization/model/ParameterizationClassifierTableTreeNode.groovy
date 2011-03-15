@@ -1,8 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
-
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
@@ -59,12 +58,14 @@ class CompareParameterizationClassifierTableTreeNode extends ParameterizationCla
     }
 
     public getExpandedCellValue(int column) {
+        String value = ""
         try {
             parameter = parametersMap.get(getParameterizationIndex(column))
-            getValueForKey(parameter.get(getPeriodIndex(column))?.value)
+            value = getValueForKey(parameter.get(getPeriodIndex(column))?.value)
         } catch (Exception ex) {
-            return getClassifier(parameter)
+            value = getClassifier(parameter)
         }
+        return value == "[]" ? "" : value
     }
 
     private String getClassifier(def parameter) {

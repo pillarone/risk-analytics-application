@@ -6,7 +6,9 @@ import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCButton
+import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCToolBar
+import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import org.pillarone.riskanalytics.application.dataaccess.function.Mean
@@ -36,8 +38,8 @@ class ResultView extends AbstractModellingFunctionView {
         super(model)
         tabbedPane = new ULCDetachableTabbedPane()
         tabbedPane.addTabListener([tabClosing: {TabEvent event -> event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())}] as ITabListener)
+        tabbedPane.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
     }
-
 
     protected void initTree() {
 

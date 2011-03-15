@@ -205,6 +205,8 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
             }
         }] as ISelectionChangedListener)
 
+        tabbedPane.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
+
         super.initComponents();
         attachListeners()
         updateErrorVisualization(model.item)

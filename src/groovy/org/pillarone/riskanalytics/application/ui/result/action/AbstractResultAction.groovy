@@ -5,8 +5,7 @@ import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
-import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultView
+import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
@@ -257,23 +256,23 @@ class FractionAbsoluteDifferenceAction extends CheckboxAction {
 
 class ApplySelectionAction extends ResourceBasedAction {
 
-    ResultViewModel model
-    ResultView resultView
+    AbstractModellingModel model
+    AbstractModellingTreeView modellingTreeView
 
-    public ApplySelectionAction(model, ResultView view) {
+    public ApplySelectionAction(AbstractModellingModel model, AbstractModellingTreeView view) {
         super("ApplySelectionAction")
         this.model = model
-        this.resultView = view
+        this.modellingTreeView = view
     }
 
     public void doActionPerformed(ActionEvent event) {
         //remove the action listener because the view is re-initialized and the same action instance used as listener in the new combo box
-        resultView.selectView.removeActionListener(this)
+        modellingTreeView.selectView.removeActionListener(this)
 
         model.resultStructureChanged()
-        resultView.setModel(model)
-        resultView.filterSelection.setVisible(resultView.selectView.getSelectedIndex() == 0)
-        resultView.filterLabel.setVisible(resultView.selectView.getSelectedIndex() == 0)
+        modellingTreeView.setModel(model)
+        modellingTreeView.filterSelection.setVisible(modellingTreeView.selectView.getSelectedIndex() == 0)
+        modellingTreeView.filterLabel.setVisible(modellingTreeView.selectView.getSelectedIndex() == 0)
     }
 }
 

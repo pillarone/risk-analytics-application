@@ -42,6 +42,12 @@ public class UIFixedColumnTableTree extends UIScrollPane {
         removeKeystrokes((TableTreeTable) viewPort.getComponent(0), new KeyStroke[]{
                 KeyStroke.getKeyStroke(KeyEvent.VK_TAB, KeyEvent.SHIFT_DOWN_MASK)
         });
+        removeKeystrokes((TableTreeTable) rowHeader.getComponent(0), new KeyStroke[]{
+                KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK)
+        });
+        removeKeystrokes((TableTreeTable) viewPort.getComponent(0), new KeyStroke[]{
+                KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK)
+        });
         rowHeader.addTreeExpansionListener(new MyExpansionListener(viewPort));
         rowHeader.addTreeSelectionListener(new MySelectionListener(viewPort, rowHeader));
         viewPort.addTreeSelectionListener(new MySelectionListener(rowHeader, viewPort));
