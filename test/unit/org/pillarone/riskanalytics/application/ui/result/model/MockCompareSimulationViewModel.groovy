@@ -7,6 +7,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
@@ -18,10 +19,12 @@ class MockCompareSimulationViewModel extends CompareSimulationsViewModel {
         Simulation simulation1 = new Simulation("item1")
         Simulation simulation2 = new Simulation("item2")
         item = [simulation1, simulation2]
+        selectionViewModel = new ItemsComboBoxModel([])
+        buildTreeStructure()
     }
 
 
-    protected ITableTreeModel buildTree() {
+    protected ITableTreeModel buildTreeStructure() {
         SimpleTableTreeNode rootNode = new SimpleTableTreeNode("root")
         ResultStructureTableTreeNode child = new ResultStructureTableTreeNode("child", ApplicationModel)
         child.metaClass.getCellValue = {i ->
@@ -30,7 +33,8 @@ class MockCompareSimulationViewModel extends CompareSimulationsViewModel {
         rootNode.add(child)
         String[] strings = ["name", "one", "two"].toArray()
         MockTableTreeModel model = new MockTableTreeModel(rootNode, strings)
-        return model
+        treeModel = model//new FilteringTableTreeModel(model, filter)
+//        return model
     }
 
     public getColumnName(int index) {
