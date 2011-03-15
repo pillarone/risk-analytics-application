@@ -5,31 +5,28 @@ import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
-import com.ulcjava.base.application.ULCButton
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCToolBar
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
+import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.dataaccess.function.Mean
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.base.application.ULCComboBox
-import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCLabel
+import com.ulcjava.base.application.*
 
 class ResultView extends AbstractModellingFunctionView {
 
     ULCCloseableTabbedPane tabbedPane
     P1RATModel p1ratModel
+    //view selection for simulation/calculation
     ULCComboBox selectView
 
     public static int space = 3

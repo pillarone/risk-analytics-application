@@ -1,5 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.CollectingModeFactory
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
@@ -12,13 +19,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeM
 import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.CollectingModeFactory
-import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -52,7 +52,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     }
 
 
-    private ITableTreeModel buildTreeStructure(ResultStructure resultStructure = null) {
+    public ITableTreeModel buildTreeStructure(ResultStructure resultStructure = null) {
         //All pre-calculated results, used in the RTTM. We already create it here because this is the fastest way to obtain
         //all result paths for this simulation run
         if (!allResults)
@@ -75,14 +75,14 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         resultStructure.load()
         builder = new ResultStructureTreeBuilder(obtainsCollectors(item*.simulationRun, paths.toList()), modelClass, resultStructure, item[0])
 
-        treeRoot = builder.buildTree()
+        def treeRoot = builder.buildTree()
 
         MeanAction meanAction = new MeanAction(this, null)
         List<ConfigObject> resultsList = []
         if (!resultsList) {
             resultsList = []
             item.each {
-                ConfigObject configObject = ResultViewModel.initPostSimulationCalculations(it.simulationRun)
+                ConfigObject configObject = ResultViewUtils.initPostSimulationCalculations(it.simulationRun)
                 resultsList << configObject
             }
         }
