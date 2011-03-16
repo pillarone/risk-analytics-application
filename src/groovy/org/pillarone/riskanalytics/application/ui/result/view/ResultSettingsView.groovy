@@ -6,11 +6,11 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import java.text.SimpleDateFormat
 import org.joda.time.format.DateTimeFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.model.DeterministicModel
@@ -41,7 +41,7 @@ class ResultSettingsView {
 
             ULCBoxPane content = new ULCBoxPane(3, 0)
             addLabels(content, getText('name') + ":", "$simulation.name", new ULCFiller())
-            addLabels(content, getText('creationDate') + ":", simulation.start ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(simulation.start) : "", new ULCFiller())
+            addLabels(content, getText('creationDate') + ":", DateFormatUtils.formatDetailed(simulation.start), new ULCFiller())
             // TODO (msp): adjust to new user concept
 //            addLabels(content, getText('username') + ":", simulation.creator ? simulation.creator.username : "", new ULCFiller())
             addLabels(content, getText('comment') + ":", comment)
@@ -61,7 +61,7 @@ class ResultSettingsView {
                 addLabels(content, getText('firstPeriod') + ":", DateTimeFormat.forPattern('dd.MM.yyyy').print(simulation.beginOfFirstPeriod), new ULCFiller())
             }
             addLabels(content, getText('periods') + ":", simulation.periodCount.toString(), new ULCFiller())
-            int simulationDuration = (simulation.end.getTime() - simulation.start.getTime()) / 1000
+            int simulationDuration = (simulation.end.getMillis() - simulation.start.getMillis()) / 1000
             addLabels(content, getText('completedIterations') + ":", "${simulation.numberOfIterations.toString()} in ${simulationDuration} secs", new ULCFiller())
 
             box.add(content)

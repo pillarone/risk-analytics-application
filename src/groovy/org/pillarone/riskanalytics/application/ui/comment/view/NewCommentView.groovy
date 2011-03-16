@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
+import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -103,7 +104,7 @@ class NewCommentView {
             String text = commentTextArea.getText()
             if (text && text.length() > 0 && text.length() < MAX_CHARS) {
                 Comment comment = createComment(path, periodIndex)
-                comment.lastChange = new Date()
+                comment.lastChange = new DateTime()
                 comment.comment = commentTextArea.getText()
                 tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
                     comment.addTag(tag)

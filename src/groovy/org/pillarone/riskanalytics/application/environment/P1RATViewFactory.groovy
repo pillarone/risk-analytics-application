@@ -14,6 +14,8 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.canoo.ulc.community.locale.server.ULCClientTimeZoneSetter
+import org.pillarone.riskanalytics.application.UserContext
+import com.ulcjava.base.application.ClientContext
 
 abstract class P1RATViewFactory implements UlcViewFactory {
 
@@ -26,7 +28,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         } catch (Exception ex) {
             // put a user in MDC causes an exception in integration Test
         }
-
+        UserContext.setUserTimeZone(ClientContext.timeZone)
         ULCClientTimeZoneSetter.setDefaultTimeZone(TimeZone.getTimeZone("UTC"))
 
         ULCClipboard.install()

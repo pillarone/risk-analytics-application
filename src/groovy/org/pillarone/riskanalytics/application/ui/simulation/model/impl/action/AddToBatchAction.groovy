@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.output.batch.OutputStrategyFactory
+import org.joda.time.DateTime
 
 class AddToBatchAction extends RunSimulationAction {
 
@@ -27,8 +28,8 @@ class AddToBatchAction extends RunSimulationAction {
             if (!batchRun) {
                 String newBatchRunName = model.batchRunComboBoxModel.getSelectedItem()
                 if (!newBatchRunName || "" == newBatchRunName)
-                    newBatchRunName = "${new Date()}"
-                batchRun = new BatchRun(name: newBatchRunName, executionTime: new Date())
+                    newBatchRunName = "${new DateTime()}"
+                batchRun = new BatchRun(name: newBatchRunName, executionTime: new DateTime())
                 BatchRun.withTransaction {
                     batchRun.save()
                 }

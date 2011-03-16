@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
@@ -10,6 +9,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 class ResultIterationDataViewModel extends QueryPaneModel {
     int periodCount
@@ -131,7 +131,7 @@ class ResultIterationDataViewModel extends QueryPaneModel {
             data << ["Structure:", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
             data << ["Number of Periods:", simulation.periodCount]
             data << ["Number of Iterations:", simulation.numberOfIterations]
-            data << ["Simulation end Date:", simulation.end ? new SimpleDateFormat('dd.MM.yyyy').format(simulation.end) : ""]
+            data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
             return data
         }
     }

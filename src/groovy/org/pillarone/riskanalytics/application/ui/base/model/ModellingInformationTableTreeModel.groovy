@@ -13,7 +13,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import java.text.SimpleDateFormat
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
@@ -22,6 +21,10 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -54,8 +57,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     List<ChangeIndexerListener> changeIndexerListeners
     List<TransactionInfo> transactionInfos
 
-    SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy HH:mm")
-    static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy")
+    static DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy")
 
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
@@ -160,15 +162,15 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     break;
                 case QUARTER:
                     if (parameterization.dealId && parameterization.valuationDate) {
-                        value = UIUtils.format(format, parameterization.valuationDate)
+                        value = DateFormatUtils.formatDetailed(parameterization.valuationDate)
                     };
                     break;
                 case COMMENTS: value = parameterization.getSize(CommentDAO); break;
                 case REVIEW_COMMENT: value = parameterization.getSize(WorkflowCommentDAO); break;
                 case OWNER: value = parameterization?.getCreator()?.username; break;
                 case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username; break;
-                case CREATION_DATE: value = UIUtils.format(format, parameterization.getCreationDate()); break;
-                case LAST_MODIFICATION_DATE: value = UIUtils.format(format, parameterization.getModificationDate()); break;
+                case CREATION_DATE: value = DateFormatUtils.formatDetailed(parameterization.creationDate); break;
+                case LAST_MODIFICATION_DATE: value = DateFormatUtils.formatDetailed(parameterization.modificationDate); break;
                 case ASSIGNED_TO: return "---"
                 case VISIBILITY: return "---"
                 default: return ""
@@ -188,8 +190,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                 case REVIEW_COMMENT: return 0;
                 case OWNER: return item?.getCreator()?.username;
                 case LAST_UPDATER: return item?.getLastUpdater()?.username;
-                case CREATION_DATE: return UIUtils.format(format, item.getCreationDate());
-                case LAST_MODIFICATION_DATE: return UIUtils.format(format, item.getModificationDate());
+                case CREATION_DATE: return DateFormatUtils.formatDetailed(item.creationDate)
+                case LAST_MODIFICATION_DATE: return DateFormatUtils.formatDetailed(item.modificationDate)
                 case ASSIGNED_TO: return "---"
                 case VISIBILITY: return "---"
                 default: return ""
@@ -215,8 +217,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     switch (columnIndex) {
                         case CREATION_DATE:
                         case LAST_MODIFICATION_DATE:
-                            if (value[columnIndex] instanceof Date)
-                                values.add(UIUtils.format(simpleDateFormat, value[columnIndex]))
+                            if (value[columnIndex] instanceof DateTime)
+                                values.add(simpleDateFormat.print(value[columnIndex]))
                             else
                                 values.add(value[columnIndex]);
                             break;

@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -91,8 +92,8 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
         }
     }
 
-    private boolean contains(Date value) {
-        return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.format(value)} != null
+    private boolean contains(DateTime value) {
+        return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.print(value)} != null
     }
 
     private boolean contains(String tag, String value) {

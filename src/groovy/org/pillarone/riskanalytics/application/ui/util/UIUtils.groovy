@@ -186,12 +186,4 @@ class UIUtils {
         UserContext.setAttribute(ROOT_PANE, pane)
     }
 
-    public static format(SimpleDateFormat format, Date date) {
-        try {
-            return format.format(date)
-        } catch (Exception ex) {
-            return null
-        }
-    }
-
 }

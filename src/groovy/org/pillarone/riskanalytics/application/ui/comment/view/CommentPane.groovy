@@ -9,7 +9,6 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
-import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
@@ -17,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -33,7 +33,6 @@ class CommentPane {
     EditCommentAction editCommentAction
     RemoveCommentAction removeCommentAction
     protected ParameterViewModel model
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat('dd.MM.yyyy HH:mm')
     String searchText = null
 
     public CommentPane(ParameterViewModel model, Comment comment, String searchText = null) {
@@ -110,7 +109,7 @@ class CommentPane {
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
         if (username != "")
             sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
-        sb.append(" " + simpleDateFormat.format(comment.lastChange))
+        sb.append(" " + DateFormatUtils.formatDetailed(comment.lastChange))
         return sb.toString()
     }
 

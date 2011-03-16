@@ -12,6 +12,8 @@ class UserContext {
     private static Map fallbackContext = [:]
     static Log LOG = LogFactory.getLog(UserContext)
 
+    public static final String USER_TIME_ZONE = "time_zone"
+
     public static void setAttribute(String key, Object value) {
         try {
             ApplicationContext.setAttribute key, value
@@ -42,6 +44,14 @@ class UserContext {
     public static boolean isStandAlone() {
         int type = ClientContext.getClientEnvironmentType()
         return type != ClientContext.APPLET && type != ClientContext.JNLP
+    }
+
+    public static void setUserTimeZone(TimeZone timeZone) {
+        setAttribute(USER_TIME_ZONE, timeZone)
+    }
+
+    public static TimeZone getUserTimeZone() {
+        return (TimeZone) getAttribute(USER_TIME_ZONE)
     }
 
 }

@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import com.ulcjava.base.application.ULCSpinnerDateModel
-import java.text.SimpleDateFormat
 import javax.sql.DataSource
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -28,6 +27,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -185,7 +185,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     Simulation getSimulation() {
         String name = simulationName
         if (name == null || name.trim().length() == 0) {
-            name = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss").format(new Date())
+            name = DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime())
         }
         Simulation simulation = new Simulation(name)
         simulation.modelClass = modelClass

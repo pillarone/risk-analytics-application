@@ -1,8 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import groovy.time.TimeCategory
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
@@ -17,6 +15,9 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguratio
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * The view model for the SimulationActionsPane.
@@ -26,7 +27,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 class SimulationActionsPaneModel {
 
     protected SimulationRunner runner
-    private DateFormat dateFormat = new SimpleDateFormat("HH:mm")
+    private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
     volatile Simulation simulation
@@ -89,35 +90,35 @@ class SimulationActionsPaneModel {
     }
 
     String getEstimatedEndTime() {
-        Date estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
+        DateTime estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
         if (estimatedSimulationEnd != null) {
-            return dateFormat.format(estimatedSimulationEnd)
+            return dateFormat.print(estimatedSimulationEnd)
         }
         return "-"
     }
 
     String getSimulationStartTime() {
-        Date estimatedSimulationEnd = simulation.start
+        DateTime estimatedSimulationEnd = simulation.start
         if (estimatedSimulationEnd != null) {
-            return dateFormat.format(estimatedSimulationEnd)
+            return dateFormat.print(estimatedSimulationEnd)
         }
         return "-"
     }
 
     String getSimulationEndTime() {
-        Date estimatedSimulationEnd = simulation.end
+        DateTime estimatedSimulationEnd = simulation.end
         if (estimatedSimulationEnd != null) {
-            return dateFormat.format(estimatedSimulationEnd)
+            return dateFormat.print(estimatedSimulationEnd)
         }
         return "-"
     }
 
     String getRemainingTime() {
         String result = "-"
-        Date end = runner.getEstimatedSimulationEnd()
+        DateTime end = runner.getEstimatedSimulationEnd()
         if (end != null) {
             use(TimeCategory) {
-                def duration = end - new Date()
+                def duration = end.toDate() - new Date()
                 result = "$duration.hours h $duration.minutes m $duration.seconds s"
             }
         }
