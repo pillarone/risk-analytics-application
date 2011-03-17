@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -16,8 +16,8 @@ import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.testframework.operator.*
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -45,7 +45,12 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
+        Comment comment = new Comment("Core:exampleInputOutputComponent", 0)
+        comment.text = "test"
+        parameterization.addComment(comment)
+        parameterization.save()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
+        parameterViewModel.setReadOnly(readOnly)
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
@@ -77,6 +82,10 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
         ULCComponentOperator tabbedPaneComments = new ULCComponentOperator(frameOperator, new ComponentByNameChooser('Comments'))
         assertNotNull tabbedPaneComments
+    }
+
+    protected boolean isReadOnly() {
+        return false
     }
 
 

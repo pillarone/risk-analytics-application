@@ -26,6 +26,7 @@ class NewCommentView {
     int periodIndex
     String path
     static int MAX_CHARS = 4080
+    final static String POST_LOCKING = "post locking"
 
     private ParameterViewModel model;
     protected CommentAndErrorView commentAndErrorView
@@ -34,16 +35,14 @@ class NewCommentView {
     public NewCommentView(CommentAndErrorView commentAndErrorView) {
         this.commentAndErrorView = commentAndErrorView
         this.model = commentAndErrorView.model
-        List allTags = Tag.findAll()
-        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), allTags)
+        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), getAllTags())
     }
 
     public NewCommentView(CommentAndErrorView commentAndErrorView, String path, int periodIndex) {
         this(commentAndErrorView)
         this.periodIndex = periodIndex
         this.path = path
-        List allTags = Tag.findAll()
-        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), allTags)
+        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), getAllTags())
 
         initComponents()
         layoutComponents()
@@ -103,6 +102,7 @@ class NewCommentView {
                 tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
                     comment.addTag(tag)
                 }
+                addPostLockingTag(comment)
                 model.addComment(comment)
                 commentAndErrorView.closeTab()
             } else if (text && text.length() > MAX_CHARS) {
@@ -118,7 +118,18 @@ class NewCommentView {
 
     }
 
+    public static List getAllTags() {
+        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ?", [POST_LOCKING])
+    }
+
     String getDisplayPath() {
         return CommentAndErrorView.getDisplayPath(model, path)
+    }
+
+    protected void addPostLockingTag(Comment comment) {
+        if (model.isReadOnly()) {
+            Tag postLocking = Tag.findByName(POST_LOCKING)
+            comment.addTag(postLocking)
+        }
     }
 }

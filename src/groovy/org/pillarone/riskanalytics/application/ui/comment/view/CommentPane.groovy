@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-
 import be.devijver.wikipedia.Parser
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
@@ -15,6 +12,8 @@ import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentActi
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 
@@ -63,12 +62,16 @@ class CommentPane {
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
+        Closure enablingClosure = {-> return comment.tags.any { it.name == NewCommentView.POST_LOCKING} || !model.isReadOnly()}
+        editCommentAction.enablingClosure = enablingClosure
         editButton = new ULCButton(editCommentAction)
         editButton.setContentAreaFilled false
         editButton.setBackground Color.white
         editButton.setOpaque false
         editButton.name = "editComment"
         removeCommentAction = new RemoveCommentAction(model, comment)
+        removeCommentAction.enablingClosure = enablingClosure
+
         deleteButton = new ULCButton(removeCommentAction)
         deleteButton.setContentAreaFilled false
         editButton.setOpaque true

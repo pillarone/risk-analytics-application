@@ -6,18 +6,19 @@ import java.awt.event.InputEvent
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -46,11 +47,13 @@ class AddNewComentTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
+        parameterViewModel.setReadOnly(readOnly)
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)
         frame.visible = true
+        new Tag(name: NewCommentView.POST_LOCKING).save()
     }
 
     void testAddNewComment() {
@@ -88,5 +91,9 @@ class AddNewComentTests extends AbstractSimpleFunctionalTest {
         println parameterization.comments.get(0).path
         assertEquals 1, tabbedPaneOperator.getComponentCount()
 
+    }
+
+    protected boolean isReadOnly() {
+        return false
     }
 }
