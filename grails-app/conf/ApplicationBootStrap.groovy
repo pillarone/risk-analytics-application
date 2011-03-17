@@ -1,8 +1,9 @@
 import grails.util.Environment
-
-import org.pillarone.riskanalytics.application.jobs.JobScheduler
-import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
+import org.pillarone.riskanalytics.application.jobs.JobScheduler
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 
 class ApplicationBootStrap {
 
@@ -19,8 +20,16 @@ class ApplicationBootStrap {
         }
         new ResultStructureImportService().compareFilesAndWriteToDB(models)
         ResultStructureImportService.importDefaults()
+        Tag.withTransaction { status ->
+            if (!Tag.findByName(NewCommentView.POST_LOCKING)) {
+                // for master version :  new Tag(name: NewCommentView.POST_LOCKING, tagType: EnumTagType.COMMENT).save()
+                new Tag(name: NewCommentView.POST_LOCKING).save()
+            }
+        }
+
         // start a quartz job scheduler for a batch
         new JobScheduler().start()
+
 
     }
 
