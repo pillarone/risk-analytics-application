@@ -33,7 +33,6 @@ class ResultView extends AbstractModellingFunctionView {
         super(model)
         tabbedPane = new ULCDetachableTabbedPane()
         tabbedPane.addTabListener([tabClosing: {TabEvent event -> event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())}] as ITabListener)
-        tabbedPane.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
     }
 
     protected void initTree() {
@@ -58,6 +57,9 @@ class ResultView extends AbstractModellingFunctionView {
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
         }
+        tree.rowHeaderView.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK))
+        tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_FOCUSED)
+
     }
 
     protected void addPrecisionFunctions(ULCToolBar toolbar) {
