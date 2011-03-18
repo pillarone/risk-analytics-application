@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.simulation.engine.actions.PeriodAction
 import org.pillarone.riskanalytics.core.simulation.engine.actions.SimulationAction
 import static org.pillarone.riskanalytics.core.simulation.SimulationState.*
 import org.pillarone.riskanalytics.core.simulation.engine.*
+import org.joda.time.DateTime
 
 class MockSimulationRunner extends SimulationRunner {
 
@@ -16,9 +17,9 @@ class MockSimulationRunner extends SimulationRunner {
 
     private List states = [INITIALIZING, RUNNING, RUNNING, RUNNING, SAVING_RESULTS, POST_SIMULATION_CALCULATIONS, FINISHED]
     private List progress = [0, 33, 66, 99, 0, 50, 100]
-    private List dates = [null, new GregorianCalendar(2010, 6, 5).time, new GregorianCalendar(2010, 6, 5).time, new GregorianCalendar(2010, 6, 5).time, null, new GregorianCalendar(2010, 6, 5).time, new GregorianCalendar(2010, 6, 5).time]
+    private List<DateTime> dates = [null, new DateTime(2010, 6, 5, 0, 0, 0, 0), new DateTime(2010, 6, 5, 0, 0, 0, 0), new DateTime(2010, 6, 5, 0, 0, 0, 0), null, new DateTime(2010, 6, 5, 0, 0, 0, 0), new DateTime(2010, 6, 5, 0, 0, 0, 0)]
 
-    Date getEstimatedSimulationEnd() {
+    DateTime getEstimatedSimulationEnd() {
         return dates[count]
     }
 

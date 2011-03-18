@@ -105,10 +105,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     void layoutComponents() {
-        ULCScrollPane treeScrollPane = new ULCScrollPane(selectionTreeView.content)
-        treeScrollPane.minimumSize = new Dimension(200, 600)
         modelPane.minimumSize = new Dimension(600, 600)
-        treePane.add(ULCBoxPane.BOX_EXPAND_EXPAND, treeScrollPane)
+        treePane.add(ULCBoxPane.BOX_EXPAND_EXPAND, selectionTreeView.content)
         ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.HORIZONTAL_SPLIT)
         splitPane.oneTouchExpandable = true
         splitPane.setResizeWeight(1)
@@ -153,7 +151,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         importAllAction = new ImportAllAction(this, model, "ImportAllParameterizations")
         saveAction = new SaveAction(model)
         settingsAction = new ShowUserSettingsAction(this)
-        runAction = new SimulationAction(null, model)
+        runAction = new SimulationAction(selectionTreeView.getSelectionTree(), model)
         syncMenuBar()
         menuBar = new ULCMenuBar()
         ULCMenu fileMenu = new ULCMenu(getText("File"))
@@ -164,13 +162,14 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         saveItem.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false)
         ULCMenuItem saveAllItem = new ULCMenuItem(new SaveAllAction(model))
         ULCMenuItem refreshItem = new ULCMenuItem(refreshAction)
-        ULCMenuItem runItem = new ULCMenuItem(runAction)
+        ULCMenuItem runItem = new SimulationRunMenuItem(runAction)
         ULCMenuItem exportAllItemsNewstVersion = new ULCMenuItem(exportAllNewestVersionAction)
         ULCMenuItem exportAllItems = new ULCMenuItem(exportAllAction)
         ULCMenuItem importAllItems = new ULCMenuItem(importAllAction)
 
 
         fileMenu.add(runItem)
+        selectionTreeView.getSelectionTree().addTreeSelectionListener(runItem)
         fileMenu.add(refreshItem)
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)

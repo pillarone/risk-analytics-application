@@ -85,7 +85,6 @@ class CompareSimulationsViewModelTests extends GroovyTestCase {
         simulationRun1.periodCount = 2
         simulationRun1.iterations = 5
         simulationRun1.randomSeed = 0
-        simulationRun1.modelVersionNumber = "1"
 
         simulationRun1 = simulationRun1.save(flush: true)
 
@@ -97,7 +96,6 @@ class CompareSimulationsViewModelTests extends GroovyTestCase {
         simulationRun2.periodCount = 2
         simulationRun2.iterations = 5
         simulationRun2.randomSeed = 0
-        simulationRun2.modelVersionNumber = "1"
 
         simulationRun2 = simulationRun2.save(flush: true)
     }

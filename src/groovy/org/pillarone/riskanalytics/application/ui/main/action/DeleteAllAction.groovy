@@ -70,4 +70,10 @@ abstract class DeleteAllAction extends SelectionTreeAction {
         model.fireModelChanged()
     }
 
+    @Override
+    boolean isEnabled() {
+        return false
+    }
+
+
 }

@@ -9,8 +9,7 @@ import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensiona
 /**
  Format a MultiDimensionalParam for the parameter view, where only an indication of the
  backing data should be shown.
- These methods are used for the cell value itself. The tooltip content is defined in
-  {@link MultiDimensionalCellRenderer}
+ These methods are used for the cell value itself. The tooltip content is defined in{@link MultiDimensionalCellRenderer}
  */
 public class Formatter {
 
@@ -31,8 +30,10 @@ public class Formatter {
     static String format(List list, Locale locale) {
         if (list.any {it instanceof List}) {
             StringBuilder result = new StringBuilder()
+            String results = list.collect {format(it, locale)}.join("; ")
+            if (results == "") return ""
             result << "["
-            result << list.collect {format(it, locale)}.join("; ")
+            result << results
             result << "]"
             return result.toString()
         }
@@ -49,6 +50,11 @@ public class Formatter {
                 return String.valueOf(it)
             }
         }
-        return "[${values.join("; ")}]".toString()
+        String joinValue = values.join("; ")
+        if (values.size() == 0 || joinValue == "") {
+            return ""
+        }
+
+        return "[${joinValue}]".toString()
     }
 }

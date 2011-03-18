@@ -39,7 +39,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void init() {
-
+        setIterations()
         nodes.eachWithIndex { ResultTableTreeNode resultTableTreeNode, int nodeIndex ->
             if (!singleValueResultsMap[nodeIndex])
                 singleValueResultsMap[nodeIndex] = ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun)
@@ -97,6 +97,10 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
 
     public int getIndexOfChild(Object parent, Object child) {
         return parent.getIndex(child)
+    }
+
+    public void setIterations() {
+        this.iterations = Math.min(iterations, getMaxIteration())
     }
 
     int getMaxIteration() {

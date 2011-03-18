@@ -1,4 +1,4 @@
-<plugin name='risk-analytics-application' version='1.3-ALPHA-4.1-kti' grailsVersion='1.3.4 &gt; *'>
+<plugin name='risk-analytics-application' version='1.3-BETA-2.1-kti' grailsVersion='1.3.4 &gt; *'>
   <author>Intuitive Collaboration AG</author>
   <authorEmail>info@pillarone.org</authorEmail>
   <title>RiskAnalytics application</title>
@@ -8,6 +8,7 @@ ULC view
   <documentation>http://www.pillarone.org</documentation>
   <resources>
     <resource>ApplicationBootStrap</resource>
+    <resource>BootStrap</resource>
     <resource>BuildConfig</resource>
     <resource>Config</resource>
     <resource>DataSource</resource>
@@ -16,9 +17,6 @@ ULC view
     <resource>org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO</resource>
     <resource>org.pillarone.riskanalytics.application.output.structure.StructureMapping</resource>
   </resources>
-  <dependencies>
-    <plugin name='ulc' version='2008 &gt; *' />
-    <plugin name='jasper' version='0.9.5-riskanalytics' />
-  </dependencies>
+  <dependencies />
   <behavior />
 </plugin>

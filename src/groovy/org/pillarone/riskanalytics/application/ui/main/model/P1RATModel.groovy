@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Compare
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
@@ -29,7 +30,6 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -68,6 +68,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             return viewModelsInUse[item]
         }
         ParameterViewModel model = new ParameterViewModel(simulationModel, item, ModelStructure.getStructureForModel(simulationModel.class))
+        model.p1RATModel = this
         registerModel(item, model)
         return model
     }
@@ -81,6 +82,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             return viewModelsInUse[item]
         }
         ResultConfigurationViewModel model = new ResultConfigurationViewModel(simulationModel, item, ModelStructure.getStructureForModel(simulationModel.class))
+        model.p1RATModel = this
         registerModel(item, model)
         return model
     }
@@ -245,7 +247,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     protected void saveItem(Parameterization item) {
-        viewModelsInUse[currentItem].removeInvisibleComments()
+        viewModelsInUse[item]?.removeInvisibleComments()
 
         ExceptionSafe.protect {
             item.save()
@@ -353,14 +355,18 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         item.daoClass.withTransaction {status ->
             item.load()
             ModellingItem modellingItem = ModellingItemFactory.incrementVersion(item)
-            modellingItem.id = null
             fireModelChanged()
             selectionTreeModel.addNodeForItem(modellingItem)
-            notifyOpenDetailView(model, modellingItem)
+            openItem(model, modellingItem)
         }
     }
 
     public void openItem(Model model, Parameterization item) {
+        item.load()
+        notifyOpenDetailView(model, item)
+    }
+
+    public void openItem(Model model, ResultConfiguration item) {
         item.load()
         notifyOpenDetailView(model, item)
     }
@@ -433,28 +439,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
 
         notifyOpenDetailView(model, parameterizations)
-    }
-
-    private void handleEvent(String value, String firstButtonValue, String secondButtonValue, Model model, ModellingItem item) {
-        //in case hibernate collections are accessed by the simulation at the same time
-        synchronized (item) {
-            if (value.equals(firstButtonValue)) {
-                ModellingItem modellingItem
-                item.daoClass.withTransaction {status ->
-                    item.load()
-                    modellingItem = ModellingItemFactory.incrementVersion(item)
-                    modellingItem.id = null
-                    fireModelChanged()
-                    selectionTreeModel.addNodeForItem(modellingItem)
-                }
-                openItem(model, modellingItem)
-            } else if (value.equals(secondButtonValue)) {
-                item.daoClass.withTransaction {status ->
-                    item.load()
-                    notifyOpenDetailView(model, item)
-                }
-            }
-        }
     }
 
     public void closeItem(Model model, ModellingItem item) {

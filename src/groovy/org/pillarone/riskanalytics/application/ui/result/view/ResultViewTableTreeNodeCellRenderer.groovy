@@ -222,7 +222,11 @@ class ChartRenameListener implements IModelChangedListener {
     }
 
     public void modelChanged() {
-        tabbedPane.setTitleAt(panelIndex, format(model.chartProperties.title))
+        try {
+            tabbedPane.setTitleAt(panelIndex, format(model.chartProperties.title))
+        } catch (Exception ex) {
+            //ignore exception due an undocked pane
+        }
     }
 
     private String format(String title) {

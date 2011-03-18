@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentLis
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
@@ -29,6 +30,7 @@ class ParameterViewModel extends AbstractModellingModel {
     private List<ChangedCommentListener> changedCommentListeners
     private List<TabbedPaneChangeListener> tabbedPaneChangeListeners
     private List<NavigationListener> navigationListeners
+    public P1RATModel p1RATModel
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
@@ -47,6 +49,11 @@ class ParameterViewModel extends AbstractModellingModel {
                 [valueChanged: {Object node, int column -> item.changed = true}] as TableTreeValueChangedListener)
         paramterTableTreeModel.readOnly = !item.isEditable()
         return paramterTableTreeModel
+    }
+
+    @Override
+    public void saveItem() {
+        p1RATModel.saveItem(item)
     }
 
     void save() {
@@ -184,6 +191,10 @@ class ParameterViewModel extends AbstractModellingModel {
             node.comments << comment
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
+    }
+
+    boolean isNotEmpty(String path) {
+        return item.comments.any {it.path == path && !it.deleted && commentIsVisible(it)}
     }
 
     void navigationSelected(boolean comment) {

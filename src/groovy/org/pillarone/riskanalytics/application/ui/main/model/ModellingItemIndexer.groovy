@@ -32,6 +32,8 @@ class ModellingItemIndexer {
         // the boolean arg in the IndexWriter ctor means to
         // create a new index, overwriting any existing index
         indexWriter = new IndexWriter(index, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+        indexWriter.optimize();
+
         indexItems()
     }
 

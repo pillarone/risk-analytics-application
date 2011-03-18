@@ -33,6 +33,10 @@ abstract class AbstractCommentAction extends ResourceBasedAction {
         }
     }
 
+    String getPath() {
+        return tree?.selectedPath?.lastPathComponent?.path
+    }
+
 
 
     void addCommentListener(CommentListener listener) {

@@ -9,7 +9,6 @@ import org.pillarone.riskanalytics.core.remoting.TransactionInfo
 import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
-import org.joda.time.DateTime
 
 class DealLinkDialog {
     ITransactionService transactionService
@@ -115,7 +114,7 @@ class DealLinkDialog {
             parameterization.load()
         }
         if (parameterization.valuationDate != null) {
-            valuationDatePaneModel.setDate(new DateTime(parameterization.valuationDate))
+            valuationDatePaneModel.setDate(parameterization.valuationDate)
         }
         if (parameterization.dealId == null) return
 

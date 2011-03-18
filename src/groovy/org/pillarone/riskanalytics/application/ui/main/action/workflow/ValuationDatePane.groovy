@@ -1,9 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
+import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComboBox
 import com.ulcjava.base.application.ULCSpinner
-import com.ulcjava.base.application.ULCLabel
-import com.ulcjava.base.application.ULCBoxPane
 
 class ValuationDatePane {
 
@@ -29,6 +28,7 @@ class ValuationDatePane {
         quarter = new ULCComboBox(model.quarterComboBoxModel)
         quarter.name = "quarter"
         year = new ULCSpinner(model.yearSpinnerModel)
+        year.setEditor(new ULCSpinner.ULCNumberEditor(year, "###0000"))
         year.name = "year"
 
         content = new ULCBoxPane(4, 1, 50, 50)

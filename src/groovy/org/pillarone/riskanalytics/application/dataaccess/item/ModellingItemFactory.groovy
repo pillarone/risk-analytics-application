@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.joda.time.DateTime
 
 class ModellingItemFactory {
 
@@ -160,7 +161,7 @@ class ModellingItemFactory {
         }
         if (item instanceof Parameterization || item instanceof ResultConfiguration) {
             if (item.creationDate == null) {
-                item.creationDate = new Date()
+                item.creationDate = new DateTime()
             }
         }
 
@@ -351,6 +352,7 @@ class ModellingItemFactory {
         if (item.srcCode != null) {
             newItem.srcCode = item.srcCode
             newItem.versionNumber = VersionNumber.incrementVersion(item)
+            newItem.modelClass = item.modelClass
         }
         def newID = newItem.save()
         newItem.load()

@@ -19,7 +19,7 @@ class IterationResultTableRenderer extends DefaultTableCellRenderer {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
         ULCPopupMenu menu = new ULCPopupMenu()
         menu.add(new ULCMenuItem(new ShowIterationInTreeViewAction(model.resultView.model, model.resultView.tree.viewPortTableTree, new ULCTextField(value: value), model.resultView, table)))
-        if (model.isSingle())
+        if (model.isSingle() && (value instanceof Integer))
             menu.add(new ULCMenuItem(new ShowSingleValueCollectorAction(model, (int) value)))
         component.setComponentPopupMenu(menu)
         setDataType getLocalNumberDataType()

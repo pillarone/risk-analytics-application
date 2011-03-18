@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AssignableTypeFilter
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 class ResultStructureImportService extends FileImportService {
 
@@ -27,7 +28,7 @@ class ResultStructureImportService extends FileImportService {
         }
         LOG.info "All available model ${allModels*.simpleName}"
         for (String modelClassName in modelFilter) {
-            Class modelClass = allModels.find { it.name.endsWith(modelClassName)}
+            Class modelClass = allModels.find { it.simpleName == modelClassName}
             if (ResultStructureDAO.countByModelClassNameAndNameLike(modelClass.name, DEFAULT_NAME) == 0) {
                 LOG.info "No default result structure found for model ${modelClass.simpleName} - importing default"
                 DefaultResultStructureBuilder.create(DEFAULT_NAME, modelClass).save()
@@ -51,7 +52,9 @@ class ResultStructureImportService extends FileImportService {
     }
 
     String prepare(URL file, String itemName) {
-        currentConfigObject = new ConfigSlurper().parse(readFromURL(file))
+        GroovyUtils.parseGroovyScript readFromURL(file), { ConfigObject config ->
+            currentConfigObject = config
+        }
         String name = itemName - ".groovy"
         if (currentConfigObject.containsKey('displayName')) {
             name = currentConfigObject.displayName

@@ -29,7 +29,7 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
     }
 
     protected void initTree() {
-        treeTitle = new ULCLabel("Select the key figures to be collected during the simulation:")
+        treeTitle = new ULCLabel(UIUtils.getText(ResultConfigurationView.class, "selectTheKeyFigures") + ":")
 
         int treeWidth = UIUtils.calculateTreeWidth(model.treeModel.root)
         int fixColumnCount = 1
@@ -37,7 +37,7 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
         tree = new ULCFixedColumnTableTree(model.treeModel, fixColumnCount, ([treeWidth] + [100] * model.periodCount) as int[])
         tree.viewPortTableTree.name = "resultConfigurationTreeContent"
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
-            it.headerValue = "Collection mode"
+            it.headerValue = UIUtils.getText(ResultConfigurationView.class, "CollectionMode")
             it.setCellRenderer(new DelegatingCellRenderer(createRendererConfiguration(index + fixColumnCount, tree.viewPortTableTree)))
             it.setCellEditor(new DelegatingCellEditor(createEditorConfiguration()))
             it.setHeaderRenderer(new CenteredHeaderRenderer())

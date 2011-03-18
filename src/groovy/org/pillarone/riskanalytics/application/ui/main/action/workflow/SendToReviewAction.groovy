@@ -1,11 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
-import org.pillarone.riskanalytics.core.workflow.Status
-
-import org.pillarone.riskanalytics.core.user.UserManagement
-
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.workflow.Status
 
 class SendToReviewAction extends AbstractWorkflowAction {
 
@@ -17,8 +15,10 @@ class SendToReviewAction extends AbstractWorkflowAction {
         Status.IN_REVIEW
     }
 
-    protected String requiredRole() {
-        UserManagement.USER_ROLE
+    @Override
+    protected List allowedRoles() {
+        return [UserManagement.USER_ROLE]
     }
+
 
 }

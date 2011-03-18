@@ -1,5 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.simulation.item.*
+
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -15,12 +22,6 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-import org.pillarone.riskanalytics.core.util.GroovyUtils
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.core.simulation.item.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -227,6 +228,7 @@ class ModellingInformationTableTreeBuilder {
     public void removeNodeForItem(ModellingItem item) {
         ITableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         def itemNode = findNodeForItem(groupNode, item)
+        if (!itemNode) return
         if (itemNode instanceof SimulationNode) {
             itemNode.removeAllChildren()
         } else {
@@ -412,6 +414,7 @@ class ModellingInformationTableTreeBuilder {
 
         node.add(paramsNode)
         node.add(templateNode)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
         return node
     }
 
@@ -442,7 +445,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private boolean nodeMatches(item, SimulationNode node) {
-        return node.item == item
+        return (node.item == item) || (node.item.id == item.id)
     }
 
     private boolean nodeMatches(item, BatchRunNode node) {

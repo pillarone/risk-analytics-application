@@ -46,8 +46,10 @@ class StartWorkflowAction extends AbstractWorkflowAction {
         return Status.DATA_ENTRY
     }
 
-    protected String requiredRole() {
-        UserManagement.USER_ROLE
+
+    @Override
+    protected List allowedRoles() {
+        return [UserManagement.USER_ROLE]
     }
 
 

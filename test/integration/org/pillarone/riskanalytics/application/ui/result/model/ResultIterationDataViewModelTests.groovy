@@ -38,7 +38,6 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         simulationRun.periodCount = 2
         simulationRun.iterations = 5
         simulationRun.randomSeed = 0
-        simulationRun.modelVersionNumber = "1"
 
         simulationRun = simulationRun.save(flush: true)
 
@@ -340,8 +339,8 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     private void initResults() {
         simulationRun.iterations.times {int iteration ->
             simulationRun.periodCount.times {int period ->
-                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration+1), valueIndex: 0, value: (iteration + 1) * (period + 1), field: field, path: path1, collector: collector)
-                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration+1), valueIndex: 0, value: (iteration + 1) * (period + 1) * 3, field: field, path: path2, collector: collector)
+                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1), field: field, path: path1, collector: collector)
+                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1) * 3, field: field, path: path2, collector: collector)
             }
         }
     }
@@ -349,9 +348,9 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     private void initResultsWithDifferentFields() {
         simulationRun.iterations.times {int iteration ->
             simulationRun.periodCount.times {int period ->
-                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration+1), valueIndex: 0, value: (iteration + 1) * (period + 1), field: field, path: path1, collector: collector)
-                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration+1), valueIndex: 0, value: (iteration + 1) * (period + 1) * 3, field: field, path: path2, collector: collector)
-                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration+1), valueIndex: 0, value: 5, field: field2, path: path1, collector: collector)
+                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1), field: field, path: path1, collector: collector)
+                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1) * 3, field: field, path: path2, collector: collector)
+                writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: 5, field: field2, path: path1, collector: collector)
             }
         }
     }
@@ -363,13 +362,14 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
             def parent = new SimpleTableTreeNode(testPath)
             def result = new ResultTableTreeNode("ultimate")
             result.resultPath = "$testPath:ultimate"
+            result.collector = collector.collectorName
             parent.add(result)
             res << result
         }
         return res
     }
 
-     private void writeResult(SingleValueResult result) {
+    private void writeResult(SingleValueResult result) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
         dos.writeInt(result.iteration);
@@ -377,7 +377,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         dos.writeDouble(result.value);
         dos.writeLong(0);
 
-        resultWriter.writeResult(new ResultTransferObject(new ResultDescriptor(result.field.id, result.path.id, result.period), null, bos.toByteArray(), 0));
+        resultWriter.writeResult(new ResultTransferObject(new ResultDescriptor(result.field.id, result.path.id, collector.id, result.period), null, bos.toByteArray(), 0));
     }
 
 

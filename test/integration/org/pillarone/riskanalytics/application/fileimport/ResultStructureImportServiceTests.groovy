@@ -16,11 +16,12 @@ class ResultStructureImportServiceTests extends GroovyTestCase {
 
         ResultStructureImportService.importDefaults()
 
-        assertEquals 4, ResultStructureDAO.count()
+        List allDaos = ResultStructureDAO.list()
+        assertEquals allDaos.collect { it.modelClassName + " " + it.name}.toString(), 5, allDaos.size()
         assertTrue StructureMapping.count() > initialMappings
 
         ResultStructure resultStructure = new ResultStructure(ResultStructureImportService.DEFAULT_NAME, ApplicationModel)
-        resultStructure.load ()
+        resultStructure.load()
 
         ResultNode node = resultStructure.rootNode
         assertEquals 2, node.childCount

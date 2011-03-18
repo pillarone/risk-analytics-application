@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -51,7 +52,7 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
 
     boolean internalAcceptNode(SimulationNode node) {
         if (allSelected || !values || values.size() == 0) return true
-        return contains(node.values[column])
+        return contains(node.values[0])
     }
 
     boolean internalAcceptNode(ITableTreeNode node) {
@@ -63,17 +64,15 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
         if (column == ModellingInformationTableTreeModel.NAME) {
             if (values.size() == 0) return false
             for (String name: values) {
-                if (value != null && value.indexOf(name) != -1) {
+                if (value != null && value == name) {
                     found = true
                     break
                 }
             }
         } else if (column == ModellingInformationTableTreeModel.TAGS) {
             for (String tag: values) {
-                if (value != null && value.indexOf(tag) != -1) {
-                    found = true
-                    break
-                }
+                found = contains(tag, value)
+                if (found) break;
             }
         } else {
             found = values?.contains(value);
@@ -93,8 +92,13 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
         }
     }
 
-    private boolean contains(Date value) {
-        return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.format(value)} != null
+    private boolean contains(DateTime value) {
+        return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.print(value)} != null
+    }
+
+    private boolean contains(String tag, String value) {
+        if (!value) return false
+        return value.split(",").any { it == tag}
     }
 
 }

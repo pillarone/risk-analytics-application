@@ -8,8 +8,6 @@ import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
@@ -39,14 +37,9 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
     abstract Status toStatus()
 
     final boolean isEnabled() {
-        try {
-            Person user = UserManagement.getCurrentUser()
-            return user != null && user.getAuthorities()*.authority.contains(requiredRole()) && isActionEnabled()
-        } catch (Exception ex) {}
-        return false
+        return super.isEnabled() && isActionEnabled()
     }
 
-    abstract protected String requiredRole()
 
     protected boolean isActionEnabled() {
         return true

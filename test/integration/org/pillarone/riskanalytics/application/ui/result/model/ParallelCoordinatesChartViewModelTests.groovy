@@ -48,7 +48,6 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
         simulationRun.periodCount = 2
         simulationRun.iterations = 5
         simulationRun.randomSeed = 0
-        simulationRun.modelVersionNumber = "1"
 
         simulationRun = simulationRun.save(flush: true)
         resultWriter = new ResultWriter(simulationRun.id)
@@ -146,7 +145,7 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
         dos.writeDouble(result.value);
         dos.writeLong(0);
 
-        resultWriter.writeResult(new ResultTransferObject(new ResultDescriptor(result.field.id, result.path.id, result.period), null, bos.toByteArray(), 0));
+        resultWriter.writeResult(new ResultTransferObject(new ResultDescriptor(result.field.id, result.path.id, result.collector.id, result.period), null, bos.toByteArray(), 0));
     }
 
     private List createResultNodes() {
@@ -156,6 +155,7 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
             def parent = new SimpleTableTreeNode(testPath)
             def result = new ResultTableTreeNode("ultimate")
             result.resultPath = "$testPath:ultimate"
+            result.collector = collector.collectorName
             parent.add(result)
             res << result
         }

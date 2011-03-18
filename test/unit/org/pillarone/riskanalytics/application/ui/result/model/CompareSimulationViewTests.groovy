@@ -26,7 +26,6 @@ class CompareSimulationViewTests extends AbstractP1RATTestCase {
         comboBoxOperator.selectItem 1
         assertEquals "selected item in combobox, but no action", 1, counter
 
-
     }
 
     ULCComponent createContentPane() {

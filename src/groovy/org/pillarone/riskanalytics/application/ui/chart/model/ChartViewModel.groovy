@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 abstract class ChartViewModel {
     protected List series = []
@@ -83,7 +84,7 @@ abstract class ChartViewModel {
             data << ["Structure:", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
             data << ["Number of Periods:", simulation.periodCount]
             data << ["Number of Iterations:", simulation.numberOfIterations]
-            data << ["Simulation end Date:", simulation.end ? new SimpleDateFormat('dd.MM.yyyy').format(simulation.end) : ""]
+            data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
             return data
         }
     }

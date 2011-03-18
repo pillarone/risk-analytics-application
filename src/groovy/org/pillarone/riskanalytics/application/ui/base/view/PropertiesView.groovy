@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import com.ulcjava.base.application.*
-import java.text.SimpleDateFormat
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 class PropertiesView implements IGuiUpdate {
 
@@ -53,13 +53,13 @@ class PropertiesView implements IGuiUpdate {
 
     private String getCreatorInfo() {
         String creator = model.item.creator.username
-        String date = model.item.creationDate ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(model.item.creationDate) : ""
+        String date = DateFormatUtils.formatDetailed(model.item.creationDate)
         return getTextByKeys("creator", date, creator)
     }
 
     private String getModificatorInfo() {
         String changer = model.item.lastUpdater.username
-        String date = model.item.modificationDate ? new SimpleDateFormat('dd.MM.yyyy HH:mm').format(model.item.modificationDate) : ""
+        String date = DateFormatUtils.formatDetailed(model.item.modificationDate)
         return getTextByKeys("modificator", date, changer)
     }
 

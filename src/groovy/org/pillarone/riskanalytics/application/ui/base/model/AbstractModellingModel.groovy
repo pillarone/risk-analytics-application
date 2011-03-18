@@ -11,8 +11,6 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 abstract class AbstractModellingModel {
 
     int periodCount
-    //TODO maybe redundant, check
-    //ITableTreeNode treeRoot
     Model model
     String structureFileName
     String modellingFileName
@@ -85,6 +83,10 @@ abstract class AbstractModellingModel {
 
     String getPeriodLabel(int periodIndex) {
         return "Q$periodIndex".toString()
+    }
+
+    public void saveItem() {
+
     }
 
 }

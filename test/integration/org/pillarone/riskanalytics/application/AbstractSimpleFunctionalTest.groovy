@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.ModelDAO
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -37,6 +38,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
                     ResultConfigurationDAO.list()*.delete()
                     ParameterizationDAO.list()*.delete()
                     ModelStructureDAO.list()*.delete()
+                    ModelDAO.list()*.delete()
                 }] as Runnable
         )
         cleanUpThread.start()

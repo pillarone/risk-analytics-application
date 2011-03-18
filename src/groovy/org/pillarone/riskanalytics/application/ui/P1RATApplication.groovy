@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCMinimalSizeFrame
+import org.pillarone.riskanalytics.application.UserContext
 
 class P1RATApplication extends AbstractApplication {
 
@@ -22,6 +23,14 @@ class P1RATApplication extends AbstractApplication {
 
     public void start() {
         ClientContext.sendMessage("hideSplash");
+        if (UserContext.isStandAlone()) {
+            try {
+                UserContext.setUserTimeZone(TimeZone.getTimeZone(System.getProperty("user.timezone")))
+            } catch (Exception e) {
+                UserContext.setUserTimeZone(TimeZone.getTimeZone("UTC"))
+            }
+        }
+
         initMainView()
     }
 

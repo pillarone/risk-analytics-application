@@ -218,9 +218,7 @@ class QueryPaneModel extends AbstractPresentationModel {
     }
 
     protected List queryResultsHQL(CriteriaViewModel criteria) {
-         List list=ResultAccessor.getCriteriaConstrainedIterations(simulationRun,criteria.selectedPeriod,criteria.selectedPath
-        ,criteria.field,criteria.selectedComparator.toString(),criteria.interpretedValue);
-        return list;
+        return ResultAccessor.getCriteriaConstrainedIterations(simulationRun, criteria.selectedPeriod, criteria.selectedPath, criteria.field, criteria.collector, criteria.selectedComparator.toString(), criteria.interpretedValue);
     }
 
     protected String createCriteriaSubQuerry(CriteriaViewModel model) {
@@ -235,8 +233,52 @@ class QueryPaneModel extends AbstractPresentationModel {
         List lastQueryResults = []
         List resultsPerPathAndPeriod = []
         List iterations = new ArrayList(results)
+        if (iterations.size() == 0) {
+            return []
+        }
         iterations = iterations.sort()
 
+        List<List<Integer>> splitUpIterations = getSplitUpIterations(iterations)
+
+        if (orderByPath) {
+            nodes.each {ResultTableTreeNode node ->
+                simulationRun.periodCount.times {int period ->
+                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, splitUpIterations)
+                }
+            }
+        } else {
+            simulationRun.periodCount.times {int period ->
+                nodes.each {ResultTableTreeNode node ->
+                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, splitUpIterations)
+                }
+            }
+        }
+
+        iterations.eachWithIndex {int iterationNumber, int index ->
+            List row = []
+            row << iterationNumber
+            resultsPerPathAndPeriod.each {List pathResults ->
+                row << pathResults[index]
+            }
+            lastQueryResults << row
+        }
+
+        return lastQueryResults
+    }
+
+    private void addResultsPerPathAndPeriod(ResultTableTreeNode node, int period, List resultsPerPathAndPeriod, List<List<Integer>> splitUpIterations) {
+        String path = node.path
+        String field = node.field
+        List periodList = []
+
+        for (List<Integer> list in splitUpIterations) {
+            periodList.addAll(ResultAccessor.getIterationConstrainedValues(simulationRun, period, path, field, node.collector, list))
+
+        }
+        resultsPerPathAndPeriod << periodList
+    }
+
+    List getSplitUpIterations(List iterations) {
         //do not use more than 1000 ids in the in clause
         List<List<Integer>> splitUpIterations = []
         if (iterations.size() > 1000) {
@@ -250,65 +292,8 @@ class QueryPaneModel extends AbstractPresentationModel {
         } else {
             splitUpIterations << iterations
         }
-
-        if (iterations.size() == 0) {
-            return []
-        }
-
-        if (orderByPath) {
-            nodes.each {ResultTableTreeNode node ->
-                String path = node.path
-                String field = node.field
-                simulationRun.periodCount.times {int period ->
-                    List periodList = []
-                    for (List<Integer> list in splitUpIterations) {
-                        String q = "SELECT s.value " +
-                                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                                "WHERE s.simulationRun.id = " + simulationRun.id +
-                                " AND s.period = " + period +
-                                " AND s.path.pathName = '" + path + "'" +
-                                " AND s.field.fieldName = '" + field + "'" +
-                                " AND s.iteration in (:list) ORDER BY s.iteration"
-                        //periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
-                        periodList.addAll(ResultAccessor.getIterationConstrainedValues(simulationRun,period,path,field,
-                        list));
-                    }
-                    resultsPerPathAndPeriod << periodList
-                }
-            }
-        } else {
-            simulationRun.periodCount.times {int period ->
-                nodes.each {ResultTableTreeNode node ->
-                    String path = node.path
-                    String field = node.field
-                    List periodList = []
-                    for (List<Integer> list in splitUpIterations) {
-                        String q = "SELECT s.value " +
-                                "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                                "WHERE s.simulationRun.id = " + simulationRun.id +
-                                " AND s.period = " + period +
-                                " AND s.path.pathName = '" + path + "'" +
-                                " AND s.field.fieldName = '" + field + "'" +
-                                " AND s.iteration in (:list) ORDER BY s.iteration"
-                        //periodList.addAll(SingleValueResult.executeQuery(q, ["list": list]))
-                        periodList.addAll(ResultAccessor.getIterationConstrainedValues(simulationRun,period,path,field,
-                        list));
-                    }
-                    resultsPerPathAndPeriod << periodList
-                }
-            }
-        }
-
-
-        iterations.eachWithIndex {int iterationNumber, int index ->
-            List row = []
-            row << iterationNumber
-            resultsPerPathAndPeriod.each {List pathResults ->
-                row << pathResults[index]
-            }
-            lastQueryResults << row
-        }
-
-        return lastQueryResults
+        return splitUpIterations
     }
+
+
 }

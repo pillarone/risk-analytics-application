@@ -14,6 +14,7 @@ import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
@@ -30,6 +31,7 @@ abstract class AbstractModellingTreeView {
     ULCComboBox filterSelection
     ULCToolBar toolbar
     ULCToolBar selectionToolbar
+    IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert("CtrlA").show() }] as IActionListener
 
 
     public AbstractModellingTreeView(def model) {
@@ -117,7 +119,10 @@ abstract class AbstractModellingTreeView {
     private void layoutComponents() {
         ULCBoxPane toolbarBox = new ULCBoxPane(1, 0, 5, 5)
         toolbarBox.add(new ULCFiller(0, 0))
-        toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, selectionToolbar)
+        ULCBoxPane pane = new ULCBoxPane(2, 0)
+        pane.add(selectionToolbar)
+        pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        toolbarBox.add(ULCBoxPane.BOX_EXPAND_TOP, pane)
         toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, toolbar)
         toolbarBox.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
         viewComponent = layoutContent(toolbarBox)
@@ -142,6 +147,8 @@ abstract class AbstractModellingTreeView {
         viewPortTree.registerKeyboardAction(new TreeNodePaster(tree: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeSelectionFiller(tree: viewPortTree, model: viewPortTree.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TableTreeCopier(table: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        IActionListener saveAction = [actionPerformed: {ActionEvent event -> model.saveItem()  }] as IActionListener
+        content.registerKeyboardAction(saveAction, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
 
 
         viewPortTree.tableTreeHeader.addActionListener([actionPerformed: {ActionEvent e ->
@@ -203,12 +210,12 @@ abstract class AbstractModellingTreeView {
         }
     }
 
-    /**
-     * Utility method to get resource bundle entries for this class
-     *
-     * @param key
-     * @return the localized value corresponding to the key
-     */
+/**
+ * Utility method to get resource bundle entries for this class
+ *
+ * @param key
+ * @return the localized value corresponding to the key
+ */
     protected String getText(String key) {
         return LocaleResources.getString("AbstractModellingTreeView." + key);
     }

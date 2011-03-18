@@ -318,7 +318,7 @@ class ColumnOrder extends ResultFunction {
 class Percentile extends ResultFunction {
 
     String name
-    final Double percentile
+    Double percentile
 
     public void setPercentile(Double percentile) {
         name = percentile + " " + i18nName

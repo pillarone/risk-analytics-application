@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.output.structure.ResultStructureD
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
+import org.pillarone.riskanalytics.core.ModelDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -27,6 +28,7 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
                     ResultConfigurationDAO.list()*.delete()
                     ParameterizationDAO.list()*.delete()
                     ModelStructureDAO.list()*.delete()
+                    ModelDAO.list()*.delete()
                 }] as Runnable
         )
         cleanUpThread.start()

@@ -15,7 +15,6 @@ import org.pillarone.riskanalytics.core.simulation.item.*
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import java.text.SimpleDateFormat
 import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
@@ -23,6 +22,7 @@ import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.UserPreferences
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -157,7 +157,7 @@ abstract class ExportAction extends SelectionTreeAction {
             data << ["Structure:", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
             data << ["Number of Periods:", simulation.periodCount]
             data << ["Number of Iterations:", simulation.numberOfIterations]
-            data << ["Simulation end Date:", simulation.end ? new SimpleDateFormat('dd.MM.yyyy').format(simulation.end) : ""]
+            data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
             return data
         }
     }

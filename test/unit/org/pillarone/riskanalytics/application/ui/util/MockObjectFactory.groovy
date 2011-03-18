@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.workflow.Status
+import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -54,7 +55,7 @@ class MockObjectFactory {
                     simulation.parameterization = new Parameterization("param1")
                     simulation.template = new ResultConfiguration("result1")
                     simulation.id = 1
-                    simulation.setEnd(new Date())
+                    simulation.setEnd(new DateTime())
                     return [simulation]
                 default: return []
             }
@@ -78,10 +79,10 @@ class MockObjectFactory {
         parameterization.id = index
         Person person = new Person(username: "username" + index)
         parameterization.setCreator(person)
-        parameterization.setCreationDate(new Date())
+        parameterization.setCreationDate(new DateTime())
         Person person2 = new Person(username: "modificator" + index)
         parameterization.setLastUpdater(person2)
-        parameterization.setModificationDate(new Date())
+        parameterization.setModificationDate(new DateTime())
         parameterization.status = status
         return parameterization
 
@@ -93,7 +94,7 @@ class MockObjectFactory {
         simulation.parameterization = new Parameterization("param1")
         simulation.template = new ResultConfiguration("result1")
         simulation.id = 2
-        simulation.setEnd(new Date())
+        simulation.setEnd(new DateTime())
         return simulation
     }
 }

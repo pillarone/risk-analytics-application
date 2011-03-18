@@ -26,7 +26,7 @@ grails.project.dependency.resolution = {
 
     plugins {
         runtime ":background-thread:1.3"
-        runtime ":hibernate:1.3.4"
+        runtime ":hibernate:1.3.7"
         runtime ":joda-time:0.5"
         runtime ":maven-publisher:0.7.5"
         runtime ":quartz:0.4.1"
@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
         runtime "org.pillarone:jasper:0.9.5-riskanalytics"
         compile "com.canoo:ulc:${ulcVersion}"
 
-        runtime "org.pillarone:risk-analytics-core:1.3-ALPHA-2.7-kti"
+        runtime "org.pillarone:risk-analytics-core:1.3-BETA-2.2-kti"
 
     }
 

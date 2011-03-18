@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -22,7 +23,7 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
         if (isNotInitialized(node)) return true
         for (ITableTreeFilter filter: filters) {
             boolean nodeAccepted = filter.acceptNode(node)
-            if (!nodeAccepted) {
+            if (!nodeAccepted && !(node instanceof SimulationNode)) {
                 node.childCount.times {
                     nodeAccepted |= isAcceptedNode((node.getChildAt(it)))
                 }
