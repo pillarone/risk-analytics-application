@@ -54,26 +54,27 @@ class CriteriaViewModelTests extends GroovyTestCase {
 
     void testIsValid() {
 
-        assertTrue CriteriaViewModel.isValid(CompareOperator.LESS_THAN, 101)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<"), 102)
+        assertTrue CriteriaViewModel.isValid(CompareOperator.LESS_THAN, 100)
+        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<"), 101)
         assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<"), 1)
         assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<"), 0)
         assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<="), 100)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<="), 101)
-        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<="), 0)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<="), -1)
-        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("="), 0)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("="), -1)
+        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<="), 0)
+        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("<="), 1)
+
+        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("="), 0)
+        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("="), 1)
         assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("="), 100)
         assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator("="), 101)
-        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">"), -1)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">"), -2)
+
+        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">"), 0)
+        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">"), -1)
         assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">"), 99)
         assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">"), 100)
 
         assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), 0)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), -1)
-        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), 100)
-        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), 101)
+        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), 1)
+        assertTrue CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), 99)
+        assertFalse CriteriaViewModel.isValid(CriteriaComparator.getCompareOperator(">="), 100)
     }
 }
