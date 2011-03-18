@@ -31,7 +31,6 @@ public class Formatter {
         if (list.any {it instanceof List}) {
             StringBuilder result = new StringBuilder()
             String results = list.collect {format(it, locale)}.join("; ")
-            if (results == "") return ""
             result << "["
             result << results
             result << "]"
