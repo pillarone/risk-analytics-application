@@ -56,7 +56,7 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         dialog.show()
     }
 
-    abstract void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree)
+    abstract protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree)
 
     protected String getPathName(ITableTreeNode node, String name) {
         String pathName = node.path

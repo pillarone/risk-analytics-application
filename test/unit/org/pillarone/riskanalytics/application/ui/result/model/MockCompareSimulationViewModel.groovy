@@ -24,7 +24,7 @@ class MockCompareSimulationViewModel extends CompareSimulationsViewModel {
     }
 
 
-    protected ITableTreeModel buildTreeStructure() {
+    ITableTreeModel buildTreeStructure() {
         SimpleTableTreeNode rootNode = new SimpleTableTreeNode("root")
         ResultStructureTableTreeNode child = new ResultStructureTableTreeNode("child", ApplicationModel)
         child.metaClass.getCellValue = {i ->
