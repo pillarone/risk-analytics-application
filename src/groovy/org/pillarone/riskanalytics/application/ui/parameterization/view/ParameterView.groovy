@@ -227,6 +227,14 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
                 itemChanged: {Parameterization item ->
                     updateErrorVisualization(item)
                 }] as IModellingItemChangeListener)
+
+        Closure closeSplitPane = {->
+            int count = ((ULCCloseableTabbedPane) splitPane.getBottomComponent()).getTabCount()
+            if (count == 1) {
+                splitPane.setDividerLocation(NO_DIVIDER)
+            }
+        }
+        commentAndErrorView.addPopupMenuListener(closeSplitPane)
     }
 
     protected void updateErrorVisualization(Parameterization item) {
@@ -250,11 +258,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         tabbedPane.setCloseableTab(1, false)
         splitPane.add(tabbedPane);
         splitPane.add(commentAndErrorView.tabbedPane)
-
-
         return splitPane
-
-
     }
 
     public void modelItemChanged() {
