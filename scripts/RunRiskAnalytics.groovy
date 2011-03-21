@@ -14,6 +14,8 @@ target('default': "Load the Grails interactive Swing console") {
 
 target(runRiskAnalytics: "The application start target") {
     try {
+        //workaround for GRAILS-7367
+        ant.copy(toDir: classesDir, file: "./web-app/WEB-INF/applicationContext.xml", verbose: true)
         ApplicationContext ctx = GrailsUtil.bootstrapGrailsFromClassPath();
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
         new GroovyShell(app.classLoader).evaluate '''
