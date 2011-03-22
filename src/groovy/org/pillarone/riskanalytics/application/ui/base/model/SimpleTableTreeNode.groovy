@@ -9,11 +9,13 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 class SimpleTableTreeNode implements IMutableTableTreeNode {
     boolean expanded = true
     protected String name, cachedDisplayName
+    protected String cachedToolTip
     List children
     ITableTreeNode parent
     Set comments = new HashSet()
 
     static String PATH_SEPARATOR = '/'
+    static String TOOLTIP = ".tooltip"
 
     public SimpleTableTreeNode(String name) {
         children = []
@@ -52,12 +54,7 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
         if (cachedDisplayName != null)
             return cachedDisplayName
         String value = name
-        //try to get a displayValue from the parent.component
-        String displayNameValue = I18NUtils.findResultParameterDisplayName(this, value)
-        if (displayNameValue == null)
-            displayNameValue = I18NUtils.findDisplayNameByParentComponent(this, value)
-        if (displayNameValue == null)
-            displayNameValue = I18NUtils.findDisplayNameByParentComponent(this.parent, value)
+        String displayNameValue = lookUp(value, "")
         if (displayNameValue == null)
             displayNameValue = I18NUtils.formatDisplayName(value)
 
@@ -66,6 +63,24 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
         }
         return displayNameValue
 
+    }
+
+    String lookUp(String value, String tooltip = "") {
+        //try to get a displayValue from the parent.component
+        String displayNameValue = I18NUtils.findResultParameterDisplayName(this, value, tooltip)
+        if (displayNameValue == null)
+            displayNameValue = I18NUtils.findDisplayNameByParentComponent(this, value, tooltip)
+        if (displayNameValue == null)
+            displayNameValue = I18NUtils.findDisplayNameByParentComponent(this.parent, value, tooltip)
+        return displayNameValue
+    }
+
+    public String getToolTip() {
+        if (!cachedToolTip) {
+            String value = name
+            cachedToolTip = lookUp(value, TOOLTIP)
+        }
+        return cachedToolTip
     }
 
     protected Object getCellValue(int column) {

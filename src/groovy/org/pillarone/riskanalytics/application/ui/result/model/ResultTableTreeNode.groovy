@@ -42,9 +42,14 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
 
     public String getDisplayName() {
         if (cachedDisplayName == null) {
-            cachedDisplayName = I18NUtils.getResultStructureString(modelClass, name)
+            cachedDisplayName = lookUp(null, "")
         }
         return cachedDisplayName
+    }
+
+    @Override
+    String lookUp(String value, String tooltip) {
+        return I18NUtils.getResultStructureString(modelClass, name, tooltip)
     }
 
 

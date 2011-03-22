@@ -18,15 +18,7 @@ class ComponentTableTreeNode extends SimpleTableTreeNode {
             return cachedDisplayName
 
         String value = null
-        if (!ComponentUtils.isDynamicComposedSubComponentNode(this))
-            value = I18NUtils.findComponentDisplayNameByTreeNode(this)
-
-        if (value == null && !ComponentUtils.isDynamicComposedSubComponentNode(this)) {
-            value = I18NUtils.findComponentDisplayNameInModelBundle(path)
-        }
-        if (value == null && !ComponentUtils.isDynamicComposedSubComponentNode(this)) {
-            value = I18NUtils.findComponentDisplayNameInComponentBundle(component)
-        }
+        value = lookUp(value, "")
 
         if (value == null) {
             value = super.getDisplayName()
@@ -36,6 +28,21 @@ class ComponentTableTreeNode extends SimpleTableTreeNode {
         return value
     }
 
+    @Override
+    String lookUp(String value, String tooltip) {
+        String displayName
+        if (!ComponentUtils.isDynamicComposedSubComponentNode(this)) {
+            displayName = I18NUtils.findComponentDisplayNameByTreeNode(this, tooltip)
+        }
+
+        if (displayName == null && !ComponentUtils.isDynamicComposedSubComponentNode(this)) {
+            displayName = I18NUtils.findComponentDisplayNameInModelBundle(path, tooltip)
+        }
+        if (displayName == null && !ComponentUtils.isDynamicComposedSubComponentNode(this)) {
+            displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component, tooltip)
+        }
+        return displayName
+    }
 
     public void setName(String newName) {
         this.@name = newName

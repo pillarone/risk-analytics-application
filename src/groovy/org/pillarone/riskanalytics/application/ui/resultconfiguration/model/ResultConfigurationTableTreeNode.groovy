@@ -2,10 +2,10 @@ package org.pillarone.riskanalytics.application.ui.resultconfiguration.model
 
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.view.IMultiValueTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PacketCollector
@@ -32,6 +32,7 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     }
 
     //must be called when the tree is complete, not in the constructor or setParent of this class!
+
     public void findCollector() {
         collector = configuration.collectors.find {PacketCollector coll -> coll.path == path}
     }
@@ -67,13 +68,21 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     }
 
     public String getDisplayName() {
-        String value = I18NUtils.findResultParameterDisplayName(this, name)
-        if (value == null)
-            value = I18NUtils.findDisplayNameByParentComponent(this, name)
+        String value = lookUp(null, "")
         if (value == null)
             value = super.getDisplayName()
         return value
     }
+
+    @Override
+    String lookUp(String value, String tooltip) {
+        String displayName = I18NUtils.findResultParameterDisplayName(this, name, tooltip)
+        if (displayName == null)
+            displayName = I18NUtils.findDisplayNameByParentComponent(this, name, tooltip)
+        return displayName
+    }
+
+
 
     public List getValues() {
         valueToKey.keySet().toList()

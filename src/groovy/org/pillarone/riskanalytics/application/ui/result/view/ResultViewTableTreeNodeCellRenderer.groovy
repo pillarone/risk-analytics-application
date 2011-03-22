@@ -124,6 +124,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         IRendererComponent rendererComponent = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node);
         setPopupMenu(rendererComponent, node)
         setFormat(value)
+        setToolTipText node.getToolTip()
         return rendererComponent;
     }
 

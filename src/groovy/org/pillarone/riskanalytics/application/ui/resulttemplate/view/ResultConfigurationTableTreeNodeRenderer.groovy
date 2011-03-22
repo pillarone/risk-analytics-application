@@ -35,6 +35,7 @@ class ResultConfigurationTableTreeNodeRenderer extends DefaultTableTreeCellRende
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
         addExpandNodePopupMenuEntry(component, node, tableTree)
+        setToolTipText(node.getToolTip())
         return component
 
     }

@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.view
 
-import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-
 import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
@@ -23,6 +21,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.SubComponentMenuItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
+import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.application.ui.base.action.*
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
@@ -159,6 +158,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         customizeNode(component, node)
         if (selected)
             setForeground(Color.white)
+        setToolTipText node.getToolTip()
         return component
 
     }
