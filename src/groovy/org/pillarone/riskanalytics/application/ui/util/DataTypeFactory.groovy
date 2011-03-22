@@ -71,7 +71,7 @@ public class DataTypeFactory {
 
         if (integerDataTypeForEdit == null) {
             integerDataTypeForEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
-            integerDataTypeForEdit.integer = true
+            integerDataTypeForEdit.classType = Integer
             integerDataTypeForEdit.groupingUsed = false
             UserContext.setAttribute("integerDataTypeForEdit", integerDataTypeForEdit)
         }
@@ -85,7 +85,7 @@ public class DataTypeFactory {
 
         if (integerDataTypeForNonEdit == null) {
             integerDataTypeForNonEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
-            integerDataTypeForNonEdit.integer = true
+            integerDataTypeForNonEdit.classType = Integer
             integerDataTypeForNonEdit.groupingUsed = true
             UserContext.setAttribute("integerDataTypeForNonEdit", integerDataTypeForNonEdit)
         }
@@ -98,7 +98,6 @@ public class DataTypeFactory {
         if (floatingPointDataTypeForEdit == null) {
             floatingPointDataTypeForEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
             floatingPointDataTypeForEdit.classType = Double
-            floatingPointDataTypeForEdit.integer = false
             floatingPointDataTypeForEdit.minFractionDigits = 0
             floatingPointDataTypeForEdit.maxFractionDigits = 20
             floatingPointDataTypeForEdit.groupingUsed = false
@@ -111,7 +110,6 @@ public class DataTypeFactory {
         IDataType floatingPointDataTypeForNonEdit = UserContext.getAttribute("floatingPointDataTypeForNonEdit")
         if (floatingPointDataTypeForNonEdit == null) {
             floatingPointDataTypeForNonEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
-            floatingPointDataTypeForNonEdit.integer = false
             floatingPointDataTypeForNonEdit.minFractionDigits = 0
             floatingPointDataTypeForNonEdit.maxFractionDigits = 20
             floatingPointDataTypeForNonEdit.groupingUsed = true
@@ -122,7 +120,7 @@ public class DataTypeFactory {
 
     static IDataType getDoubleDataType() {
         ULCNumberDataType dataType = new ULCNumberDataType(UIUtils.clientLocale)
-        dataType.integer = false
+        dataType.classType = Double
         dataType.minFractionDigits = 1
         dataType.maxFractionDigits = 2
         return dataType

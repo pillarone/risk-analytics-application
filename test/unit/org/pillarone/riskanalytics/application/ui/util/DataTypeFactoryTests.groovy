@@ -13,7 +13,7 @@ class DataTypeFactoryTests extends GroovyTestCase {
     void testDoubleDataTypeForEdit() {
         Double value = new Double(1.2)
         ULCNumberDataType dataType = DataTypeFactory.getDataType(value, true)
-        assertFalse "integer", dataType.integer
+        assertEquals Double.simpleName, dataType.classType
         assertFalse "grouping used", dataType.groupingUsed
         assertEquals "minFractionDigits", 0, dataType.minFractionDigits
         assertEquals "maxFractionDigits", 20, dataType.maxFractionDigits
@@ -25,7 +25,7 @@ class DataTypeFactoryTests extends GroovyTestCase {
     void testDoubleDataTypeForNonEdit() {
         Double value = new Double(1.2)
         ULCNumberDataType dataType = DataTypeFactory.getDataType(value, false)
-        assertFalse "integer", dataType.integer
+        assertEquals Double.simpleName, dataType.classType
         assertTrue "grouping not used", dataType.groupingUsed
         assertEquals "minFractionDigits", 0, dataType.minFractionDigits
         assertEquals "maxFractionDigits", 20, dataType.maxFractionDigits
@@ -39,7 +39,7 @@ class DataTypeFactoryTests extends GroovyTestCase {
     void testIntegerDataTypeForEdit() {
         Integer value = new Integer(2)
         ULCNumberDataType dataType = DataTypeFactory.getDataType(value, true)
-        assertTrue "integer", dataType.integer
+        assertEquals Integer.simpleName, dataType.classType
         assertFalse "grouping used", dataType.groupingUsed
 
         assertSame dataType, DataTypeFactory.getDataType(value, true)
@@ -48,7 +48,7 @@ class DataTypeFactoryTests extends GroovyTestCase {
     void testIntegerDataTypeForNonEdit() {
         Integer value = new Integer(2)
         ULCNumberDataType dataType = DataTypeFactory.getDataType(value, false)
-        assertTrue "integer", dataType.integer
+        assertEquals Integer.simpleName, dataType.classType
         assertTrue "grouping not used", dataType.groupingUsed
 
         assertSame dataType, DataTypeFactory.getDataType(value, false)

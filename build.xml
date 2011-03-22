@@ -15,7 +15,6 @@
     <property name="dist.dir" value="dist"/>
     <property name="target.dir" value="target"/>
     <property name="webapp.lib.dir" value="web-app/lib"/>
-    <property name="ulcPlugIn.webapp.lib.dir" value="${plugin.dir}/ulc-2008-u4-4.1/web-app/lib"/>
     <property name="doc.dir" value="docs"/>
 
     <condition property="grails" value="${GRAILS_HOME}/bin/grails.bat">
@@ -123,6 +122,7 @@
     </target>
 
     <target name="jar-client" depends="-self-signed-cert" description="--> Create clientside jar files">
+        <echo message="${signjar.keystore}"/>
         <mkdir dir="${webapp.lib.dir}"/>
         <delete dir="${webapp.lib.dir}">
             <include name="${app.name}*.jar"/>
@@ -155,7 +155,6 @@
         <signjar alias="${signjar.alias}" keystore="${signjar.keystore}" storepass="${signjar.storepass}"
                  keypass="${signjar.keypass}" lazy="false">
             <fileset dir="${webapp.lib.dir}" includes="${app.name}*.jar"/>
-            <fileset dir="${ulcPlugIn.webapp.lib.dir}" includes="**/*.jar"/>
         </signjar>
     </target>
 

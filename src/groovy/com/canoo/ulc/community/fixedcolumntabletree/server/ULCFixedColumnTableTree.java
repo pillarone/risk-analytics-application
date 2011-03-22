@@ -13,7 +13,6 @@ import com.ulcjava.base.application.tree.TreePath;
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel;
 import com.ulcjava.base.shared.UlcEventCategories;
 import com.ulcjava.base.shared.UlcEventConstants;
-import com.ulcjava.base.shared.internal.IllegalArgumentException;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -164,7 +164,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         toolbar.add(new ULCLabel(getText("Add")))
         toolbar.add ULCFiller.createHorizontalStrut(5)
         IDataType dataType = DataTypeFactory.numberDataType
-        dataType.integer = false
+        dataType.classType = Double
         dataType.minFractionDigits = 1
         dataType.maxFractionDigits = 2
         dataType.groupingUsed = false
