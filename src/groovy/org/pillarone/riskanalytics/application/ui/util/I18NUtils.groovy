@@ -22,33 +22,33 @@ public class I18NUtils {
     static ResourceBundle testResourceBundle = null
     static Set exceptionResourceBundle = null
 
-    public static findParameterTypeDisplayName(String type) {
+    public static findParameterTypeDisplayName(String type, String tooltip = "") {
         String value = null
         try {
             ResourceBundle bundle = LocaleResources.getBundle(type + "Resources")
-            value = bundle.getString("displayName")
+            value = bundle.getString("displayName" + tooltip)
         } catch (java.util.MissingResourceException e) {
             LOG.debug("resource for ${type} not found. Key: displayName")
         }
         return value
     }
 
-    public static String findParameterDisplayName(ComponentTableTreeNode componentNode, String subPath) {
+    public static String findParameterDisplayName(ComponentTableTreeNode componentNode, String subPath, String toolTip = "") {
         Component component = componentNode.component
         String value = null
         String parmKey = subPath.replaceAll(":", ".")
         try {
             ResourceBundle bundle = findResourceBundle(component.getClass())
-            value = bundle.getString(parmKey)
+            value = bundle.getString(parmKey + toolTip)
         } catch (java.util.MissingResourceException e) {
-            return findParameterDisplayNameBySuperClass(component.getClass().getSuperclass(), parmKey)
+            return findParameterDisplayNameBySuperClass(component.getClass().getSuperclass(), parmKey, toolTip)
         }
         return value
     }
 
-    public static String findDisplayNameByParentComponent(def simpleTableTreeNode, String parmKey) {
+    public static String findDisplayNameByParentComponent(def simpleTableTreeNode, String parmKey, String toolTip = "") {
         if (simpleTableTreeNode != null && simpleTableTreeNode instanceof SimpleTableTreeNode && simpleTableTreeNode.parent != null && simpleTableTreeNode.parent.properties.keySet().contains("component") && simpleTableTreeNode.parent.component != null)
-            return findParameterDisplayNameBySuperClass(simpleTableTreeNode.parent.component.getClass(), parmKey)
+            return findParameterDisplayNameBySuperClass(simpleTableTreeNode.parent.component.getClass(), parmKey + toolTip)
         return null
 
     }
@@ -57,17 +57,17 @@ public class I18NUtils {
      * iterate the superclasses and get the resource
      * null if doesn't exist
      */
-    public static String findParameterDisplayNameBySuperClass(Class componentClass, String parmKey) {
+    public static String findParameterDisplayNameBySuperClass(Class componentClass, String parmKey, String toolTip = "") {
         String value
         try {
             if (componentClass != null && componentClass.name != "org.pillarone.riskanalytics.core.components.Component") {
                 ResourceBundle bundle = findResourceBundle(componentClass)
-                value = bundle.getString(parmKey)
+                value = bundle.getString(parmKey + toolTip)
             }
         } catch (java.util.MissingResourceException e) {
             Class superClass = componentClass.getSuperclass()
             if (superClass != null && superClass.name != "org.pillarone.riskanalytics.core.components.Component") {
-                value = findParameterDisplayNameBySuperClass(superClass, parmKey)
+                value = findParameterDisplayNameBySuperClass(superClass, parmKey + toolTip)
             }
             else {
                 LOG.debug("resource for ${componentClass.getSimpleName()} not found. Key: ${parmKey}")
@@ -76,13 +76,13 @@ public class I18NUtils {
         return value
     }
 
-    public static String findResultParameterDisplayName(def simpleTableTreeNode, String parmKey) {
+    public static String findResultParameterDisplayName(def simpleTableTreeNode, String parmKey, String toolTip = "") {
         String value = null
         if (simpleTableTreeNode instanceof SimpleTableTreeNode && simpleTableTreeNode.parent != null && simpleTableTreeNode.parent instanceof ComponentTableTreeNode) {
             Component component = simpleTableTreeNode.parent.component
             try {
                 ResourceBundle bundle = findResourceBundle(component.getClass())
-                value = bundle.getString(parmKey)
+                value = bundle.getString(parmKey + toolTip)
             } catch (java.util.MissingResourceException e) {
                 value = findResultParameterDisplayName(simpleTableTreeNode.parent, parmKey)
             }
@@ -91,7 +91,7 @@ public class I18NUtils {
     }
 
 
-    public static String findParameterDisplayName(ParameterObjectParameterTableTreeNode node, String subPath) {
+    public static String findParameterDisplayName(ParameterObjectParameterTableTreeNode node, String subPath, String toolTip = "") {
         ParameterObjectParameterHolder parameter = node.parameter.find {it -> it != null }
         String parameterType = parameter.classifier.getClass().name
         int lastIndex = parameterType.lastIndexOf('.') + 1
@@ -100,7 +100,7 @@ public class I18NUtils {
         String parmKey = subPath.replaceAll(":", ".")
         try {
             ResourceBundle bundle = LocaleResources.getBundle(parameterType + "Resources")
-            value = bundle.getString(parmKey)
+            value = bundle.getString(parmKey + toolTip)
         } catch (java.util.MissingResourceException e) {
             LOG.debug("resource for ${parameterType} not found. Key: ${parmKey}")
         }
@@ -119,34 +119,34 @@ public class I18NUtils {
     }
 
 
-    public static String findComponentDisplayNameInModelBundle(String componentPath) {
+    public static String findComponentDisplayNameInModelBundle(String componentPath, String toolTip = "") {
         String name = null
         String modelName = componentPath[0..(componentPath.indexOf(":") - 1)]
         String componentSubPath = componentPath[(componentPath.indexOf(":") + 1)..(componentPath.length() - 1)]
         componentSubPath = componentSubPath.replaceAll(":", ".")
         try {
-            name = getModelResourceBundle(modelName).getString(componentSubPath)
+            name = getModelResourceBundle(modelName).getString(componentSubPath + toolTip)
         } catch (java.util.MissingResourceException e) {
             LOG.debug("resource for ${modelName} not found. Key: ${componentSubPath}")
         }
         return name
     }
 
-    public static String findComponentDisplayNameInComponentBundle(Component component) {
+    public static String findComponentDisplayNameInComponentBundle(Component component, String toolTip = "") {
         String name = null
         try {
-            name = findResourceBundle(component.getClass()).getString("displayName")
+            name = findResourceBundle(component.getClass()).getString("displayName" + toolTip)
         } catch (java.util.MissingResourceException e) {
             LOG.debug("resource for ${component.getClass().getSimpleName()} not found")
         }
         return name
     }
 
-    public static String findComponentDisplayNameByTreeNode(ComponentTableTreeNode node) {
+    public static String findComponentDisplayNameByTreeNode(ComponentTableTreeNode node, String toolTip = "") {
         String name = null
         try {
             if (node instanceof ComponentTableTreeNode && node?.parent instanceof ComponentTableTreeNode)
-                name = findResourceBundle(((ComponentTableTreeNode) node?.parent)?.component?.class).getString(node?.name)
+                name = findResourceBundle(((ComponentTableTreeNode) node?.parent)?.component?.class).getString(node?.name + toolTip)
         } catch (java.util.MissingResourceException e) {
             LOG.debug("resource for ComponentTableTreeNode  not found")
         }
@@ -222,10 +222,10 @@ public class I18NUtils {
         return LocaleResources.getBundle(resourceBundleName)
     }
 
-    public static String getResultStructureString(Class model, String property) {
+    public static String getResultStructureString(Class model, String property, String tooltip = "") {
         try {
             ResourceBundle bundle = getModelResourceBundle(model.simpleName - "Model")
-            return bundle.getString(property)
+            return bundle.getString(property + tooltip)
         } catch (MissingResourceException e) {
             return formatDisplayName(property)
         } catch (NullPointerException e) {

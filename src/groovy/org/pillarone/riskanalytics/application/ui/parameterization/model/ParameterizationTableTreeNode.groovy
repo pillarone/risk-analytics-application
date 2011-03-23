@@ -1,11 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
@@ -34,31 +33,36 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     public String getDisplayName() {
         String value = null
-        if (parent != null) {
-            value = findParameterDisplayNameInParentNodes(parent)
-        }
+        value = lookUp(value, "")
         if (value == null) {
             value = super.getDisplayName()
         }
         return value
     }
 
+    @Override
+    String lookUp(String value, String tooltip) {
+        String displayName
+        if (parent != null) {
+            displayName = findParameterDisplayNameInParentNodes(parent, tooltip)
+        }
+        return displayName
+    }
 
-    private String findParameterDisplayNameInParentNodes(ITableTreeNode node) {
+    private String findParameterDisplayNameInParentNodes(ITableTreeNode node, String toolTip = "") {
         String value = null
         if (node instanceof ComponentTableTreeNode) {
-            value = I18NUtils.findParameterDisplayName(node, path.substring(node.path.length() + 1))
+            value = I18NUtils.findParameterDisplayName(node, path.substring(node.path.length() + 1), toolTip)
         } else {
             if (node instanceof ParameterObjectParameterTableTreeNode) {
-                value = I18NUtils.findParameterDisplayName(node, path.substring(node.path.length() + 1))
+                value = I18NUtils.findParameterDisplayName(node, path.substring(node.path.length() + 1), toolTip)
             }
             if (value == null && node.parent != null) {
-                value = findParameterDisplayNameInParentNodes(node.getParent())
+                value = findParameterDisplayNameInParentNodes(node.getParent(), toolTip)
             }
         }
         return value
     }
-
 
 }
 

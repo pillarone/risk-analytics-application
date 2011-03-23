@@ -14,24 +14,15 @@ target('default': "Load the Grails interactive Swing console") {
 
 target(runRiskAnalytics: "The application start target") {
     try {
+        //workaround for GRAILS-7367
+        ant.copy(toDir: classesDir, file: "./web-app/WEB-INF/applicationContext.xml", verbose: true)
         ApplicationContext ctx = GrailsUtil.bootstrapGrailsFromClassPath();
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
-        new GroovyShell(app.classLoader).evaluate '''
+        new GroovyShell(app.classLoader, new Binding([app: app, ctx: ctx])).evaluate '''
+            import org.codehaus.groovy.grails.web.context.GrailsConfigUtils
             import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher
-            import org.codehaus.groovy.grails.commons.GrailsClass
-            import org.codehaus.groovy.grails.commons.GrailsBootstrapClass
-            import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler
-            import org.codehaus.groovy.grails.commons.ApplicationHolder
 
-            GrailsClass[] bootstraps =  ApplicationHolder.application.getArtefacts(BootstrapArtefactHandler.TYPE);
-            for (GrailsClass bootstrap : bootstraps) {
-                final GrailsBootstrapClass bootstrapClass = (GrailsBootstrapClass) bootstrap;
-                //Quartz bootstrap needs a servlet context
-                if(!bootstrapClass.clazz.simpleName.startsWith("Quartz")) {
-                    bootstrapClass.callInit(null);
-                }
-            }
-
+            GrailsConfigUtils.executeGrailsBootstraps(app, ctx, null)
             P1RATStandaloneLauncher.start()
         '''
     } catch (Exception e) {

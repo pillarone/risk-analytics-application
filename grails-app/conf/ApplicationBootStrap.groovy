@@ -1,10 +1,11 @@
 import grails.util.Environment
 
-import org.pillarone.riskanalytics.application.jobs.JobScheduler
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 class ApplicationBootStrap {
+
+    def quartzScheduler
 
     def init = {servletContext ->
 
@@ -20,7 +21,7 @@ class ApplicationBootStrap {
         new ResultStructureImportService().compareFilesAndWriteToDB(models)
         ResultStructureImportService.importDefaults()
         // start a quartz job scheduler for a batch
-        new JobScheduler().start()
+        quartzScheduler.start()
 
     }
 
