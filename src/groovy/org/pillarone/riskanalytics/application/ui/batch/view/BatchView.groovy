@@ -11,6 +11,7 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
@@ -45,7 +46,7 @@ public class BatchView extends NewBatchView {
         super.initComponents()
         batchNameTextField.setText(batchRun.name)
         comment.setText(batchRun.comment)
-        executionTimeSpinner.setValue(batchRun.executionTime)
+        executionTimeSpinner.setValue(batchRun.executionTime.toDate())
     }
 
 
@@ -277,7 +278,8 @@ class NewBatchView {
 
     protected BatchRun mapToDao() {
         BatchRun newBatchRun = new BatchRun(name: batchNameTextField.getValue(), comment: comment.getValue())
-        newBatchRun.setExecutionTime(executionTimeSpinner.getValue())
+        java.util.Date date = executionTimeSpinner.getValue()
+        newBatchRun.setExecutionTime(new DateTime(date.getTime()))
         return newBatchRun
     }
 
