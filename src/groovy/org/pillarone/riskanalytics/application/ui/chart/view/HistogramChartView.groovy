@@ -5,10 +5,8 @@ import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCSlider
 import com.ulcjava.base.application.event.IValueChangedListener
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.chart.model.HistogramChartViewModel
-import org.pillarone.riskanalytics.application.ui.chart.view.ChartView
-
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class HistogramChartView extends ChartView {
     ULCSlider binSlider
@@ -23,7 +21,9 @@ class HistogramChartView extends ChartView {
     protected void initComponents() {
         super.initComponents()
 
-        binSlider = new ULCSlider(ULCSlider.HORIZONTAL, model.minBinCount, model.maxBinCount, model.currentBinCount)
+        int currentValue = model.currentBinCount == -1 ? model.minBinCount : model.currentBinCount
+
+        binSlider = new ULCSlider(ULCSlider.HORIZONTAL, model.minBinCount, model.maxBinCount, currentValue)
         binSlider.minorTickSpacing = 5
         binSlider.majorTickSpacing = 20
         binSlider.paintTicks = true
@@ -66,4 +66,5 @@ class HistogramChartView extends ChartView {
      */
     protected String getText(String key) {
         return LocaleResources.getString("HistogramChartView." + key);
-}}
+    }
+}
