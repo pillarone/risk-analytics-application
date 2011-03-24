@@ -1,4 +1,4 @@
-<plugin name='risk-analytics-application' version='1.3-BETA-3.1' grailsVersion='1.3.4 &gt; *'>
+<plugin name='risk-analytics-application' version='1.3-BETA-3.2' grailsVersion='1.3.4 &gt; *'>
   <author>Intuitive Collaboration AG</author>
   <authorEmail>info@pillarone.org</authorEmail>
   <title>RiskAnalytics application</title>
@@ -8,12 +8,15 @@ ULC view
   <documentation>http://www.pillarone.org</documentation>
   <resources>
     <resource>ApplicationBootStrap</resource>
+    <resource>BootStrap</resource>
     <resource>BuildConfig</resource>
     <resource>Config</resource>
     <resource>DataSource</resource>
     <resource>UrlMappings</resource>
+    <resource>spring.resources</resource>
     <resource>org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO</resource>
     <resource>org.pillarone.riskanalytics.application.output.structure.StructureMapping</resource>
+    <resource>BatchRunJob</resource>
   </resources>
   <dependencies />
   <behavior />
