@@ -31,7 +31,7 @@ class IterationResultTableRenderer extends DefaultTableCellRenderer {
         if (!numberDataType) {
             numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true
-            numberDataType.setInteger true
+            numberDataType.setClassType Integer
         }
         return numberDataType
     }

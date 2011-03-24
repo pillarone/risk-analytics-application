@@ -17,7 +17,7 @@ public class ResultIterationDataTableCellRenderer extends DefaultTableCellRender
         columnIndex = index
         if (index == 0) {
             numberDataType.setGroupingUsed true
-            numberDataType.setInteger true
+            numberDataType.setClassType Integer
             horizontalAlignment = ULCLabel.CENTER
         } else {
             numberDataType.setGroupingUsed true
