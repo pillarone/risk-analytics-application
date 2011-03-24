@@ -122,7 +122,7 @@ public class BatchView extends NewBatchView {
                     BatchRun batch = BatchRun.findByName(oldName)
                     if (batch) {
                         batch.name = newName
-                        batch.executionTime = executionTimeSpinner.getValue()
+                        batch.executionTime = new DateTime(executionTimeSpinner.getValue().getTime())
                         batch.comment = comment.getText()
                         batch.save()
                         if (!batch.name.equals(oldName)) {
@@ -182,15 +182,18 @@ class NewBatchView {
 
         batchNameLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Name"))
         batchNameTextField = new ULCTextField()
+        batchNameTextField.name = "batchNameTextField"
         batchNameTextField.setPreferredSize(new Dimension(145, 20))
         executionTimeLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "ExecutionTime"))
         ULCSpinnerDateModel dateSpinnerModel = new ULCSpinnerDateModel()
         executionTimeSpinner = new ULCSpinner(dateSpinnerModel)
+        executionTimeSpinner.name = "executionTimeSpinner"
         executionTimeSpinner.setPreferredSize(new Dimension(145, 20))
         executionTimeSpinner.setEditor(new ULCDateEditor(executionTimeSpinner, FastDateFormat.getDateTimeInstance(FastDateFormat.SHORT, FastDateFormat.SHORT, UIUtils.getClientLocale()).pattern))
 
         commentLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Comment"))
         comment = new ULCTextArea(4, 50)
+        comment.name = "comment"
         comment.lineWrap = true
         comment.wrapStyleWord = true
 
@@ -248,6 +251,7 @@ class NewBatchView {
 
     ULCBoxPane getButtonsPane() {
         addButton = new ULCButton(UIUtils.getText(NewBatchView.class, "Add"))
+        addButton.name = "addButton"
 
         addButton.setPreferredSize(dimension)
 

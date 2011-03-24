@@ -22,7 +22,7 @@ class ResultViewTests extends AbstractP1RATTestCase {
     }
 
     public void testView() {
-        Thread.sleep(5000)
+        assertNotNull getTableTreeOperatorByName("resultDescriptorTreeRowHeader")
     }
 
 
