@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.functional
 
+import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import com.ulcjava.testframework.operator.*
-import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -73,6 +73,10 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
 
     ULCTableTreeOperator getSelectionTableTreeRowHeader() {
         return getTableTreeOperatorByName("selectionTreeRowHeader")
+    }
+
+    ULCTableOperator getTableOperator(String name) {
+        return new ULCTableOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
     protected pushKeyOnPath(ULCTableTreeOperator tree, TreePath path, int key, int mask) {

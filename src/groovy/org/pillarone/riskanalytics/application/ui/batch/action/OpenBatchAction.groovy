@@ -1,15 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-
-import org.pillarone.riskanalytics.core.BatchRun
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
@@ -24,7 +22,7 @@ public class OpenBatchAction extends SelectionTreeAction {
 
     public void doActionPerformed(ActionEvent event) {
         def item = getSelectedItem()
-        if (item != null) {
+        if (item != null && (item instanceof BatchRun)) {
             item = BatchRun.findByName(item.name)
             this.model.openItem(null, item)
         }
@@ -96,7 +94,7 @@ public class TreeDoubleClickAction extends SelectionTreeAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-       delegate(getSelectedItem(), event)
+        delegate(getSelectedItem(), event)
     }
 
     protected void delegate(def item, event) {
