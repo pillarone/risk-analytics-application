@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.util.server.ULCMinimalSizeFrame
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 class P1RATApplication extends AbstractApplication {
 
@@ -52,9 +53,12 @@ class P1RATApplication extends AbstractApplication {
         mainFrame.visible = true
         mainFrame.toFront()
         mainFrame.addWindowListener([windowClosing: {WindowEvent e -> mainFrame.visible = false; handleEvent(e)}] as IWindowListener)
+
+        ModelRegistry.instance.addListener(p1RATModel)
     }
 
     private void handleEvent(WindowEvent e) {
+        ModelRegistry.instance.removeListener(p1RATModel)
         ExitAction.terminate()
     }
 

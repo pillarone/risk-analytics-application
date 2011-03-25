@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -42,39 +43,44 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public def buildTreeNodes() {
-        getAllModelClasses().each {Class modelClass ->
-            Model model = modelClass.newInstance()
-            model.init()
-            ITableTreeNode modelNode = getModelNode(model)
-            DefaultMutableTableTreeNode parametrisationsNode = modelNode.getChildAt(PARAMETERIZATION_NODE_INDEX)
-            DefaultMutableTableTreeNode resultConfigurationsNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
-            DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
-
-            getItemMap(getItemsForModel(modelClass, Parameterization), false).values().each { List<Parameterization> it ->
-                parametrisationsNode.add(createItemNodes(it))
-            }
-            getItemMap(getItemsForModel(modelClass, Parameterization), true).values().each { List<Parameterization> it ->
-                parametrisationsNode.add(createItemNodes(it))
-            }
-
-            getItemMap(getItemsForModel(modelClass, ResultConfiguration), false).values().each {
-                resultConfigurationsNode.add(createItemNodes(it))
-            }
-
-            List simulationsForModel = getItemsForModel(modelClass, Simulation)
-            if (simulationsForModel.size() == 0) {
-                simulationsNode.leaf = true
-            }
-            simulationsForModel.each {
-                try {
-                    simulationsNode.add(createNode(it))
-                } catch (Throwable t) {
-                    LOG.error "Could not create node for ${it.toString()}", t
-                }
-            }
-            root.add(modelNode)
-        }
         root.add(createBatchNode())
+        getAllModelClasses().each {Class modelClass ->
+            createModelNode(modelClass.newInstance())
+        }
+    }
+
+    private void createModelNode(Model model) {
+        Class modelClass = model.class
+
+        model.init()
+        ITableTreeNode modelNode = getModelNode(model)
+        DefaultMutableTableTreeNode parametrisationsNode = modelNode.getChildAt(PARAMETERIZATION_NODE_INDEX)
+        DefaultMutableTableTreeNode resultConfigurationsNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
+        DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
+
+        getItemMap(getItemsForModel(modelClass, Parameterization), false).values().each { List<Parameterization> it ->
+            parametrisationsNode.add(createItemNodes(it))
+        }
+        getItemMap(getItemsForModel(modelClass, Parameterization), true).values().each { List<Parameterization> it ->
+            parametrisationsNode.add(createItemNodes(it))
+        }
+
+        getItemMap(getItemsForModel(modelClass, ResultConfiguration), false).values().each {
+            resultConfigurationsNode.add(createItemNodes(it))
+        }
+
+        List simulationsForModel = getItemsForModel(modelClass, Simulation)
+        if (simulationsForModel.size() == 0) {
+            simulationsNode.leaf = true
+        }
+        simulationsForModel.each {
+            try {
+                simulationsNode.add(createNode(it))
+            } catch (Throwable t) {
+                LOG.error "Could not create node for ${toString()}", t
+            }
+        }
+        root.insert(modelNode, root.childCount - 1)
     }
 
     public List getItemsForModel(Class modelClass, Class clazz) {
@@ -87,15 +93,15 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public List getAllModelClasses() {
-        return ModelStructure.findAllModelClasses()
+        return ModelRegistry.instance.allModelClasses.toList()
     }
 
     private ITableTreeNode getModelNode(Model model) {
         DefaultMutableTableTreeNode modelNode = null
 
         for (int i = 0; i < root.childCount && modelNode == null; i++) {
-            ItemNode candidate = root.getChildAt(i)
-            if (candidate.item.class == model.class) {
+            ITableTreeNode candidate = root.getChildAt(i)
+            if (candidate instanceof ItemNode && candidate.item.class == model.class) {
                 modelNode = candidate
             }
         }
@@ -203,6 +209,11 @@ class ModellingInformationTableTreeBuilder {
         DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(item))
         groupNode.leaf = false
         insertNodeInto(createNode(item), groupNode)
+    }
+
+    public void addNodeForItem(Model model) {
+        createModelNode(model)
+        this.model.nodesWereInserted(new TreePath(root), [root.childCount - 2] as int[])
     }
 
     public def addNodeForItem(ModellingItem item) {

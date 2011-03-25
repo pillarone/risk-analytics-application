@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
@@ -79,7 +80,7 @@ class ModellingInformationTreeModel extends DefaultTableTreeModel {
     }
 
     public List getAllModelClasses() {
-        return ModelStructure.findAllModelClasses()
+        return ModelRegistry.instance.allModelClasses.toList()
     }
 
     private ITableTreeNode getModelNode(Model model) {

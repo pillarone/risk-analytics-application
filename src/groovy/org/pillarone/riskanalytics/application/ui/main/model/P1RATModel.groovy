@@ -30,8 +30,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 
-class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
+class P1RATModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
 
     private List modelListeners
     private Map viewModelsInUse
@@ -39,6 +40,9 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction
     def switchActions = []
+
+    ULCPollingTimer modelRegistryTimer
+    ModelRegistryTimerAction timerAction
 
     @Bindable ModellingItem currentItem
 
@@ -53,6 +57,10 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         selectionTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
         pollingBatchSimulationAction = new PollingBatchSimulationAction()
         startPollingTimer()
+
+        timerAction = new ModelRegistryTimerAction(selectionTreeModel: selectionTreeModel)
+        modelRegistryTimer = new ULCPollingTimer(2000, timerAction)
+        modelRegistryTimer.start()
     }
 
     public P1RATModel(ModellingInformationTableTreeModel tableTreeModel) {
@@ -556,6 +564,11 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
         return viewModel
     }
+
+    void modelAdded(Class modelClass) {
+        timerAction.addModel(modelClass.newInstance())
+    }
+
 
 }
 

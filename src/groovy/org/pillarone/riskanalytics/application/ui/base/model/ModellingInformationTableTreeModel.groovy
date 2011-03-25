@@ -25,6 +25,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.core.model.Model
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -280,6 +281,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public def addNodeForItem(BatchRun batchRun) {
         indexerChanged()
         builder.addNodeForItem batchRun
+    }
+
+    public def addNodeForItem(Model model) {
+        indexerChanged()
+        builder.addNodeForItem model
     }
 
     ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {

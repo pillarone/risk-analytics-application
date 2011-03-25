@@ -9,14 +9,17 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import models.migratableCore.MigratableCoreModel
+import groovy.mock.interceptor.StubFor
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 
-    MockFor modelStructureMock
-    MockFor factoryMock
+    StubFor modelStructureMock
+    StubFor factoryMock
 
     void setUp() {
         LocaleResources.setTestMode()
@@ -211,6 +214,28 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
                 assertEquals '1', subNode2.item.versionNumber.toString()
+            }
+        }
+    }
+
+    void testAddModelNode() {
+
+        prepareMocks([new Parameterization(name: 'Name', versionNumber: new VersionNumber('1'))
+        ], [])
+
+        modelStructureMock.use {
+            factoryMock.use {
+                def model = new ModellingInformationTableTreeModel()
+                model.buildTreeNodes()
+
+                assertEquals 2, model.root.childCount
+
+                model.addNodeForItem(new MigratableCoreModel())
+
+                assertEquals 3, model.root.childCount
+
+                DefaultMutableTableTreeNode modelNode = model.root.getChildAt(1)
+                assertEquals "MigratableCoreModel", modelNode.item.class.simpleName
             }
         }
     }
@@ -511,17 +536,18 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 //    }
 
     private void prepareMocks(params, resultConfigurations) {
-        modelStructureMock = new MockFor(ModelStructure)
-        modelStructureMock.demand.findAllModelClasses { return [CoreModel] }
+        modelStructureMock = new StubFor(ModelRegistry)
+        modelStructureMock.demand.getAllModelClasses { return new HashSet([CoreModel]) }
+        modelStructureMock.demand.getInstance { return new ModelRegistry() }
 
-        factoryMock = new MockFor(ModellingItemFactory)
-        factoryMock.demand.getParameterizationsForModel(2..2) {modelClass ->
+        factoryMock = new StubFor(ModellingItemFactory)
+        factoryMock.demand.getParameterizationsForModel(2..10) {modelClass ->
             params
         }
-        factoryMock.demand.getResultConfigurationsForModel {modelClass ->
+        factoryMock.demand.getResultConfigurationsForModel(1..10) {modelClass ->
             resultConfigurations
         }
-        factoryMock.demand.getActiveSimulationsForModel {modelClass ->
+        factoryMock.demand.getActiveSimulationsForModel(1..10) {modelClass ->
             []
         }
     }

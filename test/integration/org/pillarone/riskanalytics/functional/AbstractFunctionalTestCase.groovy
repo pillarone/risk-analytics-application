@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import com.ulcjava.testframework.operator.*
 import javax.swing.tree.TreePath
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -18,6 +19,7 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
+        ModelRegistry.instance.loadFromDatabase()
         super.setUp()
     }
 
