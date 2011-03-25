@@ -37,6 +37,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.*
 class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     ULCPopupMenu parameterNodePopUpMenu
+    ULCPopupMenu resultConfigurationNodePopUpMenu
     ULCPopupMenu simulationNodePopUpMenu
     ULCPopupMenu groupNodePopUpMenu
     ULCPopupMenu parameterGroupNodePopUpMenu
@@ -78,6 +79,18 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         }
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+
+        resultConfigurationNodePopUpMenu = new ULCPopupMenu()
+        resultConfigurationNodePopUpMenu.name = "resultConfigurationNodePopUpMenu"
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        resultConfigurationNodePopUpMenu.addSeparator()
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        resultConfigurationNodePopUpMenu.addSeparator()
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 //
         ULCPopupMenu dataEntry = new ULCPopupMenu()
         dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
@@ -224,7 +237,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopUpMenu(ULCComponent component, ResultConfigurationNode node) {
-        component.setComponentPopupMenu(parameterNodePopUpMenu)
+        component.setComponentPopupMenu(resultConfigurationNodePopUpMenu)
     }
 
     void setPopUpMenu(ULCComponent component, SimulationNode node) {
