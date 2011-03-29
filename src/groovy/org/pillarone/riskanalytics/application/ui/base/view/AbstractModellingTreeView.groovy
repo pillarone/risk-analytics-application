@@ -31,7 +31,7 @@ abstract class AbstractModellingTreeView {
     ULCComboBox filterSelection
     ULCToolBar toolbar
     ULCToolBar selectionToolbar
-    IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert("CtrlA").show() }] as IActionListener
+    IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 
     public AbstractModellingTreeView(def model) {

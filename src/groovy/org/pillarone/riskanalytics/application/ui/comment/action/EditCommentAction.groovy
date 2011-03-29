@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
  */
 class EditCommentAction extends AbstractCommentAction {
     Comment comment
+    Closure enablingClosure
 
 
     public EditCommentAction(Comment comment) {
@@ -24,6 +25,11 @@ class EditCommentAction extends AbstractCommentAction {
 
     void executeAction(String path, int periodIndex, String displayPath) {
 
+    }
+
+    @Override
+    boolean isEnabled() {
+        return super.isEnabled() && enablingClosure.call()
     }
 
 

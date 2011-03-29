@@ -510,9 +510,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     private UserSettingsViewDialog getSettingsViewDialog() {
-        if (settingsViewDialog == null) {
-            settingsViewDialog = new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content))//, {event -> getLoginViewDialog().visible = false})
-        }
+        settingsViewDialog = new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content))//, {event -> getLoginViewDialog().visible = false})
         return settingsViewDialog
     }
 

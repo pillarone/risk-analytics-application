@@ -50,8 +50,9 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         Comment comment = new Comment("Core:exampleInputOutputComponent", 0)
         comment.text = "test"
         parameterization.addComment(comment)
+        parameterization.save()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-
+        parameterViewModel.setReadOnly(readOnly)
         ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
@@ -62,7 +63,6 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
 
 
     void testShowAllComments() {
-
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         ULCTableTreeOperator componentTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
 
@@ -86,5 +86,8 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         assertNotNull tabbedPaneComments
     }
 
+    protected boolean isReadOnly() {
+        return false
+    }
 
 }
