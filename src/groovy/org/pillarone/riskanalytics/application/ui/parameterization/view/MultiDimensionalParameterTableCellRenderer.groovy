@@ -12,7 +12,7 @@ class MultiDimensionalParameterTableCellRenderer extends DefaultTableCellRendere
     int column
 
     protected String typeString() {
-        return "org.pillarone.riskanalytics.application.client.UIErrorFeedbackLabel"
+        return "org.pillarone.ulc.client.UIErrorFeedbackLabel"
     }
 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
