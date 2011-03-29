@@ -49,7 +49,10 @@ environments {
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
                 'var': [99, 99.5],
                 'tvar': [99, 99.5],
-                'pdf': 200
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
         ]
     }
     test {
@@ -59,7 +62,10 @@ environments {
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
                 'var': [99, 99.5],
                 'tvar': [99, 99.5],
-                'pdf': 200
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
         ]
     }
     sqlserver {
@@ -70,6 +76,10 @@ environments {
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
                 'var': [99, 99.5],
                 'tvar': [99, 99.5],
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
         ]
         log4j = {
             info 'org.pillarone.riskanalytics'
@@ -96,7 +106,10 @@ environments {
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
                 'var': [99, 99.5],
                 'tvar': [99, 99.5],
-                'pdf': 200
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
         ]
     }
     production {
@@ -108,7 +121,26 @@ environments {
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
                 'var': [99, 99.5],
                 'tvar': [99, 99.5],
-                'pdf': 200
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
+        ]
+    }
+    standalone {
+        resultBulkInsert = DerbyBulkInsert
+        ExceptionSafeOut = System.err
+        maxIterations = 10000
+        models = ["CoreModel", 'ApplicationModel']
+        keyFiguresToCalculate = [
+                'stdev': true,
+                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var': [99, 99.5],
+                'tvar': [99, 99.5],
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
         ]
     }
 }
@@ -143,31 +175,3 @@ log4j = {
 }
 
 //log4j.logger.org.springframework.security='off,stdout'
-
-grails {
-    plugins {
-        springsecurity {
-            userLookup {
-                userDomainClassName = 'org.pillarone.riskanalytics.core.user.Person'
-                authorityJoinClassName = 'org.pillarone.riskanalytics.core.user.PersonAuthority'
-            }
-            authority {
-                className = 'org.pillarone.riskanalytics.core.user.Authority'
-            }
-            securityConfigType = SecurityConfigType.InterceptUrlMap
-            interceptUrlMap = [
-                    '/login/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/css/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/js/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/images/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/*.jar': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/ulcserverendpoint/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/css/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/person/**': ['ROLE_ADMIN'],
-                    '/authority/**': ['ROLE_ADMIN'],
-                    '/**': ['IS_AUTHENTICATED_REMEMBERED'],
-            ]
-
-        }
-    }
-}
