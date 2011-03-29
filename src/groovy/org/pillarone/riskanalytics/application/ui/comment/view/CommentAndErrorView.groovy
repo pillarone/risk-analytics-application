@@ -6,8 +6,10 @@ import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCScrollPane
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.comment.model.UndockedPaneListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -71,6 +73,10 @@ class CommentAndErrorView implements CommentListener {
             openItems.remove(currentComponent)
             modelCardContent.removeTabAt closingIndex
         }] as ITabListener)
+    }
+
+    void addPopupMenuListener(Closure closeSplitPane) {
+        ((ULCPopupMenu) tabbedPane.getComponentPopupMenu())?.addPopupMenuListener(new UndockedPaneListener(closeSplitPane: closeSplitPane))
     }
 
     protected void updateErrorVisualization(Parameterization item) {

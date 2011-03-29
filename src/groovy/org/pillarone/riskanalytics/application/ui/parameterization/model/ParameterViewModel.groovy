@@ -132,6 +132,10 @@ class ParameterViewModel extends AbstractModellingModel {
         paramterTableTreeModel.readOnly = value
     }
 
+    public boolean isReadOnly() {
+        return paramterTableTreeModel.readOnly
+    }
+
     void addChangedCommentListener(ChangedCommentListener listener) {
         changedCommentListeners << listener
         paramterTableTreeModel.addChangedCommentListener listener

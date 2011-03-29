@@ -51,7 +51,7 @@ class OpenItemDialog {
         createCopyButton = new ULCButton(UIUtils.getText(this.class, "createCopy"))
         createCopyButton.setPreferredSize(buttonDimension)
         createCopyButton.name = "OpenItemDialog.createCopy"
-        readOnlyButton = new ULCButton("Open read only")
+        readOnlyButton = new ULCButton(UIUtils.getText(this.class, "OpenReadOnly"))
         readOnlyButton.setPreferredSize(buttonDimension)
         readOnlyButton.name = "OpenItemDialog.readOnly"
         deleteDependingResultsButton = new ULCButton(UIUtils.getText(this.class, "DeleteDependingResults"))

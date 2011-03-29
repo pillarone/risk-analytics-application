@@ -22,7 +22,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
 
     List functions = []
     Map isStochasticValueForPeriod = [:]
-    private ITableTreeNode rootNode
+    protected ITableTreeNode rootNode
     SimulationRun simulationRun
     int columnCount
     private Parameterization parameterization
@@ -36,6 +36,8 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     private NumberFormat numberFormat = NumberFormat.getInstance()
 
     Model simulationModel
+
+    protected ResultTableTreeModel() {}
 
     protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, IFunction mean, Model model) {
         this.simulationModel = model

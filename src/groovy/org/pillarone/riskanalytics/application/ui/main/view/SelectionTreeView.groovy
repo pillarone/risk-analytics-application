@@ -12,6 +12,7 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
@@ -58,7 +59,7 @@ class SelectionTreeView {
         rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         if (!UserContext.isStandAlone() || LocaleResources.getTestMode())
             rowHeaderTableTree.registerKeyboardAction(new ChooseDealAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-
+        rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
     }
 
     protected void initTree() {
@@ -103,7 +104,7 @@ class SelectionTreeView {
                     dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
                 }
                 dialog.init()
-                dialog.dialog.setLocationRelativeTo(column.getHeaderRenderer())
+                dialog.dialog.setLocationRelativeTo(tree.viewPortTableTree)
                 dialog.dialog.setVisible true
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
                 p1RATModel.selectionTreeModel.order(columnIndex, ascOrder)

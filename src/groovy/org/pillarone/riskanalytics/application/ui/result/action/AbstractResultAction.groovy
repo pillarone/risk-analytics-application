@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.result.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
@@ -182,12 +183,22 @@ class VarAction extends TextFieldResultAction {
 
 class TvarAction extends TextFieldResultAction {
 
-    public TvarAction(AbstractModellingModel model, tree, valueField) {
+    public TvarAction(AbstractModellingModel model, tree, ULCTextField valueField) {
         super(model, tree, valueField, "Tvar");
+        valueField.addKeyListener([keyTyped: {e -> setEnabled(validate()) }] as IKeyListener)
     }
 
     public IFunction function(double value) {
         new Tvar(value)
+    }
+
+    boolean validate() {
+        try {
+            double value = valueField.value
+            return value >= 0 && value < 100
+        } catch (NumberFormatException ex) {
+            return false
+        }
     }
 }
 

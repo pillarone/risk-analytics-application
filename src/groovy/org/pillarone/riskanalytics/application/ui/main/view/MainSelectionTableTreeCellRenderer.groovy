@@ -4,6 +4,7 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.action.GenerateReportAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
@@ -37,6 +38,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.*
 class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     ULCPopupMenu parameterNodePopUpMenu
+    ULCPopupMenu resultConfigurationNodePopUpMenu
     ULCPopupMenu simulationNodePopUpMenu
     ULCPopupMenu groupNodePopUpMenu
     ULCPopupMenu parameterGroupNodePopUpMenu
@@ -72,12 +74,26 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         if (!UserContext.isStandAlone()) {
-            parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, model)))
+            def transactionsEnabled = ApplicationHolder.getApplication().getConfig().getProperty("transactionsEnabled")
+            if (transactionsEnabled != null && transactionsEnabled == true)
+                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, model)))
             parameterNodePopUpMenu.addSeparator()
             parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
         }
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+
+        resultConfigurationNodePopUpMenu = new ULCPopupMenu()
+        resultConfigurationNodePopUpMenu.name = "resultConfigurationNodePopUpMenu"
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        resultConfigurationNodePopUpMenu.addSeparator()
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        resultConfigurationNodePopUpMenu.addSeparator()
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 //
         ULCPopupMenu dataEntry = new ULCPopupMenu()
         dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
@@ -224,7 +240,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     void setPopUpMenu(ULCComponent component, ResultConfigurationNode node) {
-        component.setComponentPopupMenu(parameterNodePopUpMenu)
+        component.setComponentPopupMenu(resultConfigurationNodePopUpMenu)
     }
 
     void setPopUpMenu(ULCComponent component, SimulationNode node) {

@@ -77,6 +77,10 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         return getTableTreeOperatorByName("selectionTreeRowHeader")
     }
 
+    ULCTableOperator getTableOperator(String name) {
+        return new ULCTableOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
     protected pushKeyOnPath(ULCTableTreeOperator tree, TreePath path, int key, int mask) {
 
         int row = tree.getRowForPath(path)

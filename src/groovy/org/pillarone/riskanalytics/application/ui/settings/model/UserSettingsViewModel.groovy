@@ -17,12 +17,15 @@ public class UserSettingsViewModel {
 
     public UserSettingsViewModel() {
         UserSettings userSettings = UserManagement.getCurrentUser()?.settings
+        userPreferences = new UserPreferences();
         if (userSettings == null) {
             languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[])
+            if (userPreferences.getLanguage())
+                languagesComboBoxModel.setSelectedEnum(userPreferences.getLanguage())
         } else {
             languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[], userSettings.language)
         }
-        userPreferences = new UserPreferences();
+
     }
 
     public void save() {
@@ -49,7 +52,7 @@ public class UserSettingsViewModel {
 
 
 enum LanguagesValues {
-    DE("de"), EN("en"), FR("fr")
+    DE("de"), de_CH("de_CH"), EN("en"), FR("fr"), fr_CH("fr_CH")
 
     private String displayName
 

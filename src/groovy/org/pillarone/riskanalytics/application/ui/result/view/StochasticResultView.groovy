@@ -81,7 +81,7 @@ class StochasticResultView extends ResultView {
     private ULCComponent addIntegerFunctions(ULCToolBar toolbar) {
         ULCTextField integerFunctionValue = new ULCTextField()
         ULCNumberDataType integerDataType = new ULCNumberDataType(ClientContext.locale)
-        integerDataType.integer = true
+        integerDataType.classType = Integer
         integerFunctionValue.dataType = integerDataType
         integerFunctionValue.columns = 6
         integerFunctionValue.value = 1
@@ -95,7 +95,7 @@ class StochasticResultView extends ResultView {
         toolbar.addSeparator()
         toolbar.add ULCFiller.createHorizontalStrut(5)
         IDataType dataType = DataTypeFactory.numberDataType
-        dataType.integer = false
+        dataType.classType = Double
         dataType.minFractionDigits = 1
         dataType.maxFractionDigits = 2
         dataType.groupingUsed = false

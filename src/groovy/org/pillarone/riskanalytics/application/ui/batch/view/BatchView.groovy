@@ -11,6 +11,7 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
@@ -45,7 +46,7 @@ public class BatchView extends NewBatchView {
         super.initComponents()
         batchNameTextField.setText(batchRun.name)
         comment.setText(batchRun.comment)
-        executionTimeSpinner.setValue(batchRun.executionTime)
+        executionTimeSpinner.setValue(batchRun.executionTime.toDate())
     }
 
 
@@ -65,6 +66,7 @@ public class BatchView extends NewBatchView {
         // Workarount for PMO-919: Headings Lost by Undocking Result Window (Tree View)
         //use FixedULCTable instead of ULCTable
         batches = new ULCFixedTable(batchDataTableModel)
+        batches.name = "batchesTable"
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun)
         batches.getColumnModel().getColumns().each {ULCTableColumn column ->
             column.setHeaderRenderer(new BatchTableHeaderRenderer())
@@ -121,7 +123,7 @@ public class BatchView extends NewBatchView {
                     BatchRun batch = BatchRun.findByName(oldName)
                     if (batch) {
                         batch.name = newName
-                        batch.executionTime = executionTimeSpinner.getValue()
+                        batch.executionTime = new DateTime(executionTimeSpinner.getValue().getTime())
                         batch.comment = comment.getText()
                         batch.save()
                         if (!batch.name.equals(oldName)) {
@@ -181,15 +183,18 @@ class NewBatchView {
 
         batchNameLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Name"))
         batchNameTextField = new ULCTextField()
+        batchNameTextField.name = "batchNameTextField"
         batchNameTextField.setPreferredSize(new Dimension(145, 20))
         executionTimeLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "ExecutionTime"))
         ULCSpinnerDateModel dateSpinnerModel = new ULCSpinnerDateModel()
         executionTimeSpinner = new ULCSpinner(dateSpinnerModel)
+        executionTimeSpinner.name = "executionTimeSpinner"
         executionTimeSpinner.setPreferredSize(new Dimension(145, 20))
         executionTimeSpinner.setEditor(new ULCDateEditor(executionTimeSpinner, FastDateFormat.getDateTimeInstance(FastDateFormat.SHORT, FastDateFormat.SHORT, UIUtils.getClientLocale()).pattern))
 
         commentLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Comment"))
         comment = new ULCTextArea(4, 50)
+        comment.name = "comment"
         comment.lineWrap = true
         comment.wrapStyleWord = true
 
@@ -247,6 +252,7 @@ class NewBatchView {
 
     ULCBoxPane getButtonsPane() {
         addButton = new ULCButton(UIUtils.getText(NewBatchView.class, "Add"))
+        addButton.name = "addButton"
 
         addButton.setPreferredSize(dimension)
 
@@ -277,7 +283,8 @@ class NewBatchView {
 
     protected BatchRun mapToDao() {
         BatchRun newBatchRun = new BatchRun(name: batchNameTextField.getValue(), comment: comment.getValue())
-        newBatchRun.setExecutionTime(executionTimeSpinner.getValue())
+        java.util.Date date = executionTimeSpinner.getValue()
+        newBatchRun.setExecutionTime(new DateTime(date.getTime()))
         return newBatchRun
     }
 
