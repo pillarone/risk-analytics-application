@@ -104,7 +104,7 @@ class SelectionTreeView {
                     dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
                 }
                 dialog.init()
-                dialog.dialog.setLocationRelativeTo(column.getHeaderRenderer())
+                dialog.dialog.setLocationRelativeTo(tree.viewPortTableTree)
                 dialog.dialog.setVisible true
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
                 p1RATModel.selectionTreeModel.order(columnIndex, ascOrder)
