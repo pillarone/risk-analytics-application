@@ -5,7 +5,7 @@ import com.ulcjava.base.application.ULCRootPane
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.environment.P1RATViewFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.util.server.ULCMinimalSizeFrame
+import org.pillarone.ulc.server.ULCMinimalSizeFrame
 
 class P1RATFrameViewFactory extends P1RATViewFactory {
 

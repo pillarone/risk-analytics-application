@@ -108,7 +108,7 @@ class MultiDimensionalParameterTableCellRenderer extends DefaultTableCellRendere
     }
 
     protected String typeString() {
-        return "org.pillarone.riskanalytics.application.client.UIErrorFeedbackLabel"
+        return "org.pillarone.ulc.client.UIErrorFeedbackLabel"
     }
 
 }

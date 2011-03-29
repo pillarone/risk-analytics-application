@@ -10,6 +10,7 @@
     <property name="build.prod.dir" value="${user.home}/.grails/${app.grails.version}/projects/${app.name}"/>
     <property name="plugin.dir" value="${basedir}/../local-plugins/RiskAnalyticsApplication-master"/>
     <property name="classes.prod.dir" value="${build.prod.dir}/classes"/>
+    <property name="plugin.classes.prod.dir" value="${build.prod.dir}/plugin-classes"/>
     <property name="resources.prod.dir" value="src/java"/>
 
     <property name="dist.dir" value="dist"/>
@@ -130,8 +131,9 @@
 
 
         <jar jarfile="${webapp.lib.dir}/${app.name}-extensions-client.jar">
-            <fileset dir="${classes.prod.dir}" includes="com/canoo/ulc/**/client/**"/>
-            <fileset dir="${resources.prod.dir}" includes="**/close-*.png"/>
+            <fileset dir="${plugin.classes.prod.dir}" includes="com/canoo/ulc/**/client/**"/>
+            <fileset dir="${plugin.classes.prod.dir}" includes="org/pillarone/ulc/client/**"/>
+            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-0.1/src/java" includes="**/close-*.png"/>
         </jar>
 
         <jar jarfile="${webapp.lib.dir}/${app.name}-client.jar">

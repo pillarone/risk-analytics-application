@@ -10,9 +10,8 @@ import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.util.server.ULCMinimalSizeFrame
+import org.pillarone.ulc.server.ULCMinimalSizeFrame
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
