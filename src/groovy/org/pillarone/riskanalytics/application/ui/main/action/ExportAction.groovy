@@ -211,6 +211,7 @@ abstract class ExportAction extends SelectionTreeAction {
         ParameterizationDAO.withTransaction {TransactionStatus status ->
             if (!parameterization.isLoaded())
                 parameterization.load()
+            parameterization.orderByPath = true
             result = parameterization.toConfigObject()
         }
         return result

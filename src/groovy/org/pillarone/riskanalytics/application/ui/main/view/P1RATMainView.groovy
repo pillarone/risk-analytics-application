@@ -32,7 +32,6 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.Calculati
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.util.server.ULCVerticalToggleButton
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
@@ -41,6 +40,7 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.ulc.server.ULCVerticalToggleButton
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -510,9 +510,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     private UserSettingsViewDialog getSettingsViewDialog() {
-        if (settingsViewDialog == null) {
-            settingsViewDialog = new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content))//, {event -> getLoginViewDialog().visible = false})
-        }
+        settingsViewDialog = new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content))//, {event -> getLoginViewDialog().visible = false})
         return settingsViewDialog
     }
 

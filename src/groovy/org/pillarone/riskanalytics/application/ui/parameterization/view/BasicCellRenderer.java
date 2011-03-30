@@ -52,7 +52,7 @@ public class BasicCellRenderer extends DefaultTableTreeCellRenderer implements I
     }
 
     protected String typeString() {
-        return "org.pillarone.riskanalytics.application.client.UIErrorFeedbackLabel";
+        return "org.pillarone.ulc.client.UIErrorFeedbackLabel";
     }
 
 }

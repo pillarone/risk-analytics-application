@@ -102,7 +102,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     Model getSelectedModel(DefaultMutableTableTreeNode itemNode) {
         if (itemNode == null) return null
         DefaultMutableTableTreeNode modelNode = null
-        while (modelNode == null) {
+        while (modelNode == null && itemNode?.parent) {
             if (itemNode instanceof ModelNode) {
                 modelNode = itemNode
             } else {
