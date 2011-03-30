@@ -57,8 +57,6 @@ class SelectionTreeView {
         rowHeaderTableTree.registerKeyboardAction(new ExportItemAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new SimulationAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        if (!UserContext.isStandAlone() || LocaleResources.getTestMode())
-            rowHeaderTableTree.registerKeyboardAction(new ChooseDealAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
     }
 

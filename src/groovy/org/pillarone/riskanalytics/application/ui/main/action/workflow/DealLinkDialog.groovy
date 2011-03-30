@@ -18,9 +18,6 @@ class DealLinkDialog {
         private Map<String, Long> items = [:]
 
         public DealComboBoxModel() {
-            String none = UIUtils.getText(DealLinkDialog.class, "none")
-            addElement(none)
-            items.put(none, null)
             for (TransactionInfo info in getAllTransactions()) {
                 addElement(info.name)
                 items.put(info.name, info.dealId)
@@ -74,8 +71,9 @@ class DealLinkDialog {
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("Deal") + ":"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, dealSelection)
-        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("Date") + ":"))
-        content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, valuationDatePane.content)
+        //ART-392: valuation date functionality currently disabled
+        /*content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("Date") + ":"))
+        content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, valuationDatePane.content)*/
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         okButton.setPreferredSize(new Dimension(120, 20))

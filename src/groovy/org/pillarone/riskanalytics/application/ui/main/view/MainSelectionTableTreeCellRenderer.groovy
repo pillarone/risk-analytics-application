@@ -31,6 +31,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.CreateNewWorkflowVersionAction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -75,10 +76,10 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         if (!UserContext.isStandAlone()) {
             def transactionsEnabled = ApplicationHolder.getApplication().getConfig().getProperty("transactionsEnabled")
-            if (transactionsEnabled != null && transactionsEnabled == true)
-                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, model)))
-            parameterNodePopUpMenu.addSeparator()
-            parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
+            if (transactionsEnabled != null && transactionsEnabled == true) {
+                parameterNodePopUpMenu.addSeparator()
+                parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
+            }
         }
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
@@ -94,7 +95,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         resultConfigurationNodePopUpMenu.addSeparator()
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
-//
+
         ULCPopupMenu dataEntry = new ULCPopupMenu()
         dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, model)))
         dataEntry.add(new ULCMenuItem(new SimulationAction(tree, model)))
@@ -147,6 +148,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         inProduction.addSeparator()
         inProduction.add(new ULCMenuItem(new SaveAsAction(tree, model)))
         inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        inProduction.addSeparator()
+        inProduction.add(new ULCMenuItem(new CreateNewWorkflowVersionAction(tree, model)))
         inProduction.addSeparator()
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
