@@ -69,6 +69,7 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
 
         tableTree.doExpandRow 1
         tableTree.selectCell(2, 0)
+        sleep 1000
         tableTree.pushKey(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK)
         ULCTableOperator tableOperator = getTableOperator("batchesTable")
         assertEquals 1, tableOperator.rowCount

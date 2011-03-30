@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 import com.ulcjava.testframework.operator.*
+import com.ulcjava.base.application.event.KeyEvent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -29,13 +30,8 @@ class BatchViewTests extends AbstractFunctionalTestCase {
         assertNotNull "path not found", batchPath
 
         tableTree.selectCell(1, 0)
-
-        ULCPopupMenuOperator popupMenuOperator = tableTree.callPopupOnCell(1, 0)
-
-        assertNotNull popupMenuOperator
-        ULCMenuItemOperator newBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
-        assertNotNull newBatch
-        newBatch.clickMouse()
+        sleep 1000
+        tableTree.pushKey(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)
 
         ULCTextFieldOperator textFieldOperator = getTextFieldOperator("batchNameTextField")
         textFieldOperator.clearText()

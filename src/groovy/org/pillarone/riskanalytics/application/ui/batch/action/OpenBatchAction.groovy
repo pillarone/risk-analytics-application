@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 
 /**
  * @author fouad jaada
@@ -37,8 +38,10 @@ public class NewBatchAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        BatchRun batchRun = new BatchRun()
-        this.model.openItem(null, batchRun)
+        if (tree.selectedPath?.lastPathComponent instanceof BatchRootNode) {
+            BatchRun batchRun = new BatchRun()
+            this.model.openItem(null, batchRun)
+        }
     }
 
 }

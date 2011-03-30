@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.view.Centered
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -60,6 +61,7 @@ class SelectionTreeView {
         if (!UserContext.isStandAlone() || LocaleResources.getTestMode())
             rowHeaderTableTree.registerKeyboardAction(new ChooseDealAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new NewBatchAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
     }
 
     protected void initTree() {
