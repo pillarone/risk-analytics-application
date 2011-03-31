@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.shared.UlcEventConstants
@@ -87,6 +88,10 @@ abstract class AbstractModellingModel {
 
     public void saveItem() {
 
+    }
+
+    IActionListener getSaveAction() {
+        return null
     }
 
 }

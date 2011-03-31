@@ -13,12 +13,10 @@ import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimul
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
-import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
@@ -219,40 +217,31 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         }
     }
 
-
-    void save() {
-        saveItem(currentItem)
+    private void save(def item) {
+        ExceptionSafe.protect {
+            item.save()
+        }
         updateViewModelsMap()
+        fireModelChanged()
         fireModelItemChanged()
-        if (currentItem instanceof Parameterization)
-            refresh(currentItem)
     }
+
+    public void saveItem(Parameterization item) {
+        viewModelsInUse[item]?.removeInvisibleComments()
+        save(item)
+        refresh(item)
+    }
+
+    public void saveItem(def item) {
+        save(item)
+    }
+
 
     void saveAllOpenItems() {
         viewModelsInUse.keySet().each {
             saveItem(it)
         }
         updateViewModelsMap()
-        fireModelItemChanged()
-    }
-
-    protected void saveItem(ModellingItem item) {
-        ExceptionSafe.protect {
-            item.save()
-        }
-        updateViewModelsMap()
-        fireModelChanged()
-        fireModelItemChanged()
-    }
-
-    protected void saveItem(Parameterization item) {
-        viewModelsInUse[item]?.removeInvisibleComments()
-
-        ExceptionSafe.protect {
-            item.save()
-        }
-        updateViewModelsMap()
-        fireModelChanged()
         fireModelItemChanged()
     }
 
@@ -267,7 +256,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         ITableTreeNode itemNode = selectionTreeModel.findNodeForItem(selectionTreeModel.root, item)
         closeItem(item.modelClass.newInstance(), item)
         itemNode.userObject = name
-//        selectionTreeModel.nodesChanged(itemNode.parent, itemNode.parent.getIndex(itemNode))
         selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
 
@@ -351,13 +339,16 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
     public void createNewVersion(Model model, ModellingItem item, boolean openNewVersion = true) {
+        ModellingItem modellingItem
         item.daoClass.withTransaction {status ->
-            item.load()
-            ModellingItem modellingItem = ModellingItemFactory.incrementVersion(item)
-            fireModelChanged()
-            selectionTreeModel.addNodeForItem(modellingItem)
-            openItem(model, modellingItem)
+            if (!item.isLoaded())
+                item.load()
+            modellingItem = ModellingItemFactory.incrementVersion(item)
         }
+        fireModelChanged()
+        selectionTreeModel.addNodeForItem(modellingItem)
+        if (openNewVersion)
+            openItem(model, modellingItem)
     }
 
     public void openItem(Model model, Parameterization item) {
@@ -397,14 +388,19 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         notifyOpenDetailView(model, item)
     }
 
-    public void deleteDependingResults(Model model, ModellingItem item) {
+    public boolean deleteDependingResults(Model model, ModellingItem item) {
         List<SimulationRun> simulationRuns = item.getSimulations();
-        simulationRuns.each {SimulationRun simulationRun ->
+        //check if at least one simulation is running
+        for (SimulationRun simulationRun: simulationRuns) {
+            if (!simulationRun.endTime) return false
+        }
+        for (SimulationRun simulationRun: simulationRuns) {
             Simulation simulation = ModellingItemFactory.getSimulation(simulationRun.name, item.modelClass)
             if (simulation) {
                 removeItem(model, simulation)
             }
         }
+        return true
     }
 
     public void addItem(BatchRun batchRun) {
@@ -464,33 +460,12 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
     public void simulationStart(Simulation simulation) {
-        // lock parameterization if it is visible
-        def parameterViewModel = viewModelsInUse[simulation.parameterization]
-        if (parameterViewModel && parameterViewModel instanceof ParameterViewModel)
-            parameterViewModel.setReadOnly(true)
-        // lock result template if it is visible
-        def resultConfigurationViewModel = viewModelsInUse[simulation.template]
-        if (resultConfigurationViewModel && resultConfigurationViewModel instanceof ResultConfigurationViewModel)
-            resultConfigurationViewModel.setReadOnly(true)
 
-        modelItemlisteners.each {
-            if ((it instanceof ParameterView && it.model == parameterViewModel) || (it instanceof ResultConfigurationView && it.model == resultConfigurationViewModel)) {
-                it.removeTabs()
-            }
-        }
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
-        ParameterViewModel viewModel = viewModelsInUse[simulation.parameterization]
-        ResultConfigurationViewModel templateViewModel = viewModelsInUse[simulation.template]
         if (simulation.simulationRun?.endTime != null) {
             selectionTreeModel.addNodeForItem(simulation)
-            viewModel?.readOnly = true
-            templateViewModel?.readOnly = true
-        }
-        else {
-            viewModel?.readOnly = false
-            templateViewModel?.readOnly = false
         }
     }
 
