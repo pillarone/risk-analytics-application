@@ -5,10 +5,8 @@ import grails.util.GrailsUtil;
 import groovy.lang.ExpandoMetaClass;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.groovy.grails.commons.BootstrapArtefactHandler;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
-import org.codehaus.groovy.grails.commons.GrailsBootstrapClass;
-import org.codehaus.groovy.grails.commons.GrailsClass;
+import org.codehaus.groovy.grails.web.context.GrailsConfigUtils;
 import org.pillarone.riskanalytics.application.initialization.DatabaseManagingSessionStateListener;
 import org.pillarone.riskanalytics.application.ui.P1RATStandaloneLauncher;
 import org.pillarone.riskanalytics.application.ui.util.SplashScreen;
@@ -16,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.util.SplashScreenHandler;
 import org.pillarone.riskanalytics.core.initialization.IExternalDatabaseSupport;
 import org.pillarone.riskanalytics.core.initialization.StandaloneConfigLoader;
 import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * Starting point of the standalone application.
@@ -65,14 +64,7 @@ public class Main {
             GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
 
             LOG.info("Executing bootstraps..");
-            GrailsClass[] bootstraps = app.getArtefacts(BootstrapArtefactHandler.TYPE);
-            for (GrailsClass bootstrap : bootstraps) {
-                final GrailsBootstrapClass bootstrapClass = (GrailsBootstrapClass) bootstrap;
-                //Quartz bootstrap needs a servlet context
-                if (!bootstrapClass.getClazz().getSimpleName().startsWith("Quartz")) {
-                    bootstrapClass.callInit(null);
-                }
-            }
+            GrailsConfigUtils.executeGrailsBootstraps(app, (WebApplicationContext) ctx, null);
 
             LOG.info("Loading user interface..");
             splashScreenHandler.handleMessage("Loading user interface..");
