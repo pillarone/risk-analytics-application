@@ -40,7 +40,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     ULCPopupMenu parameterNodePopUpMenu
     ULCPopupMenu resultConfigurationNodePopUpMenu
     ULCPopupMenu simulationNodePopUpMenu
-    ULCPopupMenu groupNodePopUpMenu
+    ULCPopupMenu resultConfigurationGroupNodePopUpMenu
     ULCPopupMenu parameterGroupNodePopUpMenu
     ULCPopupMenu simulationGroupNodePopUpMenu
     ULCPopupMenu modelNodePopUpMenu
@@ -172,14 +172,15 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 
-        groupNodePopUpMenu = new ULCPopupMenu()
+        resultConfigurationGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
-            groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
-        groupNodePopUpMenu.addSeparator()
-        groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllResultTemplates")))
+            resultConfigurationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', true)))
+        resultConfigurationGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, false)))
+        resultConfigurationGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, model, true)))
+        resultConfigurationGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        resultConfigurationGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultResultConfigurationAction(tree, model)))
+        resultConfigurationGroupNodePopUpMenu.addSeparator()
+        resultConfigurationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllResultTemplates")))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone()) {
@@ -296,7 +297,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         } else if (node.itemClass == Parameterization) {
             component.setComponentPopupMenu(parameterGroupNodePopUpMenu)
         } else {
-            component.setComponentPopupMenu(groupNodePopUpMenu)
+            component.setComponentPopupMenu(resultConfigurationGroupNodePopUpMenu)
         }
     }
 
