@@ -38,7 +38,7 @@ grails.project.dependency.resolution = {
         runtime "org.pillarone:pillar-one-ulc-extensions:0.1"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.4-ALPHA-1"
+            runtime "org.pillarone:risk-analytics-core:1.4-ALPHA-1.1"
         }
 
     }
