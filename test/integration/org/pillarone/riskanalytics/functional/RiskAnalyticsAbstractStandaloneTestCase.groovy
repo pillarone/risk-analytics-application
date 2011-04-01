@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ModelDAO
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -23,6 +24,7 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
     protected void tearDown() {
         Thread cleanUpThread = new Thread(
                 [run: {
+                    BatchRunSimulationRun.list()*.delete()
                     SimulationRun.list()*.delete()
                     ResultStructureDAO.list()*.delete()
                     ResultConfigurationDAO.list()*.delete()
