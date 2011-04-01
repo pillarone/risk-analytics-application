@@ -1,5 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
+import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
+import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
@@ -15,13 +24,6 @@ import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeL
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
-import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class ParameterViewModel extends AbstractModellingModel {
 
@@ -55,8 +57,8 @@ class ParameterViewModel extends AbstractModellingModel {
 
 
     @Override
-    IActionListener getSaveAction() {
-        return new SaveAction(p1RATModel, item)
+    IActionListener getSaveAction(ULCComponent parent) {
+        return new SaveAction(parent, p1RATModel, item)
     }
 
 

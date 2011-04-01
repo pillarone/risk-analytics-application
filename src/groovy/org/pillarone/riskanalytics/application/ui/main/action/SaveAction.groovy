@@ -1,26 +1,30 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 class SaveAction extends ResourceBasedAction {
     P1RATModel model
     def currentItem
+    ULCComponent parent
 
-    public SaveAction(P1RATModel model) {
+    public SaveAction(ULCComponent parent, P1RATModel model) {
         super("Save")
         this.model = model
+        this.parent = parent
     }
 
-    public SaveAction(P1RATModel model, def currentItem) {
-        super("Save")
-        this.model = model
+    public SaveAction(ULCComponent parent, P1RATModel model, def currentItem) {
+        this(parent, model)
         this.currentItem = currentItem
     }
 
@@ -34,7 +38,7 @@ class SaveAction extends ResourceBasedAction {
         if (!modellingItem.isUsedInSimulation()) {
             saveItem(modellingItem)
         } else {
-            I18NAlert alert = new I18NAlert("SaveItemAlreadyUsed")
+            I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(parent), "SaveItemAlreadyUsed")
             alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert, modellingItem)}] as IWindowListener)
             alert.show()
         }
@@ -61,14 +65,13 @@ class SaveAction extends ResourceBasedAction {
             if (alert.value.equals(alert.firstButtonLabel)) {
                 Model itemModel = getItemModel(item)
                 model.createNewVersion(itemModel, item)
-                item.load()
                 model.closeItem(itemModel, item)
             } else if (alert.value.equals(alert.secondButtonLabel)) {
                 if (model.deleteDependingResults(getItemModel(item), item)) {
                     model.saveItem(item)
                 } else {
                     //item used in running simulation
-                    new I18NAlert("DeleteAllDependentRunsError").show()
+                    new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
                 }
             }
         }
