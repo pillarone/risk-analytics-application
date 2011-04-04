@@ -1,19 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
+
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
-import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -58,6 +59,7 @@ class NewCommentView {
         commentTextArea.wrapStyleWord = true
 
         tags = new ULCList(tagListModel)
+        tags.name = "tagsList"
         tags.setVisibleRowCount(6);
         tags.setMinimumSize(new Dimension(100, 160))
 
@@ -125,7 +127,7 @@ class NewCommentView {
     }
 
     public static List getAllTags() {
-        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ?", [POST_LOCKING])
+        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ? and t.tagType =?", [POST_LOCKING, EnumTagType.COMMENT])
     }
 
     String getDisplayPath() {
