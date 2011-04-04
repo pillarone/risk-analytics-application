@@ -147,7 +147,7 @@ abstract class AbstractModellingTreeView {
         viewPortTree.registerKeyboardAction(new TreeNodePaster(tree: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TreeSelectionFiller(tree: viewPortTree, model: viewPortTree.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         viewPortTree.registerKeyboardAction(new TableTreeCopier(table: viewPortTree), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
-        IActionListener saveAction = model.getSaveAction()
+        IActionListener saveAction = model.getSaveAction(content)
         if (saveAction) {
             content.registerKeyboardAction(saveAction, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         }

@@ -1,5 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+
+import org.pillarone.riskanalytics.core.simulation.item.*
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -33,14 +38,10 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.Simulatio
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.ulc.server.ULCVerticalToggleButton
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
-import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -149,7 +150,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         exportAllNewestVersionAction = new ExportAllAction(this, model, true)
         exportAllAction = new ExportAllAction(this, model, false)
         importAllAction = new ImportAllAction(this, model, "ImportAllParameterizations")
-        saveAction = new SaveAction(model)
+        saveAction = new SaveAction(content, model)
         settingsAction = new ShowUserSettingsAction(this)
         runAction = new SimulationAction(selectionTreeView.getSelectionTree(), model)
         syncMenuBar()
@@ -587,7 +588,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             if ((modelPane.getNames() as List).contains(model.name)) {
                 ULCDetachableTabbedPane modelCardContent = modelPane.getComponentAt(model.name)
                 int tabIndex = getTabIndexForName(modelCardContent, createTabTitleForItem(item, model))
-                String title = createTabTitleForItem(item, model)
+                String title = MarkItemAsUnsavedListener.getTabTitle(item, model)
                 boolean tabExist = tabExists(modelCardContent, title)
                 if (tabIndex >= 0 && tabExist) {
                     ULCDetachableTabbedPane pane = findTabbedPane(modelCardContent, title)

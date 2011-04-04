@@ -1,13 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+
 import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 
 abstract class AbstractModellingModel {
 
@@ -90,7 +92,7 @@ abstract class AbstractModellingModel {
 
     }
 
-    IActionListener getSaveAction() {
+    IActionListener getSaveAction(ULCComponent parent) {
         return null
     }
 

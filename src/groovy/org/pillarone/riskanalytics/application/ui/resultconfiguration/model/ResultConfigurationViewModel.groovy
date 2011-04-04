@@ -1,5 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.resultconfiguration.model
 
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+
+import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
@@ -7,9 +12,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TableTreeValueChangedListener
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
 class ResultConfigurationViewModel extends AbstractModellingModel {
 
@@ -36,8 +38,8 @@ class ResultConfigurationViewModel extends AbstractModellingModel {
 
 
     @Override
-    IActionListener getSaveAction() {
-        return new SaveAction(p1RATModel, item)
+    IActionListener getSaveAction(ULCComponent parent) {
+        return new SaveAction(parent, p1RATModel, item)
     }
 
     void setReadOnly(boolean value) {
