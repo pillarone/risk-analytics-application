@@ -14,6 +14,9 @@ import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalTab
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.TableDataParser
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterTableModel
+import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
 class TablePaster extends ExceptionSafeAction {
 
@@ -39,7 +42,9 @@ class TablePaster extends ExceptionSafeAction {
         parent?.cursor = Cursor.WAIT_CURSOR
 
         ULCClipboard.appyClipboardContent([applyContent: {String clipboardContent ->
-            pasteContent(clipboardContent, startRow, startColumn)
+            ExceptionSafe.protect {
+                pasteContent(clipboardContent, startRow, startColumn)
+            }
         }] as IClipboardHandler)
 
 
@@ -47,8 +52,8 @@ class TablePaster extends ExceptionSafeAction {
 
     void pasteContent(String content, int startRow, int startColumn) {
         if (content) {
-            List data = new TableDataParser().parseTableData(content)
             withBulkChange(model) {
+                List data = new TableDataParser(columnMapping: getColumnMapping()).parseTableData(content)
                 if (!validate(data, startColumn)) {
                     showAlert(table)
                     return
@@ -68,6 +73,15 @@ class TablePaster extends ExceptionSafeAction {
         }
     }
 
+    private CopyPasteColumnMapping getColumnMapping() {
+        if (model instanceof MultiDimensionalParameterTableModel) {
+            if (model.multiDimensionalParam instanceof ConstrainedMultiDimensionalParameter) {
+                return new ConstraintColumnMapping(constraints: model.multiDimensionalParam.constraints, startColumn: table.selectedColumn - 1)
+            }
+        }
+        return new DefaultColumnMapping()
+    }
+
     private void showAlert(ULCTable table) {
         try {
             new I18NAlert(UlcUtilities.getWindowAncestor(table), "columnCountError").show()
@@ -76,8 +90,11 @@ class TablePaster extends ExceptionSafeAction {
 
     private withBulkChange(ITableModel tableModel, Closure change) {
         startBulkChange(tableModel)
-        change.call()
-        stopBulkChange(tableModel)
+        try {
+            change.call()
+        } finally {
+            stopBulkChange(tableModel)
+        }
     }
 
     private void startBulkChange(ITableModel tableModel) {

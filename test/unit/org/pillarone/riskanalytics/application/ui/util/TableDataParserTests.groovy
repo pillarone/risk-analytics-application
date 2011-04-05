@@ -1,13 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.util
 
-import org.pillarone.riskanalytics.application.ui.util.TableDataParser;
+import org.pillarone.riskanalytics.application.ui.util.TableDataParser
+import org.pillarone.riskanalytics.application.ui.base.action.DefaultColumnMapping;
 
 class TableDataParserTests extends GroovyTestCase {
 
     void testParseTableData() {
 
         String stringData = "a\tb\tc\n1\t\t2.0"
-        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH)
+        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH, columnMapping: new DefaultColumnMapping())
 
         List tableData = parser.parseTableData(stringData)
 
@@ -28,7 +29,7 @@ class TableDataParserTests extends GroovyTestCase {
 
     void testBigNumbers() {
         String stringData = "8226285.41\t0.000994753919160041\n8765133.33\t0.00093910825660648\n9183573.41\t0.000886575363657438\n9766056.49\t0.000836981114706092\n10370771.7360482\t0.000790161124589739"
-        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH)
+        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH, columnMapping: new DefaultColumnMapping())
 
         List tableData = parser.parseTableData(stringData)
         assertEquals 8226285.41, tableData[0][0]

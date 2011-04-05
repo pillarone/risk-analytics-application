@@ -1,5 +1,6 @@
 import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.pillarone.riskanalytics.application.example.constraint.CopyPasteConstraint
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
@@ -38,6 +39,7 @@ ULC view
 
     def doWithApplicationContext = {applicationContext ->
         ConstraintsFactory.registerConstraint(new LinePercentage())
+        ConstraintsFactory.registerConstraint(new CopyPasteConstraint())
     }
 
     def onChange = {event ->
