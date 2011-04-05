@@ -11,6 +11,7 @@ abstract class DateFormatUtils {
 
     //DateTimeFormatter is thread safe
     private static DateTimeFormatter detailedFormatter
+    private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
 
     public static DateTimeFormatter getDetailedDateFormat() {
         if (detailedFormatter == null) {
@@ -32,5 +33,9 @@ abstract class DateFormatUtils {
             return ""
         }
         return getDetailedDateFormat().print(date)
+    }
+
+    public static List<String> getInputDateFormats() {
+        return (List<String>) inputDateFormats.clone()
     }
 }

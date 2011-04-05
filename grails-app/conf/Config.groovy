@@ -39,7 +39,7 @@ transactionsEnabled = true
 
 environments {
     development {
-        models = ["CoreModel", 'ApplicationModel', 'DeterministicApplicationModel']
+        models = ["CoreModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
 
         ExceptionSafeOut = System.out
         log4j = {
