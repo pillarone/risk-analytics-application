@@ -3,16 +3,15 @@ package org.pillarone.riskanalytics.application.ui.main.view
 //import org.pillarone.riskanalytics.functional.P1RATAbstractStandaloneTestCase
 
 
+import javax.swing.tree.TreePath
+import org.hibernate.Session
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
-
-import javax.swing.tree.TreePath
-import org.hibernate.Session
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 import com.ulcjava.testframework.operator.*
 
@@ -30,6 +29,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
+        removeTags()
         initTags()
         super.setUp();
     }
@@ -138,7 +138,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
     }
 
     private void removeTags() {
-        Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).each {it.delete()}
+        Tag.findAll().each {it.delete()}
     }
 
 }
