@@ -123,6 +123,7 @@ class CommentPane {
         }
         String wiki = null
         try {
+            if (text) text = endLineToHtml(text)
             java.io.StringWriter writer = new java.io.StringWriter();
             (new Parser()).withVisitor(text, new HtmlVisitor(writer, null));
             wiki = writer.toString()
@@ -143,6 +144,13 @@ class CommentPane {
             text = text.replaceAll(it, "<span style=\"font-weight:bold;color:#006400\">${it}</span>")
         }
         return text
+    }
+
+
+    private String endLineToHtml(String text) {
+        // \n causes hiding of links
+        //workaround: replace all endline with html code
+        return text.replaceAll("\n", "<br>")
     }
 
 
