@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.table.ITableModel
 import java.text.NumberFormat
+import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataTableModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
@@ -28,7 +29,7 @@ class TableCopier extends ExceptionSafeAction {
 
     public String copyContent(int[] selectedRows, int[] selectedColumns) {
         StringBuilder buffer = new StringBuilder()
-        copyHeader(buffer)
+        copyHeader(model, buffer)
         for (int i = 0; i < selectedRows.size(); i++) {
             for (int j = 0; j < selectedColumns.size(); j++) {
                 Object value = model.getValueAt(selectedRows[i], selectedColumns[j])
@@ -41,10 +42,14 @@ class TableCopier extends ExceptionSafeAction {
         buffer.toString()
     }
 
-    private void copyHeader(StringBuilder builder) {
-        for (int i = 0; i < model.columnHeaders.size(); i++) {
-            builder << model.columnHeaders.get(i)
-            if (i != model.columnHeaders.size() - 1)
+    private void copyHeader(def model, StringBuilder builder) {
+    }
+
+    private void copyHeader(ResultIterationDataTableModel iterationDataTableModel, StringBuilder builder) {
+        //copy a header only by iteration s view
+        for (int i = 0; i < iterationDataTableModel.columnHeaders.size(); i++) {
+            builder << iterationDataTableModel.columnHeaders.get(i)
+            if (i != iterationDataTableModel.columnHeaders.size() - 1)
                 builder << '\t'
         }
         builder << '\n'
