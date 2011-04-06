@@ -33,15 +33,24 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     public String getDisplayName() {
         String value = null
-        value = lookUp(value, "")
+        value = this.lookUp(value, "")
         if (value == null) {
             value = super.getDisplayName()
         }
         return value
     }
 
-    @Override
-    String lookUp(String value, String tooltip) {
+    public String getToolTip() {
+        if (!cachedToolTip) {
+            String value = name
+            cachedToolTip = lookUp(value, TOOLTIP)
+            if (!cachedToolTip)
+                cachedToolTip = super.getToolTip()
+        }
+        return cachedToolTip
+    }
+
+    private String lookUp(String value, String tooltip) {
         String displayName
         if (parent != null) {
             displayName = findParameterDisplayNameInParentNodes(parent, tooltip)
@@ -122,6 +131,10 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
 
     public String getDisplayName() {
         return parameterizationTableTreeNode.getDisplayName()
+    }
+
+    public String getToolTip() {
+        return parameterizationTableTreeNode.getToolTip()
     }
 
 

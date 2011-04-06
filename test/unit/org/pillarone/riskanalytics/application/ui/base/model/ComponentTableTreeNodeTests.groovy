@@ -1,17 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.example.component.TestComponent
 
 class ComponentTableTreeNodeTests extends GroovyTestCase {
 
     void setUp() {
-        LocaleResources.setTestMode()
+        UserContext.setAttribute("SESSION_LOCAL_LOCALE", Locale.getDefault())
     }
 
-    void tearDown() {
-        LocaleResources.clearTestMode()
-    }
 
     void testNodeName() {
         ComponentTableTreeNode node = new ComponentTableTreeNode(new TestComponent(name: "componentName"), "nodeName")
@@ -20,15 +17,18 @@ class ComponentTableTreeNodeTests extends GroovyTestCase {
 
     void testDisplayName() {
         ComponentTableTreeNode node = new ComponentTableTreeNode(new TestComponent(name: "componentName"), "nodeName")
-        assertEquals("node name", node.displayName)
+        assertEquals("Node name display value", node.displayName)
+        assertEquals("Node name tooltip", node.toolTip)
 
         node = new ComponentTableTreeNode(new TestComponent(name: "subCompo"), "subCompo")
-        assertEquals("Compo", node.displayName)
+        //todo ask stefan how to add subCompo property to resource
+//        assertEquals("Compo", node.displayName)
+        assertEquals("Node name display value", node.displayName)
     }
 
     void testGetValueAt() {
         ComponentTableTreeNode node = new ComponentTableTreeNode(new TestComponent(name: "componentName"), "nodeName")
         assertEquals("nodeName", node.name)
-        assertEquals("node name", node.getValueAt(0))
+        assertEquals("Node name display value", node.getValueAt(0))
     }
 }

@@ -32,8 +32,7 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
         return value
     }
 
-    @Override
-    String lookUp(String value, String tooltip) {
+    private String lookUp(String value, String tooltip) {
         String displayName
         if (!parent instanceof DynamicComposedComponent) {
             Parameter parameter = parameter.find {it -> it != null }
@@ -41,6 +40,16 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
             displayName = I18NUtils.findParameterTypeDisplayName(parameterType, tooltip)
         }
         return displayName
+    }
+
+    public String getToolTip() {
+        if (!cachedToolTip) {
+            String value = name
+            cachedToolTip = lookUp(value, TOOLTIP)
+            if (!cachedToolTip)
+                cachedToolTip = super.getToolTip()
+        }
+        return cachedToolTip
     }
 
 
