@@ -29,7 +29,7 @@ class TableCopier extends ExceptionSafeAction {
 
     public String copyContent(int[] selectedRows, int[] selectedColumns) {
         StringBuilder buffer = new StringBuilder()
-        copyHeader(model, buffer)
+        copyHeader(model, buffer, selectedColumns)
         for (int i = 0; i < selectedRows.size(); i++) {
             for (int j = 0; j < selectedColumns.size(); j++) {
                 Object value = model.getValueAt(selectedRows[i], selectedColumns[j])
@@ -42,14 +42,14 @@ class TableCopier extends ExceptionSafeAction {
         buffer.toString()
     }
 
-    private void copyHeader(def model, StringBuilder builder) {
+    private void copyHeader(def model, StringBuilder builder, int[] selectedColumns) {
     }
 
-    private void copyHeader(ResultIterationDataTableModel iterationDataTableModel, StringBuilder builder) {
+    private void copyHeader(ResultIterationDataTableModel iterationDataTableModel, StringBuilder builder, int[] selectedColumns) {
         //copy a header only by iteration s view
-        for (int i = 0; i < iterationDataTableModel.columnHeaders.size(); i++) {
-            builder << iterationDataTableModel.columnHeaders.get(i)
-            if (i != iterationDataTableModel.columnHeaders.size() - 1)
+        for (int i = 0; i < selectedColumns.size(); i++) {
+            builder << iterationDataTableModel.columnHeaders.get(selectedColumns[i])
+            if (i != selectedColumns.size() - 1)
                 builder << '\t'
         }
         builder << '\n'
