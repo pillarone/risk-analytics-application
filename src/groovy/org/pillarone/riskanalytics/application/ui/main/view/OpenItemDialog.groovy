@@ -8,9 +8,9 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -88,7 +88,8 @@ class OpenItemDialog {
                 item.load()
             }
             item.daoClass.withTransaction {status ->
-                item.load()
+                if (!item.isLoaded())
+                    item.load()
                 modellingItem = ModellingItemFactory.incrementVersion(item)
                 p1RATModel.fireModelChanged()
                 p1RATModel.selectionTreeModel.addNodeForItem(modellingItem)
@@ -98,7 +99,8 @@ class OpenItemDialog {
 
         readOnlyButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            item.load()
+            if (!item.isLoaded())
+                item.load()
             p1RATModel.notifyOpenDetailView(model, item)
         }] as IActionListener)
 
