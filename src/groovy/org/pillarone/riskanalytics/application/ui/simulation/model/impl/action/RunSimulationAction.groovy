@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
@@ -51,16 +52,20 @@ class RunSimulationAction extends ResourceBasedAction {
             alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
-                    if (parameterization.changed) {
-                        parameterization.save()
-                    }
-                    if (configuration.changed) {
-                        if (!configuration.isLoaded()) {
-                            configuration.load()
+                    if (isUsedInSimulation(parameterization) || isUsedInSimulation(configuration)) {
+                        new I18NAlert("UnsavedUsedItem").show()
+                    } else {
+                        if (parameterization.changed) {
+                            parameterization.save()
                         }
-                        configuration.save()
+                        if (configuration.changed) {
+                            if (!configuration.isLoaded()) {
+                                configuration.load()
+                            }
+                            configuration.save()
+                        }
+                        runSimulation()
                     }
-                    runSimulation()
                 }
             }] as IWindowListener)
 
@@ -69,6 +74,10 @@ class RunSimulationAction extends ResourceBasedAction {
             return true
         }
         return false
+    }
+
+    private boolean isUsedInSimulation(ModellingItem item) {
+        return item.changed && item.isUsedInSimulation()
     }
 
     private void runSimulation() {
