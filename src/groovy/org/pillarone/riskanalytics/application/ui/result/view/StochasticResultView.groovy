@@ -2,10 +2,11 @@ package org.pillarone.riskanalytics.application.ui.result.view
 
 import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.datatype.ULCNumberDataType
-import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
@@ -21,11 +22,13 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton minButton
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
+    EnumI18NComboBoxModel profitFunctionModel
 
     private int nextModelIndex = 0
 
     public StochasticResultView(ResultViewModel model) {
         super(model)
+
     }
 
     void setModel(AbstractModellingModel model) {
@@ -51,10 +54,14 @@ class StochasticResultView extends ResultView {
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, content)
 
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), contentPane)
-        tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), new ResultSettingsView(model.item, p1ratModel).content)
+        tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), getResultSettingView())
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
         return tabbedPane
+    }
+
+    protected ULCBoxPane getResultSettingView() {
+        return new ResultSettingsView(model.item, p1ratModel).content
     }
 
     protected void addToolBarElements(ULCToolBar toolbar) {
@@ -103,13 +110,24 @@ class StochasticResultView extends ResultView {
         functionValue.dataType = dataType
         functionValue.value = 99.5
         functionValue.columns = 6
+        profitFunctionModel = new EnumI18NComboBoxModel(ProfitFunction.values() as Object[])
+        ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)
+        profitComboBox.name = "profitComboBox"
+        toolbar.add profitComboBox
+        toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add functionValue
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add new ULCLabel(getText("Percent"))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        toolbar.add new ULCButton(new PercentileAction(model, tree.viewPortTableTree, functionValue))
-        toolbar.add new ULCButton(new VarAction(model, tree.viewPortTableTree, functionValue))
-        toolbar.add new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue))
+        ULCButton percentileButton = new ULCButton(new PercentileAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        ULCButton varButton = new ULCButton(new VarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        ULCButton tvarButton = new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        percentileButton.name = "percentileButton"
+        varButton.name = "varButton"
+        tvarButton.name = "tvarButton"
+        toolbar.add percentileButton
+        toolbar.add varButton
+        toolbar.add tvarButton
     }
 
     public void functionAdded(IFunction function) {
@@ -169,24 +187,4 @@ class StochasticResultView extends ResultView {
 
 }
 
-class RemoveFunctionAction extends AbstractAction {
 
-    private ResultViewModel model
-    private IFunction function
-    private ULCToggleButton button
-
-    public RemoveFunctionAction(ResultViewModel model, IFunction function, ULCToggleButton button) {
-        super(UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.name]));
-        this.function = function
-        this.model = model
-        this.button = button
-    }
-
-    public void actionPerformed(ActionEvent event) {
-        model.removeFunction(function)
-        if (button != null) {
-            button.selected = false
-        }
-    }
-
-}

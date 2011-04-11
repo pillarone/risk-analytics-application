@@ -15,10 +15,12 @@ import org.pillarone.riskanalytics.application.dataaccess.function.CompareFuncti
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
+import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
@@ -34,7 +36,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     CompareSimulationsCriteriaView criteriaView
     P1RATMainView p1RATMainView
     ULCComboBox selectView
-
+    EnumI18NComboBoxModel profitFunctionModel
 
     public static int space = 3
 
@@ -42,6 +44,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         super(model)
         model.addFunctionListener(this)
         this.p1RATMainView = p1RATMainView
+
     }
 
     protected void initTree() {
@@ -172,13 +175,17 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         functionValue.dataType = dataType
         functionValue.value = 99.5
         functionValue.columns = 6
+        if (!this.profitFunctionModel)
+            this.profitFunctionModel = new EnumI18NComboBoxModel(ProfitFunction.values() as Object[])
+        toolbar.add new ULCComboBox(profitFunctionModel)
+        toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add functionValue
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add new ULCLabel(getText("Percent"))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        toolbar.add new ULCButton(new PercentileAction(model, tree.viewPortTableTree, functionValue))
-        toolbar.add new ULCButton(new VarAction(model, tree.viewPortTableTree, functionValue))
-        toolbar.add new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue))
+        toolbar.add new ULCButton(new PercentileAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        toolbar.add new ULCButton(new VarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        toolbar.add new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
     }
 
     private def addPrecisionFunctions(ULCToolBar toolbar) {

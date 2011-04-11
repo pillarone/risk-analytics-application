@@ -2,9 +2,12 @@ package org.pillarone.riskanalytics.application.dataaccess.function
 
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 interface IFunction extends Cloneable {
@@ -12,9 +15,10 @@ interface IFunction extends Cloneable {
     String getName(int periodIndex)
 
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node)
+
 }
 
-/** A Function for Result views           */
+/** A Function for Result views                              */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -49,7 +53,6 @@ abstract class ResultFunction implements IFunction {
     public ResultFunction clone() {
         return (ResultFunction) super.clone();
     }
-
 
 }
 
@@ -314,8 +317,26 @@ class ColumnOrder extends ResultFunction {
 
 }
 
+abstract class QuantilePerspectiveFunction extends ResultFunction {
+    QuantilePerspective perspective
 
-class Percentile extends ResultFunction {
+    @Override
+    String getName(int periodIndex) {
+        return getName() + getPerspectiveName()
+    }
+
+    private String getPerspectiveName() {
+        return perspective ? " " + UIUtils.getText(ProfitFunction, perspective.toString()) : ""
+    }
+
+    boolean equals(QuantilePerspectiveFunction function) {
+        return getName() == function.getName() && perspective == function.perspective
+    }
+
+
+}
+
+class Percentile extends QuantilePerspectiveFunction {
 
     String name
     Double percentile
@@ -326,7 +347,7 @@ class Percentile extends ResultFunction {
     }
 
     def evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        ResultAccessor.getPercentile(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field, percentile)
+        return ResultAccessor.getPercentile(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field, percentile, perspective ? perspective : QuantilePerspective.LOSS)
     }
 
     public String getKeyFigureName() {
@@ -338,7 +359,7 @@ class Percentile extends ResultFunction {
     }
 }
 
-class Var extends ResultFunction {
+class Var extends QuantilePerspectiveFunction {
 
     Double percentile
 
@@ -351,7 +372,7 @@ class Var extends ResultFunction {
     }
 
     public double evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        ResultAccessor.getVar(simulationRun, periodIndex, getPath(node), node.collector, node.field, percentile)
+        return ResultAccessor.getVar(simulationRun, periodIndex, getPath(node), node.collector, node.field, percentile, perspective ? perspective : QuantilePerspective.LOSS)
     }
 
     public String getKeyFigureName() {
@@ -389,7 +410,7 @@ class SingleIteration extends ResultFunction {
     }
 }
 
-class Tvar extends ResultFunction {
+class Tvar extends QuantilePerspectiveFunction {
 
     Double percentile
 
@@ -402,7 +423,7 @@ class Tvar extends ResultFunction {
     }
 
     public evaluate(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
-        ResultAccessor.getTvar(simulationRun, periodIndex, getPath(node), node.collector, node.field, percentile)
+        ResultAccessor.getTvar(simulationRun, periodIndex, getPath(node), node.collector, node.field, percentile, perspective ? perspective : QuantilePerspective.LOSS)
     }
 
     public String getKeyFigureName() {
