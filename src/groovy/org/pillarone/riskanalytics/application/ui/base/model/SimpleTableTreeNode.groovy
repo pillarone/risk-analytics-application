@@ -65,7 +65,7 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
 
     }
 
-    String lookUp(String value, String tooltip = "") {
+    private String lookUp(String value, String tooltip = "") {
         //try to get a displayValue from the parent.component
         String displayNameValue = I18NUtils.findResultParameterDisplayName(this, value, tooltip)
         if (displayNameValue == null)

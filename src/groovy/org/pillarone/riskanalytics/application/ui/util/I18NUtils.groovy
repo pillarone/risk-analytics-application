@@ -1,9 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.util
 
-import org.pillarone.riskanalytics.core.components.Component
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
-import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import com.ulcjava.base.application.util.HTMLUtilities
 import java.text.MessageFormat
 import org.apache.commons.logging.Log
@@ -12,6 +8,10 @@ import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeN
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterObjectParameterTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 
 public class I18NUtils {
 
@@ -137,7 +137,8 @@ public class I18NUtils {
     public static String findComponentDisplayNameInComponentBundle(Component component, String toolTip = "") {
         String name = null
         try {
-            name = findResourceBundle(component.getClass()).getString("displayName" + toolTip)
+            ResourceBundle bundle = findResourceBundle(component.getClass())
+            name = bundle.getString("displayName" + toolTip)
         } catch (java.util.MissingResourceException e) {
             LOG.debug("resource for ${component.getClass().getSimpleName()} not found")
         }

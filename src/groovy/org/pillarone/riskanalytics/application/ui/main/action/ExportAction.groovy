@@ -1,28 +1,30 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
-import org.springframework.transaction.TransactionStatus
 
 import org.pillarone.riskanalytics.core.simulation.item.*
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
+
+import com.ulcjava.base.application.*
+
 import com.ulcjava.base.shared.FileChooserConfig
 import java.util.regex.Pattern
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.UserPreferences
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.springframework.transaction.TransactionStatus
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -149,15 +151,16 @@ abstract class ExportAction extends SelectionTreeAction {
 
             List data = []
             data << ["", "", "Version"]
-            data << ["Simulation Name:", "$simulation.name"]
-            data << ["Comment:", simulation.comment]
-            data << ["Model:", "${simulation.modelClass.name}", "${simulation.modelVersionNumber}"]
-            data << ["Parameterization:", "$simulation.parameterization.name", "${simulation.parameterization.versionNumber.toString()}"]
-            data << ["Template:", "$simulation.template.name", "${simulation.template.versionNumber.toString()}"]
-            data << ["Structure:", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
-            data << ["Number of Periods:", simulation.periodCount]
-            data << ["Number of Iterations:", simulation.numberOfIterations]
-            data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
+            data << [UIUtils.getText(ExportAction.class, "SimulationName") + ":", "$simulation.name"]
+            data << [UIUtils.getText(ExportAction.class, "Comment") + ":", simulation.comment]
+            data << [UIUtils.getText(ExportAction.class, "Model") + ":", "${simulation.modelClass.name}", "${simulation.modelVersionNumber}"]
+            data << [UIUtils.getText(ExportAction.class, "Parameterization") + ":", "$simulation.parameterization.name", "${simulation.parameterization.versionNumber.toString()}"]
+            data << [UIUtils.getText(ExportAction.class, "Template") + ":", "$simulation.template.name", "${simulation.template.versionNumber.toString()}"]
+            data << [UIUtils.getText(ExportAction.class, "Structure") + ":", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
+            data << [UIUtils.getText(ExportAction.class, "NumberOfPeriods") + ":", simulation.periodCount]
+            data << [UIUtils.getText(ExportAction.class, "NumberOfIterations") + ":", simulation.numberOfIterations]
+            data << [UIUtils.getText(ExportAction.class, "RandomSeed") + ":", simulation.randomSeed]
+            data << [UIUtils.getText(ExportAction.class, "SimulationEndDate") + ":", DateFormatUtils.formatDetailed(simulation.end)]
             return data
         }
     }

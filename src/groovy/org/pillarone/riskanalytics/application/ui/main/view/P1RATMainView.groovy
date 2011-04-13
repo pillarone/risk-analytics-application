@@ -17,8 +17,14 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
+
+import org.pillarone.ulc.server.ULCVerticalToggleButton
+import com.ulcjava.base.application.*
+
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
@@ -38,8 +44,6 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.Simulatio
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.ulc.server.ULCVerticalToggleButton
-import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 
@@ -81,6 +85,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     Map windowMenus
 
     TabbedPaneManagerHelper tabbedPaneManagerHelper = new TabbedPaneManagerHelper()
+
+    Log LOG = LogFactory.getLog(P1RATMainView)
 
     public P1RATMainView(P1RATModel model) {
         this.model = model
@@ -555,8 +561,12 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     private void selectCurrentItemFromTab(ULCCloseableTabbedPane modelCardContent) {
-        def item = openItems[modelCardContent.getSelectedComponent()]
-        model.currentItem = (item instanceof BatchRun) ? null : item
+        try {
+            def item = openItems[modelCardContent.getSelectedComponent()]
+            model.currentItem = (item instanceof BatchRun) ? null : item
+        } catch (Exception ex) {
+            LOG.error "Error occured during set a current item ${ex}"
+        }
     }
 
     public void openDetailView(Model selectedModel, Object item) {

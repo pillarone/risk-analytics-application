@@ -25,7 +25,8 @@ class TableCopierTests extends GroovyTestCase {
         ResultIterationDataTableModel model = new ResultIterationDataTableModel(data, ["title1", "title2"])
         TableCopier tableCopier = new TableCopier(model: model)
         assertEquals "title1\ttitle2\n1\t2\n3\t4\n", tableCopier.copyContent([0, 1] as int[], [0, 1] as int[])
-
+        assertEquals "title1\n1\n", tableCopier.copyContent([0] as int[], [0] as int[])
+        assertEquals "title2\n4\n", tableCopier.copyContent([1] as int[], [1] as int[])
     }
 
     public void testCopyMDPContent() {

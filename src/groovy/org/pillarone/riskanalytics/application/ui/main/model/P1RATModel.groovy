@@ -261,7 +261,8 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
     public void renameItem(ModellingItem item, String name) {
         item.daoClass.withTransaction {status ->
-            item.load()
+            if (!item.isLoaded())
+                item.load()
             ITableTreeNode itemNode = selectionTreeModel.findNodeForItem(selectionTreeModel.root, item)
             closeItem(item.modelClass.newInstance(), item)
 
@@ -289,7 +290,8 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
     public void addItem(ModellingItem item, String name) {
         item.daoClass.withTransaction {status ->
-            item.load()
+            if (!item.isLoaded())
+                item.load()
             ModellingItem newItem = ModellingItemFactory.copyItem(item, name)
             newItem.id = null
             fireModelChanged()
@@ -352,12 +354,14 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
     }
 
     public void openItem(Model model, Parameterization item) {
-        item.load()
+        if (!item.isLoaded())
+            item.load()
         notifyOpenDetailView(model, item)
     }
 
     public void openItem(Model model, ResultConfiguration item) {
-        item.load()
+        if (!item.isLoaded())
+            item.load()
         notifyOpenDetailView(model, item)
     }
 
