@@ -37,9 +37,14 @@ public class BatchView extends NewBatchView {
         this.batchRun = batchRun
         this.batchDataTableModel = new BatchDataTableModel(batchRun)
         this.tabbedPane = tabbedPane
+    }
+
+    public void init() {
+        batchDataTableModel.init()
         initComponents()
         layoutComponents()
         attachListeners()
+
     }
 
     protected void initComponents() {

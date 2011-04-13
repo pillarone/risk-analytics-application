@@ -1,10 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-
-import org.pillarone.riskanalytics.core.simulation.item.*
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -17,10 +12,6 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
-
-import org.pillarone.ulc.server.ULCVerticalToggleButton
-import com.ulcjava.base.application.*
-
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import org.apache.commons.logging.Log
@@ -44,8 +35,14 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.Simulatio
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.ulc.server.ULCVerticalToggleButton
+import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -300,6 +297,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     protected ULCComponent createDetailView(BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
         if (batchRun.id != null) {
             BatchView view = new BatchView(this.model, batchRun, tabbedPane)
+            view.init()
             view.addIP1RATModelListener this
             return view.content
         } else {
