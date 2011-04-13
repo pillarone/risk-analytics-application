@@ -20,7 +20,7 @@ import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFun
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
-import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
+import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
@@ -176,7 +176,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         functionValue.value = 99.5
         functionValue.columns = 6
         if (!this.profitFunctionModel)
-            this.profitFunctionModel = new EnumI18NComboBoxModel(ProfitFunction.values() as Object[])
+            this.profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
         toolbar.add new ULCComboBox(profitFunctionModel)
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add functionValue

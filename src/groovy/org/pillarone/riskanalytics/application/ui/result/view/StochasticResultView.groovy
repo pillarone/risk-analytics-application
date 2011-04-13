@@ -6,7 +6,7 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
+import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
@@ -110,7 +110,7 @@ class StochasticResultView extends ResultView {
         functionValue.dataType = dataType
         functionValue.value = 99.5
         functionValue.columns = 6
-        profitFunctionModel = new EnumI18NComboBoxModel(ProfitFunction.values() as Object[])
+        profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
         ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)
         profitComboBox.name = "profitComboBox"
         toolbar.add profitComboBox
@@ -150,7 +150,7 @@ class StochasticResultView extends ResultView {
             tree.viewPortTableTree.removeColumn(col)
         }
         ULCMenuItem item = menu.components.find {ULCMenuItem it ->
-            it.text == "Remove " + function.name
+            it.text == UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.getName(0)])
         }
         menu.remove(item)
     }

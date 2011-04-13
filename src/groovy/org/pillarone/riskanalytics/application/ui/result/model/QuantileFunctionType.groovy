@@ -5,13 +5,13 @@ import org.pillarone.riskanalytics.core.output.QuantilePerspective
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-public enum ProfitFunction {
+public enum QuantileFunctionType {
 
     PROFIT("PROFIT"), LOSS("LOSS")
 
     private String displayName
 
-    private ProfitFunction(String displayName) {
+    private QuantileFunctionType(String displayName) {
         this.@displayName = displayName
     }
 

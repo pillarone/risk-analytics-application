@@ -2,7 +2,7 @@ package org.pillarone.riskanalytics.application.dataaccess.function
 
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
+import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
@@ -18,7 +18,7 @@ interface IFunction extends Cloneable {
 
 }
 
-/** A Function for Result views                              */
+/** A Function for Result views                               */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -326,7 +326,7 @@ abstract class QuantilePerspectiveFunction extends ResultFunction {
     }
 
     private String getPerspectiveName() {
-        return perspective ? " " + UIUtils.getText(ProfitFunction, perspective.toString()) : ""
+        return perspective ? " " + UIUtils.getText(QuantileFunctionType, perspective.toString()) : ""
     }
 
     boolean equals(QuantilePerspectiveFunction function) {

@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
-import org.pillarone.riskanalytics.application.ui.result.model.ProfitFunction
+import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
@@ -149,7 +149,7 @@ abstract class TextFieldResultAction extends AbstractResultAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        QuantilePerspective perspective = ((ProfitFunction) profitFunctionModel.getSelectedEnum()).getQuantilePerspective()
+        QuantilePerspective perspective = ((QuantileFunctionType) profitFunctionModel.getSelectedEnum()).getQuantilePerspective()
         double value = valueField.value
         if (value != null) {
             if (!model.isFunctionAdded(function(value, perspective)) || !openedValues.contains(value)) {

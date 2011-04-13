@@ -6,7 +6,6 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.QuantilePerspectiveFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
@@ -164,9 +163,7 @@ class ResultViewModel extends AbstractModellingModel {
 
     boolean isFunctionAdded(IFunction function) {
         for (IFunction f in treeModel.functions) {
-            if ((f instanceof QuantilePerspectiveFunction) && (function instanceof QuantilePerspectiveFunction) && f.equals(function))
-                return true
-            else if (f != null && f.getName(0).equals(function.name)) {
+            if (f != null && f.getName(0).equals(function.getName(0))) {
                 return true
             }
         }
