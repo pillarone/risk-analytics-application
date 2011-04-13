@@ -6,7 +6,7 @@ import org.jfree.chart.JFreeChart
 import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.xy.XYBarRenderer
-import org.jfree.data.statistics.HistogramDataset
+
 import org.jfree.data.statistics.HistogramType
 import org.jfree.data.xy.XYSeries
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -15,7 +15,8 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNo
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.application.util.JEstimator
 import org.pillarone.riskanalytics.application.util.MeshCalculations
-import org.pillarone.riskanalytics.core.output.KiloHistogramDataset
+import org.pillarone.riskanalytics.core.output.PdfFromSample
+import org.jfree.data.statistics.HistogramDataset
 
 class PDFGaussKernelEstimateChartViewModel extends GaussKernelEstimateChartViewModel implements PDFChartViewModel {
 
@@ -27,7 +28,7 @@ class PDFGaussKernelEstimateChartViewModel extends GaussKernelEstimateChartViewM
 
     protected void addHistogram(JFreeChart chart, String legendTitle, double lowerBound, double upperBound) {
         XYPlot plot = (XYPlot) chart.getPlot()
-        HistogramDataset data = new KiloHistogramDataset()
+        HistogramDataset data = new HistogramDataset()
         data.setType HistogramType.SCALE_AREA_TO_1
 
         int upperBinCount = Math.min((observations.size() / 5) as int, MeshCalculations.SAMPLE_COUNT)
@@ -63,8 +64,7 @@ class PDFGaussKernelEstimateChartViewModel extends GaussKernelEstimateChartViewM
             if (dataExportMode) {
                 seriesPDF.add(xyPair[0], xyPair[1])
             } else {
-                //sca: JFreeChart has problems calculating view range with small y values
-                seriesPDF.add(xyPair[0], xyPair[1] * 1000)
+                seriesPDF.add(xyPair[0], xyPair[1])
             }
         }
     }
