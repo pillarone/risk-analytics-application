@@ -33,9 +33,9 @@ class LocaleResources {
         ResourceBundleFactory.getBundle(bundleFilename, getLocale())
     }
 
-    static Set getBundles() {
+    static Set getBundles(String key) {
         def resourceBundle = []
-        def resources = ResourceBundleRegistry.getResourceBundles()
+        def resources = ResourceBundleRegistry.getBundles(key)
         for (String bundleName in resources) {
             resourceBundle << ResourceBundle.getBundle(bundleName, getLocale())
         }

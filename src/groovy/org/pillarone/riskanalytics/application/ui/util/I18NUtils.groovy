@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 
 public class I18NUtils {
 
@@ -20,7 +21,8 @@ public class I18NUtils {
     static final Log LOG = LogFactory.getLog(I18NUtils)
     static boolean testMode = false
     static ResourceBundle testResourceBundle = null
-    static Set exceptionResourceBundle = null
+    static Set exceptionResourceBundles = null
+    static Set helpResourceBundles = null
 
     public static findParameterTypeDisplayName(String type, String tooltip = "") {
         String value = null
@@ -323,13 +325,21 @@ public class I18NUtils {
     }
 
     public static String getExceptionText(String exception) {
-        if (!exceptionResourceBundle)
-            exceptionResourceBundle = LocaleResources.getBundles()
-        String text = getTextByResourceBundles(exception)
+        String text = getPropertyText(exceptionResourceBundles, ResourceBundleRegistry.RESOURCE, exception)
         if (!text) {
             text = toLines(exception, 70)
         }
         return HTMLUtilities.convertToHtml(text)
+    }
+
+    public static String getHelpText(String arg) {
+        return getPropertyText(helpResourceBundles, ResourceBundleRegistry.HELP, arg)
+    }
+
+    public static String getPropertyText(Set bundles, String bundleKey, String arg) {
+        if (!bundles)
+            bundles = LocaleResources.getBundles(bundleKey)
+        return getTextByResourceBundles(bundles, arg)
     }
 
     private static String toLines(String exception, int lineMaxLength) {
@@ -347,13 +357,13 @@ public class I18NUtils {
         return bf.toString()
     }
 
-    private static String getTextByResourceBundles(String exception) {
-        String text = null
+    private static String getTextByResourceBundles(Set bundles, String argument) {
         def keys = null
+        String text = ""
         try {
-            exception = exception.replaceAll("\n", "")
-            for (ResourceBundle resourceBundle: exceptionResourceBundle) {
-                keys = (List) new GroovyShell().evaluate(exception)
+            argument = argument.replaceAll("\n", "")
+            for (ResourceBundle resourceBundle: bundles) {
+                keys = (List) new GroovyShell().evaluate(argument)
                 try {
                     text = resourceBundle.getString(keys[0])
                 } catch (Exception ex) {}
@@ -368,7 +378,7 @@ public class I18NUtils {
                         text = MessageFormat.format(text, args.toArray())
                 }
             }
-        } catch (Exception ex) {  /*ignore the exception*/}
+        } catch (Exception ex) { /*ignore the exception*/}
         return text;
     }
 
