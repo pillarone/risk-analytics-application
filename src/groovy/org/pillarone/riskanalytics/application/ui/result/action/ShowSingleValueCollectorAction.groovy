@@ -56,6 +56,10 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
     }
 
     List getNodes() {
+        //return ResultIterationDataViewModel nodes
+        if (!rowHeaderTableTree)
+            return nodes
+        //return selected nodes
         def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
         nodes = paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
         return nodes
