@@ -158,7 +158,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         customizeNode(component, node)
         if (selected)
             setForeground(Color.white)
-        setToolTipText node.getToolTip()
+        setToolTipText getNodeToolTip(node.getToolTip())
         return component
 
     }
@@ -204,6 +204,11 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         } else {
             rendererComponent.setComponentPopupMenu(expandTreeMenuWithHelp)
         }
+    }
+
+    private String getNodeToolTip(String newToolTip) {
+        String oldToolTip = getToolTipText()
+        return oldToolTip ? oldToolTip + "<br>" + newToolTip : newToolTip
     }
 
 
