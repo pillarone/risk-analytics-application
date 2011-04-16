@@ -18,7 +18,6 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
-//        new ResultStructureImportService().compareFilesAndWriteToDB(["CoreStructure"])
         super.setUp()
     }
 
