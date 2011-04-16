@@ -6,6 +6,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import org.pillarone.riskanalytics.application.ui.chart.view.CriteriaView
 import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -42,6 +44,11 @@ class CriteriaViewModel {
         queryModel.collectors[keyFigureTypeModel.selectedItem]
     }
 
+    public boolean isSingleValueCollector() {
+        CollectorMapping collectorMapping = CollectorMapping.findByCollectorName(SingleValueCollectingModeStrategy.IDENTIFIER)
+        return (getCollector().equals(collectorMapping?.collectorName))
+    }
+
     public void setSelectedPath(String path) {
         keyFigureTypeModel.setSelectedItem(path)
     }
@@ -62,7 +69,7 @@ class CriteriaViewModel {
                 return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
             case ValueInterpretationType.ORDER_STATISTIC:
                 return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector,
-                        field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem))
+                        field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem), isSingleValueCollector())
         }
     }
 
