@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         compile "com.canoo:ulc:${ulcVersion}"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.3.0.2"
+            runtime "org.pillarone:risk-analytics-core:1.3.1"
         }
 
     }
