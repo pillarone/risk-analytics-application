@@ -149,18 +149,35 @@ abstract class TextFieldResultAction extends AbstractResultAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        QuantilePerspective perspective = ((QuantileFunctionType) profitFunctionModel.getSelectedEnum()).getQuantilePerspective()
-        double value = valueField.value
-        if (value != null) {
-            if (!model.isFunctionAdded(function(value, perspective)) || !openedValues.contains(value)) {
-                addFunction(function(value, perspective))
-                if (!openedValues.contains(value))
-                    openedValues << value
-            }
-        } else {
-            ULCAlert alert = new I18NAlert("InvalidNumberFormat")
+        // todo(fja): proper refactoring needed!
+        if (profitFunctionModel == null) {
+            double value = valueField.value
+            if (value != null) {
+                if (!model.isFunctionAdded(function(value)) || !openedValues.contains(value)) {
+                    addFunction(function(value))
+                    if (!openedValues.contains(value))
+                        openedValues << value
+                }
+            } else {
+                ULCAlert alert = new I18NAlert("InvalidNumberFormat")
 
-            alert.show()
+                alert.show()
+            }
+        }
+        else {
+            QuantilePerspective perspective = ((QuantileFunctionType) profitFunctionModel.getSelectedEnum()).getQuantilePerspective()
+            double value = valueField.value
+            if (value != null) {
+                if (!model.isFunctionAdded(function(value, perspective)) || !openedValues.contains(value)) {
+                    addFunction(function(value, perspective))
+                    if (!openedValues.contains(value))
+                        openedValues << value
+                }
+            } else {
+                ULCAlert alert = new I18NAlert("InvalidNumberFormat")
+
+                alert.show()
+            }
         }
 
     }
