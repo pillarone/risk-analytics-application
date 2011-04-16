@@ -5,7 +5,6 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
-import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
@@ -16,11 +15,8 @@ import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -167,7 +163,7 @@ class ResultViewModel extends AbstractModellingModel {
 
     boolean isFunctionAdded(IFunction function) {
         for (IFunction f in treeModel.functions) {
-            if (f != null && f.getName(0).equals(function.name)) {
+            if (f != null && f.getName(0).equals(function.getName(0))) {
                 return true
             }
         }

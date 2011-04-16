@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -47,7 +47,9 @@ class CompareSimulationsAction extends SelectionTreeAction {
         } catch (IllegalArgumentException ex) {
             return false
         }
-        return true
+        Model selectedModel = getSelectedModel(elements[0])
+        //at moment compare of deterministic models not supported
+        return !(selectedModel instanceof DeterministicModel)
     }
 
 }

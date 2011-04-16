@@ -1,11 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
 import groovy.mock.interceptor.StubFor
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -24,7 +25,7 @@ public class DistributionChartsViewModelTests extends GroovyTestCase {
         resultAccessor.demand.getMax(1..100) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..100) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
         resultAccessor.demand.getStdDev(1..100) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 2}
-        resultAccessor.demand.getPercentile(2..200) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
+        resultAccessor.demand.getPercentile(2..200) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
 
         ResultTableTreeNode node = new ResultTableTreeNode("node1")
         node.collector = "testCollector"

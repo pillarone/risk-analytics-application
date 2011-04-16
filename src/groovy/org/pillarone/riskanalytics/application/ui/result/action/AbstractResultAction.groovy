@@ -6,12 +6,14 @@ import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
+import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.dataaccess.function.*
-import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 
 abstract class AbstractResultAction extends ResourceBasedAction {
 
@@ -132,18 +134,26 @@ abstract class TextFieldResultAction extends AbstractResultAction {
 
     ULCTextField valueField
     List openedValues = []
+    EnumI18NComboBoxModel profitFunctionModel
+
+
 
     public TextFieldResultAction(AbstractModellingModel model, ULCTableTree tree, ULCTextField valueField, String key) {
         super(model, tree, key)
         this.valueField = valueField
     }
 
-    public void doActionPerformed(ActionEvent event) {
+    public TextFieldResultAction(AbstractModellingModel model, ULCTableTree tree, ULCTextField valueField, String key, EnumI18NComboBoxModel profitFunctionModel) {
+        this(model, tree, valueField, key)
+        this.profitFunctionModel = profitFunctionModel
+    }
 
+    public void doActionPerformed(ActionEvent event) {
+        QuantilePerspective perspective = ((QuantileFunctionType) profitFunctionModel.getSelectedEnum()).getQuantilePerspective()
         double value = valueField.value
         if (value != null) {
-            if (!model.isFunctionAdded(function(value)) || !openedValues.contains(value)) {
-                addFunction(function(value))
+            if (!model.isFunctionAdded(function(value, perspective)) || !openedValues.contains(value)) {
+                addFunction(function(value, perspective))
                 if (!openedValues.contains(value))
                     openedValues << value
             }
@@ -155,7 +165,7 @@ abstract class TextFieldResultAction extends AbstractResultAction {
 
     }
 
-    abstract IFunction function(double value)
+    abstract IFunction function(double value, QuantilePerspective perspective = QuantilePerspective.LOSS)
 }
 
 class PercentileAction extends TextFieldResultAction {
@@ -165,8 +175,13 @@ class PercentileAction extends TextFieldResultAction {
         super(model, tree, valueField, "Percentile");
     }
 
-    public IFunction function(double value) {
-        new Percentile(i18nName: getValue(IAction.NAME), percentile: value)
+    public PercentileAction(AbstractModellingModel model, ULCTableTree tree, ULCTextField valueField, EnumI18NComboBoxModel profitFunctionModel) {
+        this(model, tree, valueField);
+        this.profitFunctionModel = profitFunctionModel
+    }
+
+    public IFunction function(double value, QuantilePerspective perspective = QuantilePerspective.LOSS) {
+        new Percentile(i18nName: getValue(IAction.NAME), percentile: value, perspective: perspective)
     }
 }
 
@@ -176,8 +191,15 @@ class VarAction extends TextFieldResultAction {
         super(model, tree, valueField, "Var");
     }
 
-    public IFunction function(double value) {
-        new Var(value)
+    public VarAction(AbstractModellingModel model, tree, valueField, EnumI18NComboBoxModel profitFunctionModel) {
+        this(model, tree, valueField)
+        this.profitFunctionModel = profitFunctionModel
+    }
+
+    public IFunction function(double value, QuantilePerspective perspective = QuantilePerspective.LOSS) {
+        Var var = new Var(value)
+        var.perspective = perspective
+        return var
     }
 }
 
@@ -188,8 +210,15 @@ class TvarAction extends TextFieldResultAction {
         valueField.addKeyListener([keyTyped: {e -> setEnabled(validate()) }] as IKeyListener)
     }
 
-    public IFunction function(double value) {
-        new Tvar(value)
+    public TvarAction(AbstractModellingModel model, tree, ULCTextField valueField, EnumI18NComboBoxModel profitFunctionModel) {
+        this(model, tree, valueField)
+        this.profitFunctionModel = profitFunctionModel
+    }
+
+    public IFunction function(double value, QuantilePerspective perspective = QuantilePerspective.LOSS) {
+        Tvar tvar = new Tvar(value)
+        tvar.perspective = perspective
+        return tvar
     }
 
     boolean validate() {
@@ -212,7 +241,7 @@ class SingleIterationAction extends TextFieldResultAction {
         super(model, tree, valueField, key)
     }
 
-    public IFunction function(double value) {
+    public IFunction function(double value, QuantilePerspective perspective = QuantilePerspective.LOSS) {
         new SingleIteration((int) value)
     }
 

@@ -112,7 +112,10 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
 
     boolean isFunctionAdded(IFunction function) {
         for (IFunction iFunction in treeModel.functions) {
-            if (iFunction.name.equals(function.name))
+//            if ((iFunction instanceof QuantilePerspectiveFunction) && (function instanceof QuantilePerspectiveFunction) && iFunction.equals(function)) {
+//                return true
+//            } else
+            if (iFunction.getName(0).equals(function.getName(0)))
                 return true
         }
         return false

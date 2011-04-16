@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
@@ -13,6 +10,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeM
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -76,7 +75,7 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     public String getColumnName(int column) {
         int runIndex = getSimulationRunIndex(column);
         if (runIndex >= 0) {
-            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} : ${periodLabels[runIndex][getPeriodIndex(column)]}: ${getFunction(column).name}"
+            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} : ${periodLabels[runIndex][getPeriodIndex(column)]}: ${getFunction(column).getName(0)}"
         } else {
             runIndex = simulationRuns.indexOf(getFunction(column).runB)
             return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} :${periodLabels[runIndex][getPeriodIndex(column)]}-${periodLabels[0][getPeriodIndex(column)]} : ${getFunction(column).name}: ${getFunction(column).underlyingFunction.name}"
