@@ -31,6 +31,7 @@ abstract class AbstractModellingTreeView {
     ULCComboBox filterSelection
     ULCToolBar toolbar
     ULCToolBar selectionToolbar
+    ULCBoxPane toolbarBox
     IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 
@@ -55,6 +56,15 @@ abstract class AbstractModellingTreeView {
             filterSelection.removeAllItems()
         }
         initView(model)
+    }
+
+    void updateView(def model) {
+        this.model = model
+        filterSelection.removeAllItems()
+
+        initComponents()
+        layoutMainViewComponents()
+        attachListeners()
     }
 
     protected void initComponents() {
@@ -115,9 +125,9 @@ abstract class AbstractModellingTreeView {
 
     protected abstract void initTree()
 
+    private void layoutMainViewComponents() {
+        toolbarBox.removeAll()
 
-    private void layoutComponents() {
-        ULCBoxPane toolbarBox = new ULCBoxPane(1, 0, 5, 5)
         toolbarBox.add(new ULCFiller(0, 0))
         ULCBoxPane pane = new ULCBoxPane(2, 0)
         pane.add(selectionToolbar)
@@ -125,6 +135,11 @@ abstract class AbstractModellingTreeView {
         toolbarBox.add(ULCBoxPane.BOX_EXPAND_TOP, pane)
         toolbarBox.add(ULCBoxPane.BOX_LEFT_TOP, toolbar)
         toolbarBox.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
+    }
+
+    private void layoutComponents() {
+        toolbarBox = new ULCBoxPane(1, 0, 5, 5)
+        layoutMainViewComponents()
         viewComponent = layoutContent(toolbarBox)
 
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, viewComponent)

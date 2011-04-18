@@ -89,4 +89,7 @@ abstract class AbstractModellingModel {
 
     }
 
+    public void clearFunctions() {
+    }
+
 }

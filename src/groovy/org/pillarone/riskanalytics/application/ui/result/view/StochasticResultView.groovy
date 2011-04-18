@@ -36,6 +36,11 @@ class StochasticResultView extends ResultView {
         super.setModel(model)
     }
 
+    void updateView(def model) {
+        nextModelIndex = model.periodCount + 1
+        super.updateView(model)
+    }
+
     protected void initComponents() {
         super.initComponents();
         menu = new ULCPopupMenu()

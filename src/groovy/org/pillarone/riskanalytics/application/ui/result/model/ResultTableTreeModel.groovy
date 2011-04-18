@@ -238,4 +238,12 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         return numberDataType
     }
 
+    public void clearFunctions() {
+        List functionsToDelete = []
+        for (int i = 2; i < functions.size(); i++) {
+            functionsToDelete << functions[i]
+        }
+        functions.removeAll(functionsToDelete)
+    }
+
 }

@@ -178,4 +178,8 @@ class ResultViewModel extends AbstractModellingModel {
         ResultViewUtils.obtainAllPaths(paths)
     }
 
+    public void clearFunctions() {
+        treeModel.clearFunctions()
+    }
+
 }

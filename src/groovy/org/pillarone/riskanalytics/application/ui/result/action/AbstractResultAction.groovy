@@ -149,7 +149,7 @@ abstract class TextFieldResultAction extends AbstractResultAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        QuantilePerspective perspective = ((QuantileFunctionType) profitFunctionModel.getSelectedEnum()).getQuantilePerspective()
+        QuantilePerspective perspective = profitFunctionModel ? ((QuantileFunctionType) profitFunctionModel.getSelectedEnum()).getQuantilePerspective() : null
         double value = valueField.value
         if (value != null) {
             if (!model.isFunctionAdded(function(value, perspective)) || !openedValues.contains(value)) {
@@ -308,9 +308,10 @@ class ApplySelectionAction extends ResourceBasedAction {
     public void doActionPerformed(ActionEvent event) {
         //remove the action listener because the view is re-initialized and the same action instance used as listener in the new combo box
         modellingTreeView.selectView.removeActionListener(this)
+        model.clearFunctions()
 
         model.resultStructureChanged()
-        modellingTreeView.setModel(model)
+        modellingTreeView.updateView(model)
         modellingTreeView.filterSelection.setVisible(modellingTreeView.selectView.getSelectedIndex() == 0)
         modellingTreeView.filterLabel.setVisible(modellingTreeView.selectView.getSelectedIndex() == 0)
     }
