@@ -308,10 +308,9 @@ class ApplySelectionAction extends ResourceBasedAction {
     public void doActionPerformed(ActionEvent event) {
         //remove the action listener because the view is re-initialized and the same action instance used as listener in the new combo box
         modellingTreeView.selectView.removeActionListener(this)
-        model.clearFunctions()
 
         model.resultStructureChanged()
-        modellingTreeView.updateView(model)
+        modellingTreeView.setModel(model)
         modellingTreeView.filterSelection.setVisible(modellingTreeView.selectView.getSelectedIndex() == 0)
         modellingTreeView.filterLabel.setVisible(modellingTreeView.selectView.getSelectedIndex() == 0)
     }
