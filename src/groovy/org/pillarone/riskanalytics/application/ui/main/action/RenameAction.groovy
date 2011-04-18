@@ -30,18 +30,11 @@ class RenameAction extends SelectionTreeAction {
         ULCTreeModelAdapter adapter = ULCSession.currentSession().getModelAdapterProvider().getModelAdapter(ITreeModel.class, tree.model)
         tree.invokeUI("startEditingAtPath", [adapter.getDescriptionForPath(tree.getSelectionPath())] as Object[])
         */
-        boolean usedInSimulation = false
         def selectedItem = getSelectedItem()
         if (!(selectedItem instanceof ModellingItem)) return
-        if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
-            selectedItem.setModelClass(getSelectedModel().class)
-            usedInSimulation = selectedItem.isUsedInSimulation()
-            if (!usedInSimulation) {
-                List runs = SimulationRun.executeQuery(" from ${SimulationRun.class.name} as run where run.parameterization.name = :name ", ["name": selectedItem.name])
-                usedInSimulation = runs != null && runs.size() > 0
-            }
-        }
+        boolean usedInSimulation = isUsedInSimulation(selectedItem)
         if (!usedInSimulation) {
+            selectedItem.setModelClass(getSelectedModel().class)
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)
             dialog.title = dialog.getText("renameTitle") + " " + selectedItem.name
 
@@ -51,6 +44,30 @@ class RenameAction extends SelectionTreeAction {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "RenamingLocked")
             alert.show()
         }
+    }
+
+    /**
+     * check if this item or another version of them is used in simulation
+     * @param parameterization
+     * @return
+     */
+    protected boolean isUsedInSimulation(Parameterization parameterization) {
+        List runs = SimulationRun.executeQuery(" from ${SimulationRun.class.name} as run where run.parameterization.name = :name ", ["name": parameterization.name], [max: 1])
+        return runs != null && runs.size() > 0
+    }
+
+    /**
+     * check if this item or another version of them is used in simulation
+     * @param resultConfiguration
+     * @return
+     */
+    protected boolean isUsedInSimulation(ResultConfiguration resultConfiguration) {
+        List runs = SimulationRun.executeQuery(" from ${SimulationRun.class.name} as run where run.resultConfiguration.name = :name ", ["name": resultConfiguration.name], [max: 1])
+        return runs != null && runs.size() > 0
+    }
+
+    protected boolean isUsedInSimulation(def item) {
+        return false
     }
 
 }
