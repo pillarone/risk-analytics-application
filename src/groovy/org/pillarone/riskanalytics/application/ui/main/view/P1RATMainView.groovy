@@ -325,7 +325,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (tabExists(tabbedPane, title)) {
             selectTab(tabbedPane, title)
         } else {
-            Object detailView = createDetailView(item, selectedModel)
+            ULCComponent detailView = createDetailView(item, selectedModel)
+            detailView.registerKeyboardAction(new NewSimulationAction(selectedModel, item, model), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
             openItems[detailView] = item
             openModels[detailView] = selectedModel
             tabbedPane.addTab(title, getTabIconForItem(item), detailView)
@@ -342,7 +343,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (tabExists(tabbedPane, title)) {
             selectTab(tabbedPane, title)
         } else {
-            Object detailView = createCompareView(simulations, selectedModel)
+            ULCComponent detailView = createCompareView(simulations, selectedModel)
+            detailView.registerKeyboardAction(new NewSimulationAction(selectedModel, null, model), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
             tabbedPane.addTab(title, getTabIconForItem(simulations[0].item), detailView)
             int tabIndex = tabbedPane.tabCount - 1
             tabbedPane.selectedIndex = tabIndex
@@ -357,7 +359,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (tabExists(tabbedPane, title)) {
             selectTab(tabbedPane, title)
         } else {
-            Object detailView = createDetailView(batchRun, tabbedPane)
+            ULCComponent detailView = createDetailView(batchRun, tabbedPane)
             openItems[detailView] = batchRun
             tabbedPane.addTab(title, UIUtils.getIcon("runsimulation-active.png"), detailView)
             int tabIndex = tabbedPane.tabCount - 1
@@ -374,7 +376,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (tabIndex >= 0) {
             tabbedPane.selectedIndex = tabIndex
         } else {
-            Object detailView = createCompareParameterizationView(parameterizations, selectedModel)
+            ULCComponent detailView = createCompareParameterizationView(parameterizations, selectedModel)
+            detailView.registerKeyboardAction(new NewSimulationAction(selectedModel, null, model), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
             tabbedPane.addTab(title, UIUtils.getIcon("parametrization-active.png"), detailView)
             tabIndex = tabbedPane.tabCount - 1
             tabbedPane.selectedIndex = tabIndex

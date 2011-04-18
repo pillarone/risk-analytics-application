@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -25,14 +26,19 @@ class SimulationAction extends SelectionTreeAction {
         Model selectedModel = getSelectedModel()
         if (selectedModel) {
             Object selectedItem = getSelectedItem()
-            Simulation simulation = new Simulation("Simulation")
-            simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
-            simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
-            model.openItem(selectedModel, simulation)
+            openItem(selectedModel, selectedItem)
         }
         else {
             LOG.debug("No selected model found. Action cancelled.")
         }
     }
+
+    protected void openItem(Model selectedModel, ModellingItem selectedItem) {
+        Simulation simulation = new Simulation("Simulation")
+        simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
+        simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
+        model.openItem(selectedModel, simulation)
+    }
+
 
 }
