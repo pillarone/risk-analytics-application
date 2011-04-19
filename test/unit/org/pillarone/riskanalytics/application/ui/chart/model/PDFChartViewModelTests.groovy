@@ -4,15 +4,14 @@ import groovy.mock.interceptor.MockFor
 import groovy.mock.interceptor.StubFor
 import org.jfree.chart.JFreeChart
 import org.jfree.data.xy.XYSeries
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.util.MeshCalculations
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.core.dataaccess.PostSimulationCalculationAccessor
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class PDFChartViewModelTests extends GroovyTestCase {
 
@@ -27,7 +26,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testGetChartGauss() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
-        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
@@ -48,7 +47,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testGetChartAdaptiveGauss() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
-        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
@@ -69,7 +68,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testGetChartAdaptiveRaw() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
-        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile -> 2}
+        resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
         resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}

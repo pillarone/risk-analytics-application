@@ -46,6 +46,10 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         new ULCButtonOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
+    ULCToggleButtonOperator getToggleButtonOperator(String name) {
+        new ULCToggleButtonOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
     ULCComboBoxOperator getComboBoxOperator(String name) {
         new ULCComboBoxOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }

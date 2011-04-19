@@ -5,16 +5,15 @@ import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCCheckBoxOperator
 import com.ulcjava.testframework.operator.ULCComponentOperator
 import com.ulcjava.testframework.operator.ULCFrameOperator
-
 import groovy.mock.interceptor.StubFor
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.PDFGaussKernelEstimateChartViewModel
-
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class ChartViewTests extends AbstractSimpleFunctionalTest {
     PDFGaussKernelEstimateChartViewModel model
@@ -39,8 +38,8 @@ class ChartViewTests extends AbstractSimpleFunctionalTest {
         resultAccessorStub.demand.getMax(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> 5}
         resultAccessorStub.demand.getMean(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> 3}
         resultAccessorStub.demand.getStdDev(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> 2}
-        resultAccessorStub.demand.getPercentile(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f, double percentile -> 6}
-        resultAccessorStub.demand.getPercentile(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f, double percentile -> 7}
+        resultAccessorStub.demand.getPercentile(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f, double percentile, QuantilePerspective perspective -> 6}
+        resultAccessorStub.demand.getPercentile(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f, double percentile, QuantilePerspective perspective -> 7}
 
 
         ResultTableTreeNode node = new ResultTableTreeNode("test_node0")

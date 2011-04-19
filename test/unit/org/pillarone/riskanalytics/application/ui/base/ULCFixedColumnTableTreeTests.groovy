@@ -1,8 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.base
 
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
+import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 
@@ -17,6 +21,11 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
         DefaultTableTreeModel model = new DefaultTableTreeModel(rootNode, ["one", "two", "three", "four", "five", "six"] as String[])
         ULCFixedColumnTableTree tree = new ULCFixedColumnTableTree(model, 2, [100, 100, 100, 100, 100, 100] as int[])
         tree.setCellSelectionEnabled true
+        HtmlToolTipTreeNodeRenderer renderer = new HtmlToolTipTreeNodeRenderer()
+
+        tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
+            it.setCellRenderer(renderer)
+        }
         return tree
     }
 
@@ -37,7 +46,7 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
     }
 
     public void testSleep() {
-//        Thread.sleep 300000
+//        Thread.sleep 10000
     }
 
     private void createChild(SimpleTableTreeNode child, int depth) {
@@ -62,6 +71,16 @@ class ULCFixedColumnTableTreeTests extends AbstractP1RATTestCase {
         protected String getCellValue(int column) {
             return cellValues
         }
+    }
+
+}
+
+class HtmlToolTipTreeNodeRenderer extends DefaultTableTreeCellRenderer {
+
+    public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
+        IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
+        setToolTipText "<html><b style='color:red'>bold ${node.name}</b> test</html>"
+        return component
     }
 
 }

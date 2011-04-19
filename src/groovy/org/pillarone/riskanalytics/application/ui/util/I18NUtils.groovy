@@ -379,7 +379,7 @@ public class I18NUtils {
                         text = MessageFormat.format(text, args.toArray())
                 }
             }
-        } catch (Exception ex) {  /*ignore the exception*/}
+        } catch (Exception ex) { /*ignore the exception*/}
         return text;
     }
 
