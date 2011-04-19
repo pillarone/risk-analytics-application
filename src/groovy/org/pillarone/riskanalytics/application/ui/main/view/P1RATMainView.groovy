@@ -705,7 +705,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     private String createTabTitleForItem(Simulation item, DeterministicModel selectedModel) {
-        item.start == null ? "Calculation" : item.name
+        item.start == null ? UIUtils.getText(P1RATMainView, "Calculation") : item.name
     }
 
     /**
