@@ -1,24 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import com.ulcjava.base.application.AbstractAction
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCButton
 import com.ulcjava.base.application.ULCFiller
-import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
-
-import static org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus.*
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import com.ulcjava.base.application.ULCLabel
-import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
+import org.apache.commons.lang.builder.HashCodeBuilder
+import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ReopenWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ResolveWorkflowCommentAction
-import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
 import org.pillarone.riskanalytics.core.user.Authority
+import org.pillarone.riskanalytics.core.user.UserManagement
+import static org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus.*
 
 class WorkflowCommentPane extends CommentPane {
 
@@ -118,8 +116,8 @@ class WorkflowCommentPane extends CommentPane {
 
         closeButton = new ULCButton(new CloseWorkflowCommentAction(this))
 
-        resolvedLabel = new ULCLabel("Resolved")
-        closedLabel = new ULCLabel("Closed")
+        resolvedLabel = new ULCLabel(UIUtils.getText(WorkflowCommentPane, "Resolved"))
+        closedLabel = new ULCLabel(UIUtils.getText(WorkflowCommentPane, "Closed"))
     }
 
     protected void layoutComponents() {

@@ -94,7 +94,7 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
 
         tabbedPane.removeAll()
         tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
-        tabbedPane.addTab('Properties', UIUtils.getIcon("settings-active.png"), propertiesView.content)
+        tabbedPane.addTab(UIUtils.getText(ResultConfigurationView, 'Properties'), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
         simulationPane.add(ULCBoxPane.BOX_LEFT_TOP, treeTitle)

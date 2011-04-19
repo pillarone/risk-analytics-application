@@ -209,7 +209,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         simulationContent.add(spaceAround(openResults, 10, 2, 10, 2))
         simulationContent.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
-        content.addTab("Simulation", simulationContent)
+        content.addTab(UIUtils.getText(SimulationActionsPane, "Simulation"), simulationContent)
 
         innerPane = new ULCBoxPane(3, 2)
         innerPane.border = BorderFactory.createTitledBorder(UIUtils.getText(SimulationActionsPane.class, "AddToBatch"))
@@ -223,9 +223,9 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         ULCBoxPane batchPane = new ULCBoxPane(1, 0)
         batchPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
-        content.addTab("Batch", batchPane)
+        content.addTab(UIUtils.getText(SimulationActionsPane, "Batch"), batchPane)
         loggingView = new RealTimeLoggingView()
-        content.addTab("Logging", loggingView.getContent())
+        content.addTab(UIUtils.getText(SimulationActionsPane, "Logging"), loggingView.getContent())
     }
 
     void initComponents() {

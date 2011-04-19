@@ -57,7 +57,7 @@ class AddTagDialog {
     private void initComponents() {
         if (tree)
             this.parent = UlcUtilities.getWindowAncestor(tree)
-        dialog = new ULCDialog(parent, "Edit tags dialog", true)
+        dialog = new ULCDialog(parent, UIUtils.getText(AddTagDialog, "EditTagsDialog"), true)
         dialog.name = 'AddTagDialog'
         List<Tag> dialogTags = getItems()
         tagListModel = new ItemListModel(dialogTags?.collect {it.name}.toArray(), dialogTags)
@@ -68,13 +68,13 @@ class AddTagDialog {
         tags.setMinimumSize(new Dimension(160, 100))
         newTag = new ULCTextField()
         newTag.name = 'newTag'
-        addNewButton = new ULCButton("add new")
+        addNewButton = new ULCButton(UIUtils.getText(AddTagDialog, "addNew"))
         addNewButton.name = "addNew"
         addNewButton.setPreferredSize(buttonDimension)
-        applyButton = new ULCButton("apply")
+        applyButton = new ULCButton(UIUtils.getText(AddTagDialog, "apply"))
         applyButton.name = "apply"
         applyButton.setPreferredSize(buttonDimension)
-        cancelButton = new ULCButton("cancel")
+        cancelButton = new ULCButton(UIUtils.getText(AddTagDialog, "cancel"))
         cancelButton.setPreferredSize(buttonDimension)
     }
 
