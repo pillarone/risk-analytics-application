@@ -18,7 +18,7 @@ interface IFunction extends Cloneable {
 
 }
 
-/** A Function for Result views                               */
+/** A Function for Result views                                       */
 abstract class ResultFunction implements IFunction {
     String i18nName
 
@@ -351,7 +351,7 @@ class Percentile extends QuantilePerspectiveFunction {
     }
 
     public String getKeyFigureName() {
-        PostSimulationCalculation.PERCENTILE
+        return perspective ? perspective.getPercentileAsString() : PostSimulationCalculation.PERCENTILE
     }
 
     BigDecimal getKeyFigureParameter() {
@@ -376,7 +376,7 @@ class Var extends QuantilePerspectiveFunction {
     }
 
     public String getKeyFigureName() {
-        PostSimulationCalculation.VAR
+        return perspective ? perspective.getVarAsString() : PostSimulationCalculation.VAR
     }
 
     BigDecimal getKeyFigureParameter() {
@@ -427,7 +427,7 @@ class Tvar extends QuantilePerspectiveFunction {
     }
 
     public String getKeyFigureName() {
-        PostSimulationCalculation.TVAR
+        return perspective ? perspective.getTvarAsString() : PostSimulationCalculation.TVAR
     }
 
     BigDecimal getKeyFigureParameter() {
