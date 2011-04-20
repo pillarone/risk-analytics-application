@@ -675,7 +675,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
 
     private boolean syncMenuBar() {
-        saveAction.enabled = model.currentItem != null ? model.currentItem.changed : false
+        saveAction.enabled = saveAction.isEnabled()
         if (model.currentItem) {
             runAction.enabled = !((model.currentItem instanceof Simulation) || (model.currentItem instanceof BatchRun))
             if (model.currentItem instanceof Parameterization || model.currentItem instanceof ResultConfiguration) {

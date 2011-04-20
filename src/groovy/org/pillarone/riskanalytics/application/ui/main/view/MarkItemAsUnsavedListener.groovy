@@ -1,14 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ConfigObjectBasedModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.model.DeterministicModel
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     ULCCloseableTabbedPane tabbedPane
@@ -45,7 +40,7 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
 
     public static String getTabTitle(ModellingItem item) {
         String title = "$item.name v${item.versionNumber.toString()}"
-        if (item.isChanged()) {
+        if (isChanged(item)) {
             title += UNSAVED_MARK
         }
         return title
@@ -69,6 +64,14 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
 
     public static String getTabTitle(Simulation item, DeterministicModel selectedModel) {
         return item.start == null ? "Calculation" : item.name
+    }
+
+    private static boolean isChanged(ModellingItem item) {
+        return item.isChanged()
+    }
+
+    private static boolean isChanged(Parameterization item) {
+        return item.isChanged() || item.commentHasChanged()
     }
 
 }

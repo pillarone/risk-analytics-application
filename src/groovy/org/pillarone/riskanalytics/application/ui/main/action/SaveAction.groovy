@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
@@ -11,6 +8,9 @@ import com.ulcjava.base.application.event.WindowEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class SaveAction extends ResourceBasedAction {
     P1RATModel model
@@ -35,7 +35,7 @@ class SaveAction extends ResourceBasedAction {
     }
 
     void save(ModellingItem modellingItem) {
-        if (!modellingItem.isUsedInSimulation()) {
+        if (isChangedAndNotUsed(modellingItem)) {
             saveItem(modellingItem)
         } else {
             I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(parent), "SaveItemAlreadyUsed")
@@ -84,5 +84,28 @@ class SaveAction extends ResourceBasedAction {
         return itemModel
     }
 
+    /**
+     * there is a possibility to a comment to used p14n
+     * by saving we have to make a difference if the item is changed and not used
+     * in a simulation or only its comments have been changed
+     * @param item
+     * @return
+     */
+    private boolean isChangedAndNotUsed(ModellingItem item) {
+        return !item.changed || (item.changed && !item.isUsedInSimulation())
+    }
 
+    @Override
+    boolean isEnabled() {
+        if (model.currentItem) return itemChanged(model.currentItem)
+        return false
+    }
+
+    boolean isItemChanged(ModellingItem item) {
+        return item.changed
+    }
+
+    boolean itemChanged(Parameterization item) {
+        return item.changed || item.commentHasChanged()
+    }
 }

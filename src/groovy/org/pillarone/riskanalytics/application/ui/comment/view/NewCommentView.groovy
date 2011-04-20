@@ -1,9 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
-
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -14,6 +10,9 @@ import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
 
 /**
@@ -134,10 +133,16 @@ class NewCommentView {
         return CommentAndErrorView.getDisplayPath(model, path)
     }
 
+    /**
+     * add post locking only for comment
+     * @param comment
+     */
     protected void addPostLockingTag(Comment comment) {
-        if (model.isReadOnly()) {
+        if (comment.class.isAssignableFrom(Comment) && model.isReadOnly()) {
             Tag postLocking = Tag.findByName(POST_LOCKING)
             comment.addTag(postLocking)
         }
     }
+
+
 }
