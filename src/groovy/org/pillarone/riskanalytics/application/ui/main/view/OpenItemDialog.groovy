@@ -5,6 +5,7 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -106,8 +107,11 @@ class OpenItemDialog {
 
         deleteDependingResultsButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            p1RATModel.deleteDependingResults(model, item)
-            p1RATModel.openItem(model, item)
+            if (p1RATModel.deleteDependingResults(model, item)) {
+                p1RATModel.openItem(model, item)
+            } else {
+                new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
+            }
         }] as IActionListener)
 
         cancelButton.addActionListener([actionPerformed: {ActionEvent event ->

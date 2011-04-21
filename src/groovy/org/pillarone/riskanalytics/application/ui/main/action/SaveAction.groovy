@@ -101,7 +101,7 @@ class SaveAction extends ResourceBasedAction {
         return false
     }
 
-    boolean isItemChanged(ModellingItem item) {
+    boolean itemChanged(ModellingItem item) {
         return item.changed
     }
 

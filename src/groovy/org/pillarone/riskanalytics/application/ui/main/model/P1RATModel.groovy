@@ -340,7 +340,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
 
-    public void createNewVersion(Model model, ModellingItem item, boolean openNewVersion = true) {
+    public ModellingItem createNewVersion(Model model, ModellingItem item, boolean openNewVersion = true) {
         ModellingItem modellingItem
         item.daoClass.withTransaction {status ->
             if (!item.isLoaded())
@@ -351,6 +351,7 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         selectionTreeModel.addNodeForItem(modellingItem)
         if (openNewVersion)
             openItem(model, modellingItem)
+        return modellingItem
     }
 
     public void openItem(Model model, Parameterization item) {
