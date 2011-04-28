@@ -26,7 +26,7 @@ class TreeNodePaster extends ExceptionSafeAction {
         ULCClipboard.appyClipboardContent([applyContent: {String content ->
             ExceptionSafe.protect {
 
-                ArrayList data = new TableDataParser().parseTableData(content)
+                ArrayList data = new TableDataParser(columnMapping: new DefaultColumnMapping()).parseTableData(content)
 
                 int startColumn = tree.selectedColumn + 1
                 int startRow = tree.selectedRow

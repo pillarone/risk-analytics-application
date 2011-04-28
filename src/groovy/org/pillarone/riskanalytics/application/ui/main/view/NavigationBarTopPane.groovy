@@ -37,7 +37,7 @@ class NavigationBarTopPane {
         this.toolBar = toolBar
         this.searchBean = new ModellingItemSearchBean()
         this.tableTreeModel = tableTreeModel
-        this.tableTreeModel.addChangeIndexerListener(this.searchBean)
+        this.tableTreeModel?.addChangeIndexerListener(this.searchBean)
     }
 
     public void init() {
@@ -48,8 +48,9 @@ class NavigationBarTopPane {
 
 
     protected void initComponents() {
-        standalone = UserContext.isStandAlone()
+        standalone = isStandAlone()
         myStuffButton = new ULCToggleButton(UIUtils.getText(this.class, "MyStuff"))
+        myStuffButton.name = "myStuffButton"
         myStuffButton.setPreferredSize new Dimension(100, 20)
         myStuffButton.setSelected(false)
         assignedToMeButton = new ULCToggleButton(UIUtils.getText(this.class, "assignedToMe"))
@@ -65,6 +66,7 @@ class NavigationBarTopPane {
         searchTextField.setPreferredSize(new Dimension(250, 20))
 
         clearButton = new ULCButton(UIUtils.getIcon("delete-active.png"))
+        clearButton.name = "clearButton"
         clearButton.setToolTipText UIUtils.getText(this.class, "clear")
 
         noResults = new ULCLabel("")
@@ -86,13 +88,13 @@ class NavigationBarTopPane {
     protected void attachListeners() {
         myStuffButton.addActionListener([actionPerformed: {ActionEvent event ->
             ModellingItemNodeFilter filter = null
-            String loggedUser = UserContext.getCurrentUser()?.getUsername()
+            String loggedUser = getLoggedUser()
             if (loggedUser && myStuffButton.isSelected()) {
                 filter = new ModellingItemNodeFilter([loggedUser], ModellingInformationTableTreeModel.OWNER)
             } else {
                 filter = new ModellingItemNodeFilter([], ModellingInformationTableTreeModel.OWNER)
             }
-            tableTreeModel.applyFilter(filter)
+            tableTreeModel?.applyFilter(filter)
         }] as IActionListener)
         searchTextField.addFocusListener(new TextFieldFocusListener(searchTextField))
         Closure searchClosure = {ActionEvent event ->
@@ -122,9 +124,20 @@ class NavigationBarTopPane {
             searchTextField.setText(UIUtils.getText(this.class, "searchText"))
             searchTextField.setForeground Color.gray
             ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter([])
-            tableTreeModel.applyFilter(filter)
+            tableTreeModel?.applyFilter(filter)
             noResults.setText("")
+            myStuffButton.setSelected false
+            assignedToMeButton.setSelected false
         }] as IActionListener)
     }
+
+    protected String getLoggedUser() {
+        return UserContext.getCurrentUser()?.getUsername()
+    }
+
+    public boolean isStandAlone() {
+        return UserContext.isStandAlone()
+    }
+
 
 }

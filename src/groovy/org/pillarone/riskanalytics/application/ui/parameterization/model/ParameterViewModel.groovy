@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
@@ -11,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentLis
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
+import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
@@ -51,10 +54,13 @@ class ParameterViewModel extends AbstractModellingModel {
         return paramterTableTreeModel
     }
 
+
     @Override
-    public void saveItem() {
-        p1RATModel.saveItem(item)
+    IActionListener getSaveAction(ULCComponent parent) {
+        return new SaveAction(parent, p1RATModel, item)
     }
+
+
 
     void save() {
         ParameterWriter writer = new ParameterWriter()
@@ -171,7 +177,7 @@ class ParameterViewModel extends AbstractModellingModel {
 
 
     void commentChanged(Comment comment) {
-        item.changed = true
+        item.notifyItemChanged()
         changedCommentListeners.each {ChangedCommentListener listener ->
             listener.updateCommentVisualization()
         }

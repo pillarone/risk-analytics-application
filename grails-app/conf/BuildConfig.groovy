@@ -30,7 +30,7 @@ grails.project.dependency.resolution = {
         runtime ":joda-time:0.5"
         runtime ":maven-publisher:0.7.5"
         runtime ":quartz:0.4.2"
-        runtime ":spring-security-core:1.0.1"
+        runtime ":spring-security-core:1.1.2"
         runtime ":jetty:1.2-SNAPSHOT"
 
         runtime "org.pillarone:jasper:0.9.5-riskanalytics"
@@ -38,7 +38,7 @@ grails.project.dependency.resolution = {
         runtime "org.pillarone:pillar-one-ulc-extensions:0.1"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.3-kti"
+            runtime "org.pillarone:risk-analytics-core:1.4-ALPHA-2.5-kti"
         }
 
     }

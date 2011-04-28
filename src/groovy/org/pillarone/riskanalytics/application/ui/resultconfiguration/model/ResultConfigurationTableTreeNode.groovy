@@ -74,8 +74,17 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
         return value
     }
 
-    @Override
-    String lookUp(String value, String tooltip) {
+    public String getToolTip() {
+        if (!cachedToolTip) {
+            String value = name
+            cachedToolTip = lookUp(value, TOOLTIP)
+            if (!cachedToolTip)
+                cachedToolTip = super.getToolTip()
+        }
+        return cachedToolTip
+    }
+
+    private lookUp(String value, String tooltip) {
         String displayName = I18NUtils.findResultParameterDisplayName(this, name, tooltip)
         if (displayName == null)
             displayName = I18NUtils.findDisplayNameByParentComponent(this, name, tooltip)

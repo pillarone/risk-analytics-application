@@ -14,6 +14,8 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.util.ULCIcon
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
@@ -36,11 +38,11 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.ulc.server.ULCVerticalToggleButton
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.ulc.server.ULCVerticalToggleButton
 
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -80,6 +82,8 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     Map windowMenus
 
     TabbedPaneManagerHelper tabbedPaneManagerHelper = new TabbedPaneManagerHelper()
+
+    Log LOG = LogFactory.getLog(P1RATMainView)
 
     public P1RATMainView(P1RATModel model) {
         this.model = model
@@ -149,7 +153,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         exportAllNewestVersionAction = new ExportAllAction(this, model, true)
         exportAllAction = new ExportAllAction(this, model, false)
         importAllAction = new ImportAllAction(this, model, "ImportAllParameterizations")
-        saveAction = new SaveAction(model)
+        saveAction = new SaveAction(content, model)
         settingsAction = new ShowUserSettingsAction(this)
         runAction = new SimulationAction(selectionTreeView.getSelectionTree(), model)
         syncMenuBar()
@@ -293,6 +297,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     protected ULCComponent createDetailView(BatchRun batchRun, ULCDetachableTabbedPane tabbedPane) {
         if (batchRun.id != null) {
             BatchView view = new BatchView(this.model, batchRun, tabbedPane)
+            view.init()
             view.addIP1RATModelListener this
             return view.content
         } else {
@@ -554,8 +559,12 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     }
 
     private void selectCurrentItemFromTab(ULCCloseableTabbedPane modelCardContent) {
-        def item = openItems[modelCardContent.getSelectedComponent()]
-        model.currentItem = (item instanceof BatchRun) ? null : item
+        try {
+            def item = openItems[modelCardContent.getSelectedComponent()]
+            model.currentItem = (item instanceof BatchRun) ? null : item
+        } catch (Exception ex) {
+            LOG.error "Error occured during set a current item ${ex}"
+        }
     }
 
     public void openDetailView(Model selectedModel, Object item) {
@@ -587,7 +596,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
             if ((modelPane.getNames() as List).contains(model.name)) {
                 ULCDetachableTabbedPane modelCardContent = modelPane.getComponentAt(model.name)
                 int tabIndex = getTabIndexForName(modelCardContent, createTabTitleForItem(item, model))
-                String title = createTabTitleForItem(item, model)
+                String title = MarkItemAsUnsavedListener.getTabTitle(item, model)
                 boolean tabExist = tabExists(modelCardContent, title)
                 if (tabIndex >= 0 && tabExist) {
                     ULCDetachableTabbedPane pane = findTabbedPane(modelCardContent, title)
@@ -666,7 +675,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
 
     private boolean syncMenuBar() {
-        saveAction.enabled = model.currentItem != null ? model.currentItem.changed : false
+        saveAction.enabled = saveAction.isEnabled()
         if (model.currentItem) {
             runAction.enabled = !((model.currentItem instanceof Simulation) || (model.currentItem instanceof BatchRun))
             if (model.currentItem instanceof Parameterization || model.currentItem instanceof ResultConfiguration) {

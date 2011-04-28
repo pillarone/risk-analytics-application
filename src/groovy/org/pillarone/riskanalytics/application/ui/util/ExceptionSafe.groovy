@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.runtime.StackTraceUtils
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationError
 import org.pillarone.riskanalytics.core.workflow.WorkflowException
+import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteException
 
 /**
  * Convenience class to allow easy use of protect  {}  for centralized Exception handling.
@@ -26,7 +27,8 @@ class ExceptionSafe {
             PasteError: "Paste Error:\n\n {0} \nThis error appears also if the tree structure changes while pasting.",
             MissingHelpException: "No help available",
             HibernateOptimisticLockingFailureException: "Your values cannot be stored because another\nuser has changed them in the meantime.",
-            WorkflowException: "Workflow action failed. Reason: {0}"
+            WorkflowException: "Workflow action failed. Reason: {0}",
+            CopyPasteException: "Unable to paste at least one value: {0}"
     ]
 
     private static titles = [
@@ -36,7 +38,8 @@ class ExceptionSafe {
             PasteError: "Paste error",
             MissingHelpException: "Notification",
             HibernateOptimisticLockingFailureException: "Concurrent modification",
-            WorkflowException: "Workflow error"
+            WorkflowException: "Workflow error",
+            CopyPasteException: "Paste error"
     ]
 
     private static errorLevel = [
@@ -46,7 +49,8 @@ class ExceptionSafe {
             PasteError: ULCAlert.INFORMATION_MESSAGE,
             MissingHelpException: ULCAlert.INFORMATION_MESSAGE,
             HibernateOptimisticLockingFailureException: ULCAlert.WARNING_MESSAGE,
-            WorkflowException: ULCAlert.INFORMATION_MESSAGE
+            WorkflowException: ULCAlert.INFORMATION_MESSAGE,
+            CopyPasteException: ULCAlert.INFORMATION_MESSAGE
     ]
 
     static ULCRootPane rootPane = null

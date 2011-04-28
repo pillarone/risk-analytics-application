@@ -29,6 +29,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.CreateNewWorkflowVersionAction
 
 class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -101,6 +102,7 @@ class MainSelectionTreeCellRenderer extends DefaultTreeCellRenderer {
         inProduction.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         inProduction.add(new ULCMenuItem(new SimulationAction(tree, model)))
         inProduction.add(new ULCMenuItem(new SaveAsAction(tree, model)))
+        inProduction.add(new ULCMenuItem(new CreateNewWorkflowVersionAction(tree, model)))
         compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, model))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)

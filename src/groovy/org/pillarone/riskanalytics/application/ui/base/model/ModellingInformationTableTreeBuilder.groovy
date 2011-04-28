@@ -1,12 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-import org.pillarone.riskanalytics.core.util.GroovyUtils
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.core.simulation.item.*
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -22,6 +15,12 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 /**
@@ -108,9 +107,9 @@ class ModellingInformationTableTreeBuilder {
 
         if (modelNode == null) {
             modelNode = new ModelNode(model)
-            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(this.class, "Parameterization"), Parameterization)
-            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(this.class, "ResultTemplates"), ResultConfiguration)
-            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(this.class, "Results"), Simulation)
+            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(ModellingInformationTableTreeModel.class, "Parameterization"), Parameterization)
+            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(ModellingInformationTableTreeModel.class, "ResultTemplates"), ResultConfiguration)
+            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(ModellingInformationTableTreeModel.class, "Results"), Simulation)
             modelNode.add(parameterizationsNode)
             modelNode.add(resultConfigurationsNode)
             modelNode.add(simulationsNode)

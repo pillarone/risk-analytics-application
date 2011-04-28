@@ -71,15 +71,16 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         tableTree.pushKey(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK)
         ULCTableOperator tableOperator = getTableOperator("batchesTable")
         assertEquals 1, tableOperator.rowCount
-        assertEquals 7, tableOperator.columnCount
+        assertEquals 8, tableOperator.columnCount
 
         assertEquals "run", tableOperator.getValueAt(0, 0)
         assertEquals "CoreModel", tableOperator.getValueAt(0, 1)
         assertEquals "CoreAlternativeParameters v1", tableOperator.getValueAt(0, 2)
         assertEquals "CoreResultConfiguration v1", tableOperator.getValueAt(0, 3)
         assertEquals "2/5", tableOperator.getValueAt(0, 4)
-        assertEquals "No output", tableOperator.getValueAt(0, 5)
-        assertEquals "not running", tableOperator.getValueAt(0, 6)
+        assertEquals 0, tableOperator.getValueAt(0, 5)
+        assertEquals "No output", tableOperator.getValueAt(0, 6)
+        assertEquals "not running", tableOperator.getValueAt(0, 7)
 
     }
 }

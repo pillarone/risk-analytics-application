@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.result.action
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.SingleValueCollectorTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorView
@@ -20,7 +19,10 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
     def rowHeaderTableTree
     SimulationRun simulationRun
     Integer iteration
-    List nodes
+
+    public ShowSingleValueCollectorAction(String actionName) {
+        super(actionName)
+    }
 
     public ShowSingleValueCollectorAction(ULCCloseableTabbedPane tabbedPane, def rowHeaderTableTree, SimulationRun simulationRun) {
         super("ShowSingleValueCollector");
@@ -29,17 +31,9 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
         this.simulationRun = simulationRun
     }
 
-    public ShowSingleValueCollectorAction(ResultIterationDataViewModel iterationDataViewModel, int iteration) {
-        super("ShowSingleValueCollector");
-        this.tabbedPane = iterationDataViewModel.resultView.tabbedPane
-        this.simulationRun = iterationDataViewModel.simulationRun
-        this.nodes = iterationDataViewModel.nodes
-        this.iteration = iteration
-    }
 
     void doActionPerformed(ActionEvent event) {
-        List nodes = getNodes()
-        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(nodes, simulationRun, true)
+        SingleValueCollectorTableTreeModel model = new SingleValueCollectorTableTreeModel(getNodes(), simulationRun, true)
         if (iteration) {
             model.fromIteration = iteration
             model.iterations = iteration
@@ -57,8 +51,7 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
 
     List getNodes() {
         def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
-        nodes = paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
-        return nodes
+        return paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
     }
 
 

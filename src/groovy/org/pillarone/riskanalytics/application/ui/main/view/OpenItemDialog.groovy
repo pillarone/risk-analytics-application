@@ -5,9 +5,12 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import com.ulcjava.base.application.*
 
 /**
@@ -63,9 +66,11 @@ class OpenItemDialog {
     }
 
     private void layoutComponents() {
-        ULCBoxPane content = new ULCBoxPane(rows: 1, columns: 4)
+        ULCBoxPane content = new ULCBoxPane(rows: 1, columns: isWorkflowItem() ? 3 : 4)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        content.add(ULCBoxPane.BOX_EXPAND_CENTER, createCopyButton)
+        if (!isWorkflowItem()) {
+            content.add(ULCBoxPane.BOX_EXPAND_CENTER, createCopyButton)
+        }
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, readOnlyButton)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, deleteDependingResultsButton)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, cancelButton)
@@ -84,7 +89,8 @@ class OpenItemDialog {
                 item.load()
             }
             item.daoClass.withTransaction {status ->
-                item.load()
+                if (!item.isLoaded())
+                    item.load()
                 modellingItem = ModellingItemFactory.incrementVersion(item)
                 p1RATModel.fireModelChanged()
                 p1RATModel.selectionTreeModel.addNodeForItem(modellingItem)
@@ -94,14 +100,18 @@ class OpenItemDialog {
 
         readOnlyButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            item.load()
+            if (!item.isLoaded())
+                item.load()
             p1RATModel.notifyOpenDetailView(model, item)
         }] as IActionListener)
 
         deleteDependingResultsButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            p1RATModel.deleteDependingResults(model, item)
-            p1RATModel.openItem(model, item)
+            if (p1RATModel.deleteDependingResults(model, item)) {
+                p1RATModel.openItem(model, item)
+            } else {
+                new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
+            }
         }] as IActionListener)
 
         cancelButton.addActionListener([actionPerformed: {ActionEvent event ->
@@ -111,5 +121,13 @@ class OpenItemDialog {
 
     public void setVisible(boolean visible) {
         dialog.setVisible(visible)
+    }
+
+    private boolean isWorkflowItem() {
+        if (item instanceof Parameterization || item instanceof ResultConfiguration) {
+            return item.versionNumber.workflow
+        }
+
+        return false
     }
 }

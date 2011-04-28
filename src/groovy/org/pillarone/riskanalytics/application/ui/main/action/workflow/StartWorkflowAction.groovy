@@ -28,8 +28,12 @@ class StartWorkflowAction extends AbstractWorkflowAction {
                     parameterization.load()
                 }
                 parameterization.dealId = dialog.dealSelectionModel.dealId
-                parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate
+                //ART-392: valuation date functionality currently disabled
+//                         parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate
                 super.doActionPerformed(event)
+                //original parameterization on which workflow is started should not be linked
+                parameterization.dealId = null
+                parameterization.valuationDate = null
             }
         }
         if (parameterization.status == Status.NONE) {

@@ -31,25 +31,28 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         this.tableValues = new ArrayList<List<String>>()
         columnHeaders = []
         this.batchRun = batchRun
-        init()
-        pollingBatchRunAction = new PollingBatchRunAction(this)
-        startPollingTimer() //pollingBatchRunAction
+//        init()
+//        pollingBatchRunAction = new PollingBatchRunAction(this)
+//        startPollingTimer() //pollingBatchRunAction
         ip1RATModelListeners = []
     }
 
 
-    private void init() {
+
+
+    public void init() {
+        initTableHeader()
         BatchRun.withTransaction {
             batchRun = BatchRun.findByName(batchRun.name)
-            initTableHeader()
             batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])
             batchRunSimulationRuns.eachWithIndex {BatchRunSimulationRun brSr, int index ->
                 tableValues << toList(brSr)
             }
         }
+        startPolling()
     }
 
-    private List toList(BatchRunSimulationRun brSr) {
+    protected List toList(BatchRunSimulationRun brSr) {
         List list = new ArrayList()
         list << brSr.simulationRun.name
         int ptIndex = brSr.simulationRun.model.lastIndexOf(".")
@@ -57,6 +60,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         list << brSr?.simulationRun?.parameterization?.name + " v" + brSr?.simulationRun?.parameterization?.itemVersion
         list << brSr?.simulationRun?.resultConfiguration?.name + " v" + brSr?.simulationRun?.resultConfiguration?.itemVersion
         list << brSr.simulationRun.periodCount + "/" + brSr.simulationRun.iterations
+        list << brSr.simulationRun.randomSeed
         list << UIUtils.getText(this.class, brSr.strategy.toString())
         list << UIUtils.getText(this.class, brSr.simulationState.toString())
         return list
@@ -118,6 +122,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         this.columnHeaders << UIUtils.getText(this.class, "Parameterization")
         this.columnHeaders << UIUtils.getText(this.class, "SimulationTemplate")
         this.columnHeaders << UIUtils.getText(this.class, "PeriodCountIterations")
+        this.columnHeaders << UIUtils.getText(this.class, "RandomSeed")
         this.columnHeaders << UIUtils.getText(this.class, "Strategy")
         this.columnHeaders << SIMULATION_STATUS_COLUMN
     }
@@ -203,6 +208,11 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
 
     public void addIP1RATModelListener(IP1RATModelListener ip1RATModelListener) {
         ip1RATModelListeners << ip1RATModelListener
+    }
+
+    private void startPolling() {
+        pollingBatchRunAction = new PollingBatchRunAction(this)
+        startPollingTimer()
     }
 }
 

@@ -1,13 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
-import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.table.ITableModel
 import java.text.NumberFormat
+import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataTableModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class TableCopier extends ExceptionSafeAction {
 
@@ -26,8 +27,9 @@ class TableCopier extends ExceptionSafeAction {
         ULCClipboard.getClipboard().content = content
     }
 
-    private String copyContent(int[] selectedRows, int[] selectedColumns) {
-        StringBuffer buffer = new StringBuffer()
+    public String copyContent(int[] selectedRows, int[] selectedColumns) {
+        StringBuilder buffer = new StringBuilder()
+        copyHeader(model, buffer, selectedColumns)
         for (int i = 0; i < selectedRows.size(); i++) {
             for (int j = 0; j < selectedColumns.size(); j++) {
                 Object value = model.getValueAt(selectedRows[i], selectedColumns[j])
@@ -38,6 +40,19 @@ class TableCopier extends ExceptionSafeAction {
             buffer << '\n'
         }
         buffer.toString()
+    }
+
+    private void copyHeader(def model, StringBuilder builder, int[] selectedColumns) {
+    }
+
+    private void copyHeader(ResultIterationDataTableModel iterationDataTableModel, StringBuilder builder, int[] selectedColumns) {
+        //copy a header only by iteration s view
+        for (int i = 0; i < selectedColumns.size(); i++) {
+            builder << iterationDataTableModel.columnHeaders.get(selectedColumns[i])
+            if (i != selectedColumns.size() - 1)
+                builder << '\t'
+        }
+        builder << '\n'
     }
 
     private int[] getSelectedColumns() {
@@ -58,7 +73,7 @@ class TableCopier extends ExceptionSafeAction {
     }
 
     protected getCopyFormat() {
-        NumberFormat format = NumberFormat.getInstance(ClientContext.getLocale())
+        NumberFormat format = NumberFormat.getInstance(LocaleResources.getLocale())
         format.setMaximumFractionDigits(30)
         format.groupingUsed = false
         return format

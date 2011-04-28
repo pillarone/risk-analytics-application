@@ -28,8 +28,17 @@ class ComponentTableTreeNode extends SimpleTableTreeNode {
         return value
     }
 
-    @Override
-    String lookUp(String value, String tooltip) {
+    public String getToolTip() {
+        if (!cachedToolTip) {
+            String value = name
+            cachedToolTip = lookUp(value, TOOLTIP)
+            if (!cachedToolTip)
+                cachedToolTip = super.getToolTip()
+        }
+        return cachedToolTip
+    }
+
+    private String lookUp(String value, String tooltip) {
         String displayName
         if (!ComponentUtils.isDynamicComposedSubComponentNode(this)) {
             displayName = I18NUtils.findComponentDisplayNameByTreeNode(this, tooltip)

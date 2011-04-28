@@ -12,8 +12,8 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
-import com.ulcjava.testframework.operator.*
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
+import com.ulcjava.testframework.operator.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -29,6 +29,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
+        removeTags()
         initTags()
         super.setUp();
     }
@@ -65,6 +66,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         assertNotNull addTagDialog
 
         ULCListOperator listOperator = new ULCListOperator(addTagDialog, new ComponentByNameChooser('tagesList'))
+        assertEquals "tags count not correct ", size + 1, Tag.findAll().size()
         assertEquals "items count not correct: ", size, listOperator.getItemCount()
 
         ULCTextFieldOperator newTagField = new ULCTextFieldOperator(addTagDialog, new ComponentByNameChooser('newTag'))
@@ -132,10 +134,11 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         new Tag(name: "NONE", tagType: EnumTagType.PARAMETERIZATION).save()
         new Tag(name: "WORKFLOW", tagType: EnumTagType.PARAMETERIZATION).save()
         new Tag(name: "PRODUCTION", tagType: EnumTagType.PARAMETERIZATION).save()
+        new Tag(name: "TODO", tagType: EnumTagType.COMMENT).save()
     }
 
     private void removeTags() {
-        Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).each {it.delete()}
+        Tag.findAll().each {it.delete()}
     }
 
 }

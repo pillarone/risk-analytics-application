@@ -206,7 +206,7 @@ public class JEstimator {
             return new ArrayList();
         for (Iterator iter = values.iterator(); iter.hasNext();) {
             Map map = (Map) iter.next();
-            addXYValues(pdf, ((BigDecimal) map.get("keyFigureParameter")).doubleValue(), ((Double) map.get("result")) / 1000.0);
+            addXYValues(pdf, ((BigDecimal) map.get("keyFigureParameter")).doubleValue(), ((Double) map.get("result")));
         }
         return pdf;
     }

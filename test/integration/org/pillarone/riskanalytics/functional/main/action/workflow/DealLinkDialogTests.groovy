@@ -32,7 +32,8 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
         TreePath parametrizationPath = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", parametrizationPath
 
-        int row = tableTree.getRowForPath(parametrizationPath)
+        //ART-392: functionality currently disabled
+        /*int row = tableTree.getRowForPath(parametrizationPath)
         tableTree.selectCell(row, 0)
         tableTree.pushKey(KeyEvent.VK_L, KeyEvent.CTRL_DOWN_MASK)
 
@@ -60,7 +61,7 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
         year = new ULCSpinnerOperator(dialog, new ComponentByNameChooser("year"))
 
         assertEquals 2012, year.value
-        assertEquals "Q2", quarter.selectedItem
+        assertEquals "Q2", quarter.selectedItem*/
 
     }
 
