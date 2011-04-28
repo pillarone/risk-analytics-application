@@ -7,10 +7,10 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentSearchBean
 import org.pillarone.riskanalytics.application.ui.comment.model.MapComboBoxModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.*
@@ -21,7 +21,7 @@ import com.ulcjava.base.application.*
 class CommentSearchPane {
     ULCBoxPane content;
     ULCToolBar toolBar
-    private ParameterViewModel model
+    private AbstractCommentableItemModel model
     ULCToggleButton selectCommentButton
     ULCToggleButton selectValidationButton
     ULCButton clearButton
@@ -42,7 +42,7 @@ class CommentSearchPane {
         this.errorsView = errorsView
         this.resultView = resultView
         this.resultView.setVisible false
-        this.commentSearchBean = new CommentSearchBean(this.model.item)
+        this.commentSearchBean = CommentSearchBean.getInstance(this.model.item)
         initComponents()
         layoutComponents()
         attachListeners()

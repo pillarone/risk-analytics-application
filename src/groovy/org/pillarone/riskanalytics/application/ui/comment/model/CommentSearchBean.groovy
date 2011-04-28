@@ -8,22 +8,17 @@ import org.apache.lucene.search.Query
 import org.apache.lucene.search.TopDocs
 import org.apache.lucene.util.Version
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CommentSearchBean {
-    Parameterization parameterization
+abstract class CommentSearchBean {
     private Indexer indexer
     private QueryParser parser = null;
-    int parameterizationSize = 0
+    int commentSize = 0
 
-    public CommentSearchBean(Parameterization parameterization) {
-        this.parameterization = parameterization
-        if (this.parameterization.comments)
-            parameterizationSize = this.parameterization.comments.size()
-    }
 
     public List<Comment> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
@@ -49,12 +44,19 @@ class CommentSearchBean {
     }
 
     private void initIndexer() throws IOException {
-        if (!indexer || parameterizationSize != parameterization.comments.size()) {
-            indexer = new Indexer(parameterization.comments)
+        if (!indexer || commentSize != getComments().size()) {
+            indexer = new Indexer(getComments())
             parser = new QueryParser(Version.LUCENE_30, Indexer.SEARCH_TEXT_TITLE, indexer.analyzer)
         }
-
     }
 
+    abstract List<Comment> getComments()
+
+    static CommentSearchBean getInstance(Object item) {
+        switch (item.class) {
+            case Parameterization: return new ParameterizationCommentSearchBean(item)
+            case Simulation: return new SimulationCommentSearchBean(item)
+        }
+    }
 
 }

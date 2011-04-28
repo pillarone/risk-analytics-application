@@ -6,10 +6,11 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
@@ -31,10 +32,10 @@ class CommentPane {
     int periodIndex
     EditCommentAction editCommentAction
     RemoveCommentAction removeCommentAction
-    protected ParameterViewModel model
+    protected AbstractCommentableItemModel model
     String searchText = null
 
-    public CommentPane(ParameterViewModel model, Comment comment, String searchText = null) {
+    public CommentPane(AbstractCommentableItemModel model, Comment comment, String searchText = null) {
         this.model = model
         this.comment = comment
         if (searchText) this.searchText = searchText
@@ -61,7 +62,7 @@ class CommentPane {
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
-        Closure enablingClosure = {-> return comment.tags.any { it.name == NewCommentView.POST_LOCKING} || !model?.isReadOnly()}
+        Closure enablingClosure = {-> return comment.tags.any {model instanceof ResultViewModel || it.name == NewCommentView.POST_LOCKING} || !model?.isReadOnly()}
         editCommentAction.enablingClosure = enablingClosure
         editButton = new ULCButton(editCommentAction)
         editButton.setContentAreaFilled false

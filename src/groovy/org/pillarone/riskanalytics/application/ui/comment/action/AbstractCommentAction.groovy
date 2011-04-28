@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentListener
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -26,7 +27,7 @@ abstract class AbstractCommentAction extends ResourceBasedAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        String path = tree?.selectedPath?.lastPathComponent?.path
+        String path = getPath()
         String displayPath = tree?.selectedPath?.lastPathComponent?.getDisplayPath()
         if (path) {
             executeAction(path, periodIndex, displayPath)
@@ -34,6 +35,9 @@ abstract class AbstractCommentAction extends ResourceBasedAction {
     }
 
     String getPath() {
+        def node = tree?.selectedPath?.lastPathComponent
+        if (node instanceof ResultTableTreeNode)
+            return node.getResultPath()
         return tree?.selectedPath?.lastPathComponent?.path
     }
 

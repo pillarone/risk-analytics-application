@@ -12,6 +12,7 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.dataaccess.function.Mean
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
@@ -28,6 +29,8 @@ class ResultView extends AbstractModellingFunctionView {
     P1RATModel p1ratModel
     //view selection for simulation/calculation
     ULCComboBox selectView
+    CommentAndErrorView commentAndErrorView
+    ULCSplitPane splitPane
 
     public static int space = 3
 
@@ -48,7 +51,7 @@ class ResultView extends AbstractModellingFunctionView {
         tree.setCellSelectionEnabled true
 
         tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
-            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(tabbedPane, model.treeModel.simulationRun, tree, model, this))
+            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(this))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
 

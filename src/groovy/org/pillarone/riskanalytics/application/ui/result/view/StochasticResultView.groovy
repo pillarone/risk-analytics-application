@@ -5,7 +5,9 @@ import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
@@ -37,7 +39,9 @@ class StochasticResultView extends ResultView {
     }
 
     protected void initComponents() {
+        commentAndErrorView = new CommentAndErrorView(model)
         super.initComponents();
+
         menu = new ULCPopupMenu()
         tree.viewPortTableTree.tableTreeHeader.componentPopupMenu = menu
         // add default function to menu
@@ -45,7 +49,17 @@ class StochasticResultView extends ResultView {
         menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
     }
 
+
     protected ULCContainer layoutContent(ULCContainer content) {
+        ULCBoxPane mainContentPane = new ULCBoxPane(1, 1)
+        splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
+        splitPane.oneTouchExpandable = true
+        splitPane.setResizeWeight(1)
+        splitPane.setDividerSize(10)
+
+        splitPane.setDividerLocation(ParameterView.DIVIDER)
+        mainContentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
+
         tabbedPane.removeAll()
         ULCBoxPane contentPane = new ULCBoxPane(1, 2)
         ULCBoxPane functionPane = new ULCBoxPane(0, 1)
@@ -57,7 +71,10 @@ class StochasticResultView extends ResultView {
         tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), getResultSettingView())
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
-        return tabbedPane
+
+        splitPane.add(tabbedPane);
+        splitPane.add(commentAndErrorView.tabbedPane)
+        return splitPane
     }
 
     protected ULCBoxPane getResultSettingView() {

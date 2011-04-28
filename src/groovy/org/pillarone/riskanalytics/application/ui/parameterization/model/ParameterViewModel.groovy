@@ -5,13 +5,10 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
-import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentListener
-import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
-import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
@@ -22,25 +19,18 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
 import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
-class ParameterViewModel extends AbstractModellingModel {
+class ParameterViewModel extends AbstractCommentableItemModel {
 
     ParameterizationTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
 
     List<ParameterValidationError> validationErrors = []
-    private List<ChangedCommentListener> changedCommentListeners
-    private List<TabbedPaneChangeListener> tabbedPaneChangeListeners
-    private List<NavigationListener> navigationListeners
     public P1RATModel p1RATModel
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
         propertiesViewModel = new PropertiesViewModel(parameterization)
-        changedCommentListeners = []
-        tabbedPaneChangeListeners = []
-        navigationListeners = []
     }
 
     protected ITableTreeModel buildTree() {
@@ -108,32 +98,6 @@ class ParameterViewModel extends AbstractModellingModel {
         this.validationErrors = validationErrors
     }
 
-    void addComment(Comment comment) {
-        item.addComment(comment)
-        commentChanged(comment)
-    }
-
-    void removeComment(Comment comment) {
-        item.removeComment(comment)
-        commentChanged(comment)
-    }
-
-    void removeCommentsByPath(String path) {
-        def commentsToRemove = []
-        item.comments.each {Comment comment ->
-            if (comment.path.startsWith(path)) {
-                commentsToRemove << comment
-            }
-        }
-        commentsToRemove.each {Comment comment ->
-            item.removeComment(comment)
-        }
-        changedCommentListeners.each {ChangedCommentListener listener ->
-            listener.updateCommentVisualization()
-        }
-
-    }
-
     void setReadOnly(boolean value) {
         paramterTableTreeModel.readOnly = value
     }
@@ -142,91 +106,14 @@ class ParameterViewModel extends AbstractModellingModel {
         return paramterTableTreeModel.readOnly
     }
 
-    void addChangedCommentListener(ChangedCommentListener listener) {
-        changedCommentListeners << listener
-        paramterTableTreeModel.addChangedCommentListener listener
-    }
-
-    void removeChangedCommentListener(ChangedCommentListener listener) {
-        changedCommentListeners.remove(listener)
-        paramterTableTreeModel.removeChangedCommentListener listener
-    }
-
-    void addTabbedPaneChangeListener(TabbedPaneChangeListener listener) {
-        tabbedPaneChangeListeners << listener
-    }
-
-    void removeTabbedPaneChangeListener(TabbedPaneChangeListener listener) {
-        tabbedPaneChangeListeners.remove listener
-    }
-
     void tabbedPaneChanged(CommentFilter filter) {
         tabbedPaneChangeListeners.each {TabbedPaneChangeListener listener ->
             listener.tabbedPaneChanged(filter)
         }
     }
 
-    void addNavigationListener(NavigationListener listener) {
-        navigationListeners << listener
-    }
-
-    void removeNavigationListener(NavigationListener listener) {
-        navigationListeners.remove(listener)
-    }
-
-
-
-    void commentChanged(Comment comment) {
-        item.notifyItemChanged()
-        changedCommentListeners.each {ChangedCommentListener listener ->
-            listener.updateCommentVisualization()
-        }
-        if (comment) {
-            String path = comment.getPath()
-            def node = CommentAndErrorView.findNodeForPath(paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-            node.comments.remove(comment)
-            if (!comment.deleted)
-                node.comments << comment
-            if (paramterTableTreeModel.root.path == path)
-                paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(paramterTableTreeModel.root) as Object[]), 0)
-            else
-                paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
-        }
-    }
-
-    void commentsChanged(List<Comment> comments) {
-        for (Comment comment: comments) {
-            String path = comment.getPath()
-            def node = CommentAndErrorView.findNodeForPath(paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-            node.comments << comment
-            paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
-        }
-    }
-
-    boolean isNotEmpty(String path) {
-        return item.comments.any {it.path == path && !it.deleted && commentIsVisible(it)}
-    }
-
-    void navigationSelected(boolean comment) {
-        navigationListeners.each {NavigationListener listener ->
-            listener.showHiddenComments()
-        }
-    }
-
-    void showCommentsTab() {
-        navigationListeners.each {NavigationListener listener ->
-            listener.showComments()
-        }
-    }
-
-    void removeInvisibleComments() {
-        paramterTableTreeModel.commentsToBeDeleted.each {Comment comment ->
-            item.removeComment(comment)
-        }
-    }
-
-    boolean commentIsVisible(Comment comment) {
-        return paramterTableTreeModel.commentIsVisible(comment)
+    ITableTreeModel getTableTreeModel() {
+        return paramterTableTreeModel
     }
 
 }

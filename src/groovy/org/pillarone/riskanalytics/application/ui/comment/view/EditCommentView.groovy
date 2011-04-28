@@ -42,6 +42,7 @@ class EditCommentView extends NewCommentView {
         saveButton.addActionListener([actionPerformed: {ActionEvent evt ->
             comment.updated = true
             commentAndErrorView.model.commentChanged(null)
+            saveComments(commentAndErrorView.model.item)
             commentAndErrorView.closeTab()
         }] as IActionListener)
         cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->

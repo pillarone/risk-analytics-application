@@ -5,7 +5,7 @@ import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
-import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
+import org.pillarone.riskanalytics.core.parameter.comment.ParameterizationCommentDAO
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
@@ -30,7 +30,7 @@ class CommentPaneTests extends AbstractP1RATTestCase {
 
 
     List<Comment> generateComments() {
-        CommentDAO dao = new CommentDAO()
+        ParameterizationCommentDAO dao = new ParameterizationCommentDAO()
         dao.comment = ""
         dao.path = null
         dao.periodIndex = 0
@@ -38,7 +38,7 @@ class CommentPaneTests extends AbstractP1RATTestCase {
         comment.metaClass.updateChangeInfo = {->}
         comment.text = "test [http://www.google.de link1] de \n test  [http://www.google.de link2] de \n text  [http://www.google.de link3] de\n[http://www.google.de link4] de"
 
-        CommentDAO dao2 = new CommentDAO()
+        ParameterizationCommentDAO dao2 = new ParameterizationCommentDAO()
         dao2.comment = ""
         dao2.path = null
         dao2.periodIndex = 0
@@ -46,7 +46,7 @@ class CommentPaneTests extends AbstractP1RATTestCase {
         comment2.metaClass.updateChangeInfo = {->}
         comment2.text = "test:[http://www.test1.de test1] end line \n [http://www.test2.de] test\n[http://www.test3.de test3 link]"
 
-        CommentDAO dao3 = new CommentDAO()
+        ParameterizationCommentDAO dao3 = new ParameterizationCommentDAO()
         dao2.comment = ""
         dao2.path = null
         dao2.periodIndex = 0

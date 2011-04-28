@@ -4,8 +4,8 @@ package org.pillarone.riskanalytics.application.ui.comment.view;
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
@@ -15,9 +15,9 @@ public class ErrorPane implements TabbedPaneChangeListener {
 
     private ULCBoxPane content;
     private ULCBoxPane container;
-    private ParameterViewModel model;
+    private AbstractCommentableItemModel model;
 
-    public ErrorPane(ParameterViewModel model) {
+    public ErrorPane(AbstractCommentableItemModel model) {
         this.model = model;
         content = new ULCBoxPane();
         container = new ULCBoxPane(1, 0);

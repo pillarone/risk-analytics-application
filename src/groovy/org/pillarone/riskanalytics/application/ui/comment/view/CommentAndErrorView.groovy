@@ -8,11 +8,12 @@ import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCScrollPane
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.UndockedPaneListener
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
@@ -24,11 +25,11 @@ class CommentAndErrorView implements CommentListener {
     CommentSearchPane commentSearchPane
     ErrorPane errorPane
     ULCBoxPane content
-    private ParameterViewModel model;
+    AbstractCommentableItemModel model;
     Map openItems
 
 
-    public CommentAndErrorView(ParameterViewModel model) {
+    public CommentAndErrorView(AbstractCommentableItemModel model) {
         this.model = model;
         initComponents()
         layoutComponents()
@@ -84,6 +85,9 @@ class CommentAndErrorView implements CommentListener {
         errorPane.clear()
         errorPane.addErrors item.validationErrors
         model.addErrors(item.validationErrors)
+    }
+
+    protected void updateErrorVisualization(Simulation item) {
     }
 
     public void addNewCommentView(String path, int periodIndex) {
@@ -191,13 +195,15 @@ class CommentAndErrorView implements CommentListener {
 
     static String getDisplayPath(def model, String path) {
         if (!path) return ""
-        def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-        return node?.getDisplayPath()
+        def node = findNodeForPath(model.getTableTreeModel().root, path.substring(path.indexOf(":") + 1))
+        if (!node) node = findNodeForPath(model.getTableTreeModel().root, path)
+        return node?.getDisplayPath() ? node?.getDisplayPath() : path
     }
 
     static String getDisplayName(def model, String path) {
         if (!path) return ""
-        def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
+        def node = findNodeForPath(model.getTableTreeModel().root, path.substring(path.indexOf(":") + 1))
+        if (!node) node = findNodeForPath(model.getTableTreeModel().root, path)
         String displayName = node?.getDisplayName()
         if (!displayName) {
             displayName = getDisplayPath(model, path)
@@ -206,13 +212,18 @@ class CommentAndErrorView implements CommentListener {
     }
 
     static def findNodeForPath(def root, String path) {
-        if (path == root.path) return root
-        String[] pathElements = path.split(":")
-        SimpleTableTreeNode currentNode = root
-        for (String p in pathElements) {
-            currentNode = currentNode?.getChildByName(p)
+        def nodeForPath = null
+        if ((root instanceof ResultTableTreeNode) && root.getResultPath() == path) {
+            nodeForPath = root
+        } else if (!(root instanceof ResultTableTreeNode) && root.path == path) {
+            nodeForPath = root
+        } else {
+            for (int i = 0; i < root.childCount && nodeForPath == null; i++) {
+                def childNode = root.getChildAt(i)
+                nodeForPath = findNodeForPath(childNode, path)
+            }
         }
-        return currentNode
+        return nodeForPath
     }
 
     void closeTab() {

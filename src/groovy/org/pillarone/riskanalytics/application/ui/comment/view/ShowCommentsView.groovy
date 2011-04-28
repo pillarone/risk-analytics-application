@@ -5,8 +5,8 @@ import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.util.Color
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
@@ -18,7 +18,7 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
     private ULCBoxPane content;
     private ULCBoxPane container;
     private CommentAndErrorView commentAndErrorView
-    private ParameterViewModel model;
+    private AbstractCommentableItemModel model;
     String path
     List<Comment> comments
 

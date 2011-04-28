@@ -15,7 +15,7 @@ class ShowCommentsAction extends AbstractCommentAction {
     }
 
     void executeAction(String path, int periodIndex, String displayPath) {
-        path = !all ? tree?.selectedPath?.lastPathComponent?.path : null
+        path = !all ? getPath() : null
         commentListeners.each {CommentListener commentListener ->
             commentListener.showCommentsView(path, periodIndex)
         }

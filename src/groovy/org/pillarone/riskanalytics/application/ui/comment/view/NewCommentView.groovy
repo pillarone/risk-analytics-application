@@ -6,11 +6,13 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
@@ -30,7 +32,7 @@ class NewCommentView {
     static int MAX_CHARS = 4080
     final static String POST_LOCKING = "post locking"
 
-    ParameterViewModel model;
+    AbstractCommentableItemModel model;
     protected CommentAndErrorView commentAndErrorView
     ItemListModel<Tag> tagListModel
 
@@ -46,6 +48,12 @@ class NewCommentView {
         this.path = path
         this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), getAllTags())
 
+        initComponents()
+        layoutComponents()
+        attachListeners()
+    }
+
+    public void init() {
         initComponents()
         layoutComponents()
         attachListeners()
@@ -111,6 +119,7 @@ class NewCommentView {
                 }
                 addPostLockingTag(comment)
                 model.addComment(comment)
+                saveComments(model.item)
                 commentAndErrorView.closeTab()
             } else if (text && text.length() > MAX_CHARS) {
                 new I18NAlert("CommentTooLong").show()
@@ -138,11 +147,17 @@ class NewCommentView {
      * @param comment
      */
     protected void addPostLockingTag(Comment comment) {
-        if (comment.class.isAssignableFrom(Comment) && model.isReadOnly()) {
+        if ((model instanceof ParameterViewModel) && comment.class.isAssignableFrom(Comment) && model.isReadOnly()) {
             Tag postLocking = Tag.findByName(POST_LOCKING)
-            comment.addTag(postLocking)
+            if (!comment.tags.contains(postLocking))
+                comment.addTag(postLocking)
         }
     }
 
+    protected void saveComments(Simulation simulation) {
+        simulation.save()
+    }
 
+    protected void saveComments(def item) {
+    }
 }
