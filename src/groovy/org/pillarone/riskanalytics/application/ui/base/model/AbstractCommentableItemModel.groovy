@@ -73,7 +73,6 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
     void commentsChanged(List<Comment> comments) {
         for (Comment comment: comments) {
             String path = comment.getPath()
-//            def node = CommentAndErrorView.findNodeForPath(getTableTreeModel().root, path.substring(path.indexOf(":") + 1))
             def node = CommentAndErrorView.findNodeForPath(getTableTreeModel().root, path)
             node.comments << comment
             getTableTreeModel().nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)

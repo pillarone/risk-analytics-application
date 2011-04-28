@@ -1,6 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
+import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.main.model.ChangeIndexerListener
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
+import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
@@ -9,22 +25,6 @@ import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.main.model.ChangeIndexerListener
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
-import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -186,7 +186,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         if (item instanceof ModellingItem) {
             switch (columnIndex) {
                 case NAME: return node.item.name
-                case COMMENTS:
+                case COMMENTS: return (item instanceof Simulation) ? item.getSize(SimulationRun) : 0;
                 case REVIEW_COMMENT: return 0;
                 case OWNER: return item?.getCreator()?.username;
                 case LAST_UPDATER: return item?.getLastUpdater()?.username;
