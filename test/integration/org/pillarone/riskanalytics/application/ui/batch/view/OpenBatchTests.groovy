@@ -26,6 +26,7 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
 
 
     protected void setUp() {
+        super.setUp()
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         LocaleResources.setTestMode()
@@ -52,9 +53,6 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
             batchRunSimulationRun.simulationState = SimulationState.NOT_RUNNING
             batchRunSimulationRun.save(flush: true)
         }
-
-        super.setUp();
-
     }
 
     @Override protected void tearDown() {

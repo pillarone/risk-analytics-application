@@ -1,5 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.testframework.operator.ULCMenuItemOperator
+import com.ulcjava.testframework.operator.ULCPopupMenuOperator
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
+import models.application.ApplicationModel
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
+import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -8,19 +21,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.workflow.Status
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.testframework.operator.ULCMenuItemOperator
-import com.ulcjava.testframework.operator.ULCPopupMenuOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -279,6 +279,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
                     simulation.template = new ResultConfiguration("result1")
                     simulation.id = 1
                     simulation.setEnd(new DateTime())
+                    simulation.metaClass.getSize = {Class SimulationClass -> return 0}
                     return [simulation]
                 default: return []
             }
