@@ -5,7 +5,7 @@ class ResultNode implements Cloneable {
 
     String name
     String resultPath
-    ArrayList<ResultNode> childNodes = []
+    LinkedList<ResultNode> childNodes = []
     ResultNode parent
 
     public ResultNode(String name, String resultPath) {
