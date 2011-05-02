@@ -15,21 +15,18 @@ class ImportParametrizationTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
-        importFile(tree)
 
-        verifyImport()
-    }
-
-    private void importFile(ULCTableTreeOperator tree) {
         pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
-        pathField.typeText(ExportParametrizationTests.getResource("CoreAlternativeParameters.groovy").getFile())
+        pathField.typeText(ImportParametrizationTests.getResource("CoreAlternativeParameters.groovy").getFile())
         ULCButtonOperator button = fileChooserOperator.getApproveButton()
         assertNotNull(button)
         button.getFocus()
         button.clickMouse()
+
+        verifyImport()
     }
 
 
