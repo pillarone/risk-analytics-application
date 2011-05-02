@@ -6,12 +6,18 @@ import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import javax.swing.tree.TreePath
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ExportParametrizationTests extends AbstractFunctionalTestCase {
+    @Override protected void setUp() {
+        new ParameterizationImportService().compareFilesAndWriteToDB(["CoreAlternativeParameters"])
+        super.setUp()
+    }
+
 
 
     public void testExportParametrization() {
@@ -20,7 +26,6 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
         String fileName = testExportFile.getAbsolutePath()
 
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
-        importFile(tree)
         TreePath parametrizationPath = tree.findPath(["Core", "Parameterization", parameterizationName] as String[])
         assertNotNull "path not found", parametrizationPath
 
@@ -31,6 +36,7 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
         tree.selectCell(row, 0)
 
         tree.pushKey(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK)
+        Thread.sleep 1500
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
@@ -41,19 +47,6 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
         button.clickMouse()
         verifyExport(testExportFile)
     }
-
-    private void importFile(ULCTableTreeOperator tree) {
-        pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
-        ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
-        assertNotNull(fileChooserOperator)
-        ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
-        pathField.typeText(ExportParametrizationTests.getResource("CoreAlternativeParameters.groovy").getFile())
-        ULCButtonOperator button = fileChooserOperator.getApproveButton()
-        assertNotNull(button)
-        button.getFocus()
-        button.clickMouse()
-    }
-
 
     private void verifyExport(File exportedFile) {
         assertTrue(exportedFile.exists())
