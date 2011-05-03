@@ -9,6 +9,8 @@ public interface CommentListener {
 
     void addNewCommentView(String path, int periodIndex)
 
+    void addNewFunctionCommentView(List functionsMap)
+
     void addNewIssueView(String path, int periodIndex)
 
     void editCommentView(Comment comment)

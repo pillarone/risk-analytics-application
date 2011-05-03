@@ -35,7 +35,7 @@ class EditCommentView extends NewCommentView {
         tags.addListSelectionListener([valueChanged: {ListSelectionEvent event ->
             ULCListSelectionModel selectionModel = (ULCListSelectionModel) event.getSource()
             comment.setTags(tagListModel.getSelectedValues(selectionModel.getSelectedIndices()))
-            addPostLockingTag(comment)
+            addPostTag(comment)
 
         }] as IListSelectionListener)
         commentTextArea.addValueChangedListener([valueChanged: {ValueChangedEvent event -> this.comment.setText(commentTextArea.getText())}] as IValueChangedListener)

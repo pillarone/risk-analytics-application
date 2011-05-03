@@ -31,6 +31,7 @@ class NewCommentView {
     String path
     static int MAX_CHARS = 4080
     final static String POST_LOCKING = "post locking"
+    final static String SHARED_COMMENTS = "shared comment"
 
     AbstractCommentableItemModel model;
     protected CommentAndErrorView commentAndErrorView
@@ -80,10 +81,13 @@ class NewCommentView {
         content = new ULCBoxPane(3, 3)
         content.setPreferredSize(new Dimension(400, 160))
         content.setMinimumSize(new Dimension(400, 160))
-        String borderTitle = getDisplayPath() + ((periodIndex == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + periodIndex)
-        final ULCTitledBorder border = BorderFactory.createTitledBorder(borderTitle);
+        final ULCTitledBorder border = BorderFactory.createTitledBorder(getContentBorderTitle());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
         content.setBorder(border);
+    }
+
+    String getContentBorderTitle() {
+        return getDisplayPath() + ((periodIndex == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + periodIndex)
     }
 
     protected void layoutComponents() {
@@ -103,29 +107,14 @@ class NewCommentView {
         return pane
     }
 
-    protected Comment createComment(String path, int periodIndex) {
+    protected Comment createComment(String path, int periodIndex, String function = null) {
         return new Comment(path, periodIndex)
     }
 
     protected void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            String text = commentTextArea.getText()
-            if (text && text.length() > 0 && text.length() < MAX_CHARS) {
-                Comment comment = createComment(path, periodIndex)
-                comment.lastChange = new DateTime()
-                comment.comment = commentTextArea.getText()
-                tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
-                    comment.addTag(tag)
-                }
-                addPostLockingTag(comment)
-                model.addComment(comment)
-                saveComments(model.item)
-                commentAndErrorView.closeTab()
-            } else if (text && text.length() > MAX_CHARS) {
-                new I18NAlert("CommentTooLong").show()
-            } else {
-                new I18NAlert("CommentIsNull").show()
-            }
+            addCommentToItem(path, periodIndex)
+            commentAndErrorView.closeTab()
         }] as IActionListener)
 
         cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
@@ -134,8 +123,28 @@ class NewCommentView {
 
     }
 
+    protected void addCommentToItem(String path, int periodIndex, String function = null) {
+        String text = commentTextArea.getText()
+        if (text && text.length() > 0 && text.length() < MAX_CHARS) {
+            Comment comment = createComment(path, periodIndex, function)
+            comment.lastChange = new DateTime()
+            comment.comment = commentTextArea.getText()
+            tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
+                comment.addTag(tag)
+            }
+            addPostTag(comment)
+            model.addComment(comment)
+            saveComments(model.item)
+
+        } else if (text && text.length() > MAX_CHARS) {
+            new I18NAlert("CommentTooLong").show()
+        } else {
+            new I18NAlert("CommentIsNull").show()
+        }
+    }
+
     public static List getAllTags() {
-        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ? and t.tagType =?", [POST_LOCKING, EnumTagType.COMMENT])
+        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ? and t.name != ? and t.tagType =?", [POST_LOCKING, SHARED_COMMENTS, EnumTagType.COMMENT])
     }
 
     String getDisplayPath() {
@@ -146,7 +155,7 @@ class NewCommentView {
      * add post locking only for comment
      * @param comment
      */
-    protected void addPostLockingTag(Comment comment) {
+    protected void addPostTag(Comment comment) {
         if ((model instanceof ParameterViewModel) && comment.class.isAssignableFrom(Comment) && model.isReadOnly()) {
             Tag postLocking = Tag.findByName(POST_LOCKING)
             if (!comment.tags.contains(postLocking))

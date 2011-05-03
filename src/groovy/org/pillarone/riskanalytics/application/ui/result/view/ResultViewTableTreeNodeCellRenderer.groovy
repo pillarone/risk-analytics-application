@@ -47,14 +47,16 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     TreeNodeCopier treeNodeCopierWithoutPath
     TreeExpander treeExpander
     TreeCollapser treeCollapser
+    int columnIndex = -1
 
 
-    public ResultViewTableTreeNodeCellRenderer(ResultView resultView) {
+    public ResultViewTableTreeNodeCellRenderer(ResultView resultView, int columnIndex) {
         this.tabbedPane = resultView.tabbedPane
         this.tree = resultView.tree
         this.commentAndErrorView = resultView.commentAndErrorView
         this.model = resultView.model
         this.simulationRun = resultView.model.treeModel.simulationRun
+        this.columnIndex = columnIndex
         initContextMenu(resultView)
 
     }
@@ -64,7 +66,6 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         setPopupMenu(rendererComponent, node)
         customizeNode(rendererComponent, node)
         setFormat(value)
-//        setToolTipText node.getToolTip()
         return rendererComponent;
     }
 
@@ -92,9 +93,9 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
 
 
     private void initActions(ResultView resultView) {
-        insertComment = new InsertCommentAction(tree.rowHeaderTableTree, -1)
+        insertComment = new InsertCommentAction(tree.rowHeaderTableTree, columnIndex)
         insertComment.addCommentListener commentAndErrorView
-        showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, -1, false)
+        showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, columnIndex, false)
         showCommentsAction.addCommentListener commentAndErrorView
 
         openResultIterationDataViewer = new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)

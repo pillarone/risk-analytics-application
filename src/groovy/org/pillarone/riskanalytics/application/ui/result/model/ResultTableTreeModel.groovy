@@ -238,4 +238,14 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         return numberDataType
     }
 
+    int getPeriodIndex(int columnIndex) {
+        if (columnIndex == -1) return -1
+        return (columnIndex - 1) % simulationRun.periodCount
+    }
+
+    IFunction getFunction(int columnIndex) {
+        if (columnIndex == -1) return functions[0]
+        return functions[columnIndex]
+    }
+
 }

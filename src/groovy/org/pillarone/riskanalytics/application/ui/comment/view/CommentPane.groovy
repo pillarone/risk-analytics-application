@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.FunctionComment
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 
@@ -99,12 +100,20 @@ class CommentPane {
     String getTagsValue() {
         int size = comment.getTags().size()
         StringBuilder sb = new StringBuilder(UIUtils.getText(this.class, "Tags") + ":")
-        comment.getTags().eachWithIndex {Tag tag, int index ->
-            sb.append(tag.getName())
+        comment?.getTags()?.eachWithIndex {Tag tag, int index ->
+            sb.append(tag?.getName())
             if (index < size - 1)
                 sb.append(", ")
         }
+        appendFunction(sb, comment)
         return sb.toString()
+    }
+
+    void appendFunction(StringBuilder sb, Comment comment) {
+        if (comment instanceof FunctionComment) {
+            sb.append("<br>" + UIUtils.getText(CommentAndErrorView.class, "Function") + ": ")
+            sb.append(comment.function)
+        }
     }
 
     String getTitle() {

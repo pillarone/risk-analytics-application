@@ -8,6 +8,7 @@ import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCScrollPane
+import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.UndockedPaneListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
@@ -100,11 +101,21 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
-            tabbedPane.addTab(tabTitle, view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
-            tabbedPane.selectedIndex = tabIndex
+            addTab(view.content, tabTitle, getDisplayPath(model, path))
+            view.commentTextArea.requestFocus()
+        }
+    }
+
+    public void addNewFunctionCommentView(List functionsMap) {
+        model.showCommentsTab()
+        NewFunctionCommentView view = new NewFunctionCommentView(this, functionsMap)
+        openItems[view.content] = view
+        String tabTitle = UIUtils.getText(CommentAndErrorView, "addFunctionComment")
+        int index = tabbedPane.indexOfTab(tabTitle)
+        if (index >= 0) {
+            tabbedPane.selectedIndex = index
+        } else {
+            addTab(view.content, tabTitle, "")
             view.commentTextArea.requestFocus()
         }
     }
@@ -118,11 +129,7 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
-            tabbedPane.addTab(tabTitle, view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
-            tabbedPane.selectedIndex = tabIndex
+            addTab(view.content, tabTitle, getDisplayPath(model, path))
         }
     }
 
@@ -131,15 +138,11 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
             EditCommentView view = new EditCommentView(this, comment)
             openItems[view.content] = view
             String tabTitle = getDisplayName(model, comment.path)
             tabTitle += ((comment.period == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + comment.period)
-            tabbedPane.addTab(tabTitle, view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, comment.path))
-            tabbedPane.selectedIndex = tabIndex
+            addTab(view.content, tabTitle, getDisplayPath(model, comment.path))
         }
 
     }
@@ -151,15 +154,11 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0 && (!path || tabbedPane.getToolTipTextAt(index) == getDisplayPath(model, path))) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
             ShowCommentsView view = new ShowCommentsView(this, path)
             view.addAllComments()
             openItems[view.content] = view
             model.addChangedCommentListener view
-            tabbedPane.addTab(tabTitle, UIUtils.getIcon("comment.png"), view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
-            tabbedPane.selectedIndex = tabIndex
+            addTab(view.content, tabTitle, getDisplayPath(model, path), UIUtils.getIcon("comment.png"))
         }
     }
 
@@ -170,12 +169,9 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
             ErrorPane errorPane = new ErrorPane(model)
             errorPane.addErrors model.item.validationErrors
-            tabbedPane.addTab(tabTitle, errorPane.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.selectedIndex = tabIndex
+            addTab(errorPane.content, tabTitle, "")
         }
     }
 
@@ -246,6 +242,14 @@ class CommentAndErrorView implements CommentListener {
             }
         }
         return index
+    }
+
+    private void addTab(ULCComponent content, String tabTitle, String toolTip, ULCIcon icon = null) {
+        int tabIndex = tabbedPane.tabCount
+        icon ? tabbedPane.addTab(tabTitle, icon, content) : tabbedPane.addTab(tabTitle, content)
+        tabbedPane.setCloseableTab(tabIndex, true)
+        tabbedPane.setToolTipTextAt(tabIndex, toolTip)
+        tabbedPane.selectedIndex = tabIndex
     }
 
 }

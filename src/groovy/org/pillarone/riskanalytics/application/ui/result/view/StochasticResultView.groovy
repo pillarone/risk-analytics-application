@@ -5,7 +5,6 @@ import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
-import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
@@ -39,7 +38,6 @@ class StochasticResultView extends ResultView {
     }
 
     protected void initComponents() {
-        commentAndErrorView = new CommentAndErrorView(model)
         super.initComponents();
 
         menu = new ULCPopupMenu()
@@ -150,7 +148,7 @@ class StochasticResultView extends ResultView {
     public void functionAdded(IFunction function) {
         ResultViewModel model = this.model as ResultViewModel
         for (int i = 0; i < model.periodCount; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(nextModelIndex++, tree.viewPortTableTree, function)
+            ULCTableTreeColumn column = new ResultTableTreeColumn(nextModelIndex++, this, function)
             column.setMinWidth 110
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
@@ -174,7 +172,7 @@ class StochasticResultView extends ResultView {
 
     protected void addColumns() {
         for (int i = 1; i < model.treeModel.columnCount; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree)
+            ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree, commentAndErrorView)
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column

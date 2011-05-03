@@ -47,7 +47,7 @@ class DeterministicResultView extends ResultView {
 
     protected void addColumns() {
         for (int i = 1; i < model.treeModel.columnCount + 1; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree)
+            ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree, commentAndErrorView)
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column

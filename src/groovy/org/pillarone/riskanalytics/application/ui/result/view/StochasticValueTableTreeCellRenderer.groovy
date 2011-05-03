@@ -9,18 +9,25 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.application.ui.base.action.TableTreeCopier
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.comment.action.InsertFunctionCommentAction
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
 class StochasticValueTableTreeCellRenderer extends NumberFormatRenderer {
     int index
     ULCPopupMenu copyMenu
+    CommentAndErrorView commentAndErrorView
     static final Color backgroundColor = new Color(240, 240, 190)
 
-    public StochasticValueTableTreeCellRenderer(int index, def tableTree) {
+    public StochasticValueTableTreeCellRenderer(int index, def tableTree, CommentAndErrorView commentAndErrorView) {
         this.index = index
+        this.commentAndErrorView = commentAndErrorView
         copyMenu = new ULCPopupMenu()
         copyMenu.add(new ULCMenuItem(new TableTreeCopier(table: tableTree)))
+        InsertFunctionCommentAction action = new InsertFunctionCommentAction(tableTree)
+        action.addCommentListener commentAndErrorView
+        copyMenu.add(new ULCMenuItem(action))
     }
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {

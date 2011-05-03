@@ -5,6 +5,8 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.Mean
 import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -105,7 +107,7 @@ public class DeterministicResultTableTreeModel extends AbstractCommentableItemTa
     }
 
 
-    private int getPeriodIndex(int column) {
+    int getPeriodIndex(int column) {
         int periodIndex = (column - 1) % simulationRun.periodCount
         return periodIndex
     }
@@ -119,4 +121,10 @@ public class DeterministicResultTableTreeModel extends AbstractCommentableItemTa
         }
         return numberDataType
     }
+
+
+    IFunction getFunction(int columnIndex) {
+        return new Mean()
+    }
+
 }

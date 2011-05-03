@@ -51,13 +51,13 @@ class ResultView extends AbstractModellingFunctionView {
         tree.setCellSelectionEnabled true
 
         tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
-            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(this))
+            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(this, -1))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
 
         tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
         model.periodCount.times {int index ->
-            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, tree.viewPortTableTree, new Mean())
+            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new Mean())
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
@@ -65,6 +65,11 @@ class ResultView extends AbstractModellingFunctionView {
         tree.rowHeaderView.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK))
         tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_FOCUSED)
 
+    }
+
+    protected void initComponents() {
+        commentAndErrorView = new CommentAndErrorView(model)
+        super.initComponents()
     }
 
     protected void addPrecisionFunctions(ULCToolBar toolbar) {

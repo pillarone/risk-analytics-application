@@ -104,7 +104,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     protected void addColumns() {
         for (int i = 1; i < model.treeModel.columnCount; i++) {
             if (!model.treeModel.isHidden(i)) {
-                ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree)
+                ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree, null)
                 column.setMinWidth(110)
                 column.setHeaderRenderer(new CompareHeaderRenderer(i))
                 column.setCellRenderer(new CompareRenderer(i))
