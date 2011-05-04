@@ -110,7 +110,7 @@ class CommentPane {
     }
 
     void appendFunction(StringBuilder sb, Comment comment) {
-        if (comment instanceof FunctionComment) {
+        if ((comment instanceof FunctionComment) && comment.function) {
             sb.append("<br>" + UIUtils.getText(CommentAndErrorView.class, "Function") + ": ")
             sb.append(comment.function)
         }

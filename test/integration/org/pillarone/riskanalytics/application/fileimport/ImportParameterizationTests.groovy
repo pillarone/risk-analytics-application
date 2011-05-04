@@ -4,7 +4,6 @@ import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.DBCleanUpService
 
 /**
@@ -18,7 +17,7 @@ class ImportParameterizationTests extends GroovyTestCase {
     protected void setUp() {
         super.setUp()
         new DBCleanUpService().cleanUp()
-        ParameterizationDAO.executeUpdate("delete ${ParameterizationDAO.name}".toString())
+        ResultStructureDAO.executeUpdate("delete ${ResultStructureDAO.name}".toString())
     }
 
 

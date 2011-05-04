@@ -26,8 +26,8 @@ class ApplicationBootStrap {
             if (!Tag.findByName(NewCommentView.POST_LOCKING)) {
                 new Tag(name: NewCommentView.POST_LOCKING, tagType: EnumTagType.COMMENT).save()
             }
-            if (!Tag.findByName(NewCommentView.SHARED_COMMENTS())) {
-                new Tag(name: NewCommentView.SHARED_COMMENTS(), tagType: EnumTagType.COMMENT).save()
+            if (!Tag.findByName(NewCommentView.SHARED_COMMENTS)) {
+                new Tag(name: NewCommentView.SHARED_COMMENTS, tagType: EnumTagType.COMMENT).save()
             }
 
         }
