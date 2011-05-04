@@ -28,7 +28,7 @@ class CommentAndErrorView implements CommentListener {
     ULCBoxPane content
     AbstractCommentableItemModel model;
     Map openItems
-
+    def tableTree
 
     public CommentAndErrorView(AbstractCommentableItemModel model) {
         this.model = model;

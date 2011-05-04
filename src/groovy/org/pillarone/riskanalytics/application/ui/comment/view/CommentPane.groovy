@@ -9,6 +9,7 @@ import com.ulcjava.base.application.util.HTMLUtilities
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
+import org.pillarone.riskanalytics.application.ui.comment.action.MakeVisibleAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
@@ -28,11 +29,13 @@ class CommentPane {
     ULCLabel tags
     ULCButton editButton
     ULCButton deleteButton
+    ULCButton makeVisibleButton
     Comment comment
     String path
     int periodIndex
     EditCommentAction editCommentAction
     RemoveCommentAction removeCommentAction
+    MakeVisibleAction makeVisibleAction
     protected AbstractCommentableItemModel model
     String searchText = null
 
@@ -77,14 +80,19 @@ class CommentPane {
         deleteButton.setContentAreaFilled false
         editButton.setOpaque true
         deleteButton.name = "deleteComment"
-
+        makeVisibleAction = new MakeVisibleAction(model, comment)
+        makeVisibleButton = new ULCButton(makeVisibleAction)
+        makeVisibleButton.setContentAreaFilled false
+        makeVisibleButton.setBackground Color.white
+        makeVisibleButton.setOpaque false
     }
 
 
 
     protected void layoutComponents() {
         content.add(ULCBoxPane.BOX_LEFT_TOP, tags);
-        ULCBoxPane buttons = new ULCBoxPane(2, 1)
+        ULCBoxPane buttons = new ULCBoxPane(3, 1)
+        buttons.add(makeVisibleButton)
         buttons.add(editButton)
         buttons.add(deleteButton)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
@@ -95,6 +103,7 @@ class CommentPane {
 
     void addCommentListener(CommentListener listener) {
         editCommentAction.addCommentListener listener
+        makeVisibleAction.addCommentListener listener
     }
 
     String getTagsValue() {

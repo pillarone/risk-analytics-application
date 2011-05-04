@@ -79,6 +79,11 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
         }
     }
 
+    TreePath getTreePath(String path) {
+        def node = CommentAndErrorView.findNodeForPath(getTableTreeModel().root, path)
+        return new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[])
+    }
+
     boolean isNotEmpty(String path) {
         return item.comments.any {it.path == path && !it.deleted && commentIsVisible(it)}
     }

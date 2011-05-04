@@ -79,6 +79,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
+        commentAndErrorView.tableTree = tree
         new SelectionTracker(tree)
     }
 

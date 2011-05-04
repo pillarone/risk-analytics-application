@@ -64,7 +64,7 @@ class ResultView extends AbstractModellingFunctionView {
         }
         tree.rowHeaderView.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK))
         tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_FOCUSED)
-
+        commentAndErrorView.tableTree = tree
     }
 
     protected void initComponents() {
