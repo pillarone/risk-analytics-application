@@ -9,7 +9,7 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ImportParameterizationTests extends GroovyTestCase {
+class ImportResultStructureTests extends GroovyTestCase {
 
     ResultStructureImportService service = new ResultStructureImportService()
 
@@ -21,7 +21,7 @@ class ImportParameterizationTests extends GroovyTestCase {
 
 
 
-    void testImportParameterization() {
+    void testImport() {
 
         File paramFile = new File(getModelFolder(), "application/ApplicationDefaultResultTree.groovy")
 
