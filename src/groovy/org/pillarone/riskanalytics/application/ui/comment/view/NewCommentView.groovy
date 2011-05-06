@@ -3,10 +3,14 @@ package org.pillarone.riskanalytics.application.ui.comment.view
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
+import org.pillarone.riskanalytics.application.ui.comment.action.AddFileToCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -25,6 +29,7 @@ class NewCommentView {
     ULCTextArea commentTextArea
     ULCList tags
     ULCButton addButton
+    ULCButton addFileButton
     ULCButton cancelButton
     final Dimension dimension = new Dimension(140, 20)
     int periodIndex
@@ -36,6 +41,13 @@ class NewCommentView {
     AbstractCommentableItemModel model;
     protected CommentAndErrorView commentAndErrorView
     ItemListModel<Tag> tagListModel
+    AddFileToCommentAction addFileToCommentAction
+    List<String> addedFiles = []
+    ULCBoxPane addedFilesPane
+    ULCLabel addedFilesLabel
+    Log LOG = LogFactory.getLog(NewCommentView)
+
+    public NewCommentView() {}
 
     public NewCommentView(CommentAndErrorView commentAndErrorView) {
         this.commentAndErrorView = commentAndErrorView
@@ -47,7 +59,6 @@ class NewCommentView {
         this(commentAndErrorView)
         this.periodIndex = periodIndex
         this.path = path
-        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), getAllTags())
 
         initComponents()
         layoutComponents()
@@ -61,7 +72,9 @@ class NewCommentView {
     }
 
     protected void initComponents() {
-        commentTextArea = new ULCTextArea(5, 65)
+        commentTextArea = new ULCTextArea(5, 45)
+        commentTextArea.setMinimumSize(new Dimension(200, 160))
+        commentTextArea.setMaximumSize(new Dimension(400, 160))
         commentTextArea.name = "newCommentText"
         commentTextArea.lineWrap = true
         commentTextArea.wrapStyleWord = true
@@ -75,11 +88,20 @@ class NewCommentView {
         addButton.name = "saveNewComment"
         addButton.setPreferredSize(dimension)
 
+        addFileToCommentAction = new AddFileToCommentAction(this)
+        addFileButton = new ULCButton(addFileToCommentAction)
+        addFileButton.name = "addFileButton"
+        addFileButton.setPreferredSize(dimension)
+
+        addedFilesPane = new ULCBoxPane(2, 0)
+        addedFilesPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewCommentView, "addedFiles") + ": "))
+        addedFilesLabel = new ULCLabel("-")
+        addedFilesPane.add(addedFilesLabel)
+
         cancelButton = new ULCButton(UIUtils.getText(NewCommentView.class, "Cancel"))
         cancelButton.name = "cancelComment"
         cancelButton.setPreferredSize(dimension)
         content = new ULCBoxPane(3, 3)
-        content.setPreferredSize(new Dimension(400, 160))
         content.setMinimumSize(new Dimension(400, 160))
         final ULCTitledBorder border = BorderFactory.createTitledBorder(getContentBorderTitle());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
@@ -95,13 +117,16 @@ class NewCommentView {
         ULCScrollPane scrollList = new ULCScrollPane(tags)
         content.add(ULCBoxPane.BOX_LEFT_TOP, UIUtils.spaceAround(scrollList, 5, 0, 0, 0))
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
-        content.add(ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
-        content.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
+        content.add(3, ULCBoxPane.BOX_LEFT_TOP, addedFilesPane)
+        content.add(2, ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
+        content.add(1, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
+
         content.add(3, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
     }
 
     protected ULCBoxPane getButtonsPane() {
-        ULCBoxPane pane = new ULCBoxPane(2, 1)
+        ULCBoxPane pane = new ULCBoxPane(3, 1)
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, addFileButton)
         pane.add(ULCBoxPane.BOX_LEFT_TOP, addButton)
         pane.add(ULCBoxPane.BOX_LEFT_BOTTOM, cancelButton)
         return pane
@@ -127,6 +152,7 @@ class NewCommentView {
         String text = commentTextArea.getText()
         if (text && text.length() > 0 && text.length() < MAX_CHARS) {
             Comment comment = createComment(path, periodIndex, function)
+            comment.files = addedFiles as Set
             comment.lastChange = new DateTime()
             comment.comment = commentTextArea.getText()
             tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
@@ -168,5 +194,31 @@ class NewCommentView {
     }
 
     protected void saveComments(def item) {
+    }
+
+    public fileAdded(String fileName) {
+        if (addedFiles.contains(fileName)) return
+        addedFiles << fileName
+        ULCLabel label = new ULCLabel(fileName)
+        addedFilesPane.add(label)
+        ULCButton removeFileButton = new ULCButton(UIUtils.getIcon("cancel.png"))
+        removeFileButton.name = "removeFileButton"
+        removeFileButton.setContentAreaFilled false
+        removeFileButton.setBackground Color.white
+        removeFileButton.setOpaque false
+        removeFileButton.setToolTipText(UIUtils.getText(NewCommentView, "removeFile", [fileName]))
+        removeFileButton.addActionListener([actionPerformed: {ActionEvent event ->
+            addedFiles.remove(fileName)
+            addedFilesPane.remove(label)
+            addedFilesPane.remove(removeFileButton)
+            String dir = UIUtils.getConfigProperty("comment_file_dir")
+            try {
+                File file = new File(dir + File.separator + fileName)
+                if (file.exists()) file.delete()
+            } catch (Exception ex) {
+                LOG.error " Error occured during delete of ${dir + File.separator + fileName} : ${ex}"
+            }
+        }] as IActionListener)
+        addedFilesPane.add(removeFileButton)
     }
 }

@@ -14,7 +14,7 @@ public class UserPreferences {
     final static String EXPORT_DIR_KEY = "export_directory"
     final static String DEFAULT_RESULT = "default_result"
     final static String USER_PREFERRED_LANG = "userPreferredLanguage"
-
+    final static String ADD_FILE_DIR = "add_file_directory"
 
     public UserPreferences() {
         userPrefs = Preferences.userNodeForPackage(UserPreferences.class);

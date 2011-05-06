@@ -149,7 +149,17 @@ class CommentPane {
         } catch (Exception ex) {
             wiki = text
         }
+        wiki += getCommentFiles()
         return HTMLUtilities.convertToHtml(HtmlUtils.htmlUnescape(wiki))
+    }
+
+    String getCommentFiles() {
+        StringBuilder sb = new StringBuilder("<br>" + UIUtils.getText(NewCommentView, "addedFiles") + ":<br>")
+        String url = UIUtils.getConfigProperty("comment_file_url")
+        for (String file: comment.files) {
+            sb.append("<a href='${url + File.separator + file}' >${file}</a><br>")
+        }
+        return sb.toString()
     }
 
     private String addHighlighting(String text, def words) {

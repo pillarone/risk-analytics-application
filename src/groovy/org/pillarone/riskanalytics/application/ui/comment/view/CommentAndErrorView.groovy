@@ -101,7 +101,9 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            addTab(view.content, tabTitle, getDisplayPath(model, path))
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, getDisplayPath(model, path))
             view.commentTextArea.requestFocus()
         }
     }
@@ -115,7 +117,9 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            addTab(view.content, tabTitle, "")
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, "")
             view.commentTextArea.requestFocus()
         }
     }
@@ -129,7 +133,9 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            addTab(view.content, tabTitle, getDisplayPath(model, path))
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, getDisplayPath(model, path))
         }
     }
 
@@ -142,7 +148,9 @@ class CommentAndErrorView implements CommentListener {
             openItems[view.content] = view
             String tabTitle = getDisplayName(model, comment.path)
             tabTitle += ((comment.period == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + comment.period)
-            addTab(view.content, tabTitle, getDisplayPath(model, comment.path))
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, getDisplayPath(model, comment.path))
         }
 
     }
