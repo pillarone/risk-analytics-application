@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getCREATION_DATE
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getLAST_MODIFICATION_DATE
+
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
@@ -48,7 +49,7 @@ abstract class SelectionTreeHeaderDialog {
     }
 
     private void initComponents() {
-        dialog = new ULCDialog(parent, "SelectionTreeHeaderDialog", true)
+        dialog = new ULCDialog(parent, UIUtils.getText(SelectionTreeHeaderDialog, "title"), true)
 
         ascOrder = new ULCButton(new SelectionTreeRowSorterAction(tableTree.model, true, columnIndex))
         ascOrder.setContentAreaFilled false
@@ -115,7 +116,6 @@ abstract class SelectionTreeHeaderDialog {
         content.add(ULCBoxPane.BOX_RIGHT_BOTTOM, buttonPane)
 
         dialog.add(content)
-        dialog.setUndecorated(true)
         dialog.pack()
         dialog.resizable = false
     }
