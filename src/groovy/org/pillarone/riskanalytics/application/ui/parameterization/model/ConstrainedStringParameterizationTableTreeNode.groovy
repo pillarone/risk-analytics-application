@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import org.pillarone.riskanalytics.core.parameter.ConstrainedStringParameter
-import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractMultiValueParameterizationTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ConstrainedStringParameterHolder
@@ -44,26 +42,29 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
 
     protected List initValues() {
         List components = simulationModel.getMarkedComponents(markerClass)
-        List result = []
+        List<String> result = []
         for (Component c in components) {
             result << c.getNormalizedName()
             fillMaps(c)
         }
-        setValidValueIfEmpty(result)
+        validateValue(result)
         return result
     }
 
     //if a new DCC which contains a CS is added this makes sure the displayed value is also stored in the parameter
-    private void setValidValueIfEmpty(List values) {
-        if (values.size() > 0) {
-            int i = 1;
-            for (ConstrainedStringParameterHolder holder in parameter) {
-                String normalizedName = nameToNormalized.get(holder.businessObject.stringValue)
-                if (normalizedName == null || !values.contains(normalizedName)) {
+
+    private void validateValue(List values) {
+        int i = 1;
+        for (ConstrainedStringParameterHolder holder in parameter) {
+            String normalizedName = nameToNormalized.get(holder.businessObject.stringValue)
+            if (normalizedName == null || !values.contains(normalizedName)) {
+                if (values.empty) {
+                    holder.value = ""
+                } else {
                     setValueAt(values[0], i)
                 }
-                i++
             }
+            i++
         }
     }
 
@@ -71,6 +72,7 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
         if (markerClass.isAssignableFrom(component.getClass())) {
             values << component.getNormalizedName()
             fillMaps(component)
+            validateValue(values)
         }
 
     }
@@ -80,6 +82,7 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
             values.remove(component.getNormalizedName())
             normalizedToName.remove(component.getNormalizedName())
             nameToNormalized.remove(component.getName())
+            validateValue(values)
         }
     }
 
