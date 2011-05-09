@@ -11,12 +11,10 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 
@@ -102,7 +100,8 @@ class SelectionTreeView {
                     dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
                 }
                 dialog.init()
-                dialog.dialog.setLocationRelativeTo(tree.viewPortTableTree)
+                dialog.dialog.setLocationRelativeTo(tree)
+                dialog.dialog.setAlignment(ULCBoxPane.BOX_CENTER_CENTER)
                 dialog.dialog.setVisible true
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
                 p1RATModel.selectionTreeModel.order(columnIndex, ascOrder)
