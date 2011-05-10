@@ -20,7 +20,7 @@ class Indexer {
     final static String SEARCH_TEXT_TITLE = "title"
     def commentsMap
 
-    /** Creates a new instance of Indexer              */
+    /** Creates a new instance of Indexer                 */
     public Indexer(List<Comment> comments) {
         this.comments = comments
         commentsMap = [:]
@@ -57,6 +57,7 @@ class Indexer {
         Document doc = new Document();
         StringBuilder content = new StringBuilder(comment.comment)
         comment.tags.each { content.append(" " + it + " ")}
+        if (comment.files) content.append(" " + comment.files.join(" "))
         doc.add(new Field(SEARCH_TEXT_TITLE, content.toString(), Field.Store.YES, Field.Index.ANALYZED));
         doc.add(new Field("commentIndex", commentIndex, Field.Store.YES, Field.Index.NO));
         w.addDocument(doc);

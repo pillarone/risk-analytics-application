@@ -145,7 +145,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         reInitIndexer = true
     }
 
-    private String escapeQuery(String query) {
+    public static String escapeQuery(String query) {
         try {
             String escapeChars = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\\"\\'\\#]";
             query = query.replaceAll(escapeChars, " ")

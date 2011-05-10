@@ -7,6 +7,7 @@ import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.TopDocs
 import org.apache.lucene.util.Version
+import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
@@ -23,9 +24,12 @@ abstract class CommentSearchBean {
     public List<Comment> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
         List<Comment> result = []
+        queryString = ModellingItemSearchBean.escapeQuery(queryString)
         // the "title" arg specifies the default field to use
         // when no field is explicitly specified in the query.
-        Query q = new QueryParser(Version.LUCENE_30, Indexer.SEARCH_TEXT_TITLE, indexer.analyzer).parse(queryString);
+        QueryParser parser = new QueryParser(Version.LUCENE_30, Indexer.SEARCH_TEXT_TITLE, indexer.analyzer)
+        parser.setAllowLeadingWildcard(true);
+        Query q = parser.parse(queryString);
 
         // 3. search
         int hitsPerPage = 10;
