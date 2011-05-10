@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 
 public class I18NUtils {
 
@@ -48,9 +49,10 @@ public class I18NUtils {
         return value
     }
 
-    public static String findDisplayNameByParentComponent(def simpleTableTreeNode, String parmKey, String toolTip = "") {
-        if (simpleTableTreeNode != null && simpleTableTreeNode instanceof SimpleTableTreeNode && simpleTableTreeNode.parent != null && simpleTableTreeNode.parent.properties.keySet().contains("component") && simpleTableTreeNode.parent.component != null)
+    public static String findDisplayNameByParentComponent(ITableTreeNode simpleTableTreeNode, String parmKey, String toolTip = "") {
+        if (simpleTableTreeNode?.parent instanceof ComponentTableTreeNode) {
             return findParameterDisplayNameBySuperClass(simpleTableTreeNode.parent.component.getClass(), parmKey + toolTip)
+        }
         return null
 
     }
