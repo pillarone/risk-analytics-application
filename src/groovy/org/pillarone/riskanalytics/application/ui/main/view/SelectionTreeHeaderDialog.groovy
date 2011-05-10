@@ -1,8 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getCREATION_DATE
-import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.getLAST_MODIFICATION_DATE
-
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent

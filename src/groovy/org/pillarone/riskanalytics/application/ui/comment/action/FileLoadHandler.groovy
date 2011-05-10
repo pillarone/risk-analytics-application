@@ -5,7 +5,7 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.util.IFileLoadHandler
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.pillarone.riskanalytics.application.fileimport.ApplicationFileConstants
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -25,9 +25,14 @@ class FileLoadHandler implements IFileLoadHandler {
     void onSuccess(InputStream[] inputStreams, String[] paths, String[] names) {
         ExceptionSafe.protect {
             new UserPreferences().setUserDirectory(UserPreferences.ADD_FILE_DIR, paths[0])
-            String dir = ApplicationHolder.getApplication().getConfig().getProperty("comment_file_dir")
+            String dir = ApplicationFileConstants.COMMENT_FILE_DIRECTORY
             names.eachWithIndex {String fileName, int index ->
-                File file = new File(dir + "/" + fileName)
+                File file = new File(dir + File.separator + fileName)
+                if (file.exists()) {
+                    fileName = getNewFileName(dir, fileName)
+                    file = new File(dir + File.separator + fileName)
+                }
+
                 FileOutputStream outputStream = new FileOutputStream(file)
                 outputStream.write(inputStreams[index].getBytes())
                 newCommentView.fileAdded(fileName)
@@ -42,5 +47,16 @@ class FileLoadHandler implements IFileLoadHandler {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(newCommentView.content), "importError")
             alert.show()
         }
+    }
+
+    private String getNewFileName(String dir, String fileName) {
+        GString suffix = "_${new Date().getTime()}"
+        if (fileName.lastIndexOf(".") > 0) {
+            String name = fileName.substring(0, fileName.lastIndexOf("."))
+            String ext = fileName.substring(fileName.lastIndexOf("."))
+            fileName = name + suffix + ext
+        } else
+            fileName = fileName + suffix
+        return fileName
     }
 }

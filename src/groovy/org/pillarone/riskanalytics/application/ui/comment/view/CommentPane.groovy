@@ -6,7 +6,9 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.pillarone.riskanalytics.application.fileimport.ApplicationFileConstants
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
+import org.pillarone.riskanalytics.application.ui.base.view.DownloadFilePane
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.MakeVisibleAction
@@ -26,6 +28,7 @@ import com.ulcjava.base.application.*
 class CommentPane {
     ULCBoxPane content;
     FollowLinkPane label
+    DownloadFilePane downloadFilePane
     ULCLabel tags
     ULCButton editButton
     ULCButton deleteButton
@@ -59,10 +62,13 @@ class CommentPane {
         content.setBorder(border);
 
         label = new FollowLinkPane();
+        downloadFilePane = new DownloadFilePane(source: content)
         if (searchText) label.name = "foundText"
         label.setText getLabelText()
+        downloadFilePane.setText(getCommentFiles())
 
         label.setFont(font);
+        downloadFilePane.setFont(font)
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
@@ -98,6 +104,7 @@ class CommentPane {
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
         content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+        content.add(3, ULCBoxPane.BOX_LEFT_TOP, downloadFilePane);
     }
 
 
@@ -149,13 +156,12 @@ class CommentPane {
         } catch (Exception ex) {
             wiki = text
         }
-        wiki += getCommentFiles()
         return HTMLUtilities.convertToHtml(HtmlUtils.htmlUnescape(wiki))
     }
 
     String getCommentFiles() {
         StringBuilder sb = new StringBuilder("<br>" + UIUtils.getText(NewCommentView, "addedFiles") + ":<br>")
-        String url = UIUtils.getConfigProperty("comment_file_url")
+        String url = ApplicationFileConstants.COMMENT_FILE_DIRECTORY
         for (String file: comment.files) {
             sb.append("<a href='${url + File.separator + file}' >${file}</a><br>")
         }

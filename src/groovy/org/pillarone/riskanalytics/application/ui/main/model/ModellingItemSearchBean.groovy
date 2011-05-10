@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.lucene.document.Document
@@ -13,6 +12,7 @@ import org.apache.lucene.util.Version
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.hibernate.SQLQuery
 import org.hibernate.SessionFactory
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -164,7 +164,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
 }
 
-private interface ChangeIndexerListener {
+interface ChangeIndexerListener {
 
     void indexChanged()
 }
