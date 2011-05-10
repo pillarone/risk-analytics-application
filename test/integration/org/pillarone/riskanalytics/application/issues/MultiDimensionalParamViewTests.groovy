@@ -12,14 +12,13 @@ import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
 
@@ -57,12 +56,12 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
 
         ULCTabbedPaneOperator tabbedPane = new ULCTabbedPaneOperator(frameOperator)
-        assertEquals 2, tabbedPane.tabCount
+        assertEquals 1, tabbedPane.tabCount
 
         ULCTableTreeOperator parameterTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeContent"))
         parameterTree.clickForEdit(4, 0)
 
-        assertEquals "not tab opened for MDP", 3, tabbedPane.tabCount
+        assertEquals "not tab opened for MDP", 2, tabbedPane.tabCount
 
     }
 }

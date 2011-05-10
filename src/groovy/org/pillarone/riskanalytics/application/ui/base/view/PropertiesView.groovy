@@ -3,16 +3,18 @@ package org.pillarone.riskanalytics.application.ui.base.view
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 class PropertiesView implements IGuiUpdate {
 
     ULCBoxPane content
     PropertiesViewModel model
     ULCLabel lastModifierInfo
+    int MAX_CHARS = 255
 
     public PropertiesView(PropertiesViewModel model) {
         this.@model = model
@@ -28,7 +30,14 @@ class PropertiesView implements IGuiUpdate {
             textArea.text = model.comment
             textArea.lineWrap = true
             textArea.wrapStyleWord = true
-            textArea.addValueChangedListener([valueChanged: {ValueChangedEvent event -> model.comment = textArea.text}] as IValueChangedListener)
+            textArea.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
+                String text = textArea.text
+                if (text && text.length() > MAX_CHARS) {
+                    I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(content), "CommentTooLong")
+                    alert.show()
+                } else
+                    model.comment = text
+            }] as IValueChangedListener)
             content.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(new ULCLabel(getText('comment')), 5, 10, 0, 0))
             content.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(textArea, 5, 10, 0, 0))
             box.add(content)

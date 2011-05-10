@@ -32,10 +32,6 @@ class ResultSettingsView {
     }
 
     private void initComponents() {
-        ULCTextArea comment = new ULCTextArea(simulation.comment, 30, 20)
-        comment.lineWrap = true
-        comment.wrapStyleWord = true
-        comment.enabled = false
 
         ULCBoxPane settings = boxLayout(getText('settings')) {ULCBoxPane box ->
 
@@ -43,8 +39,6 @@ class ResultSettingsView {
             addLabels(content, getText('name') + ":", "$simulation.name", new ULCFiller())
             addLabels(content, getText('creationDate') + ":", DateFormatUtils.formatDetailed(simulation.start), new ULCFiller())
             // TODO (msp): adjust to new user concept
-//            addLabels(content, getText('username') + ":", simulation.creator ? simulation.creator.username : "", new ULCFiller())
-            addLabels(content, getText('comment') + ":", comment)
             addLabels(content, "", "", new ULCFiller())
             addLabels(content, getText('modelLabel') + ":", "$simulation.modelClass.simpleName v${simulation.modelVersionNumber.toString()}", new ULCButton(new ExportModelItemAction(simulation)))
             addLabels(content, getText('structure') + ":", "$simulation.structure.name v${simulation.structure.versionNumber.toString()}", new ULCButton(new ExportStructureAction(simulation.structure)))

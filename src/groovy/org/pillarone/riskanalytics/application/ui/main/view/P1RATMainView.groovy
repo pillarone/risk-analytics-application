@@ -253,7 +253,6 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
 
     protected ULCComponent createDetailView(Parameterization currentItem, Model simulationModel) {
         ParameterView view = new ParameterView(model.getParameterViewModel(currentItem, simulationModel))
-        model.addModelItemChangedListener(view)
         return view.content
     }
 
