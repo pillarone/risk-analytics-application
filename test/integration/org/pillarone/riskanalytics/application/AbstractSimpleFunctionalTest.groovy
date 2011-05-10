@@ -8,6 +8,8 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.core.BatchRun
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -33,12 +35,16 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
     protected void tearDown() {
         Thread cleanUpThread = new Thread(
                 [run: {
-                    SimulationRun.list()*.delete()
-                    ResultStructureDAO.list()*.delete()
-                    ResultConfigurationDAO.list()*.delete()
-                    ParameterizationDAO.list()*.delete()
-                    ModelStructureDAO.list()*.delete()
-                    ModelDAO.list()*.delete()
+                    SimulationRun.withTransaction {
+                        BatchRunSimulationRun.list()*.delete()
+                        BatchRun.list()*.delete()
+                        SimulationRun.list()*.delete()
+                        ResultStructureDAO.list()*.delete()
+                        ResultConfigurationDAO.list()*.delete()
+                        ParameterizationDAO.list()*.delete()
+                        ModelStructureDAO.list()*.delete()
+                        ModelDAO.list()*.delete()
+                    }
                 }] as Runnable
         )
         cleanUpThread.start()
