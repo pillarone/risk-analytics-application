@@ -16,7 +16,6 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
     ULCFrameOperator mainFrameOperator
 
     protected void setUp() {
-        new DBCleanUpService().cleanUp()
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
