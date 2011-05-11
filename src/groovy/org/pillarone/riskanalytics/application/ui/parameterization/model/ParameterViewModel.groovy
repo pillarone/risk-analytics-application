@@ -5,6 +5,7 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
+
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
@@ -16,7 +17,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
 import org.pillarone.riskanalytics.core.parameterization.ParameterWriter
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
@@ -25,7 +26,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
     ParameterizationTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
 
-    List<ParameterValidationError> validationErrors = []
+    List<ParameterValidation> validationErrors = []
     public P1RATModel p1RATModel
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
@@ -77,14 +78,14 @@ class ParameterViewModel extends AbstractCommentableItemModel {
         return currentNode
     }
 
-    void addErrors(List<ParameterValidationError> validationErrors) {
-        for (ParameterValidationError error in validationErrors) {
+    void addErrors(List<ParameterValidation> validationErrors) {
+        for (ParameterValidation error in validationErrors) {
             ParameterizationTableTreeNode node = findNodeForPath(error.getPath())
             node.errorMessage = error.getLocalizedMessage(LocaleResources.getLocale())
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
-        for (ParameterValidationError previousError in this.validationErrors) {
-            ParameterValidationError currentError = validationErrors.find { it.path == previousError.path}
+        for (ParameterValidation previousError in this.validationErrors) {
+            ParameterValidation currentError = validationErrors.find { it.path == previousError.path}
             //Error is resolved now
             if (currentError == null) {
                 ParameterizationTableTreeNode node = findNodeForPath(previousError.getPath())

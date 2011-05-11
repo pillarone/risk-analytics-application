@@ -4,12 +4,15 @@ package org.pillarone.riskanalytics.application.ui.comment.view;
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
+
+import com.ulcjava.base.application.*
+
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
-import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
+import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
 
 public class ErrorPane implements TabbedPaneChangeListener {
 
@@ -26,13 +29,13 @@ public class ErrorPane implements TabbedPaneChangeListener {
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(container));
     }
 
-    public void addError(ParameterValidationError error) {
+    public void addError(ParameterValidation error) {
         container.add(ULCBoxPane.BOX_EXPAND_TOP, createLabel(error));
     }
 
-    public void addErrors(Collection<ParameterValidationError> errors) {
+    public void addErrors(Collection<ParameterValidation> errors) {
         if (errors != null && !errors.isEmpty()) {
-            for (ParameterValidationError error: errors) {
+            for (ParameterValidation error: errors) {
                 addError(error);
             }
         } else {
@@ -58,15 +61,17 @@ public class ErrorPane implements TabbedPaneChangeListener {
 
 
 
-    private ULCComponent createLabel(ParameterValidationError error) {
+    private ULCComponent createLabel(ParameterValidation error) {
         ULCBoxPane pane = new ULCBoxPane(2, 1);
         pane.setBackground(Color.white);
         final ULCTitledBorder border = BorderFactory.createTitledBorder(model.findNodeForPath(error.getPath()).getDisplayPath());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
+        Color color = getColor(error.validationType)
+        border.setTitleColor(color)
         pane.setBorder(border);
 
         ULCLabel label = new ULCLabel();
-        label.setForeground(Color.red);
+        label.setForeground(color);
         label.setText(error.getLocalizedMessage(LocaleResources.getLocale()));
         label.setFont(label.getFont().deriveFont(Font.PLAIN));
 
@@ -81,6 +86,15 @@ public class ErrorPane implements TabbedPaneChangeListener {
 
     public void setVisible(boolean visibility) {
         container.setVisible(visibility);
+    }
+
+    private Color getColor(ValidationType validationType) {
+        switch (validationType) {
+            case ValidationType.ERROR: return Color.red
+            case ValidationType.WARNING: return Color.darkGray
+            case ValidationType.HINT: return Color.blue
+            default: return Color.black
+        }
     }
 
 }

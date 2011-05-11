@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.comment.model
 
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidationError
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
@@ -25,7 +25,7 @@ class CommentPathFilter implements CommentFilter {
         return path.equals(comment.path)
     }
 
-    boolean accept(ParameterValidationError error) {
+    boolean accept(ParameterValidation error) {
         return errorPath?.equals(error.path)
     }
 
