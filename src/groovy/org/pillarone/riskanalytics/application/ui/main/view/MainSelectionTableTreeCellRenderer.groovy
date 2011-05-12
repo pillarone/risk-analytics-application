@@ -1,5 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.workflow.Status
+
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
@@ -13,10 +18,6 @@ import org.pillarone.riskanalytics.application.ui.batch.action.DeleteBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.RejectWorkflowAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToProductionAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
@@ -25,13 +26,9 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.workflow.Status
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.CreateNewWorkflowVersionAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -78,6 +75,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
             def transactionsEnabled = ApplicationHolder.getApplication().getConfig().getProperty("transactionsEnabled")
             if (transactionsEnabled != null && transactionsEnabled == true) {
                 parameterNodePopUpMenu.addSeparator()
+                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, model)))
                 parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, model)))
             }
         }
