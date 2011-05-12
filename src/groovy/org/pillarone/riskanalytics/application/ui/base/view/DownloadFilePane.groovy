@@ -39,8 +39,8 @@ class DownloadFilePane extends AbstractLinkPane {
             } catch (NullPointerException ex) {
                 url = hyperlinkEvent.getDescription()
             }
-            if (url != null) {
-                File file = new File(url)
+            File file = new File(url)
+            if (url != null && file.exists()) {
                 FileChooserConfig config = new FileChooserConfig()
                 config.dialogTitle = UIUtils.getText(DownloadFilePane, "saveAs")
                 config.dialogType = FileChooserConfig.SAVE_DIALOG
@@ -59,6 +59,8 @@ class DownloadFilePane extends AbstractLinkPane {
                             }
                         }] as IFileChooseHandler, config, null)
 
+            } else {
+                new I18NAlert(UlcUtilities.getWindowAncestor(source), "FileNotExist", [file.name] as List).show()
             }
         }
 

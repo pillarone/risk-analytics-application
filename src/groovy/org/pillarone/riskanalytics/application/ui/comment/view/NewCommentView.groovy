@@ -9,7 +9,7 @@ import com.ulcjava.base.application.util.Font
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.application.fileimport.ApplicationFileConstants
+import org.pillarone.riskanalytics.core.FileConstants;
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.action.AddFileToCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
@@ -212,7 +212,7 @@ class NewCommentView {
             addedFiles.remove(fileName)
             addedFilesPane.remove(label)
             addedFilesPane.remove(removeFileButton)
-            String dir = ApplicationFileConstants.COMMENT_FILE_DIRECTORY
+            String dir = FileConstants.COMMENT_FILE_DIRECTORY
             try {
                 File file = new File(dir + File.separator + fileName)
                 if (file.exists()) file.delete()

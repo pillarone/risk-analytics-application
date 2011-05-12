@@ -1,12 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import org.pillarone.riskanalytics.core.FileConstants;
+
+
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.FunctionComment
+
 import be.devijver.wikipedia.Parser
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
-import org.pillarone.riskanalytics.application.fileimport.ApplicationFileConstants
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.view.DownloadFilePane
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
@@ -16,9 +22,6 @@ import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAc
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.FunctionComment
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 
@@ -161,7 +164,7 @@ class CommentPane {
 
     String getCommentFiles() {
         StringBuilder sb = new StringBuilder("<br>" + UIUtils.getText(NewCommentView, "addedFiles") + ":<br>")
-        String url = ApplicationFileConstants.COMMENT_FILE_DIRECTORY
+        String url = FileConstants.COMMENT_FILE_DIRECTORY
         for (String file: comment.files) {
             sb.append("<a href='${url + File.separator + file}' >${file}</a><br>")
         }

@@ -5,7 +5,7 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.util.IFileLoadHandler
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.fileimport.ApplicationFileConstants
+import org.pillarone.riskanalytics.core.FileConstants;
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -25,7 +25,7 @@ class FileLoadHandler implements IFileLoadHandler {
     void onSuccess(InputStream[] inputStreams, String[] paths, String[] names) {
         ExceptionSafe.protect {
             new UserPreferences().setUserDirectory(UserPreferences.ADD_FILE_DIR, paths[0])
-            String dir = ApplicationFileConstants.COMMENT_FILE_DIRECTORY
+            String dir = FileConstants.COMMENT_FILE_DIRECTORY
             names.eachWithIndex {String fileName, int index ->
                 File file = new File(dir + File.separator + fileName)
                 if (file.exists()) {
