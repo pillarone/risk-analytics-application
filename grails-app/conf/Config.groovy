@@ -38,6 +38,8 @@ transactionServiceUrl = "rmi://localhost:1099/TransactionService"
 resultServiceRegistryPort = 1099
 transactionsEnabled = true
 
+serverSessionPrefix = ";jsessionid="
+
 environments {
     development {
         models = ["CoreModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
