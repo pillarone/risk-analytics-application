@@ -83,7 +83,6 @@ class AboutDialog {
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Bardola Jon, FS Consulta AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Brendle Detlef, Canoo Engineering AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Cartier Sebastian, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Cartier Sebastian, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Dittrich Joerg, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Ginsberg Benjamin, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Hartmann Stephan, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())

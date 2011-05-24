@@ -1,9 +1,10 @@
 package org.pillarone.riskanalytics.application.reports
 
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 public abstract class CapitalEagleReportModel implements ReportModel {
@@ -86,9 +87,9 @@ public abstract class CapitalEagleReportModel implements ReportModel {
         map["stdDev"] = ResultAccessor.getStdDev(simulation.getSimulationRun(), periodIndex, path[0], path[1], path[2])
         map["mean"] = ResultAccessor.getMean(simulation.getSimulationRun(), periodIndex, path[0], path[1], path[2])
 
-        Percentile percentile = new Percentile(percentile: 75)
+        PercentileFunction percentile = new PercentileFunction(75, QuantilePerspective.LOSS)
         Double per75 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(path))
-        percentile = new Percentile(percentile: 25)
+        percentile = new PercentileFunction(25, QuantilePerspective.LOSS)
         Double per25 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(path))
         map["IQR"] = per75 - per25
 

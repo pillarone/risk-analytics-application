@@ -2,13 +2,11 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 
 import org.jfree.chart.JFreeChart
 import org.jfree.data.xy.XYSeries
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
-
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.application.util.JEstimator
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
  * @author martin.melchior (at) fhnw.ch
@@ -38,7 +36,7 @@ class CDFAdaptiveKernelBandwidthEstimatorChartViewModel extends AdaptiveKernelBa
         writer.writeInset("Prior kernel bandwidth", priorBandwidth)
         writer.writeEmptyLine()
         writer.writePercentiles([1], simulationRun, 0, nodes[0])
-        double median = ResultAccessor.getPercentile(simulationRun, ResultFunction.getPath(nodes[0]), nodes[0].collector, nodes[0].field, 50)
+        double median = ResultAccessor.getPercentile(simulationRun, nodes[0].path, nodes[0].collector, nodes[0].field, 50)
         writer.writeInset("median", median)
         writer.writeInset("mean", mean)
         writer.writePercentiles([99], simulationRun, 0, nodes[0])

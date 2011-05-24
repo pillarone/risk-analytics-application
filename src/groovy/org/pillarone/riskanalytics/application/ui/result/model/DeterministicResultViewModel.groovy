@@ -1,18 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.ToggleKeyFigureAction
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.CollectingModeFactory
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.output.*
 
 class DeterministicResultViewModel extends ResultViewModel {
 
@@ -20,7 +15,7 @@ class DeterministicResultViewModel extends ResultViewModel {
         super(model, structure, simulation)
     }
 
-    protected ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
+    protected ITableTreeModel getResultTreeTableModel(Model model, ToggleKeyFigureAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
         return new DeterministicResultTableTreeModel(treeRoot, simulationRun, parameterization, results)
     }
 

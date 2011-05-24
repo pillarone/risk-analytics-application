@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.result.action.RemoveFunctionAction
 import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
@@ -14,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.dataaccess.function.*
-import org.pillarone.riskanalytics.application.ui.result.action.*
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 
 class StochasticResultView extends ResultView {
 
@@ -27,9 +28,10 @@ class StochasticResultView extends ResultView {
 
     private int nextModelIndex = 0
 
+    @Lazy MeanFunction meanFunction
+
     public StochasticResultView(ResultViewModel model) {
         super(model)
-
     }
 
     void setModel(AbstractModellingModel model) {
@@ -43,8 +45,7 @@ class StochasticResultView extends ResultView {
         menu = new ULCPopupMenu()
         tree.viewPortTableTree.tableTreeHeader.componentPopupMenu = menu
         // add default function to menu
-        def function = meanButton.action.function
-        menu.add(new ULCMenuItem(new RemoveFunctionAction(model, function, getToggleButton(function))))
+        menu.add(new ULCMenuItem(new RemoveFunctionAction(model, meanFunction, meanButton)))
     }
 
 
@@ -80,14 +81,18 @@ class StochasticResultView extends ResultView {
     }
 
     protected void addToolBarElements(ULCToolBar toolbar) {
-        meanButton = new ULCToggleButton(new MeanAction(model, tree.viewPortTableTree))
+        meanButton = new ULCToggleButton()
+        meanButton.setAction(new ToggleKeyFigureAction(meanFunction, new DefaultToggleValueProvider(meanButton), model, tree.viewPortTableTree))
         meanButton.setSelected true
         toolbar.add(meanButton)
-        minButton = new ULCToggleButton(new MinAction(model, tree.viewPortTableTree))
+        minButton = new ULCToggleButton()
+        minButton.action = new ToggleKeyFigureAction(new MinFunction(), new DefaultToggleValueProvider(minButton), model, tree.viewPortTableTree)
         toolbar.add(minButton)
-        maxButton = new ULCToggleButton(new MaxAction(model, tree.viewPortTableTree))
+        maxButton = new ULCToggleButton()
+        maxButton.action = new ToggleKeyFigureAction(new MaxFunction(), new DefaultToggleValueProvider(maxButton), model, tree.viewPortTableTree)
         toolbar.add(maxButton)
-        sigmaButton = new ULCToggleButton(new SigmaAction(model, tree.viewPortTableTree))
+        sigmaButton = new ULCToggleButton()
+        sigmaButton.action = new ToggleKeyFigureAction(new SigmaFunction(), new DefaultToggleValueProvider(sigmaButton), model, tree.viewPortTableTree)
         toolbar.add(sigmaButton)
 
         addDoubleFunctions(toolbar)
@@ -108,8 +113,7 @@ class StochasticResultView extends ResultView {
         integerFunctionValue.columns = 6
         integerFunctionValue.value = 1
         toolbar.add integerFunctionValue
-        ULCButton button = new ULCButton(new SingleIterationAction(model, tree.viewPortTableTree, integerFunctionValue))
-        toolbar.add UIUtils.spaceAround(button, 0, 5, 0, 5)
+        toolbar.add UIUtils.spaceAround(new ULCButton(new SingleIterationKeyFigureAction(new TextFieldValueProvider<Integer>(integerFunctionValue), model, tree.viewPortTableTree)), 0, 5, 0, 5)
     }
 
     private def addDoubleFunctions(ULCToolBar toolbar) {
@@ -134,9 +138,9 @@ class StochasticResultView extends ResultView {
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add new ULCLabel(getText("Percent"))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        ULCButton percentileButton = new ULCButton(new PercentileAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
-        ULCButton varButton = new ULCButton(new VarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
-        ULCButton tvarButton = new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        ULCButton percentileButton = new ULCButton(new PercentileKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        ULCButton varButton = new ULCButton(new VarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        ULCButton tvarButton = new ULCButton(new TvarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
         percentileButton.name = "percentileButton"
         varButton.name = "varButton"
         tvarButton.name = "tvarButton"
@@ -165,7 +169,7 @@ class StochasticResultView extends ResultView {
             tree.viewPortTableTree.removeColumn(col)
         }
         ULCMenuItem item = menu.components.find {ULCMenuItem it ->
-            it.text == UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.getName(0)])
+            it.text == UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.displayName])
         }
         menu.remove(item)
     }
@@ -184,19 +188,19 @@ class StochasticResultView extends ResultView {
         null
     }
 
-    private ULCToggleButton getToggleButton(Min function) {
+    private ULCToggleButton getToggleButton(MinFunction function) {
         minButton
     }
 
-    private ULCToggleButton getToggleButton(Max function) {
+    private ULCToggleButton getToggleButton(MaxFunction function) {
         maxButton
     }
 
-    private ULCToggleButton getToggleButton(Sigma function) {
+    private ULCToggleButton getToggleButton(SigmaFunction function) {
         sigmaButton
     }
 
-    private ULCToggleButton getToggleButton(Mean function) {
+    private ULCToggleButton getToggleButton(MeanFunction function) {
         meanButton
     }
 

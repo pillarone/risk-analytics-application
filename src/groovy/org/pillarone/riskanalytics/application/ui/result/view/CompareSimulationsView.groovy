@@ -11,14 +11,13 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
@@ -28,7 +27,8 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.result.action.*
+import org.pillarone.riskanalytics.application.dataaccess.function.*
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 
 class CompareSimulationsView extends AbstractModellingFunctionView implements ICompareFunctionListener {
 
@@ -152,9 +152,15 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
 
 
     protected void addToolBarElements(ULCToolBar toolbar) {
-        toolbar.add(new ULCToggleButton(new MinAction(model, tree.viewPortTableTree)))
-        toolbar.add(new ULCToggleButton(new MaxAction(model, tree.viewPortTableTree)))
-        toolbar.add(new ULCToggleButton(new SigmaAction(model, tree.viewPortTableTree)))
+        final ULCToggleButton minButton = new ULCToggleButton()
+        minButton.action = new ToggleKeyFigureAction(new MinFunction(), new DefaultToggleValueProvider(minButton), model, tree.viewPortTableTree)
+        toolbar.add(minButton)
+        final ULCToggleButton maxButton = new ULCToggleButton()
+        maxButton.action = new ToggleKeyFigureAction(new MaxFunction(), new DefaultToggleValueProvider(maxButton), model, tree.viewPortTableTree)
+        toolbar.add(maxButton)
+        final ULCToggleButton sigmaButton = new ULCToggleButton()
+        sigmaButton.action = new ToggleKeyFigureAction(new SigmaFunction(), new DefaultToggleValueProvider(sigmaButton), model, tree.viewPortTableTree)
+        toolbar.add(sigmaButton)
 
         toolbar.addSeparator()
         addDoubleFunctions(toolbar)
@@ -177,20 +183,21 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         functionValue.columns = 6
         if (!this.profitFunctionModel)
             this.profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
-        toolbar.add new ULCComboBox(profitFunctionModel)
+        final ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)
+        toolbar.add profitComboBox
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add functionValue
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add new ULCLabel(getText("Percent"))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        toolbar.add new ULCButton(new PercentileAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
-        toolbar.add new ULCButton(new VarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
-        toolbar.add new ULCButton(new TvarAction(model, tree.viewPortTableTree, functionValue, profitFunctionModel))
+        toolbar.add new ULCButton(new PercentileKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        toolbar.add new ULCButton(new VarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        toolbar.add new ULCButton(new TvarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
     }
 
     private def addPrecisionFunctions(ULCToolBar toolbar) {
-        toolbar.add new ULCButton(new PercisionAction(model, -1, "reducePrecision"))
-        toolbar.add new ULCButton(new PercisionAction(model, +1, "increasePrecision"))
+        toolbar.add new ULCButton(new PrecisionAction(model, -1, "reducePrecision"))
+        toolbar.add new ULCButton(new PrecisionAction(model, +1, "increasePrecision"))
     }
 
 
@@ -266,8 +273,8 @@ class CompareHeaderRenderer extends CenteredHeaderRenderer {
             setForeground UIUtils.getFontColor(color)
         } else {
             IFunction function = tableTree.model.getFunction(columnIndex)
-            if (function instanceof CompareFunction) {
-                Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[tableTree.model.getSimulationRunIndex(function.runB)])
+            if (function instanceof AbstractComparisonFunction) {
+                Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[tableTree.model.getSimulationRunIndex(tableTree.model.getSecondRun(columnIndex))])
                 setBackground(color)
                 setForeground UIUtils.getFontColor(color)
             }

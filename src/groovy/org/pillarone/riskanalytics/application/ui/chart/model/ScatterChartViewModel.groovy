@@ -9,7 +9,6 @@ import org.jfree.chart.annotations.XYLineAnnotation
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
@@ -29,8 +28,8 @@ class ScatterChartViewModel extends ChartViewModel {
             return chartInsetWriter.createErrorMessageChart("series contain different number of observations")
         }
 //        if (!onlyStochasticSeries) {
-//            return chartInsetWriter.createErrorMessageChart("at least one series is constant")
-//        }
+        //            return chartInsetWriter.createErrorMessageChart("at least one series is constant")
+        //        }
 
         int seriesCount = 0
         periodCount.times {int periodIndex ->
@@ -89,10 +88,10 @@ class ScatterChartViewModel extends ChartViewModel {
             List meansP = []
             List stdDevsP = []
             periodCount.times {int periodIndex ->
-                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                stdDevsP << ResultAccessor.getStdDev(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                meansP << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                stdDevsP << ResultAccessor.getStdDev(simulationRun, periodIndex, node.path, node.collector, node.field)
+                meansP << ResultAccessor.getMean(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             series << periods
             seriesNames << node.getShortDisplayPath(nodes)

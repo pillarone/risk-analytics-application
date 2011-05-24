@@ -4,10 +4,6 @@ import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.NodeNameFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.SingleIteration
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
@@ -17,10 +13,11 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.dataaccess.function.*
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
 
-    List functions = []
+    List<IFunction> functions = []
     Map isStochasticValueForPeriod = [:]
     protected ITableTreeNode rootNode
     SimulationRun simulationRun
@@ -115,7 +112,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         String name = null
         if (i < functions.size()) {
             int periodIndex = (i - 1) % simulationRun.periodCount
-            name = functions[i].getName(periodIndex)
+            name = functions[i].displayName
             if (i > 0) {
                 String periodLabel = periodLabels.get(periodIndex)
                 name = name + " " + periodLabel
@@ -133,9 +130,10 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
             boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
             if (isResultCell) {
                 int periodIndex = (column - 1) % simulationRun.periodCount
-                ResultFunction currentFunction = functions[column]
-                boolean isPreCalculated = isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
-                return !isPreCalculated && !(currentFunction instanceof SingleIteration)
+                AbstractResultFunction currentFunction = functions[column]
+                def parameter = currentFunction instanceof IParametrizedFunction ? currentFunction.parameter : null
+                boolean isPreCalculated = isValuePreCalculated(periodIndex, node.path, node.field, currentFunction.keyFigureName, parameter)
+                return !isPreCalculated && !(currentFunction instanceof SingleIterationFunction)
             } else {
                 return false
             }
@@ -147,17 +145,18 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     public def getAsynchronValue(Object node, int i) {
         int periodIndex = (i - 1) % simulationRun.periodCount
         IFunction function = functions[i]
+        def parameter = function instanceof IParametrizedFunction ? function.parameter : null
         if (isStochasticValue(node, i)) {
-            if (function instanceof ResultFunction && node instanceof ResultTableTreeNode && isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter)) {
-                return getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter)
+            if (function instanceof AbstractResultFunction && node instanceof ResultTableTreeNode && isValuePreCalculated(periodIndex, node.path, node.field, function.keyFigureName, parameter)) {
+                return getPreCalculatedValue(periodIndex, node.path, node.field, function.keyFigureName, parameter)
             } else {
                 //check if the function is not removed
                 return function?.evaluate(simulationRun, periodIndex, node)
             }
         } else {
             if (function.calculateForNonStochasticalValues()) {
-                if (function instanceof ResultFunction && node instanceof ResultTableTreeNode && isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter)) {
-                    return getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter)
+                if (function instanceof AbstractResultFunction && node instanceof ResultTableTreeNode && isValuePreCalculated(periodIndex, node.path, node.field, function.keyFigureName, parameter)) {
+                    return getPreCalculatedValue(periodIndex, node.path, node.field, function.keyFigureName, parameter)
                 } else {
                     //check if the function is not removed
                     return function?.evaluate(simulationRun, periodIndex, node)
@@ -183,11 +182,11 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         int periodIndex = (i - 1) % simulationRun.periodCount
         if (!isStochasticValueForPeriod.containsKey(getKey(simulationRun, periodIndex, node))) {
             simulationRun.periodCount.times {
-                def result = getPreCalculatedValue(it, ResultFunction.getPath(node), node.field, PostSimulationCalculation.IS_STOCHASTIC)
+                def result = getPreCalculatedValue(it, node.path, node.field, PostSimulationCalculation.IS_STOCHASTIC)
                 if (result != null) {
                     isStochasticValueForPeriod[getKey(simulationRun, it, node)] = result == 0
                 } else {
-                    isStochasticValueForPeriod[getKey(simulationRun, it, node)] = ResultAccessor.hasDifferentValues(simulationRun, it, ResultFunction.getPath(node), node.collector, node.field)
+                    isStochasticValueForPeriod[getKey(simulationRun, it, node)] = ResultAccessor.hasDifferentValues(simulationRun, it, node.path, node.collector, node.field)
                 }
             }
         }
@@ -198,7 +197,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         return true
     }
 
-    private boolean isFunctionStochastic(SingleIteration function) {
+    private boolean isFunctionStochastic(SingleIterationFunction function) {
         return false
     }
 

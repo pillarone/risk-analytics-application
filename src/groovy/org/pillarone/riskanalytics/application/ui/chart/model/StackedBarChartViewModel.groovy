@@ -4,7 +4,6 @@ import org.jfree.chart.ChartFactory
 import org.jfree.chart.JFreeChart
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
@@ -52,7 +51,7 @@ public class StackedBarChartViewModel extends ChartViewModel {
         nodes.each {ResultTableTreeNode node ->
             List meansP = []
             periodCount.times {int periodIndex ->
-                meansP << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                meansP << ResultAccessor.getMean(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             seriesNames << node.getShortDisplayPath(nodes)
             means << meansP

@@ -8,7 +8,6 @@ import org.jfree.chart.title.LegendTitle
 import org.jfree.data.statistics.HistogramDataset
 import org.jfree.ui.HorizontalAlignment
 import org.jfree.ui.RectangleEdge
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -121,11 +120,11 @@ class HistogramChartViewModel extends ChartViewModel {
             List maxsP = []
             String path = node.getShortDisplayPath(nodes)
             periodCount.times {int periodIndex ->
-                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
                 if (onlyStochasticSeries) {
-                    periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                    minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                    maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                    minsP << ResultAccessor.getMin(simulationRun, periodIndex, node.path, node.collector, node.field)
+                    maxsP << ResultAccessor.getMax(simulationRun, periodIndex, node.path, node.collector, node.field)
                 } else {
                     notStochasticSeries[path, periodIndex] = true
                     periods << []

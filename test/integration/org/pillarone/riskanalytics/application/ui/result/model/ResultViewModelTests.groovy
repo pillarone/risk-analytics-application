@@ -1,29 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.core.output.FieldMapping
-import org.pillarone.riskanalytics.core.output.PathMapping
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.application.dataaccess.function.MaxFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.MinFunction
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
-
-import org.pillarone.riskanalytics.application.dataaccess.function.Min
-import org.pillarone.riskanalytics.application.dataaccess.function.Max
-
-import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
-import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.output.*
 
 class ResultViewModelTests extends GroovyTestCase {
 
@@ -110,8 +100,8 @@ class ResultViewModelTests extends GroovyTestCase {
 
         ResultViewModel resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
 
-        Max max = new Max()
-        Min min = new Min()
+        MaxFunction max = new MaxFunction()
+        MinFunction min = new MinFunction()
 
         def treeModel = resultViewModel.treeModel
         assertEquals 3, treeModel.functions.size() //node name + 2 * mean

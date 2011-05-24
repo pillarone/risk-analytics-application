@@ -6,7 +6,7 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.Mean
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -124,7 +124,7 @@ public class DeterministicResultTableTreeModel extends AbstractCommentableItemTa
 
 
     IFunction getFunction(int columnIndex) {
-        return new Mean()
+        return new MeanFunction()
     }
 
 }

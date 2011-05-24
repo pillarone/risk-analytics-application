@@ -23,7 +23,7 @@ class ResultTableTreeColumn extends ULCTableTreeColumn {
     public ResultTableTreeColumn(int modelIndex, ResultView resultView, IFunction function) {
         this(modelIndex, resultView.tree.viewPortTableTree, resultView.commentAndErrorView)
         if (LOG.isDebugEnabled()) {
-            LOG.debug "Created column for function ${function.getName(0)} with model index $modelIndex"
+            LOG.debug "Created column for function ${function.getDisplayName()} with model index $modelIndex"
         }
         this.function = function
     }

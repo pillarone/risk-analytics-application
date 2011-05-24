@@ -10,13 +10,13 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.dataaccess.function.Mean
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
-import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -57,7 +57,7 @@ class ResultView extends AbstractModellingFunctionView {
 
         tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
         model.periodCount.times {int index ->
-            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new Mean())
+            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new MeanFunction())
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
@@ -74,8 +74,8 @@ class ResultView extends AbstractModellingFunctionView {
 
     protected void addPrecisionFunctions(ULCToolBar toolbar) {
         selectionToolbar.addSeparator()
-        selectionToolbar.add new ULCButton(new PercisionAction(model, -1, "reducePrecision"))
-        selectionToolbar.add new ULCButton(new PercisionAction(model, +1, "increasePrecision"))
+        selectionToolbar.add new ULCButton(new PrecisionAction(model, -1, "reducePrecision"))
+        selectionToolbar.add new ULCButton(new PrecisionAction(model, +1, "increasePrecision"))
     }
 
     public ULCBoxPane createSelectionPane() {

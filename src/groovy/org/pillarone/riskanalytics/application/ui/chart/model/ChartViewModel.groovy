@@ -1,18 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import java.text.SimpleDateFormat
 import org.jfree.chart.JFreeChart
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 abstract class ChartViewModel {
     protected List series = []
@@ -197,8 +195,8 @@ abstract class ChartViewModel {
         nodes.each {ResultTableTreeNode node ->
             List periods = []
             periodCount.times {int periodIndex ->
-                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             series << periods
             seriesNames << node.getShortDisplayPath(nodes)

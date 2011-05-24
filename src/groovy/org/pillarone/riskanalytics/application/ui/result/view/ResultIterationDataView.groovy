@@ -8,11 +8,11 @@ import java.awt.event.KeyEvent
 import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.chart.view.QueryPane
-import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
 
 class ResultIterationDataView implements IModelChangedListener {
     ResultIterationDataViewModel model
@@ -54,8 +54,8 @@ class ResultIterationDataView implements IModelChangedListener {
         addCriteriaGroupButton = new ULCButton(getText("addGroup"))
         groupColumnsByPeriodButton = new ULCButton(getText("columnOrderPeriod"))
         groupColumnsByPathButton = new ULCButton(getText("columnOrderKeyFigure"))
-        reducePrecisionButton = new ULCButton(new PercisionAction(model, -1, "reducePrecision"))
-        increasePrecisionButton = new ULCButton(new PercisionAction(model, +1, "increasePrecision"))
+        reducePrecisionButton = new ULCButton(new PrecisionAction(model, -1, "reducePrecision"))
+        increasePrecisionButton = new ULCButton(new PrecisionAction(model, +1, "increasePrecision"))
 
         queryButton = new ULCButton(getText("search"))
         exportButton = new ULCButton(new ExportRawDataTable(this))

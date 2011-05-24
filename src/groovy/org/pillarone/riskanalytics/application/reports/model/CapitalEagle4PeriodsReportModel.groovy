@@ -1,12 +1,13 @@
 package org.pillarone.riskanalytics.application.reports.model
 
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
-import org.pillarone.riskanalytics.application.dataaccess.function.Var
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.VarFunction
 import org.pillarone.riskanalytics.application.reports.CapitalEagleReportModel
 import org.pillarone.riskanalytics.application.reports.JasperChartUtils
 import org.pillarone.riskanalytics.application.util.JEstimator
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.reports.bean.*
 
@@ -54,39 +55,39 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
 
     public Map getParameters() {
         [
-            "LoBReportBruttoCDF0": getLoBBruttoCDF(0),
-            "LoBReportBruttoCDF1": getLoBBruttoCDF(1),
-            "LoBReportBruttoCDF2": getLoBBruttoCDF(2),
-            "LoBReportBruttoCDF3": getLoBBruttoCDF(3),
-            "LoBReportBruttoTable0": getLoBBruttoTable(0),
-            "LoBReportBruttoTable1": getLoBBruttoTable(1),
-            "LoBReportBruttoTable2": getLoBBruttoTable(2),
-            "LoBReportBruttoTable3": getLoBBruttoTable(3),
-            "TotalBusinessCDF0": getTotalBusinessCDF(0),
-            "ExpectedLossStackedBar0": getExpectedLossStackedBar(0),
-            "WaterfallClaimsGross0": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(0)),
-            "WaterfallClaimsGross1": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(1)),
-            "WaterfallClaimsGross2": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(2)),
-            "WaterfallClaimsGross3": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(3)),
-            "WaterfallClaimsNet0": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(0)),
-            "WaterfallClaimsNet1": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(1)),
-            "WaterfallClaimsNet2": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(2)),
-            "WaterfallClaimsNet3": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(3)),
-            "summary": getSummary(0),
+                "LoBReportBruttoCDF0": getLoBBruttoCDF(0),
+                "LoBReportBruttoCDF1": getLoBBruttoCDF(1),
+                "LoBReportBruttoCDF2": getLoBBruttoCDF(2),
+                "LoBReportBruttoCDF3": getLoBBruttoCDF(3),
+                "LoBReportBruttoTable0": getLoBBruttoTable(0),
+                "LoBReportBruttoTable1": getLoBBruttoTable(1),
+                "LoBReportBruttoTable2": getLoBBruttoTable(2),
+                "LoBReportBruttoTable3": getLoBBruttoTable(3),
+                "TotalBusinessCDF0": getTotalBusinessCDF(0),
+                "ExpectedLossStackedBar0": getExpectedLossStackedBar(0),
+                "WaterfallClaimsGross0": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(0)),
+                "WaterfallClaimsGross1": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(1)),
+                "WaterfallClaimsGross2": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(2)),
+                "WaterfallClaimsGross3": JasperChartUtils.generateWaterfallChart(getGrossVar99ForWaterfallChart(3)),
+                "WaterfallClaimsNet0": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(0)),
+                "WaterfallClaimsNet1": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(1)),
+                "WaterfallClaimsNet2": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(2)),
+                "WaterfallClaimsNet3": JasperChartUtils.generateWaterfallChart(getNetVar99ForWaterfallChart(3)),
+                "summary": getSummary(0),
 
-            "overview0": getPremLossOverviewChart(0),
-            "overview1": getPremLossOverviewChart(1),
-            "overview2": getPremLossOverviewChart(2),
-            "overview3": getPremLossOverviewChart(3),
-            "LoBClaimsVaRTableBean": getLoBClaimsVarTable(),
-            "NetClaimsMtpl": getNetClaimsGraph("mtpl"),
-            "netClaimsTableMtpl": getNetClaimsTable("mtpl"),
-            "netClaimsMotorHull": getNetClaimsGraph("motor hull"),
-            "netClaimsTableMotorHull": getNetClaimsTable("motor hull"),
-            "netClaimsPersonalAccident": getNetClaimsGraph("personal accident"),
-            "netClaimsTablePersonalAccident": getNetClaimsTable("personal accident"),
-            "netClaimsProperty": getNetClaimsGraph("property"),
-            "netClaimsTableProperty": getNetClaimsTable("property")
+                "overview0": getPremLossOverviewChart(0),
+                "overview1": getPremLossOverviewChart(1),
+                "overview2": getPremLossOverviewChart(2),
+                "overview3": getPremLossOverviewChart(3),
+                "LoBClaimsVaRTableBean": getLoBClaimsVarTable(),
+                "NetClaimsMtpl": getNetClaimsGraph("mtpl"),
+                "netClaimsTableMtpl": getNetClaimsTable("mtpl"),
+                "netClaimsMotorHull": getNetClaimsGraph("motor hull"),
+                "netClaimsTableMotorHull": getNetClaimsTable("motor hull"),
+                "netClaimsPersonalAccident": getNetClaimsGraph("personal accident"),
+                "netClaimsTablePersonalAccident": getNetClaimsTable("personal accident"),
+                "netClaimsProperty": getNetClaimsGraph("property"),
+                "netClaimsTableProperty": getNetClaimsTable("property")
         ]
     }
 
@@ -94,7 +95,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         Collection currentValues = new ArrayList<VaRClaimsTableBean>()
 
         lobName.each {
-            Var var = new Var(99.5)
+            VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
             double grossVar = var.evaluate(simulation.getSimulationRun(), 0, createRTTN(grossPathMap[it]))
             double rv0 = var.evaluate(simulation.getSimulationRun(), 0, createRTTN(netPathMap[it]))
             double rv1 = var.evaluate(simulation.getSimulationRun(), 1, createRTTN(netPathMap[it]))
@@ -133,8 +134,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         double rv3 = ResultAccessor.getMean(simulation.getSimulationRun(), 3, grossPathMap[lob][0], grossPathMap[lob][1], grossPathMap[lob][2])
         currentValues << new AllRVTableDataBean(type: type, gross: gross, rv0: rv0, rv1: rv1, rv2: rv2, rv3: rv3)
 
-        Percentile percentile = new Percentile()
-        percentile.percentile = 99.5
+        PercentileFunction percentile = new PercentileFunction(99.5, QuantilePerspective.LOSS)
         type = "99.5 %"
         gross = percentile.evaluate(simulation.getSimulationRun(), 0, createRTTN(grossPathMap[lob]))
         rv0 = percentile.evaluate(simulation.getSimulationRun(), 0, createRTTN(grossPathMap[lob]))
@@ -143,7 +143,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         rv3 = percentile.evaluate(simulation.getSimulationRun(), 3, createRTTN(grossPathMap[lob]))
         currentValues << new AllRVTableDataBean(type: type, gross: gross, rv0: rv0, rv1: rv1, rv2: rv2, rv3: rv3)
 
-        Var var = new Var(99.5)
+        VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
         type = "Var 99.5 %"
         gross = var.evaluate(simulation.getSimulationRun(), 0, createRTTN(grossPathMap[lob]))
         rv0 = var.evaluate(simulation.getSimulationRun(), 0, createRTTN(grossPathMap[lob]))
@@ -256,13 +256,13 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
 
     protected LoBReportBruttoTableDataBean createLoBReportBruttoTableDataBean(List paths, int periodIndex, String name) {
         double mean = ResultAccessor.getMean(simulation.getSimulationRun(), periodIndex, paths[0], paths[1], paths[2])
-        Percentile percentile = new Percentile(percentile: 95)
+        PercentileFunction percentile = new PercentileFunction(95, QuantilePerspective.LOSS)
         Double per95 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(paths))
-        percentile = new Percentile(percentile: 99)
+        percentile = new PercentileFunction(99, QuantilePerspective.LOSS)
         Double per99 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(paths))
-        Var var = new Var(95)
+        VarFunction var = new VarFunction(95, QuantilePerspective.LOSS)
         Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(paths))
-        var = new Var(99)
+        var = new VarFunction(99, QuantilePerspective.LOSS)
         Double var99 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(paths))
 
         return new LoBReportBruttoTableDataBean(lineOfBusiness: name, mean: mean / divider, percentile95: per95 / divider, percentile99: per99 / divider, var95: var95 / divider, var99: var99 / divider)
@@ -304,7 +304,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         List<ReportWaterfallDataBean> beans = []
 
         lobName.each {String name ->
-            Var var = new Var(99.5)
+            VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
             Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(grossPathMap[name]))
             beans << new ReportWaterfallDataBean(line: name, value: var95 / divider)
         }
@@ -312,7 +312,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         beans.sort()
         beans = beans.reverse()
 
-        Var var = new Var(99.5)
+        VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
         Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(summaryPathMap["gross"]))
         ReportWaterfallDataBean total = new ReportWaterfallDataBean(line: "total", value: var95 / divider)
 
@@ -328,7 +328,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         List<ReportWaterfallDataBean> beans = []
 
         lobName.each {String name ->
-            Var var = new Var(99.5)
+            VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
             Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(netPathMap[name]))
             beans << new ReportWaterfallDataBean(line: name, value: var95 / divider)
         }
@@ -336,7 +336,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
         beans.sort()
         beans = beans.reverse()
 
-        Var var = new Var(99.5)
+        VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
         Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(summaryPathMap["net"]))
         ReportWaterfallDataBean total = new ReportWaterfallDataBean(line: "total", value: var95 / divider)
 

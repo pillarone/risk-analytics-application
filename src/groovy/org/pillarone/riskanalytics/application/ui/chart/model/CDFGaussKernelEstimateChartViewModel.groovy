@@ -5,12 +5,12 @@ import org.jfree.chart.axis.NumberTickUnit
 import org.jfree.chart.axis.TickUnit
 import org.jfree.chart.axis.TickUnitSource
 import org.jfree.data.xy.XYSeries
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
-import org.pillarone.riskanalytics.core.output.SimulationRun
-
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.application.util.JEstimator
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class CDFGaussKernelEstimateChartViewModel extends GaussKernelEstimateChartViewModel {
 
@@ -35,7 +35,7 @@ class CDFGaussKernelEstimateChartViewModel extends GaussKernelEstimateChartViewM
         writer.writeInset("Kernel bandwidth", t)
         writer.writeEmptyLine()
         writer.writePercentiles([1], simulationRun, 0, nodes[0])
-        Percentile percentile = new Percentile(percentile: 50)
+        PercentileFunction percentile = new PercentileFunction(50, QuantilePerspective.LOSS)
         double median = percentile.evaluate(simulationRun, 0, nodes[0])
         writer.writeInset("median", median)
         writer.writeInset("mean", mean)

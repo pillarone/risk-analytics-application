@@ -17,7 +17,7 @@ class RemoveFunctionAction extends AbstractAction {
     private ULCToggleButton button
 
     public RemoveFunctionAction(ResultViewModel model, IFunction function, ULCToggleButton button) {
-        super(UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.getName(0)]));
+        super(UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.displayName]));
         this.function = function
         this.model = model
         this.button = button

@@ -8,7 +8,6 @@ import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.renderer.xy.XYStepRenderer
 import org.jfree.data.statistics.SimpleHistogramBin
 import org.jfree.data.statistics.SimpleHistogramDataset
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -87,18 +86,18 @@ class DiscretePDFChartViewModel extends ChartViewModel {
         max = 0
 
         nodes.each {
-            onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, ResultFunction.getPath(it))
-            series << ResultAccessor.getValues(simulationRun, ResultFunction.getPath(it))
+            onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, it.path)
+            series << ResultAccessor.getValues(simulationRun, it.path)
             seriesNames << it.getDisplayPath()
-            min = Math.min(min, ResultAccessor.getMin(simulationRun, ResultFunction.getPath(it)))
-            max = Math.max(max, ResultAccessor.getMax(simulationRun, ResultFunction.getPath(it)))
+            min = Math.min(min, ResultAccessor.getMin(simulationRun, it.path))
+            max = Math.max(max, ResultAccessor.getMax(simulationRun, it.path))
         }
 
         maxBinSize = max - min
 
         if (nodes.size() == 1) {
-            mean = ResultAccessor.getMean(simulationRun, ResultFunction.getPath(nodes[0]))
-            stdDev = ResultAccessor.getStdDev(simulationRun, ResultFunction.getPath(nodes[0]))
+            mean = ResultAccessor.getMean(simulationRun, nodes[0].path)
+            stdDev = ResultAccessor.getStdDev(simulationRun, nodes[0].path)
         }
     }
 

@@ -29,9 +29,9 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
-        Min min = new Min()
-        DeviationPercentage percentage = new DeviationPercentage()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
+        DeviationPercentageFunction percentage = new DeviationPercentageFunction()
 
         model.addFunction(mean)
         model.addFunction(min)
@@ -69,9 +69,9 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
+        MeanFunction mean = new MeanFunction()
 
-        DeviationPercentage percentage = new DeviationPercentage()
+        DeviationPercentageFunction percentage = new DeviationPercentageFunction()
 
         model.addFunction(mean)
         model.addCompareFunction(percentage)
@@ -103,8 +103,8 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        model.addFunction(new Mean())
-        model.addCompareFunction(new DeviationPercentage())
+        model.addFunction(new MeanFunction())
+        model.addCompareFunction(new DeviationPercentageFunction())
 
         //Standard order by key figure:
         //Name | MeanS0P0 | MeanS1P0 | % | MeanS0P1 | MeanS1P1 | %
@@ -137,9 +137,9 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
-        Min min = new Min()
-        DeviationPercentage percentage = new DeviationPercentage()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
+        DeviationPercentageFunction percentage = new DeviationPercentageFunction()
 
         model.addFunction(mean)
         model.addFunction(min)
@@ -237,10 +237,10 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
-        Min min = new Min()
-        DeviationPercentage percentage = new DeviationPercentage()
-        DeviationAbsoluteDifference difference = new DeviationAbsoluteDifference()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
+        DeviationPercentageFunction percentage = new DeviationPercentageFunction()
+        DeviationAbsoluteFunction difference = new DeviationAbsoluteFunction()
 
         model.addFunction(mean)
         model.addFunction(min)
@@ -294,10 +294,10 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2, simulation3]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
-        Min min = new Min()
-        DeviationPercentage percentage = new DeviationPercentage()
-        DeviationAbsoluteDifference difference = new DeviationAbsoluteDifference()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
+        DeviationPercentageFunction percentage = new DeviationPercentageFunction()
+        DeviationAbsoluteFunction difference = new DeviationAbsoluteFunction()
 
         model.addFunction(mean)
         model.addFunction(min)
@@ -341,10 +341,10 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2, simulation3]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
-        Min min = new Min()
-        DeviationPercentage percentage = new DeviationPercentage()
-        DeviationAbsoluteDifference difference = new DeviationAbsoluteDifference()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
+        DeviationPercentageFunction percentage = new DeviationPercentageFunction()
+        DeviationAbsoluteFunction difference = new DeviationAbsoluteFunction()
 
         model.addFunction(mean)
         model.addFunction(min)
@@ -386,8 +386,8 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         List simulations = [simulation1, simulation2, simulation3, simulation4]
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
 
-        Mean mean = new Mean()
-        Min min = new Min()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
         model.addFunction(mean)
         model.addFunction(min)
         //1: MeanS0P0 | 2: MeanS1P0 | 3: MeanS2P0 | 4: MeanS3P0 | 5: MeanS0P1 | 6: MeanS1P1 | 7: MeanS2P1 | 8: MeanS3P1 |
@@ -414,8 +414,8 @@ class CompareTableTreeModelTests extends GroovyTestCase {
 
         CompareResultTableTreeModel model = new CompareResultTableTreeModel(null, simulations, null, null)
         model.orderByKeyfigure = false
-        Mean mean = new Mean()
-        Min min = new Min()
+        MeanFunction mean = new MeanFunction()
+        MinFunction min = new MinFunction()
         model.addFunction(mean)
         model.addFunction(min)
 

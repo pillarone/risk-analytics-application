@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.reports.model
 
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
 import org.pillarone.riskanalytics.application.reports.CapitalEagleReportModel
 import org.pillarone.riskanalytics.application.reports.bean.LoBMeanStdDevIQRPerDataBean
 import org.pillarone.riskanalytics.application.reports.bean.LoBReportBruttoTableDataBean
@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBea
 import org.pillarone.riskanalytics.application.reports.bean.ReportChartDataBean
 import org.pillarone.riskanalytics.application.util.JEstimator
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class CapitalEagle1PeriodActuaryReportModel extends CapitalEagleReportModel {
@@ -47,12 +48,12 @@ class CapitalEagle1PeriodActuaryReportModel extends CapitalEagleReportModel {
 
     public Map getParameters() {
         [
-            "LoBRatioNetPdf0": getLoBRatioNetPdf(0),
-            "LoBRatioGrossPdf0": getLoBRatioGrossPdf(0),
-            "PremiumNet0": getPremiumNetPie(0),
-            "PremiumGross0": getPremiumGrossPie(0),
-            "grossKeyFigureSummary": getKeyFigureSummary(0, grossPathMap),
-            "netKeyFigureSummary": getKeyFigureSummary(0, netPathMap)
+                "LoBRatioNetPdf0": getLoBRatioNetPdf(0),
+                "LoBRatioGrossPdf0": getLoBRatioGrossPdf(0),
+                "PremiumNet0": getPremiumNetPie(0),
+                "PremiumGross0": getPremiumGrossPie(0),
+                "grossKeyFigureSummary": getKeyFigureSummary(0, grossPathMap),
+                "netKeyFigureSummary": getKeyFigureSummary(0, netPathMap)
 
         ]
     }
@@ -66,15 +67,15 @@ class CapitalEagle1PeriodActuaryReportModel extends CapitalEagleReportModel {
             double mean = ResultAccessor.getMean(simulation.getSimulationRun(), periodIndex, lines[it][0], lines[it][1], lines[it][2])
             double stdDev = ResultAccessor.getStdDev(simulation.getSimulationRun(), periodIndex, lines[it][0], lines[it][1], lines[it][2])
 
-            Percentile percentile = new Percentile(percentile: 25)
+            PercentileFunction percentile = new PercentileFunction(25, QuantilePerspective.LOSS)
             Double per25 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(lines[it]))
 
-            percentile = new Percentile(percentile: 75)
+            percentile = new PercentileFunction(75, QuantilePerspective.LOSS)
             Double per75 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(lines[it]))
 
             double IQR = per75 - per25
 
-            percentile = new Percentile(percentile: 99.5)
+            percentile = new PercentileFunction(99.5, QuantilePerspective.LOSS)
             Double per995 = percentile.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(lines[it]))
 
             currentValues << new LoBMeanStdDevIQRPerDataBean(lineOfBusiness: it, mean: mean, stdDev: stdDev, IQR: IQR, per995: per995)
