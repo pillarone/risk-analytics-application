@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.parameterization.view
+package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
@@ -11,7 +11,7 @@ import java.text.DecimalFormat
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -22,7 +22,10 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
 
-class ParameterViewTests extends AbstractSimpleFunctionalTest {
+/**
+ * @author fouad.jaada@intuitive-collaboration.com
+ */
+class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
 
     Parameterization parameterization
 
@@ -45,39 +48,42 @@ class ParameterViewTests extends AbstractSimpleFunctionalTest {
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
-        ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        frame.setContentPane(new ParameterView(parameterViewModel).content)
+//        ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
+        //        frame.setContentPane(new ParameterView(parameterViewModel).content)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(mainModel, model, parameterization)
+        frame.setContentPane(parameterizationUIItem.createDetailView())
         ULCClipboard.install()
         UIUtils.setRootPane(frame)
         frame.visible = true
     }
 
 // TODO (msh): check with dani
-/*
-    void testCollapseExpandTree() {
-        ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
-        ULCTableTreeOperator tableTreeOperator = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
-        assertTrue(tableTreeOperator.isExpanded(0))
-        tableTreeOperator.doCollapseRow 0
-        assertTrue(tableTreeOperator.isCollapsed(0))
-        tableTreeOperator.doExpandRow 0
-        assertTrue(tableTreeOperator.isExpanded(0))
+    /*
+        void testCollapseExpandTree() {
+            ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
+            ULCTableTreeOperator tableTreeOperator = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
+            assertTrue(tableTreeOperator.isExpanded(0))
+            tableTreeOperator.doCollapseRow 0
+            assertTrue(tableTreeOperator.isCollapsed(0))
+            tableTreeOperator.doExpandRow 0
+            assertTrue(tableTreeOperator.isExpanded(0))
 
-        tableTreeOperator.selectCell(1, 0)
-        tableTreeOperator.pushKey(KeyEvent.VK_LEFT)
-        assertTrue("left key should collaps node", tableTreeOperator.isCollapsed(1))
+            tableTreeOperator.selectCell(1, 0)
+            tableTreeOperator.pushKey(KeyEvent.VK_LEFT)
+            assertTrue("left key should collaps node", tableTreeOperator.isCollapsed(1))
 
-        tableTreeOperator.pushKey(KeyEvent.VK_RIGHT)
-        assertTrue("right key should expand node", tableTreeOperator.isExpanded(1))
+            tableTreeOperator.pushKey(KeyEvent.VK_RIGHT)
+            assertTrue("right key should expand node", tableTreeOperator.isExpanded(1))
 
-        tableTreeOperator.selectCell(2, 0)
-        tableTreeOperator.pushKey(KeyEvent.VK_RIGHT)
-        assertTrue("key listener did not manipulate tree state", tableTreeOperator.isExpanded(2))
+            tableTreeOperator.selectCell(2, 0)
+            tableTreeOperator.pushKey(KeyEvent.VK_RIGHT)
+            assertTrue("key listener did not manipulate tree state", tableTreeOperator.isExpanded(2))
 
-        tableTreeOperator.pushKey(KeyEvent.VK_LEFT)
-        assertTrue("key listener did not manipulate tree state", tableTreeOperator.isCollapsed(2))
-    }
-*/
+            tableTreeOperator.pushKey(KeyEvent.VK_LEFT)
+            assertTrue("key listener did not manipulate tree state", tableTreeOperator.isCollapsed(2))
+        }
+    */
 
 
     void testExpandAll() {
@@ -174,7 +180,7 @@ class ParameterViewTests extends AbstractSimpleFunctionalTest {
         valueTree.selectCell(2, 0)
         // select a cell above the comboBox, as selection of the ComboBox would open it
         // do not move down to produce an error because of wrong data format
-//        valueTree.pushKey(KeyEvent.VK_DOWN)
+        //        valueTree.pushKey(KeyEvent.VK_DOWN)
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard()
         String pasteData = "TYPE0\n1.5\n1.6"
@@ -234,4 +240,6 @@ class ParameterViewTests extends AbstractSimpleFunctionalTest {
         assertTrue "row 4 not expanded", componentTree.isExpanded(2)
         assertTrue "row 3 expanded", componentTree.isCollapsed(1)
     }
+
+
 }

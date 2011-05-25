@@ -2,7 +2,8 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareSimulationUIItem
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -12,7 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 class CompareSimulationsAction extends SelectionTreeAction {
 
-    public CompareSimulationsAction(ULCTableTree tree, P1RATModel model) {
+    public CompareSimulationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("CompareSimulations", tree, model)
     }
 
@@ -20,10 +21,12 @@ class CompareSimulationsAction extends SelectionTreeAction {
         List elements = getSelectedObjects(Simulation.class)
         try {
             validate(elements)
-            Model model = getSelectedModel(elements[0])
-            model.init()
-            if (model != null && elements[0].item != null) {
-                this.model.compareItems(model, elements)
+            Model selectedModel = getSelectedModel(elements[0])
+            selectedModel.init()
+            if (selectedModel != null) {
+                List items = elements*.abstractUIItem.item
+                CompareSimulationUIItem uiItem = new CompareSimulationUIItem(model, selectedModel, items)
+                model.openItem(selectedModel, uiItem)
             }
         } catch (IllegalArgumentException ex) {
             println "$ex"
@@ -32,9 +35,9 @@ class CompareSimulationsAction extends SelectionTreeAction {
 
     private void validate(List elements) throws IllegalArgumentException, Exception {
         if (elements.size() < 2) throw new IllegalArgumentException("select at lease two simulations for compare")
-        Class modelClass = elements[0].item.modelClass
+        Class modelClass = elements[0].abstractUIItem.item.modelClass
         elements.each {
-            if (it.item.modelClass != modelClass) {
+            if (it.abstractUIItem.item.modelClass != modelClass) {
                 throw new IllegalArgumentException("select a simulations with same ModelClass")
             }
         }

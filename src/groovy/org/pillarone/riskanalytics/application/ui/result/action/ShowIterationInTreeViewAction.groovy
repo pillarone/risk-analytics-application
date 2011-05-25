@@ -32,6 +32,7 @@ class ShowIterationInTreeViewAction extends SingleIterationAction {
                 resultView.tabbedPane.selectedIndex = tabIndex
             }
         }
+        //todo fja change to RAMM mainModel
         resultView.p1ratModel.openItem(resultView.model.model, resultView.model.item)
     }
 }

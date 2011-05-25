@@ -2,15 +2,15 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResultUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 
 class NodeNameDialog {
 
-    private ModellingItem item
+    private ModellingUIItem modellingUIItem
     private ULCWindow parent
     private ULCDialog dialog
     ULCTextField nameInput
@@ -20,9 +20,9 @@ class NodeNameDialog {
     Closure okAction
     String title
 
-    NodeNameDialog(ULCWindow parent, ModellingItem item) {
+    NodeNameDialog(ULCWindow parent, ModellingUIItem item) {
         this.parent = parent
-        this.item = item
+        this.modellingUIItem = item
         initComponents()
         layoutComponents()
         attachListeners()
@@ -31,7 +31,7 @@ class NodeNameDialog {
     private void initComponents() {
         dialog = new ULCDialog(parent, true)
         dialog.name = 'renameDialog'
-        nameInput = new ULCTextField(item.name)
+        nameInput = new ULCTextField(modellingUIItem.name)
         nameInput.name = 'newName'
         okButton = new ULCButton(getText("okButton"))
         okButton.name = 'okButton'
@@ -61,11 +61,11 @@ class NodeNameDialog {
 
     private void attachListeners() {
         IActionListener action = [actionPerformed: {e ->
-            if (!item.isLoaded()) {
-                item.load()
+            if (!modellingUIItem.isLoaded()) {
+                modellingUIItem.load()
             }
 
-            if (isUnique(item)) {
+            if (isUnique(modellingUIItem)) {
                 okAction.call(); hide()
             } else {
                 I18NAlert alert = new I18NAlert(parent, "UniquesNamesRequired")
@@ -78,14 +78,13 @@ class NodeNameDialog {
         cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
     }
 
-    protected boolean isUnique(Simulation item) {
-        item.template.daoClass.findByNameAndModelClassName(nameInput.text, item.modelClass.name) == null
+    protected boolean isUnique(ResultUIItem simulationUIItem) {
+        simulationUIItem.item.template.daoClass.findByNameAndModelClassName(nameInput.text, simulationUIItem.item.modelClass.name) == null
     }
 
-    protected boolean isUnique(ModellingItem item) {
-        item.daoClass.findByNameAndModelClassName(nameInput.text, item.modelClass.name) == null
+    protected boolean isUnique(ModellingUIItem modellingUIItem) {
+        modellingUIItem.item.daoClass.findByNameAndModelClassName(nameInput.text, modellingUIItem.item.modelClass.name) == null
     }
-
 
     public void show() {
         dialog.title = title
@@ -102,7 +101,7 @@ class NodeNameDialog {
      * @param key
      * @return the localized value corresponding to the key
      */
-    protected String getText(String key) {
+    public String getText(String key) {
         return LocaleResources.getString("NodeNameDialog." + key);
     }
 }

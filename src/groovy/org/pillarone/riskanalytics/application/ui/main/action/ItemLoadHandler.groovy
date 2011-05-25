@@ -8,6 +8,8 @@ import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
@@ -15,8 +17,8 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterizationImportE
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import org.pillarone.riskanalytics.core.util.PropertiesUtils
 import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -66,7 +68,8 @@ class ItemLoadHandler implements IFileLoadHandler {
                                     newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
 
                                 if (newItem != null) {
-                                    importAction.model.importItem(newItem, data.model)
+                                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(newItem, parentNodeModel, importAction.model, importAction.tree.model)
+                                    modellingUIItem.importItem()
                                 } else {
                                     ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "lastVersionError")
                                     alert.show()

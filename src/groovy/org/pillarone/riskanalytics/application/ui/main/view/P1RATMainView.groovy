@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
@@ -44,6 +45,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
 
+//todo fja mainView not used
 class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
     P1RATModel model
@@ -727,6 +729,22 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (evt.source == model && evt.propertyName == "currentItem") {
             syncMenuBar()
         }
+    }
+
+    void openDetailView(Model model, AbstractUIItem item) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    void openDetailView(Model model, ModellingItem item) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    void closeDetailView(Model model, AbstractUIItem item) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    void changedDetailView(Model model, AbstractUIItem item) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 

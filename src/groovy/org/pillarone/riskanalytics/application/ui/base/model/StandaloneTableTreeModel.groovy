@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -10,6 +12,10 @@ class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
     static int COMMENTS = 2
     static int CREATION_DATE = 3
     static int LAST_MODIFICATION_DATE = 4
+
+    public StandaloneTableTreeModel(RiskAnalyticsMainModel mainModel) {
+        super(mainModel)
+    }
 
     int getColumnCount() {
         5

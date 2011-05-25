@@ -1,30 +1,27 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.ulcjava.base.application.util.IFileChooseHandler
+import com.ulcjava.base.application.util.IFileStoreHandler
+import com.ulcjava.base.shared.FileChooserConfig
+import java.util.regex.Pattern
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
-
-import org.pillarone.riskanalytics.core.simulation.item.*
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.util.IFileStoreHandler
-
-import com.ulcjava.base.application.*
-
-import com.ulcjava.base.shared.FileChooserConfig
-import java.util.regex.Pattern
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.springframework.transaction.TransactionStatus
+import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -33,7 +30,7 @@ abstract class ExportAction extends SelectionTreeAction {
     UserPreferences userPreferences
     Log LOG = LogFactory.getLog(ExportAction)
 
-    public ExportAction(ULCTableTree tree, P1RATModel model, String title) {
+    public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title) {
         super(title, tree, model)
         userPreferences = new UserPreferences()
     }

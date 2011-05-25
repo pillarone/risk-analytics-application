@@ -13,9 +13,11 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -26,32 +28,32 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
  */
 class DeleteAction extends SelectionTreeAction {
 
-    Closure okAction = { def selectedItem, def nextItemToSelect ->
+    Closure okAction = { AbstractUIItem selectedItem, def nextItemToSelect ->
         removeItem(selectedItem)
         tree.addPathSelection(new TreePath(DefaultTableTreeModel.getPathToRoot(nextItemToSelect) as Object[]))
     }
 
-    public DeleteAction(ULCTableTree tree, P1RATModel model) {
+    public DeleteAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Delete", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true));
     }
 
     public void doActionPerformed(ActionEvent event) {
-        def selectedItem = getSelectedItem()
+        AbstractUIItem selectedItem = getSelectedUIItem()
         if (!selectedItem) return
         AlertDialog dialog = new AlertDialog(tree, selectedItem, getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [tree?.selectedPath?.lastPathComponent?.toString()]), okAction)
         dialog.init()
         dialog.show()
     }
 
-    private void removeItem(ModellingItem selectedItem) {
+    private void removeItem(ModellingUIItem selectedItem) {
         boolean usedInSimulation = false
-        if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
+        if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
             usedInSimulation = selectedItem.isUsedInSimulation()
         }
         Model selectedModel = getSelectedModel()
         if (!usedInSimulation) {
-            model.removeItem(selectedModel, selectedItem)
+            selectedItem.remove()
         } else {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
             alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
@@ -59,9 +61,10 @@ class DeleteAction extends SelectionTreeAction {
         }
     }
 
-    private void removeItem(BatchRun selectedItem) {
-        model.removeItem(selectedItem)
-    }
+    //todo fja
+//    private void removeItem(BatchRun selectedItem) {
+    //        model.removeItem(selectedItem)
+    //    }
 
     private void removeItem(def selectedItem) {}
 

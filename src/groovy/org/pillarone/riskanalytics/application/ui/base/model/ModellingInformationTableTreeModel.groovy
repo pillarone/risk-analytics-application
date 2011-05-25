@@ -10,12 +10,19 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.model.ChangeIndexerListener
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
@@ -29,7 +36,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
+class ModellingInformationTableTreeModel extends AbstractTableTreeModel implements ISimulationListener {
 
     List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Quarter", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
 
@@ -56,21 +63,23 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     ModellingItemNodeFilter filter
     List<ChangeIndexerListener> changeIndexerListeners
     List<TransactionInfo> transactionInfos
+    RiskAnalyticsMainModel mainModel
 
     static DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy")
 
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
-    public ModellingInformationTableTreeModel() {
-        builder = new ModellingInformationTableTreeBuilder(this)
+    public ModellingInformationTableTreeModel(RiskAnalyticsMainModel mainModel) {
+        this.mainModel = mainModel
+        builder = new ModellingInformationTableTreeBuilder(this, mainModel)
         changeIndexerListeners = []
     }
 
-    public static ModellingInformationTableTreeModel getInstance() {
+    public static ModellingInformationTableTreeModel getInstance(RiskAnalyticsMainModel mainModel) {
         if (UserContext.isStandAlone()) {
-            return new StandaloneTableTreeModel()
+            return new StandaloneTableTreeModel(mainModel)
         } else {
-            return new ModellingInformationTableTreeModel()
+            return new ModellingInformationTableTreeModel(mainModel)
         }
     }
 
@@ -122,7 +131,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         if (i == 0) {
             return "${node.getValueAt(0)}".toString()
         } else if (node instanceof ItemNode) {
-            return getValue(node.item, node, i)
+            return getValue(node.abstractUIItem.item, node, i)
         }
         return ""
     }
@@ -152,7 +161,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         def value = null
         try {
             switch (columnIndex) {
-                case NAME: value = node.item.name; break;
+                case NAME: value = node.abstractUIItem.item.name; break;
                 case STATE: value = parameterization?.status?.getDisplayName(); break;
                 case TAGS: value = parameterization?.tags?.join(","); break;
                 case TRANSACTION_NAME:
@@ -185,7 +194,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public Object getValue(def item, ItemNode node, int columnIndex) {
         if (item instanceof ModellingItem) {
             switch (columnIndex) {
-                case NAME: return node.item.name
+                case NAME: return node.abstractUIItem.item.name
                 case COMMENTS: return (item instanceof Simulation) ? item.getSize(SimulationRun) : 0;
                 case REVIEW_COMMENT: return 0;
                 case OWNER: return item?.getCreator()?.username;
@@ -233,7 +242,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void putValues(ItemNode node) {
         for (int column = 0; column < columnNames.size() - 2; column++) {
-            addColumnValue(node.item, node, column, getValue(node.item, node, column))
+            addColumnValue(node.abstractUIItem.item, node, column, getValue(node.abstractUIItem.item, node, column))
         }
     }
 
@@ -257,33 +266,30 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             node.values[column] = value
     }
 
-    public void refresh() {
-        indexerChanged()
-        builder.refresh()
+    public void refresh(AbstractUIItem item = null) {
+        ExceptionSafe.protect {
+            indexerChanged()
+            item ? builder.refresh(item) : builder.refresh()
+        }
     }
 
-    public void refresh(ModellingItem item) {
+    public void addNodeForItem(Model selectedModel, Simulation item) {
         indexerChanged()
-        builder.refresh(item)
+        builder.addNodeForItem(item, selectedModel)
     }
 
-    public void addNodeForItem(Simulation item) {
-        indexerChanged()
-        builder.addNodeForItem item
-    }
-
-    public def addNodeForItem(ModellingItem item) {
+    public def addNodeForItem(ModellingUIItem item) {
         indexerChanged()
         builder.addNodeForItem(item)
     }
 
-    public def addNodeForItem(BatchRun batchRun) {
+    public def addNodeForItem(BatchUIItem batchRun) {
         indexerChanged()
         builder.addNodeForItem batchRun
     }
 
     ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
-        return builder.findNodeForItem(node, item)
+        return TableTreeBuilderUtils.findNodeForItem(node, item)
     }
 
     public void removeAllGroupNodeChildren(ItemGroupNode groupNode) {
@@ -291,13 +297,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         indexerChanged()
     }
 
-    public void removeNodeForItem(ModellingItem item) {
-        builder.removeNodeForItem item
+    public void removeNodeForItem(ModellingUIItem modellingUIItem) {
+        builder.removeNodeForItem modellingUIItem
         indexerChanged()
     }
 
-    public void removeNodeForItem(BatchRun batchRun) {
-        builder.removeNodeForItem batchRun
+    public void removeNodeForItem(BatchUIItem batchUIItem) {
+        builder.removeNodeForItem batchUIItem
     }
 
     public void refreshBatchNode() {
@@ -349,4 +355,16 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
         return ""
     }
+
+    public void simulationStart(Simulation simulation) {
+    }
+
+    public void simulationEnd(Simulation simulation, Model model) {
+        if (simulation.simulationRun?.endTime != null) {
+            println "add a simulation : ${simulation.name}"
+            addNodeForItem(model, simulation)
+        }
+    }
+
+
 }

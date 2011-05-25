@@ -6,8 +6,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.DefaultParameterizationDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.Model
@@ -20,7 +20,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateDefaultParameterizationAction)
 
-    public CreateDefaultParameterizationAction(ULCTableTree tree, P1RATModel model) {
+    public CreateDefaultParameterizationAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("CreateDefaultParameterization", tree, model)
     }
 

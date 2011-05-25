@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
@@ -12,7 +13,6 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.joda.time.DateTime
 
 class ModellingItemFactory {
 
@@ -236,11 +236,11 @@ class ModellingItemFactory {
     static List getActiveSimulationsForModel(Class modelClass) {
         SimulationRun.findAllByModel(modelClass.name).
                 findAll {SimulationRun run ->
-            !run.toBeDeleted && run.endTime != null
-        }.
+                    !run.toBeDeleted && run.endTime != null
+                }.
                 collect {SimulationRun run ->
-            getItem(Simulation, modelClass, run.name)
-        }
+                    getItem(Simulation, modelClass, run.name)
+                }
     }
 
     static boolean delete(def item) {
@@ -385,6 +385,7 @@ class ModellingItemFactory {
         ModellingItem item = getSimulationInstances()[key]
         if (!item) {
             item = itemClass.newInstance([itemName] as Object[])
+            item.modelClass = modelClass
             getSimulationInstances()[key] = item
         }
         return item

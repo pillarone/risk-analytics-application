@@ -27,8 +27,9 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     ConfigObject allResults = null
     List<ConfigObject> resultsList
 
+
     public CompareSimulationsViewModel(Model model, ModelStructure structure, List simulations) {
-        super(model, simulations*.item, structure)
+        super(model, simulations, structure)
         if (structure) {
             model.init()
             buildTreeStructure()
@@ -36,6 +37,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         }
 
     }
+
 
     void addFunctionListener(ICompareFunctionListener listener) {
         listeners << listener
@@ -113,8 +115,8 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     boolean isFunctionAdded(IFunction function) {
         for (IFunction iFunction in treeModel.functions) {
 //            if ((iFunction instanceof QuantilePerspectiveFunction) && (function instanceof QuantilePerspectiveFunction) && iFunction.equals(function)) {
-//                return true
-//            } else
+            //                return true
+            //            } else
             if (iFunction.getName(0).equals(function.getName(0)))
                 return true
         }

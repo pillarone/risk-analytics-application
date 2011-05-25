@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.ui.batch.action.ChangeBatchSimula
 import org.pillarone.riskanalytics.application.ui.batch.action.DeleteBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchSimulationAction
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
 
@@ -15,6 +16,7 @@ import com.ulcjava.base.application.*
 
 public class BatchTableRenderer extends DefaultTableCellRenderer {
     BatchRun batchRun
+    RiskAnalyticsMainModel mainModel
     ULCPopupMenu nodePopup
 
     public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
@@ -34,9 +36,9 @@ public class BatchTableRenderer extends DefaultTableCellRenderer {
             nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, 1)))
             nodePopup.add(new ULCMenuItem(new ChangeBatchSimulationPriorityAction(table.model, -1)))
             nodePopup.addSeparator()
-            nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.SIMULATION, "BatchOpenSimulationAction")))
-            nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.PARAMETERIZATION, "BatchOpenParameterizationAction")))
-            nodePopup.add(new ULCMenuItem(new OpenItemAction(table.model, OpenItemAction.RESULT_CONFIG, "BatchOpenresultAction")))
+            nodePopup.add(new ULCMenuItem(new OpenItemAction(mainModel, table.model, OpenItemAction.SIMULATION, "BatchOpenSimulationAction")))
+            nodePopup.add(new ULCMenuItem(new OpenItemAction(mainModel, table.model, OpenItemAction.PARAMETERIZATION, "BatchOpenParameterizationAction")))
+            nodePopup.add(new ULCMenuItem(new OpenItemAction(mainModel, table.model, OpenItemAction.RESULT_CONFIG, "BatchOpenresultAction")))
             nodePopup.addSeparator()
             nodePopup.add(new ULCMenuItem(new DeleteBatchSimulationAction(model: table.model)))
         }

@@ -164,7 +164,3 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
 }
 
-interface ChangeIndexerListener {
-
-    void indexChanged()
-}

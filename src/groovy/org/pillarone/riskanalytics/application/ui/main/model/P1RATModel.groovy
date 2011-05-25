@@ -530,13 +530,5 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
 
-interface IP1RATModelListener {
-
-    void openDetailView(Model model, Object item)
-
-    void closeDetailView(Model model, Object item)
-
-}
-
 
 

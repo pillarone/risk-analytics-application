@@ -4,7 +4,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
@@ -20,9 +21,9 @@ class OpenItemDialog {
     private ULCWindow parent
     ULCTableTree tree
     Model model
-    P1RATModel p1RATModel
+    RiskAnalyticsMainModel mainModel
     ULCDialog dialog
-    ModellingItem item
+    ModellingUIItem modellingUIItem
 
     private ULCButton createCopyButton
     private ULCButton readOnlyButton
@@ -33,11 +34,11 @@ class OpenItemDialog {
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
 
 
-    public OpenItemDialog(ULCTableTree tree, Model model, P1RATModel p1RATModel, ModellingItem item) {
+    public OpenItemDialog(ULCTableTree tree, Model model, RiskAnalyticsMainModel mainModel, ModellingUIItem modellingUIItem) {
         this.tree = tree
         this.model = model
-        this.item = item
-        this.p1RATModel = p1RATModel
+        this.modellingUIItem = modellingUIItem
+        this.mainModel = mainModel
     }
 
     public void init() {
@@ -84,31 +85,31 @@ class OpenItemDialog {
     private void attachListeners() {
         createCopyButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            ModellingItem modellingItem
-            if (!item.isLoaded()) {
-                item.load()
+            ModellingItem modellingItem = null
+            if (!modellingUIItem.isLoaded()) {
+                modellingUIItem.load()
             }
             item.daoClass.withTransaction {status ->
                 if (!item.isLoaded())
                     item.load()
                 modellingItem = ModellingItemFactory.incrementVersion(item)
-                p1RATModel.fireModelChanged()
-                p1RATModel.selectionTreeModel.addNodeForItem(modellingItem)
+                mainModel.fireModelChanged()
+                mainModel.selectionTreeModel.addNodeForItem(modellingUIItem)
             }
-            p1RATModel.openItem(model, modellingItem)
+            mainModel.openItem(model, UIItemFactory.createItem(modellingItem, model, mainModel))
         }] as IActionListener)
 
         readOnlyButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            if (!item.isLoaded())
-                item.load()
-            p1RATModel.notifyOpenDetailView(model, item)
+            if (!modellingUIItem.isLoaded())
+                modellingUIItem.load()
+            mainModel.notifyOpenDetailView(model, modellingUIItem)
         }] as IActionListener)
 
         deleteDependingResultsButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            if (p1RATModel.deleteDependingResults(model, item)) {
-                p1RATModel.openItem(model, item)
+            if (modellingUIItem.deleteDependingResults(model)) {
+                mainModel.openItem(model, modellingUIItem)
             } else {
                 new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
             }
@@ -129,5 +130,9 @@ class OpenItemDialog {
         }
 
         return false
+    }
+
+    ModellingItem getItem() {
+        return modellingUIItem.getItem()
     }
 }

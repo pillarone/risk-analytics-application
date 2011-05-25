@@ -6,7 +6,7 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
@@ -15,7 +15,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
     private StatusChangeService service = getService()
 
-    public AbstractWorkflowAction(String name, ULCTableTree tree, P1RATModel model) {
+    public AbstractWorkflowAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
         super(name, tree, model)
     }
 

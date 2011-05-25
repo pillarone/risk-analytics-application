@@ -1,11 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import groovy.time.TimeCategory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
@@ -15,9 +18,6 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguratio
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * The view model for the SimulationActionsPane.
@@ -28,7 +28,7 @@ class SimulationActionsPaneModel {
 
     protected SimulationRunner runner
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
-    private List<ISimulationListener> listeners = []
+    private List listeners = []
 
     volatile Simulation simulation
     ICollectorOutputStrategy outputStrategy
@@ -42,11 +42,11 @@ class SimulationActionsPaneModel {
     AddToBatchAction addToBatchAction
 
     ISimulationProvider simulationProvider
-    P1RATModel mainModel
+    RiskAnalyticsMainModel mainModel
 
     String batchMessage
 
-    public SimulationActionsPaneModel(ISimulationProvider provider, P1RATModel mainModel) {
+    public SimulationActionsPaneModel(ISimulationProvider provider, RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)

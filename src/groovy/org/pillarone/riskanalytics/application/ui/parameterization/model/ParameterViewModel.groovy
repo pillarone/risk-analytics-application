@@ -5,14 +5,13 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
-
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
@@ -27,7 +26,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
     PropertiesViewModel propertiesViewModel
 
     List<ParameterValidation> validationErrors = []
-    public P1RATModel p1RATModel
+    public RiskAnalyticsMainModel mainModel
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
@@ -48,7 +47,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
 
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
-        return new SaveAction(parent, p1RATModel, item)
+        return new SaveAction(parent, mainModel, mainModel.getAbstractUIItem(item))
     }
 
 

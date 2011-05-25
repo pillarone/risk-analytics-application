@@ -9,15 +9,16 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
 
 class P1RATApplication extends AbstractApplication {
 
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
-    P1RATModel p1RATModel
+//    P1RATModel p1RATModel
+    RiskAnalyticsMainModel mainModel
     public static boolean CLOSE_WINDOW = false
 
     public void start() {
@@ -35,7 +36,8 @@ class P1RATApplication extends AbstractApplication {
 
     public void initMainView() {
         //init p1ratModel after login
-        p1RATModel = new P1RATModel()
+        //        p1RATModel = new P1RATModel()
+        mainModel = new RiskAnalyticsMainModel()
         mainFrame.defaultCloseOperation = ULCFrame.DO_NOTHING_ON_CLOSE
         mainFrame.size = new Dimension(1000, 750)
         mainFrame.minimumSize = new Dimension(800, 600)
@@ -44,7 +46,9 @@ class P1RATApplication extends AbstractApplication {
         mainFrame.locationRelativeTo = null
         mainFrame.setIconImage(UIUtils.getIcon("application.png"))
         ULCClipboard.install()
-        P1RATMainView mainView = new P1RATMainView(p1RATModel)
+//        P1RATMainView mainView = new P1RATMainView(p1RATModel)
+        RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(mainModel)
+        mainView.init()
         mainFrame.contentPane.add(mainView.content)
         mainFrame.menuBar = mainView.menuBar
         UIUtils.setRootPane(mainFrame)

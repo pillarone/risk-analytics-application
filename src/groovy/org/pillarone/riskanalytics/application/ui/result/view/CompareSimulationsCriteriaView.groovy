@@ -4,6 +4,8 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.result.action.DeviationAbsoluteDifferenceAction
 import org.pillarone.riskanalytics.application.ui.result.action.DeviationPercentageAction
 import org.pillarone.riskanalytics.application.ui.result.action.FractionAbsoluteDifferenceAction
@@ -142,7 +144,9 @@ class CompareSimulationsCriteriaView {
         frAbsolute.addValueChangedListener(new FractionAbsoluteDifferenceAction(model, tree.viewPortTableTree, compareSimulationTreeView))
 
         compareParameterizations.addActionListener([actionPerformed: {event ->
-            compareSimulationTreeView.p1RATMainView.createCompareParameterizationView(model.model, model.treeModel.simulations)
+            ArrayList parameters = ParameterizationUtilities.getParameters(model.treeModel.simulations)
+            CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(compareSimulationTreeView.mainModel, model.model, parameters)
+            compareSimulationTreeView.mainModel.notifyOpenDetailView(model.model, compareParameterizationUIItem)
         }] as IActionListener)
 
         //ColumnOrderAction
