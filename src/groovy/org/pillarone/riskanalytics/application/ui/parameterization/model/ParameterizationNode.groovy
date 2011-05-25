@@ -22,8 +22,7 @@ class ParameterizationNode extends VersionedItemNode {
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.popupMenus['parameterNodePopUpMenu']) return renderer.popupMenus['parameterNodePopUpMenu']
+    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu parameterNodePopUpMenu = new ULCPopupMenu()
         parameterNodePopUpMenu.name = "parameterNodePopUpMenu"
         parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
@@ -48,7 +47,6 @@ class ParameterizationNode extends VersionedItemNode {
         }
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
-        renderer.popupMenus['parameterNodePopUpMenu'] = parameterNodePopUpMenu
         return parameterNodePopUpMenu
     }
 

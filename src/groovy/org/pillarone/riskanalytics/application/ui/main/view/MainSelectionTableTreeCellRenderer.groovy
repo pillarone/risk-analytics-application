@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -66,5 +67,13 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         popupMenus.put(node.itemClass, popupMenu)
         return popupMenu
     }
+
+    private ULCPopupMenu getPopUpMenu(WorkflowParameterizationNode node) {
+        if (workflowMenus.containsKey(node.status)) return workflowMenus.get(node.status)
+        ULCPopupMenu popupMenu = node.getPopupMenu(tree)
+        workflowMenus.put(node.status, popupMenu)
+        return popupMenu
+    }
+
 
 }

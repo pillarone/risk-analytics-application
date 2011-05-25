@@ -22,7 +22,7 @@ class UIItemFactory {
 
     Log LOG = LogFactory.getLog(UIItemFactory)
 
-    public static ModellingUIItem createItem(ModellingItem modellingItem, Model model, RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel) {
+    public static ModellingUIItem createItem(ModellingItem modellingItem, Model model, RiskAnalyticsMainModel mainModel) {
         switch (modellingItem.class) {
             case Parameterization.class: return new ParameterizationUIItem(mainModel,  model, (Parameterization) modellingItem)
             case ResultConfiguration.class: return new ResultConfigurationUIItem(mainModel,  model, (ResultConfiguration) modellingItem)
@@ -30,7 +30,7 @@ class UIItemFactory {
         }
     }
 
-    public static ModellingUIItem createItem(Simulation simulation, Model model, RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel) {
+    public static ModellingUIItem createItem(Simulation simulation, Model model, RiskAnalyticsMainModel mainModel) {
         if (DeterministicModel.class.isAssignableFrom(simulation.modelClass))
             return new DeterministicResultUIItem(mainModel,  (DeterministicModel) model, simulation)
         else if (StochasticModel.class.isAssignableFrom(simulation.modelClass))

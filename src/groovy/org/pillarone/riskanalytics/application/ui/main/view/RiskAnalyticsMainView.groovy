@@ -1,17 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.util.Dimension
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
-import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
+
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -20,8 +18,9 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 
-class RiskAnalyticsMainView extends AbstractView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
+class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
     ULCBoxPane content
     ULCBoxPane treePane
@@ -100,7 +99,7 @@ class RiskAnalyticsMainView extends AbstractView implements IP1RATModelListener,
         AbstractUIItem abstractUIItem = TableTreeBuilderUtils.findUIItemForItem(navigationView.root, item)
         if (!abstractUIItem) {
             LOG.error " AbstractUIItem (${item.name}) table tree node not found "
-            abstractUIItem = UIItemFactory.createItem(item, model, mainModel, navigationView.navigationTableTreeModel)
+            abstractUIItem = UIItemFactory.createItem(item, model, mainModel)
         }
         openDetailView(model, abstractUIItem)
     }

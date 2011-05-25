@@ -21,8 +21,18 @@ class WorkflowParameterizationNode extends ParameterizationNode {
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.workflowMenus.get(getStatus())) return renderer.workflowMenus.get(getStatus())
+    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+        switch (getStatus()) {
+            case Status.DATA_ENTRY: return getDataEntryPopupMenu(tree)
+            case Status.REJECTED: return getRejectedPopupMenu(tree)
+            case Status.IN_REVIEW: return getInReviewPopupMenu(tree)
+            case Status.IN_PRODUCTION: return getInProductionPopupMenu(tree)
+        }
+        return null
+
+    }
+
+    private ULCPopupMenu getDataEntryPopupMenu(ULCTableTree tree) {
         ULCPopupMenu dataEntry = new ULCPopupMenu()
         dataEntry.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
         dataEntry.add(new ULCMenuItem(new SimulationAction(tree, abstractUIItem.mainModel)))
@@ -36,26 +46,30 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
         dataEntry.addSeparator()
         dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, abstractUIItem.mainModel)))
-        renderer.workflowMenus.put(Status.DATA_ENTRY, dataEntry)
+        return dataEntry
+    }
 
+    private ULCPopupMenu getRejectedPopupMenu(ULCTableTree tree) {
         ULCPopupMenu rejected = new ULCPopupMenu()
         rejected.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
         rejected.add(new ULCMenuItem(new SimulationAction(tree, abstractUIItem.mainModel)))
         rejected.addSeparator()
-        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, abstractUIItem.mainModel))
+        CompareParameterizationMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, abstractUIItem.mainModel))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         rejected.add(compareParameterizationMenuItem)
         rejected.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
         rejected.addSeparator()
         rejected.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
         rejected.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
-        renderer.workflowMenus.put(Status.REJECTED, rejected)
+        return rejected
+    }
 
+    private ULCPopupMenu getInReviewPopupMenu(ULCTableTree tree) {
         ULCPopupMenu inReview = new ULCPopupMenu()
         inReview.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
         inReview.add(new ULCMenuItem(new SimulationAction(tree, abstractUIItem.mainModel)))
         inReview.addSeparator()
-        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, abstractUIItem.mainModel))
+        CompareParameterizationMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, abstractUIItem.mainModel))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inReview.add(compareParameterizationMenuItem)
         inReview.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
@@ -67,8 +81,10 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         inReview.add(sendToProductionMenuItem)
         tree.addTreeSelectionListener(sendToProductionMenuItem)
         inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, abstractUIItem.mainModel)))
-        renderer.workflowMenus.put(Status.IN_REVIEW, inReview)
+        return inReview
+    }
 
+    private ULCPopupMenu getInProductionPopupMenu(ULCTableTree tree) {
         ULCPopupMenu inProduction = new ULCPopupMenu()
         inProduction.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
         inProduction.add(new ULCMenuItem(new SimulationAction(tree, abstractUIItem.mainModel)))
@@ -78,12 +94,11 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         inProduction.addSeparator()
         inProduction.add(new ULCMenuItem(new CreateNewWorkflowVersionAction(tree, abstractUIItem.mainModel)))
         inProduction.addSeparator()
-        compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, abstractUIItem.mainModel))
+        CompareParameterizationMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, abstractUIItem.mainModel))
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)
         inProduction.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
-        renderer.workflowMenus.put(Status.IN_PRODUCTION, inProduction)
-        return renderer.workflowMenus.get(getStatus())
+        return inProduction
     }
 
 

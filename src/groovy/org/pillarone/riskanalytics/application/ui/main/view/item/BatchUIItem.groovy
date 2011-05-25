@@ -19,12 +19,9 @@ import org.pillarone.riskanalytics.core.BatchRun
 class BatchUIItem extends AbstractUIItem {
 
     BatchRun batchRun
-    RiskAnalyticsMainModel model
-    AbstractTableTreeModel tableTreeModel
 
-    public BatchUIItem(RiskAnalyticsMainModel model, BatchRun batchRun) {
-        super(model, null)
-        this.model = model
+    public BatchUIItem(RiskAnalyticsMainModel mainModel, BatchRun batchRun) {
+        super(mainModel, null)
         this.batchRun = batchRun
     }
 
@@ -66,7 +63,7 @@ class BatchUIItem extends AbstractUIItem {
     public void addBatchRun(BatchRun batchRun) {
         if (!batchRun) return
         this.batchRun = batchRun
-        tableTreeModel.addNodeForItem(this)
+        navigationTableTreeModel.addNodeForItem(this)
         mainModel.viewModelsInUse.each {k, v ->
             if (v instanceof BatchListener)
                 v.newBatchAdded(batchRun)
@@ -77,7 +74,7 @@ class BatchUIItem extends AbstractUIItem {
 
     public boolean remove() {
         if (batchRun.batchRunService.deleteBatchRun(batchRun)) {
-            tableTreeModel.removeNodeForItem(this)
+            navigationTableTreeModel.removeNodeForItem(this)
             mainModel.fireModelChanged()
             return true
         }

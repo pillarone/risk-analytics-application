@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.batch.view.NewBatchView
-import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
+
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
@@ -44,9 +44,10 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.result.view.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 
 //todo fja mainView not used
-class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener, PropertyChangeListener {
+class P1RATMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
     P1RATModel model
 
@@ -299,7 +300,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         if (batchRun.id != null) {
             BatchView view = new BatchView(this.model, batchRun, tabbedPane)
             view.init()
-            view.addIP1RATModelListener this
+            view.addRiskAnalyticsModelListener this
             return view.content
         } else {
             return new NewBatchView(this.model, tabbedPane).content

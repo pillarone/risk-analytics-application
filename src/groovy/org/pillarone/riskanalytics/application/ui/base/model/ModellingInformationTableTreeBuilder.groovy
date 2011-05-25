@@ -59,14 +59,14 @@ class ModellingInformationTableTreeBuilder {
             DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
 
             getItemMap(getItemsForModel(modelClass, Parameterization), false).values().each { List<Parameterization> it ->
-                parametrisationsNode.add(createItemNodes(model, it))
+                parametrisationsNode.add(createItemNodes(it))
             }
             getItemMap(getItemsForModel(modelClass, Parameterization), true).values().each { List<Parameterization> it ->
-                parametrisationsNode.add(createItemNodes(model, it))
+                parametrisationsNode.add(createItemNodes(it))
             }
 
             getItemMap(getItemsForModel(modelClass, ResultConfiguration), false).values().each {
-                resultConfigurationsNode.add(createItemNodes(model, it))
+                resultConfigurationsNode.add(createItemNodes(it))
             }
 
             List simulationsForModel = getItemsForModel(modelClass, Simulation)
@@ -75,7 +75,7 @@ class ModellingInformationTableTreeBuilder {
             }
             simulationsForModel.each {
                 try {
-                    simulationsNode.add(createNode(model, it))
+                    simulationsNode.add(createNode(it))
                 } catch (Throwable t) {
                     LOG.error "Could not create node for ${it.toString()}", t
                 }
@@ -141,34 +141,34 @@ class ModellingInformationTableTreeBuilder {
         map
     }
 
-    private def createItemNodes(Model selectedModel, List items) {
+    private def createItemNodes(List items) {
         def tree = []
         tree.addAll(items)
         tree.sort {a, b -> b.versionNumber <=> a.versionNumber }
 
-        def root = createNode(selectedModel, tree.first())
+        def root = createNode(tree.first())
         tree.remove(tree.first())
         root.leaf = tree.empty
 
         def secondLevelNodes = tree.findAll { it.versionNumber.level == 1}
         secondLevelNodes.each {
-            def node = createNode(selectedModel, it)
-            createSubNodes(tree, node, selectedModel)
+            def node = createNode(it)
+            createSubNodes(tree, node)
             root.add(node)
         }
 
         root
     }
 
-    private void createSubNodes(def tree, ItemNode node, Model selectedModel) {
+    private void createSubNodes(def tree, ItemNode node) {
         def currentLevelNodes = tree.findAll {ModellingItem it ->
             it.versionNumber.isDirectChildVersionOf(node.versionNumber)
         }
         node.leaf = currentLevelNodes.size() == 0
         currentLevelNodes.each {
-            def newNode = createNode(selectedModel, it)
+            def newNode = createNode(it)
             node.add(newNode)
-            createSubNodes(tree, newNode, selectedModel)
+            createSubNodes(tree, newNode)
         }
     }
 
@@ -209,15 +209,15 @@ class ModellingInformationTableTreeBuilder {
 
     //todo fja add selected model as arg
 
-    public void addNodeForItem(Simulation item, Model selectedModel = null) {
+    public void addNodeForItem(Simulation item) {
         DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
         groupNode.leaf = false
-        insertNodeInto(createNode(selectedModel, item), groupNode)
+        insertNodeInto(createNode(item), groupNode)
     }
 
     //todo fja add selected model as arg
 
-    public def addNodeForItem(ModellingUIItem modellingUIItem, Model selectedModel = null) {
+    public def addNodeForItem(ModellingUIItem modellingUIItem) {
         ITableTreeNode groupNode = findGroupNode(modellingUIItem, findModelNode(root, modellingUIItem))
         createAndInsertItemNode(groupNode, modellingUIItem)
         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
@@ -226,7 +226,7 @@ class ModellingInformationTableTreeBuilder {
 
     //todo fja add selected model as arg
 
-    public def addNodeForItem(BatchUIItem batchRun, Model selectedModel = null) {
+    public def addNodeForItem(BatchUIItem batchRun) {
         ITableTreeNode groupNode = findBatchRootNode(root)
         createAndInsertItemNode(groupNode, batchRun)
         model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]), [groupNode.childCount - 1] as int[])
@@ -343,8 +343,8 @@ class ModellingInformationTableTreeBuilder {
         new DefaultMutableTableTreeNode(name)
     }
 
-    private ITableTreeNode createNode(Model selectedModel, Parameterization item) {
-        Model selectedModelInstance = getNewModelInstance(selectedModel)
+    private ITableTreeNode createNode(Parameterization item) {
+        Model selectedModelInstance = getModelInstance(item)
         return createNode(new ParameterizationUIItem(mainModel, selectedModelInstance, item))
     }
 
@@ -354,9 +354,9 @@ class ModellingInformationTableTreeBuilder {
         return node
     }
 
-    private ITableTreeNode createNode(Model selectedModel, ResultConfiguration item) {
-        Model selectedModelInstance = getNewModelInstance(selectedModel)
-        return createNode(new ResultConfigurationUIItem(mainModel,  selectedModelInstance, item))
+    private ITableTreeNode createNode(ResultConfiguration item) {
+        Model selectedModelInstance = getModelInstance(item)
+        return createNode(new ResultConfigurationUIItem(mainModel, selectedModelInstance, item))
     }
 
     private ITableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
@@ -369,21 +369,21 @@ class ModellingInformationTableTreeBuilder {
         return new BatchRunNode(batchUIItem)
     }
 
-    private ITableTreeNode createNode(Model selectedModel, BatchRun batchRun) {
-        return new BatchRunNode(new BatchUIItem(mainModel,  batchRun))
+    private ITableTreeNode createNode(BatchRun batchRun) {
+        return new BatchRunNode(new BatchUIItem(mainModel, batchRun))
     }
 
-    private ITableTreeNode createNode(Model selectedModel, Simulation item) {
+    private ITableTreeNode createNode(Simulation item) {
         SimulationNode node = null
-        Model selectedModelInstance = getNewModelInstance(selectedModel)
+        Model selectedModelInstance = getModelInstance(item)
         try {
-            node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel, model))
+            node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
             if (!item.isLoaded()) {
                 item.load()
             }
-            def paramsNode = createNode(selectedModelInstance, item.parameterization)
+            def paramsNode = createNode(item.parameterization)
             paramsNode.leaf = true
-            def templateNode = createNode(selectedModelInstance, item.template)
+            def templateNode = createNode(item.template)
             templateNode.leaf = true
 
             node.add(paramsNode)
@@ -395,11 +395,11 @@ class ModellingInformationTableTreeBuilder {
         return node
     }
 
-    protected ITableTreeNode createBatchNode(Model selectedModel) {
+    protected ITableTreeNode createBatchNode() {
         BatchRootNode batchesNode = new BatchRootNode("Batches", mainModel)
         List<BatchRun> batchRuns = getAllBatchRuns()
         batchRuns?.each {BatchRun batchRun ->
-            batchesNode.add(createNode(selectedModel, batchRun))
+            batchesNode.add(createNode(batchRun))
         }
         return batchesNode
     }
@@ -420,10 +420,11 @@ class ModellingInformationTableTreeBuilder {
         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
     }
 
-    Model getNewModelInstance(Model selectedModel) {
-        Model selectedModelInstance = selectedModel.class.newInstance()
-        selectedModelInstance.init()
-        return selectedModelInstance
+    Model getModelInstance(ModellingItem item) {
+//        Model selectedModelInstance = item.modelClass.newInstance()
+        //        selectedModelInstance.init()
+        //        return selectedModelInstance
+        return null
     }
 
 }

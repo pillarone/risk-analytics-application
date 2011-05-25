@@ -22,6 +22,8 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -48,7 +50,7 @@ class DeleteAction extends SelectionTreeAction {
 
     private void removeItem(ModellingUIItem selectedItem) {
         boolean usedInSimulation = false
-        if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
+        if (selectedItem instanceof ParameterizationUIItem || selectedItem instanceof ResultConfigurationUIItem) {
             usedInSimulation = selectedItem.isUsedInSimulation()
         }
         Model selectedModel = getSelectedModel()

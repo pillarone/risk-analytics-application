@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -47,7 +48,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     AbstractUIItem getSelectedUIItem() {
         DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
-        return itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
+        AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
+        return abstractUIItem
     }
 
     //todo fja uiitem
@@ -155,6 +157,13 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     protected List allowedRoles() {
         return []
     }
+
+    Model getModelInstance(ModellingItem item) {
+        Model selectedModelInstance = item.modelClass.newInstance()
+        selectedModelInstance.init()
+        return selectedModelInstance
+    }
+
 }
 
 

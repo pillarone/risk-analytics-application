@@ -33,7 +33,7 @@ class CalculationUIItem extends SimulationUIItem {
         CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, mainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
-        model.actionsPaneModel.addSimulationListener(tableTreeModel)
+        model.actionsPaneModel.addSimulationListener(mainModel)
         mainModel.addModelChangedListener(model.settingsPaneModel)
         mainModel.registerModel(this, model)
 

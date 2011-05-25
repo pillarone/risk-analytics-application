@@ -177,24 +177,24 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         return model
     }
 
-    void addModelListener(IP1RATModelListener listener) {
+    void addModelListener(IRiskAnalyticsModelListener listener) {
         modelListeners << listener
     }
 
     void notifyOpenDetailView(Model model, Object item) {
-        modelListeners.each {IP1RATModelListener listener ->
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.openDetailView(model, item)
         }
     }
 
     void notifyOpenDetailView(Model model, List items) {
-        modelListeners.each {IP1RATModelListener listener ->
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.openDetailView(model, items)
         }
     }
 
     void notifyCloseDetailView(Model model, Object item) {
-        modelListeners.each {IP1RATModelListener listener ->
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.closeDetailView(model, item)
         }
     }

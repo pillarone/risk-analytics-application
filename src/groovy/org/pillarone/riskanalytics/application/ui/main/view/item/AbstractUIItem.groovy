@@ -10,14 +10,16 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
+import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractUIItem implements  IUIItem{
+abstract class AbstractUIItem implements IUIItem {
 
     public RiskAnalyticsMainModel mainModel
-    Model model
+    public Model model
 
     public AbstractUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel) {
         this.mainModel = mainModel
@@ -102,6 +104,11 @@ abstract class AbstractUIItem implements  IUIItem{
     Object getItem() {
         return null
     }
+
+    public AbstractTableTreeModel getNavigationTableTreeModel() {
+        return mainModel.navigationTableTreeModel
+    }
+
 
 
 }

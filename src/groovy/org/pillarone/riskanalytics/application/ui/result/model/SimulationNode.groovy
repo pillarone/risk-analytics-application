@@ -30,8 +30,7 @@ class SimulationNode extends ItemNode {
         }
     }
 
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.popupMenus['simulationNodePopUpMenu']) return renderer.popupMenus['simulationNodePopUpMenu']
+    public ULCPopupMenu getPopupMenu( ULCTableTree tree) {
         ULCPopupMenu simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
 
@@ -49,7 +48,6 @@ class SimulationNode extends ItemNode {
         simulationNodePopUpMenu.add(reportsMenu)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
-        renderer.popupMenus['simulationNodePopUpMenu'] = simulationNodePopUpMenu
         return simulationNodePopUpMenu
     }
 

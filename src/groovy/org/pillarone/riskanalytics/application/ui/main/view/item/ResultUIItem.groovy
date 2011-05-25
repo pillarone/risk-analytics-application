@@ -21,11 +21,11 @@ abstract class ResultUIItem extends ModellingUIItem {
 
     @Override
     void rename(String newName) {
-        ITableTreeNode itemNode = tableTreeModel.findNodeForItem(tableTreeModel.root, this)
+        ITableTreeNode itemNode = navigationTableTreeModel.findNodeForItem(navigationTableTreeModel.root, this)
         //todo fja
         //closeItem(item.modelClass.newInstance(), item)
         itemNode.userObject = newName
-        tableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+        navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
 
     @Override

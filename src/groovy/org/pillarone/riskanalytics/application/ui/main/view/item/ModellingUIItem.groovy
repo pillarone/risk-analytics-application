@@ -18,12 +18,10 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 abstract class ModellingUIItem extends AbstractUIItem {
     ModellingItem item
-    AbstractTableTreeModel tableTreeModel
 
     public ModellingUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ModellingItem item) {
         super(mainModel, simulationModel)
         this.item = item
-        this.tableTreeModel = mainModel.navigationTableTreeModel
     }
 
 
@@ -68,8 +66,8 @@ abstract class ModellingUIItem extends AbstractUIItem {
             modellingItem = ModellingItemFactory.incrementVersion(item)
         }
         mainModel.fireModelChanged()
-        AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, selectedModel, mainModel, tableTreeModel)
-        tableTreeModel.addNodeForItem(modellingUIItem)
+        AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, selectedModel, mainModel)
+        navigationTableTreeModel.addNodeForItem(modellingUIItem)
         if (openNewVersion)
             mainModel.openItem(selectedModel, modellingUIItem)
         return modellingItem
@@ -81,7 +79,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
             ModellingUIItem openedItem = mainModel.getAbstractUIItem(item)
             if (openedItem)
                 mainModel.closeItem(model, openedItem)
-            tableTreeModel.removeNodeForItem(this)
+            navigationTableTreeModel.removeNodeForItem(this)
             ModellingItemFactory.remove(item)
             mainModel.fireModelChanged()
             //todo fja refactoring fireRowDeleted
@@ -96,13 +94,13 @@ abstract class ModellingUIItem extends AbstractUIItem {
         item.daoClass.withTransaction {status ->
             if (!item.isLoaded())
                 item.load()
-            ITableTreeNode itemNode = tableTreeModel.findNodeForItem(tableTreeModel.root, this)
+            ITableTreeNode itemNode = navigationTableTreeModel.findNodeForItem(navigationTableTreeModel.root, this)
             //todo fja
             //            closeItem(item.modelClass.newInstance(), item)
 
             itemNode.userObject = newName
 
-            tableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+            navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
             //todo fja
             //            renameAllChildren(itemNode, name)
             Class modelClass = item.modelClass != null ? item.modelClass : Model
@@ -130,7 +128,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
             ModellingItem newItem = ModellingItemFactory.copyItem(modellingUIItem.item, name)
             newItem.id = null
             mainModel.fireModelChanged()
-            tableTreeModel.addNodeForItem(UIItemFactory.createItem(newItem, modellingUIItem.model, mainModel, tableTreeModel))
+            navigationTableTreeModel.addNodeForItem(UIItemFactory.createItem(newItem, modellingUIItem.model, mainModel))
         }
     }
 
@@ -138,7 +136,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     public void importItem() {
         mainModel.fireModelChanged()
-        tableTreeModel.addNodeForItem(this)
+        navigationTableTreeModel.addNodeForItem(this)
         item.unload()
     }
 
@@ -161,5 +159,12 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return item.name
     }
 
+    public Model getModel() {
+        if (!this.@model) {
+            this.model = item.modelClass.newInstance()
+            this.model.init()
+        }
+        return this.@model
+    }
 
 }

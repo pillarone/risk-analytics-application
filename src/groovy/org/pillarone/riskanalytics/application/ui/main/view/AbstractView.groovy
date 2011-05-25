@@ -11,9 +11,9 @@ abstract class AbstractView {
         attachListeners()
     }
 
-    abstract void initComponents()
+    abstract protected void initComponents()
 
-    abstract void layoutComponents()
+    abstract protected void layoutComponents()
 
-    abstract void attachListeners()
+    abstract protected void attachListeners()
 }

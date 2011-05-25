@@ -2,9 +2,9 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import com.ulcjava.base.application.tree.TreePath
+
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
-import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
+
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -165,27 +166,27 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     }
 
-    void addModelListener(IP1RATModelListener listener) {
+    void addModelListener(IRiskAnalyticsModelListener listener) {
         if (!modelItemlisteners.contains(listener))
             modelListeners << listener
     }
 
     void notifyOpenDetailView(Model model, Object item) {
-        modelListeners.each {IP1RATModelListener listener ->
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.openDetailView(model, item)
         }
     }
 
 
     void notifyCloseDetailView(Model model, AbstractUIItem item) {
-        modelListeners.each {IP1RATModelListener listener ->
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.closeDetailView(model, item)
         }
     }
 
     void notifyChangedDetailView(Model model, AbstractUIItem item) {
         setCurrentItem(item)
-        modelListeners.each {IP1RATModelListener listener ->
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.changedDetailView(model, item)
         }
     }
@@ -227,7 +228,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public void simulationEnd(Simulation simulation, Model model) {
         if (simulation.simulationRun?.endTime != null) {
-            navigationTableTreeModel.addNodeForItem(model, simulation)
+            navigationTableTreeModel.addNodeForItem(simulation)
         }
     }
 

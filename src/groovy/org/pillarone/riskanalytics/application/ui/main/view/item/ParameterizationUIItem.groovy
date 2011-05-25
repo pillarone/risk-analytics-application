@@ -54,7 +54,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     }
 
     public boolean newVersionAllowed() {
-        return ((Parameterization) getItem()).newVersionAllowed()
+        return ((Parameterization) item).newVersionAllowed()
     }
 
     @Override
@@ -74,7 +74,7 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     @Override
     boolean isEditable() {
-        return getItem().isEditable()
+        return item.isEditable()
     }
 
 

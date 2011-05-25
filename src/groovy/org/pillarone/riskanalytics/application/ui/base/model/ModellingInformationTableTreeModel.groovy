@@ -273,9 +273,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
-    public void addNodeForItem(Model selectedModel, Simulation item) {
+    public void addNodeForItem( Simulation item) {
         indexerChanged()
-        builder.addNodeForItem(item, selectedModel)
+        builder.addNodeForItem(item)
     }
 
     public def addNodeForItem(ModellingUIItem item) {

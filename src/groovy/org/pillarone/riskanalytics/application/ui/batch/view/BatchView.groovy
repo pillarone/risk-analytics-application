@@ -9,7 +9,7 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
-import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -143,8 +143,8 @@ public class BatchView extends NewBatchView {
         //        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
     }
 
-    public void addIP1RATModelListener(IP1RATModelListener ip1RATModelListener) {
-        batchDataTableModel.addIP1RATModelListener ip1RATModelListener
+    public void addRiskAnalyticsModelListener(IRiskAnalyticsModelListener riskAnalyticsModelListener) {
+        batchDataTableModel.addRiskAnalyticsModelListener riskAnalyticsModelListener
     }
 
     static AbstractView getView(RiskAnalyticsMainModel model, BatchRun batchRun) {

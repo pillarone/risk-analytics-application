@@ -15,8 +15,7 @@ class ResultConfigurationNode extends VersionedItemNode {
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.popupMenus['resultConfigurationNodePopUpMenu']) return renderer.popupMenus['resultConfigurationNodePopUpMenu']
+    public ULCPopupMenu getPopupMenu( ULCTableTree tree) {
         ULCPopupMenu resultConfigurationNodePopUpMenu = new ULCPopupMenu()
         resultConfigurationNodePopUpMenu.name = "resultConfigurationNodePopUpMenu"
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
@@ -28,7 +27,6 @@ class ResultConfigurationNode extends VersionedItemNode {
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
         resultConfigurationNodePopUpMenu.addSeparator()
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
-        renderer.popupMenus['resultConfigurationNodePopUpMenu'] = resultConfigurationNodePopUpMenu
         return resultConfigurationNodePopUpMenu
 
     }
