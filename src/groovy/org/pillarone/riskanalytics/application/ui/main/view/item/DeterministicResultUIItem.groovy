@@ -21,11 +21,6 @@ class DeterministicResultUIItem extends ResultUIItem {
         super(model, simulationModel, simulation)
     }
 
-    public DeterministicResultUIItem(RiskAnalyticsMainModel model, AbstractTableTreeModel tableTreeModel,
-                                     DeterministicModel simulationModel, Simulation simulation) {
-        super(model, tableTreeModel, simulationModel, simulation)
-    }
-
     ULCContainer createDetailView() {
         ResultViewModel resultViewModel = getViewModel()
         DeterministicResultView view = new DeterministicResultView(null)

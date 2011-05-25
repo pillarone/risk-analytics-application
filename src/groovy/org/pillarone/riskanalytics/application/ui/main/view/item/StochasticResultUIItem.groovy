@@ -20,12 +20,6 @@ class StochasticResultUIItem extends ResultUIItem {
         super(model, simulationModel, simulation)
     }
 
-    public StochasticResultUIItem(RiskAnalyticsMainModel model, AbstractTableTreeModel tableTreeModel,
-                                  Model simulationModel, Simulation simulation) {
-        super(model, tableTreeModel, simulationModel, simulation)
-    }
-
-
     ULCContainer createDetailView() {
         ResultViewModel resultViewModel = (ResultViewModel) getViewModel()
         StochasticResultView view = new StochasticResultView(null)

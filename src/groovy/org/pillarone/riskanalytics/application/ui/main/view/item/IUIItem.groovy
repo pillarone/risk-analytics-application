@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
+import com.ulcjava.base.application.util.ULCIcon
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
 //classes implementing this interface need to be created for all item-"views" (modelling items, batch runs, comparisons etc.)
-//todo fja interface not used
 public interface IUIItem {
 
     /**
@@ -36,9 +38,6 @@ public interface IUIItem {
 
     public boolean remove()
 
-    public void delete()
-
-    public IUIItem incrementVersion()
 
     public boolean isEditable()
 
@@ -46,5 +45,20 @@ public interface IUIItem {
 
     public Object getItem()
 
+    public String getName()
+
+    public String getToolTip()
+
+    public ULCIcon getIcon()
+
+    public boolean isVersionable()
+
+    public boolean isChangeable()
+
+    public boolean isChanged()
+
+    public void removeAllModellingItemChangeListener()
+
+    public addModellingItemChangeListener(IModellingItemChangeListener listener)
 
 }

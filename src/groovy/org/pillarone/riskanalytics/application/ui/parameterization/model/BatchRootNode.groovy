@@ -6,15 +6,16 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.application.ui.base.model.NavigationTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class BatchRootNode extends DefaultMutableTableTreeNode implements NavigationTreeNode {
+class BatchRootNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
     RiskAnalyticsMainModel mainModel
 
     public BatchRootNode(String name, RiskAnalyticsMainModel mainModel) {
@@ -22,11 +23,9 @@ class BatchRootNode extends DefaultMutableTableTreeNode implements NavigationTre
         this.mainModel = mainModel
     }
 
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.popupMenus['batchesRootNodePopUpMenu']) return renderer.popupMenus['batchesRootNodePopUpMenu']
+    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu batchesRootNodePopUpMenu = new ULCPopupMenu()
         batchesRootNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, mainModel)))
-        renderer.popupMenus['batchesRootNodePopUpMenu'] = batchesRootNodePopUpMenu
         return batchesRootNodePopUpMenu
     }
 

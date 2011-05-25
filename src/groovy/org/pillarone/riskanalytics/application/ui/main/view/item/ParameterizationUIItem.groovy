@@ -22,13 +22,6 @@ class ParameterizationUIItem extends ModellingUIItem {
         super(model, simulationModel, parameterization)
     }
 
-    public ParameterizationUIItem(RiskAnalyticsMainModel model, AbstractTableTreeModel tableTreeModel,
-                                  Model simulationModel, Parameterization parameterization) {
-        super(model, tableTreeModel, simulationModel, parameterization)
-
-    }
-
-
     ULCContainer createDetailView() {
         ParameterView view = new ParameterView(getViewModel())
         return view.content

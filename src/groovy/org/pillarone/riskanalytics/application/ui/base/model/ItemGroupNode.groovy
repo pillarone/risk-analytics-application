@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.main.action.*
 
-class ItemGroupNode extends DefaultMutableTableTreeNode implements NavigationTreeNode {
+class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
     Class itemClass
     RiskAnalyticsMainModel mainModel
 
@@ -29,8 +29,15 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements NavigationTre
         this.mainModel = mainModel
     }
 
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.popupMenus[itemClass.name]) return renderer.popupMenus[itemClass.name]
+    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+        switch (itemClass) {
+            case Simulation: return getSimulationGroupNodePopUpMenu(tree)
+            case ResultConfiguration: return getGroupNodePopUpMenu(tree)
+            case Parameterization: return getParameterGroupNodePopUpMenu(tree)
+        }
+    }
+
+    private ULCPopupMenu getGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu groupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
             groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', true)))
@@ -39,8 +46,19 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements NavigationTre
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
         groupNodePopUpMenu.addSeparator()
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllResultTemplates")))
-        renderer.popupMenus['groupNodePopUpMenu'] = groupNodePopUpMenu
+        return groupNodePopUpMenu
+    }
 
+    private ULCPopupMenu getSimulationGroupNodePopUpMenu(ULCTableTree tree) {
+        ULCPopupMenu simulationGroupNodePopUpMenu = new ULCPopupMenu()
+        if (UserContext.isStandAlone())
+            simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
+        simulationGroupNodePopUpMenu.addSeparator()
+        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllSimulations")))
+        return simulationGroupNodePopUpMenu
+    }
+
+    private ULCPopupMenu getParameterGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu parameterGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone()) {
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
@@ -54,17 +72,7 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements NavigationTre
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, mainModel)))
         parameterGroupNodePopUpMenu.addSeparator()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllParameters")))
-        renderer.popupMenus[Parameterization.class.name] = parameterGroupNodePopUpMenu
-
-        ULCPopupMenu simulationGroupNodePopUpMenu = new ULCPopupMenu()
-        if (UserContext.isStandAlone())
-            simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
-        simulationGroupNodePopUpMenu.addSeparator()
-        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllSimulations")))
-        renderer.popupMenus[Simulation.class.name] = simulationGroupNodePopUpMenu
-        if (itemClass == Simulation || itemClass == Parameterization)
-            return renderer.popupMenus[itemClass.name]
-        return renderer.popupMenus['groupNodePopUpMenu']
+        return parameterGroupNodePopUpMenu
     }
 
     public ULCIcon getIcon() {

@@ -2,12 +2,12 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,10 +19,6 @@ class CalculationUIItem extends SimulationUIItem {
         super(mainModel, simulationModel, simulation)
     }
 
-    public CalculationUIItem(RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel,
-                             Model simulationModel, Simulation simulation) {
-        super(mainModel, tableTreeModel, simulationModel, simulation)
-    }
 
     String createTitle() {
         return null  
@@ -33,7 +29,7 @@ class CalculationUIItem extends SimulationUIItem {
         return view.content
     }
 
-    IContentModel getViewModel() {
+    AbstractModellingModel getViewModel() {
         CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, mainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template

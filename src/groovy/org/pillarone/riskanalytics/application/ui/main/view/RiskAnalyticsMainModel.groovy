@@ -14,18 +14,22 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
+import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 
-class RiskAnalyticsMainModel extends AbstractPresentationModel {
+class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
     List<AbstractUIItem> openItems
     Map<AbstractUIItem, IContentModel> viewModelsInUse
-    AbstractTableTreeModel selectionTreeModel
+    AbstractTableTreeModel navigationTableTreeModel
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction
     def switchActions = []
@@ -40,6 +44,9 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
+        ModellingInformationTableTreeModel modellingInformationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
+        modellingInformationTableTreeModel.buildTreeNodes()
+        navigationTableTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
     }
 
     void saveAllOpenItems() {
@@ -59,7 +66,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
             closeItem(itemNode.item.modelClass.newInstance(), childNode.item)
 
             childNode.userObject = name
-            selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+//            selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
 
             renameAllChildren(childNode, name)
         }
@@ -67,7 +74,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
     public void removeItems(Model selectedModel, ItemGroupNode itemGroupNode, List<AbstractUIItem> modellingItems) {
         closeItems(selectedModel, modellingItems)
-        selectionTreeModel.removeAllGroupNodeChildren(itemGroupNode)
+//        selectionTreeModel.removeAllGroupNodeChildren(itemGroupNode)
         try {
             for (AbstractUIItem item: modellingItems) {
                 item.remove()
@@ -213,6 +220,15 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
             pollingBatchSimulationTimer.syncClientState = false
             pollingBatchSimulationTimer.start()
         } catch (NullPointerException ex) {}
+    }
+
+    public void simulationStart(Simulation simulation) {
+    }
+
+    public void simulationEnd(Simulation simulation, Model model) {
+        if (simulation.simulationRun?.endTime != null) {
+            navigationTableTreeModel.addNodeForItem(model, simulation)
+        }
     }
 
 }

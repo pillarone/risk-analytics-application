@@ -9,7 +9,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTr
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
-class ItemNode extends DefaultMutableTableTreeNode implements NavigationTreeNode {
+class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
     AbstractUIItem abstractUIItem
     boolean renameable
@@ -35,7 +35,7 @@ class ItemNode extends DefaultMutableTableTreeNode implements NavigationTreeNode
         return abstractUIItem.item.class
     }
 
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
+    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         return null
     }
 

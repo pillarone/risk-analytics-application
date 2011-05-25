@@ -36,7 +36,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ModellingInformationTableTreeModel extends AbstractTableTreeModel implements ISimulationListener {
+class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Quarter", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
 
@@ -356,15 +356,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
         return ""
     }
 
-    public void simulationStart(Simulation simulation) {
-    }
 
-    public void simulationEnd(Simulation simulation, Model model) {
-        if (simulation.simulationRun?.endTime != null) {
-            println "add a simulation : ${simulation.name}"
-            addNodeForItem(model, simulation)
-        }
-    }
 
 
 }

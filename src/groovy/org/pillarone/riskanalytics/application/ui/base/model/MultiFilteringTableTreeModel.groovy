@@ -11,7 +11,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class MultiFilteringTableTreeModel extends FilteringTableTreeModel implements ISimulationListener {
+class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
 
     List<ITableTreeFilter> filters
 
@@ -70,13 +70,6 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel implements IS
         return false
     }
 
-    void simulationStart(Simulation simulation) {
-        model.simulationStart(simulation)
-    }
-
-    void simulationEnd(Simulation simulation, Model selectedModel) {
-        model.simulationEnd(simulation, selectedModel)
-    }
 
 
 }

@@ -16,8 +16,7 @@ public class NewBatchAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-//        BatchRun batchRun = new BatchRun()
-        this.model.openItem(null, new BatchUIItem(model, tree.model, null))
+        this.model.openItem(null, new BatchUIItem(model,  null))
     }
 
 }

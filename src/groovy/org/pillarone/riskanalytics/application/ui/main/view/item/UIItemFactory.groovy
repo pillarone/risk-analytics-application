@@ -24,17 +24,17 @@ class UIItemFactory {
 
     public static ModellingUIItem createItem(ModellingItem modellingItem, Model model, RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel) {
         switch (modellingItem.class) {
-            case Parameterization.class: return new ParameterizationUIItem(mainModel, tableTreeModel, model, (Parameterization) modellingItem)
-            case ResultConfiguration.class: return new ResultConfigurationUIItem(mainModel, tableTreeModel, model, (ResultConfiguration) modellingItem)
+            case Parameterization.class: return new ParameterizationUIItem(mainModel,  model, (Parameterization) modellingItem)
+            case ResultConfiguration.class: return new ResultConfigurationUIItem(mainModel,  model, (ResultConfiguration) modellingItem)
             default: throw new IllegalArgumentException("modellingItem ${modellingItem.name} not supported")
         }
     }
 
     public static ModellingUIItem createItem(Simulation simulation, Model model, RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel) {
         if (DeterministicModel.class.isAssignableFrom(simulation.modelClass))
-            return new DeterministicResultUIItem(mainModel, tableTreeModel, (DeterministicModel) model, simulation)
+            return new DeterministicResultUIItem(mainModel,  (DeterministicModel) model, simulation)
         else if (StochasticModel.class.isAssignableFrom(simulation.modelClass))
-            return new StochasticResultUIItem(mainModel, tableTreeModel, (StochasticModel) model, simulation)
+            return new StochasticResultUIItem(mainModel,  (StochasticModel) model, simulation)
         else
             throw new IllegalArgumentException("modelClass ${simulation.modelClass} not supported")
     }

@@ -345,7 +345,7 @@ class ModellingInformationTableTreeBuilder {
 
     private ITableTreeNode createNode(Model selectedModel, Parameterization item) {
         Model selectedModelInstance = getNewModelInstance(selectedModel)
-        return createNode(new ParameterizationUIItem(mainModel, model, selectedModelInstance, item))
+        return createNode(new ParameterizationUIItem(mainModel, selectedModelInstance, item))
     }
 
     private ITableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
@@ -356,7 +356,7 @@ class ModellingInformationTableTreeBuilder {
 
     private ITableTreeNode createNode(Model selectedModel, ResultConfiguration item) {
         Model selectedModelInstance = getNewModelInstance(selectedModel)
-        return createNode(new ResultConfigurationUIItem(mainModel, model, selectedModelInstance, item))
+        return createNode(new ResultConfigurationUIItem(mainModel,  selectedModelInstance, item))
     }
 
     private ITableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
@@ -370,7 +370,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private ITableTreeNode createNode(Model selectedModel, BatchRun batchRun) {
-        return new BatchRunNode(new BatchUIItem(mainModel, model, batchRun))
+        return new BatchRunNode(new BatchUIItem(mainModel,  batchRun))
     }
 
     private ITableTreeNode createNode(Model selectedModel, Simulation item) {

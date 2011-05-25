@@ -22,8 +22,7 @@ public class BatchRunNode extends ItemNode {
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree) {
-        if (renderer.popupMenus['batchesNodePopUpMenu']) return renderer.popupMenus['batchesNodePopUpMenu']
+    public ULCPopupMenu getPopupMenu( ULCTableTree tree) {
         ULCPopupMenu batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = "batchesNodePopUpMenu"
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, abstractUIItem.mainModel)))
@@ -31,7 +30,6 @@ public class BatchRunNode extends ItemNode {
         batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, abstractUIItem.mainModel)))
         batchesNodePopUpMenu.addSeparator()
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteBatchAction(tree, (BatchUIItem) abstractUIItem)))
-        renderer.popupMenus['batchesNodePopUpMenu'] = batchesNodePopUpMenu
         return batchesNodePopUpMenu
     }
 

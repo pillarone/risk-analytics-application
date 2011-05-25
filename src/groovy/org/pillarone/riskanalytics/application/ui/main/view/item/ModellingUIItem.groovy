@@ -23,14 +23,9 @@ abstract class ModellingUIItem extends AbstractUIItem {
     public ModellingUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ModellingItem item) {
         super(mainModel, simulationModel)
         this.item = item
+        this.tableTreeModel = mainModel.navigationTableTreeModel
     }
 
-    public ModellingUIItem(RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel,
-                           Model simulationModel, ModellingItem item) {
-        this(mainModel, simulationModel, item)
-        this.tableTreeModel = tableTreeModel
-
-    }
 
     @Override
     public boolean isLoaded() {
@@ -59,7 +54,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         for (SimulationRun simulationRun: simulationRuns) {
             Simulation simulation = ModellingItemFactory.getSimulation(simulationRun.name, item.modelClass)
-            SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, tableTreeModel, model, simulation)
+            SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
             simulationUIItem.remove()
         }
         return true
@@ -121,7 +116,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
             item.save()
         }
         //todo fja
-//        mainModel.updateViewModelsMap()
+        //        mainModel.updateViewModelsMap()
         mainModel.fireModelChanged()
         mainModel.fireModelItemChanged()
     }

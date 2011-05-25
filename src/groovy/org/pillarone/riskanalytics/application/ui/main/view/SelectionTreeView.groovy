@@ -30,9 +30,9 @@ class SelectionTreeView {
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
 
-    public SelectionTreeView(RiskAnalyticsMainModel mainModel, AbstractTableTreeModel navigationTableTreeModel) {
+    public SelectionTreeView(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
-        this.navigationTableTreeModel = navigationTableTreeModel
+        this.navigationTableTreeModel = mainModel.navigationTableTreeModel
         initTree()
         initComponents()
         layoutComponents()

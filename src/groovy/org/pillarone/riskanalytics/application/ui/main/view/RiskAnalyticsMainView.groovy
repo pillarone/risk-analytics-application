@@ -47,11 +47,8 @@ class RiskAnalyticsMainView extends AbstractView implements IP1RATModelListener,
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
         cardPaneManager = new CardPaneManager(modelPane)
-        AbstractTableTreeModel modellingInformationTableTreeModel = ModellingInformationTableTreeModel.getInstance(mainModel)
-        modellingInformationTableTreeModel.buildTreeNodes()
-        MultiFilteringTableTreeModel tableTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
-        navigationView = new SelectionTreeView(mainModel, tableTreeModel)
-        headerView = new HeaderView(navigationView.getSelectionTree(), mainModel, tableTreeModel)
+        navigationView = new SelectionTreeView(mainModel)
+        headerView = new HeaderView(navigationView.getSelectionTree(), mainModel)
 
 
     }

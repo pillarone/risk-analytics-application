@@ -9,9 +9,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTr
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-public interface NavigationTreeNode {
+public interface INavigationTreeNode {
 
-    public ULCPopupMenu getPopupMenu(MainSelectionTableTreeCellRenderer renderer, ULCTableTree tree)
+    public ULCPopupMenu getPopupMenu( ULCTableTree tree)
 
     public ULCIcon getIcon()
 

@@ -22,11 +22,6 @@ class ResultConfigurationUIItem extends ModellingUIItem {
         super(mainModel, simulationModel, resultConfiguration)
     }
 
-    public ResultConfigurationUIItem(RiskAnalyticsMainModel mainModel, AbstractTableTreeModel tableTreeModel,
-                                     Model simulationModel, ResultConfiguration resultConfiguration) {
-        super(mainModel, tableTreeModel, simulationModel, resultConfiguration)
-    }
-
     ULCContainer createDetailView() {
         ResultConfigurationView view = new ResultConfigurationView(getViewModel())
         mainModel.addModelItemChangedListener(view)

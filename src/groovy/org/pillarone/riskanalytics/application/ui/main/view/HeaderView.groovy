@@ -62,13 +62,13 @@ class HeaderView extends AbstractView {
     ULCTableTree navigationTableTree
 
     RiskAnalyticsMainModel model
-    AbstractTableTreeModel tableTreeModel
+    AbstractTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
 
-    public HeaderView(ULCTableTree navigationTableTree, RiskAnalyticsMainModel model, AbstractTableTreeModel tableTreeModel) {
+    public HeaderView(ULCTableTree navigationTableTree, RiskAnalyticsMainModel model) {
         this.navigationTableTree = navigationTableTree
         this.model = model
-        this.tableTreeModel = tableTreeModel
+        this.navigationTableTreeModel = model.navigationTableTreeModel
         init()
     }
 
@@ -88,7 +88,7 @@ class HeaderView extends AbstractView {
         rightToolBar = new ULCToolBar()
         rightToolBar.floatable = false
         //init actions
-        refreshAction = new RefreshAction(tableTreeModel)
+        refreshAction = new RefreshAction(navigationTableTreeModel)
         exportAllNewestVersionAction = new ExportAllAction(model, true)
         exportAllAction = new ExportAllAction(model, false)
         importAllAction = new ImportAllAction(model, "ImportAllParameterizations")
@@ -186,7 +186,7 @@ class HeaderView extends AbstractView {
         toolBar.addSeparator()
 
         //todo fja
-        navigationBarTopPane = new NavigationBarTopPane(toolBar, tableTreeModel)
+        navigationBarTopPane = new NavigationBarTopPane(toolBar, navigationTableTreeModel)
         navigationBarTopPane.init()
 
         rightToolBar.add(UIUtils.spaceAround(lockedLabel, 6, 3, 3, 3))

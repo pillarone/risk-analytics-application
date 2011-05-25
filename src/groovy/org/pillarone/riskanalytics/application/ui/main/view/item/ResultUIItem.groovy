@@ -19,11 +19,6 @@ abstract class ResultUIItem extends ModellingUIItem {
         super(model, simulationModel, simulation)
     }
 
-    public ResultUIItem(RiskAnalyticsMainModel model, AbstractTableTreeModel tableTreeModel,
-                        Model simulationModel, Simulation simulation) {
-        super(model, tableTreeModel, simulationModel, simulation)
-    }
-
     @Override
     void rename(String newName) {
         ITableTreeNode itemNode = tableTreeModel.findNodeForItem(tableTreeModel.root, this)

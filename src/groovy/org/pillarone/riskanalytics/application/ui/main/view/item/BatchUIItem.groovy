@@ -28,10 +28,6 @@ class BatchUIItem extends AbstractUIItem {
         this.batchRun = batchRun
     }
 
-    public BatchUIItem(RiskAnalyticsMainModel model, AbstractTableTreeModel tableTreeModel, BatchRun batchRun) {
-        this(model, batchRun)
-        this.tableTreeModel = tableTreeModel
-    }
 
     String createTitle() {
         return batchRun ? batchRun.name : "new batch"

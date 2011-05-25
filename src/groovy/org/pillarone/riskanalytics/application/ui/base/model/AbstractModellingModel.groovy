@@ -6,10 +6,10 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
 abstract class AbstractModellingModel implements IContentModel {
 

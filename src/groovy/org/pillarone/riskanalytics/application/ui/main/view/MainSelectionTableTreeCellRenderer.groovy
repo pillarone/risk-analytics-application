@@ -7,10 +7,13 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
-import org.pillarone.riskanalytics.application.ui.base.model.NavigationTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,7 +22,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     ULCTableTree tree
     RiskAnalyticsMainModel mainModel
-    Map<String, ULCPopupMenu> popupMenus = [:]
+    Map<Class, ULCPopupMenu> popupMenus = [:]
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
 
     public MainSelectionTableTreeCellRenderer(ULCTableTree tree, RiskAnalyticsMainModel mainModel) {
@@ -31,10 +34,9 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setFont(node)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tree, value, selected, expanded, leaf, hasFocus, node)
-        //todo fja by class
-        ((ULCComponent) component).setComponentPopupMenu(((NavigationTreeNode) node).getPopupMenu(this, tree))
-        ((ULCComponent) component).setToolTipText(((NavigationTreeNode) node).getToolTip())
-        setIcon(((NavigationTreeNode) node).getIcon())
+        ((ULCComponent) component).setComponentPopupMenu(getPopupMenu(node))
+        ((ULCComponent) component).setToolTipText(((INavigationTreeNode) node).getToolTip())
+        setIcon(((INavigationTreeNode) node).getIcon())
         return component
 
     }
@@ -49,6 +51,20 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     void setFont(def node) {
         setFont(new Font(getFont().getName(), Font.PLAIN, getFont().getSize()))
         setForeground(null)
+    }
+
+    private ULCPopupMenu getPopupMenu(Object node) {
+        if (popupMenus.containsKey(node.class)) return popupMenus.get(node.class)
+        ULCPopupMenu popupMenu = ((INavigationTreeNode) node).getPopupMenu(tree)
+        popupMenus.put(node.class, popupMenu)
+        return popupMenu
+    }
+
+    private ULCPopupMenu getPopupMenu(ItemGroupNode node) {
+        if (popupMenus.containsKey(node.itemClass)) return popupMenus.get(node.itemClass)
+        ULCPopupMenu popupMenu = node.getPopupMenu(tree)
+        popupMenus.put(node.itemClass, popupMenu)
+        return popupMenu
     }
 
 }
