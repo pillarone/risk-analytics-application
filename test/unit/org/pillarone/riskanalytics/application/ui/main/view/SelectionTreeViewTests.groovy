@@ -30,8 +30,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
         RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
-        viewModel = getMockTreeModel(mainModel)
-        SelectionTreeView view = new SelectionTreeView(mainModel, viewModel)//getMockP1RATModel(viewModel))
+        SelectionTreeView view = new SelectionTreeView(mainModel)//getMockP1RATModel(viewModel))
         return view.content;
     }
 
@@ -98,13 +97,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         componentTree.selectCell(2, 0)
 
-        //fja callPopupOnCell doesn't work in cruise on the server
-        //        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
-        //
-        //        assertNotNull popupMenuOperator
-        //
-        //        ULCMenuItemOperator run = new ULCMenuItemOperator(popupMenuOperator, "Run simulation ...")
-        //        assertNotNull run
     }
 
     public void testSaveAsAction() {
@@ -164,7 +156,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
         assertNotNull openBatch
-        openBatch.clickMouse()
 
     }
 
@@ -207,8 +198,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         ULCMenuItemOperator openResult = new ULCMenuItemOperator(popupMenuOperator, "Open")
         assertNotNull openResult
-        openResult.clickMouse()
-
     }
 
     public void testExportResult() {
@@ -239,30 +228,9 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     }
 
 
-    private P1RATModel getMockP1RATModel(def viewModel) {
-        P1RATModel p1RATModel = new P1RATModel(viewModel)
-//        p1RATModel.selectionTreeModel = new FilteringTableTreeModel(viewModel, new ParameterizationNodeFilter(null, -1))
-        p1RATModel.selectionTreeModel = new MultiFilteringTableTreeModel(viewModel)
-        p1RATModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
-        }
-        p1RATModel.metaClass.openItem = {Model pcModel, Parameterization item ->
-            assertEquals pcModel.name, "Application"
-            assertNotNull item
-        }
-
-        p1RATModel.metaClass.openItem = {Model pcModel, Simulation item ->
-            assertEquals pcModel.name, "Application"
-            assertNotNull item
-        }
-
-        return p1RATModel
-    }
 
     private RiskAnalyticsMainModel getMockRiskAnalyticsMainModel() {
-//        RiskAnalyticsMainModel p1RATModel = new RiskAnalyticsMainModel(viewModel)
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-//        p1RATModel.selectionTreeModel = new FilteringTableTreeModel(viewModel, new ParameterizationNodeFilter(null, -1))
-        //        mainModel.selectionTreeModel = new MultiFilteringTableTreeModel(viewModel)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(getMockTreeModel(null))
         mainModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
         }
         mainModel.metaClass.openItem = {Model pcModel, Parameterization item ->
@@ -280,7 +248,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     private ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
-//        ModellingInformationTableTreeBuilder builder = new ModellingInformationTableTreeBuilder(treeModel)
         treeModel.builder.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
         }

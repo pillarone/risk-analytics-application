@@ -35,10 +35,18 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setFont(node)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tree, value, selected, expanded, leaf, hasFocus, node)
-        ((ULCComponent) component).setComponentPopupMenu(getPopupMenu(node))
-        ((ULCComponent) component).setToolTipText(((INavigationTreeNode) node).getToolTip())
-        setIcon(((INavigationTreeNode) node).getIcon())
+        renderComponent((ULCComponent) component, node)
         return component
+
+    }
+
+    private void renderComponent(ULCComponent component, INavigationTreeNode node) {
+        component.setComponentPopupMenu(getPopupMenu(node))
+        component.setToolTipText(node.getToolTip())
+        setIcon(node.getIcon())
+    }
+
+    private void renderComponent(ULCComponent component, Object node) {
 
     }
 

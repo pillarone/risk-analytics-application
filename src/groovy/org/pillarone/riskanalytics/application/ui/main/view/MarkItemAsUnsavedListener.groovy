@@ -4,13 +4,14 @@ import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
+import com.ulcjava.base.application.ULCTabbedPane
 
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
-    ULCCloseableTabbedPane tabbedPane
+    ULCTabbedPane tabbedPane
     int paneIndex
     static String UNSAVED_MARK = " *"
 
-    public MarkItemAsUnsavedListener(ULCCloseableTabbedPane tabbedPane, int paneIndex) {
+    public MarkItemAsUnsavedListener(ULCTabbedPane tabbedPane, int paneIndex) {
         this.@tabbedPane = tabbedPane
         this.@paneIndex = paneIndex
     }

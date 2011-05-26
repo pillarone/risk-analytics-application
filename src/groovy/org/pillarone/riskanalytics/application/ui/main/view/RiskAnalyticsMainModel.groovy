@@ -50,6 +50,11 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         navigationTableTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
     }
 
+    public RiskAnalyticsMainModel(AbstractTableTreeModel navigationTableTreeModel) {
+        viewModelsInUse = [:]
+        this.navigationTableTreeModel = navigationTableTreeModel
+    }
+
     void saveAllOpenItems() {
         viewModelsInUse.keySet().each {AbstractUIItem item ->
             item.save()

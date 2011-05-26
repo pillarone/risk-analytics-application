@@ -35,6 +35,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         ULCRootPane frame = createRootPane()
 
         RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel())
+        mainView.init()
         frame.setMenuBar(mainView.getMenuBar())
         frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.getContent(), ULCBoxPane.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
         UIUtils.setRootPane(frame)

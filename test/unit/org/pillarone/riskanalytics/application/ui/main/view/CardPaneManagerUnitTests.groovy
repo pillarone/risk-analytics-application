@@ -33,14 +33,15 @@ class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
         Closure closeure2 = { event ->  }
 
         //test add card
-        cardPaneManager.addCard(core)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(null)
+        cardPaneManager.addCard(core, mainModel)
 
         assertEquals "Core", cardPaneManager.cardPane.getSelectedName()
 
         assertTrue "pane manager must contain CORE", cardPaneManager.contains(core)
         assertFalse "pane manager doesn't contain APPLICATION", cardPaneManager.contains(application)
 
-        cardPaneManager.addCard(application)
+        cardPaneManager.addCard(application, mainModel)
         assertTrue "pane manager must contain APPLICATION", cardPaneManager.contains(application)
 
         assertEquals "Application", cardPaneManager.cardPane.getSelectedName()
@@ -57,7 +58,7 @@ class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
 
         //add batch card
         assertEquals 1, cardPane.getComponentCount()
-        cardPaneManager.addCard(null)
+        cardPaneManager.addCard(null, mainModel)
         assertEquals 2, cardPane.getComponentCount()
 
         assertEquals CardPaneManager.NO_MODEL, cardPane.getSelectedName()

@@ -23,7 +23,6 @@ class CalculationUIItemTests extends AbstractUIItemTest {
     public void testView() {
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
         assertNotNull frameOperator
-        Thread.sleep 5000
     }
 
 

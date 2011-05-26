@@ -40,4 +40,10 @@ class BatchRootNode extends DefaultMutableTableTreeNode implements INavigationTr
     public String getToolTip() {
         return ""
     }
+
+    public String getName() {
+        return ""
+    }
+
+
 }

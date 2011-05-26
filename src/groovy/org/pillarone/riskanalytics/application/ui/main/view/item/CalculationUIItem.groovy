@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.Calculati
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,7 +22,7 @@ class CalculationUIItem extends SimulationUIItem {
 
 
     String createTitle() {
-        return null  
+        return "Calculation"
     }
 
     ULCContainer createDetailView() {
@@ -29,7 +30,7 @@ class CalculationUIItem extends SimulationUIItem {
         return view.content
     }
 
-    AbstractModellingModel getViewModel() {
+    IContentModel getViewModel() {
         CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, mainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template

@@ -38,7 +38,7 @@ class ResultConfigurationViewModel extends AbstractModellingModel {
 
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
-        return new SaveAction(parent, mainModel, mainModel.getAbstractUIItem(item))
+        return new SaveAction(parent, mainModel, mainModel?.getAbstractUIItem(item))
     }
 
     void setReadOnly(boolean value) {

@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.*
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -69,7 +70,7 @@ class CompareSimulationsViewModelTests extends GroovyTestCase {
 
         Model model = new ApplicationModel()
 
-        CompareSimulationsViewModel compareSimulationsViewModel = new TestCompareSimulationsViewModel(model, ModelStructure.getStructureForModel(model.class), [new SimulationNode(simulation1), new SimulationNode(simulation2)])
+        CompareSimulationsViewModel compareSimulationsViewModel = new TestCompareSimulationsViewModel(model, ModelStructure.getStructureForModel(model.class), [simulation1, simulation2])
         assertEquals 1, compareSimulationsViewModel.builder.allPaths.size()
         assertTrue compareSimulationsViewModel.builder.allPaths.keySet().contains(path1.pathName + ":" + field.fieldName)
 

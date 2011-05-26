@@ -53,7 +53,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
 
     protected void synchronizeFilteredTree(ITableTreeNode node, FilterTableTreeNode filteredNode) {
         nodeMapping[node] = filteredNode
-        node.childCount.times {childIndex ->
+        node?.childCount?.times {childIndex ->
 
             def childNode = node.getChildAt(childIndex)
             FilterTableTreeNode filteredChildNode = filteredNode.childNodes.find {it.originalNode == childNode}

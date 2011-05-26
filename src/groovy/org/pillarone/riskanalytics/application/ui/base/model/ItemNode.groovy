@@ -51,5 +51,9 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         return ""
     }
 
+    public String getName() {
+        return abstractUIItem.item.name
+    }
+
 
 }

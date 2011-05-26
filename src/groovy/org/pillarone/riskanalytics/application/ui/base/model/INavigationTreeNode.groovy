@@ -11,6 +11,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTr
  */
 public interface INavigationTreeNode {
 
+    public String getName()
+
     public ULCPopupMenu getPopupMenu( ULCTableTree tree)
 
     public ULCIcon getIcon()

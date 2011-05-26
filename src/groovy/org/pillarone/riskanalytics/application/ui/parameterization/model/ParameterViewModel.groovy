@@ -47,7 +47,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
 
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
-        return new SaveAction(parent, mainModel, mainModel.getAbstractUIItem(item))
+        return new SaveAction(parent, mainModel, mainModel?.getAbstractUIItem(item))
     }
 
 

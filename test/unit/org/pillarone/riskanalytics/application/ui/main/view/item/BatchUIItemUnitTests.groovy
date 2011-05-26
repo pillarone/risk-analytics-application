@@ -15,7 +15,7 @@ class BatchUIItemUnitTests extends AbstractP1RATTestCase {
 
     @Override
     ULCComponent createContentPane() {
-        RiskAnalyticsMainModel model = new RiskAnalyticsMainModel()
+        RiskAnalyticsMainModel model = new RiskAnalyticsMainModel(null)
         BatchUIItem batchUIItem = new BatchUIItem(model, null)
         return batchUIItem.createDetailView()
     }

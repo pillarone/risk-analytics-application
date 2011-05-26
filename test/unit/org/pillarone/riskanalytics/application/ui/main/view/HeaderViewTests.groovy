@@ -9,12 +9,12 @@ import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 class HeaderViewTests extends AbstractP1RATTestCase {
 
     public void testView() {
-        Thread.sleep 10000
+//        Thread.sleep 10000
     }
 
     @Override
     ULCComponent createContentPane() {
-        HeaderView headerView = new HeaderView(new RiskAnalyticsMainModel())
+        HeaderView headerView = new HeaderView(null, new RiskAnalyticsMainModel(null))
         return headerView.content
     }
 

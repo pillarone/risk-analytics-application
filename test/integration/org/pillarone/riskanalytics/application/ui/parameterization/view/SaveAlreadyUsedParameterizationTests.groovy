@@ -22,6 +22,10 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -54,10 +58,15 @@ class SaveAlreadyUsedParameterizationTests extends AbstractSimpleFunctionalTest 
         parameterization.metaClass.isUsedInSimulation = {-> return true}
 
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
+        parameterViewModel.mainModel = new RiskAnalyticsMainModel(null)
+        parameterViewModel.mainModel.currentItem = new ParameterizationUIItem(parameterViewModel.mainModel, new CoreModel(), parameterization)
 
         ULCBoxPane content = new ParameterView(parameterViewModel).content
         IActionListener saveAction = content.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false))
-        saveAction.metaClass.save = {ModellingItem modellingItem ->
+        saveAction.metaClass.save = {AbstractUIItem modellingItem ->
+            parameterization.changed = false
+        }
+        saveAction.metaClass.saveItem = {AbstractUIItem modellingItem ->
             parameterization.changed = false
         }
         frame.setContentPane(content)

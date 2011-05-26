@@ -22,7 +22,7 @@ class TabbedPaneManagerUnitTests extends AbstractP1RATTestCase {
 
         assertEquals "tabCount must be 0", 0, tabbedPane.getTabCount()
 
-        RiskAnalyticsMainModel model = new RiskAnalyticsMainModel()
+        RiskAnalyticsMainModel model = new RiskAnalyticsMainModel(null)
         BatchUIItem batchUIItem = new BatchUIItem(model, null)
 
         tabbedPaneManager.addTab(batchUIItem)
