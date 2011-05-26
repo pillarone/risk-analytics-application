@@ -13,8 +13,10 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelDAO
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
@@ -61,12 +63,27 @@ class ResultSettingsView {
             box.add(content)
         }
 
-        ULCBoxPane holder = new ULCBoxPane(2, 1)
+        ULCBoxPane runtimeParameters = boxLayout("Runtime parameters") { ULCBoxPane box ->
+            ULCBoxPane content = new ULCBoxPane(2, 0)
+            for (ParameterHolder parameter in simulation.runtimeParameters) {
+                content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(ComponentUtils.getNormalizedName(parameter.path)))
+                content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(parameter.businessObject.toString()))
+            }
+
+            box.add(content)
+        }
+
+        boolean hasRuntimeParameters = !simulation.runtimeParameters.empty
+
+        ULCBoxPane holder = new ULCBoxPane(hasRuntimeParameters ? 3 : 2, 1)
         holder.add(ULCBoxPane.BOX_EXPAND_TOP, settings)
         holder.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
 
         content = new ULCBoxPane()
         content.add(ULCBoxPane.BOX_EXPAND_TOP, holder)
+        if (hasRuntimeParameters) {
+            content.add(ULCBoxPane.BOX_EXPAND_TOP, runtimeParameters)
+        }
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
 
     }
