@@ -4,6 +4,8 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -32,7 +34,5 @@ class ShowIterationInTreeViewAction extends SingleIterationAction {
                 resultView.tabbedPane.selectedIndex = tabIndex
             }
         }
-        //todo fja change to RAMM mainModel
-        resultView.p1ratModel.openItem(resultView.model.model, resultView.model.item)
     }
 }

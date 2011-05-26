@@ -89,14 +89,17 @@ class OpenItemDialog {
             if (!modellingUIItem.isLoaded()) {
                 modellingUIItem.load()
             }
-            item.daoClass.withTransaction {status ->
+            ModellingUIItem newModellingUIItem
+            modellingUIItem.item.daoClass.withTransaction {status ->
                 if (!item.isLoaded())
                     item.load()
                 modellingItem = ModellingItemFactory.incrementVersion(item)
                 mainModel.fireModelChanged()
-                mainModel.selectionTreeModel.addNodeForItem(modellingUIItem)
+                newModellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
+                mainModel.navigationTableTreeModel.addNodeForItem(newModellingUIItem)
             }
-            mainModel.openItem(model, UIItemFactory.createItem(modellingItem, model, mainModel))
+            if (newModellingUIItem)
+                mainModel.openItem(model, newModellingUIItem)
         }] as IActionListener)
 
         readOnlyButton.addActionListener([actionPerformed: {ActionEvent event ->
@@ -133,6 +136,6 @@ class OpenItemDialog {
     }
 
     ModellingItem getItem() {
-        return modellingUIItem.getItem()
+        return modellingUIItem.item
     }
 }

@@ -215,13 +215,16 @@ class ModellingInformationTableTreeBuilder {
         insertNodeInto(createNode(item), groupNode)
     }
 
-    //todo fja add selected model as arg
-
     public def addNodeForItem(ModellingUIItem modellingUIItem) {
         ITableTreeNode groupNode = findGroupNode(modellingUIItem, findModelNode(root, modellingUIItem))
         createAndInsertItemNode(groupNode, modellingUIItem)
         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
         return groupNode
+    }
+
+    public def addNodeForItem(ModellingItem modellingItem) {
+        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
+        return addNodeForItem(modellingUIItem)
     }
 
     //todo fja add selected model as arg

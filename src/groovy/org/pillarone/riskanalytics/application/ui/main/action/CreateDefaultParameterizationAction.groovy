@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -39,7 +41,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
             } else {
                 try {
                     int periodCount = hasOneParameterColumnOnly ? 1 : (Integer) dialog.periodCount.value
-                    def param
+                    Parameterization param
                     ParameterizationDAO.withTransaction {status ->
                         param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
                         param.name = dialog.nameInput.text
@@ -48,10 +50,11 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     }
                     dialog.hide()
 
-                    model.selectionTreeModel.addNodeForItem(param)
+                    ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(model, null, param)
+                    model.navigationTableTreeModel.addNodeForItem(parameterizationUIItem)
                     model.fireModelChanged()
-                    param.load(true)
-                    model.notifyOpenDetailView(simulationModel, param)
+                    parameterizationUIItem.load(true)
+                    model.notifyOpenDetailView(simulationModel, parameterizationUIItem)
                 } catch (Exception ex) {
                     LOG.error "Error creating default parameterization", ex
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "CreationError")

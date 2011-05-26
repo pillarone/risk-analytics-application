@@ -10,6 +10,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
+import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
@@ -26,10 +29,11 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         }
         Parameterization parameterization = service.changeStatus(item, toStatus())
         if (!item.is(parameterization)) {
-            model.selectionTreeModel.addNodeForItem(parameterization)
+            model.navigationTableTreeModel.addNodeForItem(parameterization)
         } else {
-            ITableTreeNode paramNode = model.selectionTreeModel.findNodeForItem(model.selectionTreeModel.root, parameterization)
-            model.selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(paramNode) as Object[]))
+            ParameterizationUIItem parameterizationUIItem = (ParameterizationUIItem)UIItemFactory.createItem(parameterization, null,model)
+            ITableTreeNode paramNode = TableTreeBuilderUtils.findNodeForItem(model.navigationTableTreeModel.root, parameterizationUIItem)
+            model.navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(paramNode) as Object[]))
         }
 
     }

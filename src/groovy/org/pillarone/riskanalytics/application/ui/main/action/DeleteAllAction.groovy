@@ -65,7 +65,7 @@ abstract class DeleteAllAction extends SelectionTreeAction {
 
 
     private void removeAllChildren(Model selectedModel, ModellingItem selectedItem) {
-        model.selectionTreeModel.removeAllNodeForItem(selectedItem)
+        model.navigationTableTreeModel.removeAllNodeForItem(selectedItem)
         model.fireModelChanged()
     }
 

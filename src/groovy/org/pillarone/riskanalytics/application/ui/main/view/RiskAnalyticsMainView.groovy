@@ -106,9 +106,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     void closeDetailView(Model model, AbstractUIItem abstractUIItem) {
         TabbedPaneManager tabbedPaneManager = cardPaneManager.getTabbedPaneManager(model)
-        if (!isChanged(abstractUIItem)) {
-            tabbedPaneManager.removeTab(abstractUIItem)
-        }
+        tabbedPaneManager.removeTab(abstractUIItem)
         //todo notify Enabler instead of syncMenuBar
         headerView.syncMenuBar()
     }

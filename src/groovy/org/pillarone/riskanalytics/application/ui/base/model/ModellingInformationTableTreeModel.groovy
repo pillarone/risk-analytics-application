@@ -273,19 +273,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
-    public void addNodeForItem( Simulation item) {
+    public void addNodeForItem(Object item) {
         indexerChanged()
         builder.addNodeForItem(item)
-    }
-
-    public def addNodeForItem(ModellingUIItem item) {
-        indexerChanged()
-        builder.addNodeForItem(item)
-    }
-
-    public def addNodeForItem(BatchUIItem batchRun) {
-        indexerChanged()
-        builder.addNodeForItem batchRun
     }
 
     ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
@@ -355,8 +345,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
         return ""
     }
-
-
 
 
 }

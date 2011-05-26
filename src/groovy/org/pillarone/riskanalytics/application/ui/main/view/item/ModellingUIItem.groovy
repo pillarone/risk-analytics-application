@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
+import org.apache.commons.lang.builder.HashCodeBuilder
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -41,7 +43,10 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     @Override
     String createTitle() {
-        return "$item.name v${item.versionNumber.toString()}".toString()
+        String title = "$item.name v${item.versionNumber.toString()}".toString()
+        if (item.changed)
+            title += MarkItemAsUnsavedListener.UNSAVED_MARK
+        return title
     }
 
     public boolean deleteDependingResults(Model model) {
@@ -166,5 +171,21 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         return this.@model
     }
+
+    @Override
+    boolean equals(Object obj) {
+        if (!(obj instanceof ModellingUIItem)) return false
+        return item.modelClass == obj.modelClass && item.name == obj.name && item.versionNumber.toString() == obj.versionNumber.toString()
+    }
+
+    @Override
+    int hashCode() {
+        HashCodeBuilder hcb = new HashCodeBuilder()
+        hcb.append(item.modelClass.toString())
+        hcb.append(item.modelClass.name)
+        hcb.append(item.versionNumber.toString())
+        return hcb.toHashCode()
+    }
+
 
 }

@@ -30,7 +30,7 @@ class TabbedPaneManager {
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
         tabManager.put(item, view)
-        item.addModellingItemChangeListener new MarkItemAsUnsavedListener(tabbedPane, tabIndex)
+        item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this,tabbedPane, item)
         tabbedPane.setToolTipTextAt(tabIndex, item.getToolTip())
     }
 
@@ -66,5 +66,15 @@ class TabbedPaneManager {
                 abstractUIItem = k
         }
         return abstractUIItem
+    }
+
+    public void updateTabbedPaneTitle(ULCTabbedPane tabbedPane, AbstractUIItem abstractUIItem) {
+        ULCComponent component = tabManager.get(abstractUIItem)
+        if (component) {
+            int tabIndex = tabbedPane.indexOfComponent(component)
+            if (tabIndex >= 0)
+                tabbedPane.setTitleAt(tabIndex, abstractUIItem.createTitle())
+        }
+
     }
 }
