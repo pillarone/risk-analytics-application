@@ -28,6 +28,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterPaneModel
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -67,6 +69,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     Class modelClass
     Model modelInstance
 
+    RuntimeParameterPaneModel parameterPaneModel
+
     private List<ISimulationValidationListener> listeners = []
 
     public SimulationSettingsPaneModel(Class modelClass) {
@@ -92,6 +96,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         randomSeedAction = new RandomSeedAction(this)
         reloadParameterizationListModelAction = new ReloadParameterizationListModelAction(this)
         reloadResultConfigurationListModelAction = new ReloadResultConfigurationListModelAction(this)
+
+        parameterPaneModel = new RuntimeParameterPaneModel(getModelInstance())
     }
 
     /**
@@ -206,6 +212,10 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         simulation.structure = ModelStructure.getStructureForModel(modelClass)
 
         initConfigParameters(simulation, parameterization.periodCount)
+
+        for(ParameterHolder holder in parameterPaneModel.parameters) {
+            simulation.addParameter(holder)
+        }
         return simulation
     }
 

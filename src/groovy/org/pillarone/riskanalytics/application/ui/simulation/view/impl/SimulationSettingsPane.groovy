@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import com.ulcjava.base.application.util.Font
 
 /**
  * A view class which can be used to collect all information necessary for a simulation run (Simulation & output strategy)
@@ -51,6 +52,8 @@ class SimulationSettingsPane {
     protected ULCCheckBox userDefinedRandomSeed
     protected ULCTextField randomSeed
     protected ULCTextField numberOfIterations
+
+    protected RuntimeParameterPane runtimeParameterPane
 
     SimulationSettingsPaneModel model
     final private Dimension dimension = new Dimension(100, 20)
@@ -132,6 +135,8 @@ class SimulationSettingsPane {
             beginOfFirstPeriod = new ULCSpinner(model.getBeginOfFirstPeriodSpinnerModel())
             beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
         }
+
+        runtimeParameterPane = new RuntimeParameterPane(model.parameterPaneModel)
 
     }
 
@@ -259,6 +264,17 @@ class SimulationSettingsPane {
         numberOfIterations.enabled = true
         randomSeed.enabled = userDefinedRandomSeed.isSelected()
         userDefinedRandomSeed.enabled = true
+    }
+
+    ULCContainer getContent() {
+        if (runtimeParameterPane.model.hasRuntimeParameters()) {
+            ULCTabbedPane tabbedPane = new ULCTabbedPane()
+            tabbedPane.addTab("Settings", content)
+            tabbedPane.addTab("Runtime parameters", runtimeParameterPane.content)
+            return tabbedPane
+        } else {
+            return content
+        }
     }
 
 }
