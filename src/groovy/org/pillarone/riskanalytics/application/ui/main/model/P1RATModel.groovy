@@ -28,6 +28,12 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.parameter.comment.ParameterizationCommentDAO
+import org.springframework.transaction.TransactionStatus
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 
 class P1RATModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -340,12 +346,13 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
 
 
 
-    public ModellingItem createNewVersion(Model model, ModellingItem item, boolean openNewVersion = true) {
+    public ModellingItem createNewVersion(Model model, ModellingItem item, String commentText, boolean openNewVersion = true) {
         ModellingItem modellingItem
         item.daoClass.withTransaction {status ->
             if (!item.isLoaded())
                 item.load()
             modellingItem = ModellingItemFactory.incrementVersion(item)
+            addComment(modellingItem, commentText)
         }
         fireModelChanged()
         selectionTreeModel.addNodeForItem(modellingItem)
@@ -353,6 +360,26 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             openItem(model, modellingItem)
         return modellingItem
     }
+
+    //todo fja : refactoring after merge
+    private void addComment(Parameterization parameterization, String commentText) {
+        if (commentText) {
+            Model model = parameterization.modelClass.newInstance()
+            String modelName = model.getName()
+            Comment comment = new Comment(modelName, -1)
+            comment.text = commentText
+            Tag version = Tag.findByName(NewCommentView.VERSION_COMMENT)
+            comment.addTag(version)
+            parameterization.addComment(comment)
+            parameterization.save()
+        }
+
+    }
+
+    private void addComment(ModellingItem item, String commentText) {
+
+    }
+
 
     public void openItem(Model model, Parameterization item) {
         if (!item.isLoaded())
@@ -370,10 +397,10 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
         notifyOpenDetailView(model, item)
     }
 
-    /**
-     * @param model
-     * @param item can be used for a simulation page or a result view
-     */
+/**
+ * @param model
+ * @param item can be used for a simulation page or a result view
+ */
     public void openItem(Model model, Simulation item) {
         // update parameter, result template and their version selection according correctly, if the item is not a result
         if (item.end == null) {

@@ -64,7 +64,7 @@ class SaveAction extends ResourceBasedAction {
         synchronized (item) {
             if (alert.value.equals(alert.firstButtonLabel)) {
                 Model itemModel = getItemModel(item)
-                model.createNewVersion(itemModel, item)
+                model.createNewVersion(itemModel, item, null)
                 model.closeItem(itemModel, item)
             } else if (alert.value.equals(alert.secondButtonLabel)) {
                 if (model.deleteDependingResults(getItemModel(item), item)) {

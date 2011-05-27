@@ -29,6 +29,9 @@ class ApplicationBootStrap {
             if (!Tag.findByName(NewCommentView.SHARED_COMMENTS)) {
                 new Tag(name: NewCommentView.SHARED_COMMENTS, tagType: EnumTagType.COMMENT).save()
             }
+            if (!Tag.findByName(NewCommentView.VERSION_COMMENT)) {
+                new Tag(name: NewCommentView.VERSION_COMMENT, tagType: EnumTagType.COMMENT).save()
+            }
 
         }
 

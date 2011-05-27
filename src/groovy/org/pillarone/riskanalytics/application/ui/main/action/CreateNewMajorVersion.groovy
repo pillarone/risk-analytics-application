@@ -5,6 +5,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -15,18 +17,27 @@ class CreateNewMajorVersion extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        createNewVersion(getSelectedItem())
+        ModellingItem item = getSelectedItem()
+        if (item instanceof Parameterization) {
+            Closure okAction = {ModellingItem modellingItem, String commentText ->
+                createNewVersion(modellingItem, commentText)
+            }
+            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(tree, item, okAction)
+            versionCommentDialog.show()
+        } else
+            createNewVersion(getSelectedItem(), null)
+
     }
 
-    private void createNewVersion(Parameterization item) {
-        model.createNewVersion(selectedModel, item)
+    private ModellingItem createNewVersion(Parameterization item, String commentText) {
+        return model.createNewVersion(selectedModel, item, commentText)
     }
 
 
-    private void createNewVersion(ResultConfiguration template) {
-        model.createNewVersion(selectedModel, template)
+    private ModellingItem createNewVersion(ResultConfiguration template, String commentText) {
+        return model.createNewVersion(selectedModel, template, commentText)
     }
 
-    private void createNewVersion(def node) {}
+    private ModellingItem createNewVersion(def node, String commentText) { return null}
 
 }

@@ -38,6 +38,7 @@ class NewCommentView {
     static int MAX_CHARS = 4080
     final static String POST_LOCKING = "post locking"
     final static String SHARED_COMMENTS = "shared comment"
+    final static String VERSION_COMMENT = "version"
 
     AbstractCommentableItemModel model;
     protected CommentAndErrorView commentAndErrorView

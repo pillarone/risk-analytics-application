@@ -132,7 +132,7 @@ class RunSimulationHandler {
         SimulationRun.withTransaction {TransactionStatus transactionStatus ->
             for (ModellingItem item: items) {
                 if (item.changed) {
-                    newItems << model.mainModel.createNewVersion(itemModel, item, false)
+                    newItems << model.mainModel.createNewVersion(itemModel, item,null, false)
                     model.mainModel.closeItem(itemModel, item)
                     item.load()
                 } else
