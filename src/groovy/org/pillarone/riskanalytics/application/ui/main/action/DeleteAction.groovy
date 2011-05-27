@@ -63,10 +63,6 @@ class DeleteAction extends SelectionTreeAction {
         }
     }
 
-    //todo fja
-//    private void removeItem(BatchRun selectedItem) {
-    //        model.removeItem(selectedItem)
-    //    }
 
     private void removeItem(def selectedItem) {}
 

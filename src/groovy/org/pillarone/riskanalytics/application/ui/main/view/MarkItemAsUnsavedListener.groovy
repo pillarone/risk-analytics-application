@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.*
 import com.ulcjava.base.application.ULCTabbedPane
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     ULCTabbedPane tabbedPane
@@ -23,9 +24,19 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
         tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
     }
 
-     public void itemSaved(ModellingItem modellingItem) {
-          tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
-     }
+    public void itemSaved(ModellingItem modellingItem) {
+//        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
+        update(abstractUIItem)
+    }
+
+    public void update(AbstractUIItem abstractUIItem) {
+        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
+    }
+
+    public void update(BatchUIItem batchUIItem) {
+        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, batchUIItem)
+        batchUIItem.mainModel.navigationTableTreeModel.refreshBatchNode()
+    }
 
 }
 

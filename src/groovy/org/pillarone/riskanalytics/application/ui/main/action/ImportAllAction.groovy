@@ -84,10 +84,4 @@ class ImportAllAction extends ImportAction {
         return null
     }
 
-    ULCWindow getAncestor() {
-        //todo fja
-        //        return UlcUtilities.getWindowAncestor(p1RATMainView?.content)
-    }
-
-
 }

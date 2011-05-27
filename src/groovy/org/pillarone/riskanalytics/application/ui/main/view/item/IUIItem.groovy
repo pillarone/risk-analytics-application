@@ -59,6 +59,6 @@ public interface IUIItem {
 
     public void removeAllModellingItemChangeListener()
 
-    public addModellingItemChangeListener(IModellingItemChangeListener listener)
+    public void addModellingItemChangeListener(IModellingItemChangeListener listener)
 
 }

@@ -271,7 +271,6 @@ class P1RATModel extends AbstractPresentationModel implements ISimulationListene
             selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
 
             renameAllChildren(itemNode, name)
-            Class modelClass = item.modelClass != null ? item.modelClass : Model
             fireModelChanged()
         }
     }

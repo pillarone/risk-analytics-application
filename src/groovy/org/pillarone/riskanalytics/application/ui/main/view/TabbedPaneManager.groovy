@@ -23,8 +23,6 @@ class TabbedPaneManager {
      * @param model
      */
     public void addTab(AbstractUIItem item) {
-        //use IUIItem.createDetailView() to create the content
-        //todo fja icon and toolTip
         ULCContainer view = item.createDetailView()
         tabbedPane.addTab(item.createTitle(), item.getIcon(), view)
         int tabIndex = tabbedPane.tabCount - 1

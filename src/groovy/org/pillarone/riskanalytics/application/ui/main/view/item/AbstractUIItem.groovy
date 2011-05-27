@@ -97,7 +97,7 @@ abstract class AbstractUIItem implements IUIItem {
 
     }
 
-    public addModellingItemChangeListener(IModellingItemChangeListener listener) {
+    public void addModellingItemChangeListener(IModellingItemChangeListener listener) {
 
     }
 

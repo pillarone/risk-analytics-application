@@ -65,18 +65,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         item.rename(name)
     }
 
-    private void renameAllChildren(ITableTreeNode itemNode, String name) {
-        //todo fja refactoring move the code to selectionTreeModel.renameAllChildren...
-        itemNode.childCount.times {
-            def childNode = itemNode.getChildAt(it)
-            closeItem(itemNode.item.modelClass.newInstance(), childNode.item)
-
-            childNode.userObject = name
-//            selectionTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
-
-            renameAllChildren(childNode, name)
-        }
-    }
 
     public void removeItems(Model selectedModel, ItemGroupNode itemGroupNode, List<AbstractUIItem> modellingItems) {
         closeItems(selectedModel, modellingItems)
@@ -198,7 +186,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public void setCurrentItem(def currentItem) {
         this.currentItem = (currentItem instanceof BatchUIItem) ? null : currentItem
-        //todo fja refactoring of action
         switchActions.each {
             boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof ResultUIItem)
             it.setEnabled(b)

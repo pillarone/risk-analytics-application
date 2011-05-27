@@ -207,7 +207,6 @@ class ModellingInformationTableTreeBuilder {
         return node
     }
 
-    //todo fja add selected model as arg
 
     public void addNodeForItem(Simulation item) {
         DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
@@ -226,8 +225,6 @@ class ModellingInformationTableTreeBuilder {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
         return addNodeForItem(modellingUIItem)
     }
-
-    //todo fja add selected model as arg
 
     public def addNodeForItem(BatchUIItem batchRun) {
         ITableTreeNode groupNode = findBatchRootNode(root)
@@ -276,7 +273,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public void refreshBatchNode() {
-        ITableTreeNode batchNode = findBatchRootNode()
+        ITableTreeNode batchNode = findBatchRootNode(root)
 
         removeNodeFromParent(batchNode)
         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))

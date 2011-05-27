@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -30,17 +31,15 @@ class NewBatchView extends AbstractView {
     ULCButton cancelButton
     final Dimension dimension = new Dimension(140, 20)
 
+
     RiskAnalyticsMainModel model
     BatchUIItem batchUIItem
-    //todo fja
-    //    ULCDetachableTabbedPane tabbedPane
 
     public NewBatchView() {
     }
 
     public NewBatchView(RiskAnalyticsMainModel model) {
         this.model = model
-//        this.tabbedPane = tabbedPane
     }
 
     public NewBatchView(BatchUIItem batchUIItem) {
@@ -78,6 +77,7 @@ class NewBatchView extends AbstractView {
 
     public void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
+            notifyItemSaved()
             batchUIItem.createNewBatch((ULCComponent) evt.source, mapToDao())
         }] as IActionListener)
     }
@@ -86,11 +86,9 @@ class NewBatchView extends AbstractView {
         return StringUtils.isNotEmpty(batchName) && StringUtils.isNotBlank(batchName) && BatchRun.findByName(batchName) == null
     }
 
-//    protected void updateGui(BatchRun batchRun, String oldName) {
-    //        model.addItem(batchRun)
-    //        todo fja
-    //                TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
-    //}
+    protected void notifyItemSaved() {
+        batchUIItem.notifyItemSaved()
+    }
 
     protected ULCBoxPane getParameterSectionPane() {
         ULCBoxPane parameterSection = boxLayout(UIUtils.getText(NewBatchView.class, "BatchConfig") + ":") {ULCBoxPane box ->
@@ -147,5 +145,6 @@ class NewBatchView extends AbstractView {
         newBatchRun.setExecutionTime(new DateTime(date.getTime()))
         return newBatchRun
     }
+
 
 }

@@ -41,11 +41,4 @@ class ExportAllAction extends ExportAction {
         return "${filePaths[0]}/${item.modelClass.name}/${paramName}.groovy"
     }
 
-    ULCWindow getAncestor() {
-//        ULCWindow ancestor = UlcUtilities.getWindowAncestor(mainView.content)
-        //        return ancestor
-        //todo fja
-    }
-
-
 }

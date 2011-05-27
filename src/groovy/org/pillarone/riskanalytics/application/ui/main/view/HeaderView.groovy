@@ -93,7 +93,6 @@ class HeaderView extends AbstractView {
         exportAllAction = new ExportAllAction(model, false)
         importAllAction = new ImportAllAction(model, "ImportAllParameterizations")
         saveAction = new SaveAction(content, model)
-        //todo fja
         runAction = new SimulationAction(navigationTableTree, model)
 
         //init menu
@@ -104,7 +103,7 @@ class HeaderView extends AbstractView {
         saveItem.icon = null
         saveItem.mnemonic = 'S'
         saveItem.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false)
-        saveAllItem = new ULCMenuItem()//todo fja new SaveAllAction(model))
+        saveAllItem = new ULCMenuItem(new SaveAllAction(model))
         refreshItem = new ULCMenuItem(refreshAction)
         runItem = new SimulationRunMenuItem(runAction)
         exportAllItemsNewstVersion = new ULCMenuItem(exportAllNewestVersionAction)
@@ -149,8 +148,7 @@ class HeaderView extends AbstractView {
 
     void layoutComponents() {
         fileMenu.add(runItem)
-        //todo fja
-        //        selectionTreeView.getSelectionTree().addTreeSelectionListener(runItem)
+        navigationTableTree?.addTreeSelectionListener(runItem)
         fileMenu.add(refreshItem)
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)
@@ -185,12 +183,10 @@ class HeaderView extends AbstractView {
         toolBar.add(runButton)
         toolBar.addSeparator()
 
-        //todo fja
         navigationBarTopPane = new NavigationBarTopPane(toolBar, navigationTableTreeModel)
         navigationBarTopPane.init()
 
         rightToolBar.add(UIUtils.spaceAround(lockedLabel, 6, 3, 3, 3))
-//        toolBar.add(UIUtils.spaceAround(lockedLabel, 6, 3, 3, 3))
 
         content.add(ULCBoxPane.BOX_EXPAND_TOP, toolBar)
         content.add(ULCBoxPane.BOX_RIGHT_TOP, rightToolBar)

@@ -114,7 +114,6 @@ class SelectionTreeView {
     }
 
     public MainSelectionTableTreeCellRenderer getPopUpRenderer(ULCFixedColumnTableTree tree) {
-        //todo fja
         MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree.rowHeaderTableTree, mainModel)
         return renderer
     }

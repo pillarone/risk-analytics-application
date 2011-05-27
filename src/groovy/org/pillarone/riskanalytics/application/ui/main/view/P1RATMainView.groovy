@@ -69,7 +69,6 @@ class P1RATMainView implements IRiskAnalyticsModelListener, IModellingItemChange
     ULCMenu windowMenu
     ULCButtonGroup windowMenuItemGroup
     SelectionTreeView selectionTreeView
-    //todo fja implentation of toolbar action for the navigation bar
     NavigationBarTopPane navigationBarTopPane
 
     ULCLabel lockedLabel

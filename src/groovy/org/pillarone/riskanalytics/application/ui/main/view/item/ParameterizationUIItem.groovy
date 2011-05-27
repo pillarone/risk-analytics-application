@@ -41,8 +41,6 @@ class ParameterizationUIItem extends ModellingUIItem {
             mainModel.getViewModel(modellingUIItem)?.removeInvisibleComments()
         }
         super.save()
-        //todo fja
-        //        refresh(item)
     }
 
 

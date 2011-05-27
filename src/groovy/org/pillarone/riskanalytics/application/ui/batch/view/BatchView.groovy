@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 
 public class BatchView extends NewBatchView {
 
@@ -32,6 +33,12 @@ public class BatchView extends NewBatchView {
         this.model = model
         this.batchRun = batchRun
         this.batchDataTableModel = new BatchDataTableModel(batchRun)
+    }
+
+    public BatchView(BatchUIItem batchUIItem) {
+        this(batchUIItem.mainModel, batchUIItem.batchRun)
+        this.batchUIItem = batchUIItem
+
     }
 
     public void init() {
@@ -125,7 +132,7 @@ public class BatchView extends NewBatchView {
                         batch.comment = comment.getText()
                         batch.save()
                         if (!batch.name.equals(oldName)) {
-                            updateGui(batch, oldName)
+                            notifyItemSaved()
                         }
                     }
                 }
@@ -137,12 +144,6 @@ public class BatchView extends NewBatchView {
         model.addBatchTableListener batchDataTableModel
     }
 
-    protected void updateGui(BatchRun batchRun, String oldName) {
-        //todo fja
-        //model.refreshBatchNode()
-        //        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
-    }
-
     public void addRiskAnalyticsModelListener(IRiskAnalyticsModelListener riskAnalyticsModelListener) {
         batchDataTableModel.addRiskAnalyticsModelListener riskAnalyticsModelListener
     }
@@ -152,7 +153,7 @@ public class BatchView extends NewBatchView {
     }
 
     static AbstractView getView(BatchUIItem batchUIItem) {
-        return batchUIItem.batchRun ? new BatchView(batchUIItem.mainModel, batchUIItem.batchRun) : new NewBatchView(batchUIItem)
+        return batchUIItem.batchRun ? new BatchView(batchUIItem) : new NewBatchView(batchUIItem)
     }
 
 

@@ -72,7 +72,6 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(new CommentsSwitchAction(mainModel, UIUtils.getText(this.class, "ValidationsAndComments"), false))
         validationSwitchButton.selected = false
         validationSwitchButton.setEnabled false
-        //todo fja
         mainModel.switchActions << validationSwitchButton
         selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, validationSwitchButton);
 
@@ -106,9 +105,10 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     void closeDetailView(Model model, AbstractUIItem abstractUIItem) {
         TabbedPaneManager tabbedPaneManager = cardPaneManager.getTabbedPaneManager(model)
-        tabbedPaneManager.removeTab(abstractUIItem)
-        //todo notify Enabler instead of syncMenuBar
-        headerView.syncMenuBar()
+        if (tabbedPaneManager) {
+            tabbedPaneManager.removeTab(abstractUIItem)
+            headerView.syncMenuBar()
+        }
     }
 
     void changedDetailView(Model model, AbstractUIItem item) {

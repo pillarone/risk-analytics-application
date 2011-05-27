@@ -4,12 +4,13 @@ import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 
 class SaveAllAction extends ResourceBasedAction {
-    P1RATModel model
+    RiskAnalyticsMainModel model
 
-    public SaveAllAction(P1RATModel model) {
+    public SaveAllAction(RiskAnalyticsMainModel model) {
         super("SaveAll")
         this.model = model
     }

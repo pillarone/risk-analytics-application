@@ -52,7 +52,6 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return abstractUIItem
     }
 
-    //todo fja uiitem
     Object getNextSelectedItem() {
         ITableTreeNode itemNode = tree.selectedPath?.lastPathComponent
         ITableTreeNode parent = itemNode.parent

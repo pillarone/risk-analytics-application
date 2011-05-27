@@ -8,7 +8,6 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
  */
 //todo fja action not used
 public class ShowUserSettingsAction extends ResourceBasedAction {
-    //todo fja
     //    P1RATMainView view
 
     public ShowUserSettingsAction() {

@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.apache.commons.lang.builder.HashCodeBuilder
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -29,16 +30,16 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     @Override
     public boolean isLoaded() {
-        return ((ModellingItem) getItem()).isLoaded()
+        return ((ModellingItem) item).isLoaded()
     }
 
     @Override
     public void load(boolean completeLoad) {
-        ((ModellingItem) getItem()).load(completeLoad)
+        ((ModellingItem) item).load(completeLoad)
     }
 
     public boolean isUsedInSimulation() {
-        return ((ModellingItem) getItem()).isUsedInSimulation()
+        return ((ModellingItem) item).isUsedInSimulation()
     }
 
     @Override
@@ -87,7 +88,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
             navigationTableTreeModel.removeNodeForItem(this)
             ModellingItemFactory.remove(item)
             mainModel.fireModelChanged()
-            //todo fja refactoring fireRowDeleted
             if (item instanceof Simulation) mainModel.fireRowDeleted(item)
             return true
         }
@@ -100,26 +100,29 @@ abstract class ModellingUIItem extends AbstractUIItem {
             if (!item.isLoaded())
                 item.load()
             ITableTreeNode itemNode = navigationTableTreeModel.findNodeForItem(navigationTableTreeModel.root, this)
-            //todo fja
-            //            closeItem(item.modelClass.newInstance(), item)
 
             itemNode.userObject = newName
 
             navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
-            //todo fja
-            //            renameAllChildren(itemNode, name)
-            Class modelClass = item.modelClass != null ? item.modelClass : Model
+            renameAllChildren(itemNode, name)
             mainModel.fireModelChanged()
         }
     }
+
+    private void renameAllChildren(ITableTreeNode itemNode, String name) {
+        if (((ItemNode) itemNode).abstractUIItem instanceof ResultUIItem) return
+        itemNode.childCount.times {
+            ItemNode childNode = itemNode.getChildAt(it)
+            ((ModellingUIItem) childNode.abstractUIItem).rename(name)
+        }
+    }
+
 
     @Override
     void save() {
         ExceptionSafe.protect {
             item.save()
         }
-        //todo fja
-        //        mainModel.updateViewModelsMap()
         mainModel.fireModelChanged()
         mainModel.fireModelItemChanged()
     }
@@ -151,8 +154,8 @@ abstract class ModellingUIItem extends AbstractUIItem {
     }
 
     @Override
-    def addModellingItemChangeListener(IModellingItemChangeListener listener) {
-        return item.addModellingItemChangeListener(listener)
+    public void addModellingItemChangeListener(IModellingItemChangeListener listener) {
+        item.addModellingItemChangeListener(listener)
     }
 
     @Override
@@ -175,7 +178,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     boolean equals(Object obj) {
         if (!(obj instanceof ModellingUIItem)) return false
-        return item.modelClass == obj.modelClass && item.name == obj.name && item.versionNumber.toString() == obj.versionNumber.toString()
+        return item.modelClass == obj.item.modelClass && item.name == obj.item.name && item.versionNumber.toString() == obj.item.versionNumber.toString()
     }
 
     @Override

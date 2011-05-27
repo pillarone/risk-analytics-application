@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.apache.commons.lang.builder.HashCodeBuilder
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -22,8 +23,6 @@ abstract class ResultUIItem extends ModellingUIItem {
     @Override
     void rename(String newName) {
         ITableTreeNode itemNode = navigationTableTreeModel.findNodeForItem(navigationTableTreeModel.root, this)
-        //todo fja
-        //closeItem(item.modelClass.newInstance(), item)
         itemNode.userObject = newName
         navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
@@ -32,5 +31,20 @@ abstract class ResultUIItem extends ModellingUIItem {
     ULCIcon getIcon() {
         return UIUtils.getIcon("results-active.png")
     }
+
+    @Override
+    boolean equals(Object obj) {
+        if (!(obj instanceof ModellingUIItem)) return false
+        return item.modelClass == obj.item.modelClass && item.name == obj.item.name
+    }
+
+    @Override
+    int hashCode() {
+        HashCodeBuilder hcb = new HashCodeBuilder()
+        hcb.append(item.modelClass.toString())
+        hcb.append(item.modelClass.name)
+        return hcb.toHashCode()
+    }
+
 
 }

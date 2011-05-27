@@ -57,7 +57,7 @@ class ResultConfigurationUIItem extends ModellingUIItem {
 
     @Override
     boolean isEditable() {
-        return getItem().isEditable()
+        return item.isEditable()
     }
 
 

@@ -12,6 +12,10 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
+import org.apache.commons.lang.builder.HashCodeBuilder
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,6 +23,7 @@ import org.pillarone.riskanalytics.core.BatchRun
 class BatchUIItem extends AbstractUIItem {
 
     BatchRun batchRun
+    List<IModellingItemChangeListener> itemChangeListeners = []
 
     public BatchUIItem(RiskAnalyticsMainModel mainModel, BatchRun batchRun) {
         super(mainModel, null)
@@ -68,8 +73,6 @@ class BatchUIItem extends AbstractUIItem {
             if (v instanceof BatchListener)
                 v.newBatchAdded(batchRun)
         }
-        //todo fja
-        //TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, oldName, batchRun.name)
     }
 
     public boolean remove() {
@@ -79,6 +82,34 @@ class BatchUIItem extends AbstractUIItem {
             return true
         }
         return false
+    }
+
+    @Override
+    public void addModellingItemChangeListener(IModellingItemChangeListener listener) {
+        itemChangeListeners << listener
+    }
+
+    public void removeModellingItemChangeListener(IModellingItemChangeListener listener) {
+        itemChangeListeners.remove(listener)
+    }
+
+    public void notifyItemSaved() {
+        itemChangeListeners.each {IModellingItemChangeListener listener ->
+            listener.itemSaved(null)
+        }
+    }
+
+    @Override
+    boolean equals(Object obj) {
+        return batchRun && obj.batchRun && batchRun.name == obj.batchRun.name
+    }
+
+    @Override
+    int hashCode() {
+        HashCodeBuilder hcb = new HashCodeBuilder()
+        if (batchRun)
+            hcb.append(batchRun.name)
+        return hcb.toHashCode()
     }
 
 
