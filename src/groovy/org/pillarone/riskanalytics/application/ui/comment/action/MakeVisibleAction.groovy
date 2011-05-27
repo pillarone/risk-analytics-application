@@ -10,18 +10,19 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class MakeVisibleAction extends AbstractCommentAction {
-    Comment comment
-    AbstractCommentableItemModel model
 
-    public MakeVisibleAction(AbstractCommentableItemModel model, Comment comment) {
+    AbstractCommentableItemModel model
+    String path
+
+    public MakeVisibleAction(AbstractCommentableItemModel model, String path) {
         super("MakeVisibleAction")
         this.model = model
-        this.comment = comment
+        this.path = path
     }
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        TreePath treePath = model.getTreePath(comment.path)
+        TreePath treePath = model.getTreePath(path)
         if (treePath) {
             getViewPortTableTree().makeVisible treePath
             getRowHeaderTableTree().makeVisible treePath

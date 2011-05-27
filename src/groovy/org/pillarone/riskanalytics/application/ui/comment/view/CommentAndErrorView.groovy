@@ -40,7 +40,7 @@ class CommentAndErrorView implements CommentListener {
 
     protected void initComponents() {
         tabbedPane = new ULCDetachableTabbedPane(name: "commentAndErrorPane")
-        errorPane = new ErrorPane(model)
+        errorPane = new ErrorPane(model, this)
     }
 
     private void layoutComponents() {

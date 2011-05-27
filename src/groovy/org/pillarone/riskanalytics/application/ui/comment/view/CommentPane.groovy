@@ -89,7 +89,7 @@ class CommentPane {
         deleteButton.setContentAreaFilled false
         editButton.setOpaque true
         deleteButton.name = "deleteComment"
-        makeVisibleAction = new MakeVisibleAction(model, comment)
+        makeVisibleAction = new MakeVisibleAction(model, comment.path)
         makeVisibleButton = new ULCButton(makeVisibleAction)
         makeVisibleButton.setContentAreaFilled false
         makeVisibleButton.setBackground Color.white
