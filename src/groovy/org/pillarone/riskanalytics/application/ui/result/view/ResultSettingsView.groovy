@@ -20,6 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.joda.time.DateTime
 
 class ResultSettingsView {
 
@@ -67,7 +68,7 @@ class ResultSettingsView {
             ULCBoxPane content = new ULCBoxPane(2, 0)
             for (ParameterHolder parameter in simulation.runtimeParameters) {
                 content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(ComponentUtils.getNormalizedName(parameter.path)))
-                content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(parameter.businessObject.toString()))
+                content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(formatParameter(parameter.businessObject)))
             }
 
             box.add(content)
@@ -86,6 +87,14 @@ class ResultSettingsView {
         }
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
 
+    }
+
+    private String formatParameter(def parameter) {
+        return parameter.toString()
+    }
+
+    private String formatParameter(DateTime parameter) {
+        return DateTimeFormat.forPattern("yyyy-MM-dd").print(parameter)
     }
 
     private void openItem(ModellingItem item) {
