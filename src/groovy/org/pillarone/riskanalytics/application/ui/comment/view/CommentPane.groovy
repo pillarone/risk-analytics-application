@@ -14,7 +14,6 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
-import org.pillarone.riskanalytics.application.ui.base.view.DownloadFilePane
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.MakeVisibleAction
@@ -24,6 +23,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.base.action.DownloadFileAction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -31,7 +31,7 @@ import com.ulcjava.base.application.*
 class CommentPane {
     ULCBoxPane content;
     FollowLinkPane label
-    DownloadFilePane downloadFilePane
+    ULCBoxPane downloadFilePane
     ULCLabel tags
     ULCButton editButton
     ULCButton deleteButton
@@ -65,13 +65,13 @@ class CommentPane {
         content.setBorder(border);
 
         label = new FollowLinkPane();
-        downloadFilePane = new DownloadFilePane(source: content)
+        downloadFilePane = new ULCBoxPane(3, 0)//new DownloadFilePane(source: content)
+        downloadFilePane.setBackground(Color.white)
         if (searchText) label.name = "foundText"
         label.setText getLabelText()
-        downloadFilePane.setText(getCommentFiles())
+        addCommentFiles()
 
         label.setFont(font);
-        downloadFilePane.setFont(font)
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
@@ -171,6 +171,23 @@ class CommentPane {
         return sb.toString()
     }
 
+    void addCommentFiles() {
+        downloadFilePane.add(3, ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewCommentView, "addedFiles") + ":"))
+        String url = FileConstants.COMMENT_FILE_DIRECTORY
+        for (String file: comment.files) {
+            String fileName = url + File.separator + file
+            downloadFilePane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(file))
+            DownloadFileAction downloadFileAction = new DownloadFileAction(fileName, content, false)
+            DownloadFileAction downloadFileAndOpen = new DownloadFileAction(fileName, content, true)
+            ULCButton downloadButton = new ULCButton(downloadFileAction)
+            ULCButton downloadAndOpenButton = new ULCButton(downloadFileAndOpen)
+            render(downloadButton, "downloadButton")
+            render(downloadAndOpenButton, "downloadAndOpenButton")
+            downloadFilePane.add(ULCBoxPane.BOX_LEFT_TOP, downloadButton)
+            downloadFilePane.add(ULCBoxPane.BOX_LEFT_TOP, downloadAndOpenButton)
+        }
+    }
+
     private String addHighlighting(String text, def words) {
         def found = []
         words.each {
@@ -189,6 +206,13 @@ class CommentPane {
         // \n causes hiding of links
         //workaround: replace all endline with html code
         return text.replaceAll("\n", "<br>")
+    }
+
+    private void render(ULCButton button, String name) {
+        button.setContentAreaFilled false
+        button.setBackground Color.white
+        button.setOpaque false
+        button.name = name
     }
 
 

@@ -27,7 +27,7 @@ class FileStoreHandler implements IFileStoreHandler {
     }
 
     void onSuccess(String filePath, String fileName) {
-        LOG.info "file ${filePath + "/" + fileName } succesfully downloaded"
+        LOG.info "file ${filePath} succesfully downloaded"
     }
 
     void onFailure(int reason, String description) {
