@@ -10,7 +10,7 @@ import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CompareParameterizationsAction extends SelectionTreeAction {
+class CompareParameterizationsAction extends AbstractCompareAction {
 
     public CompareParameterizationsAction(ULCTableTree tree, P1RATModel model) {
         super("CompareParameterizations", tree, model)
@@ -19,7 +19,7 @@ class CompareParameterizationsAction extends SelectionTreeAction {
     public void doActionPerformed(ActionEvent event) {
         List elements = getSelectedObjects(Parameterization.class)
         try {
-            validate(elements)
+            validate()
             Model model = getSelectedModel(elements[0])
             model.init()
             if (model != null && elements[0] != null) {
@@ -28,26 +28,6 @@ class CompareParameterizationsAction extends SelectionTreeAction {
         } catch (IllegalArgumentException ex) {
             println "$ex"
         }
-    }
-
-    private void validate(List elements) throws IllegalArgumentException {
-        if (elements.size() < 2) throw new IllegalArgumentException("select at lease two parameterizations for compare")
-        Model model = getSelectedModel(elements[0])
-        elements.each {
-            if (getSelectedModel(it) != model) {
-                throw new IllegalArgumentException("select a parameterizations with same ModelClass")
-            }
-        }
-    }
-
-    public boolean isEnabled() {
-        List elements = getSelectedObjects(Parameterization.class)
-        try {
-            validate(elements)
-        } catch (IllegalArgumentException ex) {
-            return false
-        }
-        return true
     }
 
 }
