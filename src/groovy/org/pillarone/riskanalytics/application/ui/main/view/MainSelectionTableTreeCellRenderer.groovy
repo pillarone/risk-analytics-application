@@ -29,6 +29,8 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.*
+import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
+import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -46,13 +48,17 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     ULCPopupMenu batchesRootNodePopUpMenu
 
     //ULCPopupMenu simulationTemplateNodePopUpMenu as it is the same as parameterNodePopupMenu
+    ULCFixedColumnTableTree columnTableTree
     ULCTableTree tree
     P1RATModel model
 
     private Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
 
-    public MainSelectionTableTreeCellRenderer(ULCTableTree tree, P1RATModel model) {
-        this.tree = tree
+    // using a ULCFixedColumnTableTree instead of ULCTableTree due on PMO-1516. ExpandAll action
+    // need ULCFixedColumnTableTree as argument
+    public MainSelectionTableTreeCellRenderer(ULCFixedColumnTableTree columnTableTree, P1RATModel model) {
+        this.columnTableTree = columnTableTree
+        this.tree = columnTableTree.rowHeaderTableTree
         this.model = model
     }
 
@@ -80,6 +86,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
             }
         }
         parameterNodePopUpMenu.addSeparator()
+        parameterNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
+        parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 
         resultConfigurationNodePopUpMenu = new ULCPopupMenu()
@@ -91,6 +99,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, model)))
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, model)))
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        resultConfigurationNodePopUpMenu.addSeparator()
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
         resultConfigurationNodePopUpMenu.addSeparator()
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
 
@@ -107,6 +117,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         dataEntry.addSeparator()
         dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, model)))
+        dataEntry.addSeparator()
+        dataEntry.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
         workflowMenus.put(Status.DATA_ENTRY, dataEntry)
 
         ULCPopupMenu rejected = new ULCPopupMenu()
@@ -120,6 +132,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         rejected.addSeparator()
         rejected.add(new ULCMenuItem(new SaveAsAction(tree, model)))
         rejected.add(new ULCMenuItem(new ExportItemAction(tree, model)))
+        rejected.addSeparator()
+        rejected.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
         workflowMenus.put(Status.REJECTED, rejected)
 
         ULCPopupMenu inReview = new ULCPopupMenu()
@@ -138,6 +152,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         inReview.add(sendToProductionMenuItem)
         tree.addTreeSelectionListener(sendToProductionMenuItem)
         inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, model)))
+        inReview.addSeparator()
+        inReview.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
         workflowMenus.put(Status.IN_REVIEW, inReview)
 
         ULCPopupMenu inProduction = new ULCPopupMenu()
@@ -153,17 +169,17 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)
         inProduction.add(new ULCMenuItem(new TagsAction(tree, model)))
+        inProduction.addSeparator()
+        inProduction.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
         workflowMenus.put(Status.IN_PRODUCTION, inProduction)
 
         simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, model)))
-
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, model)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, model)))
         ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, model))
         tree.addTreeSelectionListener(compareSimulationMenuItem)
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
-
 
         ULCMenu reportsMenu = new ReportMenu("Reports")
         reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, model)))
@@ -172,6 +188,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         simulationNodePopUpMenu.add(reportsMenu)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, model)))
+        simulationNodePopUpMenu.addSeparator()
+        simulationNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
 
         groupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
@@ -181,6 +199,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
         groupNodePopUpMenu.addSeparator()
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllResultTemplates")))
+        groupNodePopUpMenu.addSeparator()
+        groupNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
 
         parameterGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone()) {
@@ -195,15 +215,20 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, model)))
         parameterGroupNodePopUpMenu.addSeparator()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllParameters")))
+        parameterGroupNodePopUpMenu.addSeparator()
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
 
         simulationGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
             simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, model, 'ExportAll', false)))
         simulationGroupNodePopUpMenu.addSeparator()
         simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, model, "DeleteAllSimulations")))
+        simulationGroupNodePopUpMenu.addSeparator()
+        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
 
         modelNodePopUpMenu = new ULCPopupMenu()
         modelNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, model)))
+        modelNodePopUpMenu.add(new ULCMenuItem(new TreeExpander(columnTableTree)))
 
         batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = "batchesNodePopUpMenu"

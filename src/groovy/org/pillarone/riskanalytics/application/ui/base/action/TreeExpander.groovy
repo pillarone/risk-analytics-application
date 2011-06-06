@@ -14,7 +14,7 @@ class TreeExpander extends ResourceBasedAction {
     public TreeExpander(ULCFixedColumnTableTree tree) {
         super("ExpandNode")
         this.tree = tree
-        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, true));
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false));
     }
 
     public void doActionPerformed(ActionEvent event) {
