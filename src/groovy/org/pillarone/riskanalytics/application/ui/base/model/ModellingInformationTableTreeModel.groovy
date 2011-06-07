@@ -25,6 +25,7 @@ import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.parameter.comment.ParameterizationCommentDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -165,7 +166,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                         value = DateFormatUtils.formatDetailed(parameterization.valuationDate)
                     };
                     break;
-                case COMMENTS: value = parameterization.getSize(CommentDAO); break;
+                case COMMENTS: value = parameterization.getSize(ParameterizationCommentDAO); break;
                 case REVIEW_COMMENT: value = parameterization.getSize(WorkflowCommentDAO); break;
                 case OWNER: value = parameterization?.getCreator()?.username; break;
                 case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username; break;

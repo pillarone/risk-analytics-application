@@ -15,6 +15,9 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.ULCScrollPane
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.ULCComponent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -89,6 +92,7 @@ class NewVersionCommentDialog {
             okAction.call(item, commentTextArea.getText()); hide();
         }] as IActionListener
         okButton.addActionListener(action)
+        commentTextArea.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
     }
 
