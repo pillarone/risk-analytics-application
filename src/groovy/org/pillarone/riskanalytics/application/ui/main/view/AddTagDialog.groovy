@@ -79,7 +79,7 @@ class AddTagDialog {
     }
 
     public List<Tag> getItems() {
-        return Tag.findAllByTagType(EnumTagType.PARAMETERIZATION)
+        return Tag.findAll(" from ${Tag.class.name} as tag where tag.tagType =? and tag.name != ?",[EnumTagType.PARAMETERIZATION, "LOCKED"])
     }
 
     private void layoutComponents() {
