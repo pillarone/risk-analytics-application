@@ -52,4 +52,32 @@ class ReportHelper {
         exporter.exportReport()
         return byteArray
     }
+
+    public static OutputStream commentReport(Map parameters, JRBeanCollectionDataSource collectionDataSource) {
+        String reportName = parameters["_file"] + ".jrxml"
+
+        URL reportsDir = getReportFolder()
+        URL reportUrl = new URL(reportsDir.toExternalForm() + "/" + reportName)
+
+        JRExporter exporter = new JRPdfExporter()
+
+        ByteArrayOutputStream byteArray = new ByteArrayOutputStream()
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, byteArray)
+
+        JasperPrint jasperPrint
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportUrl.openStream())
+
+            jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, collectionDataSource)
+
+        } catch (Exception ex) {
+            println "${ex}"
+        } 
+
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint)
+        exporter.exportReport()
+        return byteArray
+
+    }
+
 }

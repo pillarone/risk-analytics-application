@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.comment.model.MapComboBoxModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.reports.comment.action.CommentReportAction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,6 +26,7 @@ class CommentSearchPane {
     ULCToggleButton selectCommentButton
     ULCToggleButton selectValidationButton
     ULCButton clearButton
+    ULCButton exportToPdf
     ULCTextField searchText
     ULCLabel orderByLabel
     ULCComboBox orderByComboBox
@@ -35,6 +37,7 @@ class CommentSearchPane {
     CommentSearchBean commentSearchBean
     DefaultComboBoxModel orderByComboBoxModel
     DefaultComboBoxModel orderComboBoxModel
+    CommentReportAction reportAction
 
     public CommentSearchPane(ShowCommentsView commentsView, ErrorPane errorsView, ShowCommentsView resultView, model) {
         this.model = model;
@@ -61,6 +64,8 @@ class CommentSearchPane {
         clearButton = new ULCButton(UIUtils.getIcon("delete-active.png"))
         clearButton.setToolTipText UIUtils.getText(this.class, "clear")
         clearButton.name = "searchButton"
+        reportAction = new CommentReportAction(model)
+        exportToPdf = new ULCButton(reportAction)
         searchText = new ULCTextField(name: "searchText")
         searchText.setMaximumSize(new Dimension(20, 180))
         searchText.setToolTipText UIUtils.getText(this.class, "initialText")
@@ -87,6 +92,7 @@ class CommentSearchPane {
         toolBar.add(ULCFiller.createHorizontalStrut(10))
         toolBar.add(searchText);
         toolBar.add(clearButton);
+        toolBar.add(exportToPdf);
         content.add(ULCBoxPane.BOX_LEFT_TOP, toolBar)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
 //        toolBar.add( new ULCFiller())
@@ -115,6 +121,7 @@ class CommentSearchPane {
                 resultView.clear()
                 resultView.comments = comments
                 resultView.addComments(comments, text)
+                reportAction.filteredComments = comments
             }
         }
         IActionListener action = [actionPerformed: {e -> searchClosure.call()}] as IActionListener
@@ -137,6 +144,7 @@ class CommentSearchPane {
             searchText.setForeground Color.gray
             commentsView.setVisible(true)
             resultView.setVisible(false)
+            reportAction.filteredComments = null
         }] as IActionListener)
 
     }

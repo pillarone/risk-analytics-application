@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.action.DownloadFileAction
+import org.pillarone.riskanalytics.application.ui.util.CommentUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -117,32 +118,12 @@ class CommentPane {
     }
 
     String getTagsValue() {
-        int size = comment.getTags().size()
-        StringBuilder sb = new StringBuilder(UIUtils.getText(this.class, "Tags") + ":")
-        comment?.getTags()?.eachWithIndex {Tag tag, int index ->
-            sb.append(tag?.getName())
-            if (index < size - 1)
-                sb.append(", ")
-        }
-        appendFunction(sb, comment)
-        return sb.toString()
+        return CommentUtils.getTagsValue(comment)
     }
 
-    void appendFunction(StringBuilder sb, Comment comment) {
-        if ((comment instanceof FunctionComment) && comment.function) {
-            sb.append("<br>" + UIUtils.getText(CommentAndErrorView.class, "Function") + ": ")
-            sb.append(comment.function)
-        }
-    }
 
     String getTitle() {
-        String username = comment.user ? comment.user.username : ""
-        StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
-        sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
-        if (username != "")
-            sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
-        sb.append(" " + DateFormatUtils.formatDetailed(comment.lastChange))
-        return sb.toString()
+        return CommentUtils.getCommentTitle(comment, model)
     }
 
     private String getLabelText() {

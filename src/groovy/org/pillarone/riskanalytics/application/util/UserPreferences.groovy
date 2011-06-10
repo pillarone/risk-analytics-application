@@ -10,6 +10,7 @@ import java.util.prefs.Preferences
 public class UserPreferences {
     private Preferences userPrefs
     final static String IMPORT_DIR_KEY = "import_directory"
+    final static String REPORT_DIR_KEY = "report"
     final static String RESULT_DIR_KEY = "result_directory"
     final static String EXPORT_DIR_KEY = "export_directory"
     final static String DEFAULT_RESULT = "default_result"
