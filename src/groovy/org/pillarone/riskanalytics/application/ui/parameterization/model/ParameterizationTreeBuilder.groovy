@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComp
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
+import org.pillarone.riskanalytics.core.components.DynamicMultiPhaseComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
