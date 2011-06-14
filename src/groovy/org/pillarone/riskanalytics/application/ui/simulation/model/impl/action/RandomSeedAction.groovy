@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.Simulati
 import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCTextField
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.util.UserPreferences
 
 /**
  * A IValueChangedListener which is used for the random seed check box and text field.
@@ -20,6 +21,8 @@ class RandomSeedAction implements IValueChangedListener {
 
     private SimulationSettingsPaneModel model;
     private Integer oldRandomSeed
+    private UserPreferences userPreferences = new UserPreferences()
+    ULCTextField randomSeed
 
     public RandomSeedAction(SimulationSettingsPaneModel model) {
         this.model = model;
@@ -35,7 +38,8 @@ class RandomSeedAction implements IValueChangedListener {
             oldRandomSeed = model.randomSeed
             model.randomSeed = null
         } else {
-            model.randomSeed = oldRandomSeed
+            model.randomSeed = getRandomSeed()
+            randomSeed?.setValue model.randomSeed
         }
     }
 
@@ -43,6 +47,7 @@ class RandomSeedAction implements IValueChangedListener {
         Integer randomSeed = textField.getValue()
         if (randomSeed != null && randomSeed > 0) {
             model.randomSeed = randomSeed
+            userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED, randomSeed)
         } else {
             randomSeed = 1
             new I18NAlert("NoInteger").show()
@@ -50,5 +55,14 @@ class RandomSeedAction implements IValueChangedListener {
             model.randomSeed = randomSeed
         }
         LOG.info("User defined random seed changed to ${randomSeed}.")
+    }
+
+    private Integer getRandomSeed() {
+        if (!oldRandomSeed) {
+            String value = userPreferences.getPropertyValue(UserPreferences.RANDOM_SEED)
+            if (value) return Integer.valueOf(value)
+            return null
+        }
+        return oldRandomSeed
     }
 }

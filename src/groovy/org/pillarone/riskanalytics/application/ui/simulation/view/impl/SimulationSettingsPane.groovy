@@ -194,6 +194,7 @@ class SimulationSettingsPane {
         numberOfIterations.name = "iterations"
         numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
+        model.randomSeedAction.randomSeed = randomSeed
         randomSeed.addValueChangedListener(model.randomSeedAction)
         userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
 

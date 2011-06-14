@@ -16,6 +16,7 @@ public class UserPreferences {
     final static String DEFAULT_RESULT = "default_result"
     final static String USER_PREFERRED_LANG = "userPreferredLanguage"
     final static String ADD_FILE_DIR = "add_file_directory"
+    final static String RANDOM_SEED = "randomseed"
 
     public UserPreferences() {
         userPrefs = Preferences.userNodeForPackage(UserPreferences.class);
@@ -63,6 +64,14 @@ public class UserPreferences {
             dir = userHome
         }
         return dir
+    }
+
+    public void putPropertyValue(String property, Object value) {
+        userPrefs.put(property, value?.toString())
+    }
+
+    public String getPropertyValue(String property) {
+        userPrefs.get(property, null)
     }
 
 }
