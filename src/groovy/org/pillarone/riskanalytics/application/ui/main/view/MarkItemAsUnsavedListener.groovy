@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     ULCCloseableTabbedPane tabbedPane
@@ -38,8 +39,11 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     }
 
     public void itemSaved(ModellingItem item) {
-        String title = "$item.name v${item.versionNumber.toString()}"
-        TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title + UNSAVED_MARK, title)
+        // workaround for PMO-1618, after merging with refactoring branch, issue will be solved
+        if (GroovyUtils.getProperties(item).containsKey("versionNumber")) {
+            String title = "$item.name v${item.versionNumber.toString()}"
+            TabbedPaneGuiHelper.updateTabbedPaneTitle(tabbedPane, title + UNSAVED_MARK, title)
+        }
     }
 }
 
