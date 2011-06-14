@@ -9,7 +9,6 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 
@@ -65,7 +64,7 @@ abstract class AbstractUIItem implements IUIItem {
 
     abstract public ULCContainer createDetailView()
 
-    abstract public IContentModel getViewModel()
+    abstract public Object getViewModel()
 
     abstract public String createTitle()
 

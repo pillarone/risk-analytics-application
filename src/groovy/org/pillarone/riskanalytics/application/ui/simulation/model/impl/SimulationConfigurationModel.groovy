@@ -2,9 +2,8 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
-class SimulationConfigurationModel implements BatchListener, IContentModel {
+class SimulationConfigurationModel implements BatchListener {
 
     SimulationSettingsPaneModel settingsPaneModel
     SimulationActionsPaneModel actionsPaneModel

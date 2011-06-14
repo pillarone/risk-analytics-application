@@ -2,12 +2,11 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CalculationConfigurationModel implements BatchListener, IContentModel {
+class CalculationConfigurationModel implements BatchListener {
 
     SimulationSettingsPaneModel settingsPaneModel
     SimulationActionsPaneModel actionsPaneModel

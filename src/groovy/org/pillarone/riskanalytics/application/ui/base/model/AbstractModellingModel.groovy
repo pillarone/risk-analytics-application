@@ -9,9 +9,8 @@ import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTableTreeNode
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
-abstract class AbstractModellingModel implements IContentModel {
+abstract class AbstractModellingModel {
 
     int periodCount
     Model model

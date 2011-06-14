@@ -19,7 +19,6 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.Simulati
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
@@ -29,7 +28,7 @@ import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModel
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
     List<AbstractUIItem> openItems
-    Map<AbstractUIItem, IContentModel> viewModelsInUse
+    Map<AbstractUIItem, Object> viewModelsInUse
     AbstractTableTreeModel navigationTableTreeModel
     ULCPollingTimer pollingBatchSimulationTimer
     PollingBatchSimulationAction pollingBatchSimulationAction

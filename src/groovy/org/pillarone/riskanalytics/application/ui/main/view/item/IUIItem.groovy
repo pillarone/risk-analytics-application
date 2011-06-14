@@ -4,7 +4,6 @@ import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.application.ui.main.model.IContentModel
 
 //classes implementing this interface need to be created for all item-"views" (modelling items, batch runs, comparisons etc.)
 public interface IUIItem {
@@ -22,7 +21,7 @@ public interface IUIItem {
      */
     public ULCContainer createDetailView()
 
-    public IContentModel getViewModel()
+    public Object getViewModel()
 
     /**
      * Cleanup when an UIItem is closed (remove listeners etc.)
