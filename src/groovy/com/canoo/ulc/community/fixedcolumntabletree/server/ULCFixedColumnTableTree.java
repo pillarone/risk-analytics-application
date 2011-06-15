@@ -58,14 +58,14 @@ public class ULCFixedColumnTableTree extends ULCScrollPane {
         }
 
         //see PMO-919 and PMO-1013
-        ULCTableTree rowHeader = new ULCHeaderFixedTableTree();
+        ULCTableTree rowHeader = new ULCTableTree();
         rowHeader.setAutoCreateColumnsFromModel(false);
         rowHeader.setModel(model);
         for (int i = 0; i < firstScrollableColumn; i++) {
             rowHeader.addColumn(new ULCTableTreeColumn(i, columnWidths[i]));
         }
 
-        final ULCTableTree viewPort = new ULCHeaderFixedTableTree();
+        final ULCTableTree viewPort = new ULCTableTree();
         viewPort.setAutoCreateColumnsFromModel(false);
         viewPort.setModel(model);
         viewPort.setEventDeliveryMode(UlcEventCategories.TREE_SELECTION_EVENT_CATEGORY, UlcEventConstants.ASYNCHRONOUS_MODE);
