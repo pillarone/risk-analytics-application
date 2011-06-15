@@ -166,11 +166,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     private def addDoubleFunctions(ULCToolBar toolbar) {
         toolbar.add(new ULCLabel(getText("Add")))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        IDataType dataType = DataTypeFactory.numberDataType
-        dataType.classType = Double
-        dataType.minFractionDigits = 1
-        dataType.maxFractionDigits = 2
-        dataType.groupingUsed = false
+        IDataType dataType = DataTypeFactory.bigDecimalDataType
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
         functionValue.value = 99.5

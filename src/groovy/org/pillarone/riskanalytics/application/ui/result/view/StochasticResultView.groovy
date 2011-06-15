@@ -106,11 +106,7 @@ class StochasticResultView extends ResultView {
         toolbar.add ULCFiller.createHorizontalStrut(5)
         toolbar.addSeparator()
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        IDataType dataType = DataTypeFactory.numberDataType
-        dataType.classType = Double
-        dataType.minFractionDigits = 1
-        dataType.maxFractionDigits = 2
-        dataType.groupingUsed = false
+        IDataType dataType = DataTypeFactory.bigDecimalDataType
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
         functionValue.value = 99.5

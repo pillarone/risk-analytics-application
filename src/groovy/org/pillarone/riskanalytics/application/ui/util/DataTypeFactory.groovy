@@ -126,6 +126,15 @@ public class DataTypeFactory {
         return dataType
     }
 
+    static IDataType getBigDecimalDataType() {
+        ULCNumberDataType dataType = new ULCNumberDataType(UIUtils.clientLocale)
+        dataType.classType = BigDecimal
+        dataType.minFractionDigits = 1
+        dataType.maxFractionDigits = 2
+        dataType.groupingUsed = false
+        return dataType
+    }
+
     static ULCNumberDataType getNumberDataType() {
         return new ULCNumberDataType(UIUtils.clientLocale)
     }
