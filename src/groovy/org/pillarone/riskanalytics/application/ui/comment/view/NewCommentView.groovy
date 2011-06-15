@@ -103,6 +103,10 @@ class NewCommentView {
             String text = commentTextArea.getText()
             if (text && text.length() > 0 && text.length() < MAX_CHARS) {
                 Comment comment = createComment(path, periodIndex)
+                if (!CommentAndErrorView.getDisplayPath(model, comment.getPath())) {
+                    new I18NAlert("CommentPathNotFound").show()
+                    return
+                }
                 comment.lastChange = new DateTime()
                 comment.comment = commentTextArea.getText()
                 tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
