@@ -39,7 +39,7 @@ class ResultViewModel extends AbstractCommentableItemModel {
 
         model.init()
         buildTreeStructure()
-        selectionViewModel = new ItemsComboBoxModel(resultStructures)
+        selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
     }
 
 

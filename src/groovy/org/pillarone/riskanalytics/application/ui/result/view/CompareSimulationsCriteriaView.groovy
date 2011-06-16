@@ -19,6 +19,7 @@ import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.getText
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import org.pillarone.riskanalytics.application.util.UserPreferences
 
 class CompareSimulationsCriteriaView {
 
@@ -255,13 +256,21 @@ class CompareSimulationsCriteriaView {
 class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
 
     List<T> items
+    UserPreferences userPreferences = new UserPreferences()
+    String itemPreferenceKey
 
     public ItemsComboBoxModel(List<T> items) {
         super(items*.name)
         this.items = items
     }
 
-
+    public ItemsComboBoxModel(List<T> items, String itemPreferenceKey) {
+        super(items*.name)
+        this.items = items
+        this.itemPreferenceKey = itemPreferenceKey
+        Object defaultItem = userPreferences.getPropertyValue(itemPreferenceKey)
+        selectedItem = defaultItem ? defaultItem : getElementAt(0)
+    }
 
     T getSelectedObject() {
         int index = getIndexOf(getSelectedItem())
@@ -276,6 +285,15 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
     void removeItem(T item) {
         removeElement(item.name)
         items.remove(item)
+    }
+
+
+    @Override
+    void setSelectedItem(Object object) {
+        if (itemPreferenceKey && object) {
+            userPreferences.putPropertyValue(itemPreferenceKey, object)
+        }
+        super.setSelectedItem(object)
     }
 
 
