@@ -26,7 +26,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
  */
 class SimulationActionsPaneModel {
 
-    protected SimulationRunner runner
+    SimulationRunner runner
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
