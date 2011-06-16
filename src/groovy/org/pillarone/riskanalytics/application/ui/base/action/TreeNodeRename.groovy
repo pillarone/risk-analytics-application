@@ -21,7 +21,7 @@ public class TreeNodeRename extends TreeNodeAction {
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }
 
-    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments) {
         if (model.paramterTableTreeModel.readOnly) return
         String oldPath = getPathName(node.parent, "${node.name}")
         String newPath = getPathName(node.parent, "$newName")
