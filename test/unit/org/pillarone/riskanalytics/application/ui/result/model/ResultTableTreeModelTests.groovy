@@ -8,14 +8,22 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import groovy.mock.interceptor.StubFor
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 class ResultTableTreeModelTests extends GroovyTestCase {
 
     StubFor stub
 
     void setUp() {
+        LocaleResources.setTestMode()
+
         stub = new StubFor(PostSimulationCalculation)
         stub.demand.executeQuery(1..2) {query, params -> return [] }
+    }
+
+    @Override
+    protected void tearDown() {
+        LocaleResources.clearTestMode()
     }
 
 
@@ -69,9 +77,9 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         stub.use {
             ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new MeanFunction(), new ExtendedCoreModel())
             assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
-            assertEquals "Wrong columnName for col 1", "Mean 2009-01-01", model.getColumnName(1)
-            assertEquals "Wrong columnName for col 2", "Mean 2010-01-01", model.getColumnName(2)
-            assertEquals "Wrong columnName for col 3", "Mean 2011-01-01", model.getColumnName(3)
+            assertEquals "Wrong columnName for col 1", "Mean Jan 01, 2009", model.getColumnName(1)
+            assertEquals "Wrong columnName for col 2", "Mean Jan 01, 2010", model.getColumnName(2)
+            assertEquals "Wrong columnName for col 3", "Mean Jan 01, 2011", model.getColumnName(3)
         }
 
     }

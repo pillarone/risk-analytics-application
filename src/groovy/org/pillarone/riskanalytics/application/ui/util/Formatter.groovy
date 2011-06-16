@@ -44,7 +44,7 @@ public class Formatter {
                 return format.format(it)
             }
             else if (it instanceof DateTime) {
-                return new SimpleDateFormat('MMM dd, yyyy').format(it.toDate())
+                return new SimpleDateFormat(DateFormatUtils.PARAMETER_DISPLAY_FORMAT).format(it.toDate())
             } else {
                 return String.valueOf(it)
             }
