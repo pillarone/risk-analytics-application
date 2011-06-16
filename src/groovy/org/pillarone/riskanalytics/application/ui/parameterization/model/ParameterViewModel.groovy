@@ -69,7 +69,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
         writer.write(builder.parameterConfigObject, file.newWriter())
     }
 
-    ParameterizationTableTreeNode findNodeForPath(String path) {
+    SimpleTableTreeNode findNodeForPath(String path) {
         String[] pathElements = path.split(":")
         SimpleTableTreeNode currentNode = paramterTableTreeModel.root
         for (String p in pathElements) {

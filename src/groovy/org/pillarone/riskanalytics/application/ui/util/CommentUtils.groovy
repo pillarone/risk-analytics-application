@@ -5,6 +5,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentable
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentPane
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.FunctionComment
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -30,5 +32,24 @@ class CommentUtils {
             sb.append(comment.function)
         }
         return sb.toString()
+    }
+
+    public static List duplicateComments(Parameterization parameterization, String oldPath, String newPath) {
+        List componentComments = []
+        parameterization?.comments?.each {Comment comment ->
+            String commentPath = comment.path.substring(comment.path.indexOf(":") + 1)
+            if (commentPath?.startsWith(oldPath + ":") || commentPath == oldPath)
+                componentComments << comment
+        }
+        List pathCommentList = []
+        componentComments?.each {Comment comment ->
+            Comment newComment = comment.clone()
+            newComment.path = newComment.path.replace("${oldPath}", "${newPath}")
+            parameterization.addComment(newComment)
+            //node path doesn't start with model
+            String treePath = newComment.path.substring(comment.path.indexOf(":") + 1)
+            pathCommentList << ["path": treePath, "comment": newComment]
+        }
+        return pathCommentList
     }
 }
