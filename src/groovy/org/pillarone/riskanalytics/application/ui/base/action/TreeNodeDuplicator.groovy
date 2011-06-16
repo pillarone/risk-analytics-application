@@ -11,6 +11,8 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import com.ulcjava.base.application.ULCWindow
+import org.pillarone.riskanalytics.application.ui.base.view.DynamicComponentNameDialog
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -24,15 +26,21 @@ public class TreeNodeDuplicator extends TreeNodeAction {
     }
 
 
-    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments) {
         if (model.paramterTableTreeModel.readOnly) return
         String oldPath = getPathName(node.parent, "${node.name}")
         String newPath = getPathName(node.parent, "$newName")
         ParameterHolderFactory.duplicateParameters(model.builder.item, oldPath, newPath)
-        List commentedPaths = CommentUtils.duplicateComments(model.builder.item, oldPath, newPath)
+        List commentedPaths = []
+        if (withComments)
+            commentedPaths = CommentUtils.duplicateComments(model.builder.item, oldPath, newPath)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
         tree.model.addComponentNode(node.parent, component)
+        refreshCommentedDuplicatedNodes(commentedPaths)
+    }
+
+    private void refreshCommentedDuplicatedNodes(List commentedPaths) {
         // notify all nodes referencing the renamed component
         for (Map pathCommentMap: commentedPaths) {
             SimpleTableTreeNode duplicatedNode = model.findNodeForPath((String) pathCommentMap["path"])
@@ -41,7 +49,6 @@ public class TreeNodeDuplicator extends TreeNodeAction {
                 TreePath treePath = new TreePath(DefaultTableTreeModel.getPathToRoot(duplicatedNode) as Object[])
                 model.paramterTableTreeModel.nodeChanged(treePath)
             }
-
         }
     }
 
@@ -50,4 +57,13 @@ public class TreeNodeDuplicator extends TreeNodeAction {
     public boolean isEnabled() {
         return super.isEnabled() && !model.paramterTableTreeModel.readOnly;
     }
+
+    @Override
+    public DynamicComponentNameDialog getInputNameDialog(ULCWindow parent, String displayName) {
+        DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(parent, displayName)
+        dialog.withComments.setVisible(true)
+        return dialog
+    }
+
+
 }

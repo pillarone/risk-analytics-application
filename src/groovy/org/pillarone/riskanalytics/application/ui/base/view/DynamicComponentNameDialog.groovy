@@ -9,6 +9,7 @@ class DynamicComponentNameDialog {
     private ULCWindow parent
     private ULCDialog dialog
     ULCTextField nameInput
+    ULCCheckBox withComments
     String nameValue
     private ULCButton okButton
     private ULCButton cancelButton
@@ -37,6 +38,9 @@ class DynamicComponentNameDialog {
         nameInput = new ULCTextField()
         nameInput.name = 'newName'
         nameInput.value = nameValue
+        withComments = new ULCCheckBox("withComment")
+        withComments.setSelected(true)
+        withComments.setVisible(false)
         okButton = new ULCButton("Ok")
         okButton.name = 'okButton'
         okButton.enabler = nameInput
@@ -50,8 +54,10 @@ class DynamicComponentNameDialog {
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel("Name:"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, nameInput)
-        content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
-        content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
+        content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCFiller())
+        content.add(ULCBoxPane.BOX_LEFT_CENTER, withComments)
+        content.add(2,ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
+        content.add(2,ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         okButton.setPreferredSize(new Dimension(70, 20))
         content.add(ULCBoxPane.BOX_RIGHT_BOTTOM, okButton)
         cancelButton.setPreferredSize(new Dimension(70, 20))
