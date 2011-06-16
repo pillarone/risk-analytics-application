@@ -28,4 +28,6 @@ interface NavigationListener {
     void showHiddenComments()
 
     void showComments()
+
+    void selectTab(int index)
 }

@@ -288,6 +288,11 @@ class ParameterView extends AbstractModellingTreeView implements NavigationListe
         }
     }
 
+    public void selectTab(int index) {
+        if (index < tabbedPane.getTabCount())
+            tabbedPane.setSelectedIndex(index)
+    }
+
     public void addCommentFilter(int tabbedPaneIndex, CommentFilter filter) {
         commentFilters[tabbedPaneIndex] = filter
         model?.tabbedPaneChanged(filter)

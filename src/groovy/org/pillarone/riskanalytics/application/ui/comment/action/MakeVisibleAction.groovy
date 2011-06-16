@@ -28,6 +28,7 @@ class MakeVisibleAction extends AbstractCommentAction {
             getRowHeaderTableTree().makeVisible treePath
             getViewPortTableTree().scrollCellToVisible treePath, 0
             getViewPortTableTree().selectionModel.setSelectionPath treePath
+            model.selectTab(0)
         }
     }
 

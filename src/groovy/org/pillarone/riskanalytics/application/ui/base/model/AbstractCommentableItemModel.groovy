@@ -116,6 +116,12 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
         }
     }
 
+    void selectTab(int tabIndex) {
+        navigationListeners.each {NavigationListener listener ->
+            listener.selectTab(tabIndex)
+        }
+    }
+
     void showCommentsTab() {
         navigationListeners.each {NavigationListener listener ->
             listener.showComments()
