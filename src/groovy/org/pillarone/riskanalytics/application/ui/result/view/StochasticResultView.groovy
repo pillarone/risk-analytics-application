@@ -16,6 +16,9 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
+import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.event.ValueChangedEvent
+import org.pillarone.riskanalytics.application.util.UserPreferences
 
 class StochasticResultView extends ResultView {
 
@@ -25,8 +28,9 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
     EnumI18NComboBoxModel profitFunctionModel
-
+    UserPreferences userPreferences = new UserPreferences()
     private int nextModelIndex = 0
+    final static String FUNCTION_VALUE = "functionValue_"
 
     @Lazy MeanFunction meanFunction
 
@@ -127,8 +131,11 @@ class StochasticResultView extends ResultView {
         dataType.groupingUsed = false
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
-        functionValue.value = 99.5
+        functionValue.value = userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, 99.5)
         functionValue.columns = 6
+        functionValue.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
+            userPreferences.putPropertyValue(FUNCTION_VALUE + model.model.name, functionValue.getValue())
+        }] as IValueChangedListener)
         profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
         ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)
         profitComboBox.name = "profitComboBox"

@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDi
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.util.UserPreferences
 
 class UIUtils {
 

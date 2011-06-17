@@ -74,4 +74,9 @@ public class UserPreferences {
         userPrefs.get(property, null)
     }
 
+    public Object getDefaultValue(String property, Object defaultValue) {
+        Object value = userPrefs.get(property, null)
+        return value ? value : defaultValue
+    }
+
 }
