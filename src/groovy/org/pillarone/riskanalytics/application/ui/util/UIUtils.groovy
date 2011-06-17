@@ -198,17 +198,19 @@ class UIUtils {
         UserContext.setAttribute(ROOT_PANE, pane)
     }
 
-    public static String getUserRoles() {
-        Person loggedUser
-        String userAuthorities = ""
-        Person.withTransaction {def status ->
-            loggedUser = UserManagement.getCurrentUser()
-            List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
-            List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
-            userAuthorities = i18nAuthorities.join(",&nbsp;")
+    public static String getUserInfo() {
+        if (UserManagement.isLoggedIn()) {
+            Person loggedUser=null
+            String userAuthorities = ""
+            Person.withTransaction {def status ->
+                loggedUser = UserManagement.getCurrentUser()
+                List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
+                List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
+                userAuthorities = i18nAuthorities.join(", ")
+            }
+            return loggedUser.username + " " + userAuthorities
         }
-        return userAuthorities
-
+        return ""
     }
 
 }

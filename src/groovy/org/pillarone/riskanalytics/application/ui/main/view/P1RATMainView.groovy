@@ -70,6 +70,7 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
     NavigationBarTopPane navigationBarTopPane
 
     ULCLabel lockedLabel
+    ULCLabel userInfoLabel
 
     private AboutDialog aboutDialog
     private UserSettingsViewDialog settingsViewDialog
@@ -243,7 +244,9 @@ class P1RATMainView implements IP1RATModelListener, IModellingItemChangeListener
         lockedLabel.text = null
 
         lockedLabel.icon = UIUtils.getIcon("clear.png")
+        userInfoLabel = new ULCLabel(UIUtils.getUserInfo())
 
+        rightToolBar.add(UIUtils.spaceAround(userInfoLabel, 6, 3, 3, 3))
         rightToolBar.add(UIUtils.spaceAround(lockedLabel, 6, 3, 3, 3))
     }
 
