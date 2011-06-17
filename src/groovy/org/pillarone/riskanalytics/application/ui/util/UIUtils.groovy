@@ -17,6 +17,9 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.core.user.PersonAuthority
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 class UIUtils {
 
@@ -193,6 +196,19 @@ class UIUtils {
 
     public static void setRootPane(ULCRootPane pane) {
         UserContext.setAttribute(ROOT_PANE, pane)
+    }
+
+    public static String getUserRoles() {
+        Person loggedUser
+        String userAuthorities = ""
+        Person.withTransaction {def status ->
+            loggedUser = UserManagement.getCurrentUser()
+            List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
+            List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
+            userAuthorities = i18nAuthorities.join(",&nbsp;")
+        }
+        return userAuthorities
+
     }
 
 }
