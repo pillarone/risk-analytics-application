@@ -90,7 +90,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         def enumNode = tableModel.root.getChildAt(1).getChildAt(1)
         assertEquals 'enum parameter', enumNode.displayName
-        assertEquals 'FIRST_VALUE', tableModel.getValueAt(enumNode, 1)
+        assertEquals 'First value', tableModel.getValueAt(enumNode, 1)
 
         tableModel.setValueAt('SECOND_VALUE', enumNode, 1)
         assertEquals 'SECOND_VALUE', tableModel.getValueAt(enumNode, 1)
