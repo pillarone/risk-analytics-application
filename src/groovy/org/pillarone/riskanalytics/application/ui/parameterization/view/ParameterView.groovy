@@ -37,8 +37,6 @@ class ParameterView extends AbstractModellingTreeView implements NavigationListe
     ULCTabbedPane tabbedPane
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
-    static double DIVIDER = 0.65
-    static double NO_DIVIDER = 1.0
     def commentFilters
 
     ParameterView(ParameterViewModel model) {

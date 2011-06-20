@@ -1,39 +1,24 @@
 package org.pillarone.riskanalytics.application.reports
 
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.reports.ReportFactory
-import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.util.IFileChooseHandler
+import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import com.ulcjava.base.application.ULCWindow
-import com.ulcjava.base.application.ULCAlert
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import com.ulcjava.base.application.util.IFileStoreHandler
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.UlcUtilities
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.UserPreferences
+import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractReportAction extends SelectionTreeAction {
-    protected UserPreferences userPreferences  = new UserPreferences()
+    protected UserPreferences userPreferences = new UserPreferences()
 
     Log LOG = LogFactory.getLog(AbstractReportAction)
 
-    def AbstractReportAction(name, tree, P1RATModel model) {
+    def AbstractReportAction(name, tree, RiskAnalyticsMainModel model) {
         super(name, tree, model)
     }
 

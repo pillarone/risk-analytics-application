@@ -11,69 +11,70 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class DeleteAction extends SelectionTreeAction {
 
-    Closure okAction = { def selectedItem, def nextItemToSelect ->
+    Closure okAction = { AbstractUIItem selectedItem, def nextItemToSelect ->
         removeItem(selectedItem)
         tree.addPathSelection(new TreePath(DefaultTableTreeModel.getPathToRoot(nextItemToSelect) as Object[]))
     }
 
-    public DeleteAction(ULCTableTree tree, P1RATModel model) {
+    public DeleteAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Delete", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true));
     }
 
     public void doActionPerformed(ActionEvent event) {
-        def selectedItem = getSelectedItem()
+        AbstractUIItem selectedItem = getSelectedUIItem()
         if (!selectedItem) return
         AlertDialog dialog = new AlertDialog(tree, selectedItem, getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [tree?.selectedPath?.lastPathComponent?.toString()]), okAction)
         dialog.init()
         dialog.show()
     }
 
-    private void removeItem(ModellingItem selectedItem) {
+    private void removeItem(ModellingUIItem selectedItem) {
         boolean usedInSimulation = false
-        if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
+        if (selectedItem instanceof ParameterizationUIItem || selectedItem instanceof ResultConfigurationUIItem) {
             usedInSimulation = selectedItem.isUsedInSimulation()
         }
         Model selectedModel = getSelectedModel()
         if (!usedInSimulation) {
-            model.removeItem(selectedModel, selectedItem)
+            selectedItem.remove()
         } else {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
-            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
-            alert.show()
+            //todo fja remove use a new RiskAnalyticsMainModel
+            //            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
+            //            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
+            //            alert.show()
         }
     }
 
-    private void removeItem(BatchRun selectedItem) {
-        model.removeItem(selectedItem)
-    }
 
     private void removeItem(def selectedItem) {}
 
-
-    private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
-        synchronized (item) {
-            if (value.equals(firstButtonValue)) {
-                model.deleteDependingResults(selectedModel, item)
-                model.removeItem(selectedModel, item)
-            }
-        }
-    }
+//todo fja remove use a new RiskAnalyticsMainModel
+    //    private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
+    //        synchronized (item) {
+    //            if (value.equals(firstButtonValue)) {
+    //                model.deleteDependingResults(selectedModel, item)
+    //                model.removeItem(selectedModel, item)
+    //            }
+    //        }
+    //    }
 
     protected List allowedRoles() {
         return []

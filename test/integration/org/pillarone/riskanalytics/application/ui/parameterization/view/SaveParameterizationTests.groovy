@@ -22,6 +22,9 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -52,9 +55,12 @@ class SaveParameterizationTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
+        parameterViewModel.mainModel = new RiskAnalyticsMainModel(null)
+        parameterViewModel.mainModel.currentItem = new ParameterizationUIItem(parameterViewModel.mainModel, new CoreModel(), parameterization)
+
         ULCBoxPane content = new ParameterView(parameterViewModel).content
         IActionListener saveAction = content.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false))
-        saveAction.metaClass.saveItem = {ModellingItem modellingItem ->
+        saveAction.metaClass.saveItem = {AbstractUIItem modellingItem ->
             parameterization.changed = false
         }
         frame.setContentPane(content)

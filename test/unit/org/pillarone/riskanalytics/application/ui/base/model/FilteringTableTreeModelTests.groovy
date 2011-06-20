@@ -12,6 +12,10 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import models.application.ApplicationModel
 
 class FilteringTableTreeModelTests extends GroovyTestCase {
 
@@ -554,16 +558,6 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
             model.nodeStructureChanged(child2)
         }
 
-/*
-
-        assertNotNull eventForMethod(filteringModel, "tableTreeNodeStructureChanged") {
-            model.nodeStructureChanged(child2)
-        }
-
-        assertNull eventForMethod(filteringModel, "tableTreeNodeStructureChanged") {
-            model.nodeStructureChanged(child3)
-        }
-*/
 
     }
 
@@ -652,13 +646,20 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
         modelNode.add(simulationsNode)
         root.add(modelNode)
 
+
+
         Parameterization parameterization1 = new Parameterization("param1")
-        ParameterizationNode parameterizationNode1 = new ParameterizationNode(parameterization1)
+
+
+
+        ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(null)
+        FilteringTableTreeModel filter = new MultiFilteringTableTreeModel(model)
+
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(model)
+        Model itemModel = new ApplicationModel()
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(mainModel, itemModel, parameterization1)
+        ParameterizationNode parameterizationNode1 = new ParameterizationNode(parameterizationUIItem)
         parameterizationsNode.add parameterizationNode1
-
-
-        ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(root: root)
-        FilteringTableTreeModel filter = new FilteringTableTreeModel(model, new ModellingItemNodeFilter(null, -1))
 
         assertTrue filter.isAcceptedNode(modelNode)
         assertTrue filter.isAcceptedNode(parameterizationsNode)
@@ -666,7 +667,7 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
         assertTrue filter.isAcceptedNode(simulationsNode)
         assertTrue filter.isAcceptedNode(parameterizationNode1)
 
-        filter.setFilter(new ModellingItemNodeFilter(["test1", "test2"], 0))
+        filter.addFilter(new ModellingItemNodeFilter(["test1", "test2"], 0, false) )
 
         parameterizationNode1.values[0] = "test2"
         assertTrue filter.isAcceptedNode(parameterizationNode1)

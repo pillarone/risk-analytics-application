@@ -2,7 +2,8 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareSimulationUIItem
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -12,7 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 class CompareSimulationsAction extends AbstractCompareAction {
 
-    public CompareSimulationsAction(ULCTableTree tree, P1RATModel model) {
+    public CompareSimulationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("CompareSimulations", tree, model)
     }
 
@@ -20,10 +21,12 @@ class CompareSimulationsAction extends AbstractCompareAction {
         List elements = getSelectedObjects(Simulation.class)
         try {
             validate()
-            Model model = getSelectedModel(elements[0])
-            model.init()
-            if (model != null && elements[0].item != null) {
-                this.model.compareItems(model, elements)
+            Model selectedModel = getSelectedModel(elements[0])
+            selectedModel.init()
+            if (elements[0].item != null) {
+                List items = elements*.abstractUIItem.item
+                CompareSimulationUIItem uiItem = new CompareSimulationUIItem(model, selectedModel, items)
+                model.openItem(selectedModel, uiItem)
             }
         } catch (IllegalArgumentException ex) {
             println "$ex"

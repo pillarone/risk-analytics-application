@@ -1,34 +1,15 @@
 package org.pillarone.riskanalytics.application.reports.comment.action
 
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.reports.ReportFactory
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.shared.FileChooserConfig
-import com.ulcjava.base.application.ULCWindow
-import com.ulcjava.base.application.ULCAlert
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import com.ulcjava.base.application.util.IFileStoreHandler
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.UlcUtilities
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.reports.AbstractReportAction
-import static org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView.*
+import org.pillarone.riskanalytics.application.reports.ReportFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.CommentUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com

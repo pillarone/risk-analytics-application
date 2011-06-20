@@ -1,9 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
@@ -11,8 +7,11 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -20,7 +19,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 class DeleteAllGroupAction extends DeleteAllAction {
     String alertId
 
-    public DeleteAllGroupAction(ULCTableTree tree, P1RATModel model, String alertId) {
+    public DeleteAllGroupAction(ULCTableTree tree, RiskAnalyticsMainModel model, String alertId) {
         super(tree, model)
         this.alertId = alertId
     }

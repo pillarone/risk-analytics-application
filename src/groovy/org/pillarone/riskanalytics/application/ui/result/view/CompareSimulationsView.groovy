@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
-import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
@@ -34,16 +34,16 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
 
     ULCCloseableTabbedPane tabbedPane
     CompareSimulationsCriteriaView criteriaView
-    P1RATMainView p1RATMainView
+    RiskAnalyticsMainModel mainModel
     ULCComboBox selectView
     EnumI18NComboBoxModel profitFunctionModel
 
     public static int space = 3
 
-    public CompareSimulationsView(CompareSimulationsViewModel model, P1RATMainView p1RATMainView) {
+    public CompareSimulationsView(CompareSimulationsViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model)
         model.addFunctionListener(this)
-        this.p1RATMainView = p1RATMainView
+        this.mainModel = mainModel
 
     }
 

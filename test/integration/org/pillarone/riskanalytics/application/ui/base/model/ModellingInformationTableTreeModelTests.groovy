@@ -9,6 +9,8 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import models.application.ApplicationModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -37,8 +39,8 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '1', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '1', node.abstractUIItem.item.versionNumber.toString()
             }
         }
     }
@@ -57,12 +59,12 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '3', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
-                assertEquals '2', node.getChildAt(0).item.versionNumber.toString()
-                assertEquals '1', node.getChildAt(1).item.versionNumber.toString()
+                assertEquals '2', node.getChildAt(0).abstractUIItem.item.versionNumber.toString()
+                assertEquals '1', node.getChildAt(1).abstractUIItem.item.versionNumber.toString()
             }
         }
     }
@@ -89,8 +91,8 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '11', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '11', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 10, node.childCount
             }
@@ -113,21 +115,21 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '3', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '2', subNode1.item.versionNumber.toString()
+                assertEquals '2', subNode1.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, subNode1.childCount
-                assertEquals '2.1', subNode1.getChildAt(0).item.versionNumber.toString()
+                assertEquals '2.1', subNode1.getChildAt(0).abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
-                assertEquals '1', subNode2.item.versionNumber.toString()
+                assertEquals '1', subNode2.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, subNode2.childCount
-                assertEquals '1.1', subNode2.getChildAt(0).item.versionNumber.toString()
+                assertEquals '1.1', subNode2.getChildAt(0).abstractUIItem.item.versionNumber.toString()
             }
         }
     }
@@ -146,15 +148,15 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '2.1', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '2.1', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '2', subNode1.item.versionNumber.toString()
+                assertEquals '2', subNode1.abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
-                assertEquals '1', subNode2.item.versionNumber.toString()
+                assertEquals '1', subNode2.abstractUIItem.item.versionNumber.toString()
 
             }
         }
@@ -166,20 +168,21 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 
         modelStructureMock.use {
             factoryMock.use {
-                def model = new ModellingInformationTableTreeModel()
+                def model = new ModellingInformationTableTreeModel(null)
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('2'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('2'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new ApplicationModel(), parameterization))
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '2', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '2', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '1', subNode1.item.versionNumber.toString()
+                assertEquals '1', subNode1.abstractUIItem.item.versionNumber.toString()
 
             }
         }
@@ -196,21 +199,24 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new CoreModel(), parameterization))
+
+//                model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel))
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '3', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '2', subNode1.item.versionNumber.toString()
+                assertEquals '2', subNode1.abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
-                assertEquals '1', subNode2.item.versionNumber.toString()
+                assertEquals '1', subNode2.abstractUIItem.item.versionNumber.toString()
             }
         }
     }
@@ -225,7 +231,10 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'foo', versionNumber: new VersionNumber('2'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'foo', versionNumber: new VersionNumber('2'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new CoreModel(), parameterization))
+
+//                model.addNodeForItem(new Parameterization(name: 'foo', versionNumber: new VersionNumber('2'), modelClass: CoreModel))
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
@@ -244,7 +253,10 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'bar', versionNumber: new VersionNumber('1'), modelClass: CoreModel))
+//                model.addNodeForItem(new Parameterization(name: 'bar', versionNumber: new VersionNumber('1'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'bar', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new CoreModel(), parameterization))
+
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
@@ -265,24 +277,26 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('2.1'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('2.1'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new CoreModel(), parameterization))
+
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '3', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '2', subNode1.item.versionNumber.toString()
+                assertEquals '2', subNode1.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, subNode1.childCount
-                assertEquals '2.1', subNode1.getChildAt(0).item.versionNumber.toString()
+                assertEquals '2.1', subNode1.getChildAt(0).abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
-                assertEquals '1', subNode2.item.versionNumber.toString()
+                assertEquals '1', subNode2.abstractUIItem.item.versionNumber.toString()
 
             }
         }
@@ -301,28 +315,30 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('2.1.1'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('2.1.1'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new CoreModel(), parameterization))
+
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '3', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '2', subNode1.item.versionNumber.toString()
+                assertEquals '2', subNode1.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, subNode1.childCount
-                assertEquals '2.1', subNode1.getChildAt(0).item.versionNumber.toString()
+                assertEquals '2.1', subNode1.getChildAt(0).abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subSubNode = subNode1.getChildAt(0)
                 assertEquals 1, subSubNode.childCount
-                assertEquals '2.1.1', subSubNode.getChildAt(0).item.versionNumber.toString()
+                assertEquals '2.1.1', subSubNode.getChildAt(0).abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
-                assertEquals '1', subNode2.item.versionNumber.toString()
+                assertEquals '1', subNode2.abstractUIItem.item.versionNumber.toString()
 
             }
         }
@@ -339,25 +355,27 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.addNodeForItem(new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel))
+                Parameterization parameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel)
+                model.addNodeForItem(new ParameterizationUIItem(null, new CoreModel(), parameterization))
+
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
 
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '3', node.item.versionNumber.toString()
+                assertEquals 'Name', node.abstractUIItem.item.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 2, node.childCount
                 DefaultMutableTableTreeNode subNode1 = node.getChildAt(0)
-                assertEquals '2', subNode1.item.versionNumber.toString()
+                assertEquals '2', subNode1.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, subNode1.childCount
-                assertEquals '2.1', subNode1.getChildAt(0).item.versionNumber.toString()
+                assertEquals '2.1', subNode1.getChildAt(0).abstractUIItem.item.versionNumber.toString()
 
                 DefaultMutableTableTreeNode subNode2 = node.getChildAt(1)
-                assertEquals '1', subNode2.item.versionNumber.toString()
+                assertEquals '1', subNode2.abstractUIItem.item.versionNumber.toString()
 
             }
         }
@@ -370,9 +388,10 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 
         modelStructureMock.use {
             factoryMock.use {
-                def model = new ModellingInformationTableTreeModel()
+                def model = new ModellingInformationTableTreeModel(null)
                 model.buildTreeNodes()
-                model.removeNodeForItem(parameterization)
+                ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(), parameterization)
+                model.removeNodeForItem(parameterizationUIItem)
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
@@ -392,20 +411,21 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.removeNodeForItem(parameterization3)
+                 ParameterizationUIItem parameterizationUIItem3 = new ParameterizationUIItem(null, new CoreModel(), parameterization3)
+                model.removeNodeForItem(parameterizationUIItem3)
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
 
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '2', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '2', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, node.childCount
                 def child = node.getChildAt(0)
-                assertEquals 'Name', child.item.name
-                assertEquals '1', child.item.versionNumber.toString()
+                assertEquals 'Name', child.name
+                assertEquals '1', child.abstractUIItem.item.versionNumber.toString()
             }
         }
     }
@@ -421,94 +441,26 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                model.removeNodeForItem(parameterization3)
+                 ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(), parameterization3)
+                model.removeNodeForItem(parameterizationUIItem)
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
                 DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
                 assertEquals 1, paramsNode.childCount
 
                 def node = paramsNode.getChildAt(0)
-                assertEquals 'Name', node.item.name
-                assertEquals '2', node.item.versionNumber.toString()
+                assertEquals 'Name', node.name
+                assertEquals '2', node.abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 1, node.childCount
-                assertEquals 'Name', node.getChildAt(0).item.name
-                assertEquals '1', node.getChildAt(0).item.versionNumber.toString()
+                assertEquals 'Name', node.getChildAt(0).name
+                assertEquals '1', node.getChildAt(0).abstractUIItem.item.versionNumber.toString()
 
                 assertEquals 0, node.getChildAt(0).childCount
             }
         }
     }
 
-//    void testRefresh_AddingItem() {
-//        Parameterization parameterization1 = new Parameterization(name: 'Name1', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//        Parameterization parameterization2 = new Parameterization(name: 'Name2', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//        Parameterization parameterization3 = new Parameterization(name: 'Name3', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//        Parameterization parameterization4 = new Parameterization(name: 'Name4', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//
-//        ModellingInformationTableTreeModel model = null
-//        prepareMocks([parameterization1, parameterization2, parameterization3], [])
-//        modelStructureMock.use {
-//            factoryMock.use {
-//                model = new ModellingInformationTableTreeModel()
-//                model.buildTreeNodes()
-//            }
-//        }
-//
-//
-//
-//
-//        TreeModelEvent treeModelEvent = null
-//
-//        model.addTreeModelListener([
-//                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event}
-//        ] as ITreeModelListener)
-//
-//        assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
-//        prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
-//        modelStructureMock.use {
-//            factoryMock.use {
-//                model.refresh()
-//            }
-//        }
-//        assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
-//        assertNotNull "No event fired", treeModelEvent
-//    }
-//
-//
-//    void testRefresh_RemovingItem() {
-//        Parameterization parameterization1 = new Parameterization(name: 'Name1', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//        Parameterization parameterization2 = new Parameterization(name: 'Name2', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//        Parameterization parameterization3 = new Parameterization(name: 'Name3', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//        Parameterization parameterization4 = new Parameterization(name: 'Name4', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
-//
-//        ModellingInformationTableTreeModel model = null
-//        prepareMocks([parameterization1, parameterization2, parameterization3, parameterization4], [])
-//        modelStructureMock.use {
-//            factoryMock.use {
-//                model = new ModellingInformationTableTreeModel()
-//                model.buildTreeNodes()
-//                assertEquals "wrong number of parameter childs", 4, model.root.getChildAt(0).getChildAt(0).childCount
-//            }
-//        }
-//
-//        TreeModelEvent treeModelEvent = null
-//
-//        model.addTreeModelListener([
-//                treeNodesChanged: {TreeModelEvent event -> treeModelEvent = event},
-//                treeStructureChanged: {TreeModelEvent event -> treeModelEvent = event},
-//                treeNodesRemoved: {TreeModelEvent event -> treeModelEvent = event}
-//        ] as ITreeModelListener)
-//
-//        prepareMocks([parameterization1, parameterization2, parameterization3], [])
-//        modelStructureMock.use {
-//            factoryMock.use {
-//                model.refresh()
-//                assertEquals "wrong number of parameter childs", 3, model.root.getChildAt(0).getChildAt(0).childCount
-//                assertNotNull "No event fired", treeModelEvent
-//            }
-//        }
-//    }
 
     private void prepareMocks(params, resultConfigurations) {
         modelStructureMock = new MockFor(ModelStructure)

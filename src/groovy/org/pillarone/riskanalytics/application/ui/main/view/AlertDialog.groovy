@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 
@@ -20,11 +21,11 @@ class AlertDialog {
     String message
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
     Closure okAction
-    def selectedItem
+    AbstractUIItem selectedItem
     def nextItemToSelect
     Dimension buttonDimension = new Dimension(80, 20)
 
-    public AlertDialog(ULCTableTree tree, def selectedItem, def nextItemToSelect, String title, String message, Closure okAction) {
+    public AlertDialog(ULCTableTree tree, AbstractUIItem selectedItem, def nextItemToSelect, String title, String message, Closure okAction) {
         this.tree = tree
         this.title = title
         this.message = message

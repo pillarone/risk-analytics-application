@@ -10,18 +10,20 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
     ULCTableTree tree
-    P1RATModel model
+    RiskAnalyticsMainModel model
 
-    def SelectionTreeAction(name, tree, P1RATModel model) {
+    def SelectionTreeAction(name, tree, RiskAnalyticsMainModel model) {
         super(name);
         this.tree = tree;
         this.model = model
@@ -41,7 +43,13 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     Object getSelectedItem() {
         DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
-        return itemNode instanceof ItemNode ? itemNode.item : null
+        return itemNode instanceof ItemNode ? itemNode.abstractUIItem.item : null
+    }
+
+    AbstractUIItem getSelectedUIItem() {
+        DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
+        AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
+        return abstractUIItem
     }
 
     Object getNextSelectedItem() {
@@ -109,7 +117,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
                 itemNode = itemNode?.parent
             }
         }
-        return modelNode?.item
+        return modelNode?.abstractUIItem.item
     }
 
     Class getSelectedItemGroupClass() {
@@ -148,6 +156,13 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     protected List allowedRoles() {
         return []
     }
+
+    Model getModelInstance(ModellingItem item) {
+        Model selectedModelInstance = item.modelClass.newInstance()
+        selectedModelInstance.init()
+        return selectedModelInstance
+    }
+
 }
 
 

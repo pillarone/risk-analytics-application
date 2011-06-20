@@ -22,9 +22,8 @@ class AboutDialog {
     private ULCTabbedPane tabbedPane
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
 
-    public AboutDialog(ULCWindow rootPane, Closure closeAction) {
+    public AboutDialog(ULCWindow rootPane) {
         this.rootPane = rootPane
-        this.closeAction = closeAction
         initComponents()
         layoutComponents()
     }

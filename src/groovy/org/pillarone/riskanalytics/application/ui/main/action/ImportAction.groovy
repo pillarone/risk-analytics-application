@@ -9,7 +9,7 @@ import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -24,13 +24,13 @@ class ImportAction extends SelectionTreeAction {
     boolean forceImport = false
     Log LOG = LogFactory.getLog(ImportAction)
 
-    public ImportAction(ULCTableTree tree, P1RATModel model) {
+    public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Import", tree, model)
         userPreferences = new UserPreferences()
         ancestor = getAncestor()
     }
 
-    public ImportAction(ULCTableTree tree, P1RATModel model, boolean forceImport) {
+    public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model, boolean forceImport) {
         super(forceImport ? "forceImport" : "Import", tree, model)
         this.forceImport = forceImport
         userPreferences = new UserPreferences()
@@ -38,7 +38,7 @@ class ImportAction extends SelectionTreeAction {
     }
 
 
-    public ImportAction(ULCTableTree tree, P1RATModel model, String actionName) {
+    public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
         super(actionName, tree, model)
         userPreferences = new UserPreferences()
         ancestor = getAncestor()

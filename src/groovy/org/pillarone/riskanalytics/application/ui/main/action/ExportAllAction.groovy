@@ -1,11 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCWindow
-import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
@@ -14,13 +13,12 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
  */
 class ExportAllAction extends ExportAction {
 
-    P1RATMainView p1RATMainView
+    RiskAnalyticsMainView mainView
     boolean onlyNewestVersion
 
 
-    public ExportAllAction(P1RATMainView p1RATMainView, P1RATModel model, boolean onlyNewestVersion) {
+    public ExportAllAction(RiskAnalyticsMainModel model, boolean onlyNewestVersion) {
         super(onlyNewestVersion ? "ExportAllParameterizationsNewestVersion" : "ExportAllParameterizations")
-        this.p1RATMainView = p1RATMainView
         this.model = model
         this.onlyNewestVersion = onlyNewestVersion
     }
@@ -42,11 +40,5 @@ class ExportAllAction extends ExportAction {
             file.mkdir()
         return "${filePaths[0]}/${item.modelClass.name}/${paramName}.groovy"
     }
-
-    ULCWindow getAncestor() {
-        ULCWindow ancestor = UlcUtilities.getWindowAncestor(p1RATMainView.content)
-        return ancestor
-    }
-
 
 }

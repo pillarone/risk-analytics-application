@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.BatchRun
 
 /**
@@ -11,7 +11,7 @@ class CalculationConfigurationModel implements BatchListener {
     SimulationSettingsPaneModel settingsPaneModel
     SimulationActionsPaneModel actionsPaneModel
 
-    public CalculationConfigurationModel(Class modelClass, P1RATModel mainModel) {
+    public CalculationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
         settingsPaneModel = new CalculationSettingsPaneModel(modelClass)
         //Use the setting pane model as ISimulationProvider for the actions pane model
         actionsPaneModel = new SimulationActionsPaneModel(settingsPaneModel, mainModel)

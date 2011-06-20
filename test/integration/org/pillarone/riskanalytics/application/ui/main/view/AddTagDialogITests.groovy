@@ -6,6 +6,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import javax.swing.tree.TreePath
 import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
@@ -41,6 +42,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         new DBCleanUpService().cleanUp()
         removeTags()
         LocaleResources.clearTestMode()
+        BatchUIItem
     }
 
     void testAddNewTag() {
@@ -125,7 +127,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
             ParameterizationDAO parameterization = ParameterizationDAO.findByName("CoreAlternativeParameters")
             assertNotNull parameterization
             //todo save changed data in database doesn't work correctly in cruise
-//            assertEquals 1, parameterization.tags.size()
+            //            assertEquals 1, parameterization.tags.size()
         }
 
     }

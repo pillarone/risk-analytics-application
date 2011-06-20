@@ -1,18 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-
 import com.ulcjava.base.application.AbstractAction
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResultUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CommentsSwitchAction extends AbstractAction {
     boolean comment
-    P1RATModel model
+    RiskAnalyticsMainModel model
 
     public CommentsSwitchAction(model, text, comment) {
         super(text);
@@ -21,12 +21,17 @@ class CommentsSwitchAction extends AbstractAction {
     }
 
     public void actionPerformed(ActionEvent event) {
-        def currenItem = model.currentItem
-        if (currenItem instanceof Parameterization) {
-            ParameterViewModel parameterViewModel = model.getParameterViewModel(currenItem)
-            parameterViewModel.navigationSelected(comment)
+        if (isEnabled()) {
+            AbstractModellingModel abstractModellingModel = model.getViewModel(model.currentItem)
+            abstractModellingModel.navigationSelected(comment)
         }
 
     }
+
+    @Override
+    boolean isEnabled() {
+        return (model.currentItem instanceof ParameterizationUIItem) || (model.currentItem instanceof ResultUIItem)
+    }
+
 
 }

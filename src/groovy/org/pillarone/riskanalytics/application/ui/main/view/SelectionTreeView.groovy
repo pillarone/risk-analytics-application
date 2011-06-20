@@ -7,13 +7,14 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
@@ -25,12 +26,14 @@ import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
-    P1RATModel p1RATModel
+    RiskAnalyticsMainModel mainModel
+    AbstractTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
 
-    public SelectionTreeView(P1RATModel p1RATModel) {
-        this.p1RATModel = p1RATModel
+    public SelectionTreeView(RiskAnalyticsMainModel mainModel) {
+        this.mainModel = mainModel
+        this.navigationTableTreeModel = mainModel.navigationTableTreeModel
         initTree()
         initComponents()
         layoutComponents()
@@ -49,14 +52,14 @@ class SelectionTreeView {
 
     private void attachListeners() {
         ULCTableTree rowHeaderTableTree = tree.rowHeaderTableTree
-        rowHeaderTableTree.addActionListener(new TreeDoubleClickAction(rowHeaderTableTree, p1RATModel))
-        rowHeaderTableTree.registerKeyboardAction(new DeleteAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new RenameAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new ImportAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new ExportItemAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new SimulationAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, p1RATModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.addActionListener(new TreeDoubleClickAction(rowHeaderTableTree, mainModel))
+        rowHeaderTableTree.registerKeyboardAction(new DeleteAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new RenameAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new ImportAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new ExportItemAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new SimulationAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
     }
 
@@ -64,7 +67,7 @@ class SelectionTreeView {
 
         def columnsWidths = 120
 
-        tree = new ULCFixedColumnTableTree(p1RATModel.selectionTreeModel, 1, ([TREE_FIRST_COLUMN_WIDTH] + [columnsWidths] * (p1RATModel.selectionTreeModel.columnCount - 1)) as int[])
+        tree = new ULCFixedColumnTableTree(navigationTableTreeModel, 1, ([TREE_FIRST_COLUMN_WIDTH] + [columnsWidths] * (navigationTableTreeModel.columnCount - 1)) as int[])
         tree.name = "selectionTableTree"
         tree.viewPortTableTree.setRootVisible(false);
         tree.viewPortTableTree.showsRootHandles = true
@@ -89,10 +92,10 @@ class SelectionTreeView {
         tree.cellSelectionEnabled = true
         tree.rowHeaderTableTree.getSelectionModel().setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
-        tree.getRowHeaderTableTree().expandPaths([new TreePath([p1RATModel.selectionTreeModel.root] as Object[])] as TreePath[], false);
+        tree.getRowHeaderTableTree().expandPaths([new TreePath([navigationTableTreeModel.root] as Object[])] as TreePath[], false);
         tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
             ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
-            int columnIndex = p1RATModel.selectionTreeModel.getColumnIndex(column.getModelIndex())
+            int columnIndex = navigationTableTreeModel.getColumnIndex(column.getModelIndex())
             if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
             if (ActionEvent.META_MASK == event.getModifiers()) {
                 SelectionTreeHeaderDialog dialog
@@ -106,20 +109,23 @@ class SelectionTreeView {
                 dialog.dialog.setAlignment(ULCBoxPane.BOX_CENTER_CENTER)
                 dialog.dialog.setVisible true
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
-                p1RATModel.selectionTreeModel.order(columnIndex, ascOrder)
+                navigationTableTreeModel.order(columnIndex, ascOrder)
                 ascOrder = !ascOrder
             }
         }] as IActionListener)
     }
 
     public MainSelectionTableTreeCellRenderer getPopUpRenderer(ULCFixedColumnTableTree tree) {
-        MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree, p1RATModel)
-        renderer.initPopUpMenu()
+        MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree.viewPortTableTree, mainModel)
         return renderer
     }
 
     ULCTableTree getSelectionTree() {
         return tree.rowHeaderTableTree
+    }
+
+    ITableTreeNode getRoot() {
+        return navigationTableTreeModel.root
     }
 
 

@@ -29,8 +29,9 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     ConfigObject allResults = null
     List<ConfigObject> resultsList
 
+
     public CompareSimulationsViewModel(Model model, ModelStructure structure, List simulations) {
-        super(model, simulations*.item, structure)
+        super(model, simulations, structure)
         if (structure) {
             model.init()
             buildTreeStructure()
@@ -38,6 +39,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         }
 
     }
+
 
     void addFunctionListener(ICompareFunctionListener listener) {
         listeners << listener
