@@ -116,7 +116,7 @@ class SelectionTreeView {
     }
 
     public MainSelectionTableTreeCellRenderer getPopUpRenderer(ULCFixedColumnTableTree tree) {
-        MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree.viewPortTableTree, mainModel)
+        MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree.rowHeaderTableTree, mainModel)
         return renderer
     }
 

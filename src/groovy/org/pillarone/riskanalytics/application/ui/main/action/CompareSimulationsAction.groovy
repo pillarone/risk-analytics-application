@@ -9,9 +9,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
- * @author fouad.jaada@intuitive-collaboration.com
- */
-class CompareSimulationsAction extends AbstractCompareAction {
+* @author fouad.jaada@intuitive-collaboration.com
+*/
+class CompareSimulationsAction extends SelectionTreeAction {
 
     public CompareSimulationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("CompareSimulations", tree, model)
@@ -20,10 +20,10 @@ class CompareSimulationsAction extends AbstractCompareAction {
     public void doActionPerformed(ActionEvent event) {
         List elements = getSelectedObjects(Simulation.class)
         try {
-            validate()
+            validate(elements)
             Model selectedModel = getSelectedModel(elements[0])
             selectedModel.init()
-            if (elements[0].item != null) {
+            if (selectedModel != null) {
                 List items = elements*.abstractUIItem.item
                 CompareSimulationUIItem uiItem = new CompareSimulationUIItem(model, selectedModel, items)
                 model.openItem(selectedModel, uiItem)
@@ -33,8 +33,26 @@ class CompareSimulationsAction extends AbstractCompareAction {
         }
     }
 
+    private void validate(List elements) throws IllegalArgumentException, Exception {
+        if (elements.size() < 2) throw new IllegalArgumentException("select at lease two simulations for compare")
+        Class modelClass = elements[0].abstractUIItem.item.modelClass
+        elements.each {
+            if (it.abstractUIItem.item.modelClass != modelClass) {
+                throw new IllegalArgumentException("select a simulations with same ModelClass")
+            }
+        }
+    }
+
     public boolean isEnabled() {
-        return super.isEnabled() && !(getSelectedModel() instanceof DeterministicModel)
+        List elements = getSelectedObjects(Simulation.class)
+        try {
+            validate(elements)
+        } catch (IllegalArgumentException ex) {
+            return false
+        }
+        Model selectedModel = getSelectedModel(elements[0])
+        //at moment compare of deterministic models not supported
+        return !(selectedModel instanceof DeterministicModel)
     }
 
 }
