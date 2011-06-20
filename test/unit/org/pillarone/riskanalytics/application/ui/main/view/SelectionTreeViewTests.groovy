@@ -10,7 +10,6 @@ import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
@@ -30,7 +29,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
         RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
-        SelectionTreeView view = new SelectionTreeView(mainModel)//getMockP1RATModel(viewModel))
+        SelectionTreeView view = new SelectionTreeView(mainModel)
         return view.content;
     }
 

@@ -11,7 +11,6 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
@@ -57,24 +56,25 @@ class DeleteAction extends SelectionTreeAction {
         if (!usedInSimulation) {
             selectedItem.remove()
         } else {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
-            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
-            alert.show()
+            //todo fja remove use a new RiskAnalyticsMainModel
+            //            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
+            //            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
+            //            alert.show()
         }
     }
 
 
     private void removeItem(def selectedItem) {}
 
-
-    private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
-        synchronized (item) {
-            if (value.equals(firstButtonValue)) {
-                model.deleteDependingResults(selectedModel, item)
-                model.removeItem(selectedModel, item)
-            }
-        }
-    }
+//todo fja remove use a new RiskAnalyticsMainModel
+    //    private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
+    //        synchronized (item) {
+    //            if (value.equals(firstButtonValue)) {
+    //                model.deleteDependingResults(selectedModel, item)
+    //                model.removeItem(selectedModel, item)
+    //            }
+    //        }
+    //    }
 
     protected List allowedRoles() {
         return []

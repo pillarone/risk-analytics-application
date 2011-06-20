@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
@@ -13,10 +12,6 @@ class CreateNewWorkflowVersionAction extends AbstractWorkflowAction {
 
     CreateNewWorkflowVersionAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("NewMajorVersion", tree, model)
-    }
-
-    CreateNewWorkflowVersionAction(String name, ULCTableTree tree, P1RATModel model) {
-        super(name, tree, model)
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.ulcjava.base.shared.FileChooserConfig
 import org.joda.time.format.DateTimeFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelDAO
@@ -18,16 +17,17 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 class ResultSettingsView {
 
     Simulation simulation
     ULCBoxPane content
-    P1RATModel p1ratModel
+    RiskAnalyticsMainModel mainModel
 
-    public ResultSettingsView(Simulation simulation, P1RATModel p1ratModel) {
+    public ResultSettingsView(Simulation simulation, RiskAnalyticsMainModel mainModel) {
         this.simulation = simulation;
-        this.p1ratModel = p1ratModel
+        this.mainModel = mainModel
         initComponents()
     }
 
@@ -77,7 +77,8 @@ class ResultSettingsView {
         }
         Model model = simulation.modelClass.newInstance()
         model.init()
-        p1ratModel.openItem(model, item)
+        //todo fja open item 
+        // p1ratModel.openItem(model, item)
     }
 
     private void addLabels(ULCBoxPane container, String key, ULCTextArea value) {

@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.util
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -18,23 +17,6 @@ import org.joda.time.DateTime
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class MockObjectFactory {
-
-    public static P1RATModel getMockP1RATModel(def viewModel) {
-        P1RATModel p1RATModel = new P1RATModel(viewModel)
-        p1RATModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
-        }
-        p1RATModel.metaClass.openItem = {Model pcModel, Parameterization item ->
-            assertEquals pcModel.name, "Application"
-            assertNotNull item
-        }
-
-        p1RATModel.metaClass.openItem = {Model pcModel, Simulation item ->
-            assertEquals pcModel.name, "Application"
-            assertNotNull item
-        }
-
-        return p1RATModel
-    }
 
     public static ModellingInformationTableTreeModel getMockTreeModel() {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel()

@@ -17,7 +17,6 @@ import org.pillarone.ulc.server.ULCMinimalSizeFrame
 class P1RATApplication extends AbstractApplication {
 
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
-//    P1RATModel p1RATModel
     RiskAnalyticsMainModel mainModel
     public static boolean CLOSE_WINDOW = false
 
@@ -35,8 +34,7 @@ class P1RATApplication extends AbstractApplication {
     }
 
     public void initMainView() {
-        //init p1ratModel after login
-        //        p1RATModel = new P1RATModel()
+        //init RiskAnalyticsMainModel after login
         mainModel = new RiskAnalyticsMainModel()
         mainFrame.defaultCloseOperation = ULCFrame.DO_NOTHING_ON_CLOSE
         mainFrame.size = new Dimension(1000, 750)
@@ -46,7 +44,6 @@ class P1RATApplication extends AbstractApplication {
         mainFrame.locationRelativeTo = null
         mainFrame.setIconImage(UIUtils.getIcon("application.png"))
         ULCClipboard.install()
-//        P1RATMainView mainView = new P1RATMainView(p1RATModel)
         RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(mainModel)
         mainView.init()
         mainFrame.contentPane.add(mainView.content)

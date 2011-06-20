@@ -14,7 +14,6 @@ import org.pillarone.riskanalytics.application.dataaccess.function.Mean
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
@@ -28,7 +27,6 @@ import com.ulcjava.base.application.*
 class ResultView extends AbstractModellingFunctionView implements NavigationListener {
 
     ULCCloseableTabbedPane tabbedPane
-    P1RATModel p1ratModel
     RiskAnalyticsMainModel mainModel
     //view selection for simulation/calculation
     ULCComboBox selectView
