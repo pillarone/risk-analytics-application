@@ -56,25 +56,23 @@ class DeleteAction extends SelectionTreeAction {
         if (!usedInSimulation) {
             selectedItem.remove()
         } else {
-            //todo fja remove use a new RiskAnalyticsMainModel
-            //            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
-            //            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, model, selectedModel, selectedItem)}] as IWindowListener)
-            //            alert.show()
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
+            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, selectedModel, selectedItem)}] as IWindowListener)
+            alert.show()
         }
     }
 
 
     private void removeItem(def selectedItem) {}
 
-//todo fja remove use a new RiskAnalyticsMainModel
-    //    private void handleEvent(String value, String firstButtonValue, P1RATModel model, Model selectedModel, ModellingItem item) {
-    //        synchronized (item) {
-    //            if (value.equals(firstButtonValue)) {
-    //                model.deleteDependingResults(selectedModel, item)
-    //                model.removeItem(selectedModel, item)
-    //            }
-    //        }
-    //    }
+    private void handleEvent(String value, String firstButtonValue, Model selectedModel, ModellingUIItem item) {
+        synchronized (item) {
+            if (value.equals(firstButtonValue)) {
+                item.deleteDependingResults(selectedModel)
+                removeItem(item)
+            }
+        }
+    }
 
     protected List allowedRoles() {
         return []

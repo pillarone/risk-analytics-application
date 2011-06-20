@@ -51,17 +51,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
     }
 
     public boolean deleteDependingResults(Model model) {
-        List<SimulationRun> simulationRuns = getSimulations();
-        //check if at least one simulation is running
-        for (SimulationRun simulationRun: simulationRuns) {
-            if (!simulationRun.endTime) return false
-        }
-        for (SimulationRun simulationRun: simulationRuns) {
-            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun.name, item.modelClass)
-            SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
-            simulationUIItem.remove()
-        }
-        return true
+        return UIItemUtils.deleteDependingResults(mainModel, model, this)
     }
 
     public ModellingItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {

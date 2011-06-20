@@ -103,8 +103,8 @@ class ResultSettingsView {
         }
         Model model = simulation.modelClass.newInstance()
         model.init()
-        //todo fja open item
-        // p1ratModel.openItem(model, item)
+        item.load()
+        mainModel.notifyOpenDetailView(model, item)
     }
 
     private void addLabels(ULCBoxPane container, String key, ULCTextArea value) {

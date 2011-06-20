@@ -81,7 +81,7 @@ class StochasticResultView extends ResultView {
     }
 
     protected ULCBoxPane getResultSettingView() {
-        return new ResultSettingsView(model.item, p1ratModel).content
+        return new ResultSettingsView(model.item, mainModel).content
     }
 
     protected void addToolBarElements(ULCToolBar toolbar) {
