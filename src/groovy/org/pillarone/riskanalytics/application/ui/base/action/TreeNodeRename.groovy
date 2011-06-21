@@ -34,7 +34,7 @@ public class TreeNodeRename extends TreeNodeAction {
             model.item.addComment(newComment)
         }
 
-        List<String> modifiedReferencePaths = ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath)
+        List<String> modifiedReferencePaths = ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath, node.component)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
         tree.model.addComponentNode(node.parent, component)
