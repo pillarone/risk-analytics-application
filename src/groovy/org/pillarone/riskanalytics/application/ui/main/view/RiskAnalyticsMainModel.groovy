@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -36,6 +37,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     private List modelListeners = []
     List batchTableListeners = []
     List modelItemlisteners = []
+    List<INewSimulationListener> newSimulationListeners = []
     //selectedItem needs to be updated when tabs are changed etc.
     @Bindable AbstractUIItem currentItem
 
@@ -150,6 +152,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             if (viewModel instanceof SimulationConfigurationModel) {
                 viewModel.actionsPaneModel.removeSimulationListener(this)
                 removeModelChangedListener(viewModel.settingsPaneModel)
+                removeNewSimulationListener(viewModel)
             }
             if (viewModel instanceof IModelChangedListener) {
                 removeModelChangedListener(viewModel)
@@ -180,6 +183,20 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         setCurrentItem(item)
         modelListeners.each {IRiskAnalyticsModelListener listener ->
             listener.changedDetailView(model, item)
+        }
+    }
+
+    public void addNewSimulationListener(INewSimulationListener newSimulationListener) {
+        newSimulationListeners << newSimulationListener
+    }
+
+    public void removeNewSimulationListener(INewSimulationListener newSimulationListener) {
+        newSimulationListeners.remove(newSimulationListener)
+    }
+
+    public void fireNewSimulation(Simulation simulation) {
+        newSimulationListeners.each {INewSimulationListener newSimulationListener ->
+            newSimulationListener.newSimulation(simulation)
         }
     }
 

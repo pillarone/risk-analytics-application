@@ -30,6 +30,7 @@ class SimulationAction extends SelectionTreeAction {
             simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
             simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
             model.openItem(selectedModel, new SimulationUIItem(model, selectedModel, simulation))
+            model.fireNewSimulation(simulation)
         }
         else {
             LOG.debug("No selected model found. Action cancelled.")
