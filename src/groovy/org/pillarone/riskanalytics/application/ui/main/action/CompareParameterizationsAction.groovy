@@ -1,33 +1,56 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-
 /**
- * @author fouad.jaada@intuitive-collaboration.com
- */
-class CompareParameterizationsAction extends AbstractCompareAction {
+* @author fouad.jaada@intuitive-collaboration.com
+*/
+class CompareParameterizationsAction extends SelectionTreeAction {
 
-    public CompareParameterizationsAction(ULCTableTree tree, P1RATModel model) {
+    public CompareParameterizationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("CompareParameterizations", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
-        List elements = getSelectedObjects(Parameterization.class)
+        List<ParameterizationNode> elements = getSelectedObjects(Parameterization.class)
         try {
-            validate()
-            Model model = getSelectedModel(elements[0])
-            model.init()
-            if (model != null && elements[0] != null) {
-                this.model.compareParameterizations(model, elements*.item)
+            validate(elements)
+            Model simulationModel = getSelectedModel(elements[0])
+            simulationModel.init()
+            if (simulationModel != null && elements[0] != null) {
+                List items = elements*.abstractUIItem.item
+                CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, simulationModel, items)
+                model.openItem(simulationModel, uiItem)
             }
         } catch (IllegalArgumentException ex) {
             println "$ex"
         }
+    }
+
+    private void validate(List elements) throws IllegalArgumentException {
+        if (elements.size() < 2) throw new IllegalArgumentException("select at lease two parameterizations for compare")
+        Model model = getSelectedModel(elements[0])
+        elements.each {
+            if (getSelectedModel(it) != model) {
+                throw new IllegalArgumentException("select a parameterizations with same ModelClass")
+            }
+        }
+    }
+
+    public boolean isEnabled() {
+        List elements = getSelectedObjects(Parameterization.class)
+        try {
+            validate(elements)
+        } catch (IllegalArgumentException ex) {
+            return false
+        }
+        return true
     }
 
 }

@@ -1,25 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
-import org.apache.log4j.Logger
-
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.ITreeSelectionListener
 import com.ulcjava.base.application.event.TreeSelectionEvent
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
+import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.reports.ReportFactory
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 
 class GenerateReportAction extends SelectionTreeAction implements ITreeSelectionListener {
     String name
     static final Logger LOG = Logger.getLogger(GenerateReportAction)
 
-    public GenerateReportAction(String name, ULCTableTree tree, P1RATModel model) {
+    public GenerateReportAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("GenerateReport", tree, model)
         this.@name = name
         putValue(IAction.NAME, getValue(IAction.NAME) + " " + name);

@@ -4,7 +4,8 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -17,7 +18,7 @@ class SimulationAction extends SelectionTreeAction {
 
     static Log LOG = LogFactory.getLog(SimulationAction)
 
-    public SimulationAction(ULCTableTree tree, P1RATModel model) {
+    public SimulationAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("RunSimulation", tree, model)
     }
 
@@ -28,7 +29,7 @@ class SimulationAction extends SelectionTreeAction {
             Simulation simulation = new Simulation("Simulation")
             simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
             simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
-            model.openItem(selectedModel, simulation)
+            model.openItem(selectedModel, new SimulationUIItem(model, selectedModel, simulation))
         }
         else {
             LOG.debug("No selected model found. Action cancelled.")

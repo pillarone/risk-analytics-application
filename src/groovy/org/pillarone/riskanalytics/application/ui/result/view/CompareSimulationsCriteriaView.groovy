@@ -20,6 +20,8 @@ import com.ulcjava.base.application.event.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.getText
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
 import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
 
 class CompareSimulationsCriteriaView {
 
@@ -145,7 +147,9 @@ class CompareSimulationsCriteriaView {
         frPercentage.action = new ToggleKeyFigureAction(new FractionPercentageFunction(), new DefaultToggleValueProvider(frPercentage), model, tree.viewPortTableTree)
 
         compareParameterizations.addActionListener([actionPerformed: {event ->
-            compareSimulationTreeView.p1RATMainView.createCompareParameterizationView(model.model, model.treeModel.simulations)
+            ArrayList parameters = ParameterizationUtilities.getParameters(model.treeModel.simulations)
+            CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(compareSimulationTreeView.mainModel, model.model, parameters)
+            compareSimulationTreeView.mainModel.notifyOpenDetailView(model.model, compareParameterizationUIItem)
         }] as IActionListener)
 
         //ColumnOrderAction

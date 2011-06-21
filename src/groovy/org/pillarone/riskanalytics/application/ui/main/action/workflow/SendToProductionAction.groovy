@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
 import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
@@ -10,7 +10,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 
 class SendToProductionAction extends AbstractWorkflowAction {
 
-    public SendToProductionAction(ULCTableTree tree, P1RATModel model) {
+    public SendToProductionAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("SendToProduction", tree, model);
     }
 

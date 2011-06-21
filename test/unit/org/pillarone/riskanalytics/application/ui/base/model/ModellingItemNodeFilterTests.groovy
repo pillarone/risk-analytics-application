@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import models.core.CoreModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -13,7 +15,8 @@ class ModellingItemNodeFilterTests extends GroovyTestCase {
     public void testIsAcceptedByTags() {
         ModellingItemNodeFilter tagFilter = new ModellingItemNodeFilter(["WORKFLOW"], ModellingInformationTableTreeModel.TAGS)
         Parameterization parameterization = new Parameterization("test")
-        ParameterizationNode node = new ParameterizationNode(parameterization)
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(),parameterization)
+        ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
 
         node.values[ModellingInformationTableTreeModel.TAGS] = "WORKFLOW,NONE,PRODUCTION"
         assertTrue tagFilter.internalAcceptNode(node)
@@ -58,7 +61,8 @@ class ModellingItemNodeFilterTests extends GroovyTestCase {
     public void testIsAcceptedByDate() {
         ModellingItemNodeFilter tagFilter = new ModellingItemNodeFilter(["01.01.2001"], ModellingInformationTableTreeModel.CREATION_DATE)
         Parameterization parameterization = new Parameterization("test")
-        ParameterizationNode node = new ParameterizationNode(parameterization)
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(),parameterization)
+        ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
 
         DateTime date = ModellingInformationTableTreeModel.simpleDateFormat.parseDateTime("01.01.2001")
         node.values[ModellingInformationTableTreeModel.CREATION_DATE] = date
@@ -76,7 +80,8 @@ class ModellingItemNodeFilterTests extends GroovyTestCase {
     public void testIsAcceptedByString() {
         ModellingItemNodeFilter tagFilter = new ModellingItemNodeFilter(["author"], ModellingInformationTableTreeModel.OWNER)
         Parameterization parameterization = new Parameterization("test")
-        ParameterizationNode node = new ParameterizationNode(parameterization)
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(),parameterization)
+        ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
 
         node.values[ModellingInformationTableTreeModel.OWNER] = "author"
         assertTrue tagFilter.internalAcceptNode(node)
@@ -94,7 +99,8 @@ class ModellingItemNodeFilterTests extends GroovyTestCase {
         ModellingItemNodeFilter withoutCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.WITHOUT_COMMENTS], ModellingInformationTableTreeModel.COMMENTS)
         ModellingItemNodeFilter withCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.WITH_COMMENTS], ModellingInformationTableTreeModel.COMMENTS)
         Parameterization parameterization = new Parameterization("test")
-        ParameterizationNode node = new ParameterizationNode(parameterization)
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(),parameterization)
+        ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
 
         node.values[ModellingInformationTableTreeModel.COMMENTS] = 1
         assertTrue allCommentFilter.internalAcceptNode(node)

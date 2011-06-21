@@ -4,6 +4,9 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -66,4 +69,7 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
         if (node instanceof ParameterizationNode && (!node.values || ((ParameterizationNode) node).values.isEmpty())) return true
         return false
     }
+
+
+
 }

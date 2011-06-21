@@ -1,14 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import com.ulcjava.base.application.ULCTableTree
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractCompareAction extends SelectionTreeAction {
 
-    public AbstractCompareAction(String actionName, ULCTableTree tree, P1RATModel model) {
+    public AbstractCompareAction(String actionName, ULCTableTree tree, RiskAnalyticsMainModel model) {
         super(actionName, tree, model)
     }
 
