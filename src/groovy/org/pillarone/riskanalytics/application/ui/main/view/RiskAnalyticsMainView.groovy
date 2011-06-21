@@ -136,7 +136,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void itemChanged(ModellingItem item) {
-        if (item == mainModel.currentItem.item) {
+        if (item == mainModel?.currentItem?.item) {
             headerView.syncMenuBar()
         }
     }

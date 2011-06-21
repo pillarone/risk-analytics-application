@@ -22,7 +22,7 @@ class SimulationUIItem extends ModellingUIItem {
     }
 
     String createTitle() {
-        return ((Simulation) item).start == null ? "Calculation" : item.name
+        return ((Simulation) item).start == null ? "Simulation" : item.name
 
     }
 
