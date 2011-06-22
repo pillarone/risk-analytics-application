@@ -10,6 +10,8 @@ import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -28,6 +30,8 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
                     SimulationRun.withTransaction {
                         BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
+                        PostSimulationCalculation.list()*.delete()
+                        SingleValueResult.list()*.delete()
                         SimulationRun.list()*.delete()
                         ResultStructureDAO.list()*.delete()
                         ResultConfigurationDAO.list()*.delete()
