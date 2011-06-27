@@ -10,6 +10,8 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.SingleValueResult
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -38,6 +40,8 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
                     SimulationRun.withTransaction {
                         BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
+                        PostSimulationCalculation.list()*.delete()
+                        SingleValueResult.list()*.delete()
                         SimulationRun.list()*.delete()
                         ResultStructureDAO.list()*.delete()
                         ResultConfigurationDAO.list()*.delete()
