@@ -34,7 +34,11 @@ class UserContext {
     }
 
     public static boolean hasCurrentUser() {
-        return getCurrentUser() != null
+        try {
+            return getCurrentUser() != null
+        } catch (Exception e) {
+            return false
+        }
     }
 
     public static Person getCurrentUser() {
