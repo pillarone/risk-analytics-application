@@ -19,11 +19,12 @@ class NavigationBarTopPaneTests extends AbstractP1RATTestCase {
         textField.typeText("test")
         assertTrue textField.getText() == "test"
 
-        ULCToggleButtonOperator myStuffButton = getToggleButtonOperator("myStuffButton")
-        assertNotNull myStuffButton
-        myStuffButton.getFocus()
-        myStuffButton.clickMouse()
-        assertTrue myStuffButton.isSelected()
+        // bzetterstrom: There is no user when running in the test mode thus no MyStuff button either
+//        ULCToggleButtonOperator myStuffButton = getToggleButtonOperator("myStuffButton")
+//        assertNotNull myStuffButton
+//        myStuffButton.getFocus()
+//        myStuffButton.clickMouse()
+//        assertTrue myStuffButton.isSelected()
 
         ULCButtonOperator clearButton = getButtonOperator("clearButton")
         assertNotNull clearButton

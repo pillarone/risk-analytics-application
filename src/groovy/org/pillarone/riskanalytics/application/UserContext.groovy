@@ -43,7 +43,7 @@ class UserContext {
             if (! username) {
                 LOG.info("Running in standalone mode -- to run with a given user, please provide System property "
                         + "${SYSTEM_PROPERTY_STANDALONE_USERNAME} such as -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}=actuary");
-                return UserManagement.getCurrentUser()
+                return null
             }
             Person person = Person.findByUsername(username)
             if (person) {
