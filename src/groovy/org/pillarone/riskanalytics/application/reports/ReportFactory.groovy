@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
@@ -75,7 +76,7 @@ public class ReportFactory {
         Map params = new HashMap()
         params["comments"] = collectionDataSource
         params["title"] = UIUtils.getText(ReportFactory.class, modellingItem.class.simpleName)
-        Person currentUser = UserManagement.getCurrentUser()
+        Person currentUser = UserContext.getCurrentUser()
         params["footer"] = currentUser ? UIUtils.getText(ReportFactory.class, "footerByUser", [currentUser.username]) : UIUtils.getText(ReportFactory.class, "footer")
         params["infos"] = getItemInfo(modellingItem)
         params["currentUser"] = currentUser ? currentUser.username : ""

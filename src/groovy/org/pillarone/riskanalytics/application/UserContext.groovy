@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 
 class UserContext {
+    private static final String SYSTEM_PROPERTY_STANDALONE_USERNAME = "standaloneUsername"
 
     private static Map fallbackContext = [:]
     static Log LOG = LogFactory.getLog(UserContext)
@@ -32,7 +33,26 @@ class UserContext {
         }
     }
 
+    public static boolean hasCurrentUser() {
+        return getCurrentUser() != null
+    }
+
     public static Person getCurrentUser() {
+        if (UserContext.isStandAlone()) {
+            String username = ClientContext.getSystemProperty(SYSTEM_PROPERTY_STANDALONE_USERNAME)
+            if (! username) {
+                LOG.info("Running in standalone mode -- to run with a given user, please provide System property "
+                        + "${SYSTEM_PROPERTY_STANDALONE_USERNAME} such as -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}=actuary");
+                return UserManagement.getCurrentUser()
+            }
+            Person person = Person.findByUsername(username)
+            if (person) {
+                return person
+            } else {
+                LOG.error "Failed to lookup standalone username ${username} in the database as given by the setting -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}, running with no user set"
+                return UserManagement.getCurrentUser()
+            }
+        }
         return UserManagement.getCurrentUser()
     }
 

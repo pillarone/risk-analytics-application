@@ -100,7 +100,7 @@ class RuntimeParameterPane {
 
         ULCSpinner spinner = new ULCSpinner(dateModel)
         spinner.name = descriptor.propertyName
-        spinner.setEditor(new ULCDateEditor(spinner, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
+        spinner.setEditor(new ULCDateEditor(spinner, FastDateFormat.getDateInstance(FastDateFormat.MEDIUM, LocaleResources.getLocale()).pattern))
         spinner.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = new DateTime(spinner.value)
         }] as IValueChangedListener)

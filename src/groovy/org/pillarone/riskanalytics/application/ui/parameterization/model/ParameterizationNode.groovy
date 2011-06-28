@@ -37,7 +37,7 @@ class ParameterizationNode extends VersionedItemNode {
         parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, abstractUIItem.mainModel)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
-        if (!UserContext.isStandAlone()) {
+        if (UserContext.hasCurrentUser()) {
             def transactionsEnabled = ApplicationHolder.getApplication().getConfig().getProperty("transactionsEnabled")
             if (transactionsEnabled != null && transactionsEnabled == true) {
                 parameterNodePopUpMenu.addSeparator()

@@ -18,6 +18,15 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguratio
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRunner
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.event.serializable.IWindowListener
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationScope
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * The view model for the SimulationActionsPane.
@@ -25,6 +34,8 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
  * and provides information about the current simulation state.
  */
 class SimulationActionsPaneModel {
+
+    protected Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
 
     SimulationRunner runner
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
@@ -65,6 +76,41 @@ class SimulationActionsPaneModel {
     void runSimulation() {
         simulation.save()
         runner = SimulationRunner.createRunner()
+
+        if (ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector) {
+            possiblyWarnUserIfHugeResultSetExpected()
+        } else {
+            startSimulation()
+        }
+    }
+
+    private void possiblyWarnUserIfHugeResultSetExpected() {
+        try {
+            int iterationThreshold = ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector
+
+            if (simulation.numberOfIterations > iterationThreshold &&
+                simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
+                I18NAlert alert = new I18NAlert("WarnPotentiallyLargeResultSet")
+                alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert)}] as IWindowListener)
+                alert.show()
+            } else {
+                startSimulation()
+            }
+        } catch (Exception e) {
+            LOG.error("Failure in possiblyWarnUserIfHugeResultSetExpected(), running simulation without checking" + e.getMessage())
+            startSimulation()
+        }
+    }
+
+    void handleEvent(I18NAlert alert) {
+        if (alert.value.equals(alert.firstButtonLabel)) {
+            startSimulation()
+        } else if (! alert.value.equals(alert.secondButtonLabel)) {
+            throw new RuntimeException("Unknown button pressed: " + alert.value)
+        }
+    }
+
+    private void startSimulation() {
         RunSimulationService.getService().runSimulation(runner, new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy))
         notifySimulationStart()
     }

@@ -50,7 +50,7 @@ class LocaleResources {
 
         if (locale == null) {
             Person.withTransaction {e ->
-                UserSettings userSettings = UserManagement.getCurrentUser()?.settings
+                UserSettings userSettings = UserContext.getCurrentUser()?.settings
                 UserPreferences preferences = new UserPreferences()
                 if (userSettings != null) {
                     locale = new Locale(userSettings.language)

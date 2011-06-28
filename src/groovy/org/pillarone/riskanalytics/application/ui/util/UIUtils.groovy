@@ -203,7 +203,7 @@ class UIUtils {
             Person loggedUser=null
             String userAuthorities = ""
             Person.withTransaction {def status ->
-                loggedUser = UserManagement.getCurrentUser()
+                loggedUser = UserContext.getCurrentUser()
                 List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
                 List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
                 userAuthorities = i18nAuthorities.join(", ")

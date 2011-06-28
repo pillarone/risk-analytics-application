@@ -77,11 +77,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public static ModellingInformationTableTreeModel getInstance(RiskAnalyticsMainModel mainModel) {
-        if (UserContext.isStandAlone()) {
-            return new StandaloneTableTreeModel(mainModel)
-        } else {
-            return new ModellingInformationTableTreeModel(mainModel)
-        }
+      if (UserContext.hasCurrentUser()) {
+          return new ModellingInformationTableTreeModel(mainModel)
+      } else {
+          return new StandaloneTableTreeModel(mainModel)
+      }
     }
 
     public def buildTreeNodes() {

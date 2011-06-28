@@ -3,8 +3,6 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-
 import groovy.beans.Bindable
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
