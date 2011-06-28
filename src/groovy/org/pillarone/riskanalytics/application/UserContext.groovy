@@ -38,21 +38,22 @@ class UserContext {
     }
 
     public static Person getCurrentUser() {
-        if (UserContext.isStandAlone()) {
-            String username = ClientContext.getSystemProperty(SYSTEM_PROPERTY_STANDALONE_USERNAME)
-            if (! username) {
-                LOG.info("Running in standalone mode -- to run with a given user, please provide System property "
-                        + "${SYSTEM_PROPERTY_STANDALONE_USERNAME} such as -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}=actuary");
-                return null
-            }
-            Person person = Person.findByUsername(username)
-            if (person) {
-                return person
-            } else {
-                LOG.error "Failed to lookup standalone username ${username} in the database as given by the setting -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}, running with no user set"
-                return UserManagement.getCurrentUser()
-            }
-        }
+        // 
+//        if (UserContext.isStandAlone()) {
+//            String username = ClientContext.getSystemProperty(SYSTEM_PROPERTY_STANDALONE_USERNAME)
+//            if (! username) {
+//                LOG.info("Running in standalone mode -- to run with a given user, please provide System property "
+//                        + "${SYSTEM_PROPERTY_STANDALONE_USERNAME} such as -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}=actuary");
+//                return null
+//            }
+//            Person person = Person.findByUsername(username)
+//            if (person) {
+//                return person
+//            } else {
+//                LOG.error "Failed to lookup standalone username ${username} in the database as given by the setting -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}, running with no user set"
+//                return UserManagement.getCurrentUser()
+//            }
+//        }
         return UserManagement.getCurrentUser()
     }
 
