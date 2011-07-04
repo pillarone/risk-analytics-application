@@ -30,6 +30,8 @@ import org.pillarone.riskanalytics.application.reports.bean.ReportWaterfallDataB
 import org.pillarone.riskanalytics.application.reports.JasperChartUtils
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer
+import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.pillarone.riskanalytics.application.util.ReportUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -41,8 +43,9 @@ class GiraReportModel extends AbstractReportModel {
     NumberFormat numberFormat = LocaleResources.getNumberFormat()
 
 
-    public GiraReportModel(Simulation simulation) {
+    public GiraReportModel(Simulation simulation, String modelName) {
         this.simulation = simulation
+        this.modelName = modelName
         load()
 
     }
@@ -75,7 +78,6 @@ class GiraReportModel extends AbstractReportModel {
             currentValues << map
         }
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
-        println currentValues
         return jrBeanCollectionDataSource
     }
 
@@ -118,9 +120,6 @@ class GiraReportModel extends AbstractReportModel {
                 simpleMasterList << pathPeriodMap
             }
         }
-        println("start simpleMasterList size : ${simpleMasterList.size()}")
-        println(simpleMasterList)
-        println(" end simpleMasterList")
         return new JRMapCollectionDataSource(simpleMasterList)
     }
 
@@ -178,14 +177,16 @@ class GiraReportModel extends AbstractReportModel {
     }
 
     protected List<ReportWaterfallDataBean> getWaterfallBeans(List<String> paths) {
+        if (paths.size() == 0) return []
         List<ReportWaterfallDataBean> beans = []
-        def lobName = ["test1", "test2", "test3"]
+        Double totalValue = 0
+        VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
+        String parent = paths[0]
         paths.eachWithIndex {String path, int index ->
             getPeriodCount().times {int periodIndex ->
                 try {
-                    VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
                     Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(path, collector, "ultimate"))
-                    beans << new ReportWaterfallDataBean(line: path, value: var95 / divider)
+                    beans << new ReportWaterfallDataBean(line: ResultViewUtils.getResultNodePathShortDisplayName(simulation?.modelClass, path), value: var95 / divider)
                 } catch (Exception ex) {}
             }
         }
@@ -193,13 +194,16 @@ class GiraReportModel extends AbstractReportModel {
         beans.sort()
         beans = beans.reverse()
 
-        VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
-//        Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(summaryPathMap["gross"]))
-        Double var95 = 1997.5 * 8//var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(summaryPathMap["gross"]))
-        ReportWaterfallDataBean total = new ReportWaterfallDataBean(line: "total", value: var95 / divider)
+        getPeriodCount().times {int periodIndex ->
+            try {
+                totalValue += var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(parent, collector, "ultimate"))
+
+            } catch (Exception ex) {}
+        }
+        ReportWaterfallDataBean total = new ReportWaterfallDataBean(line: "total", value: totalValue / divider)
         try {
             double sum = beans.value.sum()
-            ReportWaterfallDataBean div = new ReportWaterfallDataBean(line: "diversification", value: total.value - sum)
+            ReportWaterfallDataBean div = new ReportWaterfallDataBean(line: "diversification", value: (totalValue - sum) / divider)
 
             beans << div
             beans << total
@@ -226,9 +230,9 @@ class GiraReportModel extends AbstractReportModel {
         List<String> singleValueResultsPaths = ResultAccessor.getPaths(simulation.getSimulationRun())
         parser = new ResultPathParser("GIRA", singleValueResultsPaths)
         Map result = [:]
-        result.put(PathType.CLAIMSGENERATORS, parser.getComponentPaths(PathType.CLAIMSGENERATORS))
-        result.put(PathType.LINESOFBUSINESS, parser.getComponentPaths(PathType.LINESOFBUSINESS))
-        result.put(PathType.REINSURANCE, parser.getComponentPaths(PathType.REINSURANCE))
+        ReportUtils.addList(result, PathType.CLAIMSGENERATORS, parser.getComponentPaths(PathType.CLAIMSGENERATORS))
+        ReportUtils.addList(result, PathType.LINESOFBUSINESS, parser.getComponentPaths(PathType.LINESOFBUSINESS))
+        ReportUtils.addList(result, PathType.REINSURANCE, parser.getComponentPaths(PathType.REINSURANCE))
         return result
     }
 

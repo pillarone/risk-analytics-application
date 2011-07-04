@@ -9,7 +9,7 @@ import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBea
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class AbstractReportActionTests extends GroovyTestCase {
+abstract class AbstractReportActionTests extends GroovyTestCase {
 
     @Override
     protected void setUp() {

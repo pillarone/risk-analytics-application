@@ -26,7 +26,7 @@ class ResultPathParser {
 
     List<String> getComponentPaths(PathType pathType) {
         if (!cachedMap[pathType])
-            cachedMap[pathType] = paths.findAll {String path -> path.startsWith(getComponentPath(pathType))}
+            cachedMap[pathType] = paths.findAll {String path -> path.startsWith(getComponentPath(pathType))}.sort()
         return cachedMap[pathType]
     }
 

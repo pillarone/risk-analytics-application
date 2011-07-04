@@ -15,16 +15,24 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
 class CommentUtils {
 
     public static String getCommentTitle(Comment comment, AbstractCommentableItemModel model) {
-        StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
-        addCommentInfo(sb, comment)
-        return sb.toString()
+        try {
+            StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
+            addCommentInfo(sb, comment)
+            return sb.toString()
+        } catch (Exception ex) {
+            return comment.getPath()
+        }
     }
 
     public static String getCommentTitle(Comment comment, Class modelClass) {
-        String pathDisplayName = ResultViewUtils.getResultNodePathDisplayName(modelClass, comment.path)
-        StringBuilder sb = new StringBuilder(pathDisplayName)
-        addCommentInfo(sb, comment)
-        return sb.toString()
+        try {
+            String pathDisplayName = ResultViewUtils.getResultNodePathDisplayName(modelClass, comment.path)
+            StringBuilder sb = new StringBuilder(pathDisplayName)
+            addCommentInfo(sb, comment)
+            return sb.toString()
+        } catch (Exception ex) {
+            return comment.getPath()
+        }
     }
 
     static void addCommentInfo(StringBuilder sb, Comment comment) {

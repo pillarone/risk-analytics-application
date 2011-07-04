@@ -49,7 +49,6 @@ abstract class AbstractReportModel implements ReportModel {
             }
             return map
         } catch (Exception ex) {
-            println "getValues $ex"
             ex.printStackTrace()
             return null
         }

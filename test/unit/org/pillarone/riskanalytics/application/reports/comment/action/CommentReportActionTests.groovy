@@ -21,12 +21,9 @@ class CommentReportActionTests extends AbstractReportActionTests {
 
     void testGeneratePDF() {
         CommentReportAction reportAction = new CommentReportAction(null)
-//        File testExportFile = File.createTempFile("test", ".pdf")
+        File testExportFile = File.createTempFile("test", ".pdf")
         reportAction.metaClass.getFileName = {->
-
-//            println "testExportFile ${testExportFile.getAbsolutePath()}"
-//            return testExportFile.getAbsolutePath()
-            return "test"
+            return testExportFile.getAbsolutePath()
         }
         reportAction.metaClass.getComments = {->
             List list = []
@@ -72,7 +69,6 @@ class CommentReportActionTests extends AbstractReportActionTests {
 
     static Comment getComment(int index) {
         String text = getText(index)
-//        println "text : ${text}"
         CommentDAO dao = new CommentDAO(comment: text, path: "org.riskanalytics.jasper.report.test.pdf.export.path${index}", periodIndex: index, timeStamp: new DateTime())
         Comment comment = new Comment(dao)
         comment.metaClass.getTags = {->
@@ -84,14 +80,14 @@ class CommentReportActionTests extends AbstractReportActionTests {
         return comment
     }
 
-   static String getText(int index) {
+    static String getText(int index) {
         StringBuilder sb = new StringBuilder()
         for (int i = 0; i < 60; i++) {
             sb.append("Text$index ")
             if (i % 9 == 0)
                 sb.append("\n")
         }
-       
+
         return sb.toString()
     }
 

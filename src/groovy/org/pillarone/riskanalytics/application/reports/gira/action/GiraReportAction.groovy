@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.reports.comment.action.CommentRep
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.model.Model
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -44,7 +45,9 @@ class GiraReportAction extends AbstractReportAction {
     }
 
     void initReportModel(Simulation simulation) {
-        model = new GiraReportModel(simulation)
+        Model selectedModel = getSelectedModel()
+        model = new GiraReportModel(simulation, selectedModel.name)
+
     }
 
     private void printPaths(Simulation simulation) {

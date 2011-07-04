@@ -130,6 +130,38 @@ abstract class ResultViewUtils {
         }
     }
 
+    public static String getResultNodeDisplayName(Class modelClass, String path) {
+        try {
+            StringBuilder stringBuilder = new StringBuilder("")
+            String[] pathNames = path.split(":")
+            String nodeName = pathNames.last()
+            stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+            return stringBuilder.toString()
+        } catch (Exception ex) {
+            return path
+        }
+    }
+
+    public static String getResultNodePathShortDisplayName(Class modelClass, String path) {
+        try {
+            StringBuilder stringBuilder = new StringBuilder("")
+            String[] pathNames = path.split(":")
+            int index = 0
+            String separator = " / "
+            for (String nodeName: pathNames) {
+                if (index > 1) {
+                    stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+                    if (index != pathNames.size() - 1)
+                        stringBuilder.append(separator)
+                }
+                index++
+            }
+            return stringBuilder.toString()
+        } catch (Exception ex) {
+            return path
+        }
+    }
+
     public static initPeriodLabels(SimulationRun simulationRun, Map periodLabels) {
         SimulationRun.withTransaction {status ->
             simulationRun = SimulationRun.get(simulationRun.id)
