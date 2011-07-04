@@ -38,6 +38,10 @@ class DownloadFileAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         File file = new File(fileURL)
         if (fileURL != null && file.exists()) {
+            if (open) {
+                ClientContext.showDocument(fileURL, "_new")
+                return
+            }
             FileChooserConfig config = new FileChooserConfig()
             config.dialogTitle = UIUtils.getText(DownloadFileAction, "saveAs")
             config.dialogType = FileChooserConfig.SAVE_DIALOG
@@ -50,8 +54,6 @@ class DownloadFileAction extends ResourceBasedAction {
                         File newFile = new File(filePaths[0])
                         if (!newFile.exists() || newFile.size() != srcFile.size())
                             ClientContext.storeFile(new FileStoreHandler(fileURL, source), filePaths[0])
-                        if (open)
-                            ClientContext.showDocument(filePaths[0], "_new")
                     },
                     onFailure: {reason, description ->
                         if (IFileStoreHandler.CANCELLED != reason) {
