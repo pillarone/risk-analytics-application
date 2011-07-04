@@ -5,6 +5,9 @@ import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
 abstract class ResultViewUtils {
 
@@ -108,6 +111,34 @@ abstract class ResultViewUtils {
         }
 
         return results
+    }
+
+    public static String getResultNodePathDisplayName(Class modelClass, String path) {
+        try {
+            StringBuilder stringBuilder = new StringBuilder("")
+            String[] pathNames = path.split(":")
+            int index = 0
+            String separator = " / "
+            for (String nodeName: pathNames) {
+                stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+                if (index++ != pathNames.size() - 1)
+                    stringBuilder.append(separator)
+            }
+            return stringBuilder.toString()
+        } catch (Exception ex) {
+            return path
+        }
+    }
+
+    public static initPeriodLabels(SimulationRun simulationRun, Map periodLabels) {
+        SimulationRun.withTransaction {status ->
+            simulationRun = SimulationRun.get(simulationRun.id)
+            Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
+            parameterization.load(false)
+            simulationRun.periodCount.times {int index ->
+                periodLabels[index] = parameterization.getPeriodLabel(index)
+            }
+        }
     }
 
 

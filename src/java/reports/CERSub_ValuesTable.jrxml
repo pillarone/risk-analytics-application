@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport name="CERSub_ValuesTable" leftMargin="0" rightMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+    <style name="cell" fontSize="10" isBold="false" topPadding="5"/>
+    <style name="tableTitle" fontSize="10" isBold="true"/>
+
+    <field name="functionName" class="java.lang.String"/>
+    <field name="meanValue" class="java.lang.String"/>
+    <field name="varValue" class="java.lang.String"/>
+    <field name="tVarValue" class="java.lang.String"/>
+
+    <background>
+    </background>
+    <title>
+        <band height="22">
+            <staticText>
+                <reportElement x="0" y="0" width="60" height="20" style="tableTitle"/>
+                <textElement textAlignment="Right"/>
+                <text/>
+            </staticText>
+            <staticText>
+                <reportElement x="60" y="0" width="100" height="20" style="tableTitle"/>
+                <textElement textAlignment="Right"/>
+                <text><![CDATA[Mean]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="160" y="0" width="100" height="20" style="tableTitle"/>
+                <textElement textAlignment="Right"/>
+                <text><![CDATA[var95.5]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="260" y="0" width="100" height="20" style="tableTitle"/>
+                <textElement textAlignment="Right"/>
+                <text><![CDATA[tVar95.5]]></text>
+            </staticText>
+            <line>
+                <reportElement x="0" y="20" width="360" height="1"/>
+            </line>
+        </band>
+    </title>
+    <pageHeader>
+    </pageHeader>
+    <columnHeader>
+    </columnHeader>
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement positionType="Float" x="0" y="0" width="60" height="20" style="cell"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{functionName}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement positionType="Float" x="60" y="0" width="100" height="20" style="cell"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{meanValue}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement positionType="Float" x="160" y="0" width="100" height="20" style="cell"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{varValue}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement positionType="Float" x="260" y="0" width="100" height="20" style="cell"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.String"><![CDATA[$F{tVarValue}]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+    <columnFooter>
+        <band height="1">
+            <line>
+                <reportElement x="0" y="0" width="360" height="1" forecolor="gray"/>
+            </line>
+        </band>
+    </columnFooter>
+    <pageFooter>
+    </pageFooter>
+    <summary>
+    </summary>
+</jasperReport>

@@ -10,16 +10,17 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.core.simulation.item.CommentableItem
+
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.joda.time.DateTime
+
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
+
 import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBean
+import org.pillarone.riskanalytics.application.reports.gira.model.GiraReportModel
 
 public class ReportFactory {
     public static String REPORT_DIR = '/reports'
@@ -70,6 +71,23 @@ public class ReportFactory {
         return output
     }
 
+    static def getGiraReport(JRBeanCollectionDataSource chartsDataSource, ModellingItem modellingItem) {
+        Map params = new HashMap()
+        params["charts"] = chartsDataSource
+        params["title"] = "Example Report"
+        Person currentUser = UserManagement.getCurrentUser()
+        params["footer"] = currentUser ? UIUtils.getText(ReportFactory.class, "footerByUser", [currentUser.username]) : UIUtils.getText(ReportFactory.class, "footer")
+        params["infos"] = getItemInfo(modellingItem)
+        params["currentUser"] = currentUser ? currentUser.username : ""
+        params["itemInfo"] = UIUtils.getText(ReportFactory.class, modellingItem.class.simpleName + "Info")
+        params["_file"] = "GiraReport"
+        params["SUBREPORT_DIR"] = ReportHelper.getReportFolder()
+        params["Comment"] = "Comment"
+        params["p1Icon"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "application.png")
+        params["p1Logo"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "pillarone-logo-transparent background report.jpg")
+        return ReportHelper.getReportOutputStream(params, chartsDataSource).toByteArray()
+    }
+
     static def getReport(JRBeanCollectionDataSource collectionDataSource, ModellingItem modellingItem) {
 
         Map params = new HashMap()
@@ -85,7 +103,7 @@ public class ReportFactory {
         params["Comment"] = "Comment"
         params["p1Icon"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "application.png")
         params["p1Logo"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "pdf-reports-header.png")
-        return ReportHelper.commentReport(params, collectionDataSource).toByteArray()
+        return ReportHelper.getReportOutputStream(params, collectionDataSource).toByteArray()
     }
 
     static protected JasperService getJasperService(Simulation simulation) {
@@ -115,7 +133,7 @@ public class ReportFactory {
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "ResultTemplate"), value: simulation.template.name + " v" + simulation.template.versionNumber.toString())
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "NumberOfPeriods"), value: simulation.periodCount)
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "NumberOfIterations"), value: simulation.numberOfIterations)
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "User"), value: simulation.creator ? simulation.creator.username : "")
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Owner"), value: simulation.creator ? simulation.creator.username : "")
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "StartTime"), value: DateFormatUtils.formatDetailed(simulation.start))
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "EndTime"), value: DateFormatUtils.formatDetailed(simulation.end))
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
