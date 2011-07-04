@@ -10,6 +10,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.IAction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -20,6 +23,7 @@ class SimulationAction extends SelectionTreeAction {
 
     public SimulationAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("RunSimulation", tree, model)
+        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true));
     }
 
     public void doActionPerformed(ActionEvent event) {
