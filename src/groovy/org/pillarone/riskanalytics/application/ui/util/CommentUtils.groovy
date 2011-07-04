@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.comment.view.CommentPane
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.FunctionComment
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -14,13 +15,25 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 class CommentUtils {
 
     public static String getCommentTitle(Comment comment, AbstractCommentableItemModel model) {
-        String username = comment.user ? comment.user.username : ""
         StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
+        addCommentInfo(sb, comment)
+        return sb.toString()
+    }
+
+    public static String getCommentTitle(Comment comment, Class modelClass) {
+        String pathDisplayName = ResultViewUtils.getResultNodePathDisplayName(modelClass, comment.path)
+        StringBuilder sb = new StringBuilder(pathDisplayName)
+        addCommentInfo(sb, comment)
+        return sb.toString()
+    }
+
+    static void addCommentInfo(StringBuilder sb, Comment comment) {
+        String username = comment.user ? comment.user.username : ""
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
         if (username != "")
             sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
         sb.append(" " + DateFormatUtils.formatDetailed(comment.lastChange))
-        return sb.toString()
+        println sb
     }
 
     public static String getTagsValue(Comment comment) {

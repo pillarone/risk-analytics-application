@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
 
 abstract class ChartViewModel {
     protected List series = []
@@ -97,15 +98,8 @@ abstract class ChartViewModel {
             if (periodLabels[periodIndex]) {
                 label = periodLabels[periodIndex]
             } else {
-                SimulationRun.withTransaction {status ->
-                    simulationRun = SimulationRun.get(simulationRun.id)
-                    Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
-                    parameterization.load(false)
-                    simulationRun.periodCount.times {int index ->
-                        periodLabels[index] = parameterization.getPeriodLabel(index)
-                    }
-                    label = periodLabels[periodIndex]
-                }
+                ResultViewUtils.initPeriodLabels(SimulationRun.get(simulationRun.id), periodLabels)
+                label = periodLabels[periodIndex]
             }
 
         } else {

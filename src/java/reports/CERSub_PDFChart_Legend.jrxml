@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
+        "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport name="CERSub_PDFChart_legend"
+              language="groovy" columnCount="1"
+              printOrder="Vertical"
+              pageWidth="842" pageHeight="595"
+              orientation="Landscape"
+              columnWidth="240"
+              columnSpacing="0"
+              leftMargin="0"
+              rightMargin="0"
+              topMargin="20"
+              bottomMargin="0"
+              whenNoDataType="AllSectionsNoDetail"
+              isTitleNewPage="false"
+              isSummaryNewPage="false">
+    <property name="ireport.scriptlethandling" value="0"/>
+    <property name="ireport.encoding" value="UTF-8"/>
+    <import value="java.util.*"/>
+    <import value="net.sf.jasperreports.engine.*"/>
+    <import value="net.sf.jasperreports.engine.data.*"/>
+
+
+    <field name="period" class="java.lang.Integer">
+        <fieldDescription><![CDATA[period]]></fieldDescription>
+    </field>
+    <field name="x" class="java.lang.Double">
+        <fieldDescription><![CDATA[x]]></fieldDescription>
+    </field>
+    <field name="y" class="java.lang.Double">
+        <fieldDescription><![CDATA[y]]></fieldDescription>
+    </field>
+    <field name="line" class="java.lang.String">
+        <fieldDescription><![CDATA[line]]></fieldDescription>
+    </field>
+
+    <variable name="SERIES_NAME" class="java.lang.String" resetType="Report" calculation="Nothing">
+    </variable>
+    <background>
+    </background>
+    <title>
+    </title>
+    <pageHeader>
+    </pageHeader>
+    <columnHeader>
+    </columnHeader>
+    <detail>
+    </detail>
+    <columnFooter>
+    </columnFooter>
+    <pageFooter>
+    </pageFooter>
+    <lastPageFooter>
+    </lastPageFooter>
+    <summary>
+        <band height="380" isSplitAllowed="true">
+
+            <xyLineChart>
+                <chart hyperlinkTarget="Self"
+                       customizerClass="org.pillarone.modelling.reports.DashNetSeriesLinesChartCustomizer">
+                    <reportElement
+                            x="0"
+                            y="0"
+                            width="400"
+                            height="380"
+                            key="element-1"/>
+                    <box></box>
+                    <chartLegend textColor="#000000" backgroundColor="#FFFFFF">
+                        <font fontName="Verdana" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false"
+                              isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true" pdfEncoding="Cp1252"/>
+                    </chartLegend>
+                </chart>
+                <xyDataset>
+                    <dataset resetType="None">
+                    </dataset>
+                    <xySeries>
+                        <seriesExpression><![CDATA[$F{line}]]></seriesExpression>
+                        <xValueExpression><![CDATA[$F{x}]]></xValueExpression>
+                        <yValueExpression><![CDATA[$F{y}]]></yValueExpression>
+                        <itemHyperlink>
+                        </itemHyperlink>
+                    </xySeries>
+                </xyDataset>
+                <linePlot isShowShapes="false">
+                    <plot>
+                        <seriesColor seriesOrder="0" color="#9F0404"/>
+                        <seriesColor seriesOrder="1" color="#008334"/>
+                        <seriesColor seriesOrder="2" color="#1900D3"/>
+                        <seriesColor seriesOrder="3" color="#835600"/>
+                    </plot>
+                    <categoryAxisLabelExpression><![CDATA["in %"]]></categoryAxisLabelExpression>
+                    <categoryAxisFormat>
+                        <axisFormat>
+                            <labelFont>
+                                <font fontName="Verdana" pdfFontName="Helvetica" size="10" isBold="false"
+                                      isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"
+                                      pdfEncoding="Cp1252"/>
+                            </labelFont>
+                            <tickLabelFont>
+                                <font fontName="Verdana" pdfFontName="Helvetica" size="10" isBold="false"
+                                      isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"
+                                      pdfEncoding="Cp1252"/>
+                            </tickLabelFont>
+                        </axisFormat>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                        <axisFormat>
+                            <labelFont>
+                                <font fontName="Verdana" pdfFontName="Helvetica" size="10" isBold="false"
+                                      isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false"
+                                      pdfEncoding="Cp1252"/>
+                            </labelFont>
+                            <tickLabelFont>
+                            </tickLabelFont>
+                        </axisFormat>
+                    </valueAxisFormat>
+                </linePlot>
+            </xyLineChart>
+        </band>
+    </summary>
+</jasperReport>
