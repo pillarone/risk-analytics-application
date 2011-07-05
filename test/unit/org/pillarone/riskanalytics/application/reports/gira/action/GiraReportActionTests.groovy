@@ -25,6 +25,7 @@ class GiraReportActionTests extends AbstractReportActionTests {
     int gIndex = 100
 
     void testGeneratePDFReport() {
+        GiraSubReportTests.compile()
         File testExportFile = File.createTempFile("test", ".pdf")
         GiraReportAction action = new GiraReportAction()
 
