@@ -135,7 +135,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
     public void importItem() {
         mainModel.fireModelChanged()
         navigationTableTreeModel.addNodeForItem(this)
-        item.unload()
     }
 
     @Override
