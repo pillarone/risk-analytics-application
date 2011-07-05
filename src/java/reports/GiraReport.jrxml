@@ -39,6 +39,11 @@
     <parameter name="p1Logo" isForPrompting="false" class="java.net.URL"/>
     <parameter name="pdf_point" isForPrompting="false" class="java.net.URL"/>
     <parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.net.URL"/>
+    <parameter name="ReturnedValuesMap" class="java.util.Map">
+        <defaultValueExpression>
+            new java.util.HashMap()
+        </defaultValueExpression>
+    </parameter>
 
     <field name="PDFCharts" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
 
@@ -103,20 +108,22 @@
                         key="line-1"/>
                 <graphicElement stretchType="NoStretch"/>
             </line>
-            <textField>
+            <textField evaluationTime="Page">
                 <reportElement
                         mode="Transparent"
                         x="0"
                         y="8"
-                        width="158"
+                        width="750"
                         height="15"
                         forecolor="#333333"
                         backcolor="#333333"
-                        key="staticText-42"/>
+                        key="staticText-42">
+                </reportElement>
                 <textElement textAlignment="Left">
-                    <font/>
+                    <font reportFont="Verdana12b"/>
                 </textElement>
-                <textFieldExpression class="java.lang.String"><![CDATA[$P{title}]]></textFieldExpression>
+                <textFieldExpression class="java.lang.String">
+                    <![CDATA[$P{ReturnedValuesMap}.get("pageTitle")]]></textFieldExpression>
             </textField>
 
         </band>
@@ -135,8 +142,15 @@
                     <subreportParameter name="SUBREPORT_DIR">
                         <subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
                     </subreportParameter>
+                    <subreportParameter name="ReturnedValuesMap">
+                        <subreportParameterExpression>
+                            $P{ReturnedValuesMap}
+                        </subreportParameterExpression>
+                    </subreportParameter>
+
                     <dataSourceExpression>
                         <![CDATA[$F{PDFCharts}]]></dataSourceExpression>
+
                     <subreportExpression class="java.net.URL">
                         <![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_PDFCharts.jasper")]]></subreportExpression>
                 </subreport>
@@ -161,7 +175,8 @@
                     <font reportFont="Verdana9"/>
                 </textElement>
                 <textFieldExpression class="java.lang.String">
-                    <![CDATA[$P{footer}+" "+ new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date()) ]]></textFieldExpression>
+                    <![CDATA[$P{footer}+" "+ new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date()) ]]>
+                </textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"
                        hyperlinkTarget="Self">

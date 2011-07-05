@@ -10,16 +10,16 @@ class ResultPathParser {
     Map<PathType, List> cachedMap = [:]
 
 
-    public ResultPathParser(String modelName,List paths) {
+    public ResultPathParser(String modelName, List paths) {
         this.modelName = modelName
         this.paths = paths
     }
 
     String getComponentPath(PathType pathType) {
         switch (pathType) {
-            case PathType.CLAIMSGENERATORS: return modelName+":claimsGenerators"
-            case PathType.LINESOFBUSINESS: return modelName+":linesOfBusiness"
-            case PathType.REINSURANCE: return modelName+":reinsurance"
+            case PathType.CLAIMSGENERATORS: return modelName + ":claimsGenerators"
+            case PathType.LINESOFBUSINESS: return modelName + ":linesOfBusiness"
+            case PathType.REINSURANCE: return modelName + ":reinsurance"
         }
         return null
     }
@@ -35,8 +35,23 @@ class ResultPathParser {
         return componentpaths.find {String path -> !path.startsWith(getComponentPath(pathType) + ":sub")}
     }
 
+    PathType getPathType(String path) {
+        if (path.startsWith(modelName + ":claimsGenerators")) return PathType.CLAIMSGENERATORS
+        if (path.startsWith(modelName + ":linesOfBusiness")) return PathType.LINESOFBUSINESS
+        if (path.startsWith(modelName + ":reinsurance")) return PathType.REINSURANCE
+        return null
+    }
+
 }
 
 enum PathType {
     CLAIMSGENERATORS, LINESOFBUSINESS, REINSURANCE
+
+    String getDispalyName() {
+        switch (this) {
+            case CLAIMSGENERATORS: return "Claims Generators"
+            case LINESOFBUSINESS: return "Line of Business"
+            case REINSURANCE: return "Reinsurance"
+        }
+    }
 }

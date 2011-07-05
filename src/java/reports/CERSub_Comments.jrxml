@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
         "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport name="CERSub_Comments" leftMargin="0" rightMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+<jasperReport name="CERSub_Comments" leftMargin="0" rightMargin="0" topMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
 
     <import value="java.util.Date"/>
     <import value="java.text.SimpleDateFormat"/>
@@ -28,7 +28,7 @@
     <parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.net.URL"/>
 
     <field name="boxTitle" class="java.lang.String"/>
-    <field name="userAndDate" class="java.lang.String"/>
+    <field name="commentInfo" class="java.lang.String"/>
     <field name="tags" class="java.lang.String"/>
     <field name="text" class="java.lang.String"/>
     <field name="addedFiles" class="java.lang.String"/>
@@ -48,7 +48,7 @@
                 <textField>
                     <reportElement positionType="Float" x="0" y="20" width="320" height="20" style="middle"/>
                     <textElement/>
-                    <textFieldExpression class="java.lang.String"><![CDATA[$F{userAndDate}]]></textFieldExpression>
+                    <textFieldExpression class="java.lang.String"><![CDATA[$F{commentInfo}]]></textFieldExpression>
                 </textField>
                 <textField>
                     <reportElement positionType="Float" x="0" y="35" width="320" height="15" style="middle"/>

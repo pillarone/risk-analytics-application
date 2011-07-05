@@ -10,29 +10,43 @@
     <import value="net.sf.jasperreports.engine.data.*"/>
 
     <parameter name="SUBREPORT_DIR" isForPrompting="false" class="java.net.URL"/>
+    <parameter name="ReturnedValuesMap" class="java.util.Map">
+        <defaultValueExpression>
+            new java.util.HashMap()
+        </defaultValueExpression>
+    </parameter>
 
     <field name="PDFChartAndCommentsInfo" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
     <field name="chart" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
     <field name="waterfallChart" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
+    <field name="pageTitle" class="java.lang.String"/>
 
 
     <variable name="SERIES_NAME" class="java.lang.String" resetType="Report" calculation="Nothing">
     </variable>
     <title>
         <band height="380">
-        <subreport isUsingCache="true">
-            <reportElement
-                    x="0"
-                    y="0"
-                    width="500"
-                    height="40"
-                    key="subreport-24" isPrintInFirstWholeBand="true">
-            </reportElement>
-            <dataSourceExpression>
-                <![CDATA[$F{waterfallChart}]]></dataSourceExpression>
-            <subreportExpression class="java.net.URL">
-                <![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_WaterfallOverview.jasper")]]></subreportExpression>
-        </subreport>
+            <subreport isUsingCache="true">
+                <reportElement
+                        x="0"
+                        y="0"
+                        width="500"
+                        height="40"
+                        key="subreport-24" isPrintInFirstWholeBand="true">
+                </reportElement>
+                <subreportParameter name="pageTitle">
+                        <subreportParameterExpression><![CDATA[$F{pageTitle}]]></subreportParameterExpression>
+                    </subreportParameter>
+                <subreportParameter name="ReturnedValuesMap">
+                    <subreportParameterExpression>
+                        $P{ReturnedValuesMap}
+                    </subreportParameterExpression>
+                </subreportParameter>
+                <dataSourceExpression>
+                    <![CDATA[$F{waterfallChart}]]></dataSourceExpression>
+                <subreportExpression class="java.net.URL">
+                    <![CDATA[new java.net.URL($P{SUBREPORT_DIR}.toExternalForm() + "/CERSub_WaterfallOverview.jasper")]]></subreportExpression>
+            </subreport>
         </band>
     </title>
     <pageHeader/>
@@ -49,6 +63,11 @@
                             key="subreport-24"/>
                     <subreportParameter name="SUBREPORT_DIR">
                         <subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+                    </subreportParameter>
+                    <subreportParameter name="ReturnedValuesMap">
+                        <subreportParameterExpression>
+                            $P{ReturnedValuesMap}
+                        </subreportParameterExpression>
                     </subreportParameter>
                     <dataSourceExpression>
                         <![CDATA[$F{PDFChartAndCommentsInfo}]]></dataSourceExpression>

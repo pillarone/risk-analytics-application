@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractReportModel implements ReportModel {
+abstract class AbstractReportModel {
 
     public static double divider = 1000
     public static List fieldNames = ["ultimate", "paidIncremental", "reserves"]
@@ -80,6 +80,8 @@ abstract class AbstractReportModel implements ReportModel {
         }
         return label
     }
+
+    abstract Map getParameters()
 
 
 }

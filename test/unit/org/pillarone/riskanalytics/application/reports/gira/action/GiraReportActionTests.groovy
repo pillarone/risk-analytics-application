@@ -22,7 +22,7 @@ import org.pillarone.riskanalytics.application.reports.bean.ReportChartDataBean
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class GiraReportActionTests extends AbstractReportActionTests {
-    int gIndex = 1000000000000000000000
+    int gIndex = 100
 
     void testGeneratePDFReport() {
         File testExportFile = File.createTempFile("test", ".pdf")
@@ -36,13 +36,16 @@ class GiraReportActionTests extends AbstractReportActionTests {
 
         action.metaClass.getFileName = {->
             return testExportFile.getAbsolutePath()
+//            return "test"
         }
         action.metaClass.initReportModel = {Simulation simulation ->
 
         }
 
         action.metaClass.saveReport = {def output, String fileName, ULCComponent component ->
+//            File f = new File("E:/downloads/reports/Gira.pdf")
             FileOutputStream fos = new FileOutputStream(testExportFile)
+//            FileOutputStream fos = new FileOutputStream(f)
             fos.write(output)
         }
 
@@ -50,6 +53,10 @@ class GiraReportActionTests extends AbstractReportActionTests {
 
         model.metaClass.getPeriodCount = {->
             return 1
+        }
+
+        model.metaClass.getComponentName = {String path ->
+            path
         }
         model.metaClass.getPaths = {->
             Map<PathType, List<String>> map = [:]

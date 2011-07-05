@@ -50,16 +50,8 @@ class GiraReportModel extends AbstractReportModel {
 
     }
 
-    Collection prepareData() {
-        return null
-    }
-
     Map getParameters() {
         return [:]
-    }
-
-    String getReportFileName() {
-        return "Gira Report"
     }
 
     public def getReport() {
@@ -95,14 +87,11 @@ class GiraReportModel extends AbstractReportModel {
         return new JRMapCollectionDataSource(simpleMasterList)
     }
 
-    JRMapCollectionDataSource getDataSource(JRBeanCollectionDataSource comments, JRBeanCollectionDataSource values, String chartBoxTitle, String type, int period) {
+    JRMapCollectionDataSource getDataSource(JRBeanCollectionDataSource comments, JRBeanCollectionDataSource values, String pageTitle) {
         Map simpleMasterMap = new HashMap();
         simpleMasterMap.put("comments", comments);
         simpleMasterMap.put("fieldFunctionValues", values);
-        simpleMasterMap.put("chartBoxTitle", chartBoxTitle);
-        simpleMasterMap.put("type", type);
-        simpleMasterMap.put("chartBoxTitle", chartBoxTitle);
-        simpleMasterMap.put("period", "Period: " + getPeriodLabel(period));
+        simpleMasterMap.put("pageTitle", pageTitle)
         List simpleMasterList = new ArrayList();
         simpleMasterList.add(simpleMasterMap);
         return new JRMapCollectionDataSource(simpleMasterList)
@@ -113,10 +102,11 @@ class GiraReportModel extends AbstractReportModel {
         for (String path: componentPaths) {
             getPeriodCount().times {int periodIndex ->
                 Map pathPeriodMap = new HashMap();
-                String pathDisplayName = ResultViewUtils.getResultNodePathDisplayName(simulation?.modelClass, path)
-                pathPeriodMap["PDFChartAndCommentsInfo"] = getDataSource(getCommentsDataSource(path, periodIndex), getFieldFunctionValues(path, periodIndex), pathDisplayName, getPathType(path, modelName), periodIndex)
+                String pageTitle = getPageTitle(path, getPathType(path, modelName), periodIndex)
+                pathPeriodMap["PDFChartAndCommentsInfo"] = getDataSource(getCommentsDataSource(path, periodIndex), getFieldFunctionValues(path, periodIndex), pageTitle)
                 pathPeriodMap["chart"] = getChartDataSource(periodIndex, path)
                 pathPeriodMap["waterfallChart"] = waterfallChart
+                pathPeriodMap["pageTitle"] = getComponentName(path) + "Overview VaR 99.5%"
                 simpleMasterList << pathPeriodMap
             }
         }
@@ -126,7 +116,7 @@ class GiraReportModel extends AbstractReportModel {
     String getPathType(String path, String modelName) {
         String typePath = path.substring((modelName + ":").length()) + ":type"
         Parameter parameter = Parameter.findByPath(typePath)
-        return "Type: " + ((parameter instanceof EnumParameter) ? parameter.parameterType : "")
+        return ((parameter instanceof EnumParameter) ? parameter.parameterType : "")
     }
 
     public JRBeanCollectionDataSource getCommentsDataSource(String path, int periodIndex) {
@@ -141,9 +131,10 @@ class GiraReportModel extends AbstractReportModel {
 
     public void addCommentData(Comment comment, Collection currentValues) {
         String boxTitle = CommentUtils.getCommentTitle(comment, simulation.modelClass)
+        String commentInfo = CommentUtils.getCommentInfo(comment)
         String tags = CommentUtils.getTagsValue(comment).replaceAll("<br>", ", ")
         String addedFiles = UIUtils.getText(CommentReportAction.class, "attachments") + ": " + (comment.getFiles() as List).join(", ")
-        currentValues << ["boxTitle": boxTitle, "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
+        currentValues << ["boxTitle": boxTitle, "commentInfo": commentInfo, "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
     }
 
     List<Comment> getComments(String path, int periodIndex) {
@@ -220,7 +211,7 @@ class GiraReportModel extends AbstractReportModel {
             String meanValue = format(valuesBean.getMean(path, fieldName, periodIndex))
             String var955 = format(valuesBean.getVar(path, fieldName, periodIndex, 99.5))
             String tVar955 = format(valuesBean.getTvar(path, fieldName, periodIndex, 99.5))
-            currentValues << ["functionName": fieldName, "meanValue": meanValue, "varValue": var955, "tVarValue": tVar955]
+            currentValues << ["functionName": UIUtils.getText(GiraReportModel.class, fieldName), "meanValue": meanValue, "varValue": var955, "tVarValue": tVar955]
         }
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
         return jrBeanCollectionDataSource
@@ -234,6 +225,24 @@ class GiraReportModel extends AbstractReportModel {
         ReportUtils.addList(result, PathType.LINESOFBUSINESS, parser.getComponentPaths(PathType.LINESOFBUSINESS))
         ReportUtils.addList(result, PathType.REINSURANCE, parser.getComponentPaths(PathType.REINSURANCE))
         return result
+    }
+
+    String getPageTitle(String path, String type, int period) {
+        String pageTitle = getComponentName(path)
+        pageTitle += ResultViewUtils.getResultNodesDisplayName(simulation?.modelClass, path)
+        if (type)
+            pageTitle += ", " + type
+        String periodLabel = getPeriodLabel(period)
+        pageTitle += "  Period starting at: " + periodLabel
+        return pageTitle
+    }
+
+    String getComponentName(String path) {
+        String pageTitle = ""
+        PathType pathType = parser.getPathType(path)
+        if (pathType)
+            pageTitle += pathType.getDispalyName() + ": "
+        return pageTitle
     }
 
     public int getPeriodCount() {

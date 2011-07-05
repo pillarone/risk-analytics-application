@@ -130,12 +130,17 @@ abstract class ResultViewUtils {
         }
     }
 
-    public static String getResultNodeDisplayName(Class modelClass, String path) {
+    public static String getResultNodesDisplayName(Class modelClass, String path) {
         try {
             StringBuilder stringBuilder = new StringBuilder("")
             String[] pathNames = path.split(":")
-            String nodeName = pathNames.last()
-            stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+            String separator = " / "
+            for (int i = 2; i < pathNames.length - 1; i++) {
+                String nodeName = pathNames[i]
+                stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+                if (i != pathNames.length - 2)
+                    stringBuilder.append(separator)
+            }
             return stringBuilder.toString()
         } catch (Exception ex) {
             return path

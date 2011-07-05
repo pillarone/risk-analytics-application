@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport name="CERSub_ValuesTable" leftMargin="0" rightMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+<jasperReport name="CERSub_ValuesTable" leftMargin="0" rightMargin="0" topMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
     <style name="cell" fontSize="10" isBold="false" topPadding="5"/>
     <style name="tableTitle" fontSize="10" isBold="true"/>
 
@@ -25,12 +25,12 @@
             <staticText>
                 <reportElement x="160" y="0" width="100" height="20" style="tableTitle"/>
                 <textElement textAlignment="Right"/>
-                <text><![CDATA[var95.5]]></text>
+                <text><![CDATA[VaR 99.5%]]></text>
             </staticText>
             <staticText>
                 <reportElement x="260" y="0" width="100" height="20" style="tableTitle"/>
                 <textElement textAlignment="Right"/>
-                <text><![CDATA[tVar95.5]]></text>
+                <text><![CDATA[TVaR 95.5%]]></text>
             </staticText>
             <line>
                 <reportElement x="0" y="20" width="360" height="1"/>

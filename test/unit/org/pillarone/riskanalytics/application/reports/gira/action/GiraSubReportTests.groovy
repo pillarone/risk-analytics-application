@@ -11,19 +11,16 @@ import net.sf.jasperreports.engine.JRException
  */
 class GiraSubReportTests extends AbstractReportActionTests {
 
-    // just to compile jrxml file .to jasper
+    // just to compile jrxml file to .jasper
     void testSubReports() {
-//        ReportHelper.compileSubReport("CERSub_Comments")
-        //compileSubReport("TableOfContentsReport")
-        //compileSubReport("CERSub_Content")
-        //compileSubReport("CERSub_ValuesTable")
-        //compileSubReport("HeadingsReport")
-        //compileSubReport("CERSub_PDFChart_legend")
-        //compileSubReport("CERSub_ReportInfoTable")
-        //compileSubReport("CERSub_WaterfallOverview")
-        //compileSubReport("CERSub_PDFChartAndCommentsInfo")
-        //compileSubReport("CERSub_PDFCharts")
-        //compileSubReport("CERSub_Component")
+//        compileSubReport("CERSub_Comments")
+//        compileSubReport("CERSub_ValuesTable")
+//        compileSubReport("CERSub_PDFChart_legend")
+//        compileSubReport("CERSub_ReportInfoTable")
+//        compileSubReport("CERSub_WaterfallOverview")
+//        compileSubReport("CERSub_PDFChartAndCommentsInfo")
+//        compileSubReport("CERSub_PDFCharts")
+//        compileSubReport("CERSub_Component")
     }
 
     //compile jrxml file to jasper

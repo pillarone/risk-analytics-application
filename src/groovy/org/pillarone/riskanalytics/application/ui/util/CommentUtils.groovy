@@ -17,7 +17,7 @@ class CommentUtils {
     public static String getCommentTitle(Comment comment, AbstractCommentableItemModel model) {
         try {
             StringBuilder sb = new StringBuilder(CommentAndErrorView.getDisplayPath(model, comment.getPath()))
-            addCommentInfo(sb, comment)
+            sb.append(getCommentInfo(comment))
             return sb.toString()
         } catch (Exception ex) {
             return comment.getPath()
@@ -28,20 +28,20 @@ class CommentUtils {
         try {
             String pathDisplayName = ResultViewUtils.getResultNodePathDisplayName(modelClass, comment.path)
             StringBuilder sb = new StringBuilder(pathDisplayName)
-            addCommentInfo(sb, comment)
             return sb.toString()
         } catch (Exception ex) {
             return comment.getPath()
         }
     }
 
-    static void addCommentInfo(StringBuilder sb, Comment comment) {
+    public static String getCommentInfo(Comment comment) {
+        StringBuilder sb = new StringBuilder("")
         String username = comment.user ? comment.user.username : ""
         sb.append((comment.getPeriod() != -1) ? " P" + comment.getPeriod() : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
         if (username != "")
             sb.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
         sb.append(" " + DateFormatUtils.formatDetailed(comment.lastChange))
-        println sb
+        return sb.toString()
     }
 
     public static String getTagsValue(Comment comment) {
