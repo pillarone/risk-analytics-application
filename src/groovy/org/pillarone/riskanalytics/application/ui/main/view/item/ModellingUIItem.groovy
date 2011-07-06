@@ -54,7 +54,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return UIItemUtils.deleteDependingResults(mainModel, model, this)
     }
 
-    public ModellingItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
+    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         ModellingItem modellingItem = null
         item.daoClass.withTransaction {status ->
             if (!item.isLoaded())
@@ -66,7 +66,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
         navigationTableTreeModel.addNodeForItem(modellingUIItem)
         if (openNewVersion)
             mainModel.openItem(selectedModel, modellingUIItem)
-        return modellingItem
+        return modellingUIItem
     }
 
     @Override

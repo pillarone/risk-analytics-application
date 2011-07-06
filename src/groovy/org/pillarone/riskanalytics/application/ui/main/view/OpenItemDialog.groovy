@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -83,23 +84,9 @@ class OpenItemDialog {
     }
 
     private void attachListeners() {
+        createCopyButton.addActionListener(new CreateNewMajorVersion(modellingUIItem))
         createCopyButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
-            ModellingItem modellingItem = null
-            if (!modellingUIItem.isLoaded()) {
-                modellingUIItem.load()
-            }
-            ModellingUIItem newModellingUIItem
-            modellingUIItem.item.daoClass.withTransaction {status ->
-                if (!item.isLoaded())
-                    item.load()
-                modellingItem = ModellingItemFactory.incrementVersion(item)
-                mainModel.fireModelChanged()
-                newModellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
-                mainModel.navigationTableTreeModel.addNodeForItem(newModellingUIItem)
-            }
-            if (newModellingUIItem)
-                mainModel.openItem(model, newModellingUIItem)
         }] as IActionListener)
 
         readOnlyButton.addActionListener([actionPerformed: {ActionEvent event ->

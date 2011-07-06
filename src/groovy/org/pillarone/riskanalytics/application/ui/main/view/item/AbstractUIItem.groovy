@@ -37,7 +37,7 @@ abstract class AbstractUIItem implements IUIItem {
         return false
     }
 
-    public ModellingItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
+    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         return null
     }
 

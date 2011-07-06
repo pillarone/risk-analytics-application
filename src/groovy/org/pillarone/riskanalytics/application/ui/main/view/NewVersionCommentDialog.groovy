@@ -18,13 +18,14 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.ULCComponent
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class NewVersionCommentDialog {
 
-    private ModellingItem item
+    private ModellingUIItem modellingUIItem
     private ULCTableTree tree
     ULCDialog dialog
     ULCTextArea commentTextArea
@@ -34,9 +35,9 @@ class NewVersionCommentDialog {
     Closure okAction
     String title
 
-    public NewVersionCommentDialog(ULCTableTree tree, ModellingItem item, Closure okAction) {
+    public NewVersionCommentDialog(ULCTableTree tree, ModellingUIItem modellingUIItem, Closure okAction) {
         this.tree = tree
-        this.item = item
+        this.modellingUIItem = modellingUIItem
         this.okAction = okAction
         initComponents()
         layoutComponents()
@@ -86,10 +87,10 @@ class NewVersionCommentDialog {
 
     private void attachListeners() {
         IActionListener action = [actionPerformed: {e ->
-            if (!item.isLoaded()) {
-                item.load()
+            if (!modellingUIItem.isLoaded()) {
+                modellingUIItem.load()
             }
-            okAction.call(item, commentTextArea.getText()); hide();
+            okAction.call(modellingUIItem, commentTextArea.getText()); hide();
         }] as IActionListener
         okButton.addActionListener(action)
         commentTextArea.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)

@@ -12,6 +12,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -43,8 +46,25 @@ class ParameterizationUIItem extends ModellingUIItem {
         super.save()
     }
 
+    public ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
+        ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false)
+        addComment(selectedModel, newItem, commentText, openNewVersion)
+        return newItem
+    }
 
-
+    private void addComment(Model selectedModel, ParameterizationUIItem uiItem, String commentText, boolean openNewVersion) {
+        if (commentText) {
+            String modelName = selectedModel.getName()
+            Comment comment = new Comment(modelName, -1)
+            comment.text = commentText
+            Tag version = Tag.findByName(NewCommentView.VERSION_COMMENT)
+            comment.addTag(version)
+            ((Parameterization) uiItem.item).addComment(comment)
+            uiItem.item.save()
+        }
+        if (openNewVersion)
+            mainModel.openItem(selectedModel, uiItem)
+    }
 
     @Override
     List<SimulationRun> getSimulations() {

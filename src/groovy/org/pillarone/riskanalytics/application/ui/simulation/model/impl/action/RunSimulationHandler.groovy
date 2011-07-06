@@ -139,7 +139,7 @@ class RunSimulationHandler {
                 if (item.changed) {
                     item.load()
                     ModellingUIItem modellingUIItem = model.mainModel.getAbstractUIItem(item)
-                    newItems << modellingUIItem.createNewVersion(itemModel,  false)
+                    newItems << modellingUIItem.createNewVersion(itemModel,  false).item
                     model.mainModel.closeItem(itemModel, modellingUIItem)
                 } else
                     newItems << item
