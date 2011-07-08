@@ -21,7 +21,6 @@ abstract class AbstractReportModel {
     public static List fieldNames = ["ultimate", "paidIncremental", "reserves"]
     protected String modelName = "GIRA"
     public static String collector = AggregatedCollectingModeStrategy.IDENTIFIER
-    Map periodLabels = [:]
     private Map cachedValues
     protected Simulation simulation
     protected ResultFunctionValuesBean valuesBean
@@ -45,7 +44,11 @@ abstract class AbstractReportModel {
                 map["values"] = valuesBean.getValues(path, fieldName, periodIndex).sort()
                 map["n"] = map["values"].size()
             } else {
-                return null
+                map["stdDev"] = 0
+                map["mean"] = 0
+                map["IQR"] = 0
+                map["values"] = []
+                map["n"] = 0
             }
             return map
         } catch (Exception ex) {
@@ -56,11 +59,7 @@ abstract class AbstractReportModel {
     }
 
     protected double calcBandwidth(Map values) {
-        if (values["IQR"] > 0) {
-            return Estimator.CONST * Math.min(values["stdDev"], values["IQR"]) * Math.pow(values["n"], (-1 / 5));
-        } else {
-            return Estimator.CONST * values["stdDev"] * Math.pow(values["n"], (-1 / 5));
-        }
+        return JEstimator.calcBandwidthForGaussKernelEstimate((double) values["stdDev"], (double) values["IQR"], values["n"])
     }
 
     protected ResultTableTreeNode createRTTN(String path, String collectorName, String fieldName) {
@@ -68,17 +67,6 @@ abstract class AbstractReportModel {
         node.resultPath = "${path}:${fieldName}"
         node.collector = collectorName
         return node
-    }
-
-    public String getPeriodLabel(int periodIndex) {
-        String label
-        if (periodLabels[periodIndex]) {
-            label = periodLabels[periodIndex]
-        } else {
-            ResultViewUtils.initPeriodLabels(simulation.getSimulationRun(), periodLabels)
-            label = periodLabels[periodIndex]
-        }
-        return label
     }
 
     abstract Map getParameters()

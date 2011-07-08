@@ -17,7 +17,7 @@
     </parameter>
 
     <field name="PDFChartAndCommentsInfo" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
-    <field name="chart" class="net.sf.jasperreports.engine.data.JRAbstractBeanDataSource"/>
+    <field name="chart" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
     <field name="waterfallChart" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
     <field name="pageTitle" class="java.lang.String"/>
 

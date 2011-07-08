@@ -51,7 +51,7 @@
             <textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"
                        hyperlinkTarget="Self">
                 <reportElement
-                        x="5"
+                        x="0"
                         y="3"
                         width="125"
                         height="13"

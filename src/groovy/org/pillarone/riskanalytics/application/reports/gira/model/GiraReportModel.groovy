@@ -32,22 +32,27 @@ import net.sf.jasperreports.engine.data.JRMapCollectionDataSource
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer
 import org.pillarone.riskanalytics.core.util.GroovyUtils
 import org.pillarone.riskanalytics.application.util.ReportUtils
+import static org.pillarone.riskanalytics.application.util.ReportUtils.*
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.user.Person
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class GiraReportModel extends AbstractReportModel {
 
-    int x = 0
     ResultPathParser parser
     NumberFormat numberFormat = LocaleResources.getNumberFormat()
+    GiraReportHelper reportHelper
+    private AbstractReportExporter exporter
 
 
     public GiraReportModel(Simulation simulation, String modelName) {
         this.simulation = simulation
         this.modelName = modelName
         load()
-
+        reportHelper = new GiraReportHelper(simulation: simulation)
     }
 
     Map getParameters() {
@@ -57,56 +62,36 @@ class GiraReportModel extends AbstractReportModel {
     public def getReport() {
         valuesBean = new ResultFunctionValuesBean(simulation?.getSimulationRun(), collector)
         JRBeanCollectionDataSource chartDataSource = getCollectionDataSource()
-        return ReportFactory.getGiraReport(chartDataSource, simulation)
+        Map params = getReportParameters(chartDataSource, simulation)
+        exporter.export(params, chartDataSource).toByteArray()
     }
 
     public JRBeanCollectionDataSource getCollectionDataSource() {
 
         Collection currentValues = new ArrayList()
-        getPaths().each {PathType pathType, List<String> componentPaths ->
+        getPaths().each {PathType pathType, List<List<String>> componentPaths ->
             Map map = [:]
-            JRMapCollectionDataSource waterfallDataSource = getDataSource(JasperChartUtils.generateWaterfallChart(getWaterfallBeans(componentPaths)))
-            map["PDFCharts"] = getDataSource(componentPaths, waterfallDataSource)
+            List<String> netPaths = parser.getPathsByPathType(componentPaths, pathType)
+            List<ReportWaterfallDataBean> beans = getWaterfallBeans(netPaths)
+            JRMapCollectionDataSource waterfallDataSource = getRendererDataSource("waterfallChart", JasperChartUtils.generateWaterfallChart(beans))
+            map["PDFCharts"] = getPDFChartsDataSource(componentPaths, waterfallDataSource)
             currentValues << map
         }
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
         return jrBeanCollectionDataSource
     }
 
-    JRMapCollectionDataSource getComponentDataSource(Map map) {
+    JRMapCollectionDataSource getPDFChartsDataSource(List<List<String>> componentPaths, JRMapCollectionDataSource waterfallChart) {
         List simpleMasterList = new ArrayList();
-        simpleMasterList.add(map);
-        return new JRMapCollectionDataSource(simpleMasterList)
-    }
-
-    JRMapCollectionDataSource getDataSource(JCommonDrawableRenderer renderer) {
-        Map simpleMasterMap = new HashMap();
-        simpleMasterMap.put("waterfallChart", renderer);
-        List simpleMasterList = new ArrayList();
-        simpleMasterList.add(simpleMasterMap);
-        return new JRMapCollectionDataSource(simpleMasterList)
-    }
-
-    JRMapCollectionDataSource getDataSource(JRBeanCollectionDataSource comments, JRBeanCollectionDataSource values, String pageTitle) {
-        Map simpleMasterMap = new HashMap();
-        simpleMasterMap.put("comments", comments);
-        simpleMasterMap.put("fieldFunctionValues", values);
-        simpleMasterMap.put("pageTitle", pageTitle)
-        List simpleMasterList = new ArrayList();
-        simpleMasterList.add(simpleMasterMap);
-        return new JRMapCollectionDataSource(simpleMasterList)
-    }
-
-    JRMapCollectionDataSource getDataSource(List<String> componentPaths, JRMapCollectionDataSource waterfallChart) {
-        List simpleMasterList = new ArrayList();
-        for (String path: componentPaths) {
+        for (List<String> paths: componentPaths) {
             getPeriodCount().times {int periodIndex ->
                 Map pathPeriodMap = new HashMap();
-                String pageTitle = getPageTitle(path, getPathType(path, modelName), periodIndex)
-                pathPeriodMap["PDFChartAndCommentsInfo"] = getDataSource(getCommentsDataSource(path, periodIndex), getFieldFunctionValues(path, periodIndex), pageTitle)
-                pathPeriodMap["chart"] = getChartDataSource(periodIndex, path)
+                String pageTitle = reportHelper.getPageTitle(parser, paths[0], getPathType(paths[0], modelName), periodIndex)
+                JRBeanCollectionDataSource fieldFunctionValues = getFieldFunctionValues(paths, periodIndex)
+                pathPeriodMap["PDFChartAndCommentsInfo"] = getPDFChartAndCommentsInfoDataSource(reportHelper.getCommentsDataSource(paths[0], periodIndex), fieldFunctionValues, pageTitle)
+                pathPeriodMap["chart"] = getChartDataSource(periodIndex, paths)
                 pathPeriodMap["waterfallChart"] = waterfallChart
-                pathPeriodMap["pageTitle"] = getComponentName(path) + "Overview VaR 99.5%"
+                pathPeriodMap["pageTitle"] = reportHelper.getComponentName(parser, paths[0]) + "Overview VaR 99.5% (ultimate)"
                 simpleMasterList << pathPeriodMap
             }
         }
@@ -119,52 +104,21 @@ class GiraReportModel extends AbstractReportModel {
         return ((parameter instanceof EnumParameter) ? parameter.parameterType : "")
     }
 
-    public JRBeanCollectionDataSource getCommentsDataSource(String path, int periodIndex) {
-        Collection currentValues = new ArrayList<Comment>()
-        for (Comment comment: getComments(path, periodIndex)) {
-            addCommentData(comment, currentValues)
-        }
-
-        JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
-        return jrBeanCollectionDataSource
-    }
-
-    public void addCommentData(Comment comment, Collection currentValues) {
-        String boxTitle = CommentUtils.getCommentTitle(comment, simulation.modelClass)
-        String commentInfo = CommentUtils.getCommentInfo(comment)
-        String tags = CommentUtils.getTagsValue(comment).replaceAll("<br>", ", ")
-        String addedFiles = UIUtils.getText(CommentReportAction.class, "attachments") + ": " + (comment.getFiles() as List).join(", ")
-        currentValues << ["boxTitle": boxTitle, "commentInfo": commentInfo, "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
-    }
-
-    List<Comment> getComments(String path, int periodIndex) {
-        List<Comment> comments = []
-        fieldNames.each {String fieldName ->
-            String commentPath = path + ":" + fieldName
-            Collection<Comment> pathFieldComments = simulation.comments.findAll {Comment comment ->
-                comment.path == commentPath && (comment.period == -1 || comment.period == periodIndex)
-            }
-            comments.addAll(pathFieldComments)
-        }
-        return comments
-    }
-
-    protected JRBeanCollectionDataSource getChartDataSource(int periodIndex, String path) {
-        Collection currentValues = new ArrayList<ReportChartDataBean>()
-        fieldNames.each {String fieldName ->
-            Map dbValues = getValues(periodIndex, path, collector, fieldName)
-            if (dbValues) {
-                try {
-                    List xyPairs = JEstimator.gaussKernelBandwidthPdf(dbValues["values"], calcBandwidth(dbValues), false)
-                    xyPairs.eachWithIndex {List xyPair, int index ->
-                        currentValues << new ReportChartDataBean(x: xyPair[0] * 100 / dbValues["mean"], y: xyPair[1], line: fieldName, period: periodIndex)
+    protected JRMapCollectionDataSource getChartDataSource(int periodIndex, List componentPaths) {
+        Map seriesMap = [:]
+        parser.appyFilter(componentPaths).each {String path ->
+            String suffix = path.substring(path.lastIndexOf(":") + 1)
+            fieldNames.each {String fieldName ->
+                Map dbValues = getValues(periodIndex, path, collector, fieldName)
+                if (dbValues) {
+                    try {
+                        seriesMap[UIUtils.getText(GiraReportModel.class, fieldName + suffix)] = JEstimator.gaussKernelBandwidthPdf(dbValues["values"], calcBandwidth(dbValues), false)
+                    } catch (Exception ex) {
                     }
-                } catch (Exception ex) {
                 }
             }
         }
-        JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
-        return jrBeanCollectionDataSource
+        return getRendererDataSource("pdfChart", JasperChartUtils.generatePDFChart(seriesMap))
     }
 
     protected List<ReportWaterfallDataBean> getWaterfallBeans(List<String> paths) {
@@ -173,28 +127,26 @@ class GiraReportModel extends AbstractReportModel {
         Double totalValue = 0
         VarFunction var = new VarFunction(99.5, QuantilePerspective.LOSS)
         String parent = paths[0]
+        int periodIndex = 0
+        double sum = 0
         paths.eachWithIndex {String path, int index ->
-            getPeriodCount().times {int periodIndex ->
+            if (!parser.isParentPath(path)) {
                 try {
                     Double var95 = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(path, collector, "ultimate"))
-                    beans << new ReportWaterfallDataBean(line: ResultViewUtils.getResultNodePathShortDisplayName(simulation?.modelClass, path), value: var95 / divider)
+                    sum += var95
+                    beans << new ReportWaterfallDataBean(line: ResultViewUtils.getResultNodePathShortDisplayName(simulation?.modelClass, path), value: var95)
                 } catch (Exception ex) {}
             }
+
         }
 
-        beans.sort()
-        beans = beans.reverse()
 
-        getPeriodCount().times {int periodIndex ->
-            try {
-                totalValue += var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(parent, collector, "ultimate"))
-
-            } catch (Exception ex) {}
-        }
-        ReportWaterfallDataBean total = new ReportWaterfallDataBean(line: "total", value: totalValue / divider)
         try {
-            double sum = beans.value.sum()
-            ReportWaterfallDataBean div = new ReportWaterfallDataBean(line: "diversification", value: (totalValue - sum) / divider)
+            totalValue = var.evaluate(simulation.getSimulationRun(), periodIndex, createRTTN(parent, collector, "ultimate"))
+        } catch (Exception ex) {}
+        ReportWaterfallDataBean total = new ReportWaterfallDataBean(line: "total", value: totalValue)
+        try {
+            ReportWaterfallDataBean div = new ReportWaterfallDataBean(line: "diversification", value: (totalValue - sum))
 
             beans << div
             beans << total
@@ -205,48 +157,35 @@ class GiraReportModel extends AbstractReportModel {
     }
 
 
-    public JRBeanCollectionDataSource getFieldFunctionValues(String path, int periodIndex) {
+    public JRBeanCollectionDataSource getFieldFunctionValues(List<String> paths, int periodIndex) {
         Collection currentValues = new ArrayList()
-        fieldNames.each {String fieldName ->
-            String meanValue = format(valuesBean.getMean(path, fieldName, periodIndex))
-            String var955 = format(valuesBean.getVar(path, fieldName, periodIndex, 99.5))
-            String tVar955 = format(valuesBean.getTvar(path, fieldName, periodIndex, 99.5))
-            currentValues << ["functionName": UIUtils.getText(GiraReportModel.class, fieldName), "meanValue": meanValue, "varValue": var955, "tVarValue": tVar955]
+        paths.each {String path ->
+            String suffix = path.substring(path.lastIndexOf(":") + 1)
+            fieldNames.each {String fieldName ->
+                String meanValue = format(valuesBean.getMean(path, fieldName, periodIndex))
+                String var955 = format(valuesBean.getVar(path, fieldName, periodIndex, 99.5))
+                String tVar955 = format(valuesBean.getTvar(path, fieldName, periodIndex, 99.5))
+                currentValues << ["functionName": UIUtils.getText(GiraReportModel.class, fieldName + suffix), "meanValue": meanValue, "varValue": var955, "tVarValue": tVar955]
+            }
         }
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
         return jrBeanCollectionDataSource
     }
 
-    Map<PathType, List<String>> getPaths() {
+    Map<PathType, List<List<String>>> getPaths() {
         List<String> singleValueResultsPaths = ResultAccessor.getPaths(simulation.getSimulationRun())
-        parser = new ResultPathParser("GIRA", singleValueResultsPaths)
+        parser = new ResultPathParser(modelName, singleValueResultsPaths)
+
         Map result = [:]
-        ReportUtils.addList(result, PathType.CLAIMSGENERATORS, parser.getComponentPaths(PathType.CLAIMSGENERATORS))
-        ReportUtils.addList(result, PathType.LINESOFBUSINESS, parser.getComponentPaths(PathType.LINESOFBUSINESS))
-        ReportUtils.addList(result, PathType.REINSURANCE, parser.getComponentPaths(PathType.REINSURANCE))
+        IPathFilter claimsFilter = PathFilter.getFilter(parser.getComponentPath(PathType.CLAIMSGENERATORS), ResultPathParser.CLAIMS_SUFFIX_LIST)
+        IPathFilter reinsuranceFilter = PathFilter.getFilter(parser.getComponentPath(PathType.REINSURANCE), ResultPathParser.REINSURANCE_TABLE_SUFFIX_LIST)
+        ReportUtils.addList(result, PathType.CLAIMSGENERATORS, parser.getComponentPaths(PathType.CLAIMSGENERATORS, claimsFilter))
+        ReportUtils.addList(result, PathType.REINSURANCE, parser.getComponentPaths(PathType.REINSURANCE, reinsuranceFilter))
         return result
     }
 
-    String getPageTitle(String path, String type, int period) {
-        String pageTitle = getComponentName(path)
-        pageTitle += ResultViewUtils.getResultNodesDisplayName(simulation?.modelClass, path)
-        if (type)
-            pageTitle += ", " + type
-        String periodLabel = getPeriodLabel(period)
-        pageTitle += "  Period starting at: " + periodLabel
-        return pageTitle
-    }
-
-    String getComponentName(String path) {
-        String pageTitle = ""
-        PathType pathType = parser.getPathType(path)
-        if (pathType)
-            pageTitle += pathType.getDispalyName() + ": "
-        return pageTitle
-    }
-
     public int getPeriodCount() {
-        return simulation.periodCount
+        return reportHelper.periodCount
     }
 
     void load() {
@@ -260,6 +199,27 @@ class GiraReportModel extends AbstractReportModel {
         } catch (Exception ex) {
             return "-"
         }
+    }
+
+    public void setExporter(AbstractReportExporter exporter) {
+        this.exporter = exporter
+    }
+
+    private Map getReportParameters(JRBeanCollectionDataSource chartsDataSource, ModellingItem modellingItem) {
+        Map params = new HashMap()
+        params["charts"] = chartsDataSource
+        params["title"] = "Example Report"
+        Person currentUser = UserManagement.getCurrentUser()
+        params["footer"] = currentUser ? UIUtils.getText(ReportFactory.class, "footerByUser", [currentUser.username]) : UIUtils.getText(ReportFactory.class, "footer")
+        params["infos"] = ReportUtils.getItemInfo(modellingItem)
+        params["currentUser"] = currentUser ? currentUser.username : ""
+        params["itemInfo"] = UIUtils.getText(ReportFactory.class, modellingItem.class.simpleName + "Info")
+        params["_file"] = "GiraReport"
+        params["SUBREPORT_DIR"] = reportHelper.getReportFolder()
+        params["Comment"] = "Comment"
+        params["p1Icon"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "application.png")
+        params["p1Logo"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "pillarone-logo-transparent-background-report.png")
+        return params
     }
 
 

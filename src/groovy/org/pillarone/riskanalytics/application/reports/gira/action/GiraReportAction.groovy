@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.reports.gira.model.PDFReportExporter
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -38,6 +39,7 @@ class GiraReportAction extends AbstractReportAction {
         try {
             Simulation simulation = getSelectedItem()
             initReportModel(simulation)
+            model.setExporter(new PDFReportExporter())
             saveReport(model.getReport(), getFileName(simulation), event?.source)
         } catch (IllegalArgumentException e) {
             LOG.error "Can not create report: ${e.message} Stacktrace: ${e.stackTrace}"

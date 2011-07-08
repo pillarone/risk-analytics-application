@@ -32,13 +32,13 @@ class GiraSubReportTests extends AbstractReportActionTests {
         File f = new File(ReportHelper.getReportFolder().toURI())
         String dir = f.getAbsolutePath() + "/"
         try {
-            println " compiling ${source}.jrxml ..."
             String src = dir + source + ".jrxml"
-//            String local = "C:/riskanalytics/RiskAnalyticsApplication/src/java/reports/" + source + ".jrxml"
+            println " compiling ${src}.jrxml ..."
+            String local = "C:/riskanalytics/RiskAnalyticsApplication/src/java/reports/" + source + ".jrxml"
 //            String target = dir + source + ".jasper"
             JasperCompileManager.compileReportToFile(src)
-//            JasperCompileManager.compileReportToFile(local)
-            println "${source}.jrxml compiled"
+            JasperCompileManager.compileReportToFile(local)
+            println "${src} compiled"
         } catch (JRException ex) {
             println "$ex"
             ex.printStackTrace()
