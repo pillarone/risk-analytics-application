@@ -131,7 +131,7 @@ class StochasticResultView extends ResultView {
         dataType.groupingUsed = false
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
-        functionValue.value = userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, 99.5)
+        functionValue.value = Double.parseDouble(userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, 99.5))
         functionValue.columns = 6
         functionValue.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
             userPreferences.putPropertyValue(FUNCTION_VALUE + model.model.name, functionValue.getValue())
