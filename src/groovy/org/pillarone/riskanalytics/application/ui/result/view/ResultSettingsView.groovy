@@ -58,6 +58,7 @@ class ResultSettingsView {
                 addLabels(content, getText('firstPeriod') + ":", DateTimeFormat.forPattern('dd.MM.yyyy').print(simulation.beginOfFirstPeriod), new ULCFiller())
             }
             addLabels(content, getText('periods') + ":", simulation.periodCount.toString(), new ULCFiller())
+            addLabels(content, getText('modelVersion') + ":", simulation.modelVersionNumber.toString(), new ULCFiller())
             int simulationDuration = (simulation.end.getMillis() - simulation.start.getMillis()) / 1000
             addLabels(content, getText('completedIterations') + ":", "${simulation.numberOfIterations.toString()} in ${simulationDuration} secs", new ULCFiller())
 
