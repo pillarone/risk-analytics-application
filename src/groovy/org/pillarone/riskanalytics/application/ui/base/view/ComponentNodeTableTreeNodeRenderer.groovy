@@ -77,6 +77,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         addDynamicNodeMenu.name = "popup.expand"
 
         removeDynamicNodeMenu = new ULCPopupMenu()
+        removeDynamicNodeMenu.name = "popup.remove"
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
         removeDynamicNodeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
         removeDynamicNodeMenu.addSeparator()
