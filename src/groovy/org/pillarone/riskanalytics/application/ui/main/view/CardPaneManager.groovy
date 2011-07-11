@@ -14,6 +14,10 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
+import com.ulcjava.base.application.ULCAlert
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.event.IWindowListener
 
 class CardPaneManager {
 
@@ -89,19 +93,19 @@ class CardPaneManager {
         return selectedModel ? selectedModel.name : NO_MODEL
     }
 
-    private void closeCard(Model model, ULCTabbedPane modelCardContent, int selectedCardIndex) {
-        if (selectedCardIndex == -1) return
+    private void closeCard(Model model, ULCTabbedPane modelCardContent, int closingIndex) {
+        if (closingIndex == -1) return
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(model))
-        AbstractUIItem abstractUIItem = tabbedPaneManager.getAbstractItem(modelCardContent.getComponentAt(selectedCardIndex))
+        AbstractUIItem abstractUIItem = tabbedPaneManager.getAbstractItem(modelCardContent.getComponentAt(closingIndex))
         if (!abstractUIItem) return
-        abstractUIItem.mainModel.closeItem(model, abstractUIItem)
+        tabbedPaneManager.closeTab(abstractUIItem)
+
         if (modelCardContent && modelCardContent.getTabCount() == 0)
             removeCard(model)
     }
 
     public ULCTabbedPane createDetachableTabbedPane(Model selectedModel, RiskAnalyticsMainModel mainModel) {
         ULCTabbedPane tabbedPane = new ULCDetachableTabbedPane(name: "DetachableTabbedPane")
-//        tabbedPane.addTabListener(tabClosingListener)
         tabbedPane.addTabListener([tabClosing: {TabEvent event ->
             int closingIndex = event.getTabClosingIndex()
             if (closingIndex < 0) closingIndex = 0
@@ -117,9 +121,11 @@ class CardPaneManager {
     public void selectCurrentItemFromTab(Model selectedModel, ULCCloseableTabbedPane modelCardContent, RiskAnalyticsMainModel mainModel) {
         try {
             TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(selectedModel))
-            AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.getSelectedComponent())
-            //mainModel.currentItem = (item instanceof BatchRun) ? null : item
-            mainModel.notifyChangedDetailView(selectedModel, item)
+            if (tabbedPaneManager) {
+                AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.getSelectedComponent())
+                //mainModel.currentItem = (item instanceof BatchRun) ? null : item
+                mainModel.notifyChangedDetailView(selectedModel, item)
+            }
         } catch (Exception ex) {
             LOG.error "Error occured during set a current item ${ex}"
         }

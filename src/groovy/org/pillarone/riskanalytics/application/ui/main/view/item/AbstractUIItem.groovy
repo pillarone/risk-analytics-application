@@ -58,6 +58,10 @@ abstract class AbstractUIItem implements IUIItem {
     public void load(boolean completeLoad = true) {
     }
 
+    void unload() {
+
+    }
+
     List<SimulationRun> getSimulations() {
         return []
     }

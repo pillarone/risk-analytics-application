@@ -42,6 +42,8 @@ public interface IUIItem {
 
     public boolean isLoaded()
 
+    public void unload()
+
     public Object getItem()
 
     public String getName()

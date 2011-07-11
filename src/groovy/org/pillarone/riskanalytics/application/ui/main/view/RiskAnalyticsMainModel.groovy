@@ -98,7 +98,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         viewModelsInUse.remove(abstractUIItem)
         unregisterModel(abstractUIItem)
         abstractUIItem.removeAllModellingItemChangeListener()
-
     }
 
 

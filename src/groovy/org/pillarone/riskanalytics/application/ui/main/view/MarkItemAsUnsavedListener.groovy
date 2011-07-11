@@ -38,5 +38,10 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
         batchUIItem.mainModel.navigationTableTreeModel.refreshBatchNode()
     }
 
+    public static String removeUnsavedMark(String title) {
+        if (title.endsWith(UNSAVED_MARK)) return title.substring(0, title.indexOf(UNSAVED_MARK))
+        return title
+    }
+
 }
 
