@@ -48,7 +48,7 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     }
 
     public String getCounterString() {
-        int found = 1//createResultList().size()
+        int found = results.size()
         java.text.NumberFormat numberFormat = LocaleResources.getNumberFormat()
         "Found ${numberFormat.format(found)} out of ${numberFormat.format(simulationRun.iterations)} Iterations"
     }
