@@ -11,6 +11,7 @@ import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAroun
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import com.ulcjava.base.application.event.IActionListener
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 class RuntimeParameterPane {
 
@@ -94,13 +95,14 @@ class RuntimeParameterPane {
     }
 
     protected void addParameter(RuntimeParameterDescriptor descriptor, DateTime value) {
-        addLabel(descriptor.displayName)
+        String format = DateFormatUtils.getInputDateFormats()[0]
+        addLabel("${descriptor.displayName} ($format)")
 
         ULCSpinnerDateModel dateModel = new ULCSpinnerDateModel(value.toDate(), null, null, Calendar.DAY_OF_MONTH)
 
         ULCSpinner spinner = new ULCSpinner(dateModel)
         spinner.name = descriptor.propertyName
-        spinner.setEditor(new ULCDateEditor(spinner, FastDateFormat.getDateInstance(FastDateFormat.MEDIUM, LocaleResources.getLocale()).pattern))
+        spinner.setEditor(new ULCDateEditor(spinner, format))
         spinner.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = new DateTime(spinner.value)
         }] as IValueChangedListener)
