@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeActio
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.UserPreferences
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -51,10 +52,10 @@ abstract class AbstractReportAction extends SelectionTreeAction {
                         try {
                             stream.write output
                         } catch (UnsupportedOperationException t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                            new I18NAlert(ancestor, "PDFReport").show()
                             LOG.error "Saving Report Failed: ${t}"
                         } catch (Throwable t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                            new I18NAlert(ancestor, "PDFReport").show()
                             LOG.error "Saving Report Failed: ${t}"
                             throw t
                         } finally {
@@ -62,13 +63,13 @@ abstract class AbstractReportAction extends SelectionTreeAction {
                         }
                     }, onSuccess: {path, name ->
                     }, onFailure: {reason, description ->
-                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                        new I18NAlert(ancestor, "PDFReport").show()
                         LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
                     }] as IFileStoreHandler, selectedFile)
 
                 },
                 onFailure: {reason, description ->
-                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                    new I18NAlert(ancestor, "PDFReport").show()
                     LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
                 }] as IFileChooseHandler, config, ancestor)
     }

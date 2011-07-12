@@ -25,6 +25,7 @@ import org.pillarone.riskanalytics.application.reports.gira.model.GiraReportMode
 import org.pillarone.riskanalytics.application.ui.result.view.ResultSettingsView
 import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.util.ReportUtils
+import org.joda.time.DateTime
 
 public class ReportFactory {
     public static String REPORT_DIR = '/reports'
@@ -79,10 +80,10 @@ public class ReportFactory {
 
         Map params = new HashMap()
         params["comments"] = collectionDataSource
-        params["title"] = UIUtils.getText(ReportFactory.class, modellingItem.class.simpleName)
+        params["title"] = UIUtils.getText(ReportFactory.class, "title", [ReportUtils.getItemName(modellingItem)] as List)
         Person currentUser = UserContext.getCurrentUser()
         String footerValue = currentUser ? UIUtils.getText(ReportFactory.class, "footerByUser", [currentUser.username]) : UIUtils.getText(ReportFactory.class, "footer")
-        footerValue += " " + new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date())
+        footerValue += " " + DateFormatUtils.formatDetailed(new DateTime())
         params["footer"] = footerValue
         params["infos"] = ReportUtils.getItemInfo(modellingItem)
         params["currentUser"] = currentUser ? currentUser.username : ""

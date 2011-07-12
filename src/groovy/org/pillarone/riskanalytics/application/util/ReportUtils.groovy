@@ -71,4 +71,12 @@ class ReportUtils {
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
         return jrBeanCollectionDataSource
     }
+
+    static String getItemName(Parameterization parameterization) {
+        return parameterization.name + " v" + parameterization.versionNumber.toString()
+    }
+
+    static String getItemName(Simulation simulation) {
+        return simulation.name
+    }
 }

@@ -129,7 +129,7 @@
 					<textElement>
 						<font reportFont="Verdana9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{footer}+" "+ new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date()) ]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{footer} ]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
