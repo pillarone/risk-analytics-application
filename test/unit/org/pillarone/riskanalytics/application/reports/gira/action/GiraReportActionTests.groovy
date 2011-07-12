@@ -1,28 +1,25 @@
 package org.pillarone.riskanalytics.application.reports.gira.action
 
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.reports.AbstractReportActionTests
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import org.pillarone.riskanalytics.application.reports.ReportHelper
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.ULCComponent
 import org.pillarone.riskanalytics.application.reports.gira.model.GiraReportModel
-import org.pillarone.riskanalytics.application.reports.ReportModel
-import org.pillarone.riskanalytics.application.reports.bean.ExpectedLossChartDataBean
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+
 import org.pillarone.riskanalytics.application.reports.comment.action.CommentReportActionTests
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.application.util.JEstimator
+
 import org.pillarone.riskanalytics.application.reports.bean.ReportChartDataBean
 import org.pillarone.riskanalytics.application.reports.gira.model.GiraReportHelper
 import org.pillarone.riskanalytics.application.reports.JasperChartUtils
 import org.pillarone.riskanalytics.application.util.ReportUtils
 import org.pillarone.riskanalytics.application.reports.gira.model.ChartDataSourceFactory
 import org.joda.time.DateTime
-import com.ulcjava.base.application.util.Color
+
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 
 /**

@@ -2,41 +2,26 @@ package org.pillarone.riskanalytics.application.reports.gira.model
 
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.application.reports.bean.ExpectedLossChartDataBean
-import org.pillarone.riskanalytics.application.dataaccess.function.VarFunction
-import org.pillarone.riskanalytics.application.reports.bean.ReportChartDataBean
-import org.pillarone.riskanalytics.application.util.JEstimator
+
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.reports.bean.LoBMeanStdDevIQRPerDataBean
-import org.pillarone.riskanalytics.core.output.QuantilePerspective
-import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
-import org.pillarone.riskanalytics.application.reports.bean.LoBReportBruttoTableDataBean
+
 import org.pillarone.riskanalytics.application.reports.ReportFactory
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.application.ui.util.CommentUtils
-import org.pillarone.riskanalytics.application.reports.comment.action.CommentReportAction
+
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.LocaleResources
+
 import org.pillarone.riskanalytics.application.reports.gira.action.ResultPathParser
-import org.pillarone.riskanalytics.core.output.SingleValueResult
+
 import org.pillarone.riskanalytics.application.reports.gira.action.PathType
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
-import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
-import org.pillarone.riskanalytics.core.parameter.Parameter
-import org.pillarone.riskanalytics.core.parameter.EnumParameter
-import java.text.NumberFormat
+
 import org.pillarone.riskanalytics.application.reports.bean.ReportWaterfallDataBean
 import org.pillarone.riskanalytics.application.reports.JasperChartUtils
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource
-import net.sf.jasperreports.renderers.JCommonDrawableRenderer
-import org.pillarone.riskanalytics.core.util.GroovyUtils
+
 import org.pillarone.riskanalytics.application.util.ReportUtils
 import static org.pillarone.riskanalytics.application.util.ReportUtils.*
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.user.Person
-import static org.pillarone.riskanalytics.application.reports.gira.model.GiraReportHelper.*
+
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.application.reports.ReportHelper
 
