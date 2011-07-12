@@ -14,6 +14,8 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.*
+import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 
 class ResultViewModelTests extends GroovyTestCase {
 
@@ -32,6 +34,7 @@ class ResultViewModelTests extends GroovyTestCase {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
         new ResultStructureImportService().compareFilesAndWriteToDB(['ApplicationDefaultResultTree'])
+        new ResultStructureImportService().compareFilesAndWriteToDB(['ApplicationAlternativeResultTree'])
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"
         simulationRun.parameterization = ParameterizationDAO.findByName('ApplicationParameters')
@@ -71,6 +74,36 @@ class ResultViewModelTests extends GroovyTestCase {
 
     void tearDown() {
         LocaleResources.clearTestMode()
+    }
+
+    void testSelectedResultStructure() {
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
+        Simulation simulation = new Simulation("testRun")
+        simulation.load()
+
+        Model model = new ApplicationModel()
+
+        List<ResultStructureDAO> structures = ResultStructureDAO.findAllByModelClassName(ApplicationModel.name)
+        assertEquals(2, structures.size())
+
+        UserPreferences preferences = new UserPreferences()
+        preferences.putPropertyValue("DEFAULT_VIEW" + model.name, structures[0].name)
+
+        ResultViewModel resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
+        assertEquals(2, resultViewModel.resultStructures.size())
+        Object selectedStructure = resultViewModel.selectionViewModel.selectedObject
+        assertEquals(selectedStructure.name, structures[0].name)
+        assertSame(selectedStructure, resultViewModel.builder.resultStructure)
+
+
+        preferences.putPropertyValue("DEFAULT_VIEW" + model.name, structures[1].name)
+
+        resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
+        assertEquals(2, resultViewModel.resultStructures.size())
+        selectedStructure = resultViewModel.selectionViewModel.selectedObject
+        assertEquals(selectedStructure.name, structures[1].name)
+        assertSame(selectedStructure, resultViewModel.builder.resultStructure)
     }
 
     void testPaths() {

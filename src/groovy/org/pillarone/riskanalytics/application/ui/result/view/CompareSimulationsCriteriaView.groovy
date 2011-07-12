@@ -273,7 +273,7 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
         this.items = items
         this.itemPreferenceKey = itemPreferenceKey
         Object defaultItem = userPreferences.getPropertyValue(itemPreferenceKey)
-        selectedItem = defaultItem ? defaultItem : getElementAt(0)
+        selectedItem = (defaultItem && items*.name.contains(defaultItem)) ? defaultItem : getElementAt(0)
     }
 
     T getSelectedObject() {
