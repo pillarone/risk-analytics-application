@@ -65,7 +65,7 @@
                 <textElement>
                     <font reportFont="Verdana24"/>
                 </textElement>
-                <text><![CDATA[Claims Generator]]></text>
+                <text><![CDATA[Claims Generators]]></text>
             </staticText>
             <!-- Reserve Generator -->
             <staticText>
@@ -73,7 +73,7 @@
                 <textElement>
                     <font reportFont="Verdana24"/>
                 </textElement>
-                <text><![CDATA[Reserve Generator]]></text>
+                <text><![CDATA[Reserve Generators (todo)]]></text>
             </staticText>
             <!-- Segment  -->
             <staticText>
@@ -81,7 +81,7 @@
                 <textElement>
                     <font reportFont="Verdana24"/>
                 </textElement>
-                <text><![CDATA[Segment]]></text>
+                <text><![CDATA[Segments (todo)]]></text>
             </staticText>
             <!-- Reinsurance  -->
             <staticText>
@@ -89,7 +89,7 @@
                 <textElement>
                     <font reportFont="Verdana24"/>
                 </textElement>
-                <text><![CDATA[Reinsurance]]></text>
+                <text><![CDATA[Reinsurances]]></text>
             </staticText>
         </band>
     </title>
@@ -175,7 +175,7 @@
                     <font reportFont="Verdana9"/>
                 </textElement>
                 <textFieldExpression class="java.lang.String">
-                    <![CDATA[$P{footer}+" "+ new SimpleDateFormat("dd.MM.yyyy, HH:mm").format(new Date()) ]]>
+                    <![CDATA[$P{footer}]]>
                 </textFieldExpression>
             </textField>
             <textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"

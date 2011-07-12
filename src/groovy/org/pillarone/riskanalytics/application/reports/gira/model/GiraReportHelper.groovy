@@ -9,6 +9,16 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 import org.pillarone.riskanalytics.application.ui.util.CommentUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.reports.comment.action.CommentReportAction
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.application.reports.ReportFactory
+import org.pillarone.riskanalytics.core.user.UserManagement
+import java.text.SimpleDateFormat
+import java.text.NumberFormat
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -17,6 +27,7 @@ class GiraReportHelper {
 
     protected Simulation simulation
     Map periodLabels = [:]
+    static NumberFormat numberFormat
 
     public JRBeanCollectionDataSource getCommentsDataSource(String path, int periodIndex) {
         Collection currentValues = new ArrayList<Comment>()
@@ -50,11 +61,14 @@ class GiraReportHelper {
 
     String getPageTitle(ResultPathParser parser, String path, String type, int period) {
         String pageTitle = getComponentName(parser, path)
-        pageTitle += ResultViewUtils.getResultNodesDisplayName(simulation?.modelClass, path)
+
+        String nodeName = ResultViewUtils.getResultNodesDisplayName(simulation?.modelClass, path)
+        if (nodeName)
+            pageTitle += ", " + nodeName
         if (type)
             pageTitle += ", " + type
         String periodLabel = getPeriodLabel(period)
-        pageTitle += "  Period starting at: " + periodLabel
+        pageTitle += ", Period Starting at " + periodLabel
         return pageTitle
     }
 
@@ -62,7 +76,7 @@ class GiraReportHelper {
         String pageTitle = ""
         PathType pathType = parser.getPathType(path)
         if (pathType)
-            pageTitle += pathType.getDispalyName() + ": "
+            pageTitle += pathType.getDispalyName()
         return pageTitle
     }
 
@@ -81,7 +95,35 @@ class GiraReportHelper {
         return simulation.periodCount
     }
 
+    SimulationRun getSimulationRun() {
+        return simulation.simulationRun
+    }
+
     public static URL getReportFolder() {
         return GiraReportHelper.class.getResource("/reports")
+    }
+
+    static String getFooter() {
+        StringBuilder sb = new StringBuilder()
+        Person currentUser = UserManagement.getCurrentUser()
+        sb.append(currentUser ? UIUtils.getText(ReportFactory.class, "footerByUser", [currentUser.username]) : UIUtils.getText(ReportFactory.class, "footer"))
+        sb.append(" " + DateFormatUtils.formatDetailed(new DateTime()))
+        return sb.toString()
+    }
+
+    static NumberFormat getNumberFormat() {
+        if (!numberFormat) {
+            numberFormat = LocaleResources.getNumberFormat()
+            numberFormat.setMaximumFractionDigits(0)
+        }
+        return numberFormat
+    }
+
+    static String format(Double value) {
+        try {
+            return getNumberFormat().format(value)
+        } catch (Exception ex) {
+            return "-"
+        }
     }
 }

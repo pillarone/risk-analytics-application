@@ -38,7 +38,7 @@ class JasperChartUtils {
         JFreeChart chart = ChartFactory.createWaterfallChart(
                 "",
                 "",
-                "[in currency unit]",
+                "[in currency units]",
                 dataset,
                 PlotOrientation.VERTICAL,
                 false,
@@ -57,9 +57,9 @@ class JasperChartUtils {
         return new JCommonDrawableRenderer(chart)
     }
 
-    public static JCommonDrawableRenderer generatePDFChart(Map seriesMap) {
+    public static JCommonDrawableRenderer generatePDFChart(Map seriesMap, Map colorsMap) {
         XYSeriesCollection dataset = new XYSeriesCollection();
-        JFreeChart chart = ChartFactory.createXYLineChart("", "[in currency unit]", "", dataset, PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart chart = ChartFactory.createXYLineChart("", "[in currency units]", "", dataset, PlotOrientation.VERTICAL, true, true, false);
         int seriesIndex = 0
         seriesMap.each {String title, List xyPairs ->
             XYSeries series = new XYSeries(title);
@@ -71,6 +71,7 @@ class JasperChartUtils {
 
             BasicStroke thickLine = new BasicStroke(ChartViewModel.chartLineThickness)
             chart.getPlot().getRenderer(0).setSeriesStroke(seriesIndex, thickLine)
+            chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, colorsMap.get(title)
             seriesIndex++
         }
         chart.setBackgroundPaint(Color.WHITE)
@@ -79,6 +80,7 @@ class JasperChartUtils {
         legend.setPosition(RectangleEdge.BOTTOM);
         legend.setHorizontalAlignment(HorizontalAlignment.LEFT);
         legend.setMargin 5, 50, 5, 5
+        legend.setBorder(0, 0, 0, 0)
         return new JCommonDrawableRenderer(chart)
     }
 

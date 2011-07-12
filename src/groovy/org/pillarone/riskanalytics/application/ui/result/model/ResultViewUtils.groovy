@@ -178,5 +178,12 @@ abstract class ResultViewUtils {
         }
     }
 
+    public static ResultTableTreeNode createRTTN(String path, String collectorName, String fieldName) {
+        ResultTableTreeNode node = new ResultTableTreeNode("")
+        node.resultPath = "${path}:${fieldName}"
+        node.collector = collectorName
+        return node
+    }
+
 
 }

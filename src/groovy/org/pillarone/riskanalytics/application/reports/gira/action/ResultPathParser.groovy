@@ -75,7 +75,7 @@ class ResultPathParser {
 
     List<String> getPathsByPathType(List<List<String>> paths, PathType pathType) {
         List<String> suffixPaths = []
-        String suffix = PathType.CLAIMSGENERATORS == pathType ? CLAIMS : CLAIMS_NET
+        String suffix = PathType.CLAIMSGENERATORS == pathType ? CLAIMS : CLAIMS_CEDED
         for (List<String> componentPaths: paths) {
             suffixPaths.addAll(componentPaths.findAll { it.endsWith(suffix)})
         }

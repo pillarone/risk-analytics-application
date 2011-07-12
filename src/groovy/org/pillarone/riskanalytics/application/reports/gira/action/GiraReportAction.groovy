@@ -49,7 +49,7 @@ class GiraReportAction extends AbstractReportAction {
     void initReportModel(Simulation simulation) {
         Model selectedModel = getSelectedModel()
         model = new GiraReportModel(simulation, selectedModel.name)
-
+        model.init()
     }
 
     private void printPaths(Simulation simulation) {
