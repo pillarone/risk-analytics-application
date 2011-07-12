@@ -75,22 +75,6 @@ class ModellingItemFactory {
         result.collect {getItem(it, modelClass)}
     }
 
-    static ModellingItem getNewestModelItem(String modelName) {
-        def result = []
-        def criteria = ModelDAO.createCriteria()
-        def highestVersion = criteria.list {
-            eq('name', modelName)
-            projections {
-                max('itemVersion')
-            }
-        }
-        result << ModelDAO.findByNameAndItemVersion(modelName, highestVersion[0])
-        if (result[0]) {
-            return getItem(result[0])
-        }
-        return null
-    }
-
     static List getNewestResultConfigurationsForModel(Class modelClass) {
         def result = []
         def criteria = ResultConfigurationDAO.createCriteria()
@@ -273,7 +257,7 @@ class ModellingItemFactory {
         }
         List comments = oldItem?.comments?.collect {it.clone()}
         comments?.each {newItem.addComment(it)}
-        
+
         newItem.periodCount = oldItem.periodCount
         newItem.periodLabels = oldItem.periodLabels
         newItem.modelClass = oldItem.modelClass
