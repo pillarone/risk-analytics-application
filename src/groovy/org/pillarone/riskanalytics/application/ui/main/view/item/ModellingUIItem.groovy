@@ -38,6 +38,11 @@ abstract class ModellingUIItem extends AbstractUIItem {
         ((ModellingItem) item).load(completeLoad)
     }
 
+    @Override
+    public void unload() {
+        ((ModellingItem) item).unload()
+    }
+
     public boolean isUsedInSimulation() {
         return ((ModellingItem) item).isUsedInSimulation()
     }

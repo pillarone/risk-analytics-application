@@ -4,16 +4,25 @@ import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCTabbedPane
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import com.ulcjava.base.application.ULCAlert
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.event.IWindowListener
+import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import com.ulcjava.base.application.ULCFrame
 
 class TabbedPaneManager {
 
     private ULCTabbedPane tabbedPane
+    private DependentFramesManager dependentFramesManager
     private Map<AbstractUIItem, ULCComponent> tabManager = [:]
 
     //keep a map of open items to avoid to compare titles to find the tabs
 
     TabbedPaneManager(ULCTabbedPane tabbedPane) {
         this.tabbedPane = tabbedPane
+        this.dependentFramesManager = new DependentFramesManager(this.tabbedPane)
     }
 
     /**
@@ -28,8 +37,36 @@ class TabbedPaneManager {
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
         tabManager.put(item, view)
-        item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this,tabbedPane, item)
+        item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, tabbedPane, item)
         tabbedPane.setToolTipTextAt(tabIndex, item.getToolTip())
+    }
+
+    public void closeTab(AbstractUIItem abstractUIItem) {
+        if (abstractUIItem.isChanged()) {
+            boolean closeTab = true
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tabManager.get(abstractUIItem)), "itemChanged")
+            alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+                def value = windowEvent.source.value
+                if (value.equals(alert.firstButtonLabel)) {
+                    abstractUIItem.save()
+                } else if (value.equals(alert.thirdButtonLabel)) {
+                    closeTab = false
+
+                } else {
+                    abstractUIItem.unload()
+
+                }
+                if (closeTab) {
+                    removeTab(abstractUIItem)
+                    abstractUIItem.mainModel.closeItem(abstractUIItem.model, abstractUIItem)
+                } else {
+                    selectTab(abstractUIItem)
+                }
+            }] as IWindowListener)
+            alert.show()
+        } else {
+            removeTab(abstractUIItem)
+        }
     }
 
     /**
@@ -38,7 +75,11 @@ class TabbedPaneManager {
      */
     public void selectTab(AbstractUIItem item) {
         ULCComponent component = tabManager.get(item)
-        tabbedPane.setSelectedComponent(component)
+        if (tabbedPane.indexOfComponent(component) >= 0) {
+            tabbedPane.setSelectedComponent(component)
+        } else {
+            dependentFramesManager.selectTab(item)
+        }
     }
 
     /**
@@ -48,7 +89,10 @@ class TabbedPaneManager {
     public void removeTab(AbstractUIItem item) {
         ULCComponent component = tabManager.get(item)
         if (component) {
-            tabbedPane.remove(component)
+            if (tabbedPane.indexOfComponent(component) >= 0)
+                tabbedPane.remove(component)
+            else
+                dependentFramesManager.closeTab(item)
             tabManager.remove(item)
         }
     }
@@ -72,6 +116,9 @@ class TabbedPaneManager {
             int tabIndex = tabbedPane.indexOfComponent(component)
             if (tabIndex >= 0)
                 tabbedPane.setTitleAt(tabIndex, abstractUIItem.createTitle())
+            else {
+                dependentFramesManager.updateTabbedPaneTitle(abstractUIItem)
+            }
         }
 
     }

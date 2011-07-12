@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCTabbedPane
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -17,7 +18,7 @@ class TabbedPaneManagerUnitTests extends AbstractP1RATTestCase {
 
     @Override
     ULCComponent createContentPane() {
-        ULCTabbedPane tabbedPane = new ULCTabbedPane()
+        ULCTabbedPane tabbedPane = new ULCDetachableTabbedPane()
         TabbedPaneManager tabbedPaneManager = new TabbedPaneManager(tabbedPane)
 
         assertEquals "tabCount must be 0", 0, tabbedPane.getTabCount()
