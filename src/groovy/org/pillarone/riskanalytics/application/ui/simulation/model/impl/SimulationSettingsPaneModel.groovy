@@ -194,7 +194,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
             name = DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime())
         }
         Simulation simulation = new Simulation(name)
-        simulation.modelClass = modelClass
+        simulation.modelClass = modelClass //does also set model version number
         simulation.comment = comment
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
         //do not always load, because params could be open and modified ("save and run")
@@ -208,7 +208,6 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         }
         simulation.template = configuration
         simulation.beginOfFirstPeriod = beginOfFirstPeriod
-        simulation.modelVersionNumber = ModellingItemFactory.getNewestModelItem(modelClass.simpleName).versionNumber // ???
         simulation.structure = ModelStructure.getStructureForModel(modelClass)
 
         initConfigParameters(simulation, parameterization.periodCount)

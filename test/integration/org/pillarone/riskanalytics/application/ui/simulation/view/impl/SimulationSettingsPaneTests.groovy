@@ -12,10 +12,15 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.core.ModelDAO
+import groovy.mock.interceptor.StubFor
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
     SimulationSettingsPane pane
+    StubFor modelStub
 
 
     protected void doStart() {
@@ -37,6 +42,15 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         pane = new SimulationSettingsPane(new SimulationSettingsPaneModel(CoreModel))
         frame.setContentPane(pane.content)
         frame.visible = true
+
+        //ART-588
+        ModelDAO modelDAO = new ModelDAO(name: CoreModel.simpleName, modelClassName: CoreModel.name, srcCode: "", itemVersion: "0.5").save()
+        assertNotNull(modelDAO)
+
+        modelStub = new StubFor(Model)
+        modelStub.demand.getModelVersion(3..3) { modelClass ->
+            return new VersionNumber("0.5")
+        }
     }
 
 
@@ -84,7 +98,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
         names.selectItem("CoreParameters")
         //todo it doesn't work on the cruise
-//        assertEquals 2, versions.getItemCount()
+        //        assertEquals 2, versions.getItemCount()
     }
 
     void testOutputStrategy() {
@@ -145,14 +159,16 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         ULCTextFieldOperator randomSeed = new ULCTextFieldOperator(frame, new ComponentByNameChooser("randomSeed"))
         userDefinedSeed.clickMouse()
         randomSeed.enterText("1234")
-
-        Simulation simulation = pane.model.getSimulation()
-        assertEquals "Simulation", simulation.name
-        assertEquals "comment", simulation.comment
-        assertEquals 10, simulation.numberOfIterations
-        assertEquals "CoreMultiPeriodParameters", simulation.parameterization.name
-        assertEquals 2, simulation.periodCount
-        assertEquals 1234, simulation.randomSeed
+        modelStub.use {
+            Simulation simulation = pane.model.getSimulation()
+            assertEquals "Simulation", simulation.name
+            assertEquals("0.5", simulation.modelVersionNumber.toString()) //ART-588, make sure that the model version from Model.getModelVersion() is used, even when a 'higher' one exists ("1")
+            assertEquals "comment", simulation.comment
+            assertEquals 10, simulation.numberOfIterations
+            assertEquals "CoreMultiPeriodParameters", simulation.parameterization.name
+            assertEquals 2, simulation.periodCount
+            assertEquals 1234, simulation.randomSeed
+        }
 
     }
 }

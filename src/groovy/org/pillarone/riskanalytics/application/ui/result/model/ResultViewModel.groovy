@@ -38,12 +38,13 @@ class ResultViewModel extends AbstractCommentableItemModel {
         super(model, simulation, structure)
 
         model.init()
-        buildTreeStructure()
+        resultStructures = ModellingItemFactory.getResultStructuresForModel(model.class)
         selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
+        buildTreeStructure(selectionViewModel.getSelectedObject())
     }
 
 
-    protected void buildTreeStructure(ResultStructure resultStructure = null) {
+    protected void buildTreeStructure(ResultStructure resultStructure) {
         ParameterizationDAO.withTransaction {status ->
             //parameterization is required for certain models to obtain period labels
             Parameterization parameterization = item.parameterization
@@ -64,11 +65,6 @@ class ResultViewModel extends AbstractCommentableItemModel {
 
             def simulationRun = item.simulationRun
             Class modelClass = model.class
-
-            if (!resultStructure) {
-                resultStructures = ModellingItemFactory.getResultStructuresForModel(modelClass)
-                resultStructure = resultStructures[0]
-            }
 
             resultStructure.load()
             builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)

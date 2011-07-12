@@ -13,8 +13,12 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 class P1RATApplication extends AbstractApplication {
+
+    private static Log LOG = LogFactory.getLog(P1RATApplication)
 
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
     RiskAnalyticsMainModel mainModel
@@ -26,6 +30,7 @@ class P1RATApplication extends AbstractApplication {
             try {
                 UserContext.setUserTimeZone(TimeZone.getTimeZone(System.getProperty("user.timezone")))
             } catch (Exception e) {
+                LOG.error("Unable to determine user time zone - using UTC", e)
                 UserContext.setUserTimeZone(TimeZone.getTimeZone("UTC"))
             }
         }

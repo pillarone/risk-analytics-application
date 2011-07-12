@@ -81,18 +81,6 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNotSame modelItem, ModellingItemFactory.getModelItem(dao)
     }
 
-    void testGetNewestModelItem() {
-        ModelDAO dao = ModelDAO.findByName('CoreModel')
-        ModelItem modelItem = ModellingItemFactory.getModelItem(dao)
-        assertNotNull modelItem
-        modelItem.load()
-
-        ModelItem newVersion = ModellingItemFactory.incrementVersion(modelItem)
-        newVersion.load()
-
-        assertEquals newVersion, ModellingItemFactory.getNewestModelItem('CoreModel')
-    }
-
     void testGetModelStructure() {
 
         ModelStructureDAO dao = ModelStructureDAO.list()[0]
