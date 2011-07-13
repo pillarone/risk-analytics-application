@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentable
 import org.pillarone.riskanalytics.application.ui.util.CommentUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.FileConstants
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -32,6 +33,7 @@ class CommentReportAction extends AbstractReportAction {
     void doActionPerformed(ActionEvent event) {
         try {
             saveReport(getReport(), getFileName(), event?.source)
+            open(getFileName())
         } catch (IllegalArgumentException e) {
             LOG.error "Can not create report: ${e.message} Stacktrace: ${e.stackTrace}"
         }
@@ -63,7 +65,12 @@ class CommentReportAction extends AbstractReportAction {
     }
 
     String getFileName() {
-        return model.item.name + ".pdf"
+        return validateFileName(model.item.name) + ".pdf"
+    }
+
+    @Override
+    String getTargetDir() {
+        return FileConstants.COMMENT_PDF_DIRECTORY
     }
 
 }

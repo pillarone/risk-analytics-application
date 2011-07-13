@@ -65,7 +65,7 @@ class ChartDataSourceFactory {
                 if (dbValues) {
                     try {
                         String text = UIUtils.getText(GiraReportModel.class, fieldName + suffix)
-                        seriesMap[text] = JEstimator.gaussKernelBandwidthPdf(dbValues["values"], calcBandwidth(dbValues), false)
+                        seriesMap[text] = JEstimator.adaptiveKernelBandwidthPdf(dbValues["values"], calcBandwidth(dbValues), false)
                         putColor(text)
                     } catch (Exception ex) {
                     }

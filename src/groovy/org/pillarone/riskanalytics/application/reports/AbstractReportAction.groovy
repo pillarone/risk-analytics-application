@@ -10,6 +10,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.util.UserPreferences
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.application.ui.comment.action.FileStoreHandler
+import com.ulcjava.base.application.util.DefaultFileStoreHandler
+import com.canoo.common.FileUtilities
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -28,50 +31,30 @@ abstract class AbstractReportAction extends SelectionTreeAction {
     }
 
     public void saveReport(def output, String fileName, ULCComponent component) {
-        FileChooserConfig config = new FileChooserConfig()
-        config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.REPORT_DIR_KEY))
-        config.dialogTitle = "Save Report As"
-        config.dialogType = FileChooserConfig.SAVE_DIALOG
-        config.FILES_ONLY
-        fileName = fileName.replace(":", "")
-        fileName = fileName.replace("/", "")
-        fileName = fileName.replace("*", "")
-        fileName = fileName.replace("?", "")
-        fileName = fileName.replace("\"", "")
-        fileName = fileName.replace("<", "")
-        fileName = fileName.replace(">", "")
-        fileName = fileName.replace("|", "")
-        config.selectedFile = fileName
+        try {
+            String targetFile = getTargetDir() + File.separator + fileName
+            FileUtilities.addFileToDirectory(getTargetDir(), fileName, output)
+            LOG.info "$targetFile saved successfully"
+        } catch (Exception ex) {
+            LOG.error "$ex"
+        }
+    }
 
-        ULCWindow ancestor = UlcUtilities.getWindowAncestor(component)
-        ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
-                    String selectedFile = filePaths[0]
-                    userPreferences.setUserDirectory(UserPreferences.REPORT_DIR_KEY, filePaths[0])
-                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                        try {
-                            stream.write output
-                        } catch (UnsupportedOperationException t) {
-                            new I18NAlert(ancestor, "PDFReport").show()
-                            LOG.error "Saving Report Failed: ${t}"
-                        } catch (Throwable t) {
-                            new I18NAlert(ancestor, "PDFReport").show()
-                            LOG.error "Saving Report Failed: ${t}"
-                            throw t
-                        } finally {
-                            stream.close()
-                        }
-                    }, onSuccess: {path, name ->
-                    }, onFailure: {reason, description ->
-                        new I18NAlert(ancestor, "PDFReport").show()
-                        LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                    }] as IFileStoreHandler, selectedFile)
+    public void open(String fileName) {
+        String targetFile = getTargetDir() + File.separator + fileName
+        File file = new File(targetFile)
+        if (file.exists()) {
+            ClientContext.showDocument(targetFile, "_new")
+        } else {
+            LOG.error "file $targetFile doesn't exist"
+        }
 
-                },
-                onFailure: {reason, description ->
-                    new I18NAlert(ancestor, "PDFReport").show()
-                    LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                }] as IFileChooseHandler, config, ancestor)
+    }
+
+    abstract String getTargetDir()
+
+    String validateFileName(String fileName) {
+        return fileName.replaceAll("[^a-zA-Z0-9]", "")
     }
 
 }

@@ -17,6 +17,9 @@ import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.reports.gira.model.PDFReportExporter
+import org.pillarone.riskanalytics.core.FileConstants
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.UlcUtilities
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -40,8 +43,11 @@ class GiraReportAction extends AbstractReportAction {
             Simulation simulation = getSelectedItem()
             initReportModel(simulation)
             model.setExporter(new PDFReportExporter())
-            saveReport(model.getReport(), getFileName(simulation), event?.source)
+            String fileName = getFileName(simulation)
+            saveReport(model.getReport(), fileName, event?.source)
+            open(fileName)
         } catch (IllegalArgumentException e) {
+            new I18NAlert(UlcUtilities.getWindowAncestor(tree), "PDFReport").show()
             LOG.error "Can not create report: ${e.message} Stacktrace: ${e.stackTrace}"
         }
     }
@@ -61,7 +67,13 @@ class GiraReportAction extends AbstractReportAction {
     }
 
     String getFileName(Simulation simulation) {
-        return simulation.name + ".pdf"
+        return validateFileName(simulation.name) + ".pdf"
     }
+
+    @Override
+    String getTargetDir() {
+        return FileConstants.REPORT_PDF_DIRECTORY
+    }
+
 
 }

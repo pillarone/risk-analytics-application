@@ -25,6 +25,8 @@ import org.jfree.ui.HorizontalAlignment
 import org.jfree.chart.title.LegendTitle
 import org.jfree.chart.title.TextTitle
 import java.awt.Font
+import org.jfree.data.Range
+import org.pillarone.riskanalytics.application.util.ReportUtils
 
 class JasperChartUtils {
 
@@ -61,7 +63,9 @@ class JasperChartUtils {
         XYSeriesCollection dataset = new XYSeriesCollection();
         JFreeChart chart = ChartFactory.createXYLineChart("", "[in currency units]", "", dataset, PlotOrientation.VERTICAL, true, true, false);
         int seriesIndex = 0
+        List maxYs = []
         seriesMap.each {String title, List xyPairs ->
+            maxYs << ReportUtils.maxYValue(xyPairs)
             XYSeries series = new XYSeries(title);
             xyPairs.each {List xyPair ->
                 series.add(xyPair[0], xyPair[1])
@@ -74,8 +78,11 @@ class JasperChartUtils {
             chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, colorsMap.get(title)
             seriesIndex++
         }
+
+        double yMaxValue = ReportUtils.getMaxValue(maxYs)
+        chart.getXYPlot().getRangeAxis().setRange(0.0, yMaxValue + (0.1 * yMaxValue))
         chart.setBackgroundPaint(Color.WHITE)
-        chart.setTitle(new TextTitle("Probabillity Density (Gauss Kernel Estimate)", new Font("Verdana", Font.PLAIN, 10)))
+        chart.setTitle(new TextTitle("Probabillity Density (Adaptive Gauss Kernel Estimate)", new Font("Verdana", Font.PLAIN, 10)))
         LegendTitle legend = chart.getLegend();
         legend.setPosition(RectangleEdge.BOTTOM);
         legend.setHorizontalAlignment(HorizontalAlignment.LEFT);

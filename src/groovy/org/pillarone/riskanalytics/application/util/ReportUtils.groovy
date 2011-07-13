@@ -79,4 +79,24 @@ class ReportUtils {
     static String getItemName(Simulation simulation) {
         return simulation.name
     }
+
+    public static double maxYValue(List xyPairs) {
+        if (!xyPairs || xyPairs.size() == 0) return 1.0
+        double max = xyPairs[0][1]
+        for (List<Double> list: xyPairs) {
+            if (max < list[1])
+                max = list[1]
+        }
+        return max
+    }
+
+    public static double getMaxValue(List values) {
+        if (values.size() == 0) return 1.0
+        values.sort()
+        if (values.last() > 1) {
+            values.remove(values.last())
+        } else
+            return values.last()
+        getMaxValue(values)
+    }
 }
