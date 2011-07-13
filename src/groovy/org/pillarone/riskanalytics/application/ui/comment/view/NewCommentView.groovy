@@ -36,9 +36,7 @@ class NewCommentView {
     int periodIndex
     String path
     static int MAX_CHARS = 4080
-    final static String POST_LOCKING = "post locking"
-    final static String SHARED_COMMENTS = "shared comment"
-    final static String VERSION_COMMENT = "version"
+
 
     AbstractCommentableItemModel model;
     protected CommentAndErrorView commentAndErrorView
@@ -48,6 +46,11 @@ class NewCommentView {
     ULCBoxPane addedFilesPane
     ULCLabel addedFilesLabel
     Log LOG = LogFactory.getLog(NewCommentView)
+
+    final static String POST_LOCKING = "post locking"
+    final static String SHARED_COMMENTS = "shared comment"
+    final static String VERSION_COMMENT = "version"
+    final static String REPORT = "report"
 
     public NewCommentView() {}
 

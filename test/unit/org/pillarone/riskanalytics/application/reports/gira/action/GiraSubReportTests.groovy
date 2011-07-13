@@ -24,7 +24,8 @@ class GiraSubReportTests extends AbstractReportActionTests {
         compileSubReport("CERSub_WaterfallOverview")
         compileSubReport("CERSub_PDFChartAndCommentsInfo")
         compileSubReport("CERSub_PDFCharts")
-        compileSubReport("CERSub_Component")
+//        compileSubReport("CERSub_Component")
+        compileSubReport("GiraReport")
     }
 
     //compile jrxml file to jasper

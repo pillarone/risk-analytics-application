@@ -2,8 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
         "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<!--<jasperReport name="CommentReports" isTitleNewPage="false" isSummaryNewPage="true">-->
-<jasperReport name="GiraReports" isTitleNewPage="false" isSummaryNewPage="true" pageWidth="842" pageHeight="595"
+<jasperReport name="GiraReport" isTitleNewPage="false" isSummaryNewPage="true" pageWidth="842" pageHeight="595"
               orientation="Landscape" rightMargin="30" leftMargin="30">
 
     <import value="java.util.Date"/>
@@ -130,14 +129,14 @@
     </pageHeader>
 
     <detail>
-        <band height="400">
+        <band height="450">
             <elementGroup>
                 <subreport isUsingCache="true">
                     <reportElement
                             x="0"
                             y="0"
                             width="500"
-                            height="400"
+                            height="450"
                             key="subreport-24"/>
                     <subreportParameter name="SUBREPORT_DIR">
                         <subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
@@ -225,7 +224,7 @@
     <summary>
         <band height="96" isSplitAllowed="false">
             <textField>
-                <reportElement
+                <reportElement positionType="FixRelativeToTop"
                         x="0"
                         y="0"
                         width="519"
@@ -238,7 +237,7 @@
             </textField>
 
             <subreport isUsingCache="true">
-                <reportElement
+                <reportElement positionType="FixRelativeToTop"
                         x="0"
                         y="29"
                         width="519"

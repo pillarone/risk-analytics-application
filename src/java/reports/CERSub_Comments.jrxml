@@ -2,7 +2,8 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
         "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport name="CERSub_Comments" leftMargin="0" rightMargin="0" topMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+<jasperReport name="CERSub_Comments" leftMargin="0" rightMargin="0" bottomMargin="0" topMargin="0"
+              isTitleNewPage="false" isSummaryNewPage="false">
 
     <import value="java.util.Date"/>
     <import value="java.text.SimpleDateFormat"/>
@@ -61,11 +62,11 @@
                     <textFieldExpression class="java.lang.String"><![CDATA[$F{addedFiles}]]></textFieldExpression>
                 </textField>
                 <textField isStretchWithOverflow="true">
-                    <reportElement stretchType="RelativeToBandHeight" x="0" y="65" width="320" height="20"
+                    <reportElement stretchType="RelativeToBandHeight" x="0" y="65" width="360" height="20"
                                    style="normal" isPrintWhenDetailOverflows="true"/>
                     <box topBorder="None" topBorderColor="gray" leftBorder="None" leftBorderColor="#FF0000"
-                         rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="gray"
-                         topPadding="5" bottomPadding="5"/>
+                    rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="gray"
+                    topPadding="5" bottomPadding="5"/>
                     <textElement/>
                     <textFieldExpression class="java.lang.String"><![CDATA[$F{text}]]></textFieldExpression>
                 </textField>
@@ -73,11 +74,6 @@
         </band>
     </detail>
     <columnFooter>
-        <band height="1">
-            <line>
-                <reportElement x="0" y="0" width="360" height="1" forecolor="gray"/>
-            </line>
-        </band>
     </columnFooter>
     <pageFooter/>
     <summary/>

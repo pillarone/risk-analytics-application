@@ -29,7 +29,7 @@ class GiraReportActionTests extends AbstractReportActionTests {
     int gIndex = 100
 
     void testGeneratePDFReport() {
-//        GiraSubReportTests.compile()
+        GiraSubReportTests.compile()
         //                File testExportFile = File.createTempFile("test", ".pdf")
         println "date ${org.pillarone.riskanalytics.application.ui.util.DateFormatUtils.formatDetailed(new DateTime())}"
         GiraReportAction action = new GiraReportAction()
@@ -76,10 +76,6 @@ class GiraReportActionTests extends AbstractReportActionTests {
             currentValues << ["boxTitle": boxTitle, "userAndDate": userAndDate, "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
 
         }
-//        model.reportHelper = reportHelper
-        //        model.metaClass.getPeriodCount = {->
-        //            return 1
-        //        }
 
         reportHelper.metaClass.getComponentName = {ResultPathParser parser, String path ->
             path
@@ -101,9 +97,6 @@ class GiraReportActionTests extends AbstractReportActionTests {
             []
         }
 
-//        model.metaClass.getPathType = {String path, String modelName ->
-        //            return "attritional"
-        //        }
 
         ChartDataSourceFactory factory = new ChartDataSourceFactory(reportHelper: reportHelper)
 
@@ -127,6 +120,12 @@ class GiraReportActionTests extends AbstractReportActionTests {
             Collection currentValues = new ArrayList()
             currentValues << ["functionName": "ultimate, Gross", "meanValue": "1234567890.5", "varValue": "1234567890.5", "tVarValue": "1234567890.0"]
             currentValues << ["functionName": "paid", "meanValue": "6.5", "varValue": "8.5", "tVarValue": "5.0"]
+            currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
+            currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
+            currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
+            currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
+            currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
+            currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
             currentValues << ["functionName": "reserved", "meanValue": "1.5", "varValue": "7.5", "tVarValue": "65.0"]
             JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
             return jrBeanCollectionDataSource
@@ -157,7 +156,7 @@ class GiraReportActionTests extends AbstractReportActionTests {
             return ReportHelper.getReportOutputStream(params, chartsDataSource).toByteArray()
         }
 //in crise doesn't work
-        //        action.doActionPerformed(null)
+//                action.doActionPerformed(null)
         //                verifyExport(testExportFile)
     }
 

@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBea
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.reports.ReportHelper
 import org.pillarone.riskanalytics.application.reports.AbstractReportActionTests
+import org.pillarone.riskanalytics.application.reports.gira.action.GiraSubReportTests
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -81,14 +82,15 @@ class CommentReportActionTests extends AbstractReportActionTests {
     }
 
     static String getText(int index) {
-        StringBuilder sb = new StringBuilder()
-        for (int i = 0; i < 60; i++) {
-            sb.append("Text$index ")
-            if (i % 9 == 0)
-                sb.append("\n")
-        }
-
-        return sb.toString()
+//        StringBuilder sb = new StringBuilder()
+//        for (int i = 0; i < 60; i++) {
+//            sb.append("Text$index ")
+//            if (i % 9 == 0)
+//                sb.append("\n")
+//        }
+//
+//        return sb.toString()
+        return "afa afa afa afa afa afa afa"
     }
 
 

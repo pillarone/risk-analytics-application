@@ -19,6 +19,11 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentPane
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -29,10 +34,12 @@ class GiraReportHelper {
     Map periodLabels = [:]
     static NumberFormat numberFormat
 
-    public JRBeanCollectionDataSource getCommentsDataSource(String path, int periodIndex) {
+    public JRBeanCollectionDataSource getCommentsDataSource(List<String> paths, int periodIndex) {
         Collection currentValues = new ArrayList<Comment>()
-        for (Comment comment: getComments(path, periodIndex)) {
-            addCommentData(comment, currentValues)
+        for (String path: paths) {
+            for (Comment comment: getComments(path, periodIndex)) {
+                addCommentData(comment, currentValues)
+            }
         }
 
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
@@ -41,20 +48,29 @@ class GiraReportHelper {
 
     public void addCommentData(Comment comment, Collection currentValues) {
         String boxTitle = CommentUtils.getCommentTitle(comment, simulation.modelClass)
-        String commentInfo = CommentUtils.getCommentInfo(comment)
+        StringBuilder commentInfo = new StringBuilder("Period: ")
+        String username = comment.user ? comment.user.username : ""
+        commentInfo.append((comment.getPeriod() != -1) ? getPeriodLabel(comment.getPeriod()) : " " + UIUtils.getText(CommentAndErrorView.class, "forAllPeriods"))
+        if (username != "")
+            commentInfo.append(" " + UIUtils.getText(CommentPane.class, "user") + ": " + username)
+        commentInfo.append(" Date: " + DateFormatUtils.formatDetailed(comment.lastChange))
         String tags = CommentUtils.getTagsValue(comment).replaceAll("<br>", ", ")
         String addedFiles = UIUtils.getText(CommentReportAction.class, "attachments") + ": " + (comment.getFiles() as List).join(", ")
-        currentValues << ["boxTitle": boxTitle, "commentInfo": commentInfo, "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
+        currentValues << ["boxTitle": boxTitle, "commentInfo": commentInfo.toString(), "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
     }
 
     List<Comment> getComments(String path, int periodIndex) {
         List<Comment> comments = []
+        Tag reportTag = Tag.findByNameAndTagType(NewCommentView.REPORT, EnumTagType.COMMENT)
         AbstractReportModel.fieldNames.each {String fieldName ->
             String commentPath = path + ":" + fieldName
             Collection<Comment> pathFieldComments = simulation.comments.findAll {Comment comment ->
                 comment.path == commentPath && (comment.period == -1 || comment.period == periodIndex)
             }
-            comments.addAll(pathFieldComments)
+            Collection<Comment> reportComments = pathFieldComments.findAll {Comment comment ->
+                comment.tags.contains(reportTag)
+            }
+            comments.addAll(reportComments)
         }
         return comments
     }

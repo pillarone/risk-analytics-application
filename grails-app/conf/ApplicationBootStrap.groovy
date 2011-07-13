@@ -32,6 +32,9 @@ class ApplicationBootStrap {
             if (!Tag.findByName(NewCommentView.VERSION_COMMENT)) {
                 new Tag(name: NewCommentView.VERSION_COMMENT, tagType: EnumTagType.COMMENT).save()
             }
+             if (!Tag.findByName(NewCommentView.REPORT)) {
+                new Tag(name: NewCommentView.REPORT, tagType: EnumTagType.COMMENT).save()
+            }
 
         }
 

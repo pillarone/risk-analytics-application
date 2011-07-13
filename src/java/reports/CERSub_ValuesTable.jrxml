@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport name="CERSub_ValuesTable" leftMargin="0" rightMargin="0" topMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+<jasperReport name="CERSub_ValuesTable" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isTitleNewPage="false" isSummaryNewPage="false" pageHeight="42">
     <style name="cell" fontSize="10" isBold="false" topPadding="5"/>
     <style name="tableTitle" fontSize="10" isBold="true"/>
 
@@ -44,22 +44,22 @@
     <detail>
         <band height="20">
             <textField>
-                <reportElement positionType="Float" x="0" y="0" width="100" height="20" style="cell"/>
+                <reportElement positionType="FixRelativeToTop" x="0" y="0" width="100" height="20" style="cell"/>
                 <textElement textAlignment="Left"/>
                 <textFieldExpression class="java.lang.String"><![CDATA[$F{functionName}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement positionType="Float" x="60" y="0" width="100" height="20" style="cell"/>
+                <reportElement positionType="FixRelativeToTop" x="60" y="0" width="100" height="20" style="cell"/>
                 <textElement textAlignment="Right"/>
                 <textFieldExpression class="java.lang.String"><![CDATA[$F{meanValue}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement positionType="Float" x="160" y="0" width="100" height="20" style="cell"/>
+                <reportElement positionType="FixRelativeToTop" x="160" y="0" width="100" height="20" style="cell"/>
                 <textElement textAlignment="Right"/>
                 <textFieldExpression class="java.lang.String"><![CDATA[$F{varValue}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement positionType="Float" x="260" y="0" width="100" height="20" style="cell"/>
+                <reportElement positionType="FixRelativeToTop" x="260" y="0" width="100" height="20" style="cell"/>
                 <textElement textAlignment="Right"/>
                 <textFieldExpression class="java.lang.String"><![CDATA[$F{tVarValue}]]></textFieldExpression>
             </textField>

@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
         "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport name="CERSub_PDFCharts" leftMargin="0" rightMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+<jasperReport name="CERSub_PDFCharts" leftMargin="0" rightMargin="0" isTitleNewPage="false" topMargin="0" bottomMargin="0" isSummaryNewPage="false">
     <property name="ireport.scriptlethandling" value="0"/>
     <property name="ireport.encoding" value="UTF-8"/>
     <import value="java.util.*"/>
@@ -20,6 +20,7 @@
     <field name="chart" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
     <field name="waterfallChart" class="net.sf.jasperreports.engine.data.JRMapCollectionDataSource"/>
     <field name="pageTitle" class="java.lang.String"/>
+    <field name="overViewPageTitle" class="java.lang.String"/>
 
 
     <variable name="SERIES_NAME" class="java.lang.String" resetType="Report" calculation="Nothing">
@@ -35,7 +36,7 @@
                         key="subreport-24" isPrintInFirstWholeBand="true">
                 </reportElement>
                 <subreportParameter name="pageTitle">
-                        <subreportParameterExpression><![CDATA[$F{pageTitle}]]></subreportParameterExpression>
+                        <subreportParameterExpression><![CDATA[$F{overViewPageTitle}]]></subreportParameterExpression>
                     </subreportParameter>
                 <subreportParameter name="ReturnedValuesMap">
                     <subreportParameterExpression>
@@ -52,7 +53,7 @@
     <pageHeader/>
 
     <detail>
-        <band height="380">
+        <band height="400">
             <elementGroup>
                 <subreport isUsingCache="true">
                     <reportElement

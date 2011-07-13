@@ -2,22 +2,8 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
         "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
-<jasperReport
-        name="CERSub_ReportInfoTable"
-        columnCount="1"
-        printOrder="Vertical"
-        orientation="Portrait"
-        pageWidth="520"
-        pageHeight="842"
-        columnWidth="520"
-        columnSpacing="0"
-        leftMargin="0"
-        rightMargin="0"
-        topMargin="0"
-        bottomMargin="0"
-        whenNoDataType="NoPages"
-        isTitleNewPage="false"
-        isSummaryNewPage="false">
+    <jasperReport name="CERSub_ReportInfoTable" leftMargin="0" rightMargin="0" topMargin="0"  bottomMargin="0" isTitleNewPage="false" isSummaryNewPage="false">
+
     <property name="ireport.scriptlethandling" value="0"/>
     <property name="ireport.encoding" value="UTF-8"/>
     <import value="java.util.*"/>

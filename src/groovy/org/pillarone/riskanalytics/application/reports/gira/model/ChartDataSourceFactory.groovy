@@ -45,10 +45,11 @@ class ChartDataSourceFactory {
                 Map pathPeriodMap = new HashMap();
                 String pageTitle = reportHelper.getPageTitle(parser, paths[0], getPathType(paths[0], modelName), periodIndex)
                 JRBeanCollectionDataSource fieldFunctionValues = getFieldFunctionValues(paths, periodIndex)
-                pathPeriodMap["PDFChartAndCommentsInfo"] = getPDFChartAndCommentsInfoDataSource(reportHelper.getCommentsDataSource(paths[0], periodIndex), fieldFunctionValues, pageTitle)
+                pathPeriodMap["PDFChartAndCommentsInfo"] = getPDFChartAndCommentsInfoDataSource(reportHelper.getCommentsDataSource(paths, periodIndex), fieldFunctionValues, pageTitle)
                 pathPeriodMap["chart"] = getChartDataSource(periodIndex, paths)
                 pathPeriodMap["waterfallChart"] = waterfallChart
-                pathPeriodMap["pageTitle"] = reportHelper.getComponentName(parser, paths[0]) + " " + AbstractWaterfallChart.getTitle(pathType)
+                pathPeriodMap["pageTitle"] = reportHelper.getComponentName(parser, paths[0]) + " " + reportHelper.getPageTitle(parser, paths[0], "", periodIndex)
+                pathPeriodMap["overViewPageTitle"] = reportHelper.getComponentName(parser, paths[0]) + " " + AbstractWaterfallChart.getTitle(pathType)
                 simpleMasterList << pathPeriodMap
             }
         }
