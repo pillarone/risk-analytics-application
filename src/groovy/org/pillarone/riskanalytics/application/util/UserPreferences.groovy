@@ -67,7 +67,8 @@ public class UserPreferences {
     }
 
     public void putPropertyValue(String property, Object value) {
-        userPrefs.put(property, value?.toString())
+        if (value)
+            userPrefs.put(property, value.toString())
     }
 
     public String getPropertyValue(String property) {

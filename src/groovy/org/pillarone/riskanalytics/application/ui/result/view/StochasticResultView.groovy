@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.util.UserPreferences
+import com.ulcjava.base.application.util.Dimension
 
 class StochasticResultView extends ResultView {
 
@@ -138,6 +139,7 @@ class StochasticResultView extends ResultView {
         }] as IValueChangedListener)
         profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
         ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)
+        profitComboBox.setMinimumSize(new Dimension(120, 20))
         profitComboBox.name = "profitComboBox"
         toolbar.add profitComboBox
         toolbar.add ULCFiller.createHorizontalStrut(3)
