@@ -24,7 +24,7 @@ class SingleCollectorIterationNode extends DefaultMutableTableTreeNode {
      * @return
      */
     public SingleCollectorIterationNode(singleValueResult, int selectedNodeIndex, int selectedNodesSize) {
-        super([String.valueOf(singleValueResult[VALUE_INDEX])] as Object[], true)
+        super([String.valueOf(singleValueResult[VALUE_INDEX]+1)] as Object[], true)
         this.singleValueResults[selectedNodeIndex] = [singleValueResult];
         this.selectedNodesSize = selectedNodesSize
     }

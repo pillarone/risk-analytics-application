@@ -42,17 +42,17 @@ class SingleValueTreeBuilderTests extends GroovyTestCase {
         assertEquals 3, builder.root.getChildAt(0).childCount
 
         ITableTreeNode node0 = builder.root.getChildAt(0).getChildAt(0)
-        assertEquals "0", node0.getValueAt(0)
+        assertEquals "1", node0.getValueAt(0)
         assertEquals 1, node0.getValueAtIndex(1)
         assertEquals 2, node0.getValueAtIndex(2)
 
         ITableTreeNode node1 = builder.root.getChildAt(0).getChildAt(1)
-        assertEquals "1", node1.getValueAt(0)
+        assertEquals "2", node1.getValueAt(0)
         assertEquals 11, node1.getValueAtIndex(1)
         assertEquals 22, node1.getValueAtIndex(2)
 
         ITableTreeNode node2 = builder.root.getChildAt(0).getChildAt(2)
-        assertEquals "2", node2.getValueAt(0)
+        assertEquals "3", node2.getValueAt(0)
         assertEquals 111, node2.getValueAtIndex(1)
         assertEquals 222, node2.getValueAtIndex(2)
 
