@@ -79,8 +79,10 @@ class CommentPane {
         editCommentAction = new EditCommentAction(comment)
         Closure enablingClosure = {->
             if (model instanceof ResultViewModel) return true
-            if (((Parameterization) model.item).isEditable()) return true
-            return comment.tags.any { it.name == NewCommentView.POST_LOCKING}
+            if (comment.tags.any { it.name == NewCommentView.POST_LOCKING}) return true
+            if (model?.isReadOnly()) return false
+            if (((Parameterization) model?.item)?.isEditable()) return true
+            return false
         }
         editCommentAction.enablingClosure = enablingClosure
         editButton = new ULCButton(editCommentAction)
