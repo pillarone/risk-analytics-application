@@ -25,6 +25,7 @@ import org.springframework.web.util.HtmlUtils
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.action.DownloadFileAction
 import org.pillarone.riskanalytics.application.ui.util.CommentUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -76,7 +77,11 @@ class CommentPane {
         tags = new ULCLabel()
         tags.setText HTMLUtilities.convertToHtml(getTagsValue())
         editCommentAction = new EditCommentAction(comment)
-        Closure enablingClosure = {-> return comment.tags.any {model instanceof ResultViewModel || it.name == NewCommentView.POST_LOCKING} || !model?.isReadOnly()}
+        Closure enablingClosure = {->
+            if (model instanceof ResultViewModel) return true
+            if (((Parameterization) model.item).isEditable()) return true
+            return comment.tags.any { it.name == NewCommentView.POST_LOCKING}
+        }
         editCommentAction.enablingClosure = enablingClosure
         editButton = new ULCButton(editCommentAction)
         editButton.setContentAreaFilled false

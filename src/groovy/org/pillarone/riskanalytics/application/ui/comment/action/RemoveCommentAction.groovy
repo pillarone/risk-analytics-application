@@ -22,8 +22,12 @@ class RemoveCommentAction extends ResourceBasedAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        model.removeComment comment
-        saveComments(model.item)
+        if (enablingClosure.call()) {
+            model.removeComment comment
+            saveComments(model.item)
+        } else {
+            setEnabled(false)
+        }
     }
 
     protected void saveComments(Simulation simulation) {

@@ -28,9 +28,7 @@ class OpenItemAction extends SelectionTreeAction {
         Model selectedModel = getSelectedModel()
         AbstractUIItem item = getSelectedUIItem()
         if (selectedModel != null && item != null) {
-            if (!item.isLoaded()) {
-                item.load()
-            }
+            item.load()
             openItem(selectedModel, item)
         }
     }
