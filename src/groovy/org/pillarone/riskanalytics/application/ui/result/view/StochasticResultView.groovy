@@ -92,11 +92,14 @@ class StochasticResultView extends ResultView {
         toolbar.add(meanButton)
         minButton = new ULCToggleButton()
         minButton.action = new ToggleKeyFigureAction(new MinFunction(), new DefaultToggleValueProvider(minButton), model, tree.viewPortTableTree)
+        minButton.name = "minButton"
         toolbar.add(minButton)
         maxButton = new ULCToggleButton()
+        maxButton.name = "maxButton"
         maxButton.action = new ToggleKeyFigureAction(new MaxFunction(), new DefaultToggleValueProvider(maxButton), model, tree.viewPortTableTree)
         toolbar.add(maxButton)
         sigmaButton = new ULCToggleButton()
+        sigmaButton.name = "sigmaButton"
         sigmaButton.action = new ToggleKeyFigureAction(new SigmaFunction(), new DefaultToggleValueProvider(sigmaButton), model, tree.viewPortTableTree)
         toolbar.add(sigmaButton)
 
@@ -112,13 +115,16 @@ class StochasticResultView extends ResultView {
 
     private ULCComponent addIntegerFunctions(ULCToolBar toolbar) {
         ULCTextField integerFunctionValue = new ULCTextField()
+        integerFunctionValue.name = "integerFunction"
         ULCNumberDataType integerDataType = new ULCNumberDataType(ClientContext.locale)
         integerDataType.classType = Integer
         integerFunctionValue.dataType = integerDataType
         integerFunctionValue.columns = 6
         integerFunctionValue.value = 1
         toolbar.add integerFunctionValue
-        toolbar.add UIUtils.spaceAround(new ULCButton(new SingleIterationKeyFigureAction(new TextFieldValueProvider<Integer>(integerFunctionValue), model, tree.viewPortTableTree)), 0, 5, 0, 5)
+        ULCButton button = new ULCButton(new SingleIterationKeyFigureAction(new TextFieldValueProvider<Integer>(integerFunctionValue), model, tree.viewPortTableTree))
+        button.name = "iterationButton"
+        toolbar.add UIUtils.spaceAround(button, 0, 5, 0, 5)
     }
 
     private def addDoubleFunctions(ULCToolBar toolbar) {
@@ -132,7 +138,8 @@ class StochasticResultView extends ResultView {
         dataType.groupingUsed = false
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
-        functionValue.value = userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, 99.5)
+        Object defaultValue = userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, new Double(99.5))
+        functionValue.value = defaultValue instanceof Double ? defaultValue : Double.valueOf(defaultValue)
         functionValue.columns = 6
         functionValue.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
             userPreferences.putPropertyValue(FUNCTION_VALUE + model.model.name, functionValue.getValue())

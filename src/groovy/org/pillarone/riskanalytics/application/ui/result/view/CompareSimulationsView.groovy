@@ -179,7 +179,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         dataType.groupingUsed = false
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
-        functionValue.value = 99.5
+        functionValue.value = new Double(99.5)
         functionValue.columns = 6
         if (!this.profitFunctionModel)
             this.profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
