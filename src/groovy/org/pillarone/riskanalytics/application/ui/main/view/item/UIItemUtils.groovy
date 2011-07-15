@@ -28,7 +28,7 @@ class UIItemUtils {
             if (!simulationRun.endTime) return false
         }
         for (SimulationRun simulationRun: simulationRuns) {
-            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun.name, model.modelClass)
+            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
             SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
             simulationUIItem.remove()
         }

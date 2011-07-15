@@ -27,7 +27,7 @@ class ChartViewModelTests extends GroovyTestCase {
 
         MockFor itemFactory = new MockFor(ModellingItemFactory)
         itemFactory.demand.getParameterization {ParameterizationDAO parameterization -> return new TestParam()}
-        itemFactory.demand.getSimulation {String name, Class clazz -> return new TestSimulation()}
+        itemFactory.demand.getSimulation { run -> return new TestSimulation()}
 
         ChartViewModel model
         SimulationRun simulationRun = new SimulationRun()

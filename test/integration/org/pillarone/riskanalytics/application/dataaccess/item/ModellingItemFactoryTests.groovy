@@ -94,16 +94,6 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNotSame template, ModellingItemFactory.getModelStructure(dao)
     }
 
-    void testGetSimulation() {
-
-        Simulation simulation = ModellingItemFactory.getSimulation("Foo", EmptyModel)
-        assertNotNull simulation
-        assertEquals "Foo", simulation.name
-        assertSame simulation, ModellingItemFactory.getSimulation("Foo", EmptyModel)
-        assertNotSame simulation, ModellingItemFactory.getSimulation("Bar", EmptyModel)
-        assertNotSame simulation, ModellingItemFactory.getSimulation("Foo", CoreModel)
-    }
-
     void testCopyParameterization() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
         ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
