@@ -36,7 +36,7 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
             // todo(sku): build i18n path
             List<String> referencingPaths = ParameterHolderFactory.referencingParametersPaths(model.builder.item, path, node.component)
             if (referencingPaths.size() == 0) {
-                String nodePath = node.parent.path
+                String nodePath = node.path
                 tree.model.removeComponentNode(node)
                 model.removeCommentsByPath(nodePath)
             }
