@@ -378,9 +378,6 @@ class ModellingInformationTableTreeBuilder {
         Model selectedModelInstance = getModelInstance(item)
         try {
             node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
-            if (!item.isLoaded()) {
-                item.load()
-            }
             def paramsNode = createNode(item.parameterization)
             paramsNode.leaf = true
             def templateNode = createNode(item.template)

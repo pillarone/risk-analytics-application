@@ -210,21 +210,23 @@ class ModellingItemFactory {
         return getItem(dao)
     }
 
-    static Simulation getSimulation(String name, Class modelClass) {
-        return getItem(Simulation, modelClass, name)
+    static Simulation getSimulation(SimulationRun run) {
+        return getItem(run)
     }
 
     /**
      * @return all SimulationRuns for this model with toBeDeleted==false
      */
     static List getActiveSimulationsForModel(Class modelClass) {
-        SimulationRun.findAllByModel(modelClass.name).
-                findAll {SimulationRun run ->
-                    !run.toBeDeleted && run.endTime != null
-                }.
-                collect {SimulationRun run ->
-                    getItem(Simulation, modelClass, run.name)
-                }
+        SimulationRun.withTransaction {
+            SimulationRun.findAllByModel(modelClass.name).
+                    findAll {SimulationRun run ->
+                        !run.toBeDeleted && run.endTime != null
+                    }.
+                    collect {SimulationRun run ->
+                        getItem(run)
+                    }
+        }
     }
 
     static boolean delete(def item) {
@@ -365,19 +367,6 @@ class ModellingItemFactory {
         return newItem
     }
 
-
-
-    private static ModellingItem getItem(Class itemClass, Class modelClass, String itemName) {
-        String key = key(itemClass, modelClass, itemName)
-        ModellingItem item = getSimulationInstances()[key]
-        if (!item) {
-            item = itemClass.newInstance([itemName] as Object[])
-            item.modelClass = modelClass
-            getSimulationInstances()[key] = item
-        }
-        return item
-    }
-
     private static ModellingItem getItem(ResultStructureDAO dao) {
         ResultStructure item = getItemInstances()[key(ResultStructure, dao.id)]
         if (!item) {
@@ -414,6 +403,19 @@ class ModellingItemFactory {
             getItemInstances()[key(Parameterization, dao.id)] = item
         }
         item
+    }
+
+    private static Simulation getItem(SimulationRun run) {
+        String key = key(SimulationRun, run.id)
+        Simulation simulation = getSimulationInstances()[key]
+        if (simulation == null) {
+            simulation = new Simulation(run.name)
+            simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
+            simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
+            simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
+            getSimulationInstances()[key] = simulation
+        }
+        return simulation
     }
 
     private static ModellingItem getItem(ModelDAO dao) {
@@ -456,17 +458,12 @@ class ModellingItemFactory {
         }
         item
     }
-
-    private static def key(Class itemClass, Class modelClass, String itemName) {
-        return "${itemClass?.simpleName}_${modelClass?.simpleName}_$itemName".toString()
-    }
-
     private static def key(Class itemClass, Long daoId) {
         return "${itemClass?.simpleName}_$daoId".toString()
     }
 
     static void remove(ModellingItem item) {
-        getSimulationInstances().remove(key(item.class, item.modelClass, item.name))
+        getSimulationInstances().remove(key(SimulationRun, item.id))
     }
 
     public static void put(ParameterizationDAO dao, Class modelClass = null) {

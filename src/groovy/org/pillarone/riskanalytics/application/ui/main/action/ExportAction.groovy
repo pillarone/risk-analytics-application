@@ -143,7 +143,7 @@ abstract class ExportAction extends SelectionTreeAction {
             simulationRun = SimulationRun.get(simulationRun.id)
             Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
             Class modelClass = parameterization.modelClass
-            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun?.name, modelClass)
+            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
             simulation.load()
 
             List data = []
