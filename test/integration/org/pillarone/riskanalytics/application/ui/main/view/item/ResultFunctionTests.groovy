@@ -60,29 +60,7 @@ class ResultFunctionTests extends AbstractResultUIItemTests {
 
         addFunction(frameOperator, 'sigmaButton')
         assertEquals 4, tableTreeOperator.getColumnCount()
-
     }
 
-    private void addResultFunction(ULCFrameOperator frameOperator, String buttonName) {
-        ULCButtonOperator buttonOperator = new ULCButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
-        assertNotNull buttonOperator
-
-        buttonOperator.getFocus()
-
-        buttonOperator.clickMouse()
-
-        Thread.sleep(1000)
-    }
-
-    private void addFunction(ULCFrameOperator frameOperator, String buttonName) {
-        ULCToggleButtonOperator toggleButtonOperator = new ULCToggleButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
-        assertNotNull toggleButtonOperator
-
-        toggleButtonOperator.getFocus()
-
-        toggleButtonOperator.clickMouse()
-
-        Thread.sleep(1000)
-    }
 
 }

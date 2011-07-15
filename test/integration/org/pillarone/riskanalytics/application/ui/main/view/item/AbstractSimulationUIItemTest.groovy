@@ -4,6 +4,10 @@ import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.*
+import com.ulcjava.testframework.operator.ComponentByNameChooser
+import com.ulcjava.testframework.operator.ULCToggleButtonOperator
+import com.ulcjava.testframework.operator.ULCFrameOperator
+import com.ulcjava.testframework.operator.ULCButtonOperator
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -66,6 +70,28 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
         if (collector1 == null) {
             collector1 = new CollectorMapping(collectorName: AggregatedCollectingModeStrategy.IDENTIFIER).save()
         }
+    }
+
+    protected void addResultFunction(ULCFrameOperator frameOperator, String buttonName) {
+        ULCButtonOperator buttonOperator = new ULCButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
+        assertNotNull buttonOperator
+
+        buttonOperator.getFocus()
+
+        buttonOperator.clickMouse()
+
+        Thread.sleep(1000)
+    }
+
+    protected void addFunction(ULCFrameOperator frameOperator, String buttonName) {
+        ULCToggleButtonOperator toggleButtonOperator = new ULCToggleButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
+        assertNotNull toggleButtonOperator
+
+        toggleButtonOperator.getFocus()
+
+        toggleButtonOperator.clickMouse()
+
+        Thread.sleep(1000)
     }
 
 

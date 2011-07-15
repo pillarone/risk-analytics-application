@@ -154,12 +154,15 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     protected void addToolBarElements(ULCToolBar toolbar) {
         final ULCToggleButton minButton = new ULCToggleButton()
         minButton.action = new ToggleKeyFigureAction(new MinFunction(), new DefaultToggleValueProvider(minButton), model, tree.viewPortTableTree)
+        minButton.name = "minButton"
         toolbar.add(minButton)
         final ULCToggleButton maxButton = new ULCToggleButton()
         maxButton.action = new ToggleKeyFigureAction(new MaxFunction(), new DefaultToggleValueProvider(maxButton), model, tree.viewPortTableTree)
+        maxButton.name = "maxButton"
         toolbar.add(maxButton)
         final ULCToggleButton sigmaButton = new ULCToggleButton()
         sigmaButton.action = new ToggleKeyFigureAction(new SigmaFunction(), new DefaultToggleValueProvider(sigmaButton), model, tree.viewPortTableTree)
+        sigmaButton.name = "sigmaButton"
         toolbar.add(sigmaButton)
 
         toolbar.addSeparator()
@@ -190,9 +193,15 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add new ULCLabel(getText("Percent"))
         toolbar.add ULCFiller.createHorizontalStrut(5)
-        toolbar.add new ULCButton(new PercentileKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
-        toolbar.add new ULCButton(new VarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
-        toolbar.add new ULCButton(new TvarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        ULCButton percentileButton = new ULCButton(new PercentileKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        percentileButton.name ="percentileButton"
+        toolbar.add percentileButton
+        ULCButton varButton = new ULCButton(new VarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        varButton.name = "varButton"
+        toolbar.add varButton
+        ULCButton tVarButton = new ULCButton(new TvarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
+        tVarButton.name = "tVarButton"
+        toolbar.add tVarButton
     }
 
     private def addPrecisionFunctions(ULCToolBar toolbar) {

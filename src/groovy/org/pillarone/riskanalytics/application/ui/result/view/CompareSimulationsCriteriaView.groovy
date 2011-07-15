@@ -92,9 +92,13 @@ class CompareSimulationsCriteriaView {
         }
 
         devPercentage = new ULCCheckBox(getText(this.class, "Percentage"))
+        devPercentage.name = "devPercentage"
         devAbsolute = new ULCCheckBox(getText(this.class, "Absolute"))
+        devAbsolute.name = "devAbsolute"
         frPercentage = new ULCCheckBox(getText(this.class, "Percentage"))
+        frPercentage.name = "frPercentage"
         frAbsolute = new ULCCheckBox(getText(this.class, "Absolute"))
+        frAbsolute.name = "frAbsolute"
         compareParameterizations = new ULCButton(getText(this.class, "CompareParameterizations"))
         byPeriod = new ULCRadioButton(getText(this.class, "Period"))
         byKeyFigure = new ULCRadioButton(getText(this.class, "KeyFigure"))
