@@ -61,7 +61,6 @@ class MultiFilteringTableTreeModel extends FilteringTableTreeModel {
     }
 
     public void refresh() {
-        filters.clear()
         model.refresh()
     }
 
