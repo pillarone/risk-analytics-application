@@ -44,7 +44,7 @@ public class ErrorPane implements TabbedPaneChangeListener {
                 addError(error);
             }
         } else {
-            ULCBoxPane around = UIUtils.spaceAround(new ULCLabel(UIUtils.getText(ErrorPane.class, "noError")), 2, 10, 0, 0)
+            ULCBoxPane around = UIUtils.spaceAround(new ULCLabel(""), 2, 10, 0, 0)
             around.setBackground(Color.white)
             container.add(ULCBoxPane.BOX_LEFT_TOP, around);
         }

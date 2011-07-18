@@ -64,7 +64,7 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
                 addComment(comment, searchText);
             }
         } else {
-            ULCLabel label = new ULCLabel(UIUtils.getText(this.class, "noComment"))
+            ULCLabel label = new ULCLabel("")
             label.name = "noComment"
             ULCBoxPane around = UIUtils.spaceAround(label, 2, 10, 0, 0)
             around.setBackground(Color.white)
