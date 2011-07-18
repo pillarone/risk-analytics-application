@@ -77,8 +77,8 @@ class NewBatchView extends AbstractView {
 
     public void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            notifyItemSaved()
             batchUIItem.createNewBatch((ULCComponent) evt.source, mapToDao())
+            notifyItemSaved()
         }] as IActionListener)
     }
 

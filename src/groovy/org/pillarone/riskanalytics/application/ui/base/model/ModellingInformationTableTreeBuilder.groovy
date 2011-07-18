@@ -226,11 +226,9 @@ class ModellingInformationTableTreeBuilder {
         return addNodeForItem(modellingUIItem)
     }
 
-    public def addNodeForItem(BatchUIItem batchRun) {
+    public void addNodeForItem(BatchUIItem batchRun) {
         ITableTreeNode groupNode = findBatchRootNode(root)
-        createAndInsertItemNode(groupNode, batchRun)
-        model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]), [groupNode.childCount - 1] as int[])
-        return groupNode
+        insertNodeInto(createNode(batchRun), groupNode)
     }
 
 

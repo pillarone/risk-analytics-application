@@ -16,6 +16,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedLis
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -32,7 +34,7 @@ class BatchUIItem extends AbstractUIItem {
 
 
     String createTitle() {
-        return batchRun ? batchRun.name : "new batch"
+        return batchRun ? batchRun.name : UIUtils.getText(BatchUIItem.class, "newbatch")
     }
 
     ULCContainer createDetailView() {
@@ -67,7 +69,6 @@ class BatchUIItem extends AbstractUIItem {
 
     public void addBatchRun(BatchRun batchRun) {
         if (!batchRun) return
-        this.batchRun = batchRun
         navigationTableTreeModel.addNodeForItem(this)
         mainModel.viewModelsInUse.each {k, v ->
             if (v instanceof BatchListener)

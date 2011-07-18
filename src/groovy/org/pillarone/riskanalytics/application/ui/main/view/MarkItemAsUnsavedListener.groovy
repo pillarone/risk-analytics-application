@@ -25,7 +25,6 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
     }
 
     public void itemSaved(ModellingItem modellingItem) {
-//        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
         update(abstractUIItem)
     }
 
