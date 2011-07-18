@@ -23,6 +23,8 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.application.ui.base.action.*
+import com.ulcjava.base.application.datatype.IDataType
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -272,17 +274,34 @@ class CompareComponentNodeTableTreeNodeRenderer extends ComponentNodeTableTreeNo
 
 class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
 
+    IDataType doubleDataType = DataTypeFactory.getDoubleDataTypeForNonEdit()
+    IDataType integerDataType = DataTypeFactory.getIntegerDataTypeForNonEdit()
+
     public CompareParameterizationRenderer() {
     }
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setBackground(tableTree, node)
+        setDataType(value)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node)
+
         return component
     }
 
     private void setBackground(ULCTableTree tableTree, Object node) {
         (tableTree.model.isDifferent(node)) ? setBackground(ParameterizationUtilities.ERROR_BG) : setBackground(Color.white)
+    }
+
+    private void setDataType(Double value) {
+        super.setDataType(doubleDataType)
+    }
+
+    private void setDataType(Integer value) {
+        super.setDataType(integerDataType)
+    }
+
+    private void setDataType(def value) {
+
     }
 
 
