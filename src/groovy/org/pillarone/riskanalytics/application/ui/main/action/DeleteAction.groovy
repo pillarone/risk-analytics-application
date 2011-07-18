@@ -68,8 +68,10 @@ class DeleteAction extends SelectionTreeAction {
     private void handleEvent(String value, String firstButtonValue, Model selectedModel, ModellingUIItem item) {
         synchronized (item) {
             if (value.equals(firstButtonValue)) {
-                item.deleteDependingResults(selectedModel)
-                removeItem(item)
+                if (item.deleteDependingResults(selectedModel))
+                    removeItem(item)
+                else
+                    new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteAllDependentRunsError").show()
             }
         }
     }
