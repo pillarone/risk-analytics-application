@@ -31,7 +31,7 @@ class SimulationNode extends ItemNode {
         }
     }
 
-    public ULCPopupMenu getPopupMenu( ULCTableTree tree) {
+    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
 
@@ -40,7 +40,10 @@ class SimulationNode extends ItemNode {
         ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, abstractUIItem.mainModel))
         tree.addTreeSelectionListener(compareSimulationMenuItem)
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
-        simulationNodePopUpMenu.add(new ULCMenuItem(new GiraReportAction( tree, abstractUIItem.mainModel)))
+        simulationNodePopUpMenu.addSeparator()
+        simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
+        simulationNodePopUpMenu.addSeparator()
+        simulationNodePopUpMenu.add(new ULCMenuItem(new GiraReportAction(tree, abstractUIItem.mainModel)))
 
         ULCMenu reportsMenu = new ReportMenu("Reports")
         reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, abstractUIItem.mainModel)))

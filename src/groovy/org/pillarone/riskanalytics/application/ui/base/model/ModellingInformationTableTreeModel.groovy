@@ -63,7 +63,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     List parameterizationNodes
     ModellingItemNodeFilter filter
     List<ChangeIndexerListener> changeIndexerListeners
-    List<TransactionInfo> transactionInfos
     RiskAnalyticsMainModel mainModel
 
     static DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy")
@@ -158,55 +157,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
 
-    public Object getValue(Parameterization parameterization, ParameterizationNode node, int columnIndex) {
-        def value = null
-        try {
-            switch (columnIndex) {
-                case NAME: value = node.abstractUIItem.item.name; break;
-                case STATE: value = parameterization?.status?.getDisplayName(); break;
-                case TAGS: value = parameterization?.tags?.join(","); break;
-                case TRANSACTION_NAME:
-                    if (parameterization.dealId) {
-                        value = getTransactionName(parameterization.dealId)
-                    };
-                    break;
-                case QUARTER:
-                    if (parameterization.dealId && parameterization.valuationDate) {
-                        value = DateFormatUtils.formatDetailed(parameterization.valuationDate)
-                    };
-                    break;
-                case COMMENTS: value = parameterization.getSize(ParameterizationCommentDAO); break;
-                case REVIEW_COMMENT: value = parameterization.getSize(WorkflowCommentDAO); break;
-                case OWNER: value = parameterization?.getCreator()?.username; break;
-                case LAST_UPDATER: value = parameterization?.getLastUpdater()?.username; break;
-                case CREATION_DATE: value = DateFormatUtils.formatDetailed(parameterization.creationDate); break;
-                case LAST_MODIFICATION_DATE: value = DateFormatUtils.formatDetailed(parameterization.modificationDate); break;
-                case ASSIGNED_TO: return "---"
-                case VISIBILITY: return "---"
-                default: return ""
-
-            }
-
-        } catch (Exception ex) {
-        }
-        return value
-    }
-
     public Object getValue(def item, ItemNode node, int columnIndex) {
-        if (item instanceof ModellingItem) {
-            switch (columnIndex) {
-                case NAME: return node.abstractUIItem.item.name
-                case COMMENTS: return (item instanceof Simulation) ? item.getSize(SimulationRun) : 0;
-                case REVIEW_COMMENT: return 0;
-                case OWNER: return item?.getCreator()?.username;
-                case LAST_UPDATER: return item?.getLastUpdater()?.username;
-                case CREATION_DATE: return DateFormatUtils.formatDetailed(item.creationDate)
-                case LAST_MODIFICATION_DATE: return DateFormatUtils.formatDetailed(item.modificationDate)
-                case ASSIGNED_TO: return "---"
-                case VISIBILITY: return "---"
-                default: return ""
-
-            }
+        if (!(item instanceof ModellingItem)) return ""
+        try {
+            return EnumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(item, node)
+        } catch (Exception ex) {
         }
         return null
     }
@@ -335,21 +290,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public int getColumnIndex(int column) {
         return column
-    }
-
-    private String getTransactionName(Long dealId) {
-        try {
-            if (transactionInfos == null) {
-                transactionInfos = RemotingUtils.getTransactionService().allTransactions
-            }
-            TransactionInfo transactionInfo = transactionInfos.find {it.dealId == dealId}
-            if (transactionInfo)
-                return transactionInfo.getName()
-        } catch (Exception ex) {
-            if (dealId)
-                return String.valueOf(dealId)
-        }
-        return ""
     }
 
 

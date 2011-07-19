@@ -413,6 +413,11 @@ class ModellingItemFactory {
             simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
             simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
             simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
+            simulation.creationDate = run.startTime
+            simulation.modificationDate = run.getModificationDate()
+            try {
+                simulation.tags = run.tags*.tag
+            } catch (Exception ex) {}
             getSimulationInstances()[key] = simulation
         }
         return simulation
@@ -458,6 +463,7 @@ class ModellingItemFactory {
         }
         item
     }
+
     private static def key(Class itemClass, Long daoId) {
         return "${itemClass?.simpleName}_$daoId".toString()
     }
