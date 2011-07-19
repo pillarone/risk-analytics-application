@@ -36,6 +36,13 @@ class StochasticResultUIItem extends ResultUIItem {
         return model
     }
 
+    @Override
+    public boolean remove() {
+        boolean removed = super.remove()
+        if (removed)
+            navigationTableTreeModel.itemChanged(((Simulation) item).parameterization)
+        return removed
+    }
 
 
 

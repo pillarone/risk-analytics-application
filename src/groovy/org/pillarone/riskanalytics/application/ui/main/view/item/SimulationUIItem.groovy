@@ -49,7 +49,7 @@ class SimulationUIItem extends ModellingUIItem {
 
     @Override
     boolean equals(Object obj) {
-        return createTitle().equals(obj.createTitle())   
+        return createTitle().equals(obj.createTitle())
     }
 
     @Override

@@ -234,6 +234,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     public void simulationEnd(Simulation simulation, Model model) {
         if (simulation.simulationRun?.endTime != null) {
             navigationTableTreeModel.addNodeForItem(simulation)
+            navigationTableTreeModel.itemChanged(simulation.parameterization)
         }
     }
 

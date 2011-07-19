@@ -79,7 +79,7 @@ class TableTreeBuilderUtils {
 
     public static ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
         ITableTreeNode nodeForItem = null
-        if (nodeMatches(item, node)) {
+        if (ItemComparator.isEqual(item, node)) {
             nodeForItem = node
         } else {
             for (int i = 0; i < node.childCount && nodeForItem == null; i++) {
@@ -102,30 +102,4 @@ class TableTreeBuilderUtils {
         return null
     }
 
-
-
-    public static boolean nodeMatches(ParameterizationUIItem parameterizationUIItem, ParameterizationNode node) {
-        return node.abstractUIItem.item == parameterizationUIItem.item
-    }
-
-    public static boolean nodeMatches(ParameterizationUIItem parameterizationUIItem, WorkflowParameterizationNode node) {
-        return node.abstractUIItem.item == parameterizationUIItem.item
-    }
-
-    public static boolean nodeMatches(ResultConfigurationUIItem resultConfigurationUIItem, ResultConfigurationNode node) {
-        return node.abstractUIItem.item == resultConfigurationUIItem.item
-    }
-
-    public static boolean nodeMatches(ModellingUIItem modellingUIItem, SimulationNode node) {
-        return (node.abstractUIItem.item == modellingUIItem.item) || (node.abstractUIItem.item.id == modellingUIItem.item.id)
-    }
-
-    public static boolean nodeMatches(BatchUIItem batchUIItem, BatchRunNode node) {
-        return node.abstractUIItem.item == batchUIItem.item
-    }
-
-
-    public static boolean nodeMatches(item, ITableTreeNode node) {
-        return false
-    }
 }

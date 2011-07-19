@@ -231,6 +231,11 @@ class ModellingInformationTableTreeBuilder {
         insertNodeInto(createNode(batchRun), groupNode)
     }
 
+    public void itemChanged(ModellingItem item) {
+        ITableTreeNode itemGroupNode = findGroupNode(item, findModelNode(root, item))
+        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, item)
+        model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+    }
 
     public void removeAllGroupNodeChildren(ItemGroupNode groupNode) {
         groupNode.removeAllChildren()
@@ -416,9 +421,6 @@ class ModellingInformationTableTreeBuilder {
     }
 
     Model getModelInstance(ModellingItem item) {
-//        Model selectedModelInstance = item.modelClass.newInstance()
-        //        selectedModelInstance.init()
-        //        return selectedModelInstance
         return null
     }
 

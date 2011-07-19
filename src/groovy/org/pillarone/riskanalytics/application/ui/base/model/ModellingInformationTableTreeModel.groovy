@@ -77,11 +77,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public static ModellingInformationTableTreeModel getInstance(RiskAnalyticsMainModel mainModel) {
-      if (UserContext.hasCurrentUser()) {
-          return new ModellingInformationTableTreeModel(mainModel)
-      } else {
-          return new StandaloneTableTreeModel(mainModel)
-      }
+        if (UserContext.hasCurrentUser()) {
+            return new ModellingInformationTableTreeModel(mainModel)
+        } else {
+            return new StandaloneTableTreeModel(mainModel)
+        }
     }
 
     public def buildTreeNodes() {
@@ -277,6 +277,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public void addNodeForItem(Object item) {
         indexerChanged()
         builder.addNodeForItem(item)
+    }
+
+    public void itemChanged(ModellingItem item) {
+        indexerChanged()
+        builder.itemChanged(item)
     }
 
     ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
