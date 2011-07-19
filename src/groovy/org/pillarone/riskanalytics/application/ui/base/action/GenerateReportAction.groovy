@@ -87,11 +87,10 @@ class GenerateReportAction extends SelectionTreeAction implements ITreeSelection
                             stream.write output
                         } catch (UnsupportedOperationException t) {
                             LOG.error "Saving Report Failed: ${t}", t
-                            new I18NAlert(ancestor, errorName).show()
-                            new ULCAlert(ancestor, "Saving report failed", "Saving report failed, the details are in the log files", "Ok").show()
+                            new I18NAlert(ancestor, "SaveReportError").show()
                         } catch (Throwable t) {
                             LOG.error "Saving Report Failed: ${t}", t
-                            new ULCAlert(ancestor, "Saving report failed", "Saving report failed, the details are in the log files", "Ok").show()
+                            new I18NAlert(ancestor, "SaveReportError").show()
                             throw t
                         } finally {
                             stream.close()
@@ -99,13 +98,13 @@ class GenerateReportAction extends SelectionTreeAction implements ITreeSelection
                     }, onSuccess: {path, name ->
                     }, onFailure: {reason, description ->
                         LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                        new I18NAlert(ancestor, "SaveReportError").show()
                     }] as IFileStoreHandler, selectedFile)
 
                 },
                 onFailure: {reason, description ->
                     LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                    new I18NAlert(ancestor, "SaveReportError").show()
                 }] as IFileChooseHandler, config, ancestor)
     }
 
