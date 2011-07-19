@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeActio
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 class GenerateReportAction extends SelectionTreeAction implements ITreeSelectionListener {
     String name
@@ -85,25 +86,26 @@ class GenerateReportAction extends SelectionTreeAction implements ITreeSelection
                         try {
                             stream.write output
                         } catch (UnsupportedOperationException t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                            LOG.error "Saving Report Failed: ${t}"
+                            LOG.error "Saving Report Failed: ${t}", t
+                            new I18NAlert(ancestor, errorName).show()
+                            new ULCAlert(ancestor, "Saving report failed", "Saving report failed, the details are in the log files", "Ok").show()
                         } catch (Throwable t) {
-                            new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
-                            LOG.error "Saving Report Failed: ${t}"
+                            LOG.error "Saving Report Failed: ${t}", t
+                            new ULCAlert(ancestor, "Saving report failed", "Saving report failed, the details are in the log files", "Ok").show()
                             throw t
                         } finally {
                             stream.close()
                         }
                     }, onSuccess: {path, name ->
                     }, onFailure: {reason, description ->
-                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                         LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
+                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 
                 },
                 onFailure: {reason, description ->
-                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
+                    new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                 }] as IFileChooseHandler, config, ancestor)
     }
 
