@@ -112,6 +112,11 @@ abstract class AbstractUIItem implements IUIItem {
         return mainModel.navigationTableTreeModel
     }
 
+    public String getWindowTitle() {
+        String windowTitle = model ? model.name : ""
+        windowTitle += " " + createTitle()
+        return windowTitle
+    }
 
 
 }

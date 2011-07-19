@@ -19,7 +19,6 @@ class WindowSelectionAction extends ExceptionSafeAction {
     public void doActionPerformed(ActionEvent event) {
         mainView.cardPaneManager.selectCard(model)
         mainView.cardPaneManager.selectCurrentItemFromTab(model, mainView.cardPaneManager.getSelectedCard(), mainView.mainModel)
-        mainView.setWindowTitle(getMenuName(model))
     }
 
     static String getMenuName(Model model) {

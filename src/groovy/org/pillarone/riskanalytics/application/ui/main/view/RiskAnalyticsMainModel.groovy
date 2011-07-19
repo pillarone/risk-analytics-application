@@ -183,6 +183,13 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         }
     }
 
+    void notifyChangedWindowTitle(AbstractUIItem abstractUIItem) {
+
+        modelListeners.each {IRiskAnalyticsModelListener listener ->
+            listener.setWindowTitle(abstractUIItem)
+        }
+    }
+
     public void addNewSimulationListener(INewSimulationListener newSimulationListener) {
         newSimulationListeners << newSimulationListener
     }
@@ -204,6 +211,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             it.setEnabled(b)
             it.selected = b
         }
+        notifyChangedWindowTitle(currentItem)
     }
 
     ModellingUIItem getAbstractUIItem(ModellingItem modellingItem) {

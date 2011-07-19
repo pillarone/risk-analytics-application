@@ -62,4 +62,6 @@ public interface IUIItem {
 
     public void addModellingItemChangeListener(IModellingItemChangeListener listener)
 
+    public String getWindowTitle()
+
 }

@@ -113,5 +113,10 @@ class BatchUIItem extends AbstractUIItem {
         return hcb.toHashCode()
     }
 
+    @Override
+    String getWindowTitle() {
+        return "Batches " + super.getWindowTitle()
+    }
+
 
 }

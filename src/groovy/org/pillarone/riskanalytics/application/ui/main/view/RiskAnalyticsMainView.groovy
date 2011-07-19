@@ -92,6 +92,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         headerView.syncMenuBar()
         //update window menu
         modelAdded(model)
+        setWindowTitle(item)
     }
 
     void openDetailView(Model model, ModellingItem item) {
@@ -109,6 +110,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
             tabbedPaneManager.removeTab(abstractUIItem)
             headerView.syncMenuBar()
         }
+        setWindowTitle(null)
     }
 
     void changedDetailView(Model model, AbstractUIItem item) {
@@ -119,10 +121,9 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         headerView.modelAdded(model, this)
     }
 
-    public setWindowTitle(String modelName) {
+    public void setWindowTitle(AbstractUIItem abstractUIItem) {
         ULCWindow window = UlcUtilities.getWindowAncestor(this.content)
-        window.title = "Risk Analytics - ${modelName}"
-
+        window.title = "Risk Analytics - ${abstractUIItem ? abstractUIItem.getWindowTitle() : ''}"
     }
 
 

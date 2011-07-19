@@ -224,7 +224,6 @@ class HeaderView extends AbstractView {
         windowMenu.add(item)
         windowMenus[name] = item
 
-        mainView.setWindowTitle(name)
     }
 
 

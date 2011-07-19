@@ -17,4 +17,6 @@ public interface IRiskAnalyticsModelListener {
 
     void changedDetailView(Model model, AbstractUIItem item)
 
+    void setWindowTitle(AbstractUIItem windowTitle)
+
 }
