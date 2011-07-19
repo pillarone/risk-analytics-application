@@ -96,7 +96,8 @@ abstract class ExportAction extends SelectionTreeAction {
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
                     exporter.writeWorkBook stream
                 } catch (Throwable t) {
-                    new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                    LOG.error("Export failed: " + t.message, t)
+                    showAlert("exportError")
                 } finally {
                     stream.close()
                 }
@@ -120,7 +121,8 @@ abstract class ExportAction extends SelectionTreeAction {
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
                 writer.write(getConfigObject(item), bw)
             } catch (Throwable t) {
-                new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
+                LOG.error("Export failed: " + t.message, t)
+                showAlert("exportError")
             } finally {
                 stream.close()
             }
