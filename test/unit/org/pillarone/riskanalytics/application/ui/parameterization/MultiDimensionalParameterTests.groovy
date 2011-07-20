@@ -53,7 +53,7 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         model.injectComponentNames()
         param.simulationModel = model
 
-        List lobs = param.getValuesAsObjects()
+        List lobs = param.getValuesAsObjects(0, true)
         assertEquals 2, lobs.size()
         assertEquals 'hierarchyComponent', lobs.get(0).name
         assertEquals 'hierarchyComponent', lobs.get(1).name
