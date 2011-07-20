@@ -6,11 +6,16 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import com.ulcjava.base.application.util.Color
+import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     List<ParameterHolder> parameter
-    String errorMessage
+    Set<ParameterValidation> errors
 
     public ParameterizationTableTreeNode(List parameter) {
         super(getNodeName(parameter))
@@ -48,6 +53,29 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
                 cachedToolTip = super.getToolTip()
         }
         return cachedToolTip
+    }
+
+    public String getErrorMessage() {
+        if (!errors) return null
+        StringBuilder sb = new StringBuilder("")
+        for (ParameterValidation error: errors) {
+            sb.append(error.getLocalizedMessage(LocaleResources.getLocale()) + " ")
+        }
+        return sb.toString()
+    }
+
+    public Color getErrorColor() {
+        if (!errors) return Color.black
+        if (errors.any { it.validationType == ValidationType.ERROR}) return UIUtils.getColor(ValidationType.ERROR)
+        if (errors.any { it.validationType == ValidationType.WARNING}) return UIUtils.getColor(ValidationType.WARNING)
+        if (errors.any { it.validationType == ValidationType.HINT}) return UIUtils.getColor(ValidationType.HINT)
+        return Color.black
+    }
+
+    public void addError(ParameterValidation error) {
+        if (!errors) errors = new HashSet<ParameterValidation>()
+        if (!errors.any {it.msg == error.msg})
+            errors << error
     }
 
     private String lookUp(String value, String tooltip) {

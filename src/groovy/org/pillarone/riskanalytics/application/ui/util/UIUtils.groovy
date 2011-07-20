@@ -20,6 +20,7 @@ import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.user.PersonAuthority
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
 
 class UIUtils {
 
@@ -200,7 +201,7 @@ class UIUtils {
 
     public static String getUserInfo() {
         if (UserManagement.isLoggedIn()) {
-            Person loggedUser=null
+            Person loggedUser = null
             String userAuthorities = ""
             Person.withTransaction {def status ->
                 loggedUser = UserContext.getCurrentUser()
@@ -211,6 +212,15 @@ class UIUtils {
             return loggedUser.username + " " + userAuthorities
         }
         return ""
+    }
+
+    public static Color getColor(ValidationType validationType) {
+        switch (validationType) {
+            case ValidationType.ERROR: return Color.red
+            case ValidationType.WARNING: return Color.darkGray
+            case ValidationType.HINT: return Color.blue
+            default: return Color.black
+        }
     }
 
 }

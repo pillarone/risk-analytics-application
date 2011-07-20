@@ -183,8 +183,8 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
     void customizeNode(IRendererComponent rendererComponent, ParameterizationTableTreeNode node) {
         Font font = getFont()
-        if (node.errorMessage != null) {
-            setForeground(Color.red)
+        if (node.errors != null) {
+            setForeground(node.getErrorColor())
             setToolTipText(node.errorMessage)
             setFont(font.deriveFont(Font.BOLD))
         } else if (node.comments && node.comments.size() > 0) {

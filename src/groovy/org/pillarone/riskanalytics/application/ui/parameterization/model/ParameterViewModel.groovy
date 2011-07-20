@@ -80,7 +80,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
     void addErrors(List<ParameterValidation> validationErrors) {
         for (ParameterValidation error in validationErrors) {
             ParameterizationTableTreeNode node = findNodeForPath(error.getPath())
-            node.errorMessage = error.getLocalizedMessage(LocaleResources.getLocale())
+            node.addError(error)
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
         for (ParameterValidation previousError in this.validationErrors) {
@@ -90,7 +90,7 @@ class ParameterViewModel extends AbstractCommentableItemModel {
                 ParameterizationTableTreeNode node = findNodeForPath(previousError.getPath())
                 //if node is null, the error node was removed
                 if (node != null) {
-                    node.errorMessage = null
+                    node.errors = null
                     paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
                 }
             }

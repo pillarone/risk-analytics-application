@@ -72,7 +72,7 @@ public class ErrorPane implements TabbedPaneChangeListener {
         def node = model.findNodeForPath(error.getPath())
         final ULCTitledBorder border = BorderFactory.createTitledBorder(node?.getDisplayPath());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
-        Color color = getColor(error.validationType)
+        Color color = UIUtils.getColor(error.validationType)
         border.setTitleColor(color)
         pane.setBorder(border);
 
@@ -104,15 +104,6 @@ public class ErrorPane implements TabbedPaneChangeListener {
 
     public void setVisible(boolean visibility) {
         container.setVisible(visibility);
-    }
-
-    private Color getColor(ValidationType validationType) {
-        switch (validationType) {
-            case ValidationType.ERROR: return Color.red
-            case ValidationType.WARNING: return Color.darkGray
-            case ValidationType.HINT: return Color.blue
-            default: return Color.black
-        }
     }
 
 }
