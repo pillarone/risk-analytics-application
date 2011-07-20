@@ -29,8 +29,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigura
  */
 class DeleteAction extends SelectionTreeAction {
 
-    Closure okAction = { AbstractUIItem selectedItem, def nextItemToSelect ->
-        removeItem(selectedItem)
+    Closure okAction = { List<AbstractUIItem> selectedItems, def nextItemToSelect ->
+        removeItem(selectedItems)
         tree.addPathSelection(new TreePath(DefaultTableTreeModel.getPathToRoot(nextItemToSelect) as Object[]))
     }
 
@@ -40,9 +40,9 @@ class DeleteAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        AbstractUIItem selectedItem = getSelectedUIItem()
-        if (!selectedItem) return
-        AlertDialog dialog = new AlertDialog(tree, selectedItem, getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [tree?.selectedPath?.lastPathComponent?.toString()]), okAction)
+        List<AbstractUIItem> selectedItems = getSelectedUIItems()
+        if (!selectedItems) return
+        AlertDialog dialog = new AlertDialog(tree, selectedItems, getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [getNames(selectedItems)]), okAction)
         dialog.init()
         dialog.show()
     }
@@ -65,6 +65,12 @@ class DeleteAction extends SelectionTreeAction {
 
     private void removeItem(def selectedItem) {}
 
+    private void removeItem(List<ModellingUIItem> selectedItems) {
+        selectedItems.each {ModellingUIItem selectedItem ->
+            removeItem(selectedItem)
+        }
+    }
+
     private void handleEvent(String value, String firstButtonValue, Model selectedModel, ModellingUIItem item) {
         synchronized (item) {
             if (value.equals(firstButtonValue)) {
@@ -78,6 +84,10 @@ class DeleteAction extends SelectionTreeAction {
 
     protected List allowedRoles() {
         return []
+    }
+
+    private String getNames(List<AbstractUIItem> items) {
+        return items*.name.join(", ")
     }
 
 }

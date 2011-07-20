@@ -52,6 +52,24 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return abstractUIItem
     }
 
+    List<AbstractUIItem> getSelectedUIItems() {
+        List selectedObjects = []
+        for (TreePath selectedPath in tree.selectedPaths) {
+            for (Object node in selectedPath.getPath()) {
+                if (node instanceof ItemGroupNode) {
+                    if (selectedPath?.lastPathComponent != null) {
+                        Object lastNode = selectedPath.lastPathComponent
+                        if (lastNode instanceof ItemNode) {
+                            selectedObjects.add(lastNode.abstractUIItem)
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        return selectedObjects
+    }
+
     Object getNextSelectedItem() {
         ITableTreeNode itemNode = tree.selectedPath?.lastPathComponent
         ITableTreeNode parent = itemNode.parent
