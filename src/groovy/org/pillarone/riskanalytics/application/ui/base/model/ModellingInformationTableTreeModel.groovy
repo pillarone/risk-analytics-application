@@ -5,7 +5,7 @@ import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.joda.time.DateTime
+
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.pillarone.riskanalytics.application.UserContext
@@ -17,22 +17,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
-import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
-import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
-import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
-import org.pillarone.riskanalytics.core.remoting.TransactionInfo
-import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
+
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.parameter.comment.ParameterizationCommentDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -64,8 +55,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     ModellingItemNodeFilter filter
     List<ChangeIndexerListener> changeIndexerListeners
     RiskAnalyticsMainModel mainModel
+    ModellingTableTreeColumn enumModellingTableTreeColumn = new ModellingTableTreeColumn()
 
-    static DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy")
+    public static DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy")
 
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
@@ -157,43 +149,19 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
 
-    public Object getValue(def item, ItemNode node, int columnIndex) {
+    public synchronized Object getValue(def item, ItemNode node, int columnIndex) {
         if (!(item instanceof ModellingItem)) return ""
         try {
-            return EnumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(item, node)
+            return enumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(item, node)
         } catch (Exception ex) {
         }
         return null
     }
 
     public List getValues(int columnIndex) {
-        Set values = new TreeSet()
-        if (columnIndex == TAGS) {
-            ParameterizationTag.withTransaction {status ->
-                Collection all = ParameterizationTag.findAll()
-                all.each {
-                    String tagName = it.tag.name
-                    values.add(tagName)
-                }
-            }
-        } else {
-            columnValues?.each {Parameterization parameterization, def value ->
-                if (value[columnIndex]) {
-                    switch (columnIndex) {
-                        case CREATION_DATE:
-                        case LAST_MODIFICATION_DATE:
-                            if (value[columnIndex] instanceof DateTime)
-                                values.add(simpleDateFormat.print(value[columnIndex]))
-                            else
-                                values.add(value[columnIndex]);
-                            break;
-                        default: values.add(value[columnIndex]); break;
-                    }
-                }
-            }
-
-        }
-        return values as List
+        if (columnIndex == ModellingInformationTableTreeModel.TAGS)
+            return ModellingTableTreeColumnValues.getTagsValues()
+        return ModellingTableTreeColumnValues.getValues(columnValues, columnIndex)
     }
 
     public void putValues(ItemNode node) {

@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.remoting.TransactionInfo
@@ -11,26 +10,27 @@ import org.pillarone.riskanalytics.core.parameter.comment.ParameterizationCommen
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-public enum EnumModellingTableTreeColumn {
+public class ModellingTableTreeColumn {
 
-    NAME {
+    List<TransactionInfo> transactionInfos
+    DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy, HH:mm")
+    Map instances
+
+    class NameColumn extends ModellingTableTreeColumn {
+
         @Override
-
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return node.abstractUIItem.item.name
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 0
-        }
-
-    },
-    STATE {
+    class StateColumn extends ModellingTableTreeColumn {
 
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
@@ -38,13 +38,10 @@ public enum EnumModellingTableTreeColumn {
                 return modellingItem?.status?.getDisplayName()
             return ""
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 1
-        }
-    },
-    TAGS {
+    class TagsColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             if (!(modellingItem instanceof ResultConfiguration))
@@ -52,12 +49,10 @@ public enum EnumModellingTableTreeColumn {
             return ""
         }
 
-        @Override
-        int getColumnIndex() {
-            return 2
-        }
-    },
-    TRANSACTION_NAME {
+    }
+
+    class TransactionColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             if ((modellingItem instanceof Parameterization) && modellingItem.dealId) {
@@ -66,147 +61,105 @@ public enum EnumModellingTableTreeColumn {
             return null
         }
 
-        @Override
-        int getColumnIndex() {
-            return 3
-        }
-    },
-    QUARTER {
+    }
+
+    class QuarterColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             if ((modellingItem instanceof Parameterization) && modellingItem.dealId && modellingItem.valuationDate) {
-                DateFormatUtils.formatDetailed(modellingItem.valuationDate)
+                return DateFormatUtils.formatDetailed(modellingItem.valuationDate)
             };
             return ""
         }
 
-        @Override
-        int getColumnIndex() {
-            return 4
-        }
-    },
-    COMMENTS {
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            if (modellingItem instanceof Parameterization) return modellingItem.getSize(ParameterizationCommentDAO)
-            if (modellingItem instanceof Simulation) return modellingItem.getSize(SimulationRun)
-            return 0
-        }
+    }
+
+    class CommentsColumn extends ModellingTableTreeColumn {
 
         @Override
-        int getColumnIndex() {
-            return 5
+        Object getValue(ModellingItem modellingItem, ItemNode node) {
+            int count = 0
+            if (modellingItem instanceof Parameterization) count = modellingItem.getSize(ParameterizationCommentDAO)
+            if (modellingItem instanceof Simulation) count = modellingItem.getSize(SimulationRun)
+            return count
         }
-    },
-    REVIEW_COMMENT {
+    }
+
+    class ReviewCommentsColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             if (modellingItem instanceof Parameterization)
                 return modellingItem.getSize(WorkflowCommentDAO)
             return 0
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 6
-        }
-    },
-    OWNER {
+    class OwnerColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return modellingItem?.getCreator()?.username
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 7
-        }
-    },
-    LAST_UPDATER {
+    class LastUpdateColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return modellingItem?.getLastUpdater()?.username
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 8
-        }
-    },
-    CREATION_DATE {
+    class CreationDateColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return DateFormatUtils.formatDetailed(modellingItem.creationDate)
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 9
-        }
-    },
-    LAST_MODIFICATION_DATE {
+    class LastModificationDateColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return DateFormatUtils.formatDetailed(modellingItem.modificationDate)
         }
+    }
 
-        @Override
-        int getColumnIndex() {
-            return 10
-        }
-    },
-    ASSIGNED_TO {
+    class AssignedToColumn extends ModellingTableTreeColumn {
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return "---"
         }
 
-        @Override
-        int getColumnIndex() {
-            return 11
-        }
-    },
-    VISIBILITY {
+    }
+
+    class VisibilityColumn extends ModellingTableTreeColumn {
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return "---"
         }
 
-        @Override
-        int getColumnIndex() {
-            return 12
-        }
-    },
-    UNKNOWN {
+    }
+
+    class UknownColumn extends ModellingTableTreeColumn {
+        
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return ""
         }
 
-        @Override
-        int getColumnIndex() {
-            return -1
-        }
     }
 
-    List<TransactionInfo> transactionInfos
-
-    public Object getValue(ModellingItem modellingItem, ItemNode node) {
+    Object getValue(ModellingItem modellingItem, ItemNode node) {
         return null
     }
 
-    public int getColumnIndex() {
-        return 0
-    }
-
-
-    public static EnumModellingTableTreeColumn getEnumModellingTableTreeColumnFor(int desired) {
-        for (EnumModellingTableTreeColumn status: values()) {
-            if (desired == status.getColumnIndex()) {
-                return status;
-            }
-        }
-        return UNKNOWN;
+    public ModellingTableTreeColumn getEnumModellingTableTreeColumnFor(int desired) {
+        getInstances().get(desired)
     }
 
     private String getTransactionName(Long dealId) {
@@ -222,6 +175,28 @@ public enum EnumModellingTableTreeColumn {
                 return String.valueOf(dealId)
         }
         return ""
+    }
+
+    Map getInstances() {
+        if (!instances) {
+            instances = [:]
+            instances[ModellingInformationTableTreeModel.NAME] = new NameColumn()
+            instances[ModellingInformationTableTreeModel.STATE] = new StateColumn()
+            instances[ModellingInformationTableTreeModel.TAGS] = new TagsColumn()
+            instances[ModellingInformationTableTreeModel.TRANSACTION_NAME] = new TransactionColumn()
+            instances[ModellingInformationTableTreeModel.QUARTER] = new QuarterColumn()
+            instances[ModellingInformationTableTreeModel.COMMENTS] = new CommentsColumn()
+            instances[ModellingInformationTableTreeModel.REVIEW_COMMENT] = new ReviewCommentsColumn()
+            instances[ModellingInformationTableTreeModel.OWNER] = new OwnerColumn()
+            instances[ModellingInformationTableTreeModel.LAST_UPDATER] = new LastUpdateColumn()
+            instances[ModellingInformationTableTreeModel.CREATION_DATE] = new CreationDateColumn()
+            instances[ModellingInformationTableTreeModel.LAST_MODIFICATION_DATE] = new LastModificationDateColumn()
+            instances[ModellingInformationTableTreeModel.ASSIGNED_TO] = new AssignedToColumn()
+            instances[ModellingInformationTableTreeModel.VISIBILITY] = new VisibilityColumn()
+            instances[-1] = new UknownColumn()
+
+        }
+        return instances
     }
 
 }
