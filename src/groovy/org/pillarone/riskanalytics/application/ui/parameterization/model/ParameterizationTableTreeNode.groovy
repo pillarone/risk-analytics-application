@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.ulcjava.base.application.util.HTMLUtilities
 
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
@@ -59,9 +60,9 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
         if (!errors) return null
         StringBuilder sb = new StringBuilder("")
         for (ParameterValidation error: errors) {
-            sb.append(error.getLocalizedMessage(LocaleResources.getLocale()) + " ")
+            sb.append(error.getLocalizedMessage(LocaleResources.getLocale()) + "<br> ")
         }
-        return sb.toString()
+        return HTMLUtilities.convertToHtml(sb.toString())
     }
 
     public Color getErrorColor() {
@@ -103,92 +104,4 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
 }
 
-class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode {
 
-    ParameterizationTableTreeNode parameterizationTableTreeNode
-
-    Map parametersMap = [:]
-    int columnsCount
-
-    public CompareParameterizationTableTreeNode(parameter) {
-        super(parameter);
-    }
-
-    public CompareParameterizationTableTreeNode(parameterizationTableTreeNode, Map parametersMap, int columnsCount) {
-        super(parameterizationTableTreeNode.parameter)
-        this.parameterizationTableTreeNode = parameterizationTableTreeNode;
-        this.parametersMap = parametersMap
-        this.columnsCount = columnsCount
-    }
-
-    boolean isCellEditable(int i) {
-        return false
-    }
-
-    public void setValueAt(Object o, int i) {
-        parameterizationTableTreeNode.setValueAt(o, i)
-    }
-
-    Object getExpandedCellValue(int column) {
-        try {
-            parameterizationTableTreeNode.parameter = (List) this.parametersMap.get(getParameterizationIndex(column))
-
-            return parameterizationTableTreeNode.getExpandedCellValue(getPeriodIndex(column) + 1)
-        } catch (Exception ex) {
-            return ""
-        }
-
-    }
-
-    protected int getParameterizationIndex(int column) {
-        if (column == 0)
-            return 0
-        return (column - 1) % columnsCount
-    }
-
-    protected int getPeriodIndex(int column) {
-        if (column == 0)
-            return 0
-        return (column - 1) / columnsCount
-    }
-
-
-    public static String getNodeName(List parameter) {
-        return ParameterizationTableTreeNode.getNodeName(parameter)
-    }
-
-    public String getDisplayName() {
-        return parameterizationTableTreeNode.getDisplayName()
-    }
-
-    public String getToolTip() {
-        return parameterizationTableTreeNode.getToolTip()
-    }
-
-
-}
-
-class CompareParameterTableTreeNode extends CompareParameterizationTableTreeNode {
-
-    Map<String, List<Parameter>> parameterEntries = [:]
-
-    public CompareParameterTableTreeNode(parameterizationTableTreeNode, Map<String, List<Parameter>> parameterEntries, int columnsCount) {
-        super(parameterizationTableTreeNode.parameter)
-        this.parameterizationTableTreeNode = parameterizationTableTreeNode;
-        this.parameterEntries = parameterEntries
-        this.columnsCount = columnsCount
-    }
-
-
-    Object getExpandedCellValue(int column) {
-        try {
-            parameterizationTableTreeNode.parameter = this.parameterEntries.get(getParameterizationIndex(column)).get(parameterizationTableTreeNode.name)
-            return parameterizationTableTreeNode.getExpandedCellValue(getPeriodIndex(column) + 1)
-        } catch (Exception ex) {
-            return ""
-        }
-
-    }
-
-
-}
