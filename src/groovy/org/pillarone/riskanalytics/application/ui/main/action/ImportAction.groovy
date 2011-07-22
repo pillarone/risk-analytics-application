@@ -11,10 +11,9 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -26,28 +25,26 @@ class ImportAction extends SelectionTreeAction {
     Log LOG = LogFactory.getLog(ImportAction)
 
     public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("Import", tree, model)
-        userPreferences = UserPreferencesFactory.getUserPreferences()
-        ancestor = getAncestor()
+        this(tree, model, "Import")
     }
 
     public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model, boolean forceImport) {
         super(forceImport ? "forceImport" : "Import", tree, model)
         this.forceImport = forceImport
-        userPreferences = UserPreferencesFactory.getUserPreferences()
+        userPreferences = new UserPreferences()
         ancestor = getAncestor()
     }
 
 
     public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
         super(actionName, tree, model)
-        userPreferences = UserPreferencesFactory.getUserPreferences()
+        userPreferences = new UserPreferences()
         ancestor = getAncestor()
     }
 
     public ImportAction(String title) {
         super(title)
-        userPreferences = UserPreferencesFactory.getUserPreferences()
+        userPreferences = new UserPreferences()
         ancestor = getAncestor()
     }
 
