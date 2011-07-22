@@ -7,18 +7,18 @@ import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.util.Font
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.application.util.UserPreferences
 import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import com.ulcjava.base.application.util.Font
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * A view class which can be used to collect all information necessary for a simulation run (Simulation & output strategy)
@@ -57,7 +57,7 @@ class SimulationSettingsPane {
 
     protected RuntimeParameterPane runtimeParameterPane
 
-    private final userPreferences = new UserPreferences();
+    private final userPreferences = UserPreferencesFactory.getUserPreferences()
 
     SimulationSettingsPaneModel model
     final private Dimension dimension = new Dimension(100, 20)
