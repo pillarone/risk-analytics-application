@@ -210,7 +210,7 @@ class UIUtils {
                     List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
                     userAuthorities = i18nAuthorities.join(", ")
                 }
-                return loggedUser.username + " " + userAuthorities
+                return loggedUser.username + " (" + userAuthorities+")"
             }
         } catch (Exception ex) {
 
