@@ -19,6 +19,7 @@ import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
 import com.ulcjava.base.application.util.Font
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 
 /**
  * A view class which can be used to collect all information necessary for a simulation run (Simulation & output strategy)

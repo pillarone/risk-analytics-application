@@ -43,4 +43,8 @@ public class MockUserPreferences extends AbstractUserPreferencesImpl {
         def value = getPropertyValue(property)
         return value != null ? value : defaultValue
     }
+
+    void clearFakePreferences() {
+      fakeUserPrefs.clear()
+    }
 }

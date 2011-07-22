@@ -16,7 +16,6 @@ import org.pillarone.riskanalytics.core.ModelDAO
 import groovy.mock.interceptor.StubFor
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import org.pillarone.riskanalytics.application.util.UserPreferences
 
 class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
@@ -39,9 +38,6 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         ULCFrame frame = new ULCFrame("test")
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
-
-        def preferences = new UserPreferences()
-        preferences.putPropertyValue(UserPreferences.RANDOM_SEED_USE_USER_DEFINED, false)
 
         pane = new SimulationSettingsPane(new SimulationSettingsPaneModel(CoreModel))
         frame.setContentPane(pane.content)
@@ -160,6 +156,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         param.selectItem "CoreMultiPeriodParameters"
 
         ULCCheckBoxOperator userDefinedSeed = new ULCCheckBoxOperator(frame, new ComponentByNameChooser("userDefinedRandomSeed"))
+        userDefinedSeed.clickMouse()
         ULCTextFieldOperator randomSeed = new ULCTextFieldOperator(frame, new ComponentByNameChooser("randomSeed"))
         randomSeed.enterText("1234")
         modelStub.use {

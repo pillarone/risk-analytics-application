@@ -15,7 +15,8 @@ public interface UserPreferences {
     final static String DEFAULT_RESULT = "default_result"
     final static String USER_PREFERRED_LANG = "userPreferredLanguage"
     final static String ADD_FILE_DIR = "add_file_directory"
-    final static String RANDOM_SEED = "randomseed"
+    final static String RANDOM_SEED_USER_VALUE = "randomseedUserValue"
+    final static String RANDOM_SEED_USE_USER_DEFINED = "randomseedUseUserDefined"
 
     String getUserDirectory(String key)
     void setUserDirectory(String[] paths, String[] names)

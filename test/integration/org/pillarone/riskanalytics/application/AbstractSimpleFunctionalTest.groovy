@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -35,6 +36,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
     }
 
     protected void tearDown() {
+        MockUserPreferences.INSTANCE.clearFakePreferences()
         Thread cleanUpThread = new Thread(
                 [run: {
                     SimulationRun.withTransaction {
