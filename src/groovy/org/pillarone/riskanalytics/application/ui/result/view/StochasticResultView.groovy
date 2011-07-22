@@ -18,8 +18,9 @@ import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 class StochasticResultView extends ResultView {
 
@@ -29,7 +30,7 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
     EnumI18NComboBoxModel profitFunctionModel
-    UserPreferences userPreferences = new UserPreferences()
+    UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
     private int nextModelIndex = 0
     final static String FUNCTION_VALUE = "functionValue_"
 
@@ -138,11 +139,10 @@ class StochasticResultView extends ResultView {
         dataType.groupingUsed = false
         ULCTextField functionValue = new ULCTextField()
         functionValue.dataType = dataType
-        Object defaultValue = userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, new Double(99.5))
-        functionValue.value = defaultValue instanceof Double ? defaultValue : Double.valueOf(defaultValue)
+        functionValue.value = Double.valueOf(userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, "" + 99.5d))
         functionValue.columns = 6
         functionValue.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
-            userPreferences.putPropertyValue(FUNCTION_VALUE + model.model.name, functionValue.getValue())
+            userPreferences.putPropertyValue(FUNCTION_VALUE + model.model.name, "" + functionValue.getValue())
         }] as IValueChangedListener)
         profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
         ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)

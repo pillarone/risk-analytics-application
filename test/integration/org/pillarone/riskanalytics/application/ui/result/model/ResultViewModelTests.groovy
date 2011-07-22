@@ -14,8 +14,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.*
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 class ResultViewModelTests extends GroovyTestCase {
 
@@ -87,7 +88,7 @@ class ResultViewModelTests extends GroovyTestCase {
         List<ResultStructureDAO> structures = ResultStructureDAO.findAllByModelClassName(ApplicationModel.name)
         assertEquals(2, structures.size())
 
-        UserPreferences preferences = new UserPreferences()
+        UserPreferences preferences = UserPreferencesFactory.getUserPreferences()
         preferences.putPropertyValue("DEFAULT_VIEW" + model.name, structures[0].name)
 
         ResultViewModel resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)

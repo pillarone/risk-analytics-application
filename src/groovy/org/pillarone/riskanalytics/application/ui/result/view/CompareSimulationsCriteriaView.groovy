@@ -19,9 +19,10 @@ import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.getText
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 class CompareSimulationsCriteriaView {
 
@@ -264,7 +265,7 @@ class CompareSimulationsCriteriaView {
 class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
 
     List<T> items
-    UserPreferences userPreferences = new UserPreferences()
+    UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
     String itemPreferenceKey
 
     public ItemsComboBoxModel(List<T> items) {
@@ -299,7 +300,7 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
     @Override
     void setSelectedItem(Object object) {
         if (itemPreferenceKey && object) {
-            userPreferences.putPropertyValue(itemPreferenceKey, object)
+            userPreferences.putPropertyValue(itemPreferenceKey, "" + object)
         }
         super.setSelectedItem(object)
     }

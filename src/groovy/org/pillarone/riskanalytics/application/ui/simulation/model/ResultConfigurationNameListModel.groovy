@@ -3,7 +3,8 @@ package org.pillarone.riskanalytics.application.ui.simulation.model
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 
 import com.ulcjava.base.application.DefaultComboBoxModel
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 public class ResultConfigurationNameListModel extends DefaultComboBoxModel {
 
@@ -11,7 +12,7 @@ public class ResultConfigurationNameListModel extends DefaultComboBoxModel {
     UserPreferences userPreferences
 
     public ResultConfigurationNameListModel() {
-        userPreferences = new UserPreferences()
+        userPreferences = UserPreferencesFactory.getUserPreferences()
     }
 
     void load(Class modelClass) {

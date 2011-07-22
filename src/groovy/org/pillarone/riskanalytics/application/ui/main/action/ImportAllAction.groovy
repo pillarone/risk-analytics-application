@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.ULCWindow
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
@@ -12,7 +12,7 @@ import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.model.Model
 
 /**

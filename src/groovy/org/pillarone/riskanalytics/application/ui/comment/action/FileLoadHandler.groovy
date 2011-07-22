@@ -9,7 +9,8 @@ import org.pillarone.riskanalytics.core.FileConstants;
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -24,7 +25,7 @@ class FileLoadHandler implements IFileLoadHandler {
 
     void onSuccess(InputStream[] inputStreams, String[] paths, String[] names) {
         ExceptionSafe.protect {
-            new UserPreferences().setUserDirectory(UserPreferences.ADD_FILE_DIR, paths[0])
+            UserPreferencesFactory.getUserPreferences().setUserDirectory(UserPreferences.ADD_FILE_DIR, paths[0])
             String dir = FileConstants.COMMENT_FILE_DIRECTORY
             names.eachWithIndex {String fileName, int index ->
                 File file = new File(dir + File.separator + fileName)
