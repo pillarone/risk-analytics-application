@@ -200,16 +200,20 @@ class UIUtils {
     }
 
     public static String getUserInfo() {
-        if (UserManagement.isLoggedIn()) {
-            Person loggedUser = null
-            String userAuthorities = ""
-            Person.withTransaction {def status ->
-                loggedUser = UserContext.getCurrentUser()
-                List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
-                List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
-                userAuthorities = i18nAuthorities.join(", ")
+        try {
+            if (UserManagement.isLoggedIn()) {
+                Person loggedUser = null
+                String userAuthorities = ""
+                Person.withTransaction {def status ->
+                    loggedUser = UserContext.getCurrentUser()
+                    List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
+                    List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
+                    userAuthorities = i18nAuthorities.join(", ")
+                }
+                return loggedUser.username + " " + userAuthorities
             }
-            return loggedUser.username + " " + userAuthorities
+        } catch (Exception ex) {
+
         }
         return ""
     }

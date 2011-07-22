@@ -16,6 +16,12 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.application.border.ULCAbstractBorder
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  *  UI for the header of RiskAnalytics to show File menus and action buttons
@@ -57,6 +63,8 @@ class HeaderView extends AbstractView {
     ULCButton runButton
 
     ULCLabel lockedLabel
+    ULCComboBox userInfoComboBox
+    DefaultComboBoxModel userInfoComboBoxModel
 
     NavigationBarTopPane navigationBarTopPane
     ULCTableTree navigationTableTree
@@ -64,6 +72,8 @@ class HeaderView extends AbstractView {
     RiskAnalyticsMainModel model
     AbstractTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
+
+    Log LOG = LogFactory.getLog(HeaderView.class)
 
     public HeaderView(ULCTableTree navigationTableTree, RiskAnalyticsMainModel model) {
         this.navigationTableTree = navigationTableTree
@@ -142,8 +152,14 @@ class HeaderView extends AbstractView {
         //init labels
         lockedLabel = new ULCLabel()
         lockedLabel.text = null
-        lockedLabel.icon = UIUtils.getIcon("locked-active.png")//UIUtils.getIcon("clear.png")
+        lockedLabel.icon = UIUtils.getIcon("locked-active.png")
 
+        userInfoComboBoxModel = new DefaultComboBoxModel([UIUtils.getUserInfo(), UIUtils.getText(HeaderView.class, "Logout")])
+        userInfoComboBox = new ULCComboBox(userInfoComboBoxModel)
+        userInfoComboBox.setOpaque(false)
+        userInfoComboBox.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1))
+        userInfoComboBox.setMinimumSize(new Dimension(120, 20))
+        userInfoComboBox.setVisible(UserContext.isApplet())
     }
 
     void layoutComponents() {
@@ -187,13 +203,26 @@ class HeaderView extends AbstractView {
         navigationBarTopPane.init()
 
         rightToolBar.add(UIUtils.spaceAround(lockedLabel, 6, 3, 3, 3))
+        rightToolBar.add(UIUtils.spaceAround(userInfoComboBox, 6, 3, 3, 3))
 
         content.add(ULCBoxPane.BOX_EXPAND_TOP, toolBar)
         content.add(ULCBoxPane.BOX_RIGHT_TOP, rightToolBar)
         syncMenuBar()
     }
 
-    void attachListeners() {}
+    void attachListeners() {
+        userInfoComboBox.addActionListener([actionPerformed: {ActionEvent evt ->
+            if (userInfoComboBoxModel.getSelectedItem() == UIUtils.getText(HeaderView.class, "Logout")) {
+                String url = null
+                try {
+                    url = UserContext.getBaseUrl() + "/logout"
+                    ClientContext.showDocument(url, "_self")
+                } catch (Exception ex) {
+                    LOG.error("Logout error by calling $url : $ex")
+                }
+            }
+        }] as IActionListener)
+    }
 
     //todo fja refactoring to IEnabler
     public boolean syncMenuBar() {
@@ -202,9 +231,9 @@ class HeaderView extends AbstractView {
             runAction.enabled = !((model.currentItem instanceof SimulationUIItem) || (model.currentItem instanceof BatchUIItem))
             if (model.currentItem instanceof ParameterizationUIItem || model.currentItem instanceof ResultConfigurationUIItem) {
                 if (model.currentItem.isEditable()) {
-                    lockedLabel.icon = UIUtils.getIcon("locked-active.png")
-                } else {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")
+                } else {
+                    lockedLabel.icon = UIUtils.getIcon("locked-active.png")
                 }
             } else {
                 lockedLabel.icon = UIUtils.getIcon("clear.png")

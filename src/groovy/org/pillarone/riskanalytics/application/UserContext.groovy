@@ -6,6 +6,9 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.codehaus.groovy.grails.web.util.WebUtils
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
+
 
 class UserContext {
     private static final String SYSTEM_PROPERTY_STANDALONE_USERNAME = "standaloneUsername"
@@ -42,23 +45,15 @@ class UserContext {
     }
 
     public static Person getCurrentUser() {
-        // 
-//        if (UserContext.isStandAlone()) {
-//            String username = ClientContext.getSystemProperty(SYSTEM_PROPERTY_STANDALONE_USERNAME)
-//            if (! username) {
-//                LOG.info("Running in standalone mode -- to run with a given user, please provide System property "
-//                        + "${SYSTEM_PROPERTY_STANDALONE_USERNAME} such as -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}=actuary");
-//                return null
-//            }
-//            Person person = Person.findByUsername(username)
-//            if (person) {
-//                return person
-//            } else {
-//                LOG.error "Failed to lookup standalone username ${username} in the database as given by the setting -D${SYSTEM_PROPERTY_STANDALONE_USERNAME}, running with no user set"
-//                return UserManagement.getCurrentUser()
-//            }
-//        }
         return UserManagement.getCurrentUser()
+    }
+
+    public static String getBaseUrl() {
+        GrailsWebRequest grailsWebRequest = WebUtils.retrieveGrailsWebRequest()
+        String contextPath = grailsWebRequest.getCurrentRequest().contextPath
+        String requestURL = grailsWebRequest.getCurrentRequest().getRequestURL()
+        String uri = grailsWebRequest.getCurrentRequest().getRequestURI()
+        return requestURL.substring(0, requestURL.indexOf(uri)) + contextPath
     }
 
     public static void removeAttribute(String key) {
@@ -69,6 +64,11 @@ class UserContext {
     public static boolean isStandAlone() {
         int type = ClientContext.getClientEnvironmentType()
         return type != ClientContext.APPLET && type != ClientContext.JNLP
+    }
+
+    public static boolean isApplet() {
+        int type = ClientContext.getClientEnvironmentType()
+        return type == ClientContext.APPLET
     }
 
     public static void setUserTimeZone(TimeZone timeZone) {
