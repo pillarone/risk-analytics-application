@@ -14,15 +14,16 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.comment.action.FileStoreHandler
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class DownloadFileAction extends ResourceBasedAction {
 
     String fileURL
-    UserPreferences userPreferences = new UserPreferences()
+    UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
     ULCComponent source
     boolean open
     Log LOG = LogFactory.getLog(DownloadFileAction)

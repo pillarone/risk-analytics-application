@@ -13,7 +13,8 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -27,7 +28,7 @@ class AddFileToCommentAction extends ResourceBasedAction {
     public AddFileToCommentAction(NewCommentView newCommentView) {
         super("AddFileToCommentAction")
         this.newCommentView = newCommentView
-        userPreferences = new UserPreferences()
+        userPreferences = UserPreferencesFactory.getUserPreferences()
     }
 
     @Override

@@ -9,7 +9,8 @@ import com.ulcjava.base.shared.FileChooserConfig
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 public class ChangeResultLocationAction extends ResourceBasedAction {
 
@@ -22,7 +23,7 @@ public class ChangeResultLocationAction extends ResourceBasedAction {
         this.model = model;
         this.action = action
         enabled = false
-        userPreferences = new UserPreferences()
+        userPreferences = UserPreferencesFactory.getUserPreferences()
     }
 
     public void doActionPerformed(ActionEvent event) {

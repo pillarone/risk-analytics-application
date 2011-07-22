@@ -156,8 +156,8 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         param.selectItem "CoreMultiPeriodParameters"
 
         ULCCheckBoxOperator userDefinedSeed = new ULCCheckBoxOperator(frame, new ComponentByNameChooser("userDefinedRandomSeed"))
-        ULCTextFieldOperator randomSeed = new ULCTextFieldOperator(frame, new ComponentByNameChooser("randomSeed"))
         userDefinedSeed.clickMouse()
+        ULCTextFieldOperator randomSeed = new ULCTextFieldOperator(frame, new ComponentByNameChooser("randomSeed"))
         randomSeed.enterText("1234")
         modelStub.use {
             Simulation simulation = pane.model.getSimulation()

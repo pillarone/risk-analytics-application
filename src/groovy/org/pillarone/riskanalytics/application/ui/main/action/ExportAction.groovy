@@ -12,7 +12,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import org.springframework.transaction.TransactionStatus
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -32,12 +33,12 @@ abstract class ExportAction extends SelectionTreeAction {
 
     public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title) {
         super(title, tree, model)
-        userPreferences = new UserPreferences()
+        userPreferences = UserPreferencesFactory.getUserPreferences()
     }
 
     public ExportAction(String title) {
         super(title)
-        userPreferences = new UserPreferences()
+        userPreferences = UserPreferencesFactory.getUserPreferences()
     }
 
     protected void exportAll(List items) {

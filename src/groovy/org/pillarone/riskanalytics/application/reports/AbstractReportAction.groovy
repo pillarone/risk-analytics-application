@@ -1,24 +1,20 @@
 package org.pillarone.riskanalytics.application.reports
 
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.util.IFileStoreHandler
-import com.ulcjava.base.shared.FileChooserConfig
+import com.canoo.common.FileUtilities
+import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.ULCComponent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.util.UserPreferences
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.application.ui.comment.action.FileStoreHandler
-import com.ulcjava.base.application.util.DefaultFileStoreHandler
-import com.canoo.common.FileUtilities
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractReportAction extends SelectionTreeAction {
-    protected UserPreferences userPreferences = new UserPreferences()
+    protected UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
 
     Log LOG = LogFactory.getLog(AbstractReportAction)
 
