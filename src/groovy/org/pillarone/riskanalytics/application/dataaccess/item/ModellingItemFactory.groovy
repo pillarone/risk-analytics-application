@@ -44,7 +44,7 @@ class ModellingItemFactory {
 
     static List getParameterizationsForModel(Class modelClass) {
         ParameterizationDAO.withTransaction { status ->
-            ParameterizationDAO.findAllByModelClassName(modelClass.name).collect {
+            ParameterizationDAO.findAllByModelClassName(modelClass.name, [sort: "name"]).collect {
                 getItem(it, modelClass)
             }
         }
@@ -194,7 +194,7 @@ class ModellingItemFactory {
 
     static List getResultConfigurationsForModel(Class modelClass) {
         ResultConfigurationDAO.withTransaction { status ->
-            ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
+            ResultConfigurationDAO.findAllByModelClassName(modelClass.name, [sort: "name"]).collect {
                 getItem(it, modelClass)
             }
         }
