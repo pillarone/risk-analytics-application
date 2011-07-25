@@ -245,10 +245,10 @@ class HeaderView extends AbstractView {
 
     }
 
-    void modelAdded(Model model, RiskAnalyticsMainView mainView) {
+    void modelAdded(Model model, CardPaneManager cardPaneManager) {
         String name = WindowSelectionAction.getMenuName(model)
         if (windowMenus[name]) return
-        ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new WindowSelectionAction(model, mainView))
+        ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new WindowSelectionAction(model, cardPaneManager))
         item.setGroup(windowMenuItemGroup)
         windowMenu.add(item)
         windowMenus[name] = item

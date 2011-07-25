@@ -22,18 +22,18 @@ import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModel
 
 class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
-    ULCBoxPane content
-    ULCBoxPane treePane
-    ULCCardPane modelPane
+    private ULCBoxPane content
+    private ULCBoxPane treePane
+    private ULCCardPane modelPane
 
     //header
     private HeaderView headerView
     //left view
     private SelectionTreeView navigationView
     //content
-    CardPaneManager cardPaneManager
+    private CardPaneManager cardPaneManager
 
-    RiskAnalyticsMainModel mainModel
+    private RiskAnalyticsMainModel mainModel
 
     Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
@@ -45,11 +45,9 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         content = new ULCBoxPane(2, 0)
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
-        cardPaneManager = new CardPaneManager(modelPane)
+        cardPaneManager = new CardPaneManager(modelPane, mainModel)
         navigationView = new SelectionTreeView(mainModel)
         headerView = new HeaderView(navigationView.getSelectionTree(), mainModel)
-
-
     }
 
     void layoutComponents() {
@@ -87,7 +85,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     void openDetailView(Model model, AbstractUIItem item) {
         item.addModellingItemChangeListener(this)
-        cardPaneManager.openItem(model, item, mainModel)
+        cardPaneManager.openItem(model, item)
         //todo notify Enabler instead of syncMenuBar
         headerView.syncMenuBar()
         //update window menu
@@ -118,7 +116,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void modelAdded(Model model) {
-        headerView.modelAdded(model, this)
+        headerView.modelAdded(model, cardPaneManager)
     }
 
     public void setWindowTitle(AbstractUIItem abstractUIItem) {
@@ -126,14 +124,12 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         window.title = "Risk Analytics - ${abstractUIItem ? abstractUIItem.getWindowTitle() : ''}"
     }
 
-
-
-    private boolean isChanged(AbstractUIItem abstractUIItem) {
-        return abstractUIItem.changeable && abstractUIItem.item.isChanged()
-    }
-
     ULCMenuBar getMenuBar() {
         return headerView.menuBar
+    }
+
+    ULCBoxPane getContent() {
+        return content
     }
 
     void itemChanged(ModellingItem item) {
