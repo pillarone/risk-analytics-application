@@ -24,8 +24,8 @@ class ApplicationBootStrap {
         }
 
         // PMO-1752: Clear the views (structure_mapping, result_structuredao) on startup
-        StructureMapping.list()*.delete()
-        ResultStructureDAO.list()*.delete()
+//        StructureMapping.list()*.delete()
+//        ResultStructureDAO.list()*.delete()
 
         new ResultStructureImportService().compareFilesAndWriteToDB(models)
         ResultStructureImportService.importDefaults()
