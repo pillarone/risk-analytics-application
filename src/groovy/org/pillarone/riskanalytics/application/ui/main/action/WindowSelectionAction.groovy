@@ -4,21 +4,24 @@ import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.main.view.CardPaneManager
+import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 
 class WindowSelectionAction extends ExceptionSafeAction {
 
     RiskAnalyticsMainView mainView
     Model model
+    private CardPaneManager cardPaneManager
 
-    def WindowSelectionAction(Model model, RiskAnalyticsMainView mainView) {
+    def WindowSelectionAction(Model model, CardPaneManager cardPaneManager) {
         super(getMenuName(model));
-        this.mainView = mainView
         this.model = model
+        this.cardPaneManager = cardPaneManager
     }
 
     public void doActionPerformed(ActionEvent event) {
-        mainView.cardPaneManager.selectCard(model)
-        mainView.cardPaneManager.selectCurrentItemFromTab(model, mainView.cardPaneManager.getSelectedCard(), mainView.mainModel)
+        cardPaneManager.selectCard(model)
+        cardPaneManager.selectCurrentItemFromTab(model, (ULCCloseableTabbedPane)cardPaneManager.getSelectedCard())
     }
 
     static String getMenuName(Model model) {

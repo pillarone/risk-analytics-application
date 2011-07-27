@@ -12,12 +12,12 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
     ITableTreeModel model
     ITableTreeFilter filter
     FilterTableTreeNode filteredRoot
-    def nodeMapping = [:]
+    Map<ITableTreeNode, FilterTableTreeNode> nodeMapping = [:]
 
     public FilteringTableTreeModel(ITableTreeModel model, ITableTreeFilter filter) {
         this.@model = model
         this.@filter = filter
-        filteredRoot = new FilterTableTreeNode(originalNode: model.root)
+        filteredRoot = new FilterTableTreeNode(originalNode: (ITableTreeNode)model.root)
         applyFilter()
         this.@model.addTableTreeModelListener this
     }
@@ -28,11 +28,11 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
     }
 
     public void applyFilter() {
-        synchronizeFilteredTree(model.root, filteredRoot)
+        synchronizeFilteredTree((ITableTreeNode)model.root, filteredRoot)
     }
 
     protected void reapplyFilter() {
-        synchronizeFilteredTree(model.root, filteredRoot)
+        synchronizeFilteredTree((ITableTreeNode)model.root, filteredRoot)
     }
 
     private void synchronizeTreePath(TreePath path) {
@@ -42,7 +42,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
     }
 
     private def findValidSynchronizationStart(TreePath path) {
-        Object node = path.lastPathComponent
+        ITableTreeNode node = (ITableTreeNode)path.lastPathComponent
         while (!(nodeMapping[node] && isAcceptedNode(node)) && node.parent != null) {
             node = node.parent
         }
@@ -81,7 +81,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
 
         def iterator = filteredNode.childNodes.iterator()
         while (iterator.hasNext()) {
-            def filteredChildNode = iterator.next()
+            FilterTableTreeNode filteredChildNode = iterator.next()
             if (node.getIndex(filteredChildNode.originalNode) < 0) {
                 removeFilteredChildNode(filteredChildNode, iterator)
             }
@@ -128,7 +128,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
      * @param node the node to get the path for
      * @return the path to the root
      */
-    public static ITableTreeNode[] getPathToRoot(ITableTreeNode node) {
+    private ITableTreeNode[] getPathToRoot(ITableTreeNode node) {
         List result = new ArrayList();
         result.add(node);
         while (node.getParent() != null) {
@@ -260,8 +260,8 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
 class FilterTableTreeNode {
 
     FilterTableTreeNode parent
-    List childNodes
-    List activeIndices
+    List<FilterTableTreeNode> childNodes
+    List<Integer> activeIndices
     int originalChildIndex
     ITableTreeNode originalNode
 

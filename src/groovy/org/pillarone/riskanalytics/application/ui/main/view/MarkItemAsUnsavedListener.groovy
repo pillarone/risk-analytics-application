@@ -1,18 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
-import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.*
 import com.ulcjava.base.application.ULCTabbedPane
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
-    ULCTabbedPane tabbedPane
+    private ULCTabbedPane tabbedPane
     static String UNSAVED_MARK = " *"
-    TabbedPaneManager tabbedPaneManager
-    AbstractUIItem abstractUIItem
+    private TabbedPaneManager tabbedPaneManager
+    private AbstractUIItem abstractUIItem
 
     public MarkItemAsUnsavedListener(TabbedPaneManager tabbedPaneManager, ULCTabbedPane tabbedPane, AbstractUIItem abstractUIItem) {
         this.tabbedPaneManager = tabbedPaneManager

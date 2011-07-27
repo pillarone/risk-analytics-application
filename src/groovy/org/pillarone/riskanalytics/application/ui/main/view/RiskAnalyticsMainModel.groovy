@@ -26,16 +26,13 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulatio
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
-    List<AbstractUIItem> openItems
     Map<AbstractUIItem, Object> viewModelsInUse
     AbstractTableTreeModel navigationTableTreeModel
-    ULCPollingTimer pollingBatchSimulationTimer
-    PollingBatchSimulationAction pollingBatchSimulationAction
     def switchActions = []
-    private List modelListeners = []
-    List batchTableListeners = []
-    List modelItemlisteners = []
-    List<INewSimulationListener> newSimulationListeners = []
+    private List<IRiskAnalyticsModelListener> modelListeners = []
+    private List<BatchTableListener> batchTableListeners = []
+    private List<IModelItemChangeListener> modelItemlisteners = []
+    private List<INewSimulationListener> newSimulationListeners = []
     //selectedItem needs to be updated when tabs are changed etc.
     @Bindable AbstractUIItem currentItem
 
@@ -159,7 +156,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     void addModelListener(IRiskAnalyticsModelListener listener) {
-        if (!modelItemlisteners.contains(listener))
+        if (!modelListeners.contains(listener))
             modelListeners << listener
     }
 
@@ -229,7 +226,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             pollingBatchSimulationAction = new PollingBatchSimulationAction()
         try {
             pollingBatchSimulationAction.addSimulationListener this
-            pollingBatchSimulationTimer = new ULCPollingTimer(2000, pollingBatchSimulationAction)
+            ULCPollingTimer pollingBatchSimulationTimer = new ULCPollingTimer(2000, pollingBatchSimulationAction)
             pollingBatchSimulationTimer.repeats = true
             pollingBatchSimulationTimer.syncClientState = false
             pollingBatchSimulationTimer.start()

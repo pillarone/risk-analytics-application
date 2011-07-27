@@ -22,7 +22,8 @@ class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
     @Override
     ULCComponent createContentPane() {
         ULCCardPane cardPane = new ULCCardPane()
-        CardPaneManager cardPaneManager = new CardPaneManager(cardPane)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(null)
+        CardPaneManager cardPaneManager = new CardPaneManager(cardPane, mainModel)
         Model core = new CoreModel()
         Model application = new ApplicationModel()
 
@@ -33,15 +34,14 @@ class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
         Closure closeure2 = { event ->  }
 
         //test add card
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(null)
-        cardPaneManager.addCard(core, mainModel)
+        cardPaneManager.addCard(core)
 
         assertEquals "Core", cardPaneManager.cardPane.getSelectedName()
 
         assertTrue "pane manager must contain CORE", cardPaneManager.contains(core)
         assertFalse "pane manager doesn't contain APPLICATION", cardPaneManager.contains(application)
 
-        cardPaneManager.addCard(application, mainModel)
+        cardPaneManager.addCard(application)
         assertTrue "pane manager must contain APPLICATION", cardPaneManager.contains(application)
 
         assertEquals "Application", cardPaneManager.cardPane.getSelectedName()
@@ -58,7 +58,7 @@ class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
 
         //add batch card
         assertEquals 1, cardPane.getComponentCount()
-        cardPaneManager.addCard(null, mainModel)
+        cardPaneManager.addCard(null)
         assertEquals 2, cardPane.getComponentCount()
 
         assertEquals CardPaneManager.NO_MODEL, cardPane.getSelectedName()

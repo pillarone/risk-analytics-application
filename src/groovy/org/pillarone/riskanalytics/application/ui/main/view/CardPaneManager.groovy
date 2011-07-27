@@ -14,20 +14,18 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
-import com.ulcjava.base.application.ULCAlert
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.event.IWindowListener
 
 class CardPaneManager {
 
     private ULCCardPane cardPane
     private Map<String, TabbedPaneManager> tabbedPaneManagers = [:]
+    private RiskAnalyticsMainModel mainModel
     public static final String NO_MODEL = "NO_MODEL"
     Log LOG = LogFactory.getLog(CardPaneManager)
 
-    public CardPaneManager(ULCCardPane cardPane) {
+    public CardPaneManager(ULCCardPane cardPane, RiskAnalyticsMainModel mainModel) {
         this.cardPane = cardPane
+        this.mainModel = mainModel
     }
 
     /**
@@ -36,8 +34,8 @@ class CardPaneManager {
      * A TabbedPaneManager needs to be created here as well.
      * @param model
      */
-    void addCard(Model selectedModel, RiskAnalyticsMainModel mainModel) {
-        ULCTabbedPane modelCardContent = createDetachableTabbedPane(selectedModel, mainModel)
+    void addCard(Model selectedModel) {
+        ULCTabbedPane modelCardContent = createDetachableTabbedPane(selectedModel)
         cardPane.addCard(getModelName(selectedModel), modelCardContent)
         Closure closeAction = { event -> closeCard(selectedModel, modelCardContent, modelCardContent.getSelectedIndex()) }
 
@@ -72,9 +70,9 @@ class CardPaneManager {
      *  switching cards may be required, then delegate to TabbedPaneManager
      * @param item
      */
-    void openItem(Model selectedModel, AbstractUIItem item, RiskAnalyticsMainModel mainModel) {
+    void openItem(Model selectedModel, AbstractUIItem item) {
         if (!selectCard(selectedModel)) {
-            addCard(selectedModel, mainModel)
+            addCard(selectedModel)
         }
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(selectedModel))
         if (tabbedPaneManager.tabExists(item)) {
@@ -104,7 +102,7 @@ class CardPaneManager {
             removeCard(model)
     }
 
-    public ULCTabbedPane createDetachableTabbedPane(Model selectedModel, RiskAnalyticsMainModel mainModel) {
+    public ULCTabbedPane createDetachableTabbedPane(Model selectedModel) {
         ULCTabbedPane tabbedPane = new ULCDetachableTabbedPane(name: "DetachableTabbedPane")
         tabbedPane.addTabListener([tabClosing: {TabEvent event ->
             int closingIndex = event.getTabClosingIndex()
@@ -112,13 +110,13 @@ class CardPaneManager {
             ULCCloseableTabbedPane modelCardContent = event.getClosableTabbedPane()
             closeCard(selectedModel, modelCardContent, closingIndex)
         }] as ITabListener)
-        Closure syncCurrentItem = {e -> selectCurrentItemFromTab(selectedModel, e.source, mainModel)}
+        Closure syncCurrentItem = {e -> selectCurrentItemFromTab(selectedModel, e.source)}
         tabbedPane.selectionChanged = syncCurrentItem
         tabbedPane.focusGained = syncCurrentItem
         return tabbedPane
     }
 
-    public void selectCurrentItemFromTab(Model selectedModel, ULCCloseableTabbedPane modelCardContent, RiskAnalyticsMainModel mainModel) {
+    public void selectCurrentItemFromTab(Model selectedModel, ULCCloseableTabbedPane modelCardContent) {
         try {
             TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(selectedModel))
             if (tabbedPaneManager) {
