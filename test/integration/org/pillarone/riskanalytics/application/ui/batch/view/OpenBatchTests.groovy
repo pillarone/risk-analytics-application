@@ -33,8 +33,8 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         BatchRunSimulationRun.withTransaction {TransactionStatus status ->
             BatchRun batchRun = new BatchRun(name: "test", executionTime: new DateTime())
             batchRun.save(flush: true)
-            ParameterizationDAO dao = ParameterizationDAO.list()[0]
-            ResultConfigurationDAO configurationDAO = ResultConfigurationDAO.list()[0]
+            ParameterizationDAO dao = ParameterizationDAO.findByNameAndItemVersion("CoreAlternativeParameters", "1")
+            ResultConfigurationDAO configurationDAO = ResultConfigurationDAO.findByNameAndItemVersion("CoreResultConfiguration", "1")
             run = new SimulationRun(name: "run")
             run.parameterization = dao
             run.resultConfiguration = configurationDAO
