@@ -23,6 +23,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTable
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -214,7 +216,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     ModellingUIItem getAbstractUIItem(ModellingItem modellingItem) {
         ModellingUIItem item = null
         viewModelsInUse.keySet().findAll {it instanceof ModellingUIItem}.each {ModellingUIItem openedUIItem ->
-            if (modellingItem.id == openedUIItem.item.id) {
+            if (modellingItem.class == openedUIItem.item.class && modellingItem.id == openedUIItem.item.id) {
                 item = openedUIItem
             }
         }
@@ -233,7 +235,22 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         } catch (NullPointerException ex) {}
     }
 
+    //set open parameterizations read only when starting a simulation
     public void simulationStart(Simulation simulation) {
+        final ModellingUIItem parameterization = getAbstractUIItem(simulation.parameterization)
+        if (parameterization != null) {
+            final ParameterViewModel parameterViewModel = viewModelsInUse[parameterization]
+            if (parameterViewModel != null) {
+                parameterViewModel.readOnly = true
+            }
+        }
+        final ModellingUIItem resultConfiguration = getAbstractUIItem(simulation.template)
+        if (resultConfiguration != null) {
+            final ResultConfigurationViewModel resultConfigurationViewModel = viewModelsInUse[resultConfiguration]
+            if (resultConfigurationViewModel != null) {
+                resultConfigurationViewModel.readOnly = true
+            }
+        }
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
