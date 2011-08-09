@@ -20,7 +20,7 @@ grails.project.dependency.resolution = {
 
     resolver ulcClientJarResolver
 
-    mavenRepo "https://build.intuitive-collaboration.com/maven/plugins/"
+    mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
 
     String ulcVersion = "ria-suite-u2"
 
@@ -57,18 +57,20 @@ grails.project.dependency.resolution = {
 }
 
 grails.project.dependency.distribution = {
-    String passPhrase = ""
+    String password = ""
+    String user = ""
     String scpUrl = ""
     try {
         Properties properties = new Properties()
         properties.load(new File("${userHome}/deployInfo.properties").newInputStream())
 
-        passPhrase = properties.get("passPhrase")
+        user = properties.get("user")
+        password = properties.get("password")
         scpUrl = properties.get("url")
     } catch (Throwable t) {
     }
     remoteRepository(id: "pillarone", url: scpUrl) {
-        authentication username: 'root', privateKey: "${userHome.absolutePath}/.ssh/id_rsa", passphrase: passPhrase
+        authentication username: user, password: password
     }
 }
 
