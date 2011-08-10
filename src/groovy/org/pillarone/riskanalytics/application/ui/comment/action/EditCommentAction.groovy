@@ -18,8 +18,12 @@ class EditCommentAction extends AbstractCommentAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        commentListeners.each {CommentListener commentListener ->
-            commentListener.editCommentView(comment)
+        if (enablingClosure.call()) {
+            commentListeners.each {CommentListener commentListener ->
+                commentListener.editCommentView(comment)
+            }
+        } else {
+            setEnabled(false)
         }
     }
 

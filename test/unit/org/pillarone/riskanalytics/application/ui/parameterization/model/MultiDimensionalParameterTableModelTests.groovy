@@ -59,7 +59,7 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         MultiDimensionalParameterTableModel model = new MultiDimensionalParameterTableModel(new SimpleMultiDimensionalParameter([[1, 2, 3], [4, 5]]))
         assertEquals([[1, 2, 3], [4, 5]], model.currentValues())
         model = new MultiDimensionalParameterTableModel(new SimpleMultiDimensionalParameter([1, 2, 3]))
-        assertEquals([1, 2, 3], model.currentValues())
+        assertEquals([[1, 2, 3]], model.currentValues())
     }
 
     void testSetValueAt() {

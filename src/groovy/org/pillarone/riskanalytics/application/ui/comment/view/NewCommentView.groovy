@@ -3,14 +3,21 @@ package org.pillarone.riskanalytics.application.ui.comment.view
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.core.FileConstants;
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
+import org.pillarone.riskanalytics.application.ui.comment.action.AddFileToCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
@@ -23,16 +30,29 @@ class NewCommentView {
     ULCTextArea commentTextArea
     ULCList tags
     ULCButton addButton
+    ULCButton addFileButton
     ULCButton cancelButton
     final Dimension dimension = new Dimension(140, 20)
     int periodIndex
     String path
     static int MAX_CHARS = 4080
-    final static String POST_LOCKING = "post locking"
 
-    ParameterViewModel model;
+
+    AbstractCommentableItemModel model;
     protected CommentAndErrorView commentAndErrorView
     ItemListModel<Tag> tagListModel
+    AddFileToCommentAction addFileToCommentAction
+    List<String> addedFiles = []
+    ULCBoxPane addedFilesPane
+    ULCLabel addedFilesLabel
+    Log LOG = LogFactory.getLog(NewCommentView)
+
+    final static String POST_LOCKING = "post locking"
+    final static String SHARED_COMMENTS = "shared comment"
+    final static String VERSION_COMMENT = "version"
+    final static String REPORT = "report"
+
+    public NewCommentView() {}
 
     public NewCommentView(CommentAndErrorView commentAndErrorView) {
         this.commentAndErrorView = commentAndErrorView
@@ -44,15 +64,22 @@ class NewCommentView {
         this(commentAndErrorView)
         this.periodIndex = periodIndex
         this.path = path
-        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), getAllTags())
 
         initComponents()
         layoutComponents()
         attachListeners()
     }
 
+    public void init() {
+        initComponents()
+        layoutComponents()
+        attachListeners()
+    }
+
     protected void initComponents() {
-        commentTextArea = new ULCTextArea(5, 65)
+        commentTextArea = new ULCTextArea(5, 45)
+        commentTextArea.setMinimumSize(new Dimension(200, 160))
+        commentTextArea.setMaximumSize(new Dimension(400, 160))
         commentTextArea.name = "newCommentText"
         commentTextArea.lineWrap = true
         commentTextArea.wrapStyleWord = true
@@ -66,16 +93,28 @@ class NewCommentView {
         addButton.name = "saveNewComment"
         addButton.setPreferredSize(dimension)
 
+        addFileToCommentAction = new AddFileToCommentAction(this)
+        addFileButton = new ULCButton(addFileToCommentAction)
+        addFileButton.name = "addFileButton"
+        addFileButton.setPreferredSize(dimension)
+
+        addedFilesPane = new ULCBoxPane(2, 0)
+        addedFilesPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewCommentView, "addedFiles") + ": "))
+        addedFilesLabel = new ULCLabel("-")
+        addedFilesPane.add(addedFilesLabel)
+
         cancelButton = new ULCButton(UIUtils.getText(NewCommentView.class, "Cancel"))
         cancelButton.name = "cancelComment"
         cancelButton.setPreferredSize(dimension)
         content = new ULCBoxPane(3, 3)
-        content.setPreferredSize(new Dimension(400, 160))
         content.setMinimumSize(new Dimension(400, 160))
-        String borderTitle = getDisplayPath() + ((periodIndex == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + periodIndex)
-        final ULCTitledBorder border = BorderFactory.createTitledBorder(borderTitle);
+        final ULCTitledBorder border = BorderFactory.createTitledBorder(getContentBorderTitle());
         border.setTitleFont(border.getTitleFont().deriveFont(Font.PLAIN));
         content.setBorder(border);
+    }
+
+    String getContentBorderTitle() {
+        return getDisplayPath() + ((periodIndex == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + periodIndex)
     }
 
     protected void layoutComponents() {
@@ -83,40 +122,29 @@ class NewCommentView {
         ULCScrollPane scrollList = new ULCScrollPane(tags)
         content.add(ULCBoxPane.BOX_LEFT_TOP, UIUtils.spaceAround(scrollList, 5, 0, 0, 0))
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
-        content.add(ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
-        content.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
+        content.add(3, ULCBoxPane.BOX_LEFT_TOP, addedFilesPane)
+        content.add(2, ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
+        content.add(1, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
+
         content.add(3, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller());
     }
 
     protected ULCBoxPane getButtonsPane() {
-        ULCBoxPane pane = new ULCBoxPane(2, 1)
+        ULCBoxPane pane = new ULCBoxPane(3, 1)
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, addFileButton)
         pane.add(ULCBoxPane.BOX_LEFT_TOP, addButton)
         pane.add(ULCBoxPane.BOX_LEFT_BOTTOM, cancelButton)
         return pane
     }
 
-    protected Comment createComment(String path, int periodIndex) {
+    protected Comment createComment(String path, int periodIndex, String function = null) {
         return new Comment(path, periodIndex)
     }
 
     protected void attachListeners() {
         addButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            String text = commentTextArea.getText()
-            if (text && text.length() > 0 && text.length() < MAX_CHARS) {
-                Comment comment = createComment(path, periodIndex)
-                comment.lastChange = new DateTime()
-                comment.comment = commentTextArea.getText()
-                tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
-                    comment.addTag(tag)
-                }
-                addPostLockingTag(comment)
-                model.addComment(comment)
-                commentAndErrorView.closeTab()
-            } else if (text && text.length() > MAX_CHARS) {
-                new I18NAlert("CommentTooLong").show()
-            } else {
-                new I18NAlert("CommentIsNull").show()
-            }
+            addCommentToItem(path, periodIndex)
+            commentAndErrorView.closeTab()
         }] as IActionListener)
 
         cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
@@ -125,8 +153,29 @@ class NewCommentView {
 
     }
 
+    protected void addCommentToItem(String path, int periodIndex, String function = null) {
+        String text = commentTextArea.getText()
+        if (text && text.length() > 0 && text.length() < MAX_CHARS) {
+            Comment comment = createComment(path, periodIndex, function)
+            comment.files = addedFiles as Set
+            comment.lastChange = new DateTime()
+            comment.comment = commentTextArea.getText()
+            tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
+                comment.addTag(tag)
+            }
+            addPostTag(comment)
+            model.addComment(comment)
+            saveComments(model.item)
+
+        } else if (text && text.length() > MAX_CHARS) {
+            new I18NAlert("CommentTooLong").show()
+        } else {
+            new I18NAlert("CommentIsNull").show()
+        }
+    }
+
     public static List getAllTags() {
-        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ? and t.tagType =?", [POST_LOCKING, EnumTagType.COMMENT])
+        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ? and t.name != ? and t.tagType =?", [POST_LOCKING, SHARED_COMMENTS, EnumTagType.COMMENT])
     }
 
     String getDisplayPath() {
@@ -137,12 +186,44 @@ class NewCommentView {
      * add post locking only for comment
      * @param comment
      */
-    protected void addPostLockingTag(Comment comment) {
-        if (comment.class.isAssignableFrom(Comment) && model.isReadOnly()) {
+    protected void addPostTag(Comment comment) {
+        if ((model instanceof ParameterViewModel) && comment.class.isAssignableFrom(Comment) && model.isReadOnly()) {
             Tag postLocking = Tag.findByName(POST_LOCKING)
-            comment.addTag(postLocking)
+            if (!comment.tags.contains(postLocking))
+                comment.addTag(postLocking)
         }
     }
 
+    protected void saveComments(Simulation simulation) {
+        simulation.save()
+    }
 
+    protected void saveComments(def item) {
+    }
+
+    public fileAdded(String fileName) {
+        if (addedFiles.contains(fileName)) return
+        addedFiles << fileName
+        ULCLabel label = new ULCLabel(fileName)
+        addedFilesPane.add(label)
+        ULCButton removeFileButton = new ULCButton(UIUtils.getIcon("cancel.png"))
+        removeFileButton.name = "removeFileButton"
+        removeFileButton.setContentAreaFilled false
+        removeFileButton.setBackground Color.white
+        removeFileButton.setOpaque false
+        removeFileButton.setToolTipText(UIUtils.getText(NewCommentView, "removeFile", [fileName]))
+        removeFileButton.addActionListener([actionPerformed: {ActionEvent event ->
+            addedFiles.remove(fileName)
+            addedFilesPane.remove(label)
+            addedFilesPane.remove(removeFileButton)
+            String dir = FileConstants.COMMENT_FILE_DIRECTORY
+            try {
+                File file = new File(dir + File.separator + fileName)
+                if (file.exists()) file.delete()
+            } catch (Exception ex) {
+                LOG.error " Error occured during delete of ${dir + File.separator + fileName} : ${ex}"
+            }
+        }] as IActionListener)
+        addedFilesPane.add(removeFileButton)
+    }
 }

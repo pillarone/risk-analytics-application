@@ -1,3 +1,4 @@
+<%@ page import="org.codehaus.groovy.grails.commons.ConfigurationHolder" %>
 <%@ page contentType="application/x-java-jnlp-file" language="java" %>
 <%
     //Idea from http://lopica.sourceforge.net/faq.html#relcodebase
@@ -18,7 +19,7 @@
     //strip file / action name, results in the virtual location of the application or plugin
     requestURI = requestURI.substring(0, requestURI.lastIndexOf('/'));
 
-    if(requestURI.startsWith(contextPath)) {
+    if (requestURI.startsWith(contextPath)) {
         requestURI = requestURI.substring(contextPath.length());
     }
     StringBuffer appPluginDir = new StringBuffer(".");
@@ -26,6 +27,9 @@
     if (requestURI.contains("plugins")) {
         appPluginDir.append("/plugins/").append(requestURI.substring(requestURI.lastIndexOf('/')));
     }
+
+    String sessionPrefix = ConfigurationHolder.getConfig().containsKey("serverSessionPrefix") ? (String) ConfigurationHolder.getConfig().get("serverSessionPrefix") : ";jsessionid=";
+    String sessionId = sessionPrefix + session.getId();
 %>
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <jnlp spec="1.0+" codebase="<%= codebaseBuffer.toString() %>">
@@ -58,7 +62,7 @@
     </resources>
 
     <application-desc main-class="org.pillarone.riskanalytics.application.environment.jnlp.P1RATJNLPLauncher">
-        <argument>url-string=<%= codebaseBuffer.toString() %>/ulcServerEndpoint/gate</argument>
+        <argument>url-string=<%= codebaseBuffer.toString() %>/ulcServerEndpoint/gate<%= sessionId %></argument>
         <argument>keep-alive-interval=60</argument>
         <argument>log-level=WARNING</argument>
         <argument>ViewFactory=org.pillarone.riskanalytics.application.environment.jnlp.P1RATFrameViewFactory</argument>

@@ -21,7 +21,7 @@ public class TreeNodeRename extends TreeNodeAction {
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }
 
-    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree) {
+    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments) {
         if (model.paramterTableTreeModel.readOnly) return
         String oldPath = getPathName(node.parent, "${node.name}")
         String newPath = getPathName(node.parent, "$newName")
@@ -34,7 +34,7 @@ public class TreeNodeRename extends TreeNodeAction {
             model.item.addComment(newComment)
         }
 
-        List<String> modifiedReferencePaths = ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath)
+        List<String> modifiedReferencePaths = ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath, node.component)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
         tree.model.addComponentNode(node.parent, component)

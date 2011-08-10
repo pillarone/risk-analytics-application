@@ -16,6 +16,17 @@ import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBea
 import org.pillarone.riskanalytics.application.reports.bean.ReportWaterfallDataBean
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.jfree.data.xy.XYSeries
+import org.jfree.data.xy.XYSeriesCollection
+import java.awt.BasicStroke
+import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
+import org.jfree.ui.RectangleEdge
+import org.jfree.ui.HorizontalAlignment
+import org.jfree.chart.title.LegendTitle
+import org.jfree.chart.title.TextTitle
+import java.awt.Font
+import org.jfree.data.Range
+import org.pillarone.riskanalytics.application.util.ReportUtils
 
 class JasperChartUtils {
 
@@ -29,7 +40,7 @@ class JasperChartUtils {
         JFreeChart chart = ChartFactory.createWaterfallChart(
                 "",
                 "",
-                "[in 1000 EUR]",
+                "[in currency units]",
                 dataset,
                 PlotOrientation.VERTICAL,
                 false,
@@ -45,6 +56,38 @@ class JasperChartUtils {
 
         CategoryAxis domainAxis = chart.getPlot().getDomainAxis();
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        return new JCommonDrawableRenderer(chart)
+    }
+
+    public static JCommonDrawableRenderer generatePDFChart(Map seriesMap, Map colorsMap) {
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        JFreeChart chart = ChartFactory.createXYLineChart("", "[in currency units]", "", dataset, PlotOrientation.VERTICAL, true, true, false);
+        int seriesIndex = 0
+        List maxYs = []
+        seriesMap.each {String title, List xyPairs ->
+            maxYs << ReportUtils.maxYValue(xyPairs)
+            XYSeries series = new XYSeries(title);
+            xyPairs.each {List xyPair ->
+                series.add(xyPair[0], xyPair[1])
+
+            }
+            dataset.addSeries(series)
+
+            BasicStroke thickLine = new BasicStroke(ChartViewModel.chartLineThickness)
+            chart.getPlot().getRenderer(0).setSeriesStroke(seriesIndex, thickLine)
+            chart.getPlot().getRenderer(0).setSeriesPaint seriesIndex, colorsMap.get(title)
+            seriesIndex++
+        }
+
+        double yMaxValue = ReportUtils.getMaxValue(maxYs)
+        chart.getXYPlot().getRangeAxis().setRange(0.0, yMaxValue + (0.1 * yMaxValue))
+        chart.setBackgroundPaint(Color.WHITE)
+        chart.setTitle(new TextTitle("Probabillity Density (Adaptive Gauss Kernel Estimate)", new Font("Verdana", Font.PLAIN, 10)))
+        LegendTitle legend = chart.getLegend();
+        legend.setPosition(RectangleEdge.BOTTOM);
+        legend.setHorizontalAlignment(HorizontalAlignment.LEFT);
+        legend.setMargin 5, 50, 5, 5
+        legend.setBorder(0, 0, 0, 0)
         return new JCommonDrawableRenderer(chart)
     }
 

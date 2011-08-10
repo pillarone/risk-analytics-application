@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
+        "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport name="CERSub_WaterfallOverview"
+              language="groovy" columnCount="1"
+              printOrder="Vertical"
+              pageWidth="842" pageHeight="595"
+              orientation="Landscape"
+              columnWidth="240"
+              columnSpacing="0"
+              leftMargin="0"
+              rightMargin="0"
+              topMargin="20"
+              bottomMargin="0"
+              whenNoDataType="AllSectionsNoDetail"
+              isTitleNewPage="false"
+              isSummaryNewPage="false">
+    <property name="ireport.scriptlethandling" value="0"/>
+    <property name="ireport.encoding" value="UTF-8"/>
+    <import value="java.util.*"/>
+    <import value="net.sf.jasperreports.engine.*"/>
+    <import value="net.sf.jasperreports.engine.data.*"/>
+
+    <parameter name="ReturnedValuesMap" class="java.util.Map"/>
+    <parameter name="pageTitle" class="java.lang.String"/>
+
+    <field name="waterfallChart" class="net.sf.jasperreports.renderers.JCommonDrawableRenderer"/>
+
+
+    <variable name="SERIES_NAME" class="java.lang.String" resetType="Report" calculation="Nothing">
+    </variable>
+    <background>
+    </background>
+    <title>
+        <band height="380" isSplitAllowed="true">
+            <elementGroup>
+                <!-- watertfall  chart-->
+                <image evaluationTime="Page" hyperlinkType="None" hyperlinkTarget="Self" scaleImage="FillFrame">
+                    <reportElement positionType="Float"
+                                   x="0"
+                                   y="0"
+                                   width="400"
+                                   height="380"
+                                   key="image-1"/>
+                    <box></box>
+                    <graphicElement stretchType="NoStretch"/>
+                    <imageExpression class="net.sf.jasperreports.engine.JRRenderable">
+                        <![CDATA[$F{waterfallChart}]]></imageExpression>
+                </image>
+                <line>
+                    <reportElement x="0" y="0" width="0" height="0">
+                        <printWhenExpression>
+                            ($P{ReturnedValuesMap}.put("pageTitle", $P{pageTitle}))?Boolean.FALSE:Boolean.FALSE
+                        </printWhenExpression>
+                    </reportElement>
+                </line>
+            </elementGroup>
+        </band>
+    </title>
+    <pageHeader>
+    </pageHeader>
+    <columnHeader>
+
+    </columnHeader>
+    <detail>
+
+    </detail>
+    <columnFooter>
+    </columnFooter>
+    <pageFooter>
+    </pageFooter>
+    <lastPageFooter>
+    </lastPageFooter>
+    <summary>
+    </summary>
+</jasperReport>

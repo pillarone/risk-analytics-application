@@ -9,11 +9,15 @@ import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataTableModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class TableCopier extends ExceptionSafeAction {
 
     ULCTable table
     ITableModel model
+
+    @Lazy DateFormat dateFormat = { new SimpleDateFormat("yyyy-MM-dd") }()
 
     public TableCopier() {
         putValue(IAction.SMALL_ICON, UIUtils.getIcon("copy-active.png"));
@@ -63,6 +67,10 @@ class TableCopier extends ExceptionSafeAction {
         return (table.selectedRows as List)?.sort() as int[]
     }
 
+
+    protected String format(Date value) {
+        return dateFormat.format(value)
+    }
 
     protected String format(Number value) {
         return copyFormat.format(value)

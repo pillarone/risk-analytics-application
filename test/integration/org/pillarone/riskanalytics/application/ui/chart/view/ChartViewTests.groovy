@@ -7,7 +7,6 @@ import com.ulcjava.testframework.operator.ULCComponentOperator
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import groovy.mock.interceptor.StubFor
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.PDFGaussKernelEstimateChartViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
@@ -24,11 +23,7 @@ class ChartViewTests extends AbstractSimpleFunctionalTest {
         frame.name = "test"
         List<SimpleTableTreeNode> nodes = new ArrayList()
         StubFor resultAccessorStub = new StubFor(ResultAccessor)
-        StubFor resultFunctionStub = new StubFor(ResultFunction)
 
-
-        resultFunctionStub.demand.getPath(160..160) {node -> node.name}
-        resultFunctionStub.demand.getAttributeName(20..20) {node -> "foo"}
 
         resultAccessorStub.demand.hasDifferentValues(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> true}
         resultAccessorStub.demand.getValues(60..60) {run, period, path, c, f ->
@@ -48,15 +43,13 @@ class ChartViewTests extends AbstractSimpleFunctionalTest {
         node.collector = "testCollector"
 
 
-        resultFunctionStub.use {
-            resultAccessorStub.use {
-                SimulationRun run = new SimulationRun()
-                run.periodCount = 4
-                model = new PDFGaussKernelEstimateChartViewModel("TEST", run, [node, node1])
-                model.showPeriodLabels = false
-                frame.contentPane = new ChartView(model).content
-                frame.visible = true
-            }
+        resultAccessorStub.use {
+            SimulationRun run = new SimulationRun()
+            run.periodCount = 4
+            model = new PDFGaussKernelEstimateChartViewModel("TEST", run, [node, node1])
+            model.showPeriodLabels = false
+            frame.contentPane = new ChartView(model).content
+            frame.visible = true
         }
 
     }

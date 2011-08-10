@@ -29,6 +29,7 @@ class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
 
         configuration = new ResultConfiguration("ApplicationResultConfiguration")
+        configuration.modelClass = ApplicationModel
         configuration.load()
 
         structure = new ModelStructure("ApplicationStructure")

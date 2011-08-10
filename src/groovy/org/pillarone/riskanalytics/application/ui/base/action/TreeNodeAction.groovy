@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.ulcjava.base.application.ULCWindow
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -38,7 +39,7 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         if (model.paramterTableTreeModel.readOnly) return
         ITableTreeNode node = tree.selectedPath.lastPathComponent
         if (!node || !ComponentUtils.isDynamicComposedSubComponentNode(node)) return;
-        DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree), node?.displayName)
+        DynamicComponentNameDialog dialog = getInputNameDialog(UlcUtilities.getWindowAncestor(tree), node?.displayName)
         dialog.title = UIUtils.getText(this.class, "title") + ":"
         dialog.okAction = {
             try {
@@ -46,7 +47,7 @@ abstract class TreeNodeAction extends ResourceBasedAction {
 
                 newName = ComponentUtils.getSubComponentName(newName)
                 if (validate(newName)) {
-                    doAction(newName, model, node, tree)
+                    doAction(newName, model, node, tree, dialog.withComments.isSelected())
                 }
             } catch (IllegalArgumentException e) {
                 ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
@@ -56,7 +57,7 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         dialog.show()
     }
 
-    abstract protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree)
+    abstract protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments)
 
     protected String getPathName(ITableTreeNode node, String name) {
         String pathName = node.path
@@ -64,4 +65,9 @@ abstract class TreeNodeAction extends ResourceBasedAction {
             pathName = pathName.substring(pathName.indexOf(":") + 1, pathName.length())
         return pathName + ":${name}"
     }
+
+    public DynamicComponentNameDialog getInputNameDialog(ULCWindow parent, String displayName){
+        return new DynamicComponentNameDialog(parent, displayName)
+    }
+
 }

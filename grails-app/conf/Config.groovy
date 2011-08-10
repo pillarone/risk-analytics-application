@@ -2,6 +2,7 @@ import org.pillarone.riskanalytics.core.output.batch.results.MysqlBulkInsert
 import org.pillarone.riskanalytics.core.output.batch.results.SQLServerBulkInsert
 import org.pillarone.riskanalytics.core.output.batch.calculations.MysqlCalculationsBulkInsert
 import grails.plugins.springsecurity.SecurityConfigType
+import org.pillarone.riskanalytics.application.logging.model.LoggingAppender
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
@@ -37,13 +38,51 @@ transactionServiceUrl = "rmi://localhost:1099/TransactionService"
 resultServiceRegistryPort = 1099
 transactionsEnabled = true
 
+serverSessionPrefix = ";jsessionid="
+
 environments {
     development {
         models = ["CoreModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
 
         ExceptionSafeOut = System.out
         log4j = {
-            info 'org.pillarone.riskanalytics'
+            appenders {
+
+                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
+
+                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
+
+                LoggingAppender loggingAppender = LoggingAppender.getInstance()
+                loggingAppender.setName('application')
+                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
+                appender loggingAppender
+
+            }
+            root {
+                error()
+                additivity = false
+            }
+
+            def infoPackages = [
+                    'org.pillarone.riskanalytics',
+            ]
+
+            def debugPackages = [
+                    'org.pillarone.riskanalytics.core.fileimport'
+            ]
+
+            info(
+                    application: infoPackages,
+                    stdout: infoPackages,
+                    additivity: false
+            )
+
+            debug(
+                    application: debugPackages,
+                    stdout: debugPackages,
+                    additivity: false
+            )
+
         }
         keyFiguresToCalculate = [
                 'stdev': true,
@@ -93,14 +132,42 @@ environments {
         models = ["CoreModel", 'ApplicationModel']
         log4j = {
             appenders {
-                console name: 'stdout', layout: pattern(conversionPattern: '[%d] %-5p %c{1} %m%n')
-                file name: 'file', file: 'RiskAnalytics.log', layout: pattern(conversionPattern: '[%d] %-5p %c{1} %m%n')
+
+                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
+
+                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
+
+                LoggingAppender loggingAppender = LoggingAppender.getInstance()
+                loggingAppender.setName('application')
+                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
+                appender loggingAppender
+
             }
             root {
-                error 'stdout', 'file'
+                error()
                 additivity = false
             }
-            info 'org.pillarone.riskanalytics'
+
+            def infoPackages = [
+                    'org.pillarone.riskanalytics',
+            ]
+
+            def debugPackages = [
+                    'org.pillarone.riskanalytics.core.fileimport'
+            ]
+
+            info(
+                    application: infoPackages,
+                    stdout: infoPackages,
+                    additivity: false
+            )
+
+            debug(
+                    application: debugPackages,
+                    stdout: debugPackages,
+                    additivity: false
+            )
+
         }
         keyFiguresToCalculate = [
                 'stdev': true,

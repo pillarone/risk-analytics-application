@@ -1,29 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.core.output.FieldMapping
-import org.pillarone.riskanalytics.core.output.PathMapping
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.application.dataaccess.function.MaxFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.MinFunction
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
-
-import org.pillarone.riskanalytics.application.dataaccess.function.Min
-import org.pillarone.riskanalytics.application.dataaccess.function.Max
-
-import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
-import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.output.*
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 class ResultViewModelTests extends GroovyTestCase {
 
@@ -42,6 +35,7 @@ class ResultViewModelTests extends GroovyTestCase {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
         new ResultStructureImportService().compareFilesAndWriteToDB(['ApplicationDefaultResultTree'])
+        new ResultStructureImportService().compareFilesAndWriteToDB(['ApplicationAlternativeResultTree'])
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"
         simulationRun.parameterization = ParameterizationDAO.findByName('ApplicationParameters')
@@ -83,6 +77,36 @@ class ResultViewModelTests extends GroovyTestCase {
         LocaleResources.clearTestMode()
     }
 
+    void testSelectedResultStructure() {
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
+        Simulation simulation = new Simulation("testRun")
+        simulation.load()
+
+        Model model = new ApplicationModel()
+
+        List<ResultStructureDAO> structures = ResultStructureDAO.findAllByModelClassName(ApplicationModel.name)
+        assertEquals(2, structures.size())
+
+        UserPreferences preferences = UserPreferencesFactory.getUserPreferences()
+        preferences.putPropertyValue("DEFAULT_VIEW" + model.name, structures[0].name)
+
+        ResultViewModel resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
+        assertEquals(2, resultViewModel.resultStructures.size())
+        Object selectedStructure = resultViewModel.selectionViewModel.selectedObject
+        assertEquals(selectedStructure.name, structures[0].name)
+        assertSame(selectedStructure, resultViewModel.builder.resultStructure)
+
+
+        preferences.putPropertyValue("DEFAULT_VIEW" + model.name, structures[1].name)
+
+        resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
+        assertEquals(2, resultViewModel.resultStructures.size())
+        selectedStructure = resultViewModel.selectionViewModel.selectedObject
+        assertEquals(selectedStructure.name, structures[1].name)
+        assertSame(selectedStructure, resultViewModel.builder.resultStructure)
+    }
+
     void testPaths() {
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
@@ -110,8 +134,8 @@ class ResultViewModelTests extends GroovyTestCase {
 
         ResultViewModel resultViewModel = new ResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
 
-        Max max = new Max()
-        Min min = new Min()
+        MaxFunction max = new MaxFunction()
+        MinFunction min = new MinFunction()
 
         def treeModel = resultViewModel.treeModel
         assertEquals 3, treeModel.functions.size() //node name + 2 * mean

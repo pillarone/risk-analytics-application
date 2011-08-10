@@ -12,6 +12,7 @@ abstract class DateFormatUtils {
     //DateTimeFormatter is thread safe
     private static DateTimeFormatter detailedFormatter
     private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
+    public static final String PARAMETER_DISPLAY_FORMAT = "MMM dd, yyyy"
 
     public static DateTimeFormatter getDetailedDateFormat() {
         if (detailedFormatter == null) {

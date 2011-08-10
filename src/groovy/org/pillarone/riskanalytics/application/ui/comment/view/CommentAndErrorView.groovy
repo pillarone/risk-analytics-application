@@ -8,11 +8,13 @@ import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCScrollPane
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import com.ulcjava.base.application.util.ULCIcon
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.UndockedPaneListener
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
@@ -24,11 +26,11 @@ class CommentAndErrorView implements CommentListener {
     CommentSearchPane commentSearchPane
     ErrorPane errorPane
     ULCBoxPane content
-    private ParameterViewModel model;
+    AbstractCommentableItemModel model;
     Map openItems
+    def tableTree
 
-
-    public CommentAndErrorView(ParameterViewModel model) {
+    public CommentAndErrorView(AbstractCommentableItemModel model) {
         this.model = model;
         initComponents()
         layoutComponents()
@@ -38,7 +40,7 @@ class CommentAndErrorView implements CommentListener {
 
     protected void initComponents() {
         tabbedPane = new ULCDetachableTabbedPane(name: "commentAndErrorPane")
-        errorPane = new ErrorPane(model)
+        errorPane = new ErrorPane(model, this)
     }
 
     private void layoutComponents() {
@@ -86,6 +88,9 @@ class CommentAndErrorView implements CommentListener {
         model.addErrors(item.validationErrors)
     }
 
+    protected void updateErrorVisualization(Simulation item) {
+    }
+
     public void addNewCommentView(String path, int periodIndex) {
         model.showCommentsTab()
         NewCommentView view = new NewCommentView(this, path, periodIndex)
@@ -96,11 +101,25 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
-            tabbedPane.addTab(tabTitle, view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
-            tabbedPane.selectedIndex = tabIndex
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, getDisplayPath(model, path))
+            view.commentTextArea.requestFocus()
+        }
+    }
+
+    public void addNewFunctionCommentView(List functionsMap) {
+        model.showCommentsTab()
+        NewFunctionCommentView view = new NewFunctionCommentView(this, functionsMap)
+        openItems[view.content] = view
+        String tabTitle = UIUtils.getText(CommentAndErrorView, "addFunctionComment")
+        int index = tabbedPane.indexOfTab(tabTitle)
+        if (index >= 0) {
+            tabbedPane.selectedIndex = index
+        } else {
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, "")
             view.commentTextArea.requestFocus()
         }
     }
@@ -114,11 +133,9 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
-            tabbedPane.addTab(tabTitle, view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
-            tabbedPane.selectedIndex = tabIndex
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, getDisplayPath(model, path))
         }
     }
 
@@ -127,15 +144,13 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
             EditCommentView view = new EditCommentView(this, comment)
             openItems[view.content] = view
             String tabTitle = getDisplayName(model, comment.path)
             tabTitle += ((comment.period == -1) ? " " + UIUtils.getText(this.class, "forAllPeriods") : " P" + comment.period)
-            tabbedPane.addTab(tabTitle, view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, comment.path))
-            tabbedPane.selectedIndex = tabIndex
+            ULCBoxPane scrolledPane = new ULCBoxPane(1, 1)
+            scrolledPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(view.content))
+            addTab(scrolledPane, tabTitle, getDisplayPath(model, comment.path))
         }
 
     }
@@ -147,15 +162,11 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0 && (!path || tabbedPane.getToolTipTextAt(index) == getDisplayPath(model, path))) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
             ShowCommentsView view = new ShowCommentsView(this, path)
             view.addAllComments()
             openItems[view.content] = view
             model.addChangedCommentListener view
-            tabbedPane.addTab(tabTitle, UIUtils.getIcon("comment.png"), view.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.setToolTipTextAt(tabIndex, getDisplayPath(model, path))
-            tabbedPane.selectedIndex = tabIndex
+            addTab(view.content, tabTitle, getDisplayPath(model, path), UIUtils.getIcon("comment.png"))
         }
     }
 
@@ -166,12 +177,9 @@ class CommentAndErrorView implements CommentListener {
         if (index >= 0) {
             tabbedPane.selectedIndex = index
         } else {
-            int tabIndex = tabbedPane.tabCount
             ErrorPane errorPane = new ErrorPane(model)
             errorPane.addErrors model.item.validationErrors
-            tabbedPane.addTab(tabTitle, errorPane.content)
-            tabbedPane.setCloseableTab(tabIndex, true)
-            tabbedPane.selectedIndex = tabIndex
+            addTab(errorPane.content, tabTitle, "")
         }
     }
 
@@ -191,13 +199,15 @@ class CommentAndErrorView implements CommentListener {
 
     static String getDisplayPath(def model, String path) {
         if (!path) return ""
-        def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
-        return node?.getDisplayPath()
+        def node = findNodeForPath(model.getTableTreeModel().root, path.substring(path.indexOf(":") + 1))
+        if (!node) node = findNodeForPath(model.getTableTreeModel().root, path)
+        return node?.getDisplayPath() ? node?.getDisplayPath() : path
     }
 
     static String getDisplayName(def model, String path) {
         if (!path) return ""
-        def node = findNodeForPath(model.paramterTableTreeModel.root, path.substring(path.indexOf(":") + 1))
+        def node = findNodeForPath(model.getTableTreeModel().root, path.substring(path.indexOf(":") + 1))
+        if (!node) node = findNodeForPath(model.getTableTreeModel().root, path)
         String displayName = node?.getDisplayName()
         if (!displayName) {
             displayName = getDisplayPath(model, path)
@@ -206,13 +216,18 @@ class CommentAndErrorView implements CommentListener {
     }
 
     static def findNodeForPath(def root, String path) {
-        if (path == root.path) return root
-        String[] pathElements = path.split(":")
-        SimpleTableTreeNode currentNode = root
-        for (String p in pathElements) {
-            currentNode = currentNode?.getChildByName(p)
+        def nodeForPath = null
+        if ((root instanceof ResultTableTreeNode) && root.getResultPath() == path) {
+            nodeForPath = root
+        } else if (!(root instanceof ResultTableTreeNode) && root.path == path) {
+            nodeForPath = root
+        } else {
+            for (int i = 0; i < root.childCount && nodeForPath == null; i++) {
+                def childNode = root.getChildAt(i)
+                nodeForPath = findNodeForPath(childNode, path)
+            }
         }
-        return currentNode
+        return nodeForPath
     }
 
     void closeTab() {
@@ -235,6 +250,14 @@ class CommentAndErrorView implements CommentListener {
             }
         }
         return index
+    }
+
+    private void addTab(ULCComponent content, String tabTitle, String toolTip, ULCIcon icon = null) {
+        int tabIndex = tabbedPane.tabCount
+        icon ? tabbedPane.addTab(tabTitle, icon, content) : tabbedPane.addTab(tabTitle, content)
+        tabbedPane.setCloseableTab(tabIndex, true)
+        tabbedPane.setToolTipTextAt(tabIndex, toolTip)
+        tabbedPane.selectedIndex = tabIndex
     }
 
 }

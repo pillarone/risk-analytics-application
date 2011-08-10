@@ -7,11 +7,11 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
@@ -20,7 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
  */
 class RenameAction extends SelectionTreeAction {
 
-    public RenameAction(ULCTableTree tree, P1RATModel model) {
+    public RenameAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Rename", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }
@@ -31,10 +31,10 @@ class RenameAction extends SelectionTreeAction {
         tree.invokeUI("startEditingAtPath", [adapter.getDescriptionForPath(tree.getSelectionPath())] as Object[])
         */
         boolean usedInSimulation = false
-        def selectedItem = getSelectedItem()
-        if (!(selectedItem instanceof ModellingItem)) return
-        if (selectedItem instanceof Parameterization || selectedItem instanceof ResultConfiguration) {
-            selectedItem.setModelClass(getSelectedModel().class)
+        ModellingUIItem selectedItem = getSelectedUIItem()
+        if (!(selectedItem instanceof ModellingUIItem)) return
+        if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
+            selectedItem.item.setModelClass(getSelectedModel().class)
             usedInSimulation = selectedItem.isUsedInSimulation()
             if (!usedInSimulation) {
                 List runs = SimulationRun.executeQuery(" from ${SimulationRun.class.name} as run where run.parameterization.name = :name ", ["name": selectedItem.name])
@@ -45,7 +45,7 @@ class RenameAction extends SelectionTreeAction {
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)
             dialog.title = dialog.getText("renameTitle") + " " + selectedItem.name
 
-            dialog.okAction = { model.renameItem(selectedItem, dialog.nameInput.text) }
+            dialog.okAction = { selectedItem.rename(dialog.nameInput.text)}//model.renameItem(selectedItem, dialog.nameInput.text) }
             dialog.show()
         } else {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "RenamingLocked")

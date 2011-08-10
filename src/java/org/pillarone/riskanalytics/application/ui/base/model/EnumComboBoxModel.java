@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.TreeMap;
 
 /**
@@ -96,7 +97,14 @@ public class EnumComboBoxModel extends AbstractListModel implements IComboBoxMod
      * @return the localized value corresponding to the key
      */
     protected String getLocalizedText(String key) {
-        return useI18N ? LocaleResources.getString(fEnumeration.getSimpleName() + "." + key) : key;
+        if(useI18N) {
+            try {
+                return LocaleResources.getString(fEnumeration.getSimpleName() + "." + key);
+            } catch (MissingResourceException e) {
+                return key;
+            }
+        }
+        return key;
     }
 
     public static Object[] removeElements(Object[] allElements, Object[] elementsToRemove) {

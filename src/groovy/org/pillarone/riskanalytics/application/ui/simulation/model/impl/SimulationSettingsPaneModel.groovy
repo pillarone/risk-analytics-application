@@ -28,6 +28,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterPaneModel
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -67,6 +69,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     Class modelClass
     Model modelInstance
 
+    RuntimeParameterPaneModel parameterPaneModel
+
     private List<ISimulationValidationListener> listeners = []
 
     public SimulationSettingsPaneModel(Class modelClass) {
@@ -92,6 +96,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         randomSeedAction = new RandomSeedAction(this)
         reloadParameterizationListModelAction = new ReloadParameterizationListModelAction(this)
         reloadResultConfigurationListModelAction = new ReloadResultConfigurationListModelAction(this)
+
+        parameterPaneModel = new RuntimeParameterPaneModel(getModelInstance())
     }
 
     /**
@@ -188,7 +194,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
             name = DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime())
         }
         Simulation simulation = new Simulation(name)
-        simulation.modelClass = modelClass
+        simulation.modelClass = modelClass //does also set model version number
         simulation.comment = comment
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
         //do not always load, because params could be open and modified ("save and run")
@@ -202,10 +208,13 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         }
         simulation.template = configuration
         simulation.beginOfFirstPeriod = beginOfFirstPeriod
-        simulation.modelVersionNumber = ModellingItemFactory.getNewestModelItem(modelClass.simpleName).versionNumber // ???
         simulation.structure = ModelStructure.getStructureForModel(modelClass)
 
         initConfigParameters(simulation, parameterization.periodCount)
+
+        for(ParameterHolder holder in parameterPaneModel.parameters) {
+            simulation.addParameter(holder)
+        }
         return simulation
     }
 

@@ -10,7 +10,6 @@ import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.renderer.AbstractRenderer
 import org.jfree.data.category.DefaultCategoryDataset
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
@@ -189,10 +188,10 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
             List minsP = []
             List maxsP = []
             periodCount.times {int periodIndex ->
-                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                minsP << ResultAccessor.getMin(simulationRun, periodIndex, node.path, node.collector, node.field)
+                maxsP << ResultAccessor.getMax(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             series << periods
             seriesNames << node.getShortDisplayPath(nodes)

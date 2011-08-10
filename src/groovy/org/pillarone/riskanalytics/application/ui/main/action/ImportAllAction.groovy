@@ -1,5 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.ULCTableTree
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
@@ -7,26 +11,22 @@ import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.model.Model
-import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ImportAllAction extends ImportAction {
-    P1RATMainView p1RATMainView
     Log LOG = LogFactory.getLog(ImportAllAction)
 
-    public ImportAllAction(ULCTableTree tree, P1RATModel model, String actionName) {
+    public ImportAllAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
         super(tree, model, actionName)
     }
 
-    public ImportAllAction(P1RATMainView p1RATMainView, P1RATModel model, String actionName) {
+    public ImportAllAction(RiskAnalyticsMainModel model, String actionName) {
         super(actionName)
-        this.p1RATMainView = p1RATMainView
         this.model = model
         ancestor = getAncestor()
     }
@@ -83,10 +83,5 @@ class ImportAllAction extends ImportAction {
     Model getSelectedModel() {
         return null
     }
-
-    ULCWindow getAncestor() {
-        return UlcUtilities.getWindowAncestor(p1RATMainView?.content)
-    }
-
 
 }

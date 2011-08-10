@@ -6,8 +6,12 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.codehaus.groovy.grails.web.util.WebUtils
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
+
 
 class UserContext {
+    private static final String SYSTEM_PROPERTY_STANDALONE_USERNAME = "standaloneUsername"
 
     private static Map fallbackContext = [:]
     static Log LOG = LogFactory.getLog(UserContext)
@@ -32,8 +36,24 @@ class UserContext {
         }
     }
 
+    public static boolean hasCurrentUser() {
+        try {
+            return getCurrentUser() != null
+        } catch (Exception e) {
+            return false
+        }
+    }
+
     public static Person getCurrentUser() {
         return UserManagement.getCurrentUser()
+    }
+
+    public static String getBaseUrl() {
+        GrailsWebRequest grailsWebRequest = WebUtils.retrieveGrailsWebRequest()
+        String contextPath = grailsWebRequest.getCurrentRequest().contextPath
+        String requestURL = grailsWebRequest.getCurrentRequest().getRequestURL()
+        String uri = grailsWebRequest.getCurrentRequest().getRequestURI()
+        return requestURL.substring(0, requestURL.indexOf(uri)) + contextPath
     }
 
     public static void removeAttribute(String key) {
@@ -44,6 +64,11 @@ class UserContext {
     public static boolean isStandAlone() {
         int type = ClientContext.getClientEnvironmentType()
         return type != ClientContext.APPLET && type != ClientContext.JNLP
+    }
+
+    public static boolean isApplet() {
+        int type = ClientContext.getClientEnvironmentType()
+        return type == ClientContext.APPLET
     }
 
     public static void setUserTimeZone(TimeZone timeZone) {

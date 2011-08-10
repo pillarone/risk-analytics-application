@@ -98,7 +98,7 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         int childCountBeforeInsert = tree1.getChildCount(path)
 
         int row = tree1.getRowForPath(pathForRename)
-        tree1.selectCell(row,0)
+        tree1.selectCell(row, 0)
         sleep 1000
         tree1.pushKey(KeyEvent.VK_DELETE)
 

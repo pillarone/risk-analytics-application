@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.example.component
 
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.packets.PacketList
-import org.pillarone.riskanalytics.core.packets.Packet
 import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 
 class ExampleInputOutputComponentWithSubcomponent extends ComposedComponent {
@@ -12,6 +11,8 @@ class ExampleInputOutputComponentWithSubcomponent extends ComposedComponent {
 
     Integer parmFirstParameter = 1
     Integer parmSecondParameter = 2
+
+    String runtimeStringParameter = "test"
 
     ExampleSimpleParameterComponent subFirstComponent = new ExampleSimpleParameterComponent()
     ExampleSimpleParameterComponent subSecondComponent = new ExampleSimpleParameterComponent()

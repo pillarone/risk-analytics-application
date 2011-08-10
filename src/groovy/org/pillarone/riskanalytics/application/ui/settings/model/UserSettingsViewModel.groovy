@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.settings.model
 
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
-import org.pillarone.riskanalytics.application.util.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.user.UserSettings
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -16,8 +18,8 @@ public class UserSettingsViewModel {
 
 
     public UserSettingsViewModel() {
-        UserSettings userSettings = UserManagement.getCurrentUser()?.settings
-        userPreferences = new UserPreferences();
+        UserSettings userSettings = UserContext.getCurrentUser()?.settings
+        userPreferences = UserPreferencesFactory.getUserPreferences()
         if (userSettings == null) {
             languagesComboBoxModel = new EnumI18NComboBoxModel(LanguagesValues.values() as Object[])
             if (userPreferences.getLanguage())
@@ -29,7 +31,7 @@ public class UserSettingsViewModel {
     }
 
     public void save() {
-        Person user = UserManagement.getCurrentUser()
+        Person user = UserContext.getCurrentUser()
         if (user != null) {
             if (user.settings == null) {
                 user.settings = new UserSettings()
@@ -44,7 +46,7 @@ public class UserSettingsViewModel {
 
     public boolean languageChanged() {
         Person.withTransaction {e ->
-            UserSettings userSettings = UserManagement.getCurrentUser()?.settings
+            UserSettings userSettings = UserContext.getCurrentUser()?.settings
             return userSettings?.language != languagesComboBoxModel.selectedEnum.toString()
         }
     }

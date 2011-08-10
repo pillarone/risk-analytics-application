@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 
@@ -20,16 +21,16 @@ class AlertDialog {
     String message
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
     Closure okAction
-    def selectedItem
+    List<AbstractUIItem> selectedItems
     def nextItemToSelect
     Dimension buttonDimension = new Dimension(80, 20)
 
-    public AlertDialog(ULCTableTree tree, def selectedItem, def nextItemToSelect, String title, String message, Closure okAction) {
+    public AlertDialog(ULCTableTree tree, List<AbstractUIItem> selectedItems, def nextItemToSelect, String title, String message, Closure okAction) {
         this.tree = tree
         this.title = title
         this.message = message
         this.okAction = okAction
-        this.selectedItem = selectedItem
+        this.selectedItems = selectedItems
         this.nextItemToSelect = nextItemToSelect
     }
 
@@ -73,7 +74,7 @@ class AlertDialog {
     private void attachListeners() {
         cancelButton.addActionListener([actionPerformed: {ActionEvent evt -> closeAction.call()}] as IActionListener)
         okButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            (selectedItem) ? okAction.call([selectedItem, nextItemToSelect] as Object[]) : okAction.call()
+            (selectedItems) ? okAction.call([selectedItems, nextItemToSelect] as Object[]) : okAction.call()
             closeAction.call()
         }] as IActionListener)
     }

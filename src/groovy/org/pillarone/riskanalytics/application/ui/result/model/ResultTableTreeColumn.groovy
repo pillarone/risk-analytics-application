@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
-import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.ui.result.view.StochasticValueTableTreeCellRenderer
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
+import org.pillarone.riskanalytics.application.ui.result.view.ResultView
+import org.pillarone.riskanalytics.application.ui.result.view.StochasticValueTableTreeCellRenderer
 
 class ResultTableTreeColumn extends ULCTableTreeColumn {
 
@@ -13,15 +15,15 @@ class ResultTableTreeColumn extends ULCTableTreeColumn {
 
     private static Log LOG = LogFactory.getLog(ResultTableTreeColumn)
 
-    public ResultTableTreeColumn(int modelIndex, def tableTree) {
+    public ResultTableTreeColumn(int modelIndex, def tableTree, CommentAndErrorView commentAndErrorView) {
         super(modelIndex)
-        cellRenderer = new StochasticValueTableTreeCellRenderer(modelIndex, tableTree)
+        cellRenderer = new StochasticValueTableTreeCellRenderer(modelIndex, tableTree, commentAndErrorView)
     }
 
-    public ResultTableTreeColumn(int modelIndex, def tableTree, IFunction function) {
-        this(modelIndex, tableTree)
+    public ResultTableTreeColumn(int modelIndex, ResultView resultView, IFunction function) {
+        this(modelIndex, resultView.tree.viewPortTableTree, resultView.commentAndErrorView)
         if (LOG.isDebugEnabled()) {
-            LOG.debug "Created column for function ${function.getName(0)} with model index $modelIndex"
+            LOG.debug "Created column for function ${function.getDisplayName()} with model index $modelIndex"
         }
         this.function = function
     }

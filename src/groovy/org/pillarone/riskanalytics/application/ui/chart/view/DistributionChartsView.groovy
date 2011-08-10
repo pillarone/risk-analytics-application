@@ -58,8 +58,8 @@ public class DistributionChartsView extends ChartView {
     }
 
     public void update() {
-        settingsButton.enabled = model.isSettingsEnabled()
         super.update()
+        settingsButton.enabled = model.isSettingsEnabled()
     }
 
     void attachListeners() {

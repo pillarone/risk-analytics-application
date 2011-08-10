@@ -1,19 +1,21 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+
 class VersionedItemNode extends ItemNode {
 
-    public VersionedItemNode(item, leaf) {
-        super(item, "$item.name v${item.versionNumber.toString()}", leaf, true)
+    public VersionedItemNode(AbstractUIItem abstractUIItem, leaf) {
+        super(abstractUIItem, "${abstractUIItem.item.name} v${abstractUIItem.item.versionNumber.toString()}", leaf, true)
     }
 
     public Object getUserObject() {
-        "${item.name} v${item.versionNumber.toString()}".toString()
+        "${abstractUIItem.item.name} v${abstractUIItem.item.versionNumber.toString()}".toString()
     }
 
     public void setUserObject(Object userObject) {
         if (renameable) {
-            item.rename(userObject)
-            setValueAt("${item.name} v${item.versionNumber.toString()}".toString(), 0)
+            abstractUIItem.item.rename(userObject)
+            setValueAt("${abstractUIItem.item.name} v${abstractUIItem.item.versionNumber.toString()}".toString(), 0)
         }
     }
 

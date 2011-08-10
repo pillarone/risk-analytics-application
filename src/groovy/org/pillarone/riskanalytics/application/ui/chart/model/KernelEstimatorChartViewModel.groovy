@@ -11,12 +11,12 @@ import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import org.jfree.ui.HorizontalAlignment
 import org.jfree.ui.RectangleEdge
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
 import org.pillarone.riskanalytics.application.reports.bean.ReportChartDataBean
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
@@ -204,17 +204,17 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
             List stdDevsP = []
             List IQRsP = []
             periodCount.times {int periodIndex ->
-                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                Percentile percentile = new Percentile(percentile: 75)
+                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                PercentileFunction percentile = new PercentileFunction(75, QuantilePerspective.LOSS)
                 Double per75 = percentile.evaluate(simulationRun, periodIndex, node)
-                percentile = new Percentile(percentile: 25)
+                percentile = new PercentileFunction(25, QuantilePerspective.LOSS)
                 Double per25 = percentile.evaluate(simulationRun, periodIndex, node)
                 if (onlyStochasticSeries) {
-                    periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                    minsP << ResultAccessor.getMin(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                    maxsP << ResultAccessor.getMax(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                    meansP << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                    stdDevsP << ResultAccessor.getStdDev(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                    periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                    minsP << ResultAccessor.getMin(simulationRun, periodIndex, node.path, node.collector, node.field)
+                    maxsP << ResultAccessor.getMax(simulationRun, periodIndex, node.path, node.collector, node.field)
+                    meansP << ResultAccessor.getMean(simulationRun, periodIndex, node.path, node.collector, node.field)
+                    stdDevsP << ResultAccessor.getStdDev(simulationRun, periodIndex, node.path, node.collector, node.field)
 
                     if (per75 != null && per25 != null) {
                         IQRsP << per75 - per25

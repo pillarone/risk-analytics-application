@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
@@ -12,7 +13,6 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.joda.time.DateTime
 
 class ModellingItemFactory {
 
@@ -44,7 +44,7 @@ class ModellingItemFactory {
 
     static List getParameterizationsForModel(Class modelClass) {
         ParameterizationDAO.withTransaction { status ->
-            ParameterizationDAO.findAllByModelClassName(modelClass.name).collect {
+            ParameterizationDAO.findAllByModelClassName(modelClass.name, [sort: "name"]).collect {
                 getItem(it, modelClass)
             }
         }
@@ -73,22 +73,6 @@ class ModellingItemFactory {
                 result << parameterizations.get(0)
         }
         result.collect {getItem(it, modelClass)}
-    }
-
-    static ModellingItem getNewestModelItem(String modelName) {
-        def result = []
-        def criteria = ModelDAO.createCriteria()
-        def highestVersion = criteria.list {
-            eq('name', modelName)
-            projections {
-                max('itemVersion')
-            }
-        }
-        result << ModelDAO.findByNameAndItemVersion(modelName, highestVersion[0])
-        if (result[0]) {
-            return getItem(result[0])
-        }
-        return null
     }
 
     static List getNewestResultConfigurationsForModel(Class modelClass) {
@@ -210,7 +194,7 @@ class ModellingItemFactory {
 
     static List getResultConfigurationsForModel(Class modelClass) {
         ResultConfigurationDAO.withTransaction { status ->
-            ResultConfigurationDAO.findAllByModelClassName(modelClass.name).collect {
+            ResultConfigurationDAO.findAllByModelClassName(modelClass.name, [sort: "name"]).collect {
                 getItem(it, modelClass)
             }
         }
@@ -226,20 +210,22 @@ class ModellingItemFactory {
         return getItem(dao)
     }
 
-    static Simulation getSimulation(String name, Class modelClass) {
-        return getItem(Simulation, modelClass, name)
+    static Simulation getSimulation(SimulationRun run) {
+        return getItem(run)
     }
 
     /**
      * @return all SimulationRuns for this model with toBeDeleted==false
      */
     static List getActiveSimulationsForModel(Class modelClass) {
-        SimulationRun.findAllByModel(modelClass.name).
-                findAll {SimulationRun run ->
-            !run.toBeDeleted && run.endTime != null
-        }.
-                collect {SimulationRun run ->
-            getItem(Simulation, modelClass, run.name)
+        SimulationRun.withTransaction {
+            SimulationRun.findAllByModel(modelClass.name).
+                    findAll {SimulationRun run ->
+                        !run.toBeDeleted && run.endTime != null
+                    }.
+                    collect {SimulationRun run ->
+                        getItem(run)
+                    }
         }
     }
 
@@ -271,6 +257,9 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
+        List comments = oldItem?.comments?.collect {it.clone()}
+        comments?.each {newItem.addComment(it)}
+
         newItem.periodCount = oldItem.periodCount
         newItem.periodLabels = oldItem.periodLabels
         newItem.modelClass = oldItem.modelClass
@@ -378,18 +367,6 @@ class ModellingItemFactory {
         return newItem
     }
 
-
-
-    private static ModellingItem getItem(Class itemClass, Class modelClass, String itemName) {
-        String key = key(itemClass, modelClass, itemName)
-        ModellingItem item = getSimulationInstances()[key]
-        if (!item) {
-            item = itemClass.newInstance([itemName] as Object[])
-            getSimulationInstances()[key] = item
-        }
-        return item
-    }
-
     private static ModellingItem getItem(ResultStructureDAO dao) {
         ResultStructure item = getItemInstances()[key(ResultStructure, dao.id)]
         if (!item) {
@@ -428,6 +405,24 @@ class ModellingItemFactory {
         item
     }
 
+    private static Simulation getItem(SimulationRun run) {
+        String key = key(SimulationRun, run.id)
+        Simulation simulation = getSimulationInstances()[key]
+        if (simulation == null) {
+            simulation = new Simulation(run.name)
+            simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
+            simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
+            simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
+            simulation.creationDate = run.startTime
+            simulation.modificationDate = run.getModificationDate()
+            try {
+                simulation.tags = run.tags*.tag
+            } catch (Exception ex) {}
+            getSimulationInstances()[key] = simulation
+        }
+        return simulation
+    }
+
     private static ModellingItem getItem(ModelDAO dao) {
         ModelItem item = getItemInstances()[key(ModelItem, dao.id)]
         if (!item) {
@@ -442,6 +437,7 @@ class ModellingItemFactory {
         ResultConfiguration item = getItemInstances()[key(ResultConfiguration, dao.id)]
         if (!item) {
             item = new ResultConfiguration(dao.name)
+            item.modelClass = Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName)
             item.versionNumber = new VersionNumber(dao.itemVersion)
             if (modelClass != null) {
                 item.modelClass = modelClass
@@ -469,16 +465,12 @@ class ModellingItemFactory {
         item
     }
 
-    private static def key(Class itemClass, Class modelClass, String itemName) {
-        return "${itemClass?.simpleName}_${modelClass?.simpleName}_$itemName".toString()
-    }
-
     private static def key(Class itemClass, Long daoId) {
         return "${itemClass?.simpleName}_$daoId".toString()
     }
 
     static void remove(ModellingItem item) {
-        getSimulationInstances().remove(key(item.class, item.modelClass, item.name))
+        getSimulationInstances().remove(key(SimulationRun, item.id))
     }
 
     public static void put(ParameterizationDAO dao, Class modelClass = null) {

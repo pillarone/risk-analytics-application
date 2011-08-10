@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.DefaultResultConfigurationDialog
 import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -9,13 +8,14 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 
 class CreateDefaultResultConfigurationAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateDefaultResultConfigurationAction)
 
-    CreateDefaultResultConfigurationAction(tree, P1RATModel model) {
+    CreateDefaultResultConfigurationAction(tree, RiskAnalyticsMainModel model) {
         super("CreateDefaultResultConfiguration", tree, model)
     }
 

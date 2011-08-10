@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
+import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import com.ulcjava.testframework.operator.*
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry

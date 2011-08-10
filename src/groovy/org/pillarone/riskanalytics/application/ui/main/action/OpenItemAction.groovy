@@ -4,13 +4,14 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
 import org.pillarone.riskanalytics.application.ui.main.view.OpenItemDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,40 +20,39 @@ class OpenItemAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(OpenItemAction)
 
-    def OpenItemAction(ULCTableTree tree, P1RATModel model) {
+    def OpenItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Open", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
         Model selectedModel = getSelectedModel()
-        def item = getSelectedItem()
+        AbstractUIItem item = getSelectedUIItem()
         if (selectedModel != null && item != null) {
-            if (!item.isLoaded()) {
-                item.load()
-            }
+            item.load()
             openItem(selectedModel, item)
         }
     }
 
-    private void openItem(Model selectedModel, Parameterization item) {
+    private void openItem(Model selectedModel, ParameterizationUIItem parameterizationUIItem) {
         selectedModel = selectedModel.class.newInstance()
         selectedModel.init()
+        ModellingItem item = parameterizationUIItem.item
         item.dao.modelClassName = selectedModel.class.name
-        synchronized (item) {
+        synchronized (parameterizationUIItem) {
             item.daoClass.withTransaction {status ->
-                boolean usedInSimulation = item.isUsedInSimulation()
-                if (!usedInSimulation || !item.newVersionAllowed()) {
-                    this.model.openItem(selectedModel, item)
+                boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
+                if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
+                    this.model.openItem(selectedModel, parameterizationUIItem)
                 } else {
-                    showOpenItemDialog(selectedModel, item)
+                    showOpenItemDialog(selectedModel, parameterizationUIItem)
                 }
             }
         }
     }
 
-    private void openItem(Model selectedModel, ModellingItem item) {
+    private void openItem(Model selectedModel, AbstractUIItem item) {
         boolean usedInSimulation = false
-        if (item instanceof ResultConfiguration) {
+        if (item instanceof ModellingUIItem) {
             usedInSimulation = item.isUsedInSimulation()
         }
         if (!usedInSimulation) {
@@ -62,7 +62,7 @@ class OpenItemAction extends SelectionTreeAction {
         }
     }
 
-    private void openItem(Model selectedModel, Simulation item) {
+    private void openItem(Model selectedModel, SimulationUIItem item) {
         this.model.openItem(selectedModel, item)
     }
 

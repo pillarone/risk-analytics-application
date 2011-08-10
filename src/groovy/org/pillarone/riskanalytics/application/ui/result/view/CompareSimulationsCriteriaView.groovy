@@ -4,10 +4,12 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.result.action.DeviationAbsoluteDifferenceAction
-import org.pillarone.riskanalytics.application.ui.result.action.DeviationPercentageAction
-import org.pillarone.riskanalytics.application.ui.result.action.FractionAbsoluteDifferenceAction
-import org.pillarone.riskanalytics.application.ui.result.action.FractionPercentageAction
+import org.pillarone.riskanalytics.application.dataaccess.function.DeviationAbsoluteFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.DeviationPercentageFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.FractionAbsoluteFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.FractionPercentageFunction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.DefaultToggleValueProvider
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.ToggleKeyFigureAction
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -17,6 +19,10 @@ import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.getText
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
 class CompareSimulationsCriteriaView {
 
@@ -87,9 +93,13 @@ class CompareSimulationsCriteriaView {
         }
 
         devPercentage = new ULCCheckBox(getText(this.class, "Percentage"))
+        devPercentage.name = "devPercentage"
         devAbsolute = new ULCCheckBox(getText(this.class, "Absolute"))
+        devAbsolute.name = "devAbsolute"
         frPercentage = new ULCCheckBox(getText(this.class, "Percentage"))
+        frPercentage.name = "frPercentage"
         frAbsolute = new ULCCheckBox(getText(this.class, "Absolute"))
+        frAbsolute.name = "frAbsolute"
         compareParameterizations = new ULCButton(getText(this.class, "CompareParameterizations"))
         byPeriod = new ULCRadioButton(getText(this.class, "Period"))
         byKeyFigure = new ULCRadioButton(getText(this.class, "KeyFigure"))
@@ -136,13 +146,15 @@ class CompareSimulationsCriteriaView {
             }] as IValueChangedListener)
         }
 
-        devPercentage.addValueChangedListener(new DeviationPercentageAction(model, tree.viewPortTableTree, compareSimulationTreeView))
-        devAbsolute.addValueChangedListener(new DeviationAbsoluteDifferenceAction(model, tree.viewPortTableTree, compareSimulationTreeView))
-        frPercentage.addValueChangedListener(new FractionPercentageAction(model, tree.viewPortTableTree, compareSimulationTreeView))
-        frAbsolute.addValueChangedListener(new FractionAbsoluteDifferenceAction(model, tree.viewPortTableTree, compareSimulationTreeView))
+        devAbsolute.action = new ToggleKeyFigureAction(new DeviationAbsoluteFunction(), new DefaultToggleValueProvider(devAbsolute), model, tree.viewPortTableTree)
+        devPercentage.action = new ToggleKeyFigureAction(new DeviationPercentageFunction(), new DefaultToggleValueProvider(devPercentage), model, tree.viewPortTableTree)
+        frAbsolute.action = new ToggleKeyFigureAction(new FractionAbsoluteFunction(), new DefaultToggleValueProvider(frAbsolute), model, tree.viewPortTableTree)
+        frPercentage.action = new ToggleKeyFigureAction(new FractionPercentageFunction(), new DefaultToggleValueProvider(frPercentage), model, tree.viewPortTableTree)
 
         compareParameterizations.addActionListener([actionPerformed: {event ->
-            compareSimulationTreeView.p1RATMainView.createCompareParameterizationView(model.model, model.treeModel.simulations)
+            ArrayList parameters = ParameterizationUtilities.getParameters(model.treeModel.simulations)
+            CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(compareSimulationTreeView.mainModel, model.model, parameters)
+            compareSimulationTreeView.mainModel.notifyOpenDetailView(model.model, compareParameterizationUIItem)
         }] as IActionListener)
 
         //ColumnOrderAction
@@ -253,13 +265,21 @@ class CompareSimulationsCriteriaView {
 class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
 
     List<T> items
+    UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
+    String itemPreferenceKey
 
     public ItemsComboBoxModel(List<T> items) {
         super(items*.name)
         this.items = items
     }
 
-
+    public ItemsComboBoxModel(List<T> items, String itemPreferenceKey) {
+        super(items*.name)
+        this.items = items
+        this.itemPreferenceKey = itemPreferenceKey
+        Object defaultItem = userPreferences.getPropertyValue(itemPreferenceKey)
+        selectedItem = (defaultItem && items*.name.contains(defaultItem)) ? defaultItem : getElementAt(0)
+    }
 
     T getSelectedObject() {
         int index = getIndexOf(getSelectedItem())
@@ -274,6 +294,15 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
     void removeItem(T item) {
         removeElement(item.name)
         items.remove(item)
+    }
+
+
+    @Override
+    void setSelectedItem(Object object) {
+        if (itemPreferenceKey && object) {
+            userPreferences.putPropertyValue(itemPreferenceKey, "" + object)
+        }
+        super.setSelectedItem(object)
     }
 
 

@@ -158,4 +158,34 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals 6, node.getValues().size()
     }
 
+    void testConstrainedStringNode_PMO1562() {
+        new ParameterizationImportService().compareFilesAndWriteToDB(["ApplicationParameters"])
+        Model model = new ApplicationModel()
+
+        ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))], model)
+        node.setParent(new ComponentTableTreeNode(null, "name"))
+
+        assertEquals "", node.parameter[0].businessObject.stringValue
+
+        ExampleOutputComponent component = new ExampleOutputComponent(name: "example1")
+        node.addComponent(component)
+
+        assertEquals "example1", node.parameter[0].businessObject.stringValue
+
+        ExampleOutputComponent component2 = new ExampleOutputComponent(name: "example2")
+        node.addComponent(component2)
+        assertEquals "example1", node.parameter[0].businessObject.stringValue
+
+        node.setValueAt("example2", 1)
+        assertEquals "example2", node.parameter[0].businessObject.stringValue
+
+        node.removeComponent(component2)
+        assertEquals "example1", node.parameter[0].businessObject.stringValue
+
+        node.removeComponent(component)
+        assertEquals "", node.parameter[0].businessObject.stringValue
+
+
+    }
+
 }

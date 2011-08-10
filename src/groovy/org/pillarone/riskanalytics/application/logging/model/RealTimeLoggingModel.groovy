@@ -22,16 +22,10 @@ public class RealTimeLoggingModel {
 
     RealTimeLoggingModel() {
         pendingLoggingEvents = new ArrayList<LoggingEvent>()
-        timer = new ULCPollingTimer(1000, [actionPerformed: { ActionEvent event ->
-            addPendingLoggingEvents()
-
-        }] as IActionListener)
-        timer.syncClientState = false
-
         appender = new MyAppender()
     }
 
-    private addPendingLoggingEvents() {
+    private void addPendingLoggingEvents() {
         synchronized (pendingLoggingEvents) {
             LoggingManager manager = LoggingAppender.getInstance().getLoggingManager()
             List<String> messages = []
@@ -65,11 +59,17 @@ public class RealTimeLoggingModel {
     }
 
     void start() {
+        timer = new ULCPollingTimer(1000, [actionPerformed: { ActionEvent event ->
+            addPendingLoggingEvents()
+
+        }] as IActionListener)
+        timer.syncClientState = false
         timer.start()
         LoggingAppender.getInstance().getLoggingManager().addAppender(appender)
     }
 
     void stop() {
+        addPendingLoggingEvents()
         LoggingAppender.getInstance().getLoggingManager().removeAppender(appender)
         timer.stop()
     }

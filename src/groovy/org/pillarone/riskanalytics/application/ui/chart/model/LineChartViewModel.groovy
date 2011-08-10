@@ -6,7 +6,6 @@ import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
@@ -101,7 +100,7 @@ public class LineChartViewModel extends ChartViewModel {
         nodes.each {def node ->
             List meansP = []
             periodCount.times {int periodIndex ->
-                meansP << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                meansP << ResultAccessor.getMean(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             seriesNames << node.getShortDisplayPath(nodes)
             means << meansP

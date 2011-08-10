@@ -24,6 +24,10 @@ class ResultTableTreeNode extends SimpleTableTreeNode {
         field = resultPath?.substring(resultPath.lastIndexOf(":") + 1)
     }
 
+    String getResultPath() {
+        return path + ":" + field
+    }
+
     String getActualTreePath() {
         if (parent) {
             return "${parent?.path}:$name"

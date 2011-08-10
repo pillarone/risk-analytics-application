@@ -31,6 +31,9 @@ abstract class AbstractModellingTreeView {
     ULCComboBox filterSelection
     ULCToolBar toolbar
     ULCToolBar selectionToolbar
+    static final double DIVIDER = 0.65
+    static final double NO_DIVIDER = 1.0
+
     IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 

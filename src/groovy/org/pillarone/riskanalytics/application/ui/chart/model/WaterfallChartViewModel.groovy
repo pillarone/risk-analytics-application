@@ -7,12 +7,9 @@ import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.renderer.category.BarRenderer
 import org.jfree.chart.renderer.category.WaterfallBarRenderer
 import org.jfree.data.category.DefaultCategoryDataset
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartProperties
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 public class WaterfallChartViewModel extends ChartViewModel {
 
@@ -37,9 +34,9 @@ public class WaterfallChartViewModel extends ChartViewModel {
         (periodValues.size() - 1).times {int index ->
             double value
             if (function == VAR_FUNCTION) {
-                value = ResultAccessor.getVar(simulationRun, currentPeriod, ResultFunction.getPath(nodes[index]), nodes[index].collector, nodes[index].field, percent)
+                value = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[index].path, nodes[index].collector, nodes[index].field, percent)
             } else {
-                value = ResultAccessor.getTvar(simulationRun, currentPeriod, ResultFunction.getPath(nodes[index]), nodes[index].collector, nodes[index].field, percent)
+                value = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[index].path, nodes[index].collector, nodes[index].field, percent)
             }
 
             dataset.addValue(value, "", seriesNames[index]);
@@ -48,23 +45,23 @@ public class WaterfallChartViewModel extends ChartViewModel {
 
         double lastValue
         if (function == VAR_FUNCTION) {
-            lastValue = ResultAccessor.getVar(simulationRun, currentPeriod, ResultFunction.getPath(nodes[-1]), nodes[-1].collector, nodes[-1].field, percent)
+            lastValue = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent)
         } else {
-            lastValue = ResultAccessor.getTvar(simulationRun, currentPeriod, ResultFunction.getPath(nodes[-1]), nodes[-1].collector, nodes[-1].field, percent)
+            lastValue = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent)
         }
         diversification = lastValue - sum
         dataset.addValue(diversification, "", "diversification")
         dataset.addValue(lastValue, "", seriesNames[-1])
 
         JFreeChart chart = ChartFactory.createWaterfallChart(
-            chartProperties.title,
-            chartProperties.xAxisTitle,
-            chartProperties.yAxisTitle,
-            dataset,
-            PlotOrientation.VERTICAL,
-            chartProperties.showLegend,
-            true,
-            false
+                chartProperties.title,
+                chartProperties.xAxisTitle,
+                chartProperties.yAxisTitle,
+                dataset,
+                PlotOrientation.VERTICAL,
+                chartProperties.showLegend,
+                true,
+                false
         )
 
         WaterfallBarRenderer renderer = (BarRenderer) chart.getPlot().getRenderer();
@@ -81,7 +78,7 @@ public class WaterfallChartViewModel extends ChartViewModel {
         nodes.each {SimpleTableTreeNode node ->
             List values = []
             periodCount.times {int periodIndex ->
-                values << ResultAccessor.getMean(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                values << ResultAccessor.getMean(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             periodValues << values
             seriesNames << node.getShortDisplayPath(nodes)
@@ -143,9 +140,9 @@ public class WaterfallChartViewModel extends ChartViewModel {
             m[""] << seriesName + " for " + getPeriodLabel(currentPeriod)
             double value
             if (function == VAR_FUNCTION) {
-                value = ResultAccessor.getVar(simulationRun, currentPeriod, ResultFunction.getPath(nodes[nameIndex]), nodes[nameIndex].collector, nodes[nameIndex].field, percent)
+                value = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[nameIndex].path, nodes[nameIndex].collector, nodes[nameIndex].field, percent)
             } else {
-                value = ResultAccessor.getTvar(simulationRun, currentPeriod, ResultFunction.getPath(nodes[nameIndex]), nodes[nameIndex].collector, nodes[nameIndex].field, percent)
+                value = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[nameIndex].path, nodes[nameIndex].collector, nodes[nameIndex].field, percent)
             }
             m[columnHeader] << value
         }

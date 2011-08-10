@@ -6,12 +6,14 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.DefaultToggleValueProvider
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.ToggleKeyFigureAction
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -22,7 +24,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class ResultViewModel extends AbstractModellingModel {
+class ResultViewModel extends AbstractCommentableItemModel {
 
     private List<IFunctionListener> listeners = new ArrayList()
 
@@ -36,12 +38,13 @@ class ResultViewModel extends AbstractModellingModel {
         super(model, simulation, structure)
 
         model.init()
-        buildTreeStructure()
-        selectionViewModel = new ItemsComboBoxModel(resultStructures)
+        resultStructures = ModellingItemFactory.getResultStructuresForModel(model.class)
+        selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
+        buildTreeStructure(selectionViewModel.getSelectedObject())
     }
 
 
-    protected void buildTreeStructure(ResultStructure resultStructure = null) {
+    protected void buildTreeStructure(ResultStructure resultStructure) {
         ParameterizationDAO.withTransaction {status ->
             //parameterization is required for certain models to obtain period labels
             Parameterization parameterization = item.parameterization
@@ -63,18 +66,13 @@ class ResultViewModel extends AbstractModellingModel {
             def simulationRun = item.simulationRun
             Class modelClass = model.class
 
-            if (!resultStructure) {
-                resultStructures = ModellingItemFactory.getResultStructuresForModel(modelClass)
-                resultStructure = resultStructures[0]
-            }
-
             resultStructure.load()
             builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)
 
             def localTreeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
 
-            MeanAction meanAction = new MeanAction(this, null)
+            ToggleKeyFigureAction meanAction = new ToggleKeyFigureAction(new MeanFunction(), new DefaultToggleValueProvider(null), this, null)
 
             // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
             treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, localTreeRoot, allResults), filter)
@@ -95,7 +93,7 @@ class ResultViewModel extends AbstractModellingModel {
         ResultViewUtils.obtainsCollectors(simulationRun, allPaths)
     }
 
-    protected ITableTreeModel getResultTreeTableModel(Model model, MeanAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
+    protected ITableTreeModel getResultTreeTableModel(Model model, ToggleKeyFigureAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
         ResultTableTreeModel tableTreeModel = new ResultTableTreeModel(treeRoot, simulationRun, parameterization, meanAction.getFunction(), model)
         tableTreeModel.simulationModel = model
         tableTreeModel.results = results
@@ -163,7 +161,7 @@ class ResultViewModel extends AbstractModellingModel {
 
     boolean isFunctionAdded(IFunction function) {
         for (IFunction f in treeModel.functions) {
-            if (f != null && f.getName(0).equals(function.getName(0))) {
+            if (f != null && f.getName().equals(function.getName())) {
                 return true
             }
         }

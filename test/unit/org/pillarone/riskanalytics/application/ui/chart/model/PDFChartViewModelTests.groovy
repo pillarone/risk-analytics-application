@@ -4,7 +4,7 @@ import groovy.mock.interceptor.MockFor
 import groovy.mock.interceptor.StubFor
 import org.jfree.chart.JFreeChart
 import org.jfree.data.xy.XYSeries
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.util.MeshCalculations
@@ -101,7 +101,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String co, String f -> 3}
         resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int periodIndex, String path, String co, String f -> 2}
 
-        StubFor percentile = new StubFor(Percentile)
+        StubFor percentile = new StubFor(PercentileFunction)
         percentile.demand.evaluate(0..4) {def a, def b, def c -> Math.random()}
         percentile.demand.getI18nName(0..4) {-> ""}
 

@@ -9,9 +9,9 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
 
@@ -29,7 +29,7 @@ class AddTagDialog {
     private ULCButton applyButton
     private ULCButton addNewButton
     private ULCButton cancelButton
-    ModellingItem item
+    ModellingUIItem modellingUIItem
 
     Closure okAction
     String title
@@ -39,13 +39,12 @@ class AddTagDialog {
 
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
 
-    public AddTagDialog(ULCTableTree tree, AbstractTableTreeModel model, ModellingItem item) {
+    public AddTagDialog(ULCTableTree tree, ModellingUIItem modellingUIItem) {
         this.tree = tree
-        this.model = model
-        if (!item.isLoaded())
-            item.load(true)
-        this.item = item
-
+        this.model = tree.model
+        if (!modellingUIItem.isLoaded())
+            modellingUIItem.load(true)
+        this.modellingUIItem = modellingUIItem
     }
 
     public void init() {
@@ -63,7 +62,7 @@ class AddTagDialog {
         tagListModel = new ItemListModel(dialogTags?.collect {it.name}.toArray(), dialogTags)
         tags = new ULCList(tagListModel)
         tags.name = "tagesList"
-        tags.setSelectedIndices(tagListModel.getSelectedIndices(item?.getTags()?.collect {it.name}))
+        tags.setSelectedIndices(tagListModel.getSelectedIndices(modellingUIItem?.item?.getTags()?.collect {it.name}))
         tags.setVisibleRowCount(6);
         tags.setMinimumSize(new Dimension(160, 100))
         newTag = new ULCTextField()
@@ -79,7 +78,7 @@ class AddTagDialog {
     }
 
     public List<Tag> getItems() {
-        return Tag.findAllByTagType(EnumTagType.PARAMETERIZATION)
+        return Tag.findAll(" from ${Tag.class.name} as tag where tag.tagType =? and tag.name != ?",[EnumTagType.PARAMETERIZATION, "LOCKED"])
     }
 
     private void layoutComponents() {
@@ -116,15 +115,15 @@ class AddTagDialog {
 
         }] as IActionListener)
         applyButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            if (!item.isLoaded())
-                item.load(true)
+            if (!modellingUIItem.isLoaded())
+                modellingUIItem.load(true)
             Set values = tagListModel.getSelectedValues(tags.getSelectedIndices())
-            item.setTags(values)
-            item.save()
+            modellingUIItem.item.setTags(values)
+            modellingUIItem.save()
             closeAction.call()
             DefaultMutableTableTreeNode node = tree?.selectedPath?.lastPathComponent
             values?.each {
-                model.addColumnValue(item, node, ModellingInformationTableTreeModel.TAGS, it.toString())
+                model.addColumnValue(modellingUIItem.item, node, ModellingInformationTableTreeModel.TAGS, it.toString())
             }
             model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }] as IActionListener)

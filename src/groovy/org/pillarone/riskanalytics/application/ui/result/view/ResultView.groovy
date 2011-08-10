@@ -10,24 +10,28 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.dataaccess.function.Mean
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
+import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
-import org.pillarone.riskanalytics.application.ui.result.action.PercisionAction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 
-class ResultView extends AbstractModellingFunctionView {
+class ResultView extends AbstractModellingFunctionView implements NavigationListener {
 
     ULCCloseableTabbedPane tabbedPane
-    P1RATModel p1ratModel
+    RiskAnalyticsMainModel mainModel
     //view selection for simulation/calculation
     ULCComboBox selectView
+    CommentAndErrorView commentAndErrorView
+    ULCSplitPane splitPane
 
     public static int space = 3
 
@@ -48,26 +52,32 @@ class ResultView extends AbstractModellingFunctionView {
         tree.setCellSelectionEnabled true
 
         tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
-            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(tabbedPane, model.treeModel.simulationRun, tree, model, this))
+            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(this, -1))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
 
         tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
         model.periodCount.times {int index ->
-            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, tree.viewPortTableTree, new Mean())
+            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new MeanFunction())
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
             tree.viewPortTableTree.addColumn column
         }
         tree.rowHeaderView.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK))
         tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_FOCUSED)
+        commentAndErrorView.tableTree = tree
+    }
 
+    protected void initComponents() {
+        commentAndErrorView = new CommentAndErrorView(model)
+        model.addNavigationListener this
+        super.initComponents()
     }
 
     protected void addPrecisionFunctions(ULCToolBar toolbar) {
         selectionToolbar.addSeparator()
-        selectionToolbar.add new ULCButton(new PercisionAction(model, -1, "reducePrecision"))
-        selectionToolbar.add new ULCButton(new PercisionAction(model, +1, "increasePrecision"))
+        selectionToolbar.add new ULCButton(new PrecisionAction(model, -1, "reducePrecision"))
+        selectionToolbar.add new ULCButton(new PrecisionAction(model, +1, "increasePrecision"))
     }
 
     public ULCBoxPane createSelectionPane() {
@@ -90,6 +100,23 @@ class ResultView extends AbstractModellingFunctionView {
         filters.add(filterLabel)
         filters.add(filterSelection)
         return filters
+    }
+
+    public void showHiddenComments() {
+        if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1)
+            splitPane.setDividerLocation(DIVIDER)
+        else
+            splitPane.setDividerLocation(NO_DIVIDER)
+    }
+
+    public void showComments() {
+        if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1) {
+            splitPane.setDividerLocation(DIVIDER)
+        }
+    }
+
+    void selectTab(int index) {
+        tabbedPane.selectedIndex = index
     }
 
     /**

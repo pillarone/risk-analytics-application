@@ -1,29 +1,32 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-
 /**
- * @author fouad.jaada@intuitive-collaboration.com
- */
+* @author fouad.jaada@intuitive-collaboration.com
+*/
 class CompareParameterizationsAction extends SelectionTreeAction {
 
-    public CompareParameterizationsAction(ULCTableTree tree, P1RATModel model) {
+    public CompareParameterizationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("CompareParameterizations", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
-        List elements = getSelectedObjects(Parameterization.class)
+        List<ParameterizationNode> elements = getSelectedObjects(Parameterization.class)
         try {
             validate(elements)
-            Model model = getSelectedModel(elements[0])
-            model.init()
-            if (model != null && elements[0] != null) {
-                this.model.compareParameterizations(model, elements*.item)
+            Model simulationModel = getSelectedModel(elements[0])
+            simulationModel.init()
+            if (simulationModel != null && elements[0] != null) {
+                List items = elements*.abstractUIItem.item
+                CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, simulationModel, items)
+                model.openItem(simulationModel, uiItem)
             }
         } catch (IllegalArgumentException ex) {
             println "$ex"

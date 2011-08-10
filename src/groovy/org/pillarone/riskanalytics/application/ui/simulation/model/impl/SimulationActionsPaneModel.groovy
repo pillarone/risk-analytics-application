@@ -1,23 +1,30 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
+import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.event.serializable.IWindowListener
 import groovy.time.TimeCategory
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * The view model for the SimulationActionsPane.
@@ -26,9 +33,11 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
  */
 class SimulationActionsPaneModel {
 
+    protected Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
+
     protected SimulationHandler runner
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
-    private List<ISimulationListener> listeners = []
+    private List listeners = []
 
     volatile Simulation simulation
     ICollectorOutputStrategy outputStrategy
@@ -42,11 +51,11 @@ class SimulationActionsPaneModel {
     AddToBatchAction addToBatchAction
 
     ISimulationProvider simulationProvider
-    P1RATModel mainModel
+    RiskAnalyticsMainModel mainModel
 
     String batchMessage
 
-    public SimulationActionsPaneModel(ISimulationProvider provider, P1RATModel mainModel) {
+    public SimulationActionsPaneModel(ISimulationProvider provider, RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)
@@ -64,6 +73,41 @@ class SimulationActionsPaneModel {
 
     void runSimulation() {
         simulation.save()
+
+        if (ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector) {
+            possiblyWarnUserIfHugeResultSetExpected()
+        } else {
+            startSimulation()
+        }
+    }
+
+    private void possiblyWarnUserIfHugeResultSetExpected() {
+        try {
+            int iterationThreshold = ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector
+
+            if (simulation.numberOfIterations > iterationThreshold &&
+                simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
+                I18NAlert alert = new I18NAlert("WarnPotentiallyLargeResultSet")
+                alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert)}] as IWindowListener)
+                alert.show()
+            } else {
+                startSimulation()
+            }
+        } catch (Exception e) {
+            LOG.error("Failure in possiblyWarnUserIfHugeResultSetExpected(), running simulation without checking" + e.getMessage())
+            startSimulation()
+        }
+    }
+
+    void handleEvent(I18NAlert alert) {
+        if (alert.value.equals(alert.firstButtonLabel)) {
+            startSimulation()
+        } else if (! alert.value.equals(alert.secondButtonLabel)) {
+            throw new RuntimeException("Unknown button pressed: " + alert.value)
+        }
+    }
+
+    private void startSimulation() {
         runner = RunSimulationService.getService().runSimulationOnGrid(
                 new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy),
                 simulation.template)

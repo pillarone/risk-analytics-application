@@ -1,14 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.AbstractComparisonFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureTreeBuilder
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.result.action.MeanAction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.DefaultToggleValueProvider
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.ToggleKeyFigureAction
 import org.pillarone.riskanalytics.application.ui.result.view.ICompareFunctionListener
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.core.model.Model
@@ -27,8 +29,9 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
     ConfigObject allResults = null
     List<ConfigObject> resultsList
 
+
     public CompareSimulationsViewModel(Model model, ModelStructure structure, List simulations) {
-        super(model, simulations*.item, structure)
+        super(model, simulations, structure)
         if (structure) {
             model.init()
             buildTreeStructure()
@@ -36,6 +39,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
         }
 
     }
+
 
     void addFunctionListener(ICompareFunctionListener listener) {
         listeners << listener
@@ -75,7 +79,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
 
         def treeRoot = builder.buildTree()
 
-        MeanAction meanAction = new MeanAction(this, null)
+        ToggleKeyFigureAction meanAction = new ToggleKeyFigureAction(new MeanFunction(), new DefaultToggleValueProvider(null), this, null)
         List<ConfigObject> resultsList = []
         if (!resultsList) {
             resultsList = []
@@ -94,7 +98,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
      */
     void addFunction(IFunction function) {
         treeModel.clearCache()
-        function instanceof CompareFunction ? treeModel.addCompareFunction(function) : treeModel.addFunction(function)
+        function instanceof AbstractComparisonFunction ? treeModel.addCompareFunction(function) : treeModel.addFunction(function)
         notifyFunctionAdded(function)
     }
 
@@ -112,10 +116,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
 
     boolean isFunctionAdded(IFunction function) {
         for (IFunction iFunction in treeModel.functions) {
-//            if ((iFunction instanceof QuantilePerspectiveFunction) && (function instanceof QuantilePerspectiveFunction) && iFunction.equals(function)) {
-//                return true
-//            } else
-            if (iFunction.getName(0).equals(function.getName(0)))
+            if (iFunction.getName().equals(function.getName()))
                 return true
         }
         return false

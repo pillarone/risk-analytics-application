@@ -11,6 +11,10 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.springframework.transaction.TransactionStatus
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -108,8 +112,9 @@ class RunSimulationHandler {
         if (!status) return status
         SimulationRun.withTransaction {TransactionStatus transactionStatus ->
             for (ModellingItem item: items) {
-                if (item.changed && status)
-                    status = model.mainModel.deleteDependingResults(itemModel, item)
+                if (item.changed && status) {
+                    status = UIItemUtils.deleteDependingResults(model.mainModel, itemModel, item)
+                }
             }
             if (status) {
                 for (ModellingItem item: items) {
@@ -132,9 +137,10 @@ class RunSimulationHandler {
         SimulationRun.withTransaction {TransactionStatus transactionStatus ->
             for (ModellingItem item: items) {
                 if (item.changed) {
-                    newItems << model.mainModel.createNewVersion(itemModel, item, false)
-                    model.mainModel.closeItem(itemModel, item)
                     item.load()
+                    ModellingUIItem modellingUIItem = model.mainModel.getAbstractUIItem(item)
+                    newItems << modellingUIItem.createNewVersion(itemModel,  false).item
+                    model.mainModel.closeItem(itemModel, modellingUIItem)
                 } else
                     newItems << item
             }

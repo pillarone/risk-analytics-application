@@ -15,6 +15,9 @@ import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDim
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.TabIdentifier
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.ULCComponent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -27,23 +30,7 @@ class MultiDimensionalTabStarter implements IActionListener {
 
     public MultiDimensionalTabStarter(ParameterView parameterView) {
         this.@parameterView = parameterView
-        parameterView.tabbedPane.addTabListener(
-                [tabClosing: {
-                    TabEvent event ->
-                    int index = event.getTabClosingIndex()
-                    parameterView.commentFilters[index] = null
-
-                    for (Iterator it = openTabs.iterator(); it.hasNext();) {
-                        Map.Entry entry = it.next();
-                        if (entry.value > index) {
-                            entry.value--
-                        } else if (entry.value == index) {
-                            it.remove()
-                        }
-                    }
-                }
-                ] as ITabListener)
-
+        attachListeners()
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -66,7 +53,7 @@ class MultiDimensionalTabStarter implements IActionListener {
                 tabbedPane.selectedIndex = currentTab
                 tabbedPane.setToolTipTextAt(currentTab, model.getPathAsString())
                 openTabs.put(new TabIdentifier(path: tree.getSelectedPath(), columnIndex: tree.selectedColumn), currentTab)
-                parameterView.addCommentFilter(currentTab, new CommentPathFilter(tree?.selectedPath?.lastPathComponent?.path))//commentFilters[currentTab] = new CommentPathFilter(tree?.selectedPath?.lastPathComponent?.path)
+                parameterView.addCommentFilter(currentTab, new CommentPathFilter(tree?.selectedPath?.lastPathComponent?.path))
             } else {
                 tabbedPane.selectedIndex = index
             }
@@ -76,6 +63,32 @@ class MultiDimensionalTabStarter implements IActionListener {
                 if (selectedRow + 1 <= tree.rowCount) {
                     tree.selectionModel.setSelectionPath(tree.getPathForRow(selectedRow + 1))
                 }
+            }
+        }
+    }
+
+    protected void attachListeners() {
+        Closure closeAction = { event ->
+            int index = parameterView.tabbedPane.getSelectedIndex()
+            if (parameterView.tabbedPane.isCloseable(index)) {
+                parameterView.tabbedPane.closeCloseableTab(index)
+                removeTab(index)
+            }
+        }
+        parameterView.tabbedPane.addTabListener([tabClosing: {TabEvent event -> removeTab(event.getTabClosingIndex()) }] as ITabListener)
+        parameterView.tabbedPane.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false),
+                ULCComponent.WHEN_IN_FOCUSED_WINDOW)
+
+    }
+
+    private void removeTab(int index) {
+        parameterView.commentFilters[index] = null
+        for (Iterator it = openTabs.iterator(); it.hasNext();) {
+            Map.Entry entry = it.next();
+            if (entry.value > index) {
+                entry.value--
+            } else if (entry.value == index) {
+                it.remove()
             }
         }
     }

@@ -24,7 +24,7 @@ class MultiDimensionalParameterModel implements IModelChangedListener {
         this.node = node
         this.columnIndex = columnIndex
         this.multiDimensionalParameter = node.getMultiDimensionalValue(columnIndex)
-        tableModel = new MultiDimensionalParameterTableModel(multiDimensionalParameter, true)
+        tableModel = MultiDimensionalParameterTableModel.getInstance(multiDimensionalParameter)
         tableModel.addListener this
         ClientContext.setModelUpdateMode(tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
         if (multiDimensionalParameter instanceof IComboBoxBasedMultiDimensionalParameter || multiDimensionalParameter instanceof ConstrainedMultiDimensionalParameter) {

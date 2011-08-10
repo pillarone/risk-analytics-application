@@ -6,16 +6,21 @@ import com.ulcjava.base.application.util.ULCIcon
 import java.awt.FontMetrics
 import java.awt.Graphics
 import java.awt.image.BufferedImage
-import java.text.SimpleDateFormat
 import javax.swing.ImageIcon
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
+
+import org.pillarone.riskanalytics.core.user.PersonAuthority
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
 
 class UIUtils {
 
@@ -115,6 +120,14 @@ class UIUtils {
         }
     }
 
+    public static String getConfigProperty(String property) {
+        try {
+            return ApplicationHolder.getApplication().getConfig().getProperty(property)
+        } catch (Exception ex) {
+            return ""
+        }
+    }
+
 
     public static ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right, String alignment = null) {
         ULCBoxPane deco = new ULCBoxPane()
@@ -184,6 +197,34 @@ class UIUtils {
 
     public static void setRootPane(ULCRootPane pane) {
         UserContext.setAttribute(ROOT_PANE, pane)
+    }
+
+    public static String getUserInfo() {
+        try {
+            if (UserManagement.isLoggedIn()) {
+                Person loggedUser = null
+                String userAuthorities = ""
+                Person.withTransaction {def status ->
+                    loggedUser = UserContext.getCurrentUser()
+                    List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
+                    List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
+                    userAuthorities = i18nAuthorities.join(", ")
+                }
+                return loggedUser.username + " (" + userAuthorities+")"
+            }
+        } catch (Exception ex) {
+
+        }
+        return ""
+    }
+
+    public static Color getColor(ValidationType validationType) {
+        switch (validationType) {
+            case ValidationType.ERROR: return Color.red
+            case ValidationType.WARNING: return Color.darkGray
+            case ValidationType.HINT: return Color.blue
+            default: return Color.black
+        }
     }
 
 }

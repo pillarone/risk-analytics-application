@@ -89,9 +89,9 @@ public class DistributionChartsViewModel extends ChartViewModel implements IMode
         if (typeComboBoxModel.selectedEnum == DistributionTyp.PDF) {
             switch (methodComboBoxModel.selectedEnum) {
                 case DistributionMethod.GAUSS:
-                    return nodes.size() == 1
+                    return nodes.size() > 0
                 case DistributionMethod.GAUSS_ADAPTIVE:
-                    return nodes.size() == 1
+                    return nodes.size() > 0
             }
         } else if (typeComboBoxModel.selectedEnum == DistributionTyp.CDF) {
             switch (methodComboBoxModel.selectedEnum) {
@@ -101,6 +101,7 @@ public class DistributionChartsViewModel extends ChartViewModel implements IMode
                     return false
             }
         }
+        return false
     }
 
     void fireModelChanged() {

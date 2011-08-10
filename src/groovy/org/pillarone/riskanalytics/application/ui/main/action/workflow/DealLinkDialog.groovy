@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
-import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.remoting.ITransactionService
 import org.pillarone.riskanalytics.core.remoting.TransactionInfo
 import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+
+import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 
 class DealLinkDialog {
@@ -48,7 +48,7 @@ class DealLinkDialog {
         initComponents()
         layoutComponents()
         attachListeners()
-        title = "Choose deal"
+        title = getText("chooseDeal")
     }
 
     private void initComponents() {

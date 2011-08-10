@@ -29,19 +29,27 @@ class EditCommentView extends NewCommentView {
         saveButton.setPreferredSize(dimension)
         this.commentTextArea.setText(comment.getText())
         tags.setSelectedIndices(tagListModel.getSelectedIndices(comment?.getTags()?.collect {it.name}))
+        comment?.files?.each {String fileName ->
+            fileAdded(fileName)
+        }
     }
 
     protected void attachListeners() {
         tags.addListSelectionListener([valueChanged: {ListSelectionEvent event ->
             ULCListSelectionModel selectionModel = (ULCListSelectionModel) event.getSource()
             comment.setTags(tagListModel.getSelectedValues(selectionModel.getSelectedIndices()))
-            addPostLockingTag(comment)
+            addPostTag(comment)
 
         }] as IListSelectionListener)
         commentTextArea.addValueChangedListener([valueChanged: {ValueChangedEvent event -> this.comment.setText(commentTextArea.getText())}] as IValueChangedListener)
         saveButton.addActionListener([actionPerformed: {ActionEvent evt ->
+            comment.clearFiles()
+            addedFiles.each {String file ->
+                comment.addFile(file)
+            }
             comment.updated = true
             commentAndErrorView.model.commentChanged(null)
+            saveComments(commentAndErrorView.model.item)
             commentAndErrorView.closeTab()
         }] as IActionListener)
         cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
@@ -52,7 +60,8 @@ class EditCommentView extends NewCommentView {
     }
 
     protected ULCBoxPane getButtonsPane() {
-        ULCBoxPane pane = new ULCBoxPane(2, 1)
+        ULCBoxPane pane = new ULCBoxPane(3, 1)
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, addFileButton)
         pane.add(ULCBoxPane.BOX_LEFT_TOP, saveButton)
         pane.add(ULCBoxPane.BOX_LEFT_BOTTOM, cancelButton)
         return pane
@@ -60,6 +69,13 @@ class EditCommentView extends NewCommentView {
 
     String getDisplayPath() {
         return CommentAndErrorView.getDisplayPath(commentAndErrorView.model, comment.path)
+    }
+
+    private void initAddedFiles() {
+        addedFiles.clear()
+        comment?.files?.each {String fileName ->
+            fileAdded(fileName)
+        }
     }
 
 }

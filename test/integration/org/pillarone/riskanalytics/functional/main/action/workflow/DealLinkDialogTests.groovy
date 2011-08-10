@@ -32,6 +32,8 @@ class DealLinkDialogTests extends AbstractFunctionalTestCase {
         TreePath parametrizationPath = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", parametrizationPath
 
+//        mainFrameOperator.close()
+
         //ART-392: functionality currently disabled
         /*int row = tableTree.getRowForPath(parametrizationPath)
         tableTree.selectCell(row, 0)

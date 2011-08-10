@@ -12,6 +12,10 @@ import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
+import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
+import org.pillarone.riskanalytics.application.ui.base.view.ComponentNodeTableTreeNodeRenderer
+import org.pillarone.riskanalytics.application.ui.base.view.DelegatingCellEditor
+import org.pillarone.riskanalytics.application.ui.base.view.DelegatingCellRenderer
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
@@ -26,17 +30,13 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.action.*
-import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 
-class ParameterView extends AbstractModellingTreeView implements IModelItemChangeListener, NavigationListener {
+class ParameterView extends AbstractModellingTreeView implements NavigationListener {
 
     ULCTabbedPane tabbedPane
-    PropertiesView propertiesView
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
-    static double DIVIDER = 0.65
-    static double NO_DIVIDER = 1.0
     def commentFilters
 
     ParameterView(ParameterViewModel model) {
@@ -79,6 +79,7 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
 
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
+        commentAndErrorView.tableTree = tree
         new SelectionTracker(tree)
     }
 
@@ -253,18 +254,12 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
         tabbedPane.removeAll()
         tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
-        propertiesView = new PropertiesView(model.propertiesViewModel)
-        tabbedPane.addTab(propertiesView.getText("properties"), UIUtils.getIcon("settings-active.png"), propertiesView.content)
         tabbedPane.setCloseableTab(0, false)
-        tabbedPane.setCloseableTab(1, false)
         splitPane.add(tabbedPane);
         splitPane.add(commentAndErrorView.tabbedPane)
         return splitPane
     }
 
-    public void modelItemChanged() {
-        propertiesView.updateGui()
-    }
 
     public void removeTabs() {
         int count = tabbedPane.getTabCount()
@@ -289,6 +284,11 @@ class ParameterView extends AbstractModellingTreeView implements IModelItemChang
         if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1) {
             splitPane.setDividerLocation(DIVIDER)
         }
+    }
+
+    public void selectTab(int index) {
+        if (index < tabbedPane.getTabCount())
+            tabbedPane.setSelectedIndex(index)
     }
 
     public void addCommentFilter(int tabbedPaneIndex, CommentFilter filter) {

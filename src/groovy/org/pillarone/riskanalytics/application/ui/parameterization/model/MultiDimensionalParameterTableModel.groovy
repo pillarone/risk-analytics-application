@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListen
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
+import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 
 class MultiDimensionalParameterTableModel extends AbstractTableModel implements IBulkChangeable {
     private boolean bulkChange = false
@@ -233,6 +234,13 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     private int getIndex(int index, int max) {
         if (index < 0) return 0
         return Math.min(index, max)
+    }
+
+    public static MultiDimensionalParameterTableModel getInstance(AbstractMultiDimensionalParameter parameter) {
+        if(parameter instanceof ConstrainedMultiDimensionalParameter) {
+            return new ConstrainedMultiDimensionalParameterTableModel(parameter, true)
+        }
+        return new MultiDimensionalParameterTableModel(parameter, true)
     }
 
 }

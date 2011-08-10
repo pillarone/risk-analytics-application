@@ -1,18 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import java.text.SimpleDateFormat
 import org.jfree.chart.JFreeChart
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
 
 abstract class ChartViewModel {
     protected List series = []
@@ -70,7 +69,7 @@ abstract class ChartViewModel {
             simulationRun = SimulationRun.get(simulationRun.id)
             Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
             Class modelClass = parameterization.modelClass
-            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun?.name, modelClass)
+            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
             simulation.load()
 
             List data = []
@@ -99,15 +98,8 @@ abstract class ChartViewModel {
             if (periodLabels[periodIndex]) {
                 label = periodLabels[periodIndex]
             } else {
-                SimulationRun.withTransaction {status ->
-                    simulationRun = SimulationRun.get(simulationRun.id)
-                    Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
-                    parameterization.load(false)
-                    simulationRun.periodCount.times {int index ->
-                        periodLabels[index] = parameterization.getPeriodLabel(index)
-                    }
-                    label = periodLabels[periodIndex]
-                }
+                ResultViewUtils.initPeriodLabels(SimulationRun.get(simulationRun.id), periodLabels)
+                label = periodLabels[periodIndex]
             }
 
         } else {
@@ -197,8 +189,8 @@ abstract class ChartViewModel {
         nodes.each {ResultTableTreeNode node ->
             List periods = []
             periodCount.times {int periodIndex ->
-                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
-                periods << ResultAccessor.getValues(simulationRun, periodIndex, ResultFunction.getPath(node), node.collector, node.field)
+                onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
+                periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
             }
             series << periods
             seriesNames << node.getShortDisplayPath(nodes)

@@ -2,16 +2,14 @@ package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import java.text.NumberFormat
-import org.pillarone.riskanalytics.application.dataaccess.function.CompareFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.NodeNameFunction
-import org.pillarone.riskanalytics.application.dataaccess.function.ResultFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.dataaccess.function.*
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -20,7 +18,7 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
     List<Simulation> simulations
     private List<SimulationRun> hiddenSimulations = []
     private List<IFunction> functions = []
-    private List<CompareFunction> compareFunctions = []
+    private List<AbstractComparisonFunction> compareFunctions = []
     private int minPeriodCount
     private NodeNameFunction nameFunction = new NodeNameFunction()
     private SimpleTableTreeNode root
@@ -55,30 +53,32 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
         IFunction function = getFunction(column).clone()
         int periodIndex = getPeriodIndex(column)
         int simulationIndex = getSimulationRunIndex(column)
-        SimulationRun run = simulationIndex >= 0 ? simulationRuns.get(simulationIndex) : null
-        if (isResultFunction(function, node) && isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter, simulationIndex)) {
-            return getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.keyFigureName, function.keyFigureParameter, simulationIndex)
-        } else if (function instanceof CompareFunction && (node instanceof ResultTableTreeNode)) {
-            Double aValue = getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.underlyingFunction.keyFigureName, function.underlyingFunction.keyFigureParameter, getSimulationRunIndex(function.runA))
-            Double bValue = getPreCalculatedValue(periodIndex, ResultFunction.getPath(node), node.field, function.underlyingFunction.keyFigureName, function.underlyingFunction.keyFigureParameter, getSimulationRunIndex(function.runB))
-            return function.evaluate(run, periodIndex, node, aValue, bValue)
+        ComparisonSimulationRunHolder simulationRunHolder = new ComparisonSimulationRunHolder(simulationRuns)
+        simulationRunHolder.referenceRun = simulationRuns[0]
+        simulationRunHolder.runToCompare = getSecondRun(column)
+
+        def parameter = function instanceof IParametrizedFunction ? function.parameter : null
+        if (isResultFunction(function, node) && isValuePreCalculated(periodIndex, node.path, node.field, function.keyFigureName, parameter, simulationIndex)) {
+            return getPreCalculatedValue(periodIndex, node.path, node.field, function.keyFigureName, parameter, simulationIndex)
+        } else if (function instanceof AbstractComparisonFunction && (node instanceof ResultTableTreeNode)) {
+            return function.evaluate(simulationRunHolder, periodIndex, node)
         } else {
-            return function.evaluate(run, periodIndex, node)
+            return function.evaluate(new SimulationRunHolder(simulationRuns[simulationIndex]), periodIndex, node as SimpleTableTreeNode)
         }
 
     }
 
     private boolean isResultFunction(IFunction function, node) {
-        return (function instanceof ResultFunction) && !(function instanceof CompareFunction) && (node instanceof ResultTableTreeNode)
+        return (function instanceof AbstractResultFunction) && !(function instanceof AbstractComparisonFunction) && (node instanceof ResultTableTreeNode)
     }
 
     public String getColumnName(int column) {
         int runIndex = getSimulationRunIndex(column);
         if (runIndex >= 0) {
-            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} : ${periodLabels[runIndex][getPeriodIndex(column)]}: ${getFunction(column).getName(0)}"
+            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} : ${periodLabels[runIndex][getPeriodIndex(column)]}: ${getFunction(column).displayName}"
         } else {
-            runIndex = simulationRuns.indexOf(getFunction(column).runB)
-            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} :${periodLabels[runIndex][getPeriodIndex(column)]}-${periodLabels[0][getPeriodIndex(column)]} : ${getFunction(column).name}: ${getFunction(column).underlyingFunction.name}"
+            runIndex = simulationRuns.indexOf(getSecondRun(column))
+            return "${SimulationUtilities.RESULT_CHAR_PREFIXES[runIndex]} :${periodLabels[runIndex][getPeriodIndex(column)]}-${periodLabels[0][getPeriodIndex(column)]} : ${getFunction(column).displayName}: ${getFunction(column).underlyingFunction.displayName}"
         }
     }
 
@@ -87,8 +87,9 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
             boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
             if (isResultCell) {
                 int periodIndex = getPeriodIndex(column)
-                ResultFunction currentFunction = getFunction(column).clone()
-                boolean isPreCalculated = isValuePreCalculated(periodIndex, ResultFunction.getPath(node), node.field, currentFunction.keyFigureName, currentFunction.keyFigureParameter)
+                AbstractResultFunction currentFunction = getFunction(column).clone()
+                def parameter = currentFunction instanceof IParametrizedFunction ? currentFunction.parameter : null
+                boolean isPreCalculated = isValuePreCalculated(periodIndex, node.path, node.field, currentFunction.keyFigureName, parameter)
                 return !isPreCalculated
             } else {
                 return false
@@ -133,27 +134,36 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
         IFunction function = blockPosition < simulationRuns.size() ?
             functions.get(functionIndex) : getCompareFunction(blockPosition)
-        if (function instanceof CompareFunction) {
+        if (function instanceof AbstractComparisonFunction) {
             function.underlyingFunction = functions.get(functionIndex)
         }
         return function
     }
 
+    private SimulationRun getSecondRun(int column) {
+        if (column == 0) return null
+        int functionIndex
+
+        int blockSize = simulationRuns.size() + compareFunctions.size() * (simulationRuns.size() - 1)
+        int blockPosition = (column - 1) % blockSize
+        blockPosition = blockPosition - simulationRuns.size()
+
+        int simulationIndex = blockPosition % (simulationRuns.size() - 1) + 1
+        return simulationRuns[simulationIndex]
+
+    }
+
     private IFunction getCompareFunction(int blockPosition) {
         blockPosition = blockPosition - simulationRuns.size()
         int compareFunctionIndex = blockPosition / (simulationRuns.size() - 1)
-        int simulationIndex = blockPosition % (simulationRuns.size() - 1) + 1
-        IFunction function = compareFunctions.get(compareFunctionIndex)
-        function.runB = simulationRuns.get(simulationIndex)
-        return function
+        return compareFunctions.get(compareFunctionIndex)
     }
 
     public void addFunction(IFunction function) {
         functions << function
     }
 
-    public void addCompareFunction(CompareFunction function) {
-        function.runA = simulationRuns.get(0)
+    public void addCompareFunction(AbstractComparisonFunction function) {
         compareFunctions << function
     }
 
@@ -172,8 +182,8 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
             return hiddenSimulations.contains(simulationRun)
         } else {
             IFunction function = getFunction(columnIndex)
-            if (function instanceof CompareFunction) {
-                return hiddenSimulations.contains(function.runB)
+            if (function instanceof AbstractComparisonFunction) {
+                return hiddenSimulations.contains(getSecondRun(columnIndex))
             }
         }
         return false
@@ -192,12 +202,6 @@ class CompareResultTableTreeModel extends AsynchronTableTreeModel {
 
         Collections.swap(simulationRuns, 0, index)
         Collections.swap(resultsList, 0, index)
-        for (CompareFunction cf in compareFunctions) {
-            cf.runA = simulationRuns.get(0)
-            if (cf.runA == cf.runB) {
-                cf.runB = simulationRuns.get(1)
-            }
-        }
     }
 
     void setInterval(double min, double max) {

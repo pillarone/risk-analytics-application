@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.workflow.Resolv
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.user.Authority
+import org.pillarone.riskanalytics.application.UserContext
 
 class WorkflowCommentPane extends CommentPane {
 
@@ -140,7 +141,7 @@ class WorkflowCommentPane extends CommentPane {
     }
 
     private String getUserRole() {
-        List<Authority> roles = UserManagement.getCurrentUser()?.getAuthorities()?.toList()
+        List<Authority> roles = UserContext.getCurrentUser()?.getAuthorities()?.toList()
         if (roles == null || roles.size() != 1) {
             return UserManagement.USER_ROLE
         }

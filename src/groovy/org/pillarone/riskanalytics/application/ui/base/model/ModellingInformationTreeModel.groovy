@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.util.GroovyUtils
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
+//todo fja delete a class
 class ModellingInformationTreeModel extends DefaultTableTreeModel {
 
     private static Log LOG = LogFactory.getLog(ModellingInformationTreeModel)

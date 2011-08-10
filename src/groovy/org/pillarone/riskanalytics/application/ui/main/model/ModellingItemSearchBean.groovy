@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.lucene.document.Document
@@ -13,6 +12,7 @@ import org.apache.lucene.util.Version
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.hibernate.SQLQuery
 import org.hibernate.SessionFactory
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -89,16 +89,23 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
     }
 
     private List getRunNames(SessionFactory sessionFactory, String modelClass) {
-        //SELECT concat_ws(' /// ',run.name, p.name, r.name ) FROM simulation_run as run, parameterizationdao as p, result_configurationdao r
-        // where run.parameterization_id = p.id and run.result_configuration_id = r.id
+        //, (select GROUP_CONCAT(t.name)  from parameterization_tag ptag, tag t
         StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
-        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
+        sb.append(",dao.name, (select GROUP_CONCAT(t.name)  from simulation_tag stag, tag t")
+        sb.append(" where stag.simulation_run_id = dao.id and t.id = stag.tag_id) ")
+        sb.append(" ,p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
         sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
+        println " query : $sb"
+//        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
+        //        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
+        //        sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
         String whereClause = clauseByModel(modelClass)
         if (whereClause) {
             sb.append(" and (" + whereClause + ")")
         }
-        return getNames(sessionFactory, sb)
+        List<String> names = getNames(sessionFactory, sb)
+        println "names : $names"
+        return names
     }
 
     private List getResultConfigurationNames(SessionFactory sessionFactory, String modelClass) {
@@ -145,7 +152,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         reInitIndexer = true
     }
 
-    private String escapeQuery(String query) {
+    public static String escapeQuery(String query) {
         try {
             String escapeChars = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\\"\\'\\#]";
             query = query.replaceAll(escapeChars, " ")
@@ -164,7 +171,3 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
 }
 
-private interface ChangeIndexerListener {
-
-    void indexChanged()
-}

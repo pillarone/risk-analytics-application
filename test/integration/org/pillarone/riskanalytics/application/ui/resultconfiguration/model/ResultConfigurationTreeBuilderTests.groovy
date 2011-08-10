@@ -26,6 +26,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
 
         ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
+        configuration.modelClass = ApplicationModel
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("ApplicationStructure")
         modelStructure.load()
@@ -40,7 +41,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         ITableTreeNode exampleOutput = builder.root.getChildAt(0)
         ResultConfigurationTableTreeNode outClaims = exampleOutput.getChildAt(0)
 
-        //todo fja check why outClaims.collector is null 
+        //todo fja check why outClaims.collector is null
 //        assertNotNull outClaims.collector
 //        assertEquals SingleValueCollectingModeStrategy.IDENTIFIER, outClaims.collector.mode.identifier
     }
@@ -50,6 +51,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
 
         ResultConfiguration configuration = new ResultConfiguration("CoreResultConfiguration")
+        configuration.modelClass = ApplicationModel
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("CoreStructure")
         modelStructure.load()
@@ -70,6 +72,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
 
         ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
+        configuration.modelClass = ApplicationModel
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("ApplicationStructure")
         modelStructure.load()
@@ -96,6 +99,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
 
         ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
+        configuration.modelClass = ApplicationModel
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("ApplicationStructure")
         modelStructure.load()

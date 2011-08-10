@@ -7,6 +7,7 @@ import org.apache.log4j.spi.Filter
 import org.apache.log4j.spi.LoggingEvent
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,7 +26,7 @@ public class LoggingManager {
     public void appendLog(LoggingEvent event) {
         Person user = null
         try {
-            user = UserContext.getCurrentUser()
+            user = UserManagement.getCurrentUser()
             event.setProperty(USER_PROPERTY, user.getUsername())
         } catch (Exception ex) {
             event.setProperty(USER_PROPERTY, NO_USER)

@@ -8,6 +8,11 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.ModelDAO
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -31,14 +36,21 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
     }
 
     protected void tearDown() {
+        MockUserPreferences.INSTANCE.clearFakePreferences()
         Thread cleanUpThread = new Thread(
                 [run: {
-                    SimulationRun.list()*.delete()
-                    ResultStructureDAO.list()*.delete()
-                    ResultConfigurationDAO.list()*.delete()
-                    ParameterizationDAO.list()*.delete()
-                    ModelStructureDAO.list()*.delete()
-                    ModelDAO.list()*.delete()
+                    SimulationRun.withTransaction {
+                        BatchRunSimulationRun.list()*.delete()
+                        BatchRun.list()*.delete()
+                        PostSimulationCalculation.list()*.delete()
+                        SingleValueResult.list()*.delete()
+                        SimulationRun.list()*.delete()
+                        ResultStructureDAO.list()*.delete()
+                        ResultConfigurationDAO.list()*.delete()
+                        ParameterizationDAO.list()*.delete()
+                        ModelStructureDAO.list()*.delete()
+                        ModelDAO.list()*.delete()
+                    }
                 }] as Runnable
         )
         cleanUpThread.start()

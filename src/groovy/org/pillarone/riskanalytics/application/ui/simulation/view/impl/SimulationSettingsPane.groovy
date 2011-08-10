@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.time.FastDateFormat
@@ -16,6 +17,9 @@ import org.pillarone.riskanalytics.core.output.FileOutput
 import com.ulcjava.base.application.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import com.ulcjava.base.application.util.Font
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 
 /**
  * A view class which can be used to collect all information necessary for a simulation run (Simulation & output strategy)
@@ -51,6 +55,10 @@ class SimulationSettingsPane {
     protected ULCCheckBox userDefinedRandomSeed
     protected ULCTextField randomSeed
     protected ULCTextField numberOfIterations
+
+    protected RuntimeParameterPane runtimeParameterPane
+
+    private final userPreferences = UserPreferencesFactory.getUserPreferences()
 
     SimulationSettingsPaneModel model
     final private Dimension dimension = new Dimension(100, 20)
@@ -133,6 +141,8 @@ class SimulationSettingsPane {
             beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
         }
 
+        runtimeParameterPane = new RuntimeParameterPane(model.parameterPaneModel)
+
     }
 
     protected void layoutComponents() {
@@ -179,6 +189,11 @@ class SimulationSettingsPane {
     protected initConfigProperties(ULCBoxPane innerPane) {
         userDefinedRandomSeed = new ULCCheckBox(model.getText(USER_DEFINED_RANDOM_SEED_KEY), false)
         userDefinedRandomSeed.name = "userDefinedRandomSeed"
+        userDefinedRandomSeed.setSelected(Boolean.parseBoolean(userPreferences.getDefaultValue(UserPreferences.RANDOM_SEED_USE_USER_DEFINED, "" + Boolean.FALSE)))
+        userDefinedRandomSeed.addValueChangedListener([valueChanged: { ValueChangedEvent e ->
+            userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USE_USER_DEFINED, "" + userDefinedRandomSeed.isSelected())
+        }] as IValueChangedListener)
+
         randomSeed = new ULCTextField()
         randomSeed.setPreferredSize(dimension)
         randomSeed.enabler = userDefinedRandomSeed
@@ -189,8 +204,9 @@ class SimulationSettingsPane {
         numberOfIterations.name = "iterations"
         numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
 
+        model.randomSeedAction.randomSeed = randomSeed
         randomSeed.addValueChangedListener(model.randomSeedAction)
-        userDefinedRandomSeed.addValueChangedListener(model.randomSeedAction)
+        model.randomSeedAction.setUserDefinedRandomSeedCheckBox(userDefinedRandomSeed)
 
         numberOfIterations.addKeyListener([keyTyped: {e ->
             def value = numberOfIterations.value
@@ -259,6 +275,17 @@ class SimulationSettingsPane {
         numberOfIterations.enabled = true
         randomSeed.enabled = userDefinedRandomSeed.isSelected()
         userDefinedRandomSeed.enabled = true
+    }
+
+    ULCContainer getContent() {
+        if (runtimeParameterPane.model.hasRuntimeParameters()) {
+            ULCTabbedPane tabbedPane = new ULCTabbedPane()
+            tabbedPane.addTab("Settings", content)
+            tabbedPane.addTab("Runtime parameters", runtimeParameterPane.content)
+            return tabbedPane
+        } else {
+            return content
+        }
     }
 
 }

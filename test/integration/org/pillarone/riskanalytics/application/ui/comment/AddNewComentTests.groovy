@@ -83,7 +83,7 @@ class AddNewComentTests extends AbstractSimpleFunctionalTest {
         assertEquals 1, tabbedPaneOperator.getSelectedIndex()
 
         ULCListOperator tags = new ULCListOperator(frameOperator, new ComponentByNameChooser('tagsList'))
-        assertEquals 2, Tag.findAll().size()
+        assertEquals 3, Tag.findAll().size()
         assertEquals 1, tags.getItemCount()
 
         ULCTextAreaOperator textAreaOperator = new ULCTextAreaOperator(frameOperator, new ComponentByNameChooser('newCommentText'))

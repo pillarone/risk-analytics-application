@@ -2,16 +2,19 @@ package org.pillarone.riskanalytics.application.ui.result.view
 
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.datatype.ULCNumberDataType
-import com.ulcjava.base.application.event.IPopupMenuListener
-import com.ulcjava.base.application.event.PopupMenuEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
+import com.ulcjava.base.application.util.HTMLUtilities
 import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel
+import org.pillarone.riskanalytics.application.ui.base.view.ShowCommentsMenuItem
+import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
+import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.result.action.OpenChartTab
 import org.pillarone.riskanalytics.application.ui.result.action.OpenPlotChartTab
 import org.pillarone.riskanalytics.application.ui.result.action.OpenResultIterationDataViewer
@@ -22,110 +25,102 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import com.ulcjava.base.application.*
 
-enum ChartType {
-    HISTOGRAM, DiscretePDF, Scatter, DISTRIBUTIONS, PARALLEL_COORDINATES, WATERFALL, STACKED_BAR_CHART, LINE_CHART
-}
-
 class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     ULCCloseableTabbedPane tabbedPane
     SimulationRun simulationRun
     def tree
-    ULCPopupMenu nodePopup
-    ULCPopupMenu nodeHelpPopup
-    ULCPopupMenu defaultResultNodePopup
-    ULCPopupMenu defaultSingleResultNodePopup
-    ULCPopupMenu resultNodePopup
-    ULCPopupMenu singleResultNodePopup
+    ULCPopupMenu nodePopup = new ULCPopupMenu()
+    ULCPopupMenu nodeHelpPopup = new ULCPopupMenu()
+    ULCPopupMenu defaultResultNodePopup = new ULCPopupMenu()
+    ULCPopupMenu defaultSingleResultNodePopup = new ULCPopupMenu()
+    ULCPopupMenu resultNodePopup = new ULCPopupMenu()
+    ULCPopupMenu singleResultNodePopup = new ULCPopupMenu()
     ULCNumberDataType numberDataType
+    CommentAndErrorView commentAndErrorView
+    def model
+    InsertCommentAction insertComment
+    ShowCommentsAction showCommentsAction
+    OpenComponentHelp help
+    OpenResultIterationDataViewer openResultIterationDataViewer
+    ShowSingleValueCollectorAction showSingleValueCollectorAction
+    TreeNodeCopier treeNodeCopierWithPath
+    TreeNodeCopier treeNodeCopierWithoutPath
+    TreeExpander treeExpander
+    TreeCollapser treeCollapser
+    int columnIndex = -1
 
-    public ResultViewTableTreeNodeCellRenderer(ULCCloseableTabbedPane tabbedPane, SimulationRun simulationRun, def tree, model, def resultView) {
-        this.tabbedPane = tabbedPane
-        this.simulationRun = simulationRun
-        this.tree = tree
 
-        numberDataType = DataTypeFactory.numberDataType
-        numberDataType.setGroupingUsed true
-        numberDataType.setMinFractionDigits 2
-        numberDataType.setMaxFractionDigits 2
+    public ResultViewTableTreeNodeCellRenderer(ResultView resultView, int columnIndex) {
+        this.tabbedPane = resultView.tabbedPane
+        this.tree = resultView.tree
+        this.commentAndErrorView = resultView.commentAndErrorView
+        this.model = resultView.model
+        this.simulationRun = resultView.model.treeModel.simulationRun
+        this.columnIndex = columnIndex
+        initContextMenu(resultView)
 
-        resultNodePopup = new ULCPopupMenu()
-        singleResultNodePopup = new ULCPopupMenu()
-        defaultResultNodePopup = new ULCPopupMenu()
-        defaultSingleResultNodePopup = new ULCPopupMenu()
-        nodePopup = new ULCPopupMenu()
-        nodeHelpPopup = new ULCPopupMenu()
-        OpenComponentHelp help = new OpenComponentHelp(this.tree.rowHeaderTableTree)
-
-        defaultResultNodePopup.add(createChartsMenu(defaultResultNodePopup, tree))
-        defaultResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
-        defaultResultNodePopup.addSeparator()
-        defaultResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
-        defaultResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
-
-        defaultSingleResultNodePopup.add(createChartsMenu(defaultSingleResultNodePopup, tree))
-        defaultSingleResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
-        defaultSingleResultNodePopup.add(new ULCMenuItem(new ShowSingleValueCollectorAction(tabbedPane, tree, simulationRun)))
-        defaultSingleResultNodePopup.addSeparator()
-        defaultSingleResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
-        defaultSingleResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
-
-        resultNodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
-        resultNodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
-        resultNodePopup.addSeparator()
-        resultNodePopup.add(createChartsMenu(resultNodePopup, tree))
-        resultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
-        resultNodePopup.addSeparator()
-        resultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
-        resultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
-
-        singleResultNodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
-        singleResultNodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
-        singleResultNodePopup.addSeparator()
-        singleResultNodePopup.add(createChartsMenu(singleResultNodePopup, tree))
-        singleResultNodePopup.add(new ULCMenuItem(new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)))
-        singleResultNodePopup.add(new ULCMenuItem(new ShowSingleValueCollectorAction(tabbedPane, tree, simulationRun)))
-        singleResultNodePopup.addSeparator()
-        singleResultNodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
-        singleResultNodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
-
-        nodePopup.add(new ULCMenuItem(new TreeExpander(tree)))
-        nodePopup.add(new ULCMenuItem(new TreeCollapser(tree)))
-        nodePopup.addSeparator()
-        nodePopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
-        nodePopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
-
-        nodeHelpPopup.add(new ULCMenuItem(new TreeExpander(tree)))
-        nodeHelpPopup.add(new ULCMenuItem(new TreeCollapser(tree)))
-        nodeHelpPopup.addSeparator()
-        nodeHelpPopup.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.getRowHeaderTableTree(), viewPortTree: tree.getViewPortTableTree(), model: model.treeModel)))
-        nodeHelpPopup.add(new ULCMenuItem(getTreeNodeCopier(tree, model)))
-        nodeHelpPopup.addSeparator()
-        nodeHelpPopup.add(new ULCMenuItem(help))
     }
-
-    private TreeNodeCopier getTreeNodeCopier(tree, model) {
-        TreeNodeCopier copierWithPath = new TreeNodeCopier(true)
-        copierWithPath.rowHeaderTree = tree.getRowHeaderTableTree()
-        copierWithPath.viewPortTree = tree.getViewPortTableTree()
-        copierWithPath.model = model.treeModel
-        return copierWithPath
-    }
-
-    private setFormat(def value) {
-        setDataType null
-    }
-
-    private setFormat(Number value) {
-        setDataType(numberDataType)
-    }
-
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         IRendererComponent rendererComponent = super.getTableTreeCellRendererComponent(tableTree, value, selected, hasFocus, expanded, leaf, node);
         setPopupMenu(rendererComponent, node)
+        customizeNode(rendererComponent, node)
         setFormat(value)
-        setToolTipText node.getToolTip()
         return rendererComponent;
+    }
+
+
+    public void initContextMenu(ResultView resultView) {
+        initActions(resultView)
+
+        ULCMenu defaultResultChartMenu = createChartsMenu(defaultResultNodePopup, tree, tabbedPane, simulationRun)
+        addActionsMenu(defaultResultNodePopup, [defaultResultChartMenu, openResultIterationDataViewer, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+
+        ULCMenu defaultSingleResultChartMenu = createChartsMenu(defaultSingleResultNodePopup, tree, tabbedPane, simulationRun)
+        addActionsMenu(defaultSingleResultNodePopup, [defaultSingleResultChartMenu, openResultIterationDataViewer, showSingleValueCollectorAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+
+        ULCMenu resultChartMenu = createChartsMenu(resultNodePopup, tree, tabbedPane, simulationRun)
+        addActionsMenu(resultNodePopup, [treeExpander, treeCollapser, null, resultChartMenu, openResultIterationDataViewer, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+
+        ULCMenu singleResultChartMenu = createChartsMenu(singleResultNodePopup, tree, tabbedPane, simulationRun)
+        addActionsMenu(singleResultNodePopup, [treeExpander, treeCollapser, null, singleResultChartMenu, openResultIterationDataViewer, showSingleValueCollectorAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+
+        addActionsMenu(nodePopup, [treeExpander, treeCollapser, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+
+        addActionsMenu(nodeHelpPopup, [treeExpander, treeCollapser, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem(), null, help])
+    }
+
+
+
+    private void initActions(ResultView resultView) {
+        insertComment = new InsertCommentAction(tree.rowHeaderTableTree, columnIndex)
+        insertComment.addCommentListener commentAndErrorView
+        showCommentsAction = new ShowCommentsAction(tree.rowHeaderTableTree, columnIndex, false)
+        showCommentsAction.addCommentListener commentAndErrorView
+
+        openResultIterationDataViewer = new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)
+        showSingleValueCollectorAction = new ShowSingleValueCollectorAction(tabbedPane, tree, simulationRun)
+
+        help = new OpenComponentHelp(this.tree.rowHeaderTableTree)
+        treeNodeCopierWithPath = getTreeNodeCopier(tree, model, true)
+        treeNodeCopierWithoutPath = getTreeNodeCopier(tree, model, false)
+
+        treeExpander = new TreeExpander(tree)
+        treeCollapser = new TreeCollapser(tree)
+    }
+
+    void customizeNode(IRendererComponent rendererComponent, def node) {
+        Font font = getFont()
+        if (node.comments && node.comments.size() > 0) {
+            setForeground(Color.black)
+            setFont(font.deriveFont(Font.BOLD))
+            setToolTipText(HTMLUtilities.convertToHtml(node.commentMessage))
+        } else {
+            setForeground(Color.black)
+            setFont(font.deriveFont(Font.PLAIN))
+            setToolTipText node.getToolTip()
+        }
+
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
@@ -139,7 +134,56 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         rendererComponent.setComponentPopupMenu((node instanceof ComponentTableTreeNode) ? nodeHelpPopup : nodePopup)
     }
 
-    private ULCMenu createChartsMenu(ULCPopupMenu popupMenu, def tree) {
+    private setFormat(def value) {
+        setDataType null
+    }
+
+    private setFormat(Number value) {
+        setDataType(getNumberDataType())
+    }
+
+    ULCNumberDataType getNumberDataType() {
+        if (!numberDataType) {
+            numberDataType = DataTypeFactory.numberDataType
+            numberDataType.setGroupingUsed true
+            numberDataType.setMinFractionDigits 2
+            numberDataType.setMaxFractionDigits 2
+        }
+        return numberDataType
+    }
+
+    private TreeNodeCopier getTreeNodeCopier(tree, model, boolean copyWithPath) {
+        TreeNodeCopier copierWithPath = new TreeNodeCopier(copyWithPath)
+        copierWithPath.rowHeaderTree = tree.getRowHeaderTableTree()
+        copierWithPath.viewPortTree = tree.getViewPortTableTree()
+        copierWithPath.model = model.treeModel
+        return copierWithPath
+    }
+
+    void addActionsMenu(ULCPopupMenu popupMenu, List menuItems) {
+        for (def menuItem: menuItems) {
+            menuItem ? addMenu(popupMenu, menuItem) : popupMenu.addSeparator()
+        }
+    }
+
+    private void addMenu(ULCPopupMenu popupMenu, AbstractAction action) {
+        popupMenu.add(new ULCMenuItem(action))
+    }
+
+    private void addMenu(ULCPopupMenu popupMenu, ULCMenu submenu) {
+        popupMenu.add(submenu)
+    }
+
+    private void addMenu(ULCPopupMenu popupMenu, ULCMenuItem menuItem) {
+        popupMenu.add(menuItem)
+    }
+
+    private void addMenu(ULCPopupMenu popupMenu, def submenu) {
+        throw new Exception("${submenu} is not supported")
+    }
+
+
+    public ULCMenu createChartsMenu(ULCPopupMenu popupMenu, def tree, def tabbedPane, SimulationRun simulationRun) {
         ULCMenu chartsMenu = new ULCMenu("Charts")
         chartsMenu.add(new ULCMenuItem(new OpenChartTab(tabbedPane, "StackedBarChart", ChartType.STACKED_BAR_CHART, simulationRun, tree)))
         ULCMenuItem lineChartItem = new ULCMenuItem(new OpenChartTab(tabbedPane, "LineChart", ChartType.LINE_CHART, simulationRun, tree))
@@ -158,80 +202,19 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         chartsMenu.add(parallelCoordinatesMenuItem)
         return chartsMenu
     }
-}
 
-class EnableScatterPlot implements IPopupMenuListener {
-    ULCMenuItem menuItem
-    def rowHeaderTableTree
-
-    public EnableScatterPlot(ULCMenuItem menuItem, def rowHeaderTableTree) {
-        this.menuItem = menuItem
-        this.@rowHeaderTableTree = rowHeaderTableTree
+    ULCMenuItem createShowCommentsMenuItem() {
+        ULCMenuItem showCommentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
+        tree.addTreeSelectionListener(showCommentsMenuItem)
+        return showCommentsMenuItem
     }
 
-    public void popupMenuHasBecomeVisible(PopupMenuEvent event) {
-        def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
-        List nodes = paths.findAll {it instanceof ResultTableTreeNode}
-        if (nodes.size() == 2) {
-            menuItem.enabled = true
-        } else {
-            menuItem.enabled = false
-        }
-    }
-
-    public void popupMenuHasBecomeInvisible(PopupMenuEvent event) {}
-
-    public void popupMenuCanceled(PopupMenuEvent event) {}
-}
-
-class EnableParallelCoordinatesChart implements IPopupMenuListener {
-    ULCMenuItem menuItem
-    def rowHeaderTableTree
-
-    public EnableParallelCoordinatesChart(ULCMenuItem menuItem, def rowHeaderTableTree) {
-        this.menuItem = menuItem
-        this.@rowHeaderTableTree = rowHeaderTableTree
-    }
-
-    public void popupMenuHasBecomeVisible(PopupMenuEvent event) {
-        def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
-        List nodes = paths.findAll {it instanceof ResultTableTreeNode}
-        if (nodes.size() > 1) {
-            menuItem.enabled = true
-        } else {
-            menuItem.enabled = false
-        }
-    }
-
-    public void popupMenuHasBecomeInvisible(PopupMenuEvent event) {}
-
-    public void popupMenuCanceled(PopupMenuEvent event) {}
 }
 
 
 
 
-class ChartRenameListener implements IModelChangedListener {
-    ULCCloseableTabbedPane tabbedPane
-    int panelIndex
-    ChartViewModel model
 
-    public ChartRenameListener(ULCCloseableTabbedPane tabbedPane, int panelIndex, ChartViewModel model) {
-        this.@tabbedPane = tabbedPane
-        this.@panelIndex = panelIndex
-        this.@model = model
-    }
 
-    public void modelChanged() {
-        try {
-            tabbedPane.setTitleAt(panelIndex, format(model.chartProperties.title))
-        } catch (Exception ex) {
-            //ignore exception due an undocked pane
-        }
-    }
 
-    private String format(String title) {
-        return (title.length() > 12) ? (title.substring(0, 12) + "...") : title
-    }
-}
 

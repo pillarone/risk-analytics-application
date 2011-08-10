@@ -1,21 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.datatype.ULCNumberDataType
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.DeterministicModel
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimeFormat
 
-public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
+public class DeterministicResultTableTreeModel extends AbstractCommentableItemTableTreeModel {
 
     private Parameterization parameterization
     private SimulationRun simulationRun
@@ -105,7 +107,7 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
     }
 
 
-    private int getPeriodIndex(int column) {
+    int getPeriodIndex(int column) {
         int periodIndex = (column - 1) % simulationRun.periodCount
         return periodIndex
     }
@@ -119,4 +121,10 @@ public class DeterministicResultTableTreeModel extends AbstractTableTreeModel {
         }
         return numberDataType
     }
+
+
+    IFunction getFunction(int columnIndex) {
+        return new MeanFunction()
+    }
+
 }

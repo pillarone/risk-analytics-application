@@ -1,26 +1,31 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.ULCCardPane
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
-import org.pillarone.riskanalytics.application.ui.main.view.P1RATMainView
-
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.main.view.CardPaneManager
+import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 
 class WindowSelectionAction extends ExceptionSafeAction {
 
-    ULCCardPane cardPane
-    P1RATMainView view
+    RiskAnalyticsMainView mainView
+    Model model
+    private CardPaneManager cardPaneManager
 
-    def WindowSelectionAction(String name, P1RATMainView view) {
-        super(name);
-        this.view = view
+    def WindowSelectionAction(Model model, CardPaneManager cardPaneManager) {
+        super(getMenuName(model));
+        this.model = model
+        this.cardPaneManager = cardPaneManager
     }
 
     public void doActionPerformed(ActionEvent event) {
-        Object actionName = getValue(NAME)
-        view.modelPane.selectedName = actionName
-        view.selectCurrentItemFromTab(view.modelPane.selectedComponent)
-        view.windowTitle = actionName
+        cardPaneManager.selectCard(model)
+        cardPaneManager.selectCurrentItemFromTab(model, (ULCCloseableTabbedPane)cardPaneManager.getSelectedCard())
+    }
+
+    static String getMenuName(Model model) {
+        return model ? model.name : "Batches"
     }
 
 }

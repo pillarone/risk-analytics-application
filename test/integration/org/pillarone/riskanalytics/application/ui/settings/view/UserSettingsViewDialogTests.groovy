@@ -57,7 +57,7 @@ public class UserSettingsViewDialogTests extends AbstractSimpleFunctionalTest {
 
                 ULCButtonOperator okButtonOperator = new ULCButtonOperator(dialogOperator, new ComponentByNameChooser("okButton"))
                 assertNotNull okButtonOperator
-                assertNotNull org.pillarone.riskanalytics.application.user.UserManagement.getCurrentUser()
+                assertNotNull org.pillarone.riskanalytics.application.user.UserContext.getCurrentUser()
                 okButtonOperator.getFocus()
                 okButtonOperator.clickMouse()
 

@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.application.ui.comment.view.CommentListener
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.application.UserContext
 
 
 class InsertIssueAction extends AbstractCommentAction {
@@ -19,7 +20,7 @@ class InsertIssueAction extends AbstractCommentAction {
     }
 
     boolean isEnabled() {
-        Person user = UserManagement.getCurrentUser()
+        Person user = UserContext.getCurrentUser()
         return user != null && user.getAuthorities()*.authority.contains(UserManagement.REVIEWER_ROLE)
     }
 

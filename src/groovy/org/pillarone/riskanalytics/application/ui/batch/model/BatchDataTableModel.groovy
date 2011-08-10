@@ -5,7 +5,7 @@ import com.ulcjava.base.application.table.AbstractTableModel
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchRunAction
-import org.pillarone.riskanalytics.application.ui.main.model.IP1RATModelListener
+
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 
 public class BatchDataTableModel extends AbstractTableModel implements BatchTableListener {
     List<String> columnHeaders
@@ -22,7 +23,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     SimulationRun selectedRun
     ULCPollingTimer pollingBatchRunTimer
     PollingBatchRunAction pollingBatchRunAction
-    List<IP1RATModelListener> ip1RATModelListeners
+    List<IRiskAnalyticsModelListener> riskAnalyticsModelListeners
 
     private final String SIMULATION_STATUS_COLUMN = UIUtils.getText(this.class, "SimulationStatus")
     Log LOG = LogFactory.getLog(BatchDataTableModel)
@@ -31,10 +32,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         this.tableValues = new ArrayList<List<String>>()
         columnHeaders = []
         this.batchRun = batchRun
-//        init()
-//        pollingBatchRunAction = new PollingBatchRunAction(this)
-//        startPollingTimer() //pollingBatchRunAction
-        ip1RATModelListeners = []
+        riskAnalyticsModelListeners = []
     }
 
 
@@ -189,8 +187,8 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     }
 
     public void openDetailView(Model model, Object item) {
-        ip1RATModelListeners.each {IP1RATModelListener ip1RATModelListener ->
-            ip1RATModelListener.openDetailView model, item
+        riskAnalyticsModelListeners.each {IRiskAnalyticsModelListener riskAnalyticsModelListener ->
+            riskAnalyticsModelListener.openDetailView model, item
         }
     }
 
@@ -206,8 +204,8 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         return columnHeaders.indexOf(columnName)
     }
 
-    public void addIP1RATModelListener(IP1RATModelListener ip1RATModelListener) {
-        ip1RATModelListeners << ip1RATModelListener
+    public void addRiskAnalyticsModelListener(IRiskAnalyticsModelListener riskAnalyticsModelListener) {
+        riskAnalyticsModelListeners << riskAnalyticsModelListener
     }
 
     private void startPolling() {

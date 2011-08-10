@@ -1,5 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.testframework.operator.ULCMenuItemOperator
+import com.ulcjava.testframework.operator.ULCPopupMenuOperator
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
+import models.application.ApplicationModel
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -8,19 +18,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.workflow.Status
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.testframework.operator.ULCMenuItemOperator
-import com.ulcjava.testframework.operator.ULCPopupMenuOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
-import org.pillarone.riskanalytics.application.ui.main.model.P1RATModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.joda.time.DateTime
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -30,8 +27,8 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
 
     ULCComponent createContentPane() {
-        viewModel = getMockTreeModel()
-        SelectionTreeView view = new SelectionTreeView(getMockP1RATModel(viewModel))
+        RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
+        SelectionTreeView view = new SelectionTreeView(mainModel)
         return view.content;
     }
 
@@ -98,13 +95,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         componentTree.selectCell(2, 0)
 
-        //fja callPopupOnCell doesn't work in cruise on the server
-//        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
-//
-//        assertNotNull popupMenuOperator
-//
-//        ULCMenuItemOperator run = new ULCMenuItemOperator(popupMenuOperator, "Run simulation ...")
-//        assertNotNull run
     }
 
     public void testSaveAsAction() {
@@ -164,7 +154,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
         assertNotNull openBatch
-        openBatch.clickMouse()
 
     }
 
@@ -207,8 +196,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         ULCMenuItemOperator openResult = new ULCMenuItemOperator(popupMenuOperator, "Open")
         assertNotNull openResult
-        openResult.clickMouse()
-
     }
 
     public void testExportResult() {
@@ -239,32 +226,30 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     }
 
 
-    private P1RATModel getMockP1RATModel(def viewModel) {
-        P1RATModel p1RATModel = new P1RATModel(viewModel)
-//        p1RATModel.selectionTreeModel = new FilteringTableTreeModel(viewModel, new ParameterizationNodeFilter(null, -1))
-        p1RATModel.selectionTreeModel = new MultiFilteringTableTreeModel(viewModel)
-        p1RATModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
+
+    private RiskAnalyticsMainModel getMockRiskAnalyticsMainModel() {
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(getMockTreeModel(null))
+        mainModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
         }
-        p1RATModel.metaClass.openItem = {Model pcModel, Parameterization item ->
+        mainModel.metaClass.openItem = {Model pcModel, Parameterization item ->
             assertEquals pcModel.name, "Application"
             assertNotNull item
         }
 
-        p1RATModel.metaClass.openItem = {Model pcModel, Simulation item ->
+        mainModel.metaClass.openItem = {Model pcModel, Simulation item ->
             assertEquals pcModel.name, "Application"
             assertNotNull item
         }
 
-        return p1RATModel
+        return mainModel
     }
 
-    private ModellingInformationTableTreeModel getMockTreeModel() {
-        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel()
-        ModellingInformationTableTreeBuilder builder = new ModellingInformationTableTreeBuilder(treeModel)
-        builder.metaClass.getAllModelClasses = {->
+    private ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
+        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
+        treeModel.builder.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
         }
-        builder.metaClass.getItemsForModel = {Class modelClass, Class clazz ->
+        treeModel.builder.metaClass.getItemsForModel = {Class modelClass, Class clazz ->
             switch (clazz) {
                 case Parameterization:
                     Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
@@ -279,12 +264,14 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
                     simulation.template = new ResultConfiguration("result1")
                     simulation.id = 1
                     simulation.setEnd(new DateTime())
+                    simulation.modelClass = ApplicationModel
+                    simulation.metaClass.getSize = {Class SimulationClass -> return 0}
                     return [simulation]
                 default: return []
             }
         }
 
-        builder.metaClass.getAllBatchRuns = {->
+        treeModel.builder.metaClass.getAllBatchRuns = {->
             return [new BatchRun(name: "test")]
         }
 
@@ -292,7 +279,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
             treeModel.addColumnValue(p, node, columnIndex, p.name + " " + columnIndex)
             return p.name + " " + columnIndex
         }
-        treeModel.builder = builder
+//        treeModel.builder = builder
         treeModel.buildTreeNodes()
         return treeModel
     }

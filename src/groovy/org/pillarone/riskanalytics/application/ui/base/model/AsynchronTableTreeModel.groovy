@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
@@ -12,8 +11,9 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 import org.apache.commons.lang.builder.HashCodeBuilder
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 
-abstract class AsynchronTableTreeModel extends AbstractTableTreeModel {
+abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeModel {
     ULCPollingTimer timer
     Map cellValues = [:]
     PollingAction pollingAction

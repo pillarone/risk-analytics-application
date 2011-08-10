@@ -8,8 +8,9 @@ import org.jfree.chart.JFreeChart
 import org.jfree.chart.annotations.XYShapeAnnotation
 import org.jfree.chart.annotations.XYTextAnnotation
 import org.jfree.ui.TextAnchor
+import org.pillarone.riskanalytics.application.dataaccess.function.PercentileFunction
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.application.dataaccess.function.Percentile
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class ChartInsetWriter {
@@ -70,7 +71,7 @@ class ChartInsetWriter {
 
     public void writePercentiles(List list, SimulationRun simulationRun, int period, def node) {
         list.each {
-            Percentile percentile = new Percentile(percentile: it)
+            PercentileFunction percentile = new PercentileFunction(it, QuantilePerspective.LOSS)
             double value = percentile.evaluate(simulationRun, 0, node)
             writeInset("$it% percentile", value)
         }
