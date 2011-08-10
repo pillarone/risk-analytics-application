@@ -20,19 +20,17 @@ class ImportP14NTests extends AbstractFunctionalTestCase {
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
-        pathField.typeText(ImportP14NTests.getResource("CoreAlternativeParameters.groovy").getFile())
+        final String file = ImportP14NTests.getResource("CoreAlternativeParameters.groovy").getFile()
+        println(file)
+        pathField.typeText(file)
         ULCButtonOperator button = fileChooserOperator.getApproveButton()
         assertNotNull(button)
         button.getFocus()
         button.clickMouse()
 
-        verifyImport()
-    }
-
-
-    private void verifyImport() {
-        ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
-        TreePath path = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
+        Thread.sleep(5000)
+        println(tree.getChildCount(tree.findPath(["Core", "Parameterization"] as String[])))
+        TreePath path = tree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull(path)
     }
 
