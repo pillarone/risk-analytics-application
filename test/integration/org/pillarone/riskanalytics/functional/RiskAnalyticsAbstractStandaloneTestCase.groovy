@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -26,6 +27,7 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
     }
 
     protected void tearDown() {
+        MockUserPreferences.INSTANCE.clearFakePreferences()
         ModelRegistry.instance.listeners.clear() //TODO: find better solution
         Thread cleanUpThread = new Thread(
                 [run: {
