@@ -76,7 +76,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         return popupMenu
     }
 
-    private ULCPopupMenu getPopUpMenu(WorkflowParameterizationNode node) {
+    private ULCPopupMenu getPopupMenu(WorkflowParameterizationNode node) {
         if (workflowMenus.containsKey(node.status)) return workflowMenus.get(node.status)
         ULCPopupMenu popupMenu = node.getPopupMenu(tree)
         workflowMenus.put(node.status, popupMenu)
