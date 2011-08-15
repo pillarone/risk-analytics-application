@@ -96,6 +96,10 @@ abstract class AbstractUIItem implements IUIItem {
         return false
     }
 
+    public boolean isDeletable() {
+        return true
+    }
+
     public void removeAllModellingItemChangeListener() {
 
     }

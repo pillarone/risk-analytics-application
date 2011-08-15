@@ -46,6 +46,11 @@ class CompareParameterizationUIItem extends AbstractUIItem {
     }
 
     @Override
+    boolean isDeletable() {
+        return false
+    }
+
+    @Override
     boolean isLoaded() {
         return false
     }

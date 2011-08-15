@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.core.workflow.Status
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -88,6 +89,12 @@ class ParameterizationUIItem extends ModellingUIItem {
     @Override
     boolean isChangeable() {
         return true
+    }
+
+    @Override
+    boolean isDeletable() {
+        Parameterization parameterization = item as Parameterization
+        return parameterization.status == Status.NONE || parameterization.status == Status.DATA_ENTRY
     }
 
     @Override

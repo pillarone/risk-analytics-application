@@ -58,6 +58,8 @@ public interface IUIItem {
 
     public boolean isChanged()
 
+    public boolean isDeletable()
+
     public void removeAllModellingItemChangeListener()
 
     public void addModellingItemChangeListener(IModellingItemChangeListener listener)

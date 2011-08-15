@@ -45,6 +45,8 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
         dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
         dataEntry.addSeparator()
+        dataEntry.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
+        dataEntry.addSeparator()
         dataEntry.add(new ULCMenuItem(new SendToReviewAction(tree, abstractUIItem.mainModel)))
         return dataEntry
     }
