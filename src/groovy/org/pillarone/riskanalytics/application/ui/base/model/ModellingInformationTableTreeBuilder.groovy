@@ -284,10 +284,10 @@ class ModellingInformationTableTreeBuilder {
         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
     }
 
-    protected def createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem) {
+    protected void createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem) {
         boolean parameterNameFound = false
         for (int i = 0; i < node.childCount; i++) {
-            if (modellingUIItem.name.equals(node.getChildAt(i).abstractUIItem.name)) {
+            if (isMatchingParent(node.getChildAt(i).abstractUIItem, modellingUIItem)) {
                 parameterNameFound = true
                 if (modellingUIItem.isVersionable() && modellingUIItem.item.versionNumber.level > 1) {
                     insertSubversionItemNode(node.getChildAt(i), createNode(modellingUIItem))
@@ -320,6 +320,22 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
+    private boolean isMatchingParent(IUIItem currentItem, IUIItem itemToAdd) {
+        return currentItem.name == itemToAdd.name
+    }
+
+    private boolean isMatchingParent(ParameterizationUIItem currentItem, ParameterizationUIItem itemToAdd) {
+        if (currentItem.item.versionNumber.isWorkflow()) {
+            if (!(itemToAdd.item.versionNumber.isWorkflow())) {
+                return false
+            }
+        } else {
+            if (itemToAdd.item.versionNumber.isWorkflow()) {
+                return false
+            }
+        }
+        return currentItem.name == itemToAdd.name
+    }
 
     private def createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchUIItem batchUIItem) {
         DefaultMutableTableTreeNode newNode = createNode(batchUIItem)
