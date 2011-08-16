@@ -54,7 +54,7 @@ class OpenItemDialog {
         dialog = new ULCDialog(parent, UIUtils.getText(this.class, "title"), true)
         dialog.name = 'OpenItemDialog'
         createCopyButton = new ULCButton(UIUtils.getText(this.class, "createCopy"))
-        createCopyButton.setPreferredSize(buttonDimension)
+        createCopyButton.setPreferredSize(new Dimension(240, 20))
         createCopyButton.name = "OpenItemDialog.createCopy"
         readOnlyButton = new ULCButton(UIUtils.getText(this.class, "OpenReadOnly"))
         readOnlyButton.setPreferredSize(buttonDimension)
