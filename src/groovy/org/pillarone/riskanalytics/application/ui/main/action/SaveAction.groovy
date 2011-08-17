@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
 
 class SaveAction extends ResourceBasedAction {
     RiskAnalyticsMainModel model
@@ -67,8 +68,8 @@ class SaveAction extends ResourceBasedAction {
                 if (deleted) {
                     saveItem(modellingUIItem)
                 } else {
-                    //item used in running simulation
-                    new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
+                    String errorKey = UIItemUtils.isUsedInRunningSimulation(modellingUIItem.item) ? "DeleteAllDependentRunningsError" : "DeleteAllDependentRunsError"
+                    new I18NAlert(UlcUtilities.getWindowAncestor(parent), errorKey).show()
                 }
             }
         }

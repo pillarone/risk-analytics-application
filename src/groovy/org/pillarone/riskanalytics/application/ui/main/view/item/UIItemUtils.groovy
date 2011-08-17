@@ -28,7 +28,7 @@ class UIItemUtils {
     }
 
     public static boolean deleteDependingResults(RiskAnalyticsMainModel mainModel, Model model, ModellingItem item) {
-        boolean usedInRunningSimulation = false
+        if (isUsedInRunningSimulation(item)) return false
         try {
             SimulationRun.withTransaction {TransactionStatus status ->
                 List<SimulationRun> simulationRuns = item.getSimulations();
@@ -41,28 +41,39 @@ class UIItemUtils {
                             batchRunSimulationRun.delete()
                             simulationRun.delete()
                             runsToBeRemoved << simulationRun
-                        } else {
-                            usedInRunningSimulation = true
                         }
                     }
                 }
-                if (!usedInRunningSimulation) {
-                    simulationRuns.removeAll(runsToBeRemoved)
-                    for (SimulationRun simulationRun: simulationRuns) {
-                        Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
-                        SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
-                        simulationUIItem.remove()
-                    }
-                    Tag postLocking = Tag.findByNameAndTagType(NewCommentView.POST_LOCKING, EnumTagType.COMMENT)
-                    deleteCommentTag(item, postLocking)
+                simulationRuns.removeAll(runsToBeRemoved)
+                for (SimulationRun simulationRun: simulationRuns) {
+                    Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
+                    SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
+                    simulationUIItem.remove()
                 }
+                Tag postLocking = Tag.findByNameAndTagType(NewCommentView.POST_LOCKING, EnumTagType.COMMENT)
+                deleteCommentTag(item, postLocking)
 
             }
         } catch (Exception ex) {
             LOG.error "$ex"
             return false
         }
-        return !usedInRunningSimulation
+        return true
+    }
+
+    public static boolean isUsedInRunningSimulation(ModellingItem item) {
+        boolean usedInRunningSimulation = false
+        List<SimulationRun> simulationRuns = item.getSimulations();
+        for (SimulationRun simulationRun: simulationRuns) {
+            if (!simulationRun.endTime) {
+                BatchRunSimulationRun batchRunSimulationRun = BatchRunSimulationRun.findBySimulationRun(simulationRun)
+                if (!batchRunSimulationRun) {
+                    usedInRunningSimulation = true
+                    break
+                }
+            }
+        }
+        return usedInRunningSimulation
     }
 
     public static void deleteCommentTag(Parameterization parameterization, Tag tag) {
