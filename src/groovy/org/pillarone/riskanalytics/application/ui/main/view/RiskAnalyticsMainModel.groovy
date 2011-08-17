@@ -235,22 +235,8 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         } catch (NullPointerException ex) {}
     }
 
-    //set open parameterizations read only when starting a simulation
+
     public void simulationStart(Simulation simulation) {
-        final ModellingUIItem parameterization = getAbstractUIItem(simulation.parameterization)
-        if (parameterization != null) {
-            final ParameterViewModel parameterViewModel = viewModelsInUse[parameterization]
-            if (parameterViewModel != null) {
-                parameterViewModel.readOnly = true
-            }
-        }
-        final ModellingUIItem resultConfiguration = getAbstractUIItem(simulation.template)
-        if (resultConfiguration != null) {
-            final ResultConfigurationViewModel resultConfigurationViewModel = viewModelsInUse[resultConfiguration]
-            if (resultConfigurationViewModel != null) {
-                resultConfigurationViewModel.readOnly = true
-            }
-        }
     }
 
     public void simulationEnd(Simulation simulation, Model model) {

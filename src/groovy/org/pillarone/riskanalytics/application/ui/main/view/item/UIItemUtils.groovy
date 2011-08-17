@@ -28,6 +28,7 @@ class UIItemUtils {
     }
 
     public static boolean deleteDependingResults(RiskAnalyticsMainModel mainModel, Model model, ModellingItem item) {
+        boolean usedInRunningSimulation = false
         try {
             SimulationRun.withTransaction {TransactionStatus status ->
                 List<SimulationRun> simulationRuns = item.getSimulations();
@@ -40,23 +41,28 @@ class UIItemUtils {
                             batchRunSimulationRun.delete()
                             simulationRun.delete()
                             runsToBeRemoved << simulationRun
+                        } else {
+                            usedInRunningSimulation = true
                         }
                     }
                 }
-                simulationRuns.removeAll(runsToBeRemoved)
-                for (SimulationRun simulationRun: simulationRuns) {
-                    Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
-                    SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
-                    simulationUIItem.remove()
+                if (!usedInRunningSimulation) {
+                    simulationRuns.removeAll(runsToBeRemoved)
+                    for (SimulationRun simulationRun: simulationRuns) {
+                        Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
+                        SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
+                        simulationUIItem.remove()
+                    }
+                    Tag postLocking = Tag.findByNameAndTagType(NewCommentView.POST_LOCKING, EnumTagType.COMMENT)
+                    deleteCommentTag(item, postLocking)
                 }
-                Tag postLocking = Tag.findByNameAndTagType(NewCommentView.POST_LOCKING, EnumTagType.COMMENT)
-                deleteCommentTag(item, postLocking)
+
             }
         } catch (Exception ex) {
             LOG.error "$ex"
             return false
         }
-        return true
+        return !usedInRunningSimulation
     }
 
     public static void deleteCommentTag(Parameterization parameterization, Tag tag) {

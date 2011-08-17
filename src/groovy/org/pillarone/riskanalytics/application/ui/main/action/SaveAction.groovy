@@ -63,7 +63,8 @@ class SaveAction extends ResourceBasedAction {
                 modellingUIItem.createNewVersion(itemModel, false)
                 model.closeItem(itemModel, modellingUIItem)
             } else if (alert.value.equals(alert.secondButtonLabel)) {
-                if (modellingUIItem.deleteDependingResults(getItemModel(modellingUIItem))) {
+                boolean deleted = modellingUIItem.deleteDependingResults(getItemModel(modellingUIItem))
+                if (deleted) {
                     saveItem(modellingUIItem)
                 } else {
                     //item used in running simulation
