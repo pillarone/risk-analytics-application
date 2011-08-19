@@ -37,6 +37,7 @@ class CapitalEagle4PeriodsReportModel extends CapitalEagleReportModel {
 
     public CapitalEagle4PeriodsReportModel(Simulation simulation) {
         this.simulation = simulation
+        if (!simulation.isLoaded()) simulation.load()
         validateSimulation()
     }
 

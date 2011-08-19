@@ -415,6 +415,7 @@ class ModellingItemFactory {
             simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
             simulation.creationDate = run.startTime
             simulation.modificationDate = run.getModificationDate()
+            simulation.periodCount = run.periodCount
             try {
                 simulation.tags = run.tags*.tag
             } catch (Exception ex) {}

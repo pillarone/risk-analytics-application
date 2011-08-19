@@ -30,6 +30,7 @@ class GenerateReportAction extends SelectionTreeAction implements ITreeSelection
     }
 
     public void checkAvailability(Simulation simulation) {
+        if (simulation.modelClass.simpleName != "CapitalEagleModel") return
         try {
             ReportFactory.getReportModel(simulation, name)
             setEnabled(true)

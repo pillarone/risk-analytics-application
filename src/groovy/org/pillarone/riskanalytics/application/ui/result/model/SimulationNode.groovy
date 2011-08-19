@@ -19,6 +19,7 @@ class SimulationNode extends ItemNode {
     boolean display = true
     // flag for hidden/display simulations
     boolean hidden = false
+    Map<String, ULCPopupMenu> resultMenus = [:]
 
     public SimulationNode(AbstractUIItem simulationUIItem) {
         super(simulationUIItem, false, true)
@@ -32,6 +33,8 @@ class SimulationNode extends ItemNode {
     }
 
     public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+        String modelName = abstractUIItem.model.modelClass.simpleName
+        if (resultMenus.containsKey(modelName)) return resultMenus[modelName]
         ULCPopupMenu simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
 
@@ -42,17 +45,30 @@ class SimulationNode extends ItemNode {
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
-        simulationNodePopUpMenu.addSeparator()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new GiraReportAction(tree, abstractUIItem.mainModel)))
-
-        ULCMenu reportsMenu = new ReportMenu("Reports")
-        reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, abstractUIItem.mainModel)))
-        reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Actuary Summary", tree, abstractUIItem.mainModel)))
-        tree.addTreeSelectionListener(reportsMenu)
-        simulationNodePopUpMenu.add(reportsMenu)
+        addReportMenus(simulationNodePopUpMenu, tree)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
+        resultMenus[modelName] = simulationNodePopUpMenu
+
         return simulationNodePopUpMenu
+    }
+
+    private void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree) {
+        String modelName = abstractUIItem.model.modelClass.simpleName
+        switch (modelName) {
+            case "CapitalEagleModel":
+                ULCMenu reportsMenu = new ReportMenu("Reports",modelName)
+                reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, abstractUIItem.mainModel)))
+                reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Actuary Summary", tree, abstractUIItem.mainModel)))
+                tree.addTreeSelectionListener(reportsMenu)
+                simulationNodePopUpMenu.addSeparator()
+                simulationNodePopUpMenu.add(reportsMenu)
+                break
+            case "GIRAModel":
+                simulationNodePopUpMenu.addSeparator()
+                simulationNodePopUpMenu.add(new ULCMenuItem(new GiraReportAction(tree, abstractUIItem.mainModel)))
+                break
+        }
     }
 
     public String getToolTip() {

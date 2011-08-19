@@ -11,17 +11,23 @@ import org.pillarone.riskanalytics.application.ui.base.action.GenerateReportActi
  */
 class ReportMenu extends ULCMenu implements ITreeSelectionListener {
     List actions = []
+    String modelName
 
-    public ReportMenu(String name) {
+    public ReportMenu(String name, String modelName) {
         super(name)
+        this.modelName = modelName
     }
 
     public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        boolean enable = false
-        actions.each {GenerateReportAction action ->
-            enable = enable || action.isEnabled()
-        }
-        setEnabled(enable)
+        if(modelName != "CapitalEagleModel") return
+        try {
+            boolean enable = false
+            actions.each {GenerateReportAction action ->
+                enable = enable || action.isEnabled()
+            }
+            setEnabled(enable)
+            setVisible(enable)
+        } catch (Exception ex) {}
     }
 
     public ULCMenuItem add(ULCMenuItem ulcMenuItem) {

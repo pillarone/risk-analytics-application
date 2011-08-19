@@ -69,6 +69,10 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         return popupMenu
     }
 
+    private ULCPopupMenu getPopupMenu(SimulationNode node) {
+        return ((INavigationTreeNode) node).getPopupMenu(tree)
+    }
+
     private ULCPopupMenu getPopupMenu(ItemGroupNode node) {
         if (popupMenus.containsKey(node.itemClass)) return popupMenus.get(node.itemClass)
         ULCPopupMenu popupMenu = node.getPopupMenu(tree)
