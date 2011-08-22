@@ -11,6 +11,8 @@ import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.ULCFrame
+import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
+import com.ulcjava.base.application.event.ActionEvent
 
 class TabbedPaneManager {
 
@@ -48,7 +50,8 @@ class TabbedPaneManager {
             alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
-                    abstractUIItem.save()
+                    SaveAction saveAction = new SaveAction(tabbedPane, abstractUIItem.mainModel, abstractUIItem)
+                    saveAction.doActionPerformed(new ActionEvent(this, "save"))
                 } else if (value.equals(alert.thirdButtonLabel)) {
                     closeTab = false
 
