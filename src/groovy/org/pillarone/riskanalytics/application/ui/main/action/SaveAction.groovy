@@ -13,8 +13,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.Parameterizatio
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 class SaveAction extends ResourceBasedAction {
+
+    private static Log LOG = LogFactory.getLog(SaveAction)
+
     RiskAnalyticsMainModel model
     AbstractUIItem currentItem
     ULCComponent parent
@@ -33,6 +38,7 @@ class SaveAction extends ResourceBasedAction {
 
 
     public void doActionPerformed(ActionEvent event) {
+        LOG.info("Saving. current item: ${currentItem}. model.currentItem: ${model.currentItem}")
         save(currentItem ? currentItem : model.currentItem)
     }
 

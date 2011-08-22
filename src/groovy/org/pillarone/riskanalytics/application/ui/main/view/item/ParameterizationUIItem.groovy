@@ -102,5 +102,9 @@ class ParameterizationUIItem extends ModellingUIItem {
         return item.isEditable()
     }
 
+    @Override
+    String toString() {
+        return item.toString()
+    }
 
 }
