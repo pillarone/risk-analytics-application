@@ -183,10 +183,12 @@ class AboutDialog {
     private ULCComponent createPropertiesTab() {
         Map props = System.properties
         int propCount = props.keySet().size()
-        Object[][] model = new Object[propCount][propCount]
-        props.entrySet().eachWithIndex {Map.Entry it, int index ->
-            model[index][0] = it.key
-            model[index][1] = it.value
+        Object[][] model = new Object[propCount][2]
+        int row = 0
+        props.keySet().sort().each {Object key ->
+            model[row][0] = key
+            model[row][1] = props.get(key)
+            row++
         }
         ULCTable table = new ULCTable(new PropertiesTableModel(model))
         table.tableHeader = null

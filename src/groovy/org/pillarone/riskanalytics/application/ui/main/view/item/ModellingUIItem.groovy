@@ -161,6 +161,13 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return item.name
     }
 
+    @Override
+    String getNameAndVersion() {
+        return getName() + (versionable ? " v" + item.versionNumber.toString() : "")
+    }
+
+
+
     public Model getModel() {
         if (!this.@model) {
             this.model = item.modelClass.newInstance()

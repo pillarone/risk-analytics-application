@@ -84,6 +84,12 @@ abstract class AbstractUIItem implements IUIItem {
         ""
     }
 
+    public String getNameAndVersion() {
+        ""
+    }
+
+
+
     public boolean isVersionable() {
         return false
     }

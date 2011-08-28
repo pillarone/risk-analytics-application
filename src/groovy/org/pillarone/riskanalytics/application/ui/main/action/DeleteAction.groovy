@@ -93,7 +93,7 @@ class DeleteAction extends SelectionTreeAction {
     }
 
     private String getNames(List<AbstractUIItem> items) {
-        return items*.name.join(", ")
+        return items*.nameAndVersion.sort().join(", ")
     }
 
 }

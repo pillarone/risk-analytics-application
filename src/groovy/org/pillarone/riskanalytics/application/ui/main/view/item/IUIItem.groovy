@@ -47,6 +47,7 @@ public interface IUIItem {
     public Object getItem()
 
     public String getName()
+    public String getNameAndVersion()
 
     public String getToolTip()
 
