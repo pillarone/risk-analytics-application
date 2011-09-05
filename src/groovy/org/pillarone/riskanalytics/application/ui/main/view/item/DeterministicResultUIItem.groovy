@@ -31,7 +31,7 @@ class DeterministicResultUIItem extends ResultUIItem {
     }
 
     ResultViewModel getViewModel() {
-        ResultViewModel model = new DeterministicResultViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), simulation)
+        ResultViewModel model = new DeterministicResultViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), (Simulation) item)
         mainModel.registerModel(this, model)
         return model
     }

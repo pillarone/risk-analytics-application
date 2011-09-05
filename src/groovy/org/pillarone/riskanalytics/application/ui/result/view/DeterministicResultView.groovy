@@ -29,7 +29,7 @@ class DeterministicResultView extends ResultView {
 
         tabbedPane.removeAll()
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), content)
-        tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), new ResultSettingsView(model.item, p1ratModel).content)
+        tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), new ResultSettingsView(model.item, mainModel).content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
 
