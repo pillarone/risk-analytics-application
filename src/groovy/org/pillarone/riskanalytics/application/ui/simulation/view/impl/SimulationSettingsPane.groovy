@@ -86,10 +86,15 @@ class SimulationSettingsPane {
         }] as IActionListener)
         resultConfigurationNamesComboBox.addActionListener(model.reloadResultConfigurationListModelAction)
 
+        resultConfigurationVersionsComboBox.addActionListener([actionPerformed: {e ->
+            model.notifyConfigurationChanged()
+        }] as IActionListener)
+
         Closure outputStrategyAction = {boolean resultLocationRequired ->
             resultLocation.enabled = resultLocationRequired
             changeLocationButton.enabled = resultLocationRequired
             resultLocation.text = model.getResultLocation()
+            model.notifyConfigurationChanged()
         }
         outputStrategy.addActionListener(model.getChangeOutputStrategyAction(outputStrategyAction))
 
@@ -218,6 +223,14 @@ class SimulationSettingsPane {
             } else {
                 model.numberOfIterations = null
             }
+        }] as IKeyListener)
+
+        randomSeed.addKeyListener([keyTyped: {e ->
+            model.notifyConfigurationChanged()
+        }] as IKeyListener)
+
+        simulationName.addKeyListener([keyTyped: {e ->
+            model.notifyConfigurationChanged()
         }] as IKeyListener)
 
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RANDOM_SEED_KEY) + ":"))

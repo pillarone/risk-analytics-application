@@ -315,6 +315,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
      */
     void simulationPropertyChanged(boolean isValid) {
         configurationValid = isValid
+        currentUISimulationState = SimulationState.NOT_RUNNING
         updateUIState(currentUISimulationState)
     }
 
