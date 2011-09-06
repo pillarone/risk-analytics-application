@@ -4,15 +4,15 @@ import com.ulcjava.base.application.ULCMenu
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.base.action.GenerateReportAction
+import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.CompareSimulationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
-import org.pillarone.riskanalytics.application.ui.main.view.ReportMenu
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.report.IReportModel
+import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.reports.gira.action.GiraReportAction
 
 class SimulationNode extends ItemNode {
     //checkBox selected simulations
@@ -54,20 +54,14 @@ class SimulationNode extends ItemNode {
     }
 
     private void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree) {
-        String modelName = abstractUIItem.model.modelClass.simpleName
-        switch (modelName) {
-            case "CapitalEagleModel":
-                ULCMenu reportsMenu = new ReportMenu("Reports",modelName)
-                reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Management Summary", tree, abstractUIItem.mainModel)))
-                reportsMenu.add(new ULCMenuItem(new GenerateReportAction("Actuary Summary", tree, abstractUIItem.mainModel)))
-                tree.addTreeSelectionListener(reportsMenu)
-                simulationNodePopUpMenu.addSeparator()
-                simulationNodePopUpMenu.add(reportsMenu)
-                break
-            case "GIRAModel":
-                simulationNodePopUpMenu.addSeparator()
-                simulationNodePopUpMenu.add(new ULCMenuItem(new GiraReportAction(tree, abstractUIItem.mainModel)))
-                break
+        List<IReportModel> reports = ReportRegistry.getReportModel(abstractUIItem.model.modelClass)
+        if (!reports.empty) {
+            ULCMenu reportsMenu = new ULCMenu("Reports")
+            for (IReportModel model in reports) {
+                reportsMenu.add(new ULCMenuItem(new CreateReportAction(model, tree, abstractUIItem.mainModel)))
+            }
+            simulationNodePopUpMenu.addSeparator()
+            simulationNodePopUpMenu.add(reportsMenu)
         }
     }
 

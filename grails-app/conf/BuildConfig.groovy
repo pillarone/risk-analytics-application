@@ -40,7 +40,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.4-BETA-3"
+            runtime "org.pillarone:risk-analytics-core:1.4-BETA-3.1"
         }
 
     }
@@ -75,8 +75,6 @@ grails.project.dependency.distribution = {
 }
 
 coverage {
-    enabledByDefault = true
-    xml = true
     exclusions = [
             'models/**',
             '**/*Test*',
