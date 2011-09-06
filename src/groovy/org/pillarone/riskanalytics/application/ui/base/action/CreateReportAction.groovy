@@ -1,73 +1,46 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
-import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.event.ITreeSelectionListener
-import com.ulcjava.base.application.event.TreeSelectionEvent
-import com.ulcjava.base.application.util.IFileChooseHandler
-import com.ulcjava.base.application.util.IFileStoreHandler
-import com.ulcjava.base.shared.FileChooserConfig
-import org.apache.log4j.Logger
-import org.pillarone.riskanalytics.application.reports.ReportFactory
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.core.report.IReportModel
+import org.pillarone.riskanalytics.core.report.ReportFactory
+import com.ulcjava.base.shared.FileChooserConfig
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.base.application.*
+import com.ulcjava.base.application.ULCWindow
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.ClientContext
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.util.IFileStoreHandler
+import com.ulcjava.base.application.util.IFileChooseHandler
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import com.ulcjava.base.application.IAction
 
-class GenerateReportAction extends SelectionTreeAction implements ITreeSelectionListener {
-    String name
-    static final Logger LOG = Logger.getLogger(GenerateReportAction)
 
-    public GenerateReportAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
+class CreateReportAction extends SelectionTreeAction {
+
+    private static Log LOG = LogFactory.getLog(CreateReportAction)
+
+    IReportModel reportModel
+
+    CreateReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
         super("GenerateReport", tree, model)
-        this.@name = name
-        putValue(IAction.NAME, getValue(IAction.NAME) + " " + name);
-        tree.addTreeSelectionListener(this)
+        this.reportModel = reportModel
+        putValue(IAction.NAME, reportModel.name)
     }
 
-    public void checkAvailability(def object) {
-        setEnabled(false)
+    @Override
+    void doActionPerformed(ActionEvent event) {
+        saveReport(ReportFactory.createPDFReport(reportModel, getSelectedItem()))
     }
 
-    public void checkAvailability(Simulation simulation) {
-        if (simulation.modelClass.simpleName != "CapitalEagleModel") return
-        try {
-            ReportFactory.getReportModel(simulation, name)
-            setEnabled(true)
-        } catch (IllegalArgumentException e) {
-            setEnabled(false)
-        } catch (Exception ex) {
-            setEnabled(false)
-        }
-    }
-
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        checkAvailability(selectedItem)
-    }
-
-    public void doActionPerformed(ActionEvent event) {
-        try {
-            def output = ReportFactory.getReport((Simulation) selectedItem, name)
-            if (!ReportFactory.testMode) {
-                saveReport output
-            }
-        } catch (IllegalArgumentException e) {
-            LOG.error "Can not create report: ${e.message} Stacktrace: ${e.stackTrace}"
-            if (!ReportFactory.testMode) {
-                ULCAlert alert = new ULCAlert("Report Generation not Possible", e.message, "Close")
-                alert.messageType = ULCAlert.INFORMATION_MESSAGE
-                alert.show()
-            }
-        }
-    }
-
-
-    protected void saveReport(def output) {
+     protected void saveReport(byte[] output) {
         FileChooserConfig config = new FileChooserConfig()
         config.dialogTitle = "Save Report As"
         config.dialogType = FileChooserConfig.SAVE_DIALOG
         config.FILES_ONLY
-        String fileName = "$name of ${((Simulation) selectedItem).name}.pdf"
+        String fileName = "${reportModel.name} of ${((Simulation) selectedItem).name}.pdf"
         fileName = fileName.replace(":", "")
         fileName = fileName.replace("/", "")
         fileName = fileName.replace("*", "")
@@ -85,7 +58,7 @@ class GenerateReportAction extends SelectionTreeAction implements ITreeSelection
 
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {
-                            stream.write output
+                            stream.write (output)
                         } catch (UnsupportedOperationException t) {
                             LOG.error "Saving Report Failed: ${t}", t
                             new I18NAlert(ancestor, "SaveReportError").show()
