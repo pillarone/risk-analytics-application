@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import com.ulcjava.base.application.ULCWindow
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com

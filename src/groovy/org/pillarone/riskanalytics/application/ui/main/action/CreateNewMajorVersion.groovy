@@ -32,7 +32,7 @@ class CreateNewMajorVersion extends SelectionTreeAction {
             Closure okAction = {ModellingUIItem modellingUIItem, String commentText ->
                 createNewVersion(modellingUIItem, commentText)
             }
-            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(tree, uiItem, okAction)
+            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(uiItem, okAction)
             versionCommentDialog.show()
         } else
             createNewVersion(getUIItem())

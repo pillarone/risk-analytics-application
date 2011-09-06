@@ -26,7 +26,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 class NewVersionCommentDialog {
 
     private ModellingUIItem modellingUIItem
-    private ULCTableTree tree
     ULCDialog dialog
     ULCTextArea commentTextArea
     private ULCButton okButton
@@ -35,8 +34,7 @@ class NewVersionCommentDialog {
     Closure okAction
     String title
 
-    public NewVersionCommentDialog(ULCTableTree tree, ModellingUIItem modellingUIItem, Closure okAction) {
-        this.tree = tree
+    public NewVersionCommentDialog( ModellingUIItem modellingUIItem, Closure okAction) {
         this.modellingUIItem = modellingUIItem
         this.okAction = okAction
         initComponents()
@@ -45,7 +43,8 @@ class NewVersionCommentDialog {
     }
 
     private void initComponents() {
-        dialog = new ULCDialog(UlcUtilities.getWindowAncestor(tree), UIUtils.getText(NewVersionCommentDialog, "addComment"), true)
+        ULCWindow window = UIUtils.getWindowAncestor()
+        dialog = new ULCDialog(window, UIUtils.getText(NewVersionCommentDialog, "addComment"), true)
         dialog.name = 'renameDialog'
         commentTextArea = new ULCTextArea(5, 45)
         commentTextArea.setMinimumSize(new Dimension(200, 160))
@@ -71,7 +70,7 @@ class NewVersionCommentDialog {
         content.add(ULCBoxPane.BOX_RIGHT_BOTTOM, cancelButton)
 
         dialog.add(content)
-        dialog.setLocationRelativeTo(UlcUtilities.getWindowAncestor(tree))
+        dialog.setLocationRelativeTo(UIUtils.getWindowAncestor())
         dialog.pack()
         dialog.resizable = false
 

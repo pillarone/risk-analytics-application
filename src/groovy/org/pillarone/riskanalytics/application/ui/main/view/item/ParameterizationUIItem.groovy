@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -46,6 +47,21 @@ class ParameterizationUIItem extends ModellingUIItem {
         }
         super.save()
     }
+
+    @Override
+    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
+        ModellingUIItem newItem = null
+        Closure okAction = {ModellingUIItem modellingUIItem, String commentText ->
+            createNewVersion(modellingUIItem.model, commentText, false)
+        }
+
+        NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog( this, okAction)
+        versionCommentDialog.show()
+
+        return newItem
+    }
+
+
 
     public ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
         ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false)

@@ -199,6 +199,11 @@ class UIUtils {
         UserContext.setAttribute(ROOT_PANE, pane)
     }
 
+    public static ULCWindow getWindowAncestor() {
+        ULCRootPane pane = getRootPane()
+        return UlcUtilities.getWindowAncestor(pane?.getContentPane())
+    }
+
     public static String getUserInfo() {
         try {
             if (UserManagement.isLoggedIn()) {
@@ -210,7 +215,7 @@ class UIUtils {
                     List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
                     userAuthorities = i18nAuthorities.join(", ")
                 }
-                return loggedUser.username + " (" + userAuthorities+")"
+                return loggedUser.username + " (" + userAuthorities + ")"
             }
         } catch (Exception ex) {
 
