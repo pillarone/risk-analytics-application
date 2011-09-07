@@ -194,7 +194,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         toolbar.add new ULCLabel(getText("Percent"))
         toolbar.add ULCFiller.createHorizontalStrut(5)
         ULCButton percentileButton = new ULCButton(new PercentileKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
-        percentileButton.name ="percentileButton"
+        percentileButton.name = "percentileButton"
         toolbar.add percentileButton
         ULCButton varButton = new ULCButton(new VarKeyFigureAction(new QuantilePerspectiveValueProvider<Double>(functionValue, profitComboBox), model, tree.viewPortTableTree))
         varButton.name = "varButton"
@@ -252,8 +252,7 @@ class CompareRenderer extends NumberFormatRenderer {
 
 
     private def setBackground(ULCTableTree tableTree, value) {
-
-        if (value != null && value instanceof Number && tableTree.model.getSimulationRunIndex(columnIndex) < 0) {
+        if (validate(tableTree, value)) {
             double maxValue = tableTree.model.maxValue
             double minValue = tableTree.model.minValue
             Color bgColor = SimulationUtilities.getColor(value, minValue, maxValue)
@@ -261,6 +260,11 @@ class CompareRenderer extends NumberFormatRenderer {
         } else {
             setBackground Color.white
         }
+    }
+
+    boolean validate(ULCTableTree tableTree, def value) {
+        if (value == null || Double.NaN == value) return false
+        return (value instanceof Number && tableTree.model.getSimulationRunIndex(columnIndex) < 0)
     }
 }
 

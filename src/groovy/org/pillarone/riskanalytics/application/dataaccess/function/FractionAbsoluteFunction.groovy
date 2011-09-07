@@ -6,8 +6,8 @@ class FractionAbsoluteFunction extends AbstractComparisonFunction {
     public static final String FRACTION_ABSOLUTE = "FrAbsoluteDifference"
 
     String getName() {
-    return FRACTION_ABSOLUTE
-}
+        return FRACTION_ABSOLUTE
+    }
 
     @Override
     protected double evaluateComparison(double referenceResult, double resultToCompare) {
