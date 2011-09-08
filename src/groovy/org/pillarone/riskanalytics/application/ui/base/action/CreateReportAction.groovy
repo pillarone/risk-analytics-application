@@ -77,8 +77,10 @@ class CreateReportAction extends SelectionTreeAction {
 
                 },
                 onFailure: {reason, description ->
-                    LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                    new I18NAlert(ancestor, "SaveReportError").show()
+                    if (reason != IFileChooseHandler.CANCELLED) {
+                        LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
+                        new I18NAlert(ancestor, "SaveReportError").show()
+                    }
                 }] as IFileChooseHandler, config, ancestor)
     }
 
