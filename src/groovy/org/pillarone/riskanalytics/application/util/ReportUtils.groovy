@@ -43,6 +43,7 @@ class ReportUtils {
 
     static JRBeanCollectionDataSource getItemInfo(Parameterization parameterization) {
         Collection currentValues = new ArrayList<PropertyValuePairBean>()
+        //todo using of map instead of bean
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Name"), value: parameterization.name + " v" + parameterization.versionNumber.toString())
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "Model"), value: parameterization.modelClass.simpleName)
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "State"), value: parameterization.status)
