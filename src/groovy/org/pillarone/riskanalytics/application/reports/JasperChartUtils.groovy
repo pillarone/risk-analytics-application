@@ -13,7 +13,6 @@ import org.jfree.chart.renderer.category.BarRenderer
 import org.jfree.chart.renderer.category.WaterfallBarRenderer
 import org.jfree.data.category.DefaultCategoryDataset
 import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBean
-import org.pillarone.riskanalytics.application.reports.bean.ReportWaterfallDataBean
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.jfree.data.xy.XYSeries
@@ -32,9 +31,9 @@ class JasperChartUtils {
 
     public static List<Color> seriesColor = [new Color(247, 139, 0), new Color(247, 139, 0), new Color(247, 139, 0), new Color(247, 139, 0), new Color(247, 139, 0)]
 
-    public static JCommonDrawableRenderer generateWaterfallChart(List<ReportWaterfallDataBean> data) {
+    public static JCommonDrawableRenderer generateWaterfallChart(List data) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        data.eachWithIndex {ReportWaterfallDataBean bean, int index ->
+        data.eachWithIndex {def bean, int index ->
             dataset.addValue(bean.value, "", bean.line);
         }
         JFreeChart chart = ChartFactory.createWaterfallChart(
