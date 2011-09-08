@@ -29,7 +29,8 @@ class MultiDimensionalParameterModel implements IModelChangedListener {
         ClientContext.setModelUpdateMode(tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
         if (multiDimensionalParameter instanceof IComboBoxBasedMultiDimensionalParameter || multiDimensionalParameter instanceof ConstrainedMultiDimensionalParameter) {
             multiDimensionalParameter.validateValues()
-            model.updateNodeValue(multiDimensionalParameter, node, columnIndex)
+            //may be null in tests
+            model?.updateNodeValue(multiDimensionalParameter, node, columnIndex)
         }
     }
 
