@@ -13,6 +13,8 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.report.IReportModel
 import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.base.action.CreatePDFReportAction
+import org.pillarone.riskanalytics.application.ui.base.action.CreatePPTXReportAction
 
 class SimulationNode extends ItemNode {
     //checkBox selected simulations
@@ -58,7 +60,8 @@ class SimulationNode extends ItemNode {
         if (!reports.empty) {
             ULCMenu reportsMenu = new ULCMenu("Reports")
             for (IReportModel model in reports) {
-                reportsMenu.add(new ULCMenuItem(new CreateReportAction(model, tree, abstractUIItem.mainModel)))
+                reportsMenu.add(new ULCMenuItem(new CreatePDFReportAction(model, tree, abstractUIItem.mainModel)))
+                reportsMenu.add(new ULCMenuItem(new CreatePPTXReportAction(model, tree, abstractUIItem.mainModel)))
             }
             simulationNodePopUpMenu.addSeparator()
             simulationNodePopUpMenu.add(reportsMenu)

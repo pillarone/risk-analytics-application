@@ -18,29 +18,31 @@ import org.apache.commons.logging.LogFactory
 import com.ulcjava.base.application.IAction
 
 
-class CreateReportAction extends SelectionTreeAction {
+abstract class CreateReportAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateReportAction)
 
     IReportModel reportModel
 
-    CreateReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
-        super("GenerateReport", tree, model)
-        this.reportModel = reportModel
-        putValue(IAction.NAME, reportModel.name)
+    public CreateReportAction(name, tree, RiskAnalyticsMainModel model) {
+        super(name, tree, model)
     }
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        saveReport(ReportFactory.createPDFReport(reportModel, getSelectedItem()))
+        saveReport(createReport(reportModel, (Simulation) getSelectedItem()))
     }
 
-     protected void saveReport(byte[] output) {
+    abstract protected byte[] createReport(IReportModel reportModel, Simulation simulation)
+
+    abstract protected String getFileExtension()
+
+    protected void saveReport(byte[] output) {
         FileChooserConfig config = new FileChooserConfig()
         config.dialogTitle = "Save Report As"
         config.dialogType = FileChooserConfig.SAVE_DIALOG
         config.FILES_ONLY
-        String fileName = "${reportModel.name} of ${((Simulation) selectedItem).name}.pdf"
+        String fileName = "${reportModel.name} of ${((Simulation) selectedItem).name}." + getFileExtension()
         fileName = fileName.replace(":", "")
         fileName = fileName.replace("/", "")
         fileName = fileName.replace("*", "")
@@ -58,7 +60,7 @@ class CreateReportAction extends SelectionTreeAction {
 
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {
-                            stream.write (output)
+                            stream.write(output)
                         } catch (UnsupportedOperationException t) {
                             LOG.error "Saving Report Failed: ${t}", t
                             new I18NAlert(ancestor, "SaveReportError").show()
@@ -84,5 +86,43 @@ class CreateReportAction extends SelectionTreeAction {
                 }] as IFileChooseHandler, config, ancestor)
     }
 
+
+}
+
+class CreatePDFReportAction extends CreateReportAction {
+
+    public CreatePDFReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
+        super("GeneratePDFReport", tree, model)
+        this.reportModel = reportModel
+    }
+
+    @Override
+    protected byte[] createReport(IReportModel reportModel, Simulation simulation) {
+        return ReportFactory.createPDFReport(reportModel, simulation)
+    }
+
+    @Override
+    protected String getFileExtension() {
+        return "pdf"
+    }
+
+}
+
+class CreatePPTXReportAction extends CreateReportAction {
+
+    public CreatePPTXReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
+        super("GeneratePPTXReport", tree, model)
+        this.reportModel = reportModel
+    }
+
+    @Override
+    protected byte[] createReport(IReportModel reportModel, Simulation simulation) {
+        return ReportFactory.createPPTXReport(reportModel, simulation)
+    }
+
+    @Override
+    protected String getFileExtension() {
+        return "pptx"
+    }
 
 }
