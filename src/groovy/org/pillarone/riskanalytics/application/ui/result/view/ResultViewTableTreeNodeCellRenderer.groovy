@@ -22,7 +22,7 @@ import org.pillarone.riskanalytics.application.ui.result.action.ShowSingleValueC
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 import com.ulcjava.base.application.*
 
 class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
@@ -125,9 +125,9 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
 
     void setPopupMenu(IRendererComponent rendererComponent, ResultTableTreeNode node) {
         if (node.childCount > 0)
-            rendererComponent.setComponentPopupMenu(node.collector == SingleValueCollectingModeStrategy.IDENTIFIER ? singleResultNodePopup : resultNodePopup)
+            rendererComponent.setComponentPopupMenu(node.collector == AggregatedWithSingleAvailableCollectingModeStrategy.IDENTIFIER ? singleResultNodePopup : resultNodePopup)
         else
-            rendererComponent.setComponentPopupMenu(node.collector == SingleValueCollectingModeStrategy.IDENTIFIER ? defaultSingleResultNodePopup : defaultResultNodePopup)
+            rendererComponent.setComponentPopupMenu(node.collector == AggregatedWithSingleAvailableCollectingModeStrategy.IDENTIFIER ? defaultSingleResultNodePopup : defaultResultNodePopup)
     }
 
     void setPopupMenu(IRendererComponent rendererComponent, def node) {
