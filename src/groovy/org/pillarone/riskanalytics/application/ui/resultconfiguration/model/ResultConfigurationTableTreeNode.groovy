@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 
 class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IMultiValueTableTreeNode {
 
@@ -27,7 +28,10 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
         keyToValue.put(NO_COLLECTOR, getText(NO_COLLECTOR))
         Locale locale = LocaleResources.getLocale()
         for (ICollectingModeStrategy key in CollectingModeFactory.getAvailableStrategies()) {
-            keyToValue.put(key.getIdentifier(), key.getDisplayName(locale))
+            //AggregatedWithSingleAvailableCollectingModeStrategy is only used internally
+            if (!(key instanceof AggregatedWithSingleAvailableCollectingModeStrategy)) {
+                keyToValue.put(key.getIdentifier(), key.getDisplayName(locale))
+            }
         }
     }
 

@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.SingleValueCollec
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -51,7 +51,7 @@ class ShowSingleValueCollectorAction extends ResourceBasedAction {
 
     List getNodes() {
         def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
-        return paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == SingleValueCollectingModeStrategy.IDENTIFIER)} as List
+        return paths.findAll {(it instanceof ResultTableTreeNode) && (it.collector == AggregatedWithSingleAvailableCollectingModeStrategy.IDENTIFIER)} as List
     }
 
 
