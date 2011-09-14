@@ -63,6 +63,7 @@ public class WaterfallChartViewModel extends ChartViewModel {
                 true,
                 false
         )
+        setBackground(chart, Color.white)
 
         WaterfallBarRenderer renderer = (BarRenderer) chart.getPlot().getRenderer();
         renderer.firstBarPaint = new Color(247, 139, 0)

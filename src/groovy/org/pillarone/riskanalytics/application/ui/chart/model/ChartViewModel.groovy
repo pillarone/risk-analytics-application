@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewUtils
+import java.awt.Color
 
 abstract class ChartViewModel {
     protected List series = []
@@ -216,6 +217,12 @@ abstract class ChartViewModel {
 
     public boolean isChangeColorEnabled() {
         return true
+    }
+
+    protected void setBackground(JFreeChart chart, Color color) {
+        chart.setBackgroundPaint(color);
+        chart.getPlot().setBackgroundPaint(color);
+        chart.getPlot().setRangeGridlinePaint(Color.lightGray);
     }
 }
 

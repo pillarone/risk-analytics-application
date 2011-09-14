@@ -72,6 +72,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
 
         XYSeriesCollection dataset = new XYSeriesCollection();
         JFreeChart chart = ChartFactory.createXYLineChart(chartProperties.title, chartProperties.xAxisTitle, chartProperties.yAxisTitle, dataset, PlotOrientation.VERTICAL, chartProperties.showLegend, true, false);
+        setBackground(chart, Color.white)
 
         double upperBound = (-1) * Double.MAX_VALUE
         double lowerBound = Double.MAX_VALUE

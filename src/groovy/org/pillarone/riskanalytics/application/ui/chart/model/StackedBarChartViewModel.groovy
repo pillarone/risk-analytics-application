@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import java.awt.Color
 
 public class StackedBarChartViewModel extends ChartViewModel {
     List means
@@ -32,6 +33,7 @@ public class StackedBarChartViewModel extends ChartViewModel {
                 true,                     // tooltips?
                 false                     // URLs?
         );
+        setBackground(chart, Color.white)
 
         means.eachWithIndex {List series, int seriesIndex ->
             series.eachWithIndex {double values, int periodIndex ->

@@ -11,6 +11,7 @@ import org.jfree.ui.RectangleEdge
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import java.awt.Color
 
 class HistogramChartViewModel extends ChartViewModel {
 
@@ -44,6 +45,7 @@ class HistogramChartViewModel extends ChartViewModel {
         }
 
         JFreeChart chart = ChartFactory.createHistogram(chartProperties.title, chartProperties.xAxisTitle, chartProperties.yAxisTitle, data, PlotOrientation.VERTICAL, chartProperties.showLegend, false, false)
+        setBackground(chart, Color.white)
 
         int seriesIndex = 0
         series.eachWithIndex {List observations, int keyFigureIndex ->
