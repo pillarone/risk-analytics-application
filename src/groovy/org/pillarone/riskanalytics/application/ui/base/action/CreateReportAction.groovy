@@ -24,8 +24,9 @@ abstract class CreateReportAction extends SelectionTreeAction {
 
     IReportModel reportModel
 
-    public CreateReportAction(name, tree, RiskAnalyticsMainModel model) {
+    public CreateReportAction(IReportModel reportModel, name, tree, RiskAnalyticsMainModel model) {
         super(name, tree, model)
+        this.reportModel = reportModel
     }
 
     @Override
@@ -92,8 +93,8 @@ abstract class CreateReportAction extends SelectionTreeAction {
 class CreatePDFReportAction extends CreateReportAction {
 
     public CreatePDFReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
-        super("GeneratePDFReport", tree, model)
-        this.reportModel = reportModel
+        super(reportModel, "GeneratePDFReport", tree, model)
+        putValue(IAction.NAME, "PDF Report")
     }
 
     @Override
@@ -111,8 +112,8 @@ class CreatePDFReportAction extends CreateReportAction {
 class CreatePPTXReportAction extends CreateReportAction {
 
     public CreatePPTXReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
-        super("GeneratePPTXReport", tree, model)
-        this.reportModel = reportModel
+        super(reportModel, "GeneratePPTXReport", tree, model)
+        putValue(IAction.NAME, "PPTX Report")
     }
 
     @Override
