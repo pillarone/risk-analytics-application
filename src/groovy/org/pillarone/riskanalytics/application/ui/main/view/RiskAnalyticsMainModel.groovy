@@ -25,6 +25,7 @@ import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -242,7 +243,10 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     public void simulationEnd(Simulation simulation, Model model) {
         if (simulation.simulationRun?.endTime != null) {
             navigationTableTreeModel.addNodeForItem(simulation)
-            navigationTableTreeModel.itemChanged(simulation.parameterization)
+            Parameterization parameterization = simulation.parameterization
+            //after simulation running, lock the used the used p14n
+            parameterization.addRemoveLockTag()
+            navigationTableTreeModel.itemChanged(parameterization)
         }
     }
 

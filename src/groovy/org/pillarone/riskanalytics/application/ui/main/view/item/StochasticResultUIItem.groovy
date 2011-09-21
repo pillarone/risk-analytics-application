@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultVi
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -39,8 +40,13 @@ class StochasticResultUIItem extends ResultUIItem {
     @Override
     public boolean remove() {
         boolean removed = super.remove()
-        if (removed)
-            navigationTableTreeModel.itemChanged(((Simulation) item).parameterization)
+        if (removed){
+            Parameterization parameterization = ((Simulation) item).parameterization
+            //after deleting a simulation, delete a lock tag if the p14n is not used
+            parameterization.addRemoveLockTag()
+            navigationTableTreeModel.itemChanged(parameterization)
+        }
+
         return removed
     }
 
