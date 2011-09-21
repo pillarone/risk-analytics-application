@@ -21,6 +21,9 @@ import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import com.ulcjava.base.application.event.IKeyListener
+import com.ulcjava.base.application.event.KeyEvent
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class StochasticResultView extends ResultView {
 
@@ -125,6 +128,10 @@ class StochasticResultView extends ResultView {
         toolbar.add integerFunctionValue
         ULCButton button = new ULCButton(new SingleIterationKeyFigureAction(new TextFieldValueProvider<Integer>(integerFunctionValue), model, tree.viewPortTableTree))
         button.name = "iterationButton"
+        button.setEnabled(iterationValueValidate(integerFunctionValue))
+        integerFunctionValue.addKeyListener([keyTyped: {KeyEvent keyEvent ->
+            button.setEnabled(iterationValueValidate(integerFunctionValue))
+        }] as IKeyListener)
         toolbar.add UIUtils.spaceAround(button, 0, 5, 0, 5)
     }
 
@@ -218,6 +225,11 @@ class StochasticResultView extends ResultView {
 
     private ULCToggleButton getToggleButton(MeanFunction function) {
         meanButton
+    }
+
+    private boolean iterationValueValidate(ULCTextField integerFunctionValue) {
+        Integer value = (Integer) integerFunctionValue.getValue()
+        return value && value > 0 && value <= ((Simulation) model.item).getNumberOfIterations()
     }
 
 }
