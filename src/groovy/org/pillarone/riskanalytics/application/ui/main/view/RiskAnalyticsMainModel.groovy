@@ -26,6 +26,8 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulatio
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -247,6 +249,18 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             //after simulation running, lock the used the used p14n
             parameterization.addRemoveLockTag()
             navigationTableTreeModel.itemChanged(parameterization)
+        }
+    }
+
+    /**
+     * insert new batch node to the mainTree, created by editing a new simulation
+     * @param newBatchRun
+     */
+    public void addBatch(BatchRun newBatchRun) {
+        navigationTableTreeModel.addNodeForItem(new BatchUIItem(this, newBatchRun))
+        viewModelsInUse.each {k, v ->
+            if (v instanceof BatchListener)
+                v.newBatchAdded(newBatchRun)
         }
     }
 
