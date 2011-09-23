@@ -13,6 +13,10 @@ import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
@@ -27,15 +31,37 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         if (!item.isLoaded()) {
             item.load()
         }
-        Parameterization parameterization = service.changeStatus(item, toStatus())
+        Status toStatus = toStatus()
+
+        if (toStatus == Status.DATA_ENTRY) {
+            Closure changeStatusAction = {String commentText ->
+                AbstractUIItem uiItem = getSelectedUIItem()
+                if (!uiItem.isLoaded()) {
+                    uiItem.load()
+                }
+                Parameterization parameterization = changeStatus(item, toStatus)
+                Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
+                parameterization.addTaggedComment(commentText, versionTag)
+                parameterization.save()
+            }
+            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(changeStatusAction)
+            versionCommentDialog.show()
+        } else {
+            changeStatus(item, toStatus)
+        }
+
+    }
+
+    private Parameterization changeStatus(Parameterization item, Status toStatus) {
+        Parameterization parameterization = service.changeStatus(item, toStatus)
         if (!item.is(parameterization)) {
             model.navigationTableTreeModel.addNodeForItem(parameterization)
         } else {
-            ParameterizationUIItem parameterizationUIItem = (ParameterizationUIItem)UIItemFactory.createItem(parameterization, null,model)
+            ParameterizationUIItem parameterizationUIItem = (ParameterizationUIItem) UIItemFactory.createItem(parameterization, null, model)
             ITableTreeNode paramNode = TableTreeBuilderUtils.findNodeForItem(model.navigationTableTreeModel.root, parameterizationUIItem)
             model.navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(paramNode) as Object[]))
         }
-
+        parameterization
     }
 
     abstract Status toStatus()
