@@ -5,6 +5,8 @@ import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.parameter.*
+import org.apache.commons.lang.builder.HashCodeBuilder
+import org.apache.commons.lang.builder.EqualsBuilder
 
 class ParameterizationNodeFactory {
     static final Logger LOG = Logger.getLogger(ParameterizationNodeFactory)
@@ -76,16 +78,17 @@ class ParameterizationNodeFactory {
             }
         }
 
-        Map<String, List<ParameterHolder>> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
+        Map<StringClassKey, List<ParameterHolder>> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
 
         parameters.each {ParameterObjectParameterHolder p ->
             if (p != null) {
                 p.classifierParameters.each {Map.Entry entry ->
-                    List params = parameterEntries.get(entry.key)
+                    final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
+                    List params = parameterEntries.get(key)
                     if (params == null) {
                         params = new ArrayList()
                         parameters.size().times { params.add(null) }
-                        parameterEntries.put(entry.key, params)
+                        parameterEntries.put(key, params)
                     }
                     params.set(p.periodIndex, entry.value)
                 }
@@ -129,26 +132,27 @@ class ParameterizationNodeFactory {
             }
 
 
-            Map<String, List<ParameterHolder>> parameterEntries = null
+            Map<StringClassKey, List<ParameterHolder>> parameterEntries = null
             Map objectsMap = [:]
             parametersMap.each {k, List parameters ->
                 parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
                 parameters.each {ParameterObjectParameterHolder p ->
                     if (p != null) {
                         p.classifierParameters.each {Map.Entry entry ->
-                            List params = parameterEntries.get(entry.key)
+                            final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
+                            List params = parameterEntries.get(key)
                             if (params == null) {
                                 params = new ArrayList()
                                 parameters.size().times { params.add(null) }
-                                parameterEntries.put(entry.key, params)
+                                parameterEntries.put(key, params)
                             }
                             params.set(p.periodIndex, entry.value)
 
-                            Map indexMap = objectsMap.get(entry.key)
+                            Map indexMap = objectsMap.get(key)
                             if (indexMap == null)
                                 indexMap = [:]
                             indexMap[k] = params
-                            objectsMap[entry.key] = indexMap
+                            objectsMap[key] = indexMap
                         }
                     }
                 }
@@ -162,11 +166,32 @@ class ParameterizationNodeFactory {
         return node
     }
 
+    static class StringClassKey {
+
+        String name
+        Class clazz
+
+        @Override
+        int hashCode() {
+            return new HashCodeBuilder().append(name).append(clazz).toHashCode()
+        }
+
+        @Override
+        boolean equals(Object obj) {
+            if (obj instanceof StringClassKey) {
+                return new EqualsBuilder().append(name, obj.name).append(clazz, obj.clazz).equals
+            }
+
+            return false
+        }
+
+
+    }
 
 }
 
 
-class ClassifierComparator implements Comparator {
+class ClassifierComparator<StringClassKey> implements Comparator<StringClassKey> {
 
     List order
 
@@ -174,8 +199,8 @@ class ClassifierComparator implements Comparator {
         this.order = order
     }
 
-    public int compare(Object o1, Object o2) {
-        return o1.equals(o2) ? 0 : order.indexOf(o1) < order.indexOf(o2) ? -1 : 1
+    public int compare(StringClassKey o1, StringClassKey o2) {
+        return o1.equals(o2) ? 0 : order.indexOf(o1.name) < order.indexOf(o2.name) ? -1 : 1
     }
 
 }
