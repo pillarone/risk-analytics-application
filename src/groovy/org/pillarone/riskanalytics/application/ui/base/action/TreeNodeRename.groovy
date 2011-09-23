@@ -22,7 +22,7 @@ public class TreeNodeRename extends TreeNodeAction {
     }
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments) {
-        if (model.paramterTableTreeModel.readOnly) return
+        if (model.paramterTableTreeModel.readOnly || node.component.name == newName) return
         String oldPath = getPathName(node.parent, "${node.name}")
         String newPath = getPathName(node.parent, "$newName")
 
