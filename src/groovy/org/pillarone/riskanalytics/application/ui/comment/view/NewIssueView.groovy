@@ -18,7 +18,7 @@ class NewIssueView extends NewCommentView {
         super(commentAndErrorView, path, periodIndex);
     }
 
-    protected Comment createComment(String path, int periodIndex) {
+    protected Comment createComment(String path, int periodIndex, String function = null) {
         return new WorkflowComment(path, periodIndex)
     }
 

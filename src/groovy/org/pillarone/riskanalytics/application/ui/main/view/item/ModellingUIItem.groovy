@@ -121,6 +121,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         mainModel.fireModelChanged()
         mainModel.fireModelItemChanged()
+        navigationTableTreeModel.itemChanged(item)
     }
 
 
