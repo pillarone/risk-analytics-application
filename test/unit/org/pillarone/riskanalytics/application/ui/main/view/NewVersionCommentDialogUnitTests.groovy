@@ -21,7 +21,7 @@ class NewVersionCommentDialogUnitTests extends AbstractP1RATTestCase {
         Parameterization parameterization = new Parameterization("param")
         ParameterizationUIItem uiItem = UIItemFactory.createItem(parameterization, new CoreModel(), null)
         Closure ok = {e ->}
-        NewVersionCommentDialog dialog = new NewVersionCommentDialog( uiItem, ok)
+        NewVersionCommentDialog dialog = new NewVersionCommentDialog(ok)
         return dialog.dialog.getContentPane()
     }
 

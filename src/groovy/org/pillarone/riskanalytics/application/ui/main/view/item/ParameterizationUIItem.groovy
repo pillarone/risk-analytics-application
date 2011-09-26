@@ -51,11 +51,14 @@ class ParameterizationUIItem extends ModellingUIItem {
     @Override
     public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
         ModellingUIItem newItem = null
-        Closure okAction = {ModellingUIItem modellingUIItem, String commentText ->
-            createNewVersion(modellingUIItem.model, commentText, false)
+        Closure okAction = {String commentText ->
+            if (! this.isLoaded()) {
+                 this.load()
+             }
+            createNewVersion(this.model, commentText, false)
         }
 
-        NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog( this, okAction)
+        NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
         versionCommentDialog.show()
 
         return newItem
@@ -71,12 +74,8 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     private void addComment(Model selectedModel, ParameterizationUIItem uiItem, String commentText, boolean openNewVersion) {
         if (commentText) {
-            String modelName = selectedModel.getName()
-            Comment comment = new Comment(modelName, -1)
-            comment.text = commentText
-            Tag version = Tag.findByName(NewCommentView.VERSION_COMMENT)
-            comment.addTag(version)
-            ((Parameterization) uiItem.item).addComment(comment)
+            Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
+            ((Parameterization) uiItem.item).addTaggedComment(commentText, versionTag)
             uiItem.item.save()
         }
         if (openNewVersion)
