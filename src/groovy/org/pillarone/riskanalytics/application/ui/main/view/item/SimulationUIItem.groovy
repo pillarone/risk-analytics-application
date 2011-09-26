@@ -24,8 +24,7 @@ class SimulationUIItem extends ModellingUIItem {
 
     String createTitle() {
         if (((Simulation) item).start != null) return item.name
-        String title = model instanceof StochasticModel ? "simulation" : "calculation"
-        return UIUtils.getText(SimulationUIItem.class, title)
+        return UIUtils.getText(SimulationUIItem.class, "simulation")
 
     }
 
