@@ -6,6 +6,7 @@ import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
+import com.ulcjava.base.application.util.HTMLUtilities
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -45,7 +46,7 @@ class AlertDialog {
             this.parent = UlcUtilities.getWindowAncestor(tree)
         dialog = new ULCDialog(parent, title, true)
         dialog.name = 'AlertDialog'
-        messageLabel = new ULCLabel(message)
+        messageLabel = new ULCLabel(HTMLUtilities.convertToHtml(message))
         okButton = new ULCButton(UIUtils.getText(this.class, "OK"))
         okButton.setPreferredSize(buttonDimension)
         okButton.name = "AlertDialog.ok"

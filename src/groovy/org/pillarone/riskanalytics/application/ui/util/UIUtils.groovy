@@ -232,4 +232,22 @@ class UIUtils {
         }
     }
 
+    public static String addBreakLines(String origin, int maxLength, String separator) {
+        if (!origin || origin.length() < maxLength) return origin
+        StringBuilder result = new StringBuilder()
+        StringBuilder temp = new StringBuilder()
+        List strings = origin.split(separator)
+        strings.eachWithIndex {String str, int index ->
+            if (temp.length() + str.length() > maxLength) {
+                result.append(temp + "\n")
+                temp = new StringBuilder()
+            }
+            String sep = (index < strings.size() - 1) ? separator : ""
+            temp.append(str + sep )
+        }
+        if (temp.length() > 0)
+            result.append(temp.toString())
+        return result.toString()
+    }
+
 }
