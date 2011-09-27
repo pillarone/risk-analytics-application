@@ -420,6 +420,8 @@ class ModellingItemFactory {
             simulation.creationDate = run.startTime
             simulation.modificationDate = run.getModificationDate()
             simulation.periodCount = run.periodCount
+            simulation.numberOfIterations = run.iterations
+            simulation.comment = run.comment
             try {
                 simulation.tags = run.tags*.tag
             } catch (Exception ex) {}
