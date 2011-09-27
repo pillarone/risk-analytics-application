@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.view.Centered
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
+import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -52,7 +53,8 @@ class SelectionTreeView {
 
     private void attachListeners() {
         ULCTableTree rowHeaderTableTree = tree.rowHeaderTableTree
-        rowHeaderTableTree.addActionListener(new TreeDoubleClickAction(rowHeaderTableTree, mainModel))
+        TreeDoubleClickAction treeDoubleClickAction = new TreeDoubleClickAction(rowHeaderTableTree, mainModel)
+        rowHeaderTableTree.addActionListener(treeDoubleClickAction)
         rowHeaderTableTree.registerKeyboardAction(new DeleteAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new RenameAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new ImportAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
@@ -61,6 +63,9 @@ class SelectionTreeView {
         rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new Collapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(treeDoubleClickAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), ULCComponent.WHEN_FOCUSED)
     }
 
     protected void initTree() {
