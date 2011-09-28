@@ -62,9 +62,8 @@ class SelectionTreeView {
         rowHeaderTableTree.registerKeyboardAction(new SimulationAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new Collapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new Collapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(treeDoubleClickAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), ULCComponent.WHEN_FOCUSED)
     }
 
