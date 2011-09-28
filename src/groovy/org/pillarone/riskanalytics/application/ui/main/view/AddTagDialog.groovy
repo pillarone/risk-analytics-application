@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTa
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -31,22 +32,27 @@ class AddTagDialog {
     private ULCButton applyButton
     private ULCButton addNewButton
     private ULCButton cancelButton
-    ModellingUIItem modellingUIItem
+    List<ModellingUIItem> modellingUIItems
 
     Closure okAction
     String title
-    ItemListModel tagListModel
     Dimension buttonDimension = new Dimension(120, 20)
 
 
     Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
 
-    public AddTagDialog(ULCTableTree tree, ModellingUIItem modellingUIItem) {
+    public AddTagDialog(ULCTableTree tree, List<ModellingUIItem> modellingUIItems) {
         this.tree = tree
         this.model = tree.model
-        if (!modellingUIItem.isLoaded())
-            modellingUIItem.load(true)
-        this.modellingUIItem = modellingUIItem
+        this.modellingUIItems = modellingUIItems
+        load()
+    }
+
+    private void load() {
+        for (ModellingUIItem modellingUIItem: modellingUIItems) {
+            if (!modellingUIItem.isLoaded())
+                modellingUIItem.load(true)
+        }
     }
 
     public void init() {
@@ -60,7 +66,7 @@ class AddTagDialog {
             this.parent = UlcUtilities.getWindowAncestor(tree)
         dialog = new ULCDialog(parent, "Edit tags dialog", true)
         dialog.name = 'AddTagDialog'
-        tagesListView = new TagesListView(modellingUIItem.item)
+        tagesListView = new TagesListView(modellingUIItems*.item)
         tagesListView.init()
         newTag = new ULCTextField()
         newTag.name = 'newTag'
@@ -80,7 +86,7 @@ class AddTagDialog {
         ULCBoxPane content = new ULCBoxPane(rows: 3, columns: 2)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ULCScrollPane scrollList = new ULCScrollPane(tagesListView.content)
-        scrollList.setPreferredSize(new Dimension(160, 100))
+        scrollList.setPreferredSize(new Dimension(160, 200))
         content.add(ULCBoxPane.BOX_LEFT_CENTER, scrollList)
         content.add(ULCBoxPane.BOX_LEFT_TOP, applyButton)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, newTag)
@@ -95,23 +101,27 @@ class AddTagDialog {
     }
 
     private void attachListeners() {
-        cancelButton.addActionListener([actionPerformed: {ActionEvent evt -> closeAction.call()}] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
+            for (ModellingUIItem modellingUIItem: modellingUIItems) {
+                if (modellingUIItem.changed) {
+                    modellingUIItem.load(true)
+                    modellingUIItem.item.setChanged(false)
+                }
+            }
+            closeAction.call()
+        }] as IActionListener)
         addNewButton.addActionListener([actionPerformed: {ActionEvent evt ->
             String tagName = newTag.getText()
             tagesListView.addTag(tagName)
 
         }] as IActionListener)
         applyButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            if (!modellingUIItem.isLoaded())
-                modellingUIItem.load(true)
-            modellingUIItem.item.setTags(tagesListView.itemTages as Set)
-            modellingUIItem.save()
-            closeAction.call()
-            DefaultMutableTableTreeNode node = tree?.selectedPath?.lastPathComponent
-            tagesListView.itemTages?.each {
-                model.addColumnValue(modellingUIItem.item, node, ModellingInformationTableTreeModel.TAGS, it.toString())
+            for (ModellingUIItem modellingUIItem: modellingUIItems) {
+                if (modellingUIItem.changed){
+                    modellingUIItem.save()
+                }
             }
-            model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+            closeAction.call()
         }] as IActionListener)
     }
 }
