@@ -41,6 +41,7 @@ class SimulationNode extends ItemNode {
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
 
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree, abstractUIItem.mainModel)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, abstractUIItem.mainModel)))
         ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, abstractUIItem.mainModel))
         tree.addTreeSelectionListener(compareSimulationMenuItem)

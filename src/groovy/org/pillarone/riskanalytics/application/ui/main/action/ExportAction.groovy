@@ -83,7 +83,7 @@ abstract class ExportAction extends SelectionTreeAction {
 
     }
 
-    private void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
+    protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
         ExcelExporter exporter = new ExcelExporter()
         SingleValueResult.withTransaction {trx ->
             def simulationFileName = "${item.name}.xls".replaceAll(':', '-')
@@ -194,7 +194,7 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
 
-    private def showAlert(String errorName) {
+    protected def showAlert(String errorName) {
         ULCAlert alert = new I18NAlert(ancestor, errorName)
         alert.show()
     }
@@ -232,7 +232,7 @@ abstract class ExportAction extends SelectionTreeAction {
         return result
     }
 
-    private boolean validate(List items) {
+    protected boolean validate(List items) {
         boolean status = true
         items.each {def item ->
             if (item instanceof Simulation) {

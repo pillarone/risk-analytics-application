@@ -243,11 +243,20 @@ class UIUtils {
                 temp = new StringBuilder()
             }
             String sep = (index < strings.size() - 1) ? separator : ""
-            temp.append(str + sep )
+            temp.append(str + sep)
         }
         if (temp.length() > 0)
             result.append(temp.toString())
         return result.toString()
+    }
+
+    public static String toCSV(List<List<String>> values) {
+        StringBuilder sb = new StringBuilder("\n\n")
+        for (List<String> list: values) {
+            sb.append(list.join(""))
+            sb.append("\n")
+        }
+        return sb.toString()
     }
 
 }
