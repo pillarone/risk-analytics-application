@@ -24,8 +24,10 @@ class ApplicationBootStrap {
         }
 
         // PMO-1752: Clear the views (structure_mapping, result_structuredao) on startup
-//        StructureMapping.list()*.delete()
-//        ResultStructureDAO.list()*.delete()
+        StructureMapping.withTransaction {
+            StructureMapping.list()*.delete()
+            ResultStructureDAO.list()*.delete()
+        }
 
         new ResultStructureImportService().compareFilesAndWriteToDB(models)
         ResultStructureImportService.importDefaults()
@@ -39,7 +41,7 @@ class ApplicationBootStrap {
             if (!Tag.findByName(NewCommentView.VERSION_COMMENT)) {
                 new Tag(name: NewCommentView.VERSION_COMMENT, tagType: EnumTagType.COMMENT).save()
             }
-             if (!Tag.findByName(NewCommentView.REPORT)) {
+            if (!Tag.findByName(NewCommentView.REPORT)) {
                 new Tag(name: NewCommentView.REPORT, tagType: EnumTagType.COMMENT).save()
             }
 

@@ -17,6 +17,10 @@ class ExportItemAction extends ExportAction {
         super(tree, model, "Export")
     }
 
+    public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
+        super(tree, model, actionName)
+    }
+
 
     public void doActionPerformed(ActionEvent event) {
         List selectedItems = getAllSelectedObjects()?.collect {ItemNode itemNode ->

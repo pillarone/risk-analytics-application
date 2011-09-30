@@ -99,6 +99,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
             LOG.error " AbstractUIItem (${item.name}) table tree node not found "
             abstractUIItem = UIItemFactory.createItem(item, model, mainModel)
         }
+        if (!abstractUIItem.isLoaded()) abstractUIItem.load(true)
         openDetailView(model, abstractUIItem)
     }
 

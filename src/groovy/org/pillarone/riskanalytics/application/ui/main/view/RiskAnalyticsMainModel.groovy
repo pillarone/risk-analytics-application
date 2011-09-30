@@ -25,6 +25,9 @@ import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
@@ -240,28 +243,29 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         } catch (NullPointerException ex) {}
     }
 
-    //set open parameterizations read only when starting a simulation
+
     public void simulationStart(Simulation simulation) {
-        final ModellingUIItem parameterization = getAbstractUIItem(simulation.parameterization)
-        if (parameterization != null) {
-            final ParameterViewModel parameterViewModel = viewModelsInUse[parameterization]
-            if (parameterViewModel != null) {
-                parameterViewModel.readOnly = true
-            }
-        }
-        final ModellingUIItem resultConfiguration = getAbstractUIItem(simulation.template)
-        if (resultConfiguration != null) {
-            final ResultConfigurationViewModel resultConfigurationViewModel = viewModelsInUse[resultConfiguration]
-            if (resultConfigurationViewModel != null) {
-                resultConfigurationViewModel.readOnly = true
-            }
-        }
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
         if (simulation.simulationRun?.endTime != null) {
             navigationTableTreeModel.addNodeForItem(simulation)
-            navigationTableTreeModel.itemChanged(simulation.parameterization)
+            Parameterization parameterization = simulation.parameterization
+            //after simulation running, lock the used the used p14n
+            parameterization.addRemoveLockTag()
+            navigationTableTreeModel.itemChanged(parameterization)
+        }
+    }
+
+    /**
+     * insert new batch node to the mainTree, created by editing a new simulation
+     * @param newBatchRun
+     */
+    public void addBatch(BatchRun newBatchRun) {
+        navigationTableTreeModel.addNodeForItem(new BatchUIItem(this, newBatchRun))
+        viewModelsInUse.each {k, v ->
+            if (v instanceof BatchListener)
+                v.newBatchAdded(newBatchRun)
         }
     }
 

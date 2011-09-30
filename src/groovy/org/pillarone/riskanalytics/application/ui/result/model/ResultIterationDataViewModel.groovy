@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
@@ -145,7 +145,7 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     boolean isSingle() {
         if (isSingleValue == null) {
-            isSingleValue = nodes.any {ResultTableTreeNode node -> node.collector == SingleValueCollectingModeStrategy.IDENTIFIER }
+            isSingleValue = nodes.any {ResultTableTreeNode node -> node.collector == AggregatedWithSingleAvailableCollectingModeStrategy.IDENTIFIER }
         }
         return isSingleValue
     }

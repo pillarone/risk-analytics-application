@@ -44,9 +44,21 @@ class TreeCollapser extends ResourceBasedAction {
         expandPaths(paths, false)
     }
 
-    private void expandPaths(TreePath[] paths, boolean includingDescendants) {
+    protected void expandPaths(TreePath[] paths, boolean includingDescendants) {
         tree.getRowHeaderTableTree().expandPaths(paths, includingDescendants);
         tree.getViewPortTableTree().expandPaths(paths, includingDescendants);
+    }
+
+}
+
+class Collapser extends TreeCollapser {
+
+    public Collapser(ULCFixedColumnTableTree tree) {
+        super(tree)
+    }
+
+    protected void expandPaths(TreePath[] paths, boolean includingDescendants) {
+
     }
 
 }

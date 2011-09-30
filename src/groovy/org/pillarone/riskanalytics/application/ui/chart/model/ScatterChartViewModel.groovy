@@ -43,6 +43,7 @@ class ScatterChartViewModel extends ChartViewModel {
         if (chartProperties.xAxisTitle == null) chartProperties.xAxisTitle = seriesNames[0]
         if (chartProperties.yAxisTitle == null) chartProperties.yAxisTitle = seriesNames[1]
         JFreeChart chart = ChartFactory.createScatterPlot(chartProperties.title, chartProperties.xAxisTitle, chartProperties.yAxisTitle, dataset, PlotOrientation.VERTICAL, chartProperties.showLegend, false, false)
+        setBackground(chart, Color.white)
         int seriesIndex = 0
         periodCount.times {int periodIndex ->
             if (showLine[0, periodIndex]) {

@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.core.model.StochasticModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -22,7 +23,8 @@ class SimulationUIItem extends ModellingUIItem {
     }
 
     String createTitle() {
-        return ((Simulation) item).start == null ? "Simulation" : item.name
+        if (((Simulation) item).start != null) return item.name
+        return UIUtils.getText(SimulationUIItem.class, "simulation")
 
     }
 

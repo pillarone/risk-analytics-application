@@ -69,6 +69,10 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         return popupMenu
     }
 
+    private ULCPopupMenu getPopupMenu(SimulationNode node) {
+        return ((INavigationTreeNode) node).getPopupMenu(tree)
+    }
+
     private ULCPopupMenu getPopupMenu(ItemGroupNode node) {
         if (popupMenus.containsKey(node.itemClass)) return popupMenus.get(node.itemClass)
         ULCPopupMenu popupMenu = node.getPopupMenu(tree)
@@ -76,7 +80,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         return popupMenu
     }
 
-    private ULCPopupMenu getPopUpMenu(WorkflowParameterizationNode node) {
+    private ULCPopupMenu getPopupMenu(WorkflowParameterizationNode node) {
         if (workflowMenus.containsKey(node.status)) return workflowMenus.get(node.status)
         ULCPopupMenu popupMenu = node.getPopupMenu(tree)
         workflowMenus.put(node.status, popupMenu)

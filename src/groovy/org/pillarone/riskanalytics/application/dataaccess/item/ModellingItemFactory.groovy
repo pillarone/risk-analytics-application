@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.springframework.transaction.TransactionStatus
 
 class ModellingItemFactory {
 
@@ -180,12 +181,15 @@ class ModellingItemFactory {
     }
 
     static ModellingItem createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
-        def item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
-        item.versionNumber = versionNumber
-        item.creator = UserManagement.currentUser
-        def id = item.save()
-        getItemInstances()[key(itemClass, id)] = item
-        item
+        def item
+        ParameterizationDAO.withTransaction {TransactionStatus status ->
+            item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
+            item.versionNumber = versionNumber
+            item.creator = UserManagement.currentUser
+            def id = item.save()
+            getItemInstances()[key(itemClass, id)] = item
+        }
+        return item
     }
 
     static ResultConfiguration getResultConfiguration(ResultConfigurationDAO dao) {
@@ -415,6 +419,9 @@ class ModellingItemFactory {
             simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
             simulation.creationDate = run.startTime
             simulation.modificationDate = run.getModificationDate()
+            simulation.periodCount = run.periodCount
+            simulation.numberOfIterations = run.iterations
+            simulation.comment = run.comment
             try {
                 simulation.tags = run.tags*.tag
             } catch (Exception ex) {}

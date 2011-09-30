@@ -41,6 +41,12 @@ class DeleteAction extends SelectionTreeAction {
 
     public void doActionPerformed(ActionEvent event) {
         List<AbstractUIItem> selectedItems = getSelectedUIItems()
+        final Iterator<AbstractUIItem> iterator = selectedItems.iterator()
+        while (iterator.hasNext()) {
+            if (!iterator.next().isDeletable()) {
+                iterator.remove()
+            }
+        }
         if (!selectedItems) return
         AlertDialog dialog = new AlertDialog(tree, selectedItems, getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [getNames(selectedItems)]), okAction)
         dialog.init()
@@ -87,7 +93,10 @@ class DeleteAction extends SelectionTreeAction {
     }
 
     private String getNames(List<AbstractUIItem> items) {
-        return items*.name.join(", ")
+        String separator = ", "
+        String names = items*.nameAndVersion.sort().join(separator)
+        String lines = UIUtils.addBreakLines(names, 80, separator)
+        return lines
     }
 
 }

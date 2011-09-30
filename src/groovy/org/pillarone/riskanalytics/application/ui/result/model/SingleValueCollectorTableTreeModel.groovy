@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIte
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationRootNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -42,7 +43,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
         setIterations()
         nodes.eachWithIndex { ResultTableTreeNode resultTableTreeNode, int nodeIndex ->
             if (!singleValueResultsMap[nodeIndex])
-                singleValueResultsMap[nodeIndex] = ResultAccessor.getSingleValueResults(resultTableTreeNode.collector, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun)
+                singleValueResultsMap[nodeIndex] = ResultAccessor.getSingleValueResults(SingleValueCollectingModeStrategy.IDENTIFIER, resultTableTreeNode.path, resultTableTreeNode.field, simulationRun)
         }
         builder = new SingleValueTreeBuilder(singleValueResultsMap, fromIteration, iterations, nodes.size(), simulationRun.periodCount)
         builder.build()

@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.testframework.operator.*
+import com.ulcjava.base.application.ULCCheckBox
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -52,6 +53,10 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
 
     ULCComboBoxOperator getComboBoxOperator(String name) {
         new ULCComboBoxOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
+    }
+
+    ULCCheckBoxOperator getCheckBoxOperator(String name) {
+        new ULCCheckBoxOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
     ULCComponentOperator getComponentOperatorByName(String name) {

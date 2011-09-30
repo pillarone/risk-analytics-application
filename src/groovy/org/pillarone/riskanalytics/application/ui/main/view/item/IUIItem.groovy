@@ -47,6 +47,7 @@ public interface IUIItem {
     public Object getItem()
 
     public String getName()
+    public String getNameAndVersion()
 
     public String getToolTip()
 
@@ -57,6 +58,8 @@ public interface IUIItem {
     public boolean isChangeable()
 
     public boolean isChanged()
+
+    public boolean isDeletable()
 
     public void removeAllModellingItemChangeListener()
 

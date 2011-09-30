@@ -95,7 +95,6 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         sb.append(" where stag.simulation_run_id = dao.id and t.id = stag.tag_id) ")
         sb.append(" ,p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
         sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
-        println " query : $sb"
 //        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
         //        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
         //        sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
@@ -104,7 +103,6 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
             sb.append(" and (" + whereClause + ")")
         }
         List<String> names = getNames(sessionFactory, sb)
-        println "names : $names"
         return names
     }
 

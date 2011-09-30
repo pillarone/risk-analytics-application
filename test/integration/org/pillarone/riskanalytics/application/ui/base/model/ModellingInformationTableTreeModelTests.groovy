@@ -14,6 +14,8 @@ import models.application.ApplicationModel
 import models.migratableCore.MigratableCoreModel
 import groovy.mock.interceptor.StubFor
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import groovy.mock.interceptor.StubFor
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -436,7 +438,7 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                 ParameterizationUIItem parameterizationUIItem3 = new ParameterizationUIItem(null, new CoreModel(), parameterization3)
+                ParameterizationUIItem parameterizationUIItem3 = new ParameterizationUIItem(null, new CoreModel(), parameterization3)
                 model.removeNodeForItem(parameterizationUIItem3)
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
@@ -466,7 +468,7 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
             factoryMock.use {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
-                 ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(), parameterization3)
+                ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(), parameterization3)
                 model.removeNodeForItem(parameterizationUIItem)
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
@@ -486,20 +488,51 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         }
     }
 
+    void testWorkflowNodeWithExistingName() {
+        Parameterization parameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('1'), modelClass: CoreModel)
+        Parameterization parameterization2 = new Parameterization(name: 'Name', versionNumber: new VersionNumber('2'), modelClass: CoreModel)
+        Parameterization parameterization3 = new Parameterization(name: 'Name', versionNumber: new VersionNumber('3'), modelClass: CoreModel)
+        prepareMocks([parameterization, parameterization2, parameterization3], [])
+
+        modelStructureMock.use {
+            factoryMock.use {
+                def model = new ModellingInformationTableTreeModel(new RiskAnalyticsMainModel())
+                model.buildTreeNodes()
+                final Parameterization workflowParameterization = new Parameterization(name: 'Name', versionNumber: new VersionNumber('R1'), modelClass: CoreModel)
+                model.addNodeForItem(workflowParameterization)
+
+
+                DefaultMutableTableTreeNode modelNode = model.root.getChildAt(0)
+                DefaultMutableTableTreeNode paramsNode = modelNode.getChildAt(0)
+                assertEquals 2, paramsNode.childCount
+
+                def node = paramsNode.getChildAt(0)
+                assertEquals 'Name', node.name
+                assertEquals '3', node.abstractUIItem.item.versionNumber.toString()
+                assertEquals 2, node.childCount
+
+                node = paramsNode.getChildAt(1)
+                assertEquals 'Name', node.name
+                assertEquals 'R1', node.abstractUIItem.item.versionNumber.toString()
+                assertEquals 0, node.childCount
+            }
+        }
+    }
+
 
     private void prepareMocks(params, resultConfigurations) {
         modelStructureMock = new StubFor(ModelRegistry)
-        modelStructureMock.demand.getAllModelClasses { return new HashSet([CoreModel]) }
-        modelStructureMock.demand.getInstance { return new ModelRegistry() }
+        modelStructureMock.demand.getAllModelClasses(0..100) { return new HashSet([CoreModel]) }
+        modelStructureMock.demand.getInstance(0..100) { return new ModelRegistry() }
 
         factoryMock = new StubFor(ModellingItemFactory)
-        factoryMock.demand.getParameterizationsForModel(2..10) {modelClass ->
+        factoryMock.demand.getParameterizationsForModel(0..100) {modelClass ->
             params
         }
-        factoryMock.demand.getResultConfigurationsForModel(1..10) {modelClass ->
+        factoryMock.demand.getResultConfigurationsForModel(0..100) {modelClass ->
             resultConfigurations
         }
-        factoryMock.demand.getActiveSimulationsForModel(1..10) {modelClass ->
+        factoryMock.demand.getActiveSimulationsForModel(0..100) {modelClass ->
             []
         }
     }

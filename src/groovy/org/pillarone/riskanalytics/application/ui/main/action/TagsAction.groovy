@@ -17,7 +17,7 @@ class TagsAction extends SelectionTreeAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        AddTagDialog dialog = new AddTagDialog(tree, (ModellingUIItem) getSelectedUIItem())
+        AddTagDialog dialog = new AddTagDialog(tree, (List<ModellingUIItem>) getSelectedUIItems())
         dialog.init()
         dialog.dialog.visible = true
     }

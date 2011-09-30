@@ -8,6 +8,7 @@ import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import java.awt.Color
 
 public class LineChartViewModel extends ChartViewModel {
     List means
@@ -32,6 +33,7 @@ public class LineChartViewModel extends ChartViewModel {
                 true,                     // tooltips
                 false                     // urls
         );
+        setBackground(chart, Color.white)
 
         means.eachWithIndex {List series, int seriesIndex ->
             series.eachWithIndex {double values, int periodIndex ->

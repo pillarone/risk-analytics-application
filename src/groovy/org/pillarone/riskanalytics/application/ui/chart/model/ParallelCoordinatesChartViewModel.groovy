@@ -45,6 +45,7 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
                 true,                     // tooltips
                 false                     // urls
         );
+        setBackground(chart, Color.white)
 
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();

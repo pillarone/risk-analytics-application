@@ -87,7 +87,7 @@
 		</pageHeader>
 
     <detail>
-    
+
       <band height="60">
       <elementGroup>
       <textField >
@@ -200,3 +200,4 @@
 		  </band>
         </summary>
 </jasperReport>
+        

@@ -49,6 +49,7 @@ class ReloadResultConfigurationListModelAction extends ReloadListModelAction {
     void actionPerformed(ActionEvent actionEvent) {
         String currentSelection = model.resultConfigurationNames.selectedItem
         model.resultConfigurationVersions.reload(currentSelection)
+        model.notifyConfigurationChanged()
     }
 
 }

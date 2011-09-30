@@ -12,8 +12,14 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 class SaveAction extends ResourceBasedAction {
+
+    private static Log LOG = LogFactory.getLog(SaveAction)
+
     RiskAnalyticsMainModel model
     AbstractUIItem currentItem
     ULCComponent parent
@@ -32,6 +38,7 @@ class SaveAction extends ResourceBasedAction {
 
 
     public void doActionPerformed(ActionEvent event) {
+        LOG.info("Saving. current item: ${currentItem}. model.currentItem: ${model.currentItem}")
         save(currentItem ? currentItem : model.currentItem)
     }
 
@@ -63,11 +70,12 @@ class SaveAction extends ResourceBasedAction {
                 modellingUIItem.createNewVersion(itemModel, false)
                 model.closeItem(itemModel, modellingUIItem)
             } else if (alert.value.equals(alert.secondButtonLabel)) {
-                if (modellingUIItem.deleteDependingResults(getItemModel(modellingUIItem))) {
+                boolean deleted = modellingUIItem.deleteDependingResults(getItemModel(modellingUIItem))
+                if (deleted) {
                     saveItem(modellingUIItem)
                 } else {
-                    //item used in running simulation
-                    new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
+                    String errorKey = UIItemUtils.isUsedInRunningSimulation(modellingUIItem.item) ? "DeleteAllDependentRunningsError" : "DeleteAllDependentRunsError"
+                    new I18NAlert(UlcUtilities.getWindowAncestor(parent), errorKey).show()
                 }
             }
         }

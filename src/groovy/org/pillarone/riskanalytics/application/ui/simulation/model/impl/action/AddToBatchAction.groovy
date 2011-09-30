@@ -33,7 +33,7 @@ class AddToBatchAction extends RunSimulationAction {
                 BatchRun.withTransaction {
                     batchRun.save()
                 }
-                model.mainModel.addItem(batchRun)
+                model.mainModel.addBatch(batchRun)
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
             BatchRunService.getService().addSimulationRun(batchRun, model.simulation, OutputStrategyFactory.getEnum(model.outputStrategy.class))

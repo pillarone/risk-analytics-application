@@ -34,7 +34,8 @@ class TreeNodeCopier extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        List nodes = rowHeaderTree.selectedPaths*.lastPathComponent
+        ArrayList nodes = new ArrayList(rowHeaderTree.selectedPaths*.lastPathComponent)
+        Collections.sort(nodes, new TreeNodeComparator(model.root))
 
         StringBuffer content = new StringBuffer()
         int columnCount = model.columnCount

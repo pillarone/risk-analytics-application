@@ -94,7 +94,7 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         } else {
             value = node.getValueAt(i)
         }
-        return value
+        return value?.toString()
     }
 
     public Object getRoot() {

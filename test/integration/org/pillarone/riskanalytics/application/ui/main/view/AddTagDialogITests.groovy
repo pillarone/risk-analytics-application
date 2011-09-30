@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 import com.ulcjava.testframework.operator.*
+import com.ulcjava.base.application.ULCCheckBox
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -67,9 +68,6 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         ULCDialogOperator addTagDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('AddTagDialog'))
         assertNotNull addTagDialog
 
-        ULCListOperator listOperator = new ULCListOperator(addTagDialog, new ComponentByNameChooser('tagesList'))
-        assertEquals "tags count not correct ", size + 1, Tag.findAll().size()
-        assertEquals "items count not correct: ", size, listOperator.getItemCount()
 
         ULCTextFieldOperator newTagField = new ULCTextFieldOperator(addTagDialog, new ComponentByNameChooser('newTag'))
         assertNotNull newTagField
@@ -83,9 +81,10 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         addNewButton.getFocus()
         addNewButton.clickMouse()
 
-        assertEquals "add new tag failed: ", size + 1, Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).size()
+        ULCCheckBoxOperator newCheckBox = new ULCCheckBoxOperator(addTagDialog, new ComponentByNameChooser("Test"))
+        assertNotNull newCheckBox
 
-        assertEquals "add new tag failed: ", size + 1, listOperator.getItemCount()
+        assertEquals "add new tag failed: ", size + 1, Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).size()
 
     }
 
@@ -113,8 +112,11 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
             ULCDialogOperator addTagDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('AddTagDialog'))
             assertNotNull addTagDialog
 
-            ULCListOperator listOperator = new ULCListOperator(addTagDialog, new ComponentByNameChooser('tagesList'))
-            listOperator.selectItems([0] as int[])
+            ULCCheckBoxOperator checkBoxOperator = new ULCCheckBoxOperator(addTagDialog, new ComponentByNameChooser("WORKFLOW"))
+            assertNotNull checkBoxOperator
+
+            checkBoxOperator.clickMouse()
+            assertTrue checkBoxOperator.selected
 
             ULCButtonOperator applyButton = new ULCButtonOperator(addTagDialog, new ComponentByNameChooser('apply'))
             assertNotNull applyButton

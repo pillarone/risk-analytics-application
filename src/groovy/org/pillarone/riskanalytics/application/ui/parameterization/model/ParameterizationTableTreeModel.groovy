@@ -95,8 +95,19 @@ class ParameterizationTableTreeModel extends AbstractCommentableItemTableTreeMod
 
 
     public void setValueAt(Object value, Object node, int column) {
+        boolean notifyValueChanged = updateNodeValue(value, node, column)
+        if (notifyValueChanged)
+            notifyNodeValueChanged(node.parent, column)
 
+    }
+
+    /**
+     * set a value without notify a TableTreeValueChangedListeners
+     */
+    public boolean updateNodeValue(Object value, Object node, int column) {
         boolean notifyChanged = true
+        boolean notifyValueChanged = false
+
         if (nonValidValues.containsKey([node, column])) {
             nonValidValues.remove([node, column])
         }
@@ -115,13 +126,14 @@ class ParameterizationTableTreeModel extends AbstractCommentableItemTableTreeMod
                 def parent = node.parent
                 node.setValueAt(value, column)
                 notifyChanged = adjustTreeStructure(node, column, value)
-                notifyNodeValueChanged(parent, column)
+                notifyValueChanged = true
             }
 
         }
         if (notifyChanged) {
             nodeChanged getPath(node), column
         }
+        return notifyValueChanged
     }
 
     private boolean adjustTreeStructure(ITableTreeNode node, int column, Object value) {

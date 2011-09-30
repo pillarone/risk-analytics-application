@@ -29,10 +29,13 @@ class CreateNewMajorVersion extends SelectionTreeAction {
     public void doActionPerformed(ActionEvent event) {
         ModellingUIItem uiItem = getUIItem()
         if (uiItem instanceof ParameterizationUIItem) {
-            Closure okAction = {ModellingUIItem modellingUIItem, String commentText ->
-                createNewVersion(modellingUIItem, commentText)
+            Closure okAction = {String commentText ->
+                if (!uiItem.isLoaded()) {
+                    uiItem.load()
+                }
+                createNewVersion(uiItem, commentText)
             }
-            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(tree, uiItem, okAction)
+            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
             versionCommentDialog.show()
         } else
             createNewVersion(getUIItem())

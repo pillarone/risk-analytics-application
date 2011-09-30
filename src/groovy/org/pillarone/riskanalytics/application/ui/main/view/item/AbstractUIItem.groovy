@@ -84,6 +84,12 @@ abstract class AbstractUIItem implements IUIItem {
         ""
     }
 
+    public String getNameAndVersion() {
+        ""
+    }
+
+
+
     public boolean isVersionable() {
         return false
     }
@@ -94,6 +100,10 @@ abstract class AbstractUIItem implements IUIItem {
 
     public boolean isChanged() {
         return false
+    }
+
+    public boolean isDeletable() {
+        return true
     }
 
     public void removeAllModellingItemChangeListener() {

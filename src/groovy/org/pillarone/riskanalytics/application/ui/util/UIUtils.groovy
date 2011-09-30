@@ -199,6 +199,11 @@ class UIUtils {
         UserContext.setAttribute(ROOT_PANE, pane)
     }
 
+    public static ULCWindow getWindowAncestor() {
+        ULCRootPane pane = getRootPane()
+        return UlcUtilities.getWindowAncestor(pane?.getContentPane())
+    }
+
     public static String getUserInfo() {
         try {
             if (UserManagement.isLoggedIn()) {
@@ -210,7 +215,7 @@ class UIUtils {
                     List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
                     userAuthorities = i18nAuthorities.join(", ")
                 }
-                return loggedUser.username + " (" + userAuthorities+")"
+                return loggedUser.username + " (" + userAuthorities + ")"
             }
         } catch (Exception ex) {
 
@@ -225,6 +230,33 @@ class UIUtils {
             case ValidationType.HINT: return Color.blue
             default: return Color.black
         }
+    }
+
+    public static String addBreakLines(String origin, int maxLength, String separator) {
+        if (!origin || origin.length() < maxLength) return origin
+        StringBuilder result = new StringBuilder()
+        StringBuilder temp = new StringBuilder()
+        List strings = origin.split(separator)
+        strings.eachWithIndex {String str, int index ->
+            if (temp.length() + str.length() > maxLength) {
+                result.append(temp + "\n")
+                temp = new StringBuilder()
+            }
+            String sep = (index < strings.size() - 1) ? separator : ""
+            temp.append(str + sep)
+        }
+        if (temp.length() > 0)
+            result.append(temp.toString())
+        return result.toString()
+    }
+
+    public static String toCSV(List<List<String>> values) {
+        StringBuilder sb = new StringBuilder("\n\n")
+        for (List<String> list: values) {
+            sb.append(list.join(""))
+            sb.append("\n")
+        }
+        return sb.toString()
     }
 
 }

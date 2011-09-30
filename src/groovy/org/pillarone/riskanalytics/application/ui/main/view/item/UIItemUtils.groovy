@@ -28,6 +28,7 @@ class UIItemUtils {
     }
 
     public static boolean deleteDependingResults(RiskAnalyticsMainModel mainModel, Model model, ModellingItem item) {
+        if (isUsedInRunningSimulation(item)) return false
         try {
             SimulationRun.withTransaction {TransactionStatus status ->
                 List<SimulationRun> simulationRuns = item.getSimulations();
@@ -51,12 +52,28 @@ class UIItemUtils {
                 }
                 Tag postLocking = Tag.findByNameAndTagType(NewCommentView.POST_LOCKING, EnumTagType.COMMENT)
                 deleteCommentTag(item, postLocking)
+
             }
         } catch (Exception ex) {
             LOG.error "$ex"
             return false
         }
         return true
+    }
+
+    public static boolean isUsedInRunningSimulation(ModellingItem item) {
+        boolean usedInRunningSimulation = false
+        List<SimulationRun> simulationRuns = item.getSimulations();
+        for (SimulationRun simulationRun: simulationRuns) {
+            if (!simulationRun.endTime) {
+                BatchRunSimulationRun batchRunSimulationRun = BatchRunSimulationRun.findBySimulationRun(simulationRun)
+                if (!batchRunSimulationRun) {
+                    usedInRunningSimulation = true
+                    break
+                }
+            }
+        }
+        return usedInRunningSimulation
     }
 
     public static void deleteCommentTag(Parameterization parameterization, Tag tag) {

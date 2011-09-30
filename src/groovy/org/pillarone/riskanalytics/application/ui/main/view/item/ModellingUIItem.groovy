@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import com.ulcjava.base.application.ULCWindow
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -120,6 +121,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         mainModel.fireModelChanged()
         mainModel.fireModelItemChanged()
+        navigationTableTreeModel.itemChanged(item)
     }
 
 
@@ -160,6 +162,13 @@ abstract class ModellingUIItem extends AbstractUIItem {
     String getName() {
         return item.name
     }
+
+    @Override
+    String getNameAndVersion() {
+        return getName() + (versionable ? " v" + item.versionNumber.toString() : "")
+    }
+
+
 
     public Model getModel() {
         if (!this.@model) {

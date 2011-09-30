@@ -15,6 +15,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -46,6 +48,24 @@ class ParameterizationUIItem extends ModellingUIItem {
         super.save()
     }
 
+    @Override
+    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
+        ModellingUIItem newItem = null
+        Closure okAction = {String commentText ->
+            if (! this.isLoaded()) {
+                 this.load()
+             }
+            createNewVersion(this.model, commentText, false)
+        }
+
+        NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
+        versionCommentDialog.show()
+
+        return newItem
+    }
+
+
+
     public ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
         ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false)
         addComment(selectedModel, newItem, commentText, openNewVersion)
@@ -54,12 +74,8 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     private void addComment(Model selectedModel, ParameterizationUIItem uiItem, String commentText, boolean openNewVersion) {
         if (commentText) {
-            String modelName = selectedModel.getName()
-            Comment comment = new Comment(modelName, -1)
-            comment.text = commentText
-            Tag version = Tag.findByName(NewCommentView.VERSION_COMMENT)
-            comment.addTag(version)
-            ((Parameterization) uiItem.item).addComment(comment)
+            Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
+            ((Parameterization) uiItem.item).addTaggedComment(commentText, versionTag)
             uiItem.item.save()
         }
         if (openNewVersion)
@@ -91,9 +107,19 @@ class ParameterizationUIItem extends ModellingUIItem {
     }
 
     @Override
+    boolean isDeletable() {
+        Parameterization parameterization = item as Parameterization
+        return parameterization.status == Status.NONE || parameterization.status == Status.DATA_ENTRY
+    }
+
+    @Override
     boolean isEditable() {
         return item.isEditable()
     }
 
+    @Override
+    String toString() {
+        return item.toString()
+    }
 
 }

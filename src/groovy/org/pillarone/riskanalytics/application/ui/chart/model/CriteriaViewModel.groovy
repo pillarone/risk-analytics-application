@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.application.ui.chart.view.CriteriaView
 import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -45,7 +45,7 @@ class CriteriaViewModel {
     }
 
     public boolean isSingleValueCollector() {
-        CollectorMapping collectorMapping = CollectorMapping.findByCollectorName(SingleValueCollectingModeStrategy.IDENTIFIER)
+        CollectorMapping collectorMapping = CollectorMapping.findByCollectorName(AggregatedWithSingleAvailableCollectingModeStrategy.IDENTIFIER)
         return (getCollector().equals(collectorMapping?.collectorName))
     }
 

@@ -49,6 +49,11 @@ class CompareSimulationUIItem extends AbstractUIItem {
     }
 
     @Override
+    boolean isDeletable() {
+        return false
+    }
+
+    @Override
     void load(boolean completeLoad) {
         simulations.each {Simulation simulation ->
             if (!simulation.isLoaded())
