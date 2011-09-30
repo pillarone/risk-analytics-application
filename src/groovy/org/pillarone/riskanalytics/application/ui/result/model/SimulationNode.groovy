@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.base.action.CreatePDFReportAction
 import org.pillarone.riskanalytics.application.ui.base.action.CreatePPTXReportAction
+import org.pillarone.riskanalytics.application.ui.base.action.CreateXlsReportAction
 
 class SimulationNode extends ItemNode {
     //checkBox selected simulations
@@ -63,6 +64,9 @@ class SimulationNode extends ItemNode {
             for (IReportModel model in reports) {
                 reportsMenu.add(new ULCMenuItem(new CreatePDFReportAction(model, tree, abstractUIItem.mainModel)))
                 reportsMenu.add(new ULCMenuItem(new CreatePPTXReportAction(model, tree, abstractUIItem.mainModel)))
+
+                // Support for export to Excel prepared, but not activated since need coordination with IC
+                // reportsMenu.add(new ULCMenuItem(new CreateXlsReportAction(model, tree, abstractUIItem.mainModel)))
             }
             simulationNodePopUpMenu.addSeparator()
             simulationNodePopUpMenu.add(reportsMenu)
