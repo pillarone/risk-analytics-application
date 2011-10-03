@@ -86,15 +86,15 @@ class ParameterizationTreeBuilder {
                     root.add(lineNode)
                 }
             }
-            List sortedPropertyKeys = TreeBuilderUtil.collectProperties(model)
-            for (String prop in sortedPropertyKeys) {
-                def value = model[prop]
-                if (value instanceof Component) {
-                    def node = componentNodes[value]
-                    if (node) {
-                        if (node.parent == null) {
-                            root.add(node)
-                        }
+        }
+        List sortedPropertyKeys = TreeBuilderUtil.collectProperties(model)
+        for (String prop in sortedPropertyKeys) {
+            def value = model[prop]
+            if (value instanceof Component) {
+                def node = componentNodes[value]
+                if (node) {
+                    if (node.parent == null) {
+                        root.add(node)
                     }
                 }
             }
@@ -320,12 +320,7 @@ class ParmComparator implements Comparator {
 class TreeBuilderUtil {
 
     protected static List collectProperties(Model model) {
-        List sortedProps = []
-
-        model.class.declaredFields.each {Field field ->
-            sortedProps << field.name
-        }
-        sortedProps
+        return model.sortedProperties
     }
 
     public static List collectProperties(Component component, String key) {
