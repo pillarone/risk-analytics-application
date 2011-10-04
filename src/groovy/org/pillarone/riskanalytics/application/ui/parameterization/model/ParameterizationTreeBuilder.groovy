@@ -64,11 +64,11 @@ class ParameterizationTreeBuilder {
         }
     }
 
-    protected void init(model, modelStructure, parameterization) {
+    protected void init(Model model, ModelStructure modelStructure, Parameterization parameterization) {
         structure = modelStructure.data
         this.@model = model
         this.@item = parameterization
-        root = new SimpleTableTreeNode(model.getClass().getSimpleName() - "Model")
+        root = new SimpleTableTreeNode(model.getName())
     }
 
     private void buildComponentNodeHierachy() {
@@ -198,7 +198,7 @@ class ParameterizationTreeBuilder {
 
     }
 
-    ComponentTableTreeNode createNewComponentNode(ComponentTableTreeNode parent, Component newComponent) {
+    ComponentTableTreeNode createNewComponentNode(SimpleTableTreeNode parent, Component newComponent) {
         ComponentTableTreeNode newComponentNode = buildComponentNode(newComponent.name, newComponent)
         parent.add(newComponentNode)
         addParameterValueNodes(newComponentNode)
