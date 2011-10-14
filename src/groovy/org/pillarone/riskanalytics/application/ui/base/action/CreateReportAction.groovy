@@ -24,23 +24,25 @@ import org.pillarone.riskanalytics.core.report.UnsupportedReportParameterExcepti
 import com.ulcjava.base.application.IAction
 
 
-abstract class CreateReportAction extends SelectionTreeAction {
+public class CreateReportAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateReportAction)
 
     IReportModel reportModel
+    ReportFactory.ReportFormat reportFormat
 
-    public CreateReportAction(IReportModel reportModel, String renderedFormatSuchAsPDF, tree, RiskAnalyticsMainModel model) {
+    public CreateReportAction(IReportModel reportModel, ReportFactory.ReportFormat reportFormat, tree, RiskAnalyticsMainModel model) {
         super("GenerateReport", tree, model)
         this.reportModel = reportModel
-        putValue(IAction.NAME, reportModel.getName() + " " + renderedFormatSuchAsPDF)
+        this.reportFormat = reportFormat
+        putValue(IAction.NAME, reportModel.getName() + " " + reportFormat.getRenderedFormatSuchAsPDF())
     }
 
     @Override
     void doActionPerformed(ActionEvent event) {
         IReportData reportData = getReportData()
         try {
-            byte[] report = createReport(reportModel, reportData)
+            byte[] report = ReportFactory.createReport(reportModel, reportData, reportFormat)
             saveReport(report, reportData)
         } catch (UnsupportedReportParameterException e) {
              LOG.error "Unsupported input to report: ${e}", e
@@ -67,16 +69,12 @@ abstract class CreateReportAction extends SelectionTreeAction {
         }
     }
 
-    abstract protected byte[] createReport(IReportModel reportModel, IReportData reportData)
-
-    abstract protected String getFileExtension()
-
     private void saveReport(byte[] output, IReportData reportData) {
         FileChooserConfig config = new FileChooserConfig()
         config.dialogTitle = "Save Report As"
         config.dialogType = FileChooserConfig.SAVE_DIALOG
         config.FILES_ONLY
-        String fileName = reportModel.getDefaultReportFileNameWithoutExtension(reportData) + "." + getFileExtension()
+        String fileName = reportModel.getDefaultReportFileNameWithoutExtension(reportData) + "." + reportFormat.getFileExtension()
         fileName = fileName.replace(":", "")
         fileName = fileName.replace("/", "")
         fileName = fileName.replace("*", "")
@@ -120,59 +118,5 @@ abstract class CreateReportAction extends SelectionTreeAction {
                 }] as IFileChooseHandler, config, ancestor)
     }
 
-
-}
-
-class CreatePDFReportAction extends CreateReportAction {
-
-    public CreatePDFReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
-        super(reportModel, "PDF", tree, model)
-    }
-
-    @Override
-    protected byte[] createReport(IReportModel reportModel, IReportData reportData) {
-        return ReportFactory.createPDFReport(reportModel, reportData)
-    }
-
-    @Override
-    protected String getFileExtension() {
-        return "pdf"
-    }
-
-}
-
-class CreatePPTXReportAction extends CreateReportAction {
-
-    public CreatePPTXReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
-        super(reportModel, "PowerPoint", tree, model)
-    }
-
-    @Override
-    protected byte[] createReport(IReportModel reportModel, IReportData reportData) {
-        return ReportFactory.createPPTXReport(reportModel, reportData)
-    }
-
-    @Override
-    protected String getFileExtension() {
-        return "pptx"
-    }
-
-}
-
-class CreateXlsReportAction extends CreateReportAction {
-
-    public CreateXlsReportAction(IReportModel reportModel, tree, RiskAnalyticsMainModel model) {
-        super(reportModel, "Excel", tree, model)
-    }
-
-    @Override
-    protected byte[] createReport(IReportModel reportModel, IReportData reportData) {
-        return ReportFactory.createXLSReport(reportModel, reportData)
-    }
-
-    @Override
-    protected String getFileExtension() {
-        return "xls"
-    }
 
 }

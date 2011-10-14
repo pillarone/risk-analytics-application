@@ -10,12 +10,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.CompareSimulationMen
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.report.IReportModel
-import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.base.action.CreatePDFReportAction
-import org.pillarone.riskanalytics.application.ui.base.action.CreatePPTXReportAction
-import org.pillarone.riskanalytics.application.ui.base.action.CreateXlsReportAction
 
 class SimulationNode extends ItemNode {
     //checkBox selected simulations
@@ -55,22 +50,6 @@ class SimulationNode extends ItemNode {
         resultMenus[modelName] = simulationNodePopUpMenu
 
         return simulationNodePopUpMenu
-    }
-
-    private void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree) {
-        List<IReportModel> reports = ReportRegistry.getReportModel(abstractUIItem.model.modelClass)
-        if (!reports.empty) {
-            ULCMenu reportsMenu = new ULCMenu("Reports")
-            for (IReportModel model in reports) {
-                reportsMenu.add(new ULCMenuItem(new CreatePDFReportAction(model, tree, abstractUIItem.mainModel)))
-                reportsMenu.add(new ULCMenuItem(new CreatePPTXReportAction(model, tree, abstractUIItem.mainModel)))
-
-                // Support for export to Excel prepared, but not activated since need coordination with IC
-                // reportsMenu.add(new ULCMenuItem(new CreateXlsReportAction(model, tree, abstractUIItem.mainModel)))
-            }
-            simulationNodePopUpMenu.addSeparator()
-            simulationNodePopUpMenu.add(reportsMenu)
-        }
     }
 
     public String getToolTip() {

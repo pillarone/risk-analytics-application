@@ -90,5 +90,10 @@ class UIItemUtils {
 
     }
 
+    public static List<ModellingItem> getSelectedModellingItems(List<AbstractUIItem> selectedUIItems) {
+       selectedUIItems
+       .findAll { AbstractUIItem uiItem -> uiItem instanceof ModellingUIItem }
+       .collectAll { AbstractUIItem modellingUIItem -> ((ModellingUIItem)modellingUIItem).item }
+    }
 
 }
