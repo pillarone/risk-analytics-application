@@ -26,7 +26,7 @@ class ExitAction extends ResourceBasedAction {
     }
 
     public static void terminate() {
-        // todo dk: move this into a job 
+        // todo dk: move this into a job
         DeleteSimulationService deleteSimulationService = (DeleteSimulationService) ApplicationHolder.application.mainContext.getBean('deleteSimulationService')
         if (deleteSimulationService != null) {
             deleteSimulationService.deleteAllMarkedSimulations()
@@ -41,6 +41,8 @@ class ExitAction extends ResourceBasedAction {
             ClientContext.showDocument(url, "_self")
         } catch (Exception ex) {
             LOG.error("Logout error by calling $url : $ex")
+        } finally {
+            terminate()
         }
     }
 }
