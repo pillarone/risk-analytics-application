@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.reports
 
-import com.canoo.common.FileUtilities
-import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCComponent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -10,10 +8,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 
+import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractReportAction extends SelectionTreeAction {
+
     protected UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
 
     Log LOG = LogFactory.getLog(AbstractReportAction)
@@ -27,24 +28,7 @@ abstract class AbstractReportAction extends SelectionTreeAction {
     }
 
     public void saveReport(def output, String fileName, ULCComponent component) {
-        try {
-            String targetFile = getTargetDir() + File.separator + fileName
-            FileUtilities.addFileToDirectory(getTargetDir(), fileName, output)
-            LOG.info "$targetFile saved successfully"
-        } catch (Exception ex) {
-            LOG.error "$ex"
-        }
-    }
-
-    public void open(String fileName) {
-        String targetFile = getTargetDir() + File.separator + fileName
-        File file = new File(targetFile)
-        if (file.exists()) {
-            ClientContext.showDocument(targetFile, "_new")
-        } else {
-            LOG.error "file $targetFile doesn't exist"
-        }
-
+        ShowDocumentStrategyFactory.getInstance().showDocument(fileName, output, "application/pdf")
     }
 
     abstract String getTargetDir()
