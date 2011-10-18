@@ -86,3 +86,5 @@ coverage {
     ]
 
 }
+
+reportFolders = [new File("./src/java/reports")]
