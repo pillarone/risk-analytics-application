@@ -17,6 +17,8 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
+import net.sf.jmimemagic.Magic
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -40,7 +42,7 @@ class DownloadFileAction extends ResourceBasedAction {
         File file = new File(fileURL)
         if (fileURL != null && file.exists()) {
             if (open) {
-                ClientContext.showDocument(fileURL, "_new")
+                ShowDocumentStrategyFactory.getInstance().showDocument(file.name, file.bytes, Magic.getMagicMatch(file, true).getMimeType())
                 return
             }
             FileChooserConfig config = new FileChooserConfig()

@@ -22,6 +22,8 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.report.impl.ReportDataCollection
 import org.pillarone.riskanalytics.core.report.UnsupportedReportParameterException
 import com.ulcjava.base.application.IAction
+import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
+import net.sf.jmimemagic.Magic
 
 
 public class CreateReportAction extends SelectionTreeAction {
@@ -85,37 +87,7 @@ public class CreateReportAction extends SelectionTreeAction {
         fileName = fileName.replace("|", "")
         config.selectedFile = fileName
 
-        ULCWindow ancestor = UlcUtilities.getWindowAncestor(tree)
-        ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
-                    String selectedFile = filePaths[0]
-
-                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
-                        try {
-                            stream.write(output)
-                        } catch (UnsupportedOperationException t) {
-                            LOG.error "Saving Report Failed: ${t}", t
-                            new I18NAlert(ancestor, "SaveReportError").show()
-                        } catch (Throwable t) {
-                            LOG.error "Saving Report Failed: ${t}", t
-                            new I18NAlert(ancestor, "SaveReportError").show()
-                            throw t
-                        } finally {
-                            stream.close()
-                        }
-                    }, onSuccess: {path, name ->
-                    }, onFailure: {reason, description ->
-                        LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                        new I18NAlert(ancestor, "SaveReportError").show()
-                    }] as IFileStoreHandler, selectedFile)
-
-                },
-                onFailure: {reason, description ->
-                    if (reason != IFileChooseHandler.CANCELLED) {
-                        LOG.error "Saving Report Failed: Description: ${description} Reason: ${reason}"
-                        new I18NAlert(ancestor, "SaveReportError").show()
-                    }
-                }] as IFileChooseHandler, config, ancestor)
+        ShowDocumentStrategyFactory.getInstance().showDocument(fileName, output, Magic.getMagicMatch(output).getMimeType())
     }
 
 

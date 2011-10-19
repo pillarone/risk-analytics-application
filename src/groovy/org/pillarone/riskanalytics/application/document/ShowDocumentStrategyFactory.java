@@ -8,7 +8,7 @@ public abstract class ShowDocumentStrategyFactory {
         if(UserContext.isStandAlone()) {
             return new FileSystemStrategy();
         } else {
-            return new BrowserStrategy();
+            return new StoreFileStrategy();
         }
     }
 }
