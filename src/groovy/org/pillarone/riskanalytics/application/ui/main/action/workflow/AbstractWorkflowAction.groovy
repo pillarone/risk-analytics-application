@@ -52,7 +52,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
     }
 
-    private Parameterization changeStatus(Parameterization item, Status toStatus) {
+    protected Parameterization changeStatus(Parameterization item, Status toStatus) {
         Parameterization parameterization = service.changeStatus(item, toStatus)
         if (!item.is(parameterization)) {
             model.navigationTableTreeModel.addNodeForItem(parameterization)
