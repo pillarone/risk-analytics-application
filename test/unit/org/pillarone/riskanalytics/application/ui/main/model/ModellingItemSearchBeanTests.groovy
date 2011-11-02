@@ -34,8 +34,25 @@ class ModellingItemSearchBeanTests extends GroovyTestCase {
         assertEquals 12, results.size()
 
         results = searchBean.performSearch("one ' / \" test")
+        assertEquals 5, results.size()
+
+        results = searchBean.performSearch('"CapitalEagle NP"')
+        assertEquals 5, results.size()
+
+        results = searchBean.performSearch('CapitalEagle NP')
+        assertEquals 8, results.size()
+
+        results = searchBean.performSearch('CapitalEagle AND NP')
+        assertEquals 5, results.size()
+
+        results = searchBean.performSearch('CapitalEagle OR NP')
+        assertEquals 8, results.size()
+
+        results = searchBean.performSearch('"One Line Example" Aggregated')
         assertEquals 6, results.size()
 
+        results = searchBean.performSearch('"One Line Example" AND Aggregated')
+        assertEquals 1, results.size()
     }
 
     List<String> getItemNames() {

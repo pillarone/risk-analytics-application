@@ -22,10 +22,16 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
     ModellingItemIndexer indexer = null
     private QueryParser parser = null;
+    boolean reInitIndexer = false
+
     private static Log LOG = LogFactory.getLog(ModellingItemSearchBean)
+
     static final String SEPARATOR = " +++ "
     static final String SQL_SEPARATOR = "' " + SEPARATOR + " '"
-    boolean reInitIndexer = false
+    static final String QUOTE = '"'
+    static final List LUCENE_OPERATOR = ['AND', 'OR', '||', '~', QUOTE, '+', '-']
+    static final String ESCAPE_CHARS = "[\\\\!\\(\\)\\:\\]\\{\\}\\'\\#]"
+
 
     public List<String> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
@@ -35,7 +41,14 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         // when no field is explicitly specified in the query.
         QueryParser parser = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer)
         parser.setAllowLeadingWildcard(true);
-        Query q = parser.parse(escapedQuery);
+        Query q
+        try {
+            q = parser.parse(escapedQuery);
+        }
+        catch (ParseException) {
+            // remove everything except letters, numbers, spaces and underscores
+            q = parser.parse(queryString.replaceAll("[^\\w\\s]",""))
+        }
 
         // 3. search
         int hitsPerPage = 100;
@@ -56,11 +69,11 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         if (!indexer || reInitIndexer) {
             List<String> names = getModellingItemNames()
             indexer = new ModellingItemIndexer(names)
-            parser = new QueryParser(Version.LUCENE_30, ModellingItemIndexer.SEARCH_TEXT_TITLE, indexer.analyzer)
             reInitIndexer = false
         }
     }
 
+    // todo(sku): think, how to make this more efficient in server mode? Loading all items per sessions becomes time consuming with large numbers of p14n ...
     private def getModellingItemNames() {
         List<String> names = []
         long currentTime = System.currentTimeMillis()
@@ -150,22 +163,29 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         reInitIndexer = true
     }
 
+    /**
+     * Remove ESCAPE_CHARS from query, extend tokens with leading and trailing *, treat quoted parts as single token
+     * @param query
+     * @return
+     */
     public static String escapeQuery(String query) {
-        try {
-            String escapeChars = "[\\\\+\\-\\!\\(\\)\\:\\^\\]\\{\\}\\~\\\"\\'\\#]";
-            query = query.replaceAll(escapeChars, " ")
-            List queries = query.split()
-            String escapedQuery = ""
-            for (String st: queries) {
+        query = query.replaceAll(ESCAPE_CHARS, " ")
+        List queries = query.split()
+        String escapedQuery = ""
+
+        boolean openingQuotes = false
+        for (String st: queries) {
+            openingQuotes = openingQuotes || st[0] == QUOTE
+            if (LUCENE_OPERATOR.contains(st) || openingQuotes) {
+                // don't add an asterix if the token contains a lucene operator or is placed within quotes
+                escapedQuery += st + ' '
+                openingQuotes = !(st[-1] == QUOTE)
+            }
+            else {
                 escapedQuery += "*" + st + "* "
             }
-            return escapedQuery
-        } catch (Exception ex) {
-            return QueryParser.escape(query)
         }
-
+        return escapedQuery
     }
-
-
 }
 
