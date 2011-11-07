@@ -33,7 +33,6 @@ class CommentReportAction extends AbstractReportAction {
     void doActionPerformed(ActionEvent event) {
         try {
             saveReport(getReport(), getFileName(), event?.source)
-            open(getFileName())
         } catch (IllegalArgumentException e) {
             LOG.error "Can not create report: ${e.message} Stacktrace: ${e.stackTrace}"
         }

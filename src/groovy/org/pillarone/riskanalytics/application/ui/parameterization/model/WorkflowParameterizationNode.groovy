@@ -44,6 +44,7 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         dataEntry.addSeparator()
         dataEntry.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
         dataEntry.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
+        addReportMenus(dataEntry, tree)
         dataEntry.addSeparator()
         dataEntry.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
         dataEntry.addSeparator()
@@ -63,6 +64,7 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         rejected.addSeparator()
         rejected.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
         rejected.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
+        addReportMenus(rejected, tree)
         return rejected
     }
 
@@ -83,6 +85,7 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         inReview.add(sendToProductionMenuItem)
         tree.addTreeSelectionListener(sendToProductionMenuItem)
         inReview.add(new ULCMenuItem(new RejectWorkflowAction(tree, abstractUIItem.mainModel)))
+        addReportMenus(inReview, tree)
         return inReview
     }
 
@@ -100,6 +103,7 @@ class WorkflowParameterizationNode extends ParameterizationNode {
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         inProduction.add(compareParameterizationMenuItem)
         inProduction.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
+        addReportMenus(inProduction, tree)
         return inProduction
     }
 

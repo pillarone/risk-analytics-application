@@ -45,6 +45,7 @@ class ParameterizationNode extends VersionedItemNode {
                 parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, abstractUIItem.mainModel)))
             }
         }
+        addReportMenus(parameterNodePopUpMenu, tree)
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
         return parameterNodePopUpMenu

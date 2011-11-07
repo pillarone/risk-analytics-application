@@ -287,7 +287,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
 
     Parameterization createStubParameterization(int index, Status status) {
-        Parameterization parameterization = new Parameterization("param" + index)
+        Parameterization parameterization = new Parameterization("param" + index, ApplicationModel)
         parameterization.id = index
         Person person = new Person(username: "username" + index)
         parameterization.setCreator(person)
@@ -296,6 +296,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         parameterization.setLastUpdater(person2)
         parameterization.setModificationDate(new DateTime())
         parameterization.status = status
+        parameterization.modelClass = ApplicationModel
         return parameterization
 
     }

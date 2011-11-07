@@ -5,3 +5,4 @@ web-app/lib/*.jar
 *.zip
 *.log
 .idea/workspace.xml
+*.jasper

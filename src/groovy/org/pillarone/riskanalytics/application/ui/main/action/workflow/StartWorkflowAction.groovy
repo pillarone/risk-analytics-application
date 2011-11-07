@@ -31,9 +31,6 @@ class StartWorkflowAction extends AbstractWorkflowAction {
                 //ART-392: valuation date functionality currently disabled
                 //                         parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate
                 super.doActionPerformed(event)
-                //original parameterization on which workflow is started should not be linked
-                parameterization.dealId = null
-                parameterization.valuationDate = null
             }
         }
         if (parameterization.status == Status.NONE) {
@@ -46,11 +43,19 @@ class StartWorkflowAction extends AbstractWorkflowAction {
 
     }
 
+    @Override
+    protected Parameterization changeStatus(Parameterization item, Status toStatus) {
+        Parameterization result = super.changeStatus(item, toStatus)
+        //original parameterization on which workflow is started should not be linked
+        item.dealId = null
+        item.valuationDate = null
+        return result
+    }
+
     Status toStatus() {
         return Status.DATA_ENTRY
     }
-
-
+    
     @Override
     protected List allowedRoles() {
         return [UserManagement.USER_ROLE]

@@ -33,14 +33,13 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:1.1.2"
         runtime ":jetty:1.2-SNAPSHOT"
 
-        runtime "org.pillarone:jasper:0.9.5-riskanalytics"
         compile "com.canoo:ulc:${ulcVersion}"
         runtime "org.pillarone:pillar-one-ulc-extensions:0.1"
 
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.4-BETA-7.1-kti"
+            runtime "org.pillarone:risk-analytics-core:1.4-RC-2-kti"
         }
 
     }
@@ -87,3 +86,5 @@ coverage {
     ]
 
 }
+
+reportFolders = [new File("./src/java/reports")]

@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.reports
 
-import jasper.JasperService
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
@@ -8,7 +7,6 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.ReportUtils
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.user.Person
 
 public class ReportFactory {

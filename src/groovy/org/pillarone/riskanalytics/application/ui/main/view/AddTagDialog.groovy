@@ -3,20 +3,13 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tree.TreePath
+
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
+
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
+
 import com.ulcjava.base.application.*
-import com.ulcjava.base.application.event.IValueChangedListener
-import com.ulcjava.base.application.event.ValueChangedEvent
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -26,7 +19,7 @@ class AddTagDialog {
     ULCTableTree tree
     AbstractTableTreeModel model
     ULCDialog dialog
-    TagesListView tagesListView
+    TagsListView tagesListView
     ULCTextField newTag
 
     private ULCButton applyButton
@@ -66,7 +59,7 @@ class AddTagDialog {
             this.parent = UlcUtilities.getWindowAncestor(tree)
         dialog = new ULCDialog(parent, "Edit tags dialog", true)
         dialog.name = 'AddTagDialog'
-        tagesListView = new TagesListView(modellingUIItems*.item)
+        tagesListView = new TagsListView(modellingUIItems*.item)
         tagesListView.init()
         newTag = new ULCTextField()
         newTag.name = 'newTag'

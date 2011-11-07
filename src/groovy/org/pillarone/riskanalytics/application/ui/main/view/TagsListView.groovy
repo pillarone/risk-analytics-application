@@ -1,22 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCCheckBox
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
-import com.ulcjava.base.application.event.ValueChangedEvent
-import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.ULCFiller
+import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
-import com.ulcjava.base.application.border.ULCAbstractBorder
-import com.ulcjava.base.application.BorderFactory
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class TagesListView extends AbstractView {
+class TagsListView extends AbstractView {
 
     public ULCBoxPane content
     public List<Tag> itemTages
@@ -25,7 +23,7 @@ class TagesListView extends AbstractView {
     private List<ModellingItem> modellingItems
     List<Tag> allTags
 
-    public TagesListView(List<ModellingItem> modellingItems) {
+    public TagsListView(List<ModellingItem> modellingItems) {
         this.modellingItems = modellingItems
         content = new ULCBoxPane(2, 0)
     }
@@ -64,9 +62,10 @@ class TagesListView extends AbstractView {
                 }
                 setLookAndFeel(box, newTag)
             }] as IValueChangedListener)
-            content.add(ULCBoxPane.BOX_LEFT_CENTER, checkBox)
+            content.add(ULCBoxPane.BOX_LEFT_TOP, checkBox)
             content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         }
+        content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
     }
 
     @Override

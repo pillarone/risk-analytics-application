@@ -5,10 +5,10 @@
 
    <import value="java.util.Date" />
    <import value="java.text.SimpleDateFormat" />
-   <reportFont name="Verdana10" isDefault="false" fontName="Verdana" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
-   <reportFont name="Verdana9" isDefault="false" fontName="Verdana" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
-   <reportFont name="Verdana12b" isDefault="false" fontName="Verdana" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdanab.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
-   <reportFont name="Verdana20" isDefault="false" fontName="Verdana" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="verdana.ttf" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+   <reportFont name="Verdana10" isDefault="false" fontName="DejaVu Sans" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+   <reportFont name="Verdana9" isDefault="false" fontName="DejaVu Sans" size="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"  pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+   <reportFont name="Verdana12b" isDefault="false" fontName="DejaVu Sans" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
+   <reportFont name="Verdana20" isDefault="false" fontName="DejaVu Sans" size="20" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Cp1250" isPdfEmbedded="true"/>
    <style name="title" fontSize="12" />
    <style name="normal" fontSize="12" />
    <style name="middle" fontSize="10" forecolor="gray"/>
@@ -200,4 +200,3 @@
 		  </band>
         </summary>
 </jasperReport>
-        

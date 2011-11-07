@@ -7,7 +7,14 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.core.report.IReportModel
+import org.pillarone.riskanalytics.core.report.ReportFactory
+import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import com.ulcjava.base.application.ULCMenuItem
+import com.ulcjava.base.application.ULCMenu
+import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
+import org.pillarone.riskanalytics.application.ui.main.view.CreateReportMenuItem
 
 class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
@@ -55,5 +62,20 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         return abstractUIItem.item.name
     }
 
+    protected void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree) {
+        List<IReportModel> reports = ReportRegistry.getReportModel(abstractUIItem.model.modelClass)
+        if (!reports.empty) {
+            ULCMenu reportsMenu = new ULCMenu("Reports")
+            for (IReportModel model in reports) {
+                reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, ReportFactory.ReportFormat.PDF, tree, abstractUIItem.mainModel)))
+                reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, ReportFactory.ReportFormat.PPT, tree, abstractUIItem.mainModel)))
+                reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, ReportFactory.ReportFormat.XLS, tree, abstractUIItem.mainModel)))
 
+                // Support for export to Excel prepared, but not activated since need coordination with IC
+                // reportsMenu.add(new ULCMenuItem(new CreateXlsReportAction(model, tree, abstractUIItem.mainModel)))
+            }
+            simulationNodePopUpMenu.addSeparator()
+            simulationNodePopUpMenu.add(reportsMenu)
+        }
+    }
 }
