@@ -27,6 +27,7 @@ public class ParameterizationNameListModel extends DefaultComboBoxModel {
             projections {
                 distinct("name")
             }
+            order("name")
         }
 
         params.each {
