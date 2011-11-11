@@ -2,25 +2,26 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.IValueChangedListener
-import org.apache.commons.lang.time.FastDateFormat
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterCollector.RuntimeParameterDescriptor
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 
 class RuntimeParameterPane {
 
     ULCBoxPane content
 
     RuntimeParameterPaneModel model
+    SimulationSettingsPaneModel simulationSettingsPaneModel
 
-    RuntimeParameterPane(RuntimeParameterPaneModel model) {
-        this.model = model
+    RuntimeParameterPane(SimulationSettingsPaneModel simulationSettingsPaneModel) {
+        this.model = simulationSettingsPaneModel.parameterPaneModel
+        this.simulationSettingsPaneModel = simulationSettingsPaneModel
         initComponents()
     }
 
@@ -40,6 +41,7 @@ class RuntimeParameterPane {
         textField.name = descriptor.propertyName
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.text
+            simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IValueChangedListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, textField)
     }
@@ -53,6 +55,7 @@ class RuntimeParameterPane {
         textField.value = value
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.value
+            simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IValueChangedListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, textField)
     }
@@ -66,6 +69,7 @@ class RuntimeParameterPane {
         textField.value = value
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.value
+            simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IValueChangedListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, textField)
     }
@@ -78,6 +82,7 @@ class RuntimeParameterPane {
         checkBox.selected = value
         checkBox.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = checkBox.selected
+            simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IValueChangedListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, checkBox)
     }
@@ -90,6 +95,7 @@ class RuntimeParameterPane {
         comboBox.name = descriptor.propertyName
         comboBox.addActionListener([actionPerformed: { evt ->
             descriptor.value = comboBoxModel.selectedEnum
+            simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IActionListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, comboBox)
     }
@@ -105,6 +111,7 @@ class RuntimeParameterPane {
         spinner.setEditor(new ULCDateEditor(spinner, format))
         spinner.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = new DateTime(spinner.value)
+            simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IValueChangedListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, spinner)
     }
