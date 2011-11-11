@@ -69,7 +69,7 @@ class CriteriaViewModel {
                 return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
             case ValueInterpretationType.ORDER_STATISTIC:
                 return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector,
-                        field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem), isSingleValueCollector())
+                        field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem))
         }
     }
 

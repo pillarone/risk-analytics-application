@@ -239,6 +239,7 @@ class QueryPaneModel extends AbstractPresentationModel {
             LOG.debug "Query: " + queryString
             return SingleValueResult.executeQuery(queryString)
         } catch (Exception ex) {
+            LOG.error("Error getting results for criteria model", ex)
             return []
         }
     }
