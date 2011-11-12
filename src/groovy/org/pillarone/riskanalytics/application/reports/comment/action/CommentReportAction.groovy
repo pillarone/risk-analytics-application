@@ -64,7 +64,7 @@ class CommentReportAction extends AbstractReportAction {
     }
 
     String getFileName() {
-        return validateFileName(model.item.name) + ".pdf"
+        return validateFileName(model.item.name) + System.currentTimeMillis() + ".pdf"
     }
 
     @Override
