@@ -22,6 +22,13 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import org.pillarone.riskanalytics.application.ui.pivot.model.PreviewNode
+import com.ulcjava.base.application.dnd.TransferHandler
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.dnd.Transferable
+import com.ulcjava.base.application.dnd.DnDTreeData
+import com.ulcjava.base.application.dnd.DataFlavor
+import com.ulcjava.base.application.tree.TreePath
+import com.ulcjava.base.application.dnd.DnDTableTreeData
 
 
 class PivotView {
@@ -33,14 +40,18 @@ class PivotView {
 
     ULCTableTree previewTableTree
 
+    ULCTable newTable
+
     PivotView(PivotModel pivotModel) {
         this.pivotModel = pivotModel
         initComponents()
     }
 
     protected void initComponents() {
-        content = new ULCBoxPane(1, 3)
+        content = new ULCBoxPane(false)
         content.setPreferredSize(new Dimension (400,400))
+
+        ULCBoxPane col1 = new ULCBoxPane (true)
 
         // TreeStructure
         ULCBoxPane treeStructurePane = new ULCBoxPane(4, 1)
@@ -79,7 +90,7 @@ class PivotView {
 
         treeStructurePane.add (ULCBoxPane.BOX_LEFT_EXPAND, createMoveButtons(coordinateTable))
 
-        content.add (ULCBoxPane.BOX_LEFT_TOP, treeStructurePane)
+        col1.add (ULCBoxPane.BOX_LEFT_TOP, treeStructurePane)
 
 
         // Preview Table Tree
@@ -87,17 +98,59 @@ class PivotView {
         previewTableTree.setRootVisible(false);
         previewTableTree.setAutoResizeMode(ULCTableTree.AUTO_RESIZE_ALL_COLUMNS);
 
-        content.add (ULCBoxPane.BOX_LEFT_EXPAND, previewTableTree)
+        previewTableTree.setDragEnabled (true)
 
+        ULCScrollPane previewTreeScrollPane = new ULCScrollPane(previewTableTree)
+        previewTreeScrollPane.setPreferredSize(new Dimension(320, 200))
+
+        col1.add (ULCBoxPane.BOX_LEFT_EXPAND, previewTreeScrollPane)
 
         // Refresh button
-        ULCButton refreshButton = new ULCButton("refresh")
+        ULCButton refreshButton = new ULCButton("Refresh Preview")
         refreshButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 pivotModel.updatePreviewTree()
+                previewTableTree.expandAll()
             }
         })
-        content.add (ULCBoxPane.BOX_CENTER_BOTTOM, refreshButton)
+        col1.add (ULCBoxPane.BOX_CENTER_CENTER, refreshButton)
+
+        content.add (ULCBoxPane.BOX_LEFT_EXPAND, col1)
+
+
+        ULCBoxPane col2 = new ULCBoxPane (true)
+
+        newTable = new ULCTable(pivotModel.newTableModel)
+        newTable.setSelectionMode(ULCListSelectionModel.SINGLE_SELECTION)
+        newTable.setRowSelectionAllowed(true)
+        newTable.setPreferredScrollableViewportSize(new Dimension(300, 300))
+        newTable.setTableHeader (null)
+
+        newTable.setTransferHandler(new MyTransferHandler())
+
+        ULCScrollPane newTableScrollPane = new ULCScrollPane(newTable)
+        newTableScrollPane.setPreferredSize(new Dimension(300, 300))
+        col2.add (ULCBoxPane.BOX_EXPAND_EXPAND, newTableScrollPane)
+        
+        content.add (ULCBoxPane.BOX_EXPAND_EXPAND, col2)
+    }
+
+    public class MyTransferHandler extends TransferHandler {
+        @Override
+        boolean importData(ULCComponent ulcComponent, Transferable transferable) {
+            TreePath[] treePaths = ((DnDTableTreeData)transferable.getTransferData(DataFlavor.DRAG_FLAVOR)).getTreePaths()
+
+            for (TreePath treePath in treePaths) {
+                PreviewNode node = treePath.getLastPathComponent();
+
+                pivotModel.newTableModel.addRow ([node.getValueAt(0), node.getValueAt(1)])
+                pivotModel.newTableModel.fireTableRowsInserted(pivotModel.newTableModel.rowCount-1, pivotModel.newTableModel.rowCount-1)
+            }
+        }
+
+        @Override
+        void exportDone(ULCComponent ulcComponent, Transferable transferable, int i) {
+        }
     }
 
     public ULCBoxPane createMoveButtons (ULCTable table) {
@@ -108,6 +161,7 @@ class PivotView {
         dimensionTopButton.setPreferredSize(new Dimension (16,16))
         dimensionTopButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
+                if (table.selectedRow < 0) return
                 if ((table.getModel() as TreeStructureTableModel).moveToTop(table.selectedRow)) {
                     table.getSelectionModel().setSelectionInterval(0, 0)
 
@@ -121,6 +175,7 @@ class PivotView {
         dimensionUpButton.setPreferredSize(new Dimension (16,16))
         dimensionUpButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
+                if (table.selectedRow < 0) return
                 if ((table.getModel() as TreeStructureTableModel).moveUp(table.selectedRow)) {
                     table.getSelectionModel().setSelectionInterval(table.selectedRow-1, table.selectedRow-1)
 
@@ -134,6 +189,7 @@ class PivotView {
         dimensionDownButton.setPreferredSize(new Dimension (16,16))
         dimensionDownButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
+                if (table.selectedRow < 0) return
                 if ((table.getModel() as TreeStructureTableModel).moveDown(table.selectedRow)) {
                     table.getSelectionModel().setSelectionInterval(table.selectedRow+1, table.selectedRow+1)
 
@@ -147,6 +203,7 @@ class PivotView {
         dimensionBottomButton.setPreferredSize(new Dimension (16,16))
         dimensionBottomButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
+                if (table.selectedRow < 0) return
                 if ((table.getModel() as TreeStructureTableModel).moveToBottom(table.selectedRow)) {
                     table.getSelectionModel().setSelectionInterval(table.rowCount-1, table.rowCount-1)
 

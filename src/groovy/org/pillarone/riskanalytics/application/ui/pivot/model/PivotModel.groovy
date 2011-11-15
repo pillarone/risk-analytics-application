@@ -4,15 +4,18 @@ import be.devijver.wikipedia.parser.ast.Pre
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.sun.xml.internal.ws.api.streaming.XMLStreamWriterFactory.Default
+import com.ulcjava.base.application.table.DefaultTableModel
 
 class PivotModel {
     TreeStructureModel treeStructureModel
     TreeStructureTableModel dimensionTableModel
     Map<Integer, TreeStructureTableModel> coordinateTableModels = new HashMap<Integer, TreeStructureTableModel>()
 
-    //PreviewTableTreeModel previewTableTreeModel
     DefaultTableTreeModel previewTableTreeModel
-    PreviewNode root
+    PreviewNode previewRootNode
+
+    DefaultTableModel newTableModel
+
 
     PivotModel(TreeStructureModel treeStructureModel) {
         this.treeStructureModel = treeStructureModel
@@ -30,26 +33,32 @@ class PivotModel {
             coordinateTableModels.put (dimension.id, coordinateTableModel)
         }
 
-        root = new PreviewNode()
-        previewTableTreeModel = new DefaultTableTreeModel (root, (String[]) ["Name", "ID"])
+        previewRootNode = new PreviewNode()
+        previewTableTreeModel = new DefaultTableTreeModel (previewRootNode, (String[]) ["Name", "ID"])
+
+
+        newTableModel = new DefaultTableModel(new Object[0][0], (String[])["Column1", "Colum2"])
+        newTableModel.addRow (["test", "bla"])
+        newTableModel.addRow (["test2", "bla2"])
+        newTableModel.addRow (["test3", "bla3"])
     }
 
     void updatePreviewTree () {
-        root.removeAllChildren()
+        previewRootNode.removeAllChildren()
 
         List<PreviewNode> pastLevelNodes = new LinkedList<PreviewNode>()
-        pastLevelNodes.add (root)
+        pastLevelNodes.add (previewRootNode)
 
         List<PreviewNode> currentLevelNodes
         
         // Loop over all Dimensions
         for (int dimRow = 0; dimRow < dimensionTableModel.rowCount; dimRow++) {
-
-            // Add new list to the nodeListMap
-            currentLevelNodes = new LinkedList<PreviewNode>()
-
+            
             // Dimension selected?
             if (dimensionTableModel.getValueAt(dimRow, 0) == true) {
+
+                // Add new list to the nodeListMap
+                currentLevelNodes = new LinkedList<PreviewNode>()
 
                 int dimID = dimensionTableModel.getID (dimRow)
                 TreeStructureTableModel coordinateTableModel = coordinateTableModels.get (dimID)
@@ -68,9 +77,7 @@ class PivotModel {
                             currentLevelNodes.add (newNode)
 
                             // add new Node to the Node
-                            int idx = n.addChild(newNode)
-
-                            //previewTableTreeModel.nodesWereInserted(n, (int[])[idx])
+                            n.addChild(newNode)
                         }
                     }
                 }
@@ -79,6 +86,6 @@ class PivotModel {
             pastLevelNodes = currentLevelNodes;
         }
 
-        previewTableTreeModel.nodeStructureChanged(root)
+        previewTableTreeModel.structureChanged()
     }
 }

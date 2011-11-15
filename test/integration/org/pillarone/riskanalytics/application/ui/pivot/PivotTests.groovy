@@ -26,7 +26,7 @@ class PivotTests extends AbstractSimpleFunctionalTest {
 
     void testFrame() {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        sleep 60000
+        sleep 180000
     }
 
     class TestModel implements TreeStructureModel {
