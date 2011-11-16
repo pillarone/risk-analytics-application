@@ -228,7 +228,9 @@ class SimulationActionsPaneModel implements IModelChangedListener {
             batchRunComboBoxModel.addItem(run)
         }
 
-        batchRunComboBoxModel.setSelectedItem(selected.name)
+        if (selected != null) {
+            batchRunComboBoxModel.setSelectedItem(selected.name)
+        }
     }
 
 
