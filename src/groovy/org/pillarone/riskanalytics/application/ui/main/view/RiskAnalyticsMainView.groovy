@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
+import org.pillarone.riskanalytics.application.ui.base.model.NavigationTreeFactory
 
 class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -35,6 +36,8 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     private RiskAnalyticsMainModel mainModel
 
+    private NavigationTreeFactory treeFactory
+
     Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
     RiskAnalyticsMainView(RiskAnalyticsMainModel mainModel) {
@@ -42,6 +45,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void initComponents() {
+        treeFactory = new NavigationTreeFactory()
         content = new ULCBoxPane(2, 0)
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()

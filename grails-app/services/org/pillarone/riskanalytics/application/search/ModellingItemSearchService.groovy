@@ -1,7 +1,11 @@
 package org.pillarone.riskanalytics.application.search
 
+import com.ulcjava.base.server.ULCSession
+import java.util.concurrent.ConcurrentHashMap
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.IndexWriter
@@ -20,8 +24,11 @@ import org.pillarone.riskanalytics.core.listener.ModellingItemListener
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 class ModellingItemSearchService {
+
+    private static Log LOG = LogFactory.getLog(ModellingItemSearchService)
 
     static transactional = false
 
@@ -32,6 +39,8 @@ class ModellingItemSearchService {
 
     protected Analyzer analyzer
     private ModellingItemListener listener = new SearchModellingItemListener()
+
+    private Map<Integer, List<ModellingItemEvent>> queue = new ConcurrentHashMap<Integer, List<ModellingItemEvent>>()
 
     @PostConstruct
     void init() {
@@ -45,6 +54,25 @@ class ModellingItemSearchService {
         indexSearcher.close()
         directory.close()
         analyzer.close()
+        queue.clear()
+    }
+
+    void registerSession(ULCSession session) {
+        final int sessionId = session.id
+        if (queue.containsKey(sessionId)) {
+            LOG.warn("Session already registered $sessionId")
+        }
+        queue.put(sessionId, new ArrayList<ModellingItemEvent>())
+    }
+
+    void unregisterSession(ULCSession session) {
+        queue.remove(session.id)
+    }
+
+    List<ModellingItemEvent> getPendingEvents(ULCSession session) {
+        List<ModellingItemEvent> result = queue.get(session.id)
+        queue.put(session.id, new ArrayList<ModellingItemEvent>())
+        return result
     }
 
     protected synchronized void createInitialIndex() {
@@ -143,20 +171,48 @@ class ModellingItemSearchService {
         indexSearcher = new IndexSearcher(directory, true)
     }
 
+    public static ModellingItemSearchService getInstance() {
+        return ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
+    }
+
     private class SearchModellingItemListener implements ModellingItemListener {
 
         void modellingItemAdded(ModellingItem item) {
             addModellingItemToIndex(item)
+            for (List<ModellingItemEventType> list in queue.values()) {
+                list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.ADDED)
+            }
         }
 
         void modellingItemDeleted(ModellingItem item) {
             removeModellingItemFromIndex(item)
+            for (List<ModellingItemEventType> list in queue.values()) {
+                list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.REMOVED)
+            }
         }
 
         void modellingItemChanged(ModellingItem item) {
-            //To change body of implemented methods use File | Settings | File Templates.
+            for (List<ModellingItemEventType> list in queue.values()) {
+                list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
+            }
+        }
+
+    }
+
+    public static class ModellingItemEvent {
+
+        ModellingItem item
+        ModellingItemEventType eventType
+
+        @Override
+        String toString() {
+            return "$item $eventType"
         }
 
 
+    }
+
+    public static enum ModellingItemEventType {
+        ADDED, REMOVED, UPDATED
     }
 }
