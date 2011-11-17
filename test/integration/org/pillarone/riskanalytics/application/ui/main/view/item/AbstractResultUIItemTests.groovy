@@ -19,7 +19,6 @@ abstract class AbstractResultUIItemTests extends AbstractSimulationUIItemTest {
 
     @Override
     AbstractUIItem createUIItem() {
-        new DBCleanUpService().cleanUp()
         new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])

@@ -24,7 +24,6 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
 
     protected void doStart() {
-        new DBCleanUpService().cleanUp()
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
 

@@ -24,7 +24,6 @@ public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
     Parameterization parameterization
 
     protected void doStart() {
-        new DBCleanUpService().cleanUp()
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
 
