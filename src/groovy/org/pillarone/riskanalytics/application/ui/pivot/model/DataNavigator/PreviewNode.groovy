@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model
+package org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 
@@ -43,5 +43,12 @@ class PreviewNode implements ITableTreeNode {
 
     void removeAllChildren () {
         children.clear()
+    }
+
+    String getPathString () {
+        if (parent == null)
+            return ""
+
+        return this.getValueAt(0) + "/" + parent.getPathString()
     }
 }

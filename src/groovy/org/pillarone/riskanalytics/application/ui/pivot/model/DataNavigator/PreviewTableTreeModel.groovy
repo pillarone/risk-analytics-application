@@ -1,7 +1,6 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model
+package org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator
 
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 
 class PreviewTableTreeModel extends AbstractTableTreeModel {
 
@@ -43,7 +42,7 @@ class PreviewTableTreeModel extends AbstractTableTreeModel {
     }
 
     int getIndexOfChild(Object o, Object o1) {
-        return (o as PreviewNode).getIndex(o1)
+        return (o as PreviewNode).getIndex((PreviewNode)o1)
     }
 
 }
