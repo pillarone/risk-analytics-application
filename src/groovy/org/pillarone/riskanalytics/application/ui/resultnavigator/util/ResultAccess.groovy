@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.core.output.PathMapping
 import org.pillarone.riskanalytics.core.output.FieldMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryColumnMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMapping
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.PodraCategoryMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.examples.ExamplePodraCategoryMapping
 
 /**
  *
@@ -64,7 +64,7 @@ class ResultAccess {
     public void addCategoryInformation(List<OutputElement> elements, CategoryColumnMapping categoryColumnMapping, SimulationRun run) {
         ICategoryMapping mapping = null
         if (run.getModel()=="models.podra.PodraModel") { // TODO: load this by some other mechanism ...
-            mapping = new PodraCategoryMapping()
+            mapping = new ExamplePodraCategoryMapping()
         }
         if (mapping) {
             for (String category : mapping.getCategories()) {

@@ -81,4 +81,23 @@ public class UIManagerHelper {
         setLookAndFeel(new MetalLookAndFeel());
         UIManager.put("TextFieldUI", MetalTextFieldUI.class.getName());
     }
+
+    public static void setTooltipDismissDelay() {
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+    }
+
+    public static void setTextFieldUI() {
+        if (isWindowsOS()) {
+            UIManager.put("TextFieldUI", WindowsTextFieldUI.class.getName());
+        } else if (isLinux()) {
+            UIManager.put("TextFieldUI", MetalTextFieldUI.class.getName());
+        } else {
+            UIManager.put("TextFieldUI", MetalTextFieldUI.class.getName());
+        }
+    }
+
+    public static void setParserDelegator() {
+        //workaround for http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6993073
+        new ParserDelegator();
+    }
 }
