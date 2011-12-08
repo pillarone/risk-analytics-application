@@ -6,9 +6,11 @@ import com.ulcjava.base.application.DefaultListModel
 
 class CustomTableModel extends AbstractTableModel {
     List<String> columnNames
+    Map<String, Integer> columnHeaderData
     List<List<Object>> data
 
     DefaultListModel rowHeaderModel
+    Map<String, Integer> rowHeaderData
 
     boolean editMode
 
@@ -16,23 +18,31 @@ class CustomTableModel extends AbstractTableModel {
         this.columnNames = columnNames
         this.data = data
 
+        columnHeaderData = new HashMap<String, Integer>()
+        rowHeaderData = new HashMap<String, Integer>()
+
         rowHeaderModel = new DefaultListModel(new Object[0])
     }
 
-    int addRow (List<Object> rowData, String rowName) {
+    int addRow (List<Object> rowData, String rowName, boolean isDataRow = false) {
         while (rowData.size() < columnCount) {
             rowData.add ("")
         }
         this.data.add(rowData)
 
-        if (rowName.isEmpty())
-            rowName = rowCount
+        /*if (rowName.isEmpty())
+            rowName = rowCount*/
         rowHeaderModel.add (rowName)
+
+        if (isDataRow) {
+            rowHeaderData.put (rowName, rowCount-1)
+        }
+
         fireTableRowsInserted(rowCount-1, rowCount-1)
         return rowCount-1
     }
 
-    int addCol (String colName) {
+    int addCol (String colName, boolean isDataCol = false) {
         this.columnNames.add(colName)
 
         for (List<Object> row : data) {
@@ -41,8 +51,43 @@ class CustomTableModel extends AbstractTableModel {
             }
         }
 
+        if (isDataCol) {
+            columnHeaderData.put (colName, columnCount-1)
+        }
+
         fireTableStructureChanged()
         return columnCount-1
+    }
+    void deleteCol (int col) {
+        if (columnHeaderData.containsValue(col)) {
+            for (String key : columnHeaderData.keySet()) {
+                if (columnHeaderData[key] == col) {
+                    columnHeaderData.remove(key)
+                    break
+                }
+            }
+            // update the bigger columns
+        }
+        for (List<Object> l : data) {
+            l.remove(col)
+        }
+        columnNames.remove(col)
+        fireTableStructureChanged()
+    }
+
+    void deleteRow (int row) {
+        if (rowHeaderData.containsValue(row)) {
+            for (String key : rowHeaderData.keySet()) {
+                if (rowHeaderData[key] == row) {
+                    rowHeaderData.remove(key)
+                    break
+                }
+            }
+            // update the bigger rows
+        }
+        data.remove(row)
+        rowHeaderModel.remove(row)
+        fireTableStructureChanged()
     }
 
     public int getColumnCount() {
