@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model
+package org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator
 
 class Dimension {
     int id

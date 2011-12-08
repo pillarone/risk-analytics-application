@@ -5,9 +5,13 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import org.pillarone.riskanalytics.application.ui.pivot.view.PivotView
 import org.pillarone.riskanalytics.application.ui.pivot.model.PivotModel
-import org.pillarone.riskanalytics.application.ui.pivot.model.TreeStructureModel
-import org.pillarone.riskanalytics.application.ui.pivot.model.Dimension
-import org.pillarone.riskanalytics.application.ui.pivot.model.Coordinate
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.TreeStructureModel
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.Dimension
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.Coordinate
+import com.ulcjava.base.application.ULCBoxPane
+import com.ulcjava.base.application.ULCTable
+import com.ulcjava.base.application.table.DefaultTableModel
+import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableHelper
 
 
 class PivotTests extends AbstractSimpleFunctionalTest {
@@ -18,15 +22,72 @@ class PivotTests extends AbstractSimpleFunctionalTest {
         ULCFrame frame = new ULCFrame("test")
 
         PivotView view = new PivotView(new PivotModel(new TestModel()))
+        view.parent = frame
 
         frame.setSize(800, 600)
         frame.setContentPane(view.content)
         frame.visible = true
+
+
+//        ULCBoxPane pane = new ULCBoxPane()
+//        DefaultTableModel tableModel = new DefaultTableModel(new Object[0][0], (String[])["1", "2"])
+//        tableModel.addRow (["test", "1234"].toArray())
+//        tableModel.addRow (["test2", "123.4"].toArray())
+//        tableModel.addRow (["test3", "12.34"].toArray())
+//        tableModel.addRow (["test4", "1.234"].toArray())
+//        tableModel.addRow (["test5", "0.1234"].toArray())
+//        tableModel.addRow (["test6", "0.01234"].toArray())
+//        ULCTable table = new ULCTable(tableModel)
+//        table.dragEnabled = true
+//
+//        pane.add(table)
+//
+//
+//        ULCFrame frame2 = new ULCFrame("test2")
+//        frame2.setSize(800, 600)
+//        frame2.setContentPane(pane)
+//        frame2.visible = true
+    }
+
+
+    void testColNo () {
+        assert CustomTableHelper.getColNo("A")   == 1
+        assert CustomTableHelper.getColNo("B")   == 2
+        assert CustomTableHelper.getColNo("C")   == 3
+        assert CustomTableHelper.getColNo("AA")  == 27
+        assert CustomTableHelper.getColNo("AB")  == 28
+        assert CustomTableHelper.getColNo("AC")  == 29
+        assert CustomTableHelper.getColNo("BA")  == 53
+        assert CustomTableHelper.getColNo("BB")  == 54
+        assert CustomTableHelper.getColNo("BC")  == 55
+        assert CustomTableHelper.getColNo("AAA") == 703
+        assert CustomTableHelper.getColNo("AAB") == 704
+        assert CustomTableHelper.getColNo("AAC") == 705
+        assert CustomTableHelper.getColNo("ABA") == 729
+        assert CustomTableHelper.getColNo("ABB") == 730
+        assert CustomTableHelper.getColNo("ABC") == 731
+
+
+        assert CustomTableHelper.getColString(1) == "A"
+        assert CustomTableHelper.getColString(2) == "B"
+        assert CustomTableHelper.getColString(3) == "C"
+        assert CustomTableHelper.getColString(27) == "AA"
+        assert CustomTableHelper.getColString(28) == "AB"
+        assert CustomTableHelper.getColString(29) == "AC"
+        assert CustomTableHelper.getColString(53) == "BA"
+        assert CustomTableHelper.getColString(54) == "BB"
+        assert CustomTableHelper.getColString(55) == "BC"
+        assert CustomTableHelper.getColString(703) == "AAA"
+        assert CustomTableHelper.getColString(704) == "AAB"
+        assert CustomTableHelper.getColString(705) == "AAC"
+        assert CustomTableHelper.getColString(729) == "ABA"
+        assert CustomTableHelper.getColString(730) == "ABB"
+        assert CustomTableHelper.getColString(731) == "ABC"
     }
 
     void testFrame() {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        sleep 180000
+        sleep 1800000
     }
 
     class TestModel implements TreeStructureModel {
@@ -70,7 +131,7 @@ class PivotTests extends AbstractSimpleFunctionalTest {
                                                                                new Coordinate (id:  7, name: "P2"),
                                                                                new Coordinate (id:  8, name: "P3")]),
 
-                    new Dimension (id:  4, name: "Country",      coordinates: [new Coordinate (id: 9, name: "CH"),
+                    new Dimension (id:  4, name: "Country",      coordinates: [new Coordinate (id:  9, name: "CH"),
                                                                                new Coordinate (id: 10, name: "DE"),
                                                                                new Coordinate (id: 12, name: "FR")]),
 

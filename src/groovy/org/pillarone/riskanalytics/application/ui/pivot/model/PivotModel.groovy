@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.pivot.model
 
-import be.devijver.wikipedia.parser.ast.Pre
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
-import com.sun.xml.internal.ws.api.streaming.XMLStreamWriterFactory.Default
-import com.ulcjava.base.application.table.DefaultTableModel
+
+import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableModel
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.Dimension
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.TreeStructureTableModel
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.TreeStructureModel
+import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.PreviewNode
 
 class PivotModel {
     TreeStructureModel treeStructureModel
@@ -14,7 +16,9 @@ class PivotModel {
     DefaultTableTreeModel previewTableTreeModel
     PreviewNode previewRootNode
 
-    DefaultTableModel newTableModel
+    CustomTableModel customTableModel
+
+    Random rand = new Random()
 
 
     PivotModel(TreeStructureModel treeStructureModel) {
@@ -24,23 +28,21 @@ class PivotModel {
 
         dimensionTableModel = new TreeStructureTableModel (new LinkedList<Object[]>(), (String[])["Selected", "Name"])
         for (dimension in dimensions) {
-            dimensionTableModel.addRow([false, dimension.name, dimension.id].toArray())
+            dimensionTableModel.addRow([rand.nextBoolean(), dimension.name, dimension.id].toArray())
 
             TreeStructureTableModel coordinateTableModel = new TreeStructureTableModel (new LinkedList<Object[]>(), (String[])["Selected", "Name"])
             for (coordinate in dimension.coordinates) {
-                coordinateTableModel.addRow([false, coordinate.name, coordinate.id].toArray())
+                coordinateTableModel.addRow([rand.nextBoolean(), coordinate.name, coordinate.id].toArray())
             }
             coordinateTableModels.put (dimension.id, coordinateTableModel)
         }
 
         previewRootNode = new PreviewNode()
-        previewTableTreeModel = new DefaultTableTreeModel (previewRootNode, (String[]) ["Name", "ID"])
+        previewTableTreeModel = new DefaultTableTreeModel (previewRootNode, (String[]) ["Name", "Random Value"])
+        updatePreviewTree()
+        previewTableTreeModel.setRoot (previewRootNode)
 
-
-        newTableModel = new DefaultTableModel(new Object[0][0], (String[])["Column1", "Colum2"])
-        newTableModel.addRow (["test", "bla"])
-        newTableModel.addRow (["test2", "bla2"])
-        newTableModel.addRow (["test3", "bla3"])
+        customTableModel = new CustomTableModel (new LinkedList<List<Object>>(), [])
     }
 
     void updatePreviewTree () {
@@ -71,7 +73,7 @@ class PivotModel {
 
                         // Add new Node to all Nodes of the past Level
                         for (PreviewNode n : pastLevelNodes) {
-                            PreviewNode newNode = new PreviewNode ((Object[])[coordinateTableModel.getValueAt (cooRow, 1), coordinateTableModel.getValueAt (cooRow, 2)])
+                            PreviewNode newNode = new PreviewNode ((Object[])[coordinateTableModel.getValueAt (cooRow, 1), (rand.nextDouble()*10000).round(2)])
 
                             // Add new Node to the list with the Nodes of the current Level
                             currentLevelNodes.add (newNode)
@@ -81,9 +83,9 @@ class PivotModel {
                         }
                     }
                 }
-            }
 
-            pastLevelNodes = currentLevelNodes;
+                pastLevelNodes = currentLevelNodes;
+            }
         }
 
         previewTableTreeModel.structureChanged()
