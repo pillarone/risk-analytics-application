@@ -17,7 +17,6 @@ public class LoggingManager {
     public static final String USER_PROPERTY = "user"
     public static final String NO_USER = "no-user"
 
-    private List<LoggingEvent> loggingEvents = new ArrayList<LoggingEvent>()
     private List<Appender> appenders = []
     private UserNameFilter userNameFilter
 
@@ -32,7 +31,6 @@ public class LoggingManager {
             event.setProperty(USER_PROPERTY, NO_USER)
         }
 
-        loggingEvents << event
         fireAppendEvent(event)
 
     }
@@ -41,10 +39,6 @@ public class LoggingManager {
         for (Appender appender: appenders) {
             appender.doAppend(loggingEvent)
         }
-    }
-
-    public Collection<LoggingEvent> getLogs() {
-        return loggingEvents
     }
 
     public void addAppender(Appender appender) {
