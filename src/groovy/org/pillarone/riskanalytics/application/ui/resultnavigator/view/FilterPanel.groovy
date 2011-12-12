@@ -15,24 +15,27 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.table.TableRowFilter
 import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ITableRowFilterListener
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryColumnMapping
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.shared.UlcEventConstants
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
+import com.ulcjava.base.application.ULCFiller
+import com.ulcjava.base.application.UlcUtilities
 
 /**
  * @author martin.melchior
  */
 class FilterPanel extends ULCBoxPane {
 
-    CategoryColumnMapping categories
+    OutputElementTableModel tableModel
     FilterFactory filterFactory
     List<ITableRowFilterListener> filterListeners = []
     ULCComboBox categoryToFilter
+    CategoryConfigurationDialog configurationDialog
 
-    FilterPanel(CategoryColumnMapping categories) {
-        super(false)
-        this.categories = categories
-        this.filterFactory = new FilterFactory(categories)
+    FilterPanel(OutputElementTableModel tableModel) {
+        super(false, 2)
+        this.tableModel = tableModel
+        this.filterFactory = new FilterFactory(tableModel)
         createView()
     }
 
@@ -54,7 +57,7 @@ class FilterPanel extends ULCBoxPane {
         filterArea.add(ULCBoxPane.BOX_LEFT_CENTER, filterType);
         filterArea.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel("Category: "));
 
-        categoryToFilter = new ULCComboBox(categories.getCategories());
+        categoryToFilter = new ULCComboBox(tableModel.categories);
         ClientContext.setModelUpdateMode(categoryToFilter.getModel(), UlcEventConstants.SYNCHRONOUS_MODE)
         filterArea.add(ULCBoxPane.BOX_LEFT_CENTER, categoryToFilter);
         filterArea.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel("Value: "));
@@ -97,5 +100,18 @@ class FilterPanel extends ULCBoxPane {
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
         filterValue.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
         this.add(ULCBoxPane.BOX_LEFT_CENTER, filterArea);
+
+        this.add(ULCBoxPane.BOX_EXPAND_CENTER, ULCFiller.createHorizontalGlue())
+
+        /*ULCButton configureCategories = new ULCButton("Edit Categories")
+        filterArea.add(ULCBoxPane.BOX_RIGHT_CENTER, configureCategories);
+        configureCategories.addActionListener(new IActionListener() {
+            void actionPerformed(ActionEvent actionEvent) {
+                if (configurationDialog==null) {
+                    configurationDialog = new CategoryConfigurationDialog(UlcUtilities.getWindowAncestor(FilterPanel.this), tableModel.getCategoryMapping())
+                }
+                configurationDialog.setVisible true
+            }
+        })*/
     }
 }

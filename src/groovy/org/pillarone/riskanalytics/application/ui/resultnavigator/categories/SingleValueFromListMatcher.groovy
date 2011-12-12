@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -21,7 +20,7 @@ class SingleValueFromListMatcher implements ICategoryMatcher {
     boolean isMatch(String path) {
         boolean isFound = false
         for (Pattern pattern : patterns) {
-            Matcher matcher = path =~ pattern
+            java.util.regex.Matcher matcher = path =~ pattern
             if (matcher.size()>0) {
                 if (isFound) {
                     return false
@@ -36,7 +35,7 @@ class SingleValueFromListMatcher implements ICategoryMatcher {
         boolean isFound = false
         String value = null
         for (int i = 0; i < patterns.size(); i++) {
-            Matcher matcher = path =~ patterns[i]
+            java.util.regex.Matcher matcher = path =~ patterns[i]
             if (matcher.size()>0) {
                 if (isFound) {
                     return null
@@ -46,5 +45,9 @@ class SingleValueFromListMatcher implements ICategoryMatcher {
             }
         }
         return value
+    }
+
+    Matcher matcherType() {
+        Matcher.BY_SINGLE_LIST_VALUE
     }
 }

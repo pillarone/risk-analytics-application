@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 /**
@@ -16,12 +15,16 @@ class RegexMatcher implements ICategoryMatcher {
     }
 
     boolean isMatch(String path) {
-        Matcher matcher = path =~ pattern
+        java.util.regex.Matcher matcher = path =~ pattern
         return matcher.size()>0
     }
 
     String getMatch(String path) {
-        Matcher matcher = path =~ pattern
+        java.util.regex.Matcher matcher = path =~ pattern
         return matcher.size()>0 ? matcher[0][groupDefiningMemberName] : null
+    }
+
+    Matcher matcherType() {
+        Matcher.BY_REGEX
     }
 }

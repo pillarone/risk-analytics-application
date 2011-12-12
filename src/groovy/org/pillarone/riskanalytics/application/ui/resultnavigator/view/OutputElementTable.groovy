@@ -17,7 +17,6 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryColumnMapping
 import com.ulcjava.base.application.event.ListDataEvent
 import com.ulcjava.base.application.event.IListDataListener
 
@@ -72,7 +71,7 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
 
     private void createContextMenu() {
         OutputElementTableModel tableModel = (OutputElementTableModel) this.getModel()
-        CategoryColumnMapping categoryHandler = tableModel.getCategories()
+        List<String> categories = tableModel.getCategories()
 
         ULCPopupMenu menu = new ULCPopupMenu();
 
@@ -111,15 +110,14 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
                 OutputElementTable.this.setRowSorter(null)
                 tableModel.fireTableStructureChanged()
                 OutputElementTable.this.setRowSorter(sorter)
-                List<String> categoryList = categoryHandler.categories
-                ListDataEvent e = new ListDataEvent(categoryList, ListDataEvent.CONTENTS_CHANGED, 0, categoryList.size())
+                ListDataEvent e = new ListDataEvent(categoryList, ListDataEvent.CONTENTS_CHANGED, 0, categories.size())
                 for (IListDataListener listener : categoryListChangeListeners) {
                     listener.contentsChanged e
                 }
             }
         })
 
-        assignCategory = new AssignCategoryDialog(UlcUtilities.getWindowAncestor(this), categoryHandler.categories)
+        assignCategory = new AssignCategoryDialog(UlcUtilities.getWindowAncestor(this), categories)
         ULCMenuItem assignCategoryItem = new ULCMenuItem("assign category");
         assignCategoryItem.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {

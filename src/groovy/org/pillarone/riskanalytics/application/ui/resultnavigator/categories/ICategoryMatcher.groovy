@@ -6,4 +6,6 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 public interface ICategoryMatcher {
     boolean isMatch(String path)
     String getMatch(String path)
+    Matcher matcherType()
 }
+

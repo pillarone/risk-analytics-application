@@ -12,8 +12,7 @@ import com.ulcjava.applicationframework.application.Action
 
 class StandaloneResultNavigator extends SingleFrameApplication {
 
-    ResultNavigator contentView
-    SimulationRunSelectionDialog simulationRunSelection
+    ResultNavigator contents
 
     @Override
     protected ULCComponent createStartupMainContent() {
@@ -35,33 +34,7 @@ class StandaloneResultNavigator extends SingleFrameApplication {
      * @return the component with the content of the main application window.
      */
     protected ULCComponent getContentView() {
-        ULCToolBar toolBar = new ToolBarFactory(getContext().getActionMap(this)).createToolBar("loadSimulationRunAction")
-        toolBar.add(ULCFiller.createHorizontalGlue())
-        ULCComponent icon = new ULCLabel()
-        icon.setName("logo.Label")
-        toolBar.add(icon)
-        toolBar.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 5))
-        getMainView().setToolBar(toolBar);
-        contentView = new ResultNavigator(getContext());
-        return contentView.getContentView();
-    }
-
-    @Action
-    public void loadSimulationRunAction() {
-        if (!simulationRunSelection) {
-            simulationRunSelection = new SimulationRunSelectionDialog(UlcUtilities.getWindowAncestor(contentView.getContentView()))
-            IActionListener newModelListener = new IActionListener() {
-                public void actionPerformed(ActionEvent event) {
-                    inspect(simulationRunSelection.getSelectRun());
-                    simulationRunSelection.setVisible(false);
-                }
-            }
-            simulationRunSelection.addSaveActionListener(newModelListener);
-        }
-        simulationRunSelection.setVisible(true);
-    }
-
-    public void inspect(SimulationRun run) {
-        contentView.loadSimulationRun(run)
+        contents = new ResultNavigator();
+        return contents.getContentView();
     }
 }

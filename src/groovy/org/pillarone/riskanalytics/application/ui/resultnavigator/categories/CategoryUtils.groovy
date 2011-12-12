@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
-import java.util.regex.Matcher
 
 /**
  * @author martin.melchior

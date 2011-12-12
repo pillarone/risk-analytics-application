@@ -45,4 +45,8 @@ class CrossSectionMatcher implements ICategoryMatcher {
         }
         return null
     }
+
+    Matcher matcherType() {
+        return Matcher.BY_CROSS_SECTION
+    }
 }

@@ -1,16 +1,24 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryColumnMapping
 import com.ulcjava.base.application.table.AbstractTableModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AbstractCategoryMapping
 
 /**
  */
 class OutputElementTableModel extends AbstractTableModel {
-    CategoryColumnMapping categories
+    private Map<Integer, String> colToCategoryMap = new HashMap<Integer, String>()
+    private Map<String, Integer> categoryToColMap = new HashMap<String, Integer>()
+    private List<String> categories = new LinkedList<String>();
+    AbstractCategoryMapping categoryMapping
+
     List<OutputElement> allElements = []
 
-    OutputElementTableModel(List<OutputElement> elements, CategoryColumnMapping categoryColumnMapping) {
-        categories = categoryColumnMapping
+    OutputElementTableModel(List<OutputElement> elements, AbstractCategoryMapping categoryMapping) {
+        this.categoryMapping = categoryMapping
+        addCategory(OutputElement.PATH)
+        for (String category : categoryMapping.categories) {
+            addCategory(category)
+        }
         if (elements) {
             allElements.addAll elements
         }
@@ -20,16 +28,24 @@ class OutputElementTableModel extends AbstractTableModel {
         return allElements.size()
     }
 
-    int getColumnCount() {
-        return categories.getSize()
-    }
-
     OutputElement getRowElement(int rowIndex) {
         return allElements.get(rowIndex) // TODO : check whether this rowIndex is the model row index
     }
 
+    List<String> getCategories() {
+        return categories
+    }
+
+    int getColumnCount() {
+        return categories.size()
+    }
+
     String getColumnName(int col) {
-        return categories.get(col)
+        return colToCategoryMap.get(col)
+    }
+
+    int getColumnIndex(String colName) {
+        return categoryToColMap.get(colName)
     }
 
     Class getColumnClass(int col) {
@@ -49,7 +65,9 @@ class OutputElementTableModel extends AbstractTableModel {
     void addRow(OutputElement element) {
         allElements.add element
         element.getCategoryMap().each { category, memberValue ->
-            categories.addCategory(category)
+            if (!categories.contains(category)) {
+                addCategory category
+            }
         }
     }
 
@@ -60,7 +78,10 @@ class OutputElementTableModel extends AbstractTableModel {
     }
 
     void addCategory(String category) {
-        categories.addCategory(category)
+        int index = categories.size()
+        categories.add category
+        colToCategoryMap.put(index, category)
+        categoryToColMap.put(category, index)
     }
 
     boolean isCellEditable(int i, int i1) {

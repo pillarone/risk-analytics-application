@@ -19,4 +19,8 @@ class ConditionalAssignment implements ICategoryMatcher {
     String getMatch(String path) {
         return condition.isMatch(path) ? value : null
     }
+
+    Matcher matcherType() {
+        return Matcher.BY_CONDITION
+    }
 }

@@ -27,4 +27,8 @@ class AndMatcher implements ICategoryMatcher {
         }
         return value
     }
+
+    Matcher matcherType() {
+        return Matcher.AND
+    }
 }

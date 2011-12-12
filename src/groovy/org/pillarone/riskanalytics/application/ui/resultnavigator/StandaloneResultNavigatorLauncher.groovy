@@ -6,6 +6,7 @@ import com.ulcjava.base.shared.logging.LogManager
 import com.ulcjava.base.shared.logging.SimpleLogManager
 import com.ulcjava.container.local.server.LocalContainerAdapter
 import org.pillarone.riskanalytics.application.environment.shared.UIManagerHelper
+import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
 
 class StandaloneResultNavigatorLauncher extends LocalContainerAdapter {
 

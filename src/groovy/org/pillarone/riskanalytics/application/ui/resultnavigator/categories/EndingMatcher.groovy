@@ -22,4 +22,8 @@ class EndingMatcher implements ICategoryMatcher {
         }
         return null
     }
+
+    Matcher matcherType() {
+        Matcher.BY_ENDING
+    }
 }

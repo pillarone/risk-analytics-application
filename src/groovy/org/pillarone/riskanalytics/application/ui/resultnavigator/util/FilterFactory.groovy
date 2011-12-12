@@ -2,9 +2,9 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.util
 
 import com.ulcjava.base.application.table.TableRowFilter
 import java.util.regex.Pattern
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryColumnMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import com.ulcjava.base.application.table.TableRowFilter.AbstractFilter
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
 
 /**
  * @author martin.melchior
@@ -16,10 +16,10 @@ class FilterFactory {
     static String EMPTY = "empty"
     static String[] FILTERNAMES = [NONE, REGEX, EMPTY]
 
-    CategoryColumnMapping categories
+    OutputElementTableModel tableModel
 
-    FilterFactory(CategoryColumnMapping categories) {
-        this.categories = categories
+    FilterFactory(OutputElementTableModel tableModel) {
+        this.tableModel = tableModel
     }
 
     TableRowFilter getFilter(String type, Object value, String category) {
@@ -34,7 +34,7 @@ class FilterFactory {
     }
 
     TableRowFilter getRegexFilter(String regex, String category) {
-        int colIndex = categories.getKey(category)
+        int colIndex = tableModel.getColumnIndex(category)
         if (colIndex>=0) {
             int[] colIndices = new int[1]
             colIndices[0] = colIndex
@@ -44,7 +44,7 @@ class FilterFactory {
     }
 
     TableRowFilter getEmptyFilter(String category) {
-        int colIndex = category != OutputElement.PATH ? categories.getKey(category) : -1
+        int colIndex = category != OutputElement.PATH ? tableModel.getColumnIndex(category) : -1
         if (colIndex>=0) {
             int[] colIndices = new int[1]
             colIndices[0] = colIndex

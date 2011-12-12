@@ -27,4 +27,8 @@ class OrMatcher implements ICategoryMatcher {
         }
         return null
     }
+
+    Matcher matcherType() {
+        Matcher.OR
+    }
 }
