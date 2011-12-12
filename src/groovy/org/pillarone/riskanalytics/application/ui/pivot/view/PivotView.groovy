@@ -33,7 +33,6 @@ import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.Tree
 import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.PreviewNode
 import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableRowHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CellEditDialog
-import com.ulcjava.base.application.dnd.DnDData
 import com.ulcjava.base.application.dnd.DnDTableData
 import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableHelper
 
@@ -278,15 +277,22 @@ class PivotView {
 
         // Column Header Context Menu
         ULCPopupMenu colHeaderPopupMenu = new ULCPopupMenu()
-        ULCMenuItem renameMenuItem = new ULCMenuItem("Rename")
-        renameMenuItem.addActionListener(new IActionListener() {
+        ULCMenuItem renameColMenuItem = new ULCMenuItem("Rename Column")
+        renameColMenuItem.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 def getName = { return pivotModel.customTableModel.getColumnName(lastLeftClickedColumn.getModelIndex()) }
                 def setName = { name -> pivotModel.customTableModel.setColumnName (lastLeftClickedColumn.getModelIndex(), name) }
                 createRenameDialog (getName, setName)
             }
         })
-        colHeaderPopupMenu.add(renameMenuItem)
+        colHeaderPopupMenu.add(renameColMenuItem)
+        ULCMenuItem deleteColMenuItem = new ULCMenuItem("Delete Column")
+        deleteColMenuItem.addActionListener(new IActionListener() {
+            void actionPerformed(ActionEvent actionEvent) {
+                pivotModel.customTableModel.deleteCol(lastLeftClickedColumn.getModelIndex())
+            }
+        })
+        colHeaderPopupMenu.add(deleteColMenuItem)
         customTable.getTableHeader().setComponentPopupMenu(colHeaderPopupMenu)
 
         customTable.getTableHeader().addActionListener(new IActionListener() {
@@ -305,7 +311,7 @@ class PivotView {
 
         // Row Header Context Menu
         ULCPopupMenu rowHeaderPopupMenu = new ULCPopupMenu()
-        ULCMenuItem renameRowMenuItem = new ULCMenuItem("Rename")
+        ULCMenuItem renameRowMenuItem = new ULCMenuItem("Rename Row")
         renameRowMenuItem.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 def getName = { return pivotModel.customTableModel.rowHeaderModel.getElementAt (rowHeader.getSelectedIndex()).toString() }
@@ -314,13 +320,20 @@ class PivotView {
             }
         })
         rowHeaderPopupMenu.add(renameRowMenuItem)
+        ULCMenuItem deleteRowMenuItem = new ULCMenuItem("Delete Row")
+        deleteRowMenuItem.addActionListener(new IActionListener() {
+            void actionPerformed(ActionEvent actionEvent) {
+                pivotModel.customTableModel.deleteRow(rowHeader.getSelectedIndex())
+            }
+        })
+        rowHeaderPopupMenu.add(deleteRowMenuItem)
         rowHeader.setComponentPopupMenu(rowHeaderPopupMenu)
 
         // add table to the window
-        ULCScrollPane newTableScrollPane = new ULCScrollPane(customTable)
-        newTableScrollPane.setPreferredSize(new Dimension(300, 300))
-        newTableScrollPane.setRowHeaderView(rowHeader)
-        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, newTableScrollPane)
+        ULCScrollPane customTableScrollPane = new ULCScrollPane(customTable)
+        customTableScrollPane.setPreferredSize(new Dimension(300, 300))
+        customTableScrollPane.setRowHeaderView(rowHeader)
+        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, customTableScrollPane)
 
         // EditMode checkBox
         ULCBoxPane customTableButtonPane = new ULCBoxPane (false)
@@ -395,15 +408,15 @@ class PivotView {
                     PreviewNode node = (PreviewNode)treePath.getLastPathComponent();
 
                     String colString = node.getValueAt(0)
-                    int colIndex = pivotModel.customTableModel.columnNames.indexOf(colString)
-                    if (colIndex < 0) {
-                        colIndex = pivotModel.customTableModel.addCol (colString)
+                    int colIndex = pivotModel.customTableModel.columnHeaderData.get (colString)
+                    if (colIndex == null) {
+                        colIndex = pivotModel.customTableModel.addCol (colString, true)
                     }
 
                     String rowString = node.parent.getPathString()
-                    int rowIndex = pivotModel.customTableModel.rowHeaderModel.indexOf(rowString)
-                    if (rowIndex < 0) {
-                        rowIndex = pivotModel.customTableModel.addRow ([], rowString)
+                    int rowIndex = pivotModel.customTableModel.rowHeaderData.get(rowString)
+                    if (rowIndex == null) {
+                        rowIndex = pivotModel.customTableModel.addRow ([], rowString, true)
                     }
 
                     pivotModel.customTableModel.setValueAt(node.getValueAt(1), rowIndex, colIndex)

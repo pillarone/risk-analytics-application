@@ -211,6 +211,12 @@ static class CustomTableHelper {
         return sb.toString()
     }
 
+    /**
+     * Converts a Excel-Like String into a int-Value where A=1, B=2, AA=27, AB=28, ...
+     *
+     * @param colString The Excel-Like input-String
+     * @return          The number which represents the input-String
+     */
     public static int getColNo (String colString) {
         int col = 0
         for (int i = 0; i < colString.length(); i++) {
@@ -219,6 +225,12 @@ static class CustomTableHelper {
         return col
     }
 
+    /**
+     * Returns a Excel-Like String in the form of "ABA" representing the input value, where 1=A, 2=B, 27=AA, 28=AB, ...
+     *
+     * @param col   The number to be transformed to a String
+     * @return      The number represented by a Excel-Like String
+     */
     public static String getColString (int col) {
         int rest = col % 26
         int times = col / 26
