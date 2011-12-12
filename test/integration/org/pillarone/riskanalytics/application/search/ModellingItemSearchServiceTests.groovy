@@ -9,13 +9,15 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class ModellingItemSearchServiceTests extends GroovyTestCase {
 
+    ModellingItemSearchService modellingItemSearchService
 
     void setUp() {
+        modellingItemSearchService = ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
         FileImportService.importModelsIfNeeded(['Core', 'Application'])
+        modellingItemSearchService.refresh()
     }
 
     void testService() {
-        ModellingItemSearchService modellingItemSearchService = ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
         final List<ModellingItem> results = modellingItemSearchService.search("*Parameters")
 
         assertEquals(4, results.size())

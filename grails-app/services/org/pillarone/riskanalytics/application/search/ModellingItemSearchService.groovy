@@ -97,6 +97,20 @@ class ModellingItemSearchService {
         indexSearcher = new IndexSearcher(directory, true)
     }
 
+    public synchronized void refresh() {
+        indexSearcher.close()
+        IndexWriter indexWriter = createIndexWriter(false)
+
+        try {
+            indexWriter.deleteAll()
+        } finally {
+            indexWriter.close()
+        }
+
+        indexSearcher = new IndexSearcher(directory, true)
+        createInitialIndex()
+    }
+
     private Parameterization toParameterization(ParameterizationDAO dao) {
         Parameterization parameterization = new Parameterization(dao.name, getClass().getClassLoader().loadClass(dao.modelClassName))
         parameterization.versionNumber = new VersionNumber(dao.itemVersion)

@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -9,7 +9,7 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
 
     ParameterizationTableTreeNode parameterizationTableTreeNode
 
-    Map parametersMap = [:]
+    Map<Integer, List<ParameterHolder>> parametersMap = [:]
     int columnsCount
 
     public CompareParameterizationTableTreeNode(parameter) {
@@ -52,6 +52,10 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
         if (column == 0)
             return 0
         return (column - 1) / columnsCount
+    }
+
+    ParameterHolder getParameterHolder(int column) {
+        return parametersMap[getParameterizationIndex(column)][getPeriodIndex(column)]
     }
 
 
