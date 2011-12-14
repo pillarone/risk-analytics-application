@@ -42,13 +42,13 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
 
     }
 
-    protected int getParameterizationIndex(int column) {
+    int getParameterizationIndex(int column) {
         if (column == 0)
             return 0
         return (column - 1) % columnsCount
     }
 
-    protected int getPeriodIndex(int column) {
+    int getPeriodIndex(int column) {
         if (column == 0)
             return 0
         return (column - 1) / columnsCount

@@ -12,6 +12,9 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Compare
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.SelectionTracker
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import com.ulcjava.base.application.ULCContainer
+import com.ulcjava.base.application.ULCBoxPane
 
 /**
  * @author fouad jaada
@@ -19,11 +22,30 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 public class CompareParameterizationsView extends AbstractModellingTreeView {
 
-    ULCTabbedPane tabbedPane
+    ULCCloseableTabbedPane tabbedPane
     PropertiesView propertiesView
 
     public CompareParameterizationsView(CompareParameterViewModel model) {
         super(model);
+    }
+
+    @Override
+    protected void initComponents() {
+        tabbedPane = new ULCCloseableTabbedPane(name: 'tabbedPane')
+        tabbedPane.tabPlacement = ULCTabbedPane.TOP
+        super.initComponents()
+    }
+
+
+
+    protected ULCContainer layoutContent(ULCContainer content) {
+        ULCBoxPane contentPane = new ULCBoxPane(1, 1)
+
+        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, tabbedPane)
+        tabbedPane.removeAll()
+        tabbedPane.addTab(model.treeModel.root.name, UIUtils.getIcon("treeview-active.png"), content)
+        tabbedPane.setCloseableTab(0, false)
+        return contentPane
     }
 
     protected void initTree() {
@@ -64,7 +86,7 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
         tree.cellSelectionEnabled = true
         // TODO (Mar 20, 2009, msh): Identified this as cause for PMO-240 (expand behaviour).
 
-//         tree.viewPortTableTree.addActionListener(new MultiDimensionalTabStarter(this))
+         tree.viewPortTableTree.addActionListener(new MultiDimensionalCompareTabStarter(this))
 
 
         model.treeModel.root.childCount.times {

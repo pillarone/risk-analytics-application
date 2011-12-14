@@ -34,7 +34,9 @@ class MultiDimensionalParameterTableCellRenderer extends DefaultTableCellRendere
                 component.background = Color.white
             }
         }
-        component.componentPopupMenu = ((MultiDimensionalTable) table).getPopupMenu(row, column)
+        if (table instanceof MultiDimensionalTable) {
+            component.componentPopupMenu = ((MultiDimensionalTable) table).getPopupMenu(row, column)
+        }
         return component
     }
 
