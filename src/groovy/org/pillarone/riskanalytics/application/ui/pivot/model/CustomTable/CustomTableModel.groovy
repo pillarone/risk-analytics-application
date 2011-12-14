@@ -30,8 +30,9 @@ class CustomTableModel extends AbstractTableModel {
         }
         this.data.add(rowData)
 
-        /*if (rowName.isEmpty())
-            rowName = rowCount*/
+        if (rowName.isEmpty())
+            rowName = rowCount
+
         rowHeaderModel.add (rowName)
 
         if (isDataRow) {
@@ -43,6 +44,9 @@ class CustomTableModel extends AbstractTableModel {
     }
 
     int addCol (String colName, boolean isDataCol = false) {
+        if (colName.isEmpty())
+            colName = CustomTableHelper.getColString(columnCount+1)
+
         this.columnNames.add(colName)
 
         for (List<Object> row : data) {

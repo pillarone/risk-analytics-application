@@ -5,12 +5,6 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import org.pillarone.riskanalytics.application.ui.pivot.view.PivotView
 import org.pillarone.riskanalytics.application.ui.pivot.model.PivotModel
-import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.TreeStructureModel
-import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.Dimension
-import org.pillarone.riskanalytics.application.ui.pivot.model.DataNavigator.Coordinate
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCTable
-import com.ulcjava.base.application.table.DefaultTableModel
 import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableHelper
 
 
@@ -21,32 +15,12 @@ class PivotTests extends AbstractSimpleFunctionalTest {
     protected void doStart() {
         ULCFrame frame = new ULCFrame("test")
 
-        PivotView view = new PivotView(new PivotModel(new TestModel()))
+        PivotView view = new PivotView()
         view.parent = frame
 
         frame.setSize(800, 600)
         frame.setContentPane(view.content)
         frame.visible = true
-
-
-//        ULCBoxPane pane = new ULCBoxPane()
-//        DefaultTableModel tableModel = new DefaultTableModel(new Object[0][0], (String[])["1", "2"])
-//        tableModel.addRow (["test", "1234"].toArray())
-//        tableModel.addRow (["test2", "123.4"].toArray())
-//        tableModel.addRow (["test3", "12.34"].toArray())
-//        tableModel.addRow (["test4", "1.234"].toArray())
-//        tableModel.addRow (["test5", "0.1234"].toArray())
-//        tableModel.addRow (["test6", "0.01234"].toArray())
-//        ULCTable table = new ULCTable(tableModel)
-//        table.dragEnabled = true
-//
-//        pane.add(table)
-//
-//
-//        ULCFrame frame2 = new ULCFrame("test2")
-//        frame2.setSize(800, 600)
-//        frame2.setContentPane(pane)
-//        frame2.visible = true
     }
 
 
@@ -89,34 +63,4 @@ class PivotTests extends AbstractSimpleFunctionalTest {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
         sleep 1800000
     }
-
-    class TestModel implements TreeStructureModel {
-        List<Dimension> getDimensions() {
-            return [new Dimension (id:  1, name: "LOB",          coordinates: [new Coordinate (id:  1, name: "Property"),
-                                                                               new Coordinate (id:  2, name: "Description")]),
-
-                    new Dimension (id:  2, name: "Key Figure",   coordinates: [new Coordinate (id:  3, name: "Claims Reported"),
-                                                                               new Coordinate (id:  4, name: "Claims Paid"),
-                                                                               new Coordinate (id:  5, name: "Premiums earned")]),
-
-                    new Dimension (id:  3, name: "Period",       coordinates: [new Coordinate (id:  6, name: "P1"),
-                                                                               new Coordinate (id:  7, name: "P2"),
-                                                                               new Coordinate (id:  8, name: "P3")]),
-
-                    new Dimension (id:  4, name: "Country",      coordinates: [new Coordinate (id:  9, name: "CH"),
-                                                                               new Coordinate (id: 10, name: "DE"),
-                                                                               new Coordinate (id: 12, name: "FR")]),
-
-                    new Dimension (id:  5, name: "Legal Entity", coordinates: [new Coordinate (id: 13, name: "Legal Entity 1"),
-                                                                               new Coordinate (id: 14, name: "Legal Entity 2")]),
-
-                    new Dimension (id:  6, name: "Iteration",    coordinates: [new Coordinate (id: 15, name: "Iteration 1"),
-                                                                               new Coordinate (id: 16, name: "Iteration 2")]),
-
-                    new Dimension (id:  7, name: "Run ID",       coordinates: [new Coordinate (id: 17, name: "Run ID 1"),
-                                                                               new Coordinate (id: 18, name: "Run ID 2")])
-            ]
-        }
-    }
-
 }

@@ -141,6 +141,8 @@ class ResultNavigator extends AbstractBean {
         ULCScrollPane scrollPane = new ULCScrollPane()
         scrollPane.setViewPortView(table)
 
+        table.setDragEnabled(true)
+
         FilterPanel filterPanel = new FilterPanel(model)
 
         resultEntryTable.removeAll()

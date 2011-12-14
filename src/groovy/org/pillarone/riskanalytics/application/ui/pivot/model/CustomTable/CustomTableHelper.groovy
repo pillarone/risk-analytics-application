@@ -232,10 +232,11 @@ static class CustomTableHelper {
      * @return      The number represented by a Excel-Like String
      */
     public static String getColString (int col) {
+        col--
         int rest = col % 26
         int times = col / 26
 
-        char letter = (char)(rest + 64)
+        char letter = (char)(rest + 65)
         if (times == 0) {
             return letter.toString()
         }
