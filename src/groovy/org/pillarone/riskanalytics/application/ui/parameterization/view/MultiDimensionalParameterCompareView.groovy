@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDi
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalParameterTableCellRenderer
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import com.ulcjava.base.application.table.ITableModel
+import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalParameterTableCompareRenderer
 
 class MultiDimensionalParameterCompareView {
 
@@ -37,7 +39,7 @@ class MultiDimensionalParameterCompareView {
         int i = 0
         for (AbstractMultiDimensionalParameter parameter in model.comparedParameters) {
             tableModel = new MultiDimensionalParameterTableModel(parameter, true)
-            final ULCTable table = createTable(tableModel)
+            final ULCTable table = createComparingTable(tableModel, referenceTable.model)
             table.name = "table${i++}"
             comparedTables << table
         }
@@ -70,6 +72,26 @@ class MultiDimensionalParameterCompareView {
 
         table.getColumnModel().getColumns().eachWithIndex {ULCTableColumn column, int index ->
             column.cellRenderer = new MultiDimensionalParameterTableCellRenderer(column: index)
+            if (index > 0) {
+                column.minWidth = getColumnWidth(tableModel, index)
+                column.resizable = true
+            } else {
+                column.minWidth = 50
+            }
+        }
+
+        return table
+    }
+
+    protected ULCTable createComparingTable(MultiDimensionalParameterTableModel tableModel, ITableModel referenceModel) {
+        tableModel.readOnly = true
+        final ULCTable table = new ULCTable(tableModel)
+        table.setTableHeader(null)
+        table.cellSelectionEnabled = true
+        table.setAutoResizeMode(ULCTable.AUTO_RESIZE_OFF)
+
+        table.getColumnModel().getColumns().eachWithIndex {ULCTableColumn column, int index ->
+            column.cellRenderer = new MultiDimensionalParameterTableCompareRenderer(index, referenceModel)
             if (index > 0) {
                 column.minWidth = getColumnWidth(tableModel, index)
                 column.resizable = true
