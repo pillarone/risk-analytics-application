@@ -70,7 +70,7 @@ class CustomTableModel extends AbstractTableModel {
                     break
                 }
             }
-            // update the bigger columns
+            // TODO: update the bigger columns
         }
         for (List<Object> l : data) {
             l.remove(col)
@@ -87,7 +87,7 @@ class CustomTableModel extends AbstractTableModel {
                     break
                 }
             }
-            // update the bigger rows
+            // TODO: update the bigger rows
         }
         data.remove(row)
         rowHeaderModel.remove(row)

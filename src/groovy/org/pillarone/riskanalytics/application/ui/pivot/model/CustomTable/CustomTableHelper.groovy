@@ -1,173 +1,63 @@
 package org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable
 
+import java.util.regex.Pattern
+import java.util.regex.Matcher
 
 static class CustomTableHelper {
     public static String replaceVariables (CustomTableModel model, String formula, int cellRow, int cellCol) {
-        StringBuilder sb = new StringBuilder(formula)
+        Pattern col_pattern = ~/[A-Z]+/
+        Pattern row_pattern = ~/[0-9]+/
 
-        int colStart = -1
-        int rowStart = -1
+        // Check for Ranges, and replace the Range with the corresponding values
+        Pattern range_pattern = ~/[A-Z]*[0-9]*:[A-Z]*[0-9]*/
+        for (String s : range_pattern.matcher(formula)) {
 
-        int col2Start = -1
-        int row2Start = -1
-        int row2End = -1
+            String first = s.split (":")[0]
+            String last = s.split (":")[1]
 
-        for (int i = 0; i <= sb.length(); i++) {
-            if (i < sb.length() && sb.charAt (i).isLetter()) {
-                // Start Col of Variable
-                if (colStart == -1) {
-                    colStart = i
-                }
-            }
-            if (i < sb.length() && sb.charAt (i).isDigit()) {
-                // Start Row of Variable
-                if (rowStart == -1) {
-                    rowStart = i
-                }
-            }
-            if (i < sb.length() && sb.charAt (i) == ':') {
-                col2Start = colStart
-                row2Start = rowStart
-                row2End   = i
+            String first_col_string = (col_pattern.matcher(first).find()) ? col_pattern.matcher(first)[0] : "A"
+            String first_row_string = (row_pattern.matcher(first).find()) ? row_pattern.matcher(first)[0] : 1
+            String last_col_string = (col_pattern.matcher(last).find()) ? col_pattern.matcher(last)[0] : CustomTableHelper.getColString(model.columnCount)
+            String last_row_string = (row_pattern.matcher(last).find()) ? row_pattern.matcher(last)[0] : model.rowCount
 
-                colStart = -1
-                rowStart = -1
-                continue
-            }
+            int first_col = CustomTableHelper.getColNo(first_col_string)-1
+            int first_row = Integer.parseInt(first_row_string)-1
+            int last_col = CustomTableHelper.getColNo(last_col_string)-1
+            int last_row = Integer.parseInt(last_row_string)-1
 
-            // End of Variable
-            if (i >= sb.length() || sb.charAt(i).isLetterOrDigit() == false) {
-
-                // Range Complete Variable
-                if (col2Start != -1 && row2Start != -1 && colStart != -1 && rowStart != -1) {
-                    int col1 = getColNo (sb.substring(col2Start, row2Start))-1
-                    int row1 = Integer.parseInt(sb.substring(row2Start, row2End))-1
-                    int col2 = getColNo (sb.substring(colStart, rowStart))-1
-                    int row2 = Integer.parseInt(sb.substring(rowStart, i))-1
-
-                    StringBuilder insertString = new StringBuilder()
-                    for (int col = col1; col <= col2; col++) {
-                        for (int row = row1; row <= row2; row++) {
-                            if (cellCol == col && cellRow == row) {
-                                System.out.println("Zirkelbezug")
-                                continue
-                            }
-                            Object value = model.getValueAt (row, col)
-                            if (value == "") {
-                                continue
-                            }
-                            insertString.append (value)
-                            insertString.append (";")
-                        }
-                    }
-                    insertString.deleteCharAt(insertString.length()-1)
-
-                    sb.delete(col2Start, i)
-                    sb.insert(col2Start, insertString.toString())
-                    i = i - (i-col2Start) + insertString.length()
-
-                    colStart = -1
-                    rowStart = -1
-                    col2Start = -1
-                    row2Start = -1
-                }
-
-                // Range Col Variable
-                if (col2Start != -1 && row2Start == -1 && colStart != -1 && rowStart == -1) {
-                    int col1 = getColNo (sb.substring(col2Start, row2End))-1
-                    int col2 = getColNo (sb.substring(colStart, i))-1
-
-                    StringBuilder insertString = new StringBuilder()
-                    for (int col = col1; col <= col2; col++) {
-                        for (int row = 0; row < model.rowCount; row++) {
-                            if (cellCol == col && cellRow == row) {
-                                System.out.println("Zirkelbezug")
-                                continue
-                            }
-                            Object value = model.getValueAt (row, col)
-                            if (value == "") {
-                                continue
-                            }
-                            insertString.append (value)
-                            insertString.append (";")
-                        }
-                    }
-                    insertString.deleteCharAt(insertString.length()-1)
-
-                    sb.delete(col2Start, i)
-                    sb.insert(col2Start, insertString.toString())
-                    i = i - (i-col2Start) + insertString.length()
-
-                    colStart = -1
-                    col2Start = -1
-                }
-
-                // Range Row Variable
-                if (col2Start == -1 && row2Start != -1 && colStart == -1 && rowStart != -1) {
-                    int row1 = Integer.parseInt(sb.substring(row2Start, row2End))-1
-                    int row2 = Integer.parseInt(sb.substring(rowStart, i))-1
-
-                    StringBuilder insertString = new StringBuilder()
-                    for (int col = 0; col < model.columnCount; col++) {
-                        for (int row = row1; row <= row2; row++) {
-                            if (cellCol == col && cellRow == row) {
-                                System.out.println("Zirkelbezug")
-                                continue
-                            }
-                            Object value = model.getValueAt (row, col)
-                            if (value == "") {
-                                continue
-                            }
-                            insertString.append (value)
-                            insertString.append (";")
-                        }
-                    }
-                    insertString.deleteCharAt(insertString.length()-1)
-
-                    sb.delete(row2Start, i)
-                    sb.insert(row2Start, insertString.toString())
-                    i = i - (i-row2Start) + insertString.length()
-
-                    rowStart = -1
-                    row2Start = -1
-                }
-
-                // Complete Variable
-                if (colStart != -1 && rowStart != -1 && col2Start == -1 && row2Start == -1) {
-                    int col = getColNo (sb.substring(colStart, rowStart))-1
-                    int row = Integer.parseInt(sb.substring(rowStart, i))-1
-
-                    sb.delete(colStart, i)
-                    String value = model.getValueAt (row, col)
-                    sb.insert(colStart, value)
-                    i = i - (i-colStart) + value.length()
-
-                    if (value == "") {
-                        if (sb.charAt(i) == ';') {
-                            sb.deleteCharAt(i)
-                        } else if (sb.charAt (colStart-1) == ';') {
-                            sb.deleteCharAt(colStart-1)
-                        }
+            StringBuilder range = new StringBuilder()
+            for (int col = first_col; col <= last_col; col++) {
+                for (int row = first_row; row <= last_row; row++) {
+                    if (row == cellRow && col == cellCol) {
+                        System.out.println ("Zirkelbezug")
                         continue
                     }
 
-
-                    colStart = -1
-                    rowStart = -1
-                }
-
-                // Col Variable -> Function, or Col Variable without range
-                if (colStart != -1 && rowStart == -1 && col2Start == -1 && row2Start == -1) {
-                    colStart = -1
-                }
-                // Row Variable -> Row Variable without range
-                if (colStart == -1 && rowStart != -1 && col2Start == -1 && row2Start == -1) {
-                    rowStart = -1
+                    String value = model.getValueAt(row, col).toString()
+                    if (value.isEmpty() == false) {
+                        range.append (value)
+                        range.append (";")
+                    }
                 }
             }
+            range.deleteCharAt(range.length()-1)
+
+            formula = formula.replace (s, range.toString())
         }
 
-        return sb.toString()
+        // Check for other variables and replace them with their value
+        Pattern variable_pattern = ~/[A-Z]+[0-9]+/
+        for (String variable : variable_pattern.matcher(formula)) {
+            String col_string = col_pattern.matcher(variable)[0];
+            String row_string = row_pattern.matcher(variable)[0];
+
+            int col = (col_string != null) ? CustomTableHelper.getColNo(col_string)-1 : 0
+            int row = (row_string != null) ? Integer.parseInt(row_string)-1 : 0
+
+            formula = formula.replace (variable, model.getValueAt(row, col).toString())
+        }
+
+        return formula
     }
 
     static enum Functions {
@@ -176,39 +66,33 @@ static class CustomTableHelper {
     }
 
     public static String executeFunctions (String formula) {
-        StringBuilder sb = new StringBuilder(formula)
 
-        int funStart = -1
+        // TODO: More than one function as a parameter doesn't work yet
 
-        for (int i = 0; i < sb.length(); i++) {
-            if (funStart == -1 && sb.charAt(i).isLetter()) {
-                funStart = i
+        Pattern pattern = ~/[A-Z]+\([\p{Print}]*\)/
+        for (String function : pattern.matcher(formula)) {
+            int bracePos      = function.indexOf("(")
+            String func       = function.substring(0, bracePos)
+            String parameters = function.substring(bracePos)
+
+            parameters = "(" + executeFunctions(parameters.substring(1, parameters.length()-1)) + ")"
+
+            switch (func) {
+                case Functions.SUM.toString():
+                    parameters = parameters.replace(';', '+')
+                    break;
+
+                case Functions.MEAN.toString():
+                    int numParam = parameters.count(";") + 1
+                    parameters = parameters.replace(';', '+')
+                    parameters += "/" + numParam
+                    break;
             }
-            if (funStart != -1 && sb.charAt(i) == '(') {
-                int braceEnd = sb.indexOf(')', i)
-                String parameters = sb.substring(i, braceEnd+1)
 
-                String func = sb.substring(funStart, i)
-                switch (func) {
-                    case Functions.SUM.toString():
-                        parameters = parameters.replace(';', '+')
-                        break;
-
-                    case Functions.MEAN.toString():
-                        int numParam = parameters.count(";") + 1
-                        parameters = parameters.replace(';', '+')
-                        parameters += "/" + numParam
-                        break;
-                }
-
-                sb.delete(funStart, braceEnd+1)
-                sb.insert(funStart, parameters)
-                i = funStart + parameters.length()-1
-
-                funStart = -1
-            }
+            formula = formula.replace (function, parameters)
         }
-        return sb.toString()
+
+        return formula
     }
 
     /**
