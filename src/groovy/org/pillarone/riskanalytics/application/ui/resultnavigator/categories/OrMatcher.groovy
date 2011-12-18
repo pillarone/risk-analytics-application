@@ -4,10 +4,15 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
  * @author martin.melchior
  */
 class OrMatcher implements ICategoryMatcher {
+    static final String NAME = "Or"
     List<ICategoryMatcher> children
 
     OrMatcher(List<ICategoryMatcher> children) {
         this.children = children
+    }
+
+    String getName() {
+        return NAME
     }
 
     boolean isMatch(String path) {
@@ -26,9 +31,5 @@ class OrMatcher implements ICategoryMatcher {
             }
         }
         return null
-    }
-
-    Matcher matcherType() {
-        Matcher.OR
     }
 }

@@ -3,12 +3,6 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator
 import com.ulcjava.applicationframework.application.SingleFrameApplication
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
-import com.ulcjava.applicationframework.application.ToolBarFactory
-import org.pillarone.riskanalytics.application.ui.resultnavigator.view.SimulationRunSelectionDialog
-import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import com.ulcjava.applicationframework.application.Action
 
 class StandaloneResultNavigator extends SingleFrameApplication {
 

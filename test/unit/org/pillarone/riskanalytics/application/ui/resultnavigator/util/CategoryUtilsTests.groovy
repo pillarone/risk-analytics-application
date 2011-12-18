@@ -4,7 +4,6 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.Cat
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.EnclosingMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.SingleValueFromListMatcher
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CrossSectionMatcher
 
 class CategoryUtilsTests extends GroovyTestCase {
 
@@ -38,24 +37,5 @@ class CategoryUtilsTests extends GroovyTestCase {
         assertNull value
         assertTrue new SingleValueFromListMatcher(["linesOfBusiness:(?!sub)"]).isMatch("podra:someother:path:linesOfBusiness:outMotor:restofthe:path")
         assertFalse new SingleValueFromListMatcher(["linesOfBusiness:(?!sub)"]).isMatch("podra:someother:path:linesOfBusiness:subMotor:restofthe:path")
-    }
-
-    void testCrossSectionMatching() {
-        String path = "podra:someother:path:subContracts:subMotorXl:someotherelements:claimsGenerators:subMotorAttritional:restofthe:path"
-        ICategoryMatcher m1 = new EnclosingMatcher("subContracts:sub",":")
-        ICategoryMatcher m2 = new EnclosingMatcher("claimsGenerators:sub",":")
-        ICategoryMatcher m = new CrossSectionMatcher(m1,m2,4)
-        assertTrue m.isMatch(path)
-        assertEquals "Motor", m.getMatch(path)
-
-        m = new CrossSectionMatcher(m1,m2,6)
-        assertFalse m.isMatch(path)
-        assertNull m.getMatch(path)
-
-        path = "podra:someother:path:subContracts:subMotXl:someotherelements:claimsGenerators:subMotorAttritional:restofthe:path"
-        m = new CrossSectionMatcher(m1,m2,4)
-        assertFalse m.isMatch(path)
-        assertNull m.getMatch(path)
-
     }
 }

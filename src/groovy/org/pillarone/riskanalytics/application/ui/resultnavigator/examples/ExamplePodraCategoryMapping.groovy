@@ -1,19 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.examples
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryUtils
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMapping
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AbstractCategoryMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.EnclosingMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.SingleValueFromListMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ConditionalAssignment
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.OrMatcher
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.EndingMatcher
 
 /**
  * @author martin.melchior
  */
-class ExamplePodraCategoryMapping extends AbstractCategoryMapping {
+class ExamplePodraCategoryMapping extends CategoryMapping {
 
     ExamplePodraCategoryMapping() {
         super()
@@ -28,6 +25,6 @@ class ExamplePodraCategoryMapping extends AbstractCategoryMapping {
         matcherMap["Peril"] = new SingleValueFromListMatcher(perils)
         matcherMap["RIContractType"] = new SingleValueFromListMatcher(contracts)
         matcherMap["AccountBasis"] = new SingleValueFromListMatcher(["Gross", "Ceded", "Net"])
-        matcherMap["Keyfigure"] = new EndingMatcher("__")
+        //matcherMap["Keyfigure"] = new EndingMatcher("__")
     }
 }

@@ -17,18 +17,13 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
-import com.ulcjava.base.application.event.ListDataEvent
-import com.ulcjava.base.application.event.IListDataListener
-
 /**
- * To change this template use File | Settings | File Templates.
+ * @author martin.melchior
  */
 class OutputElementTable extends ULCTable implements ITableRowFilterListener {
 
     AssignCategoryDialog assignCategory
-    AddCategoryDialog addCategory
     List<Integer> selectedModelRows
-    List<IListDataListener> categoryListChangeListeners = []
 
     OutputElementTable(OutputElementTableModel model) {
         // model and the like
@@ -57,18 +52,6 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         this.getRowSorter().setRowFilter(filter)
     }
 
-    void addCategoryListChangeListener(IListDataListener listener) {
-        if (!categoryListChangeListeners.contains(listener)) {
-            categoryListChangeListeners.add listener
-        }
-    }
-
-    void removeCategoryListChangeListener(IListDataListener listener) {
-        if (categoryListChangeListeners.contains(listener)) {
-            categoryListChangeListeners.remove listener
-        }
-    }
-
     private void createContextMenu() {
         OutputElementTableModel tableModel = (OutputElementTableModel) this.getModel()
         List<String> categories = tableModel.getCategories()
@@ -91,31 +74,6 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
             }
         });
         menu.add(deselectAllItem);
-
-        addCategory = new AddCategoryDialog(UlcUtilities.getWindowAncestor(this))
-        addCategory.setVisible false
-        ULCMenuItem addCategoryItem = new ULCMenuItem("add category");
-        addCategoryItem.addActionListener(new IActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                addCategory.setVisible true
-            }
-        });
-        menu.add(addCategoryItem);
-        addCategory.addSaveActionListener(new IActionListener() {
-            void actionPerformed(ActionEvent actionEvent) {
-                String newCategory = addCategory.getCategoryName()
-                tableModel.addCategory(newCategory)
-                // work around due to UBA-8496 --> fixed in RIA Suite Update 5.
-                TableRowSorter sorter = OutputElementTable.this.getRowSorter()
-                OutputElementTable.this.setRowSorter(null)
-                tableModel.fireTableStructureChanged()
-                OutputElementTable.this.setRowSorter(sorter)
-                ListDataEvent e = new ListDataEvent(categoryList, ListDataEvent.CONTENTS_CHANGED, 0, categories.size())
-                for (IListDataListener listener : categoryListChangeListeners) {
-                    listener.contentsChanged e
-                }
-            }
-        })
 
         assignCategory = new AssignCategoryDialog(UlcUtilities.getWindowAncestor(this), categories)
         ULCMenuItem assignCategoryItem = new ULCMenuItem("assign category");
@@ -143,8 +101,22 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
                 tableModel.fireTableDataChanged()
             }
         })
-        addCategoryListChangeListener(assignCategory.getCategoryComboBox())
+        // addCategoryListChangeListener(assignCategory.getCategoryComboBox())
 
         this.setComponentPopupMenu(menu);
+    }
+
+    void addCategory(String newCategory) {
+        OutputElementTableModel tableModel = (OutputElementTableModel) this.getModel()
+        tableModel.addCategory(newCategory)
+        // work around due to UBA-8496 --> fixed in RIA Suite Update 5.
+        TableRowSorter sorter = this.getRowSorter()
+        this.setRowSorter(null)
+        tableModel.fireTableStructureChanged()
+        this.setRowSorter(sorter)
+        /*ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, categories.size())
+        for (IListDataListener listener : categoryListChangeListeners) {
+            listener.contentsChanged e
+        } */       
     }
 }

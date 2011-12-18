@@ -2,54 +2,88 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.view;
 
 import com.ulcjava.base.application.*;
 import com.ulcjava.base.application.event.*;
+import com.ulcjava.base.application.tree.TreePath;
 import com.ulcjava.base.application.util.Color;
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AbstractCategoryMapping;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMatcherFactory;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMatcher;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.MatcherTreeNode;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class CategoryConfigurationDialog extends ULCDialog {
 
-    AbstractCategoryMapping categoryMapping;
+    CategoryMapping categoryMapping;
     ULCBoxPane contentPane;
-    ULCBoxPane categoryConfigPane;
-    ICategoryMatcher selectedMatcher;
+    ULCCardPane matcherTreePane;
+    ULCCardPane matcherConfigPane;
+    ICategoryMatcher selectedCategoryTreeRoot;
+    Map<String,ULCScrollPane> matcherTreeCache;
+    Map<ICategoryMatcher,ULCBoxPane> matcherCache;
+
 
     public CategoryConfigurationDialog(ULCWindow parent) {
         super(parent);
         boolean metalLookAndFeel = "Metal".equals(ClientContext.getLookAndFeelName());
         if (!metalLookAndFeel && ClientContext.getLookAndFeelSupportsWindowDecorations()) {
-            setUndecorated(true);
-            setWindowDecorationStyle(ULCDialog.PLAIN_DIALOG);
+            setUndecorated(false);
+            setWindowDecorationStyle(ULCDialog.INFORMATION_DIALOG);
         }
-        setTitle("Edit Categories");
+        setTitle("Configure Categories");
         setLocationRelativeTo(parent);
+        setSize(700, 500);
+        matcherTreeCache = new HashMap<String,ULCScrollPane>();
+        matcherCache = new HashMap<ICategoryMatcher,ULCBoxPane>();
     }
 
     @SuppressWarnings("serial")
-    public void createContent(AbstractCategoryMapping categoryMapping) {
+    public void createContent(final CategoryMapping categoryMapping) {
         this.categoryMapping = categoryMapping;
 
-        final AbstractCategoryMapping mapping = categoryMapping;
         contentPane = new ULCBoxPane(true);
 
         ULCBoxPane categoryListPane = new ULCBoxPane(true);
         categoryListPane.setBorder(BorderFactory.createTitledBorder("Categories"));
-        ULCList categoryList = new ULCList(); //categoryMapping.getCategories());
-        categoryList.setSelectionMode(ULCListSelectionModel.SINGLE_SELECTION);
-        categoryList.setSelectionBackground(Color.green);
+        CategoryList categoryList = new CategoryList();
         CategoryListModel categoryListModel = new CategoryListModel();
         categoryListModel.addAll(categoryMapping.getCategories());
         categoryList.setModel(categoryListModel);
-        categoryListPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, categoryList);
         categoryList.setSelectedIndex(0);
+        categoryListPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, categoryList);
+        categoryMapping.addCategoryChangeListener(categoryList);
 
-        selectedMatcher = categoryMapping.getMatcher(categoryMapping.getCategories().get(0));
-        categoryConfigPane = new ULCBoxPane(true);
-        categoryConfigPane.setBorder(BorderFactory.createTitledBorder("How to Match Members"));
+        ULCBoxPane addCategoryPane = new ULCBoxPane(false);
+        addCategoryPane.setBorder(BorderFactory.createTitledBorder("Add Category"));
+        final ULCTextField categorySpec = new ULCTextField(40);
+        categorySpec.setEditable(true);
+        addCategoryPane.add(ULCBoxPane.BOX_LEFT_BOTTOM, categorySpec);
+        ULCButton addCategoryButton = new ULCButton("Add");
+        addCategoryPane.add(ULCBoxPane.BOX_LEFT_BOTTOM, addCategoryButton);
+        addCategoryButton.addActionListener(new IActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                String newCategory = categorySpec.getText();
+                categoryMapping.addCategory(newCategory);
+            }
+        });
+        categoryListPane.add(ULCBoxPane.BOX_LEFT_BOTTOM,addCategoryPane);
 
-        ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.HORIZONTAL_SPLIT, categoryListPane, categoryConfigPane);
+
+        selectedCategoryTreeRoot = categoryMapping.getCategoryMatcher(categoryMapping.getCategories().get(0));
+        matcherTreePane = new ULCCardPane();
+        matcherTreePane.setBorder(BorderFactory.createTitledBorder("How to Match Members"));
+        matcherConfigPane = new ULCCardPane();
+        matcherConfigPane.setBorder(BorderFactory.createTitledBorder("Matcher Specification"));
+
+        ULCSplitPane matcherEditArea = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT, matcherTreePane, matcherConfigPane);
+        matcherEditArea.setOneTouchExpandable(true);
+        matcherEditArea.setDividerLocation(0.6);
+        matcherEditArea.setDividerSize(10);
+
+        ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.HORIZONTAL_SPLIT, categoryListPane, matcherEditArea);
         splitPane.setOneTouchExpandable(true);
         splitPane.setDividerLocation(0.4);
         splitPane.setDividerSize(10);
@@ -60,12 +94,13 @@ public class CategoryConfigurationDialog extends ULCDialog {
         
         categoryList.addListSelectionListener(new IListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
-                String selectedCategory = mapping.getCategories().get(event.getFirstIndex());
-                selectedMatcher = mapping.getMatcher(selectedCategory);
-                showSelectedMatcher();
+                int index = ((ULCListSelectionModel) event.getSource()).getSelectedIndices()[0];
+                String selectedCategory = categoryMapping.getCategories().get(index);
+                showSelectedMatcherTree(selectedCategory);
             }
         });
-        showSelectedMatcher();
+        String selectedCategory = categoryMapping.getCategories().get(0);
+        showSelectedMatcherTree(selectedCategory);
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new IWindowListener() {
@@ -76,24 +111,65 @@ public class CategoryConfigurationDialog extends ULCDialog {
 
     }
 
-    public void showSelectedMatcher() {
-        try {
-            categoryConfigPane.removeAll();
-        } catch(Exception ex) {
-            //
+    public void showSelectedMatcherTree(String category) {
+        selectedCategoryTreeRoot = categoryMapping.getCategoryMatcher(category);
+        if (!matcherTreeCache.containsKey(category)){
+            MatcherTree categoryMatcherTree = new MatcherTree(selectedCategoryTreeRoot);
+            ULCScrollPane scrollPane = new ULCScrollPane(categoryMatcherTree);
+            matcherTreePane.addCard(category, scrollPane);
+            matcherTreeCache.put(category, scrollPane);
         }
-        MatcherTree categoryMatcherTree = new MatcherTree(selectedMatcher);
-        ULCScrollPane scrollPane = new ULCScrollPane(categoryMatcherTree);
-        categoryConfigPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollPane);
+        ULCScrollPane newPane = matcherTreeCache.get(category);
+        final ULCTree tree = (ULCTree) newPane.getViewPortView();
+        tree.addActionListener(new IActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                TreePath selection = tree.getSelectionPath();
+                Object o = selection.getLastPathComponent();
+                if (o instanceof MatcherTreeNode) {
+                    showMatcher(((MatcherTreeNode) o).getMatcher());
+                }
+            }
+        });
+        matcherTreePane.setSelectedComponent(newPane);
+    }
+
+    public void showMatcher(ICategoryMatcher matcher) {
+        if (!matcherCache.containsKey(matcher)) {
+            ULCBoxPane view = CategoryMatcherFactory.getMatcherView(matcher);
+            if (view != null) {
+                matcherConfigPane.addCard(matcher.toString(), view);
+                matcherCache.put(matcher, view);
+            }
+        }
+        ULCBoxPane view = matcherCache.get(matcher);
+        if (view != null) {
+            matcherConfigPane.setSelectedComponent(view);
+        }
     }
 
     public void addSaveActionListener(IActionListener listener) {
+    }
+
+    private class CategoryList extends ULCList implements ICategoryChangeListener {
+
+        CategoryList() {
+            super();
+            setSelectionMode(ULCListSelectionModel.SINGLE_SELECTION);
+            setSelectionBackground(Color.green);
+        }
+
+        public void categoryAdded(String category) {
+        }
+
+        public void categoryRemoved(String category) {
+        }
     }
 
     private class CategoryListModel extends AbstractListModel implements IMutableListModel {
 
         public void add(Object o) {
             categoryMapping.addCategory((String) o);
+            // fire change events ??
         }
 
         public void add(int i, Object o) {

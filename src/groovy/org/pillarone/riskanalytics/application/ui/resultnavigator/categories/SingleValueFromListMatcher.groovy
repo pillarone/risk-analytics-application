@@ -6,15 +6,25 @@ import java.util.regex.Pattern
  * @author martin.melchior
  */
 class SingleValueFromListMatcher implements ICategoryMatcher {
+    static final String NAME = "BySingleValue"
+
     List<Pattern> patterns
-    List<String> toMatch
+    List<String> toMatch = []
 
     SingleValueFromListMatcher(List<String> toMatch) {
+        initialize(toMatch)
+    }
+
+    void initialize(List<String> toMatch) {
         this.toMatch = toMatch
         patterns = []
         for (String s : toMatch) {
             patterns.add(~s)
         }
+    }
+
+    String getName() {
+        return NAME
     }
 
     boolean isMatch(String path) {
@@ -45,9 +55,5 @@ class SingleValueFromListMatcher implements ICategoryMatcher {
             }
         }
         return value
-    }
-
-    Matcher matcherType() {
-        Matcher.BY_SINGLE_LIST_VALUE
     }
 }

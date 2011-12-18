@@ -1,21 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AbstractCategoryMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener
 
 /**
  */
-class OutputElementTableModel extends AbstractTableModel {
+class OutputElementTableModel extends AbstractTableModel implements ICategoryChangeListener {
     private Map<Integer, String> colToCategoryMap = new HashMap<Integer, String>()
     private Map<String, Integer> categoryToColMap = new HashMap<String, Integer>()
     private List<String> categories = new LinkedList<String>();
-    AbstractCategoryMapping categoryMapping
+    CategoryMapping categoryMapping
 
     List<OutputElement> allElements = []
 
-    OutputElementTableModel(List<OutputElement> elements, AbstractCategoryMapping categoryMapping) {
+    OutputElementTableModel(List<OutputElement> elements, CategoryMapping categoryMapping) {
         this.categoryMapping = categoryMapping
         addCategory(OutputElement.PATH)
+        addCategory(OutputElement.FIELD)
         for (String category : categoryMapping.categories) {
             addCategory(category)
         }
@@ -82,6 +84,22 @@ class OutputElementTableModel extends AbstractTableModel {
         categories.add category
         colToCategoryMap.put(index, category)
         categoryToColMap.put(category, index)
+    }
+
+    void removeCategory(String category) {
+        if (categories.contains(category)) {
+            categories.remove category
+            int index = categoryToColMap.remove(category)
+            colToCategoryMap.remove(index)
+        }
+    }
+
+    void categoryAdded(String category) {
+        addCategory(category)
+    }
+
+    void categoryRemoved(String category) {
+        removeCategory(category)
     }
 
     boolean isCellEditable(int i, int i1) {

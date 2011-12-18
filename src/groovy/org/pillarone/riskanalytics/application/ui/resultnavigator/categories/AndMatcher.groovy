@@ -4,10 +4,15 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
  * @author martin.melchior
  */
 class AndMatcher implements ICategoryMatcher {
+    static final String NAME = "And"
     List<ICategoryMatcher> children
 
     AndMatcher(List<ICategoryMatcher> children) {
         this.children = children
+    }
+
+    String getName() {
+        return NAME
     }
 
     boolean isMatch(String path) {
@@ -26,9 +31,5 @@ class AndMatcher implements ICategoryMatcher {
             }
         }
         return value
-    }
-
-    Matcher matcherType() {
-        return Matcher.AND
     }
 }

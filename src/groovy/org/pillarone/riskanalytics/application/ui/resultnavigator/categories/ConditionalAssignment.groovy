@@ -4,6 +4,7 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
  * @author martin.melchior
  */
 class ConditionalAssignment implements ICategoryMatcher {
+    static final String NAME = "ByCondition"
     ICategoryMatcher condition
     String value
 
@@ -12,15 +13,15 @@ class ConditionalAssignment implements ICategoryMatcher {
         this.condition = condition
     }
 
+    String getName() {
+        return NAME
+    }
+
     boolean isMatch(String path) {
         return condition.isMatch(path)
     }
 
     String getMatch(String path) {
         return condition.isMatch(path) ? value : null
-    }
-
-    Matcher matcherType() {
-        return Matcher.BY_CONDITION
     }
 }

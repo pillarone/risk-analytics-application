@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import org.pillarone.riskanalytics.core.output.PathMapping
 import org.pillarone.riskanalytics.core.output.FieldMapping
+import org.pillarone.riskanalytics.core.output.CollectorMapping
 
 /**
  *
@@ -46,11 +47,14 @@ class ResultAccess {
             String[] ids = f.name.split("_")
             long pathId = Long.parseLong(ids[0])
             long fieldId = Long.parseLong(ids[2])
+            long collectorId = Long.parseLong(ids[3])
             String path = PathMapping.findById(pathId)?.getPathName()
             String field = FieldMapping.findById(fieldId)?.getFieldName()
-            OutputElement element = new OutputElement(path: path, field: field)
-            String fullPath = path + "__" + field
-            element.addCategoryValue(OutputElement.PATH, fullPath)
+            String collector = CollectorMapping.findById(collectorId)?.getCollectorName()
+            OutputElement element = new OutputElement(path: path, field: field, collector: collector)
+            element.addCategoryValue(OutputElement.PATH, path)
+            element.addCategoryValue(OutputElement.FIELD, field)
+            element.addCategoryValue(OutputElement.COLLECTOR, collector)
             if (!result.contains(element)) {
                 result.add(element)
             }

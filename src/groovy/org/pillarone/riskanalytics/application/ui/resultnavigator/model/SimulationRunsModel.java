@@ -11,7 +11,6 @@ import java.util.*;
 public class SimulationRunsModel {
 
     private List<String> models = null;
-    private Map<String, List<SimulationRun>> simulationRuns = null;
     private Map<String, String> modelsLookup = null; // short name --> long name
     private String selectedModel = null; // short name
     private Map<String, Map<String,SimulationRun>> runsLookup = null; // simulation run name --> simulation run
@@ -27,9 +26,9 @@ public class SimulationRunsModel {
     }
 
     public SimulationRunsModel() {
-        List<SimulationRun> runs = (List<SimulationRun>) ResultAccess.getSimulationRuns();
+        List<SimulationRun> runs = ResultAccess.getSimulationRuns();
         models = new ArrayList<String>();
-        simulationRuns = new HashMap<String, List<SimulationRun>>();
+        Map<String, List<SimulationRun>> simulationRuns = new HashMap<String, List<SimulationRun>>();
         modelsLookup = new HashMap<String, String>();
         runsLookup = new HashMap<String, Map<String,SimulationRun>>();
         runsComboBoxModels = new HashMap<String,IComboBoxModel>();

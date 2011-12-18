@@ -14,7 +14,7 @@ import com.ulcjava.base.application.ULCScrollPane
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMappingRegistry
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AbstractCategoryMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import com.ulcjava.base.application.ULCToolBar
 import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCFiller
@@ -40,7 +40,7 @@ class ResultNavigator extends AbstractBean {
     private ULCBoxPane propertiesArea
 
     CategoryConfigurationDialog configurationDialog
-    AbstractCategoryMapping categoryMapping
+    CategoryMapping categoryMapping
 
     private ResultAccess resultAccess
 
@@ -65,12 +65,12 @@ class ResultNavigator extends AbstractBean {
         SimulationRunsModel simulationRunsModel = new SimulationRunsModel()
 
         ULCToolBar toolBar = new ULCToolBar("Simulation Run", ULCToolBar.HORIZONTAL)
-        ULCLabel modelLabel = new ULCLabel("Model")
+        ULCLabel modelLabel = new ULCLabel("Model ")
         toolBar.add(modelLabel)
         ULCComboBox modelSelector = new ULCComboBox(simulationRunsModel.getModelComboBoxModel())
         toolBar.add(modelSelector)
         toolBar.addSeparator()
-        ULCLabel simRunLabel = new ULCLabel("Simulation Run")
+        ULCLabel simRunLabel = new ULCLabel("Simulation Run ")
         toolBar.add(simRunLabel)
         ULCComboBox simulationRunSelector = new ULCComboBox(simulationRunsModel.getSimulationRunsComboBoxModel())
         simulationRunSelector.addActionListener(new IActionListener() {
@@ -150,7 +150,7 @@ class ResultNavigator extends AbstractBean {
         resultEntryTable.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollPane);
 
         filterPanel.registerFilterListener table
-        table.addCategoryListChangeListener(filterPanel.getCategoryToFilter())
+        // table.addCategoryListChangeListener(filterPanel.getCategoryToFilter())
     }
 
     private ULCBoxPane createContentView() {

@@ -4,10 +4,15 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
  * @author martin.melchior
  */
 class EndingMatcher implements ICategoryMatcher {
+    static final String NAME = "ByEnding"
     String prefix
 
     EndingMatcher(String prefix) {
         this.prefix = prefix
+    }
+
+    String getName() {
+        return NAME
     }
 
     boolean isMatch(String path) {
@@ -21,9 +26,5 @@ class EndingMatcher implements ICategoryMatcher {
             return path[index..-1]
         }
         return null
-    }
-
-    Matcher matcherType() {
-        Matcher.BY_ENDING
     }
 }
