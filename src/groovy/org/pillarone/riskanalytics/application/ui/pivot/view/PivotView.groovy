@@ -18,6 +18,7 @@ import com.ulcjava.base.application.ULCList
 import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableRowHeaderRenderer
 import com.ulcjava.base.application.ULCToolBar
 import org.pillarone.riskanalytics.application.ui.resultnavigator.StandaloneResultNavigator
+import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
 
 
 class PivotView {
@@ -26,6 +27,7 @@ class PivotView {
     PivotModel pivotModel
 
     CustomTable customTable
+    ResultNavigator resultNavigator
 
     ULCList rowHeader
 
@@ -53,13 +55,12 @@ class PivotView {
             void actionPerformed(ActionEvent actionEvent) {
                 StandaloneResultNavigator res = new StandaloneResultNavigator()
                 res.start()
+                resultNavigator = res.contents
             }
         })
 
         return toolBar
     }
-
-
 
     /**
      * Creates the Custom Table and the corresponding Buttons
@@ -69,7 +70,7 @@ class PivotView {
         ULCBoxPane pane = new ULCBoxPane(true)
 
         // Custom Table
-        customTable = new CustomTable(pivotModel)
+        customTable = new CustomTable(pivotModel, this)
 
         // Column Header Context Menu
         ULCPopupMenu colHeaderPopupMenu = new ULCPopupMenu()
