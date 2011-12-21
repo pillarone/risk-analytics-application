@@ -9,9 +9,6 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.dnd.DnDTableData
 import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.event.IListSelectionListener
-import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CellEditDialog
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCListSelectionModel
 import com.ulcjava.base.shared.UlcEventConstants
@@ -19,16 +16,13 @@ import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.Custom
 import org.pillarone.riskanalytics.application.ui.pivot.model.PivotModel
 import com.ulcjava.base.application.dnd.DataFlavor
 import com.ulcjava.base.application.dnd.Transferable
-import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.event.ActionEvent
 
 
 class CustomTable extends ULCTable {
     PivotView pivotView
-
     PivotModel pivotModel
-    CellEditDialog cellEditDialog
 
     public CustomTable (PivotModel pivotModel, PivotView pivotView) {
         super (pivotModel.customTableModel)
@@ -46,18 +40,17 @@ class CustomTable extends ULCTable {
         ClientContext.setModelUpdateMode(pivotModel.customTableModel, UlcEventConstants.SYNCHRONOUS_MODE);
         this.setTransferHandler(new MyTransferHandler())
 
-        this.addActionListener(new IActionListener() {
+        this.addActionListener(new IActionListener(){
             void actionPerformed(ActionEvent actionEvent) {
-                if (actionEvent.actionCommand == "mouseDoubleClick") {
-                    cellEditDialog = new CellEditDialog(pivotView.parent, pivotModel.customTableModel, CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
-                    cellEditDialog.setVisible(true)
-                }
+                CustomTable.this.pivotView.cellEditTextField.requestFocus()
             }
         })
 
         this.getSelectionModel().addListSelectionListener(new IListSelectionListener() {
             void valueChanged(ListSelectionEvent listSelectionEvent) {
-                if (cellEditDialog != null && cellEditDialog.isVisible() && cellEditDialog.selectDataMode) {
+
+                if (CustomTable.this.pivotView.cellEditTextField.selectDataMode) {
+                    System.out.println ("----- select mode ----")
                     int rowIndexStart = CustomTable.this.getSelectedRow();
                     int rowIndexEnd = CustomTable.this.getSelectionModel().getMaxSelectionIndex();
                     int colIndexStart = CustomTable.this.getSelectedColumn();
@@ -73,8 +66,14 @@ class CustomTable extends ULCTable {
                         }
                     }
                     sb.deleteCharAt(sb.length()-1)
-                    cellEditDialog.dataTextField.text = sb.toString()
+
+                    pivotView.cellEditTextField.insertData (sb.toString())
+
+                } else {
+                    pivotView.cellEditTextField.setText (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
                 }
+
+
             }
         })
     }

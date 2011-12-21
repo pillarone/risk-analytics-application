@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.Custom
 import com.ulcjava.base.application.ULCToolBar
 import org.pillarone.riskanalytics.application.ui.resultnavigator.StandaloneResultNavigator
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
+import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CellEditTextField
 
 
 class PivotView {
@@ -31,6 +32,8 @@ class PivotView {
 
     ULCList rowHeader
 
+    CellEditTextField cellEditTextField
+
     PivotView() {
         this.pivotModel = new PivotModel()
         initComponents()
@@ -41,6 +44,9 @@ class PivotView {
         content.setPreferredSize(new Dimension (400,400))
 
         content.add(ULCBoxPane.BOX_EXPAND_TOP, createToolbar())
+
+        cellEditTextField = new CellEditTextField(pivotModel.customTableModel, customTable)
+        content.add (ULCBoxPane.BOX_EXPAND_TOP, cellEditTextField)
 
         content.add (ULCBoxPane.BOX_EXPAND_EXPAND, createCustomTable())
     }
@@ -148,7 +154,6 @@ class PivotView {
         newRowButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 pivotModel.customTableModel.addRow([], "")
-//                pivotModel.customTableModel.fireTableDataChanged()
             }
         })
         customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newRowButton)
@@ -157,7 +162,6 @@ class PivotView {
         newColButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 pivotModel.customTableModel.addCol ("")
-//                pivotModel.customTableModel.fireTableStructureChanged()
             }
         })
         customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newColButton)
@@ -189,8 +193,4 @@ class PivotView {
 
         return renameDialog
     }
-
-
-
-
 }
