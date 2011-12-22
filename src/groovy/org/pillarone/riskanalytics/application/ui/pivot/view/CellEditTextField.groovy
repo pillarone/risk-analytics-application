@@ -1,23 +1,34 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable
+package org.pillarone.riskanalytics.application.ui.pivot.view
 
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import java.util.regex.Pattern
-import org.pillarone.riskanalytics.application.ui.pivot.view.CustomTable
 
-class CellEditTextField extends ULCTextField {
-    boolean          selectDataMode = false
-    int              insertDataPos = 0
-    CustomTableModel customTableModel
-    CustomTable      customTable
-    int row = 0
-    int col = 0
+import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableModel
 
+/**
+ * A TextField for editing the values in the CustomTable
+ *
+ * @author ivo.nussbaumer
+ */
+public class CellEditTextField extends ULCTextField {
+    public  boolean          selectDataMode = false
+    private int              insertDataPos = 0
+    private CustomTableModel customTableModel
+    private CustomTable      customTable
+    private int row = 0
+    private int col = 0
 
-    public CellEditTextField(CustomTableModel customTableModel, CustomTable customTable) {
-        this.customTableModel = customTableModel
+    /**
+     * Constructor
+     *
+     * @param customTable the CustomTable
+     */
+    public CellEditTextField(CustomTable customTable) {
         this.customTable = customTable
+        this.customTableModel = customTable.getModel()
 
+        // If the users enters a '=' in the textbox, enable the selectDataMode
         this.addKeyListener(new IKeyListener() {
             void keyTyped(KeyEvent keyEvent) {
                 if (keyEvent.keyChar == "=" || CellEditTextField.this.text == "=") {
@@ -26,6 +37,7 @@ class CellEditTextField extends ULCTextField {
             }
         })
 
+        // When the focus on the textbox is lost, check if the selected text are variables, and enable the selectDataMode
         this.addFocusListener(new IFocusListener() {
             void focusGained(FocusEvent focusEvent) {
             }
@@ -41,6 +53,7 @@ class CellEditTextField extends ULCTextField {
             }
         })
 
+        // when the user preses the Enter-key, copy the value of the textbox into the table, and move the cursor in the table
         this.addActionListener(new IActionListener(){
             void actionPerformed(ActionEvent actionEvent) {
                 selectDataMode = false;
@@ -49,30 +62,40 @@ class CellEditTextField extends ULCTextField {
                 int selectRow = CellEditTextField.this.row+1
                 int selectCol = CellEditTextField.this.col
 
-                if (selectRow >= customTable.rowCount) {
+                if (selectRow >= CellEditTextField.this.customTable.rowCount) {
                     selectRow = 0
                     selectCol++
 
-                    if (selectCol >= customTable.columnCount) {
+                    if (selectCol >= CellEditTextField.this.customTable.columnCount) {
                         selectCol = 0
                     }
 
-                    customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
-                    customTable.getColumnModel().getSelectionModel().setSelectionInterval(selectCol, selectCol)
+                    CellEditTextField.this.customTable.getColumnModel().getSelectionModel().setSelectionInterval(selectCol, selectCol)
+                    CellEditTextField.this.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
                 } else {
-                    customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
+                    CellEditTextField.this.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
                 }
 
             }
         })
     }
 
+    /**
+     * Set the Text in the textbox
+     * @param row the row of the cell, from where the value is
+     * @param col the col of the cell, from where the value is
+     */
     public void setText (int row, int col) {
         this.text = customTableModel.getDataAt (row, col)
         this.row = row
         this.col = col
+        selectDataMode = false
     }
 
+    /**
+     * Inserts a string into the textfield (used for inserting variables of the selected cells)
+     * @param data the string to insert
+     */
     public void insertData (String data) {
         StringBuilder sb = new StringBuilder (this.text)
         sb.delete (this.getSelectionStart(), this.getSelectionEnd())
@@ -80,6 +103,5 @@ class CellEditTextField extends ULCTextField {
         this.text = sb.toString()
         this.setSelectionEnd(this.getSelectionStart() + data.size())
         this.requestFocus()
-        selectDataMode = false
     }
 }

@@ -3,12 +3,12 @@ package org.pillarone.riskanalytics.application.ui.pivot
 import com.ulcjava.applicationframework.application.SingleFrameApplication
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFrame
-import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
-import org.pillarone.riskanalytics.application.ui.pivot.view.PivotView
+
+import org.pillarone.riskanalytics.application.ui.pivot.view.CustomTableView
 
 class StandaloneCustomTable extends SingleFrameApplication {
 
-    PivotView pivotView
+    CustomTableView customTableView
 
     @Override
     protected ULCComponent createStartupMainContent() {
@@ -30,7 +30,7 @@ class StandaloneCustomTable extends SingleFrameApplication {
      * @return the component with the content of the main application window.
      */
     protected ULCComponent getContentView() {
-        pivotView = new PivotView();
-        return pivotView.content;
+        customTableView = new CustomTableView();
+        return customTableView.content;
     }
 }

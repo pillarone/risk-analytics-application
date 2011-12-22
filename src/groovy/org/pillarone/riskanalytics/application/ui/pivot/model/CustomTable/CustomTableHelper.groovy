@@ -54,6 +54,12 @@ static class CustomTableHelper {
             int col = (col_string != null) ? CustomTableHelper.getColNo(col_string)-1 : 0
             int row = (row_string != null) ? Integer.parseInt(row_string)-1 : 0
 
+            if (row == cellRow && col == cellCol) {
+                System.out.println ("Zirkelbezug")
+                formula = formula.replace (variable + ";", "")
+                formula = formula.replace (";" + variable, "")
+                continue
+            }
             formula = formula.replace (variable, model.getValueAt(row, col).toString())
         }
 
