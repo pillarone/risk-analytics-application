@@ -3,8 +3,7 @@ package org.pillarone.riskanalytics.application.ui.pivot
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ULCFrameOperator
-import org.pillarone.riskanalytics.application.ui.pivot.view.PivotView
-import org.pillarone.riskanalytics.application.ui.pivot.model.PivotModel
+import org.pillarone.riskanalytics.application.ui.pivot.view.CustomTableView
 import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableHelper
 
 
@@ -15,7 +14,7 @@ class PivotTests extends AbstractSimpleFunctionalTest {
     protected void doStart() {
         ULCFrame frame = new ULCFrame("test")
 
-        PivotView view = new PivotView()
+        CustomTableView view = new CustomTableView()
         view.parent = frame
 
         frame.setSize(800, 600)

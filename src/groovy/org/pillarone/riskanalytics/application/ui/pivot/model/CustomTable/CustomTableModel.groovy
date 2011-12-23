@@ -1,111 +1,160 @@
 package org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable
 
 import com.ulcjava.base.application.table.AbstractTableModel
+import com.ulcjava.base.application.AbstractListModel
 
-import com.ulcjava.base.application.DefaultListModel
+/**
+ * TableModel for the CustomTable
+ *
+ * @author ivo.nussbaumer
+ */
+public class CustomTableModel extends AbstractTableModel {
+    private List<List<Object>> data
+    private RowHeaderListModel rowHeaderModel
+    private GroovyShell groovyShell
 
-class CustomTableModel extends AbstractTableModel {
-    List<String> columnNames
-    Map<String, Integer> columnHeaderData
-    List<List<Object>> data
+    public boolean editMode
 
-    DefaultListModel rowHeaderModel
-    Map<String, Integer> rowHeaderData
-
-    boolean editMode
-
-    CustomTableModel(List<List<Object>> data, List<String> columnNames) {
-        this.columnNames = columnNames
+    /**
+     * Constructor
+     *
+     * @param data Initial Table-Data
+     */
+    public CustomTableModel(List<List<Object>> data) {
         this.data = data
-
-        columnHeaderData = new HashMap<String, Integer>()
-        rowHeaderData = new HashMap<String, Integer>()
-
-        rowHeaderModel = new DefaultListModel(new Object[0])
+        
+        groovyShell = new GroovyShell()
+        rowHeaderModel = new RowHeaderListModel(this)
     }
 
-    int addRow (List<Object> rowData, String rowName, boolean isDataRow = false) {
-        while (rowData.size() < columnCount) {
+    /**
+     * Inserts a Column into the table
+     *
+     * @param col Position to insert the new Column
+     */
+    public void insertCol (int col) {
+        for (List<Object> rowData : data) {
+            rowData.add (col, "")
+        }
+        fireTableStructureChanged()
+    }
+
+    /**
+     * Adds a Column to the end of the table
+     * @return new Number of Columns
+     */
+    public int addCol () {
+        for (List<Object> rowData : data) {
             rowData.add ("")
-        }
-        this.data.add(rowData)
-
-        if (rowName.isEmpty())
-            rowName = rowCount
-
-        rowHeaderModel.add (rowName)
-
-        if (isDataRow) {
-            rowHeaderData.put (rowName, rowCount-1)
-        }
-
-        fireTableRowsInserted(rowCount-1, rowCount-1)
-        return rowCount-1
-    }
-
-    int addCol (String colName, boolean isDataCol = false) {
-        if (colName.isEmpty())
-            colName = CustomTableHelper.getColString(columnCount+1)
-
-        this.columnNames.add(colName)
-
-        for (List<Object> row : data) {
-            while (row.size() < columnCount) {
-                row.add ("")
-            }
-        }
-
-        if (isDataCol) {
-            columnHeaderData.put (colName, columnCount-1)
         }
 
         fireTableStructureChanged()
         return columnCount-1
     }
-    void deleteCol (int col) {
-        if (columnHeaderData.containsValue(col)) {
-            for (String key : columnHeaderData.keySet()) {
-                if (columnHeaderData[key] == col) {
-                    columnHeaderData.remove(key)
-                    break
-                }
-            }
-            // TODO: update the bigger columns
+
+    /**
+     * Deletes a Column
+     * @param col Index of the Column to delete
+     */
+    public void deleteCol (int col) {
+        for (List<Object> rowData : data) {
+            rowData.remove(col)
         }
-        for (List<Object> l : data) {
-            l.remove(col)
-        }
-        columnNames.remove(col)
         fireTableStructureChanged()
     }
 
-    void deleteRow (int row) {
-        if (rowHeaderData.containsValue(row)) {
-            for (String key : rowHeaderData.keySet()) {
-                if (rowHeaderData[key] == row) {
-                    rowHeaderData.remove(key)
-                    break
-                }
-            }
-            // TODO: update the bigger rows
+    /**
+     * Inserts a Row into the table
+     *
+     * @param col Position to insert the new Row
+     */
+    public void insertRow (int row, List<Object> rowData = null) {
+        if (rowData == null)
+            rowData = new LinkedList<Object>()
+
+        while (rowData.size() < columnCount) {
+            rowData.add ("")
         }
+
+        this.data.add(row, rowData)
+
+        fireTableRowsInserted(row, row)
+        rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
+    }
+
+    /**
+     * Adds a Row to the end of the table
+     * @return new Number of Row
+     */
+    public int addRow (List<Object> rowData = null) {
+        if (rowData == null)
+            rowData = new LinkedList<Object>()
+
+        while (rowData.size() < columnCount) {
+            rowData.add ("")
+        }
+
+        this.data.add(rowData)
+
+        fireTableRowsInserted(rowCount-1, rowCount-1)
+        rowHeaderModel.fireContentsChanged(this, rowCount-1, rowCount-1)
+        return rowCount-1
+    }
+
+    /**
+     * Deletes a Row
+     * @param row Index of the Row to delete
+     */
+    public void deleteRow (int row) {
         data.remove(row)
-        rowHeaderModel.remove(row)
         fireTableStructureChanged()
+        rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
     }
 
+    /**
+     * Calculates the number of columns, depending on the stored data
+     * @return
+     */
     public int getColumnCount() {
-        return columnNames.size()
+        int colCount = 0
+        for (List<Object> rowData : data) {
+            colCount = (rowData.size() > colCount) ? rowData.size() : colCount
+        }
+        return colCount
     }
 
+    /**
+     * Calculates the number of rows, depending on the stored data
+     * @return
+     */
     public int getRowCount() {
         return data.size()
     }
 
+    /**
+     * Returns the Header-Name of the Column, formatted as an Excel-Like string
+     * @param col the index of the column
+     * @return header-name as an excel-like string
+     */
     public String getColumnName(int col) {
-        return columnNames[col]
+        return CustomTableHelper.getColString(col+1)
     }
 
+    public Class getColumnClass(int col) {
+        return String.class
+    }
+
+    public boolean isCellEditable(int row, int col) {
+        return editMode
+    }
+
+    /**
+     * Returns the data (formula, data, or constant-value) of the cell
+     *
+     * @param row the row of the cell
+     * @param col the column of the cell
+     * @return the data of the cell
+     */
     public Object getDataAt(int row, int col) {
         if (row >= rowCount || col >= columnCount)
             return null
@@ -113,6 +162,13 @@ class CustomTableModel extends AbstractTableModel {
         return data[row][col]
     }
 
+    /**
+     * Returns the value to display (resolved formula, value of a data-cell) in the table of a cell
+     *
+     * @param row the row of the cell
+     * @param col the column of the cell
+     * @return the value to display of the cell
+     */
     public Object getValueAt(int row, int col) {
         if (row >= rowCount || col >= columnCount)
             return null
@@ -122,51 +178,69 @@ class CustomTableModel extends AbstractTableModel {
             return data[row][col]
         }
 
-        // else check if the data is a formula
         String cellData = data[row][col]
 
-        // if data is not a formula, just return the data
-        if (cellData.startsWith("=") == false) {
-            return cellData
+        // if cellData is a formula, resolve the formula
+        if (cellData.startsWith("=")) {
+            String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
+            formula = CustomTableHelper.executeFunctions (formula)
+            Object value = groovyShell.evaluate("return " + formula)
+            return value
         }
 
-        // else execute the formula as groovy code
-        String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
-        formula = CustomTableHelper.executeFunctions (formula)
-        GroovyShell shell = new GroovyShell()
-        Object value = shell.evaluate("return " + formula)
+        // if cellData is a data-Reference, get the value from the database
+        if (cellData.startsWith("#")) {
+            String dataReference = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
+            return ""
+        }
 
-        return value
+        return cellData
     }
 
-    public void setColumnName (int col, String name) {
-        columnNames.set (col, name)
-        fireTableStructureChanged()
-    }
-
-
-    public int getID (int row) {
-        return data[row][2] as int
-    }
-
-    public Class getColumnClass(int c) {
-        return String.class
-
-        if (getValueAt(0, c) == null)
-            return null
-
-        return getValueAt(0, c).class
-    }
-
-    public boolean isCellEditable(int row, int col) {
-        return editMode
-    }
-
+    /**
+     * sets the data of a cell
+     *
+     * @param value the data to set
+     * @param row the row of the cell
+     * @param col the column of the cell
+     */
     public void setValueAt(Object value, int row, int col) {
         if (row >= rowCount || col >= columnCount)
             return
 
         data[row][col] = value
         fireTableCellUpdated(row, col)
+    }
+
+    /**
+     * ListModel for the RowHeader-List
+     */
+    private class RowHeaderListModel extends AbstractListModel {
+        CustomTableModel customTableModel
+
+        /**
+         * Constructor
+         * @param customTableModel the CustomTableModel
+         */
+        public RowHeaderListModel (CustomTableModel customTableModel) {
+            this.customTableModel = customTableModel
+        }
+
+        /**
+         * The size of the RowHeaderListModel is the number of rows in the CustomTableModel
+         * @return
+         */
+        public int getSize() {
+            return customTableModel.rowCount
+        }
+
+        /**
+         * the Name of a row is just the number of the row+1
+         * @param i the row index
+         * @return the name of the element
+         */
+        public Object getElementAt(int row) {
+            return (row+1).toString()
+        }
     }
 }
