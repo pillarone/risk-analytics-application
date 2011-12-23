@@ -2,17 +2,17 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
 import com.ulcjava.base.application.tree.IMutableTreeNode
 import com.ulcjava.base.application.tree.ITreeNode
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMatcher
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 
 /**
  * @author martin.melchior
  */
 class MatcherTreeNode implements IMutableTreeNode {
-    ICategoryMatcher matcher = null
+    ICategoryResolver matcher = null
     List<MatcherTreeNode> children = []
     MatcherTreeNode parent = null
 
-    MatcherTreeNode(ICategoryMatcher matcher, MatcherTreeNode parent) {
+    MatcherTreeNode(ICategoryResolver matcher, MatcherTreeNode parent) {
         this.matcher = matcher
         this.parent = parent
     }
@@ -32,8 +32,8 @@ class MatcherTreeNode implements IMutableTreeNode {
     }
 
     void setUserObject(Object o) {
-        if (o instanceof ICategoryMatcher) {
-            matcher = (ICategoryMatcher) o
+        if (o instanceof ICategoryResolver) {
+            matcher = (ICategoryResolver) o
         }
     }
 

@@ -51,7 +51,7 @@ class ResultAccess {
             String path = PathMapping.findById(pathId)?.getPathName()
             String field = FieldMapping.findById(fieldId)?.getFieldName()
             String collector = CollectorMapping.findById(collectorId)?.getCollectorName()
-            OutputElement element = new OutputElement(path: path, field: field, collector: collector)
+            OutputElement element = new OutputElement(run: run, path: path, field: field, collector: collector, templatePath: new String(path))
             element.addCategoryValue(OutputElement.PATH, path)
             element.addCategoryValue(OutputElement.FIELD, field)
             element.addCategoryValue(OutputElement.COLLECTOR, collector)

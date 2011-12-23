@@ -125,12 +125,7 @@ class ResultNavigator extends AbstractBean {
         List<OutputElement> elements = resultAccess.getOutputElements(run)
         categoryMapping = CategoryMappingRegistry.getCategoryMapping(run)
         if (categoryMapping) {
-            for (OutputElement e : elements) {
-                for (String category : categoryMapping.getCategories()) {
-                    String path = (String) e.getCategoryValue(OutputElement.PATH)
-                    e.addCategoryValue(category, categoryMapping.getCategoryMember(category, path))
-                }
-            }
+            categoryMapping.categorize(elements)
         }
         loadDataIntoResultEntriesArea(elements)
     }

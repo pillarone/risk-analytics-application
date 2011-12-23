@@ -7,7 +7,7 @@ import com.ulcjava.base.application.ULCBoxPane
  */
 class CategoryMatcherFactory {
 
-    static ULCBoxPane getMatcherView(ICategoryMatcher matcher) {
+    static ULCBoxPane getMatcherView(ICategoryResolver matcher) {
         switch (matcher) {
             case SingleValueFromListMatcher:
                 return new SingleValueFromListMatcherView((SingleValueFromListMatcher)matcher)
@@ -18,7 +18,7 @@ class CategoryMatcherFactory {
         }
     }
 
-    static ICategoryMatcher getCategoryMatcher(String matcherType, Object... p) {
+    static ICategoryResolver getCategoryMatcher(String matcherType, Object... p) {
         switch(matcherType) {
             case SingleValueFromListMatcher.NAME:
                 if (p[0] instanceof List<String>) {
@@ -45,8 +45,8 @@ class CategoryMatcherFactory {
                     return null
                 }
             case ConditionalAssignment.NAME:
-                if (p[0] instanceof String && p[1] instanceof ICategoryMatcher) {
-                    return new ConditionalAssignment((String) p[0], (ICategoryMatcher) p[1])
+                if (p[0] instanceof String && p[1] instanceof ICategoryResolver) {
+                    return new ConditionalAssignment((String) p[0], (ICategoryResolver) p[1])
                 } else {
                     return null
                 }

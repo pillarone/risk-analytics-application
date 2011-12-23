@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
+import org.pillarone.riskanalytics.core.output.SimulationRun
+
 /**
  * @author martin.melchior
  */
@@ -7,12 +10,16 @@ class OutputElement {
     static final String PATH = "Path"
     static final String FIELD = "Field"
     static final String COLLECTOR = "Collector"
+    SimulationRun run
     String path
+    String templatePath
     String field
     String collector
-    Map<String,Object> categoryMap = [:]
+    Map<String,String> categoryMap = [:]  // may also contain elements with null value
+    List<String> wildCards
+    WildCardPath wildCardPath
 
-    void addCategoryValue(String category, Object value) {
+    void addCategoryValue(String category, String value) {
         categoryMap[category] = value
     }
 

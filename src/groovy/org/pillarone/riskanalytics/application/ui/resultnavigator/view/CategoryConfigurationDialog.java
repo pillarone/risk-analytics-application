@@ -7,7 +7,7 @@ import com.ulcjava.base.application.util.Color;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMatcherFactory;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener;
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMatcher;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.MatcherTreeNode;
 
 import java.util.Collection;
@@ -21,9 +21,9 @@ public class CategoryConfigurationDialog extends ULCDialog {
     ULCBoxPane contentPane;
     ULCCardPane matcherTreePane;
     ULCCardPane matcherConfigPane;
-    ICategoryMatcher selectedCategoryTreeRoot;
+    ICategoryResolver selectedCategoryTreeRoot;
     Map<String,ULCScrollPane> matcherTreeCache;
-    Map<ICategoryMatcher,ULCBoxPane> matcherCache;
+    Map<ICategoryResolver,ULCBoxPane> matcherCache;
 
 
     public CategoryConfigurationDialog(ULCWindow parent) {
@@ -37,7 +37,7 @@ public class CategoryConfigurationDialog extends ULCDialog {
         setLocationRelativeTo(parent);
         setSize(700, 500);
         matcherTreeCache = new HashMap<String,ULCScrollPane>();
-        matcherCache = new HashMap<ICategoryMatcher,ULCBoxPane>();
+        matcherCache = new HashMap<ICategoryResolver,ULCBoxPane>();
     }
 
     @SuppressWarnings("serial")
@@ -133,7 +133,7 @@ public class CategoryConfigurationDialog extends ULCDialog {
         matcherTreePane.setSelectedComponent(newPane);
     }
 
-    public void showMatcher(ICategoryMatcher matcher) {
+    public void showMatcher(ICategoryResolver matcher) {
         if (!matcherCache.containsKey(matcher)) {
             ULCBoxPane view = CategoryMatcherFactory.getMatcherView(matcher);
             if (view != null) {

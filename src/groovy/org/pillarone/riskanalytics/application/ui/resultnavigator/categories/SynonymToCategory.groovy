@@ -5,14 +5,12 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class ConditionalAssignment implements ICategoryResolver {
-    static final String NAME = "ByCondition"
-    ICategoryResolver condition
-    String value
+class SynonymToCategory implements ICategoryResolver {
+    static final String NAME = "Synonym to category"
+    String category
 
-    ConditionalAssignment(String value, ICategoryResolver condition) {
-        this.value = value
-        this.condition = condition
+    SynonymToCategory(String category) {
+        this.category = category
     }
 
     String getName() {
@@ -20,11 +18,11 @@ class ConditionalAssignment implements ICategoryResolver {
     }
 
     boolean isResolvable(OutputElement element) {
-        return condition.isResolvable(element)
+        return element.getCategoryValue(category) != null
     }
 
     String getResolvedValue(OutputElement element) {
-        return condition.isResolvable(element) ? value : null
+        return element.getCategoryValue(category)
     }
 
     boolean createTemplatePath(OutputElement element, String category) {

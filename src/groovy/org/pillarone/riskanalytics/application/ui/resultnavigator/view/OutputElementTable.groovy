@@ -16,6 +16,9 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import com.ulcjava.base.application.table.DefaultTableCellRenderer
+import com.ulcjava.base.application.IRendererComponent
+import com.ulcjava.base.application.table.ULCTableColumn
 
 /**
  * @author martin.melchior
@@ -43,9 +46,28 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
 
         ClientContext.setModelUpdateMode(model, UlcEventConstants.SYNCHRONOUS_MODE)
 
+        // renderer
+        setRenderer()
+
         // context menu
         createContextMenu()
-        
+
+
+    }
+
+    private void setRenderer() {
+        DefaultTableCellRenderer defaultTableTreeCellRenderer = new DefaultTableCellRenderer()
+        PathCellRenderer cellRendererWithTooltip = new PathCellRenderer()
+        for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
+            ULCTableColumn column = getColumnModel().getColumn(i);
+            if (i != ((OutputElementTableModel)this.model).getColumnIndex(OutputElement.PATH)) {
+                column.setCellRenderer(defaultTableTreeCellRenderer);
+            } else {
+                column.setCellRenderer(cellRendererWithTooltip)
+                // column.setMaxWidth(50)
+            }
+        }
+
     }
 
     void setFilter(TableRowFilter filter) {
@@ -118,5 +140,16 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         for (IListDataListener listener : categoryListChangeListeners) {
             listener.contentsChanged e
         } */       
+    }
+
+    private class PathCellRenderer extends DefaultTableCellRenderer {
+
+        @Override
+        public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
+            DefaultTableCellRenderer rendererComponent = (DefaultTableCellRenderer) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row);
+            OutputElement rowElement = ((OutputElementTableModel) OutputElementTable.this.model).getRowElement(row)
+            rendererComponent.setToolTipText(rowElement.getWildCardPath().templatePath)
+            return rendererComponent
+        }
     }
 }

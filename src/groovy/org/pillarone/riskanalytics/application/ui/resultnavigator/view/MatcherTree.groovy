@@ -2,7 +2,7 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.view
 
 import com.ulcjava.base.application.ULCTree
 import com.ulcjava.base.application.tree.DefaultTreeModel
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryMatcher
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AndMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.OrMatcher
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ConditionalAssignment
@@ -15,24 +15,24 @@ class MatcherTree extends ULCTree {
 
     private DefaultTreeModel fTreeModel;
 
-    MatcherTree(ICategoryMatcher matcher) {
+    MatcherTree(ICategoryResolver matcher) {
         super()
         fTreeModel = new DefaultTreeModel(createTreeNode(matcher, null));
         this.setModel(fTreeModel);
         this.setScrollsOnExpand(true);
     }
 
-    private MatcherTreeNode createTreeNode(ICategoryMatcher matcher, MatcherTreeNode parent) {
+    private MatcherTreeNode createTreeNode(ICategoryResolver matcher, MatcherTreeNode parent) {
         MatcherTreeNode node = new MatcherTreeNode(matcher, parent);
         switch(matcher) {
             case AndMatcher:
-                for (ICategoryMatcher child : ((AndMatcher) matcher).children) {
+                for (ICategoryResolver child : ((AndMatcher) matcher).children) {
                     MatcherTreeNode childNode = createTreeNode(child, parent)
                     node.add(childNode)
                 }
                 return node
             case OrMatcher:
-                for (ICategoryMatcher child : ((OrMatcher) matcher).children) {
+                for (ICategoryResolver child : ((OrMatcher) matcher).children) {
                     MatcherTreeNode childNode = createTreeNode(child, parent)
                     node.add(childNode)
                 }
