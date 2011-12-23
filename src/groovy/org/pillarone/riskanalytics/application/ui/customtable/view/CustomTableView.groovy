@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.pivot.view
+package org.pillarone.riskanalytics.application.ui.customtable.view
 
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
@@ -10,7 +10,7 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.ULCToolBar
 import org.pillarone.riskanalytics.application.ui.resultnavigator.StandaloneResultNavigator
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableModel
+import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 
 /**
  * The View which contains the CustomTable, and its other elements (cellEditTextField)
@@ -26,6 +26,7 @@ public class CustomTableView {
     private ResultNavigator resultNavigator
 
     private CellEditTextField cellEditTextField
+    private DataCellEditPane dataCellEditPane
 
     /**
      * Constructor
@@ -46,8 +47,11 @@ public class CustomTableView {
         ULCBoxPane customTablePane = createCustomTable()
         cellEditTextField = new CellEditTextField(customTable)
 
+        dataCellEditPane = new DataCellEditPane(customTable)
+
         content.add(ULCBoxPane.BOX_EXPAND_TOP, toolbar)
         content.add (ULCBoxPane.BOX_EXPAND_TOP, cellEditTextField)
+        content.add (ULCBoxPane.BOX_EXPAND_TOP, dataCellEditPane)
         content.add (ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
     }
 

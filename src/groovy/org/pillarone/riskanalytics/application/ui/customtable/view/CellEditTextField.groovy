@@ -1,10 +1,9 @@
-package org.pillarone.riskanalytics.application.ui.pivot.view
+package org.pillarone.riskanalytics.application.ui.customtable.view
 
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import java.util.regex.Pattern
-
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableModel
+import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 
 /**
  * A TextField for editing the values in the CustomTable

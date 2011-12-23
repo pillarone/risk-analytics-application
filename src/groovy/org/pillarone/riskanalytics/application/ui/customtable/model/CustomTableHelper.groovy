@@ -1,15 +1,17 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable
+package org.pillarone.riskanalytics.application.ui.customtable.model
 
 import java.util.regex.Pattern
-import java.util.regex.Matcher
 
 static class CustomTableHelper {
+    public static Pattern variable_pattern = ~/[A-Z]+[0-9]+/
+    public static Pattern range_pattern = ~/[A-Z]*[0-9]*:[A-Z]*[0-9]*/
+    public static Pattern col_pattern = ~/[A-Z]+/
+    public static Pattern row_pattern = ~/[0-9]+/
+
     public static String replaceVariables (CustomTableModel model, String formula, int cellRow, int cellCol) {
-        Pattern col_pattern = ~/[A-Z]+/
-        Pattern row_pattern = ~/[0-9]+/
+        formula = formula.replaceAll ('$', '')
 
         // Check for Ranges, and replace the Range with the corresponding values
-        Pattern range_pattern = ~/[A-Z]*[0-9]*:[A-Z]*[0-9]*/
         for (String s : range_pattern.matcher(formula)) {
 
             String first = s.split (":")[0]
@@ -46,7 +48,6 @@ static class CustomTableHelper {
         }
 
         // Check for other variables and replace them with their value
-        Pattern variable_pattern = ~/[A-Z]+[0-9]+/
         for (String variable : variable_pattern.matcher(formula)) {
             String col_string = col_pattern.matcher(variable)[0];
             String row_string = row_pattern.matcher(variable)[0];
@@ -75,8 +76,8 @@ static class CustomTableHelper {
 
         // TODO: More than one function as a parameter doesn't work yet
 
-        Pattern pattern = ~/[A-Z]+\([\p{Print}]*\)/
-        for (String function : pattern.matcher(formula)) {
+        Pattern formula_pattern = ~/[A-Z]+\([\p{Print}]*\)/
+        for (String function : formula_pattern.matcher(formula)) {
             int bracePos      = function.indexOf("(")
             String func       = function.substring(0, bracePos)
             String parameters = function.substring(bracePos)

@@ -1,10 +1,10 @@
-package org.pillarone.riskanalytics.application.ui.pivot
+package org.pillarone.riskanalytics.application.ui.customtable
 
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ULCFrameOperator
-import org.pillarone.riskanalytics.application.ui.pivot.view.CustomTableView
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableHelper
+import org.pillarone.riskanalytics.application.ui.customtable.view.CustomTableView
+import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
 
 
 class PivotTests extends AbstractSimpleFunctionalTest {

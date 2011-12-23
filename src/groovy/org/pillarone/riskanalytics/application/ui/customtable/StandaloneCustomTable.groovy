@@ -1,10 +1,10 @@
-package org.pillarone.riskanalytics.application.ui.pivot
+package org.pillarone.riskanalytics.application.ui.customtable
 
 import com.ulcjava.applicationframework.application.SingleFrameApplication
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFrame
 
-import org.pillarone.riskanalytics.application.ui.pivot.view.CustomTableView
+import org.pillarone.riskanalytics.application.ui.customtable.view.CustomTableView
 
 class StandaloneCustomTable extends SingleFrameApplication {
 

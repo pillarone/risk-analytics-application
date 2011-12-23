@@ -1,7 +1,9 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable
+package org.pillarone.riskanalytics.application.ui.customtable.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.AbstractListModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 /**
  * TableModel for the CustomTable
@@ -159,7 +161,12 @@ public class CustomTableModel extends AbstractTableModel {
         if (row >= rowCount || col >= columnCount)
             return null
 
-        return data[row][col]
+        Object cellData = data[row][col]
+        if (editMode == true && cellData instanceof OutputElement) {
+            return "#" + ((OutputElement)cellData).path
+        }
+
+        return cellData
     }
 
     /**
@@ -173,25 +180,29 @@ public class CustomTableModel extends AbstractTableModel {
         if (row >= rowCount || col >= columnCount)
             return null
 
+        Object cellData = data[row][col]
+
         // If editMode, just return the original data
         if (editMode == true) {
-            return data[row][col]
+            return getDataAt (row, col)
         }
 
-        String cellData = data[row][col]
-
         // if cellData is a formula, resolve the formula
-        if (cellData.startsWith("=")) {
-            String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
-            formula = CustomTableHelper.executeFunctions (formula)
-            Object value = groovyShell.evaluate("return " + formula)
-            return value
+        if (cellData instanceof String) {
+            String cellString = (String)cellData
+            if (cellString.startsWith("=")) {
+                String formula = CustomTableHelper.replaceVariables (this, cellString.substring(1), row, col)
+                formula = CustomTableHelper.executeFunctions (formula)
+                Object value = groovyShell.evaluate("return " + formula)
+                return value
+            }
         }
 
         // if cellData is a data-Reference, get the value from the database
-        if (cellData.startsWith("#")) {
-            String dataReference = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
-            return ""
+        if (cellData instanceof OutputElement) {
+            OutputElement outputElement = cellData
+            double mean = ResultAccessor.getMean (outputElement.run, 0, outputElement.path, outputElement.collector, outputElement.field)
+            return mean.toString()
         }
 
         return cellData

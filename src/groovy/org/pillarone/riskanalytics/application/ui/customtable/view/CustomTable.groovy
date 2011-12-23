@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.pivot.view
+package org.pillarone.riskanalytics.application.ui.customtable.view
 
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.util.Dimension
@@ -12,18 +12,22 @@ import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCListSelectionModel
 import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableHelper
+import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
 import com.ulcjava.base.application.dnd.DataFlavor
 import com.ulcjava.base.application.dnd.Transferable
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.ULCList
 import com.ulcjava.base.application.ULCScrollPane
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableRowHeaderRenderer
+
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCMenuItem
-import org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable.CustomTableModel
+import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 import com.ulcjava.base.application.table.ULCTableColumn
+import org.pillarone.riskanalytics.application.ui.resultnavigator.view.OutputElementTable
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -183,17 +187,7 @@ public class CustomTable extends ULCTable {
                 int colIndexStart = CustomTable.this.getSelectedColumn();
                 int colIndexEnd = CustomTable.this.getColumnModel().getSelectionModel().getMaxSelectionIndex();
 
-
-
                 StringBuilder sb = new StringBuilder()
-                /*for (int row = rowIndexStart; row <= rowIndexEnd; row++) {
-                    for (int col = colIndexStart; col <= colIndexEnd; col++) {
-                        if (CustomTable.this.isCellSelected(row, col)) {
-                            sb.append (CustomTableHelper.getColString(col+1) + (row+1).toString() + ";")
-                        }
-                    }
-                }
-                sb.deleteCharAt(sb.length()-1)*/
 
                 if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount-1) sb.append (CustomTableHelper.getColString(colIndexStart+1))
                 if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount-1) sb.append ((rowIndexStart+1).toString())
@@ -204,9 +198,20 @@ public class CustomTable extends ULCTable {
                 CustomTable.this.customTableView.cellEditTextField.insertData (sb.toString())
 
             } else {
-                // If the selectDataMode is off
-                // set the Value of the cell into the cellEditTextField
-                CustomTable.this.customTableView.cellEditTextField.setText (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+                Object cellData = CustomTable.this.customTableModel.getDataAt (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+
+                if (cellData instanceof OutputElement) {
+                    CustomTable.this.customTableView.cellEditTextField.setVisible(false)
+                    CustomTable.this.customTableView.dataCellEditPane.setVisible(true)
+                    CustomTable.this.customTableView.dataCellEditPane.setData (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+
+                } else {
+                    // If the selectDataMode is off
+                    // set the Value of the cell into the cellEditTextField
+                    CustomTable.this.customTableView.cellEditTextField.setVisible(true)
+                    CustomTable.this.customTableView.dataCellEditPane.setVisible(false)
+                    CustomTable.this.customTableView.cellEditTextField.setText (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+                }
             }
         }
     }
@@ -218,10 +223,11 @@ public class CustomTable extends ULCTable {
     public class MyTransferHandler extends TransferHandler {
         @Override
         public boolean importData(ULCComponent ulcComponent, Transferable transferable) {
-            Object transferData = transferable.getTransferData(DataFlavor.DRAG_FLAVOR)
+            Object dragData = transferable.getTransferData(DataFlavor.DRAG_FLAVOR)
+            Object dropData = transferable.getTransferData(DataFlavor.DROP_FLAVOR)
 
-            if (transferData instanceof DnDTableTreeData) {
-                TreePath[] treePaths = ((DnDTableTreeData)transferable.getTransferData(DataFlavor.DRAG_FLAVOR)).getTreePaths()
+            if (dragData instanceof DnDTableTreeData) {
+                TreePath[] treePaths = ((DnDTableTreeData)dragData).getTreePaths()
 
                 for (TreePath treePath in treePaths) {
                     /*PreviewNode node = (PreviewNode)treePath.getLastPathComponent();
@@ -241,11 +247,34 @@ public class CustomTable extends ULCTable {
                     pivotModel.customTableModel.setValueAt(node.getValueAt(1), rowIndex, colIndex)   */
                 }
 
-            } else if (transferData instanceof DnDTableData) {
+            } else if (dragData instanceof DnDTableData) {
 
-                ULCTable table = ((DnDTableData)transferable.getTransferData(DataFlavor.DRAG_FLAVOR)).getTable()
-                if (customTableView.resultNavigator != null) {
-                    return true;
+
+                OutputElementTable table = ((DnDTableData)dragData).getTable()
+                OutputElementTableModel tableModel = table.getModel()
+
+                int rowToInsert = ((DnDTableData)dropData).getSelectedRows()[0]
+                int colToInsert = ((DnDTableData)dropData).getSelectedColumns()[0]
+                for (int row : table.getSelectedRows()) {
+                    OutputElement outputElement = tableModel.getRowElement(row)
+
+                    CustomTable.this.customTableModel.setValueAt (outputElement, rowToInsert++, colToInsert)
+
+                    if (rowToInsert >= CustomTable.this.rowCount) {
+                        rowToInsert = 0
+                        colToInsert++
+
+                        if (colToInsert >= CustomTable.this.columnCount) {
+                            colToInsert = 0
+                        }
+                    }
+                }
+            }
+        }
+
+//                ULCTable table = ((DnDTableData)transferable.getTransferData(DataFlavor.DRAG_FLAVOR)).getTable()
+//                if (customTableView.resultNavigator != null) {
+//                    return true;
                     // TODO: simRun property in ResultNavigator
 //                    SimulationRun simRun = customTableView.resultNavigator.simRun
 //
@@ -274,11 +303,11 @@ public class CustomTable extends ULCTable {
 //
 //                        pivotModel.customTableModel.addRow ([mean], "")
 //                    }
-                }
-            }
-
-            return true
-        }
+//                }
+//            }
+//
+//            return true
+//        }
 
         @Override
         public void exportDone(ULCComponent ulcComponent, Transferable transferable, int i) {

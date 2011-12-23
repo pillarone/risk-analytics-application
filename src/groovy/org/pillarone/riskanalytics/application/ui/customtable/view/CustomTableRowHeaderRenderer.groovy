@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.pivot.model.CustomTable
+package org.pillarone.riskanalytics.application.ui.customtable.view
 
 import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.IListCellRenderer
@@ -6,11 +6,8 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.table.ULCTableHeader
 import com.ulcjava.base.application.ULCList
 import com.ulcjava.base.application.IRendererComponent
-import com.ulcjava.base.application.border.ULCAbstractBorder
-import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.util.Color
-import com.ulcjava.base.application.border.ULCBevelBorder
 
+import com.ulcjava.base.application.BorderFactory
 
 class CustomTableRowHeaderRenderer extends ULCLabel implements IListCellRenderer {
     public CustomTableRowHeaderRenderer (ULCTable table) {

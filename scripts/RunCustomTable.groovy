@@ -19,7 +19,7 @@ target(runCustomTable: "The application start target") {
         GrailsApplication app = (GrailsApplication) ctx.getBean(GrailsApplication.APPLICATION_ID);
         new GroovyShell(app.classLoader, new Binding(app: app, ctx: ctx)).evaluate '''
             import org.codehaus.groovy.grails.web.context.GrailsConfigUtils
-            import org.pillarone.riskanalytics.application.ui.pivot.StandaloneCustomTableLauncher
+            import org.pillarone.riskanalytics.application.ui.customtable.StandaloneCustomTableLauncher
 
             GrailsConfigUtils.executeGrailsBootstraps(app,ctx,null)
             StandaloneCustomTableLauncher.launch()
