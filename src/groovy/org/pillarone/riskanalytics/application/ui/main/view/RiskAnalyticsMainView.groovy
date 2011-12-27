@@ -19,10 +19,14 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
+import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
+import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
 
 class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
-    private ULCBoxPane content
+    public static final String DEFAULT_CARD_NAME = "Main"
+    
+    ULCCardPane content
     private ULCBoxPane treePane
     private ULCCardPane modelPane
 
@@ -42,7 +46,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void initComponents() {
-        content = new ULCBoxPane(2, 0)
+        content = new ULCCardPane()
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
         cardPaneManager = new CardPaneManager(modelPane, mainModel)
@@ -73,9 +77,20 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         mainModel.switchActions << validationSwitchButton
         selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, validationSwitchButton);
 
-        content.add(2, ULCBoxPane.BOX_EXPAND_TOP, headerView.content)
-        content.add(ULCBoxPane.BOX_LEFT_TOP, selectionSwitchPane)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
+        ULCBoxPane mainCard = new ULCBoxPane(2,0)
+
+        mainCard.add(2, ULCBoxPane.BOX_EXPAND_TOP, headerView.content)
+        mainCard.add(ULCBoxPane.BOX_LEFT_TOP, selectionSwitchPane)
+        mainCard.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane)
+
+        content.addCard(DEFAULT_CARD_NAME, mainCard)
+        headerView.addWindowMenuEntry(DEFAULT_CARD_NAME, content, true)
+        WindowRegistry.allWindows.each { String key, ComponentCreator value ->
+            content.addCard(key, value.createComponent(mainModel.applicationContext))
+            headerView.addWindowMenuEntry(key, content, false)
+        }
+        headerView.windowMenu.addSeparator()
+        content.setSelectedName(DEFAULT_CARD_NAME)
     }
 
     void attachListeners() {
@@ -127,10 +142,6 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     ULCMenuBar getMenuBar() {
         return headerView.menuBar
-    }
-
-    ULCBoxPane getContent() {
-        return content
     }
 
     void itemChanged(ModellingItem item) {

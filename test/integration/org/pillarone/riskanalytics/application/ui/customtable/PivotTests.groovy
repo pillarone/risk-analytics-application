@@ -60,6 +60,6 @@ class PivotTests extends AbstractSimpleFunctionalTest {
 
     void testFrame() {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        sleep 1800000
+        sleep 10000
     }
 }

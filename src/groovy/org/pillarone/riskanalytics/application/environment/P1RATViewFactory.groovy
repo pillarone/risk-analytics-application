@@ -16,12 +16,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.user.UserManagement
+import com.ulcjava.applicationframework.application.ApplicationContext
 
 abstract class P1RATViewFactory implements UlcViewFactory {
 
     private Log LOG = LogFactory.getLog(P1RATViewFactory)
 
-    public ULCRootPane create() {
+    public ULCRootPane create(ApplicationContext context) {
         LOG.info "Started session for user '${UserManagement.currentUser?.username}'"
         try {
             MDC.put("username", UserManagement.currentUser?.username)
@@ -34,14 +35,17 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         ULCClipboard.install()
         ULCRootPane frame = createRootPane()
 
-        RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel())
+        RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel(applicationContext: context))
         mainView.init()
         frame.setMenuBar(mainView.getMenuBar())
-        frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.getContent(), ULCBoxPane.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
+        frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.content, ULCBoxPane.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
         UIUtils.setRootPane(frame)
         return frame
     }
 
     abstract protected ULCRootPane createRootPane()
+
+    void stop() {
+    }
 
 }

@@ -16,8 +16,9 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import com.ulcjava.applicationframework.application.Application
 
-class P1RATApplication extends AbstractApplication {
+class P1RATApplication extends Application {
 
     private static Log LOG = LogFactory.getLog(P1RATApplication)
 
@@ -25,7 +26,7 @@ class P1RATApplication extends AbstractApplication {
     RiskAnalyticsMainModel mainModel
     public static boolean CLOSE_WINDOW = false
 
-    public void start() {
+    protected void startup() {
         ClientContext.sendMessage("hideSplash");
         if (UserContext.isStandAlone()) {
             try {
@@ -41,7 +42,7 @@ class P1RATApplication extends AbstractApplication {
 
     public void initMainView() {
         //init RiskAnalyticsMainModel after login
-        mainModel = new RiskAnalyticsMainModel()
+        mainModel = new RiskAnalyticsMainModel(applicationContext: getContext())
         mainFrame.defaultCloseOperation = ULCFrame.DO_NOTHING_ON_CLOSE
         mainFrame.size = new Dimension(1000, 750)
         mainFrame.minimumSize = new Dimension(800, 600)

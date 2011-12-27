@@ -57,6 +57,7 @@ class HeaderView extends AbstractView {
     ULCMenuItem aboutItem
     ULCMenuItem settingsMenu
     ULCButtonGroup windowMenuItemGroup
+    ULCButtonGroup extensionMenuItemGroup
     //buttons
     ULCButton saveButton
     ULCButton refreshButton
@@ -185,7 +186,9 @@ class HeaderView extends AbstractView {
             new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content)).visible = true
         }] as IActionListener)
         windowMenu.add(settingsMenu)
+        windowMenu.addSeparator()
         windowMenuItemGroup = new ULCButtonGroup()
+        extensionMenuItemGroup = new ULCButtonGroup()
 
 
         menuBar.add(fileMenu)
@@ -253,6 +256,13 @@ class HeaderView extends AbstractView {
         windowMenu.add(item)
         windowMenus[name] = item
 
+    }
+
+    void addWindowMenuEntry(String title, ULCCardPane cardPane, boolean selected) {
+        ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new MainCardSelectionAction(title, cardPane))
+        item.selected = selected
+        item.setGroup(extensionMenuItemGroup)
+        windowMenu.add(item)
     }
 
 

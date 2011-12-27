@@ -29,6 +29,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
+import com.ulcjava.applicationframework.application.ApplicationContext
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
 
@@ -44,6 +45,8 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public static boolean deleteActionIsRunning = false
     static final Logger LOG = Logger.getLogger(RiskAnalyticsMainModel)
+
+    ApplicationContext applicationContext
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
