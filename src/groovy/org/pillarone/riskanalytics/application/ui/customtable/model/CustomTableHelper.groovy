@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.customtable.model
 
 import java.util.regex.Pattern
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 static class CustomTableHelper {
     public static Pattern variable_pattern = ~/[A-Z]+[0-9]+/
@@ -9,7 +10,7 @@ static class CustomTableHelper {
     public static Pattern row_pattern = ~/[0-9]+/
 
     public static String replaceVariables (CustomTableModel model, String formula, int cellRow, int cellCol) {
-        formula = formula.replaceAll ('$', '')
+        formula = formula.replace ('$', '')
 
         // Check for Ranges, and replace the Range with the corresponding values
         for (String s : range_pattern.matcher(formula)) {
@@ -30,6 +31,9 @@ static class CustomTableHelper {
             StringBuilder range = new StringBuilder()
             for (int col = first_col; col <= last_col; col++) {
                 for (int row = first_row; row <= last_row; row++) {
+
+                    // TODO: don't insert if cell doesn't exist
+
                     if (row == cellRow && col == cellCol) {
                         System.out.println ("Zirkelbezug")
                         continue
@@ -49,11 +53,13 @@ static class CustomTableHelper {
 
         // Check for other variables and replace them with their value
         for (String variable : variable_pattern.matcher(formula)) {
-            String col_string = col_pattern.matcher(variable)[0];
-            String row_string = row_pattern.matcher(variable)[0];
+            String col_string = col_pattern.matcher(variable)[0]
+            String row_string = row_pattern.matcher(variable)[0]
 
             int col = (col_string != null) ? CustomTableHelper.getColNo(col_string)-1 : 0
             int row = (row_string != null) ? Integer.parseInt(row_string)-1 : 0
+
+            // TODO: don't insert if cell doesn't exist
 
             if (row == cellRow && col == cellCol) {
                 System.out.println ("Zirkelbezug")
@@ -100,6 +106,68 @@ static class CustomTableHelper {
         }
 
         return formula
+    }
+
+
+    public static Pattern variable_dollar_pattern = ~/[$]?[A-Z]+[$]?[0-9]+/
+    public static Pattern col_dollar_pattern = ~/[$]?[A-Z]+/
+    public static Pattern row_dollar_pattern = ~/[$]?[0-9]+/
+
+    public static Object copyData (Object data, int row_diff, int col_diff) {
+
+        if (data instanceof OutputElement) {
+            // clone the outputElement
+            OutputElement outputElement = new OutputElement (data)
+
+            for (String category : outputElement.categoryMap.keySet()) {
+                String value = outputElement.categoryMap[category]
+
+                if (value ==~ variable_dollar_pattern) {
+                    String col_string = col_dollar_pattern.matcher(value)[0]
+                    String row_string = row_dollar_pattern.matcher(value)[0]
+
+                    if (col_diff != 0 && col_string.startsWith('$') == false) {
+                        int col = (col_string != null) ? CustomTableHelper.getColNo(col_string.replace('$', ''))-1 : 0
+                        col_string = col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
+                    }
+
+                    if (row_diff != 0 && row_string.startsWith('$') == false) {
+                        int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
+                        row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
+                    }
+                    outputElement.categoryMap[category] = col_string + row_string
+                }
+            }
+            return outputElement
+        }
+
+        if (data instanceof String) {
+            String formula = data
+
+            if (formula.startsWith("=")) {
+
+                 // Check for variables
+                for (String variable : variable_dollar_pattern.matcher(formula)) {
+                    String col_string = col_dollar_pattern.matcher(variable)[0]
+                    String row_string = row_dollar_pattern.matcher(variable)[0]
+
+                    if (col_diff != 0 && col_string.startsWith('$') == false) {
+                        int col = (col_string != null) ? CustomTableHelper.getColNo(col_string.replace('$', ''))-1 : 0
+                        col_string = col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
+                    }
+
+                    if (row_diff != 0 && row_string.startsWith('$') == false) {
+                        int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
+                        row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
+                    }
+                    formula = formula.replace (variable, col_string + row_string)
+                }
+
+                return formula
+            }
+        }
+
+        return data
     }
 
     /**

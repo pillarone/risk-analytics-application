@@ -4,8 +4,6 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.dnd.TransferHandler
 import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.dnd.DnDTableTreeData
-import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.dnd.DnDTableData
 import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.event.IListSelectionListener
@@ -27,7 +25,12 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.OutputElementTable
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import com.ulcjava.base.application.event.IKeyListener
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.IRendererComponent
+import com.ulcjava.base.application.table.DefaultTableCellRenderer
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.BorderFactory
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -43,8 +46,8 @@ public class CustomTablePane extends ULCScrollPane {
      *
      * @param customTable the CustomTable
      */
-    public CustomTablePane (CustomTable customTable) {
-        super (customTable)
+    public CustomTablePane(CustomTable customTable) {
+        super(customTable)
 
         this.customTable = customTable
 
@@ -119,7 +122,7 @@ public class CustomTablePane extends ULCScrollPane {
         customTable.getTableHeader().addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 if (actionEvent.modifiers == ActionEvent.META_MASK) {
-                    lastLeftClickedColumn = (ULCTableColumn)actionEvent.source
+                    lastLeftClickedColumn = (ULCTableColumn) actionEvent.source
                 }
             }
         })
@@ -132,8 +135,10 @@ public class CustomTablePane extends ULCScrollPane {
  * @author ivo.nussbaumer
  */
 public class CustomTable extends ULCTable {
-    private CustomTableView  customTableView
+    private CustomTableView customTableView
     private CustomTableModel customTableModel
+
+    private List<CopyCellData> copyData = new LinkedList<CopyCellData>()
 
     /**
      * Constructor
@@ -141,8 +146,8 @@ public class CustomTable extends ULCTable {
      * @param customTableModel the CustomTableModel
      * @param pivotView the CustomTableView which contains the CustomTable
      */
-    public CustomTable (CustomTableModel customTableModel, CustomTableView customTableView) {
-        super (customTableModel)
+    public CustomTable(CustomTableModel customTableModel, CustomTableView customTableView) {
+        super(customTableModel)
         this.customTableModel = customTableModel
         this.customTableView = customTableView
         initTable()
@@ -159,9 +164,11 @@ public class CustomTable extends ULCTable {
         this.setPreferredScrollableViewportSize(new Dimension(300, 300))
         ClientContext.setModelUpdateMode(customTableModel, UlcEventConstants.SYNCHRONOUS_MODE);
         this.setTransferHandler(new MyTransferHandler())
+        this.setAutoResizeMode(ULCTable.AUTO_RESIZE_OFF)
+//        this.setDefaultRenderer(Object, new CustomTableCellRenderer())
 
         // listen if the user press the Enter-Key, and sets the focus to the cellEditTextField
-        this.addActionListener(new IActionListener(){
+        this.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 CustomTable.this.customTableView.cellEditTextField.requestFocus()
             }
@@ -171,14 +178,82 @@ public class CustomTable extends ULCTable {
         CellChangedListener cellChangedListener = new CellChangedListener()
         this.getSelectionModel().addListSelectionListener(cellChangedListener)
         this.getColumnModel().getSelectionModel().addListSelectionListener(cellChangedListener)
+
+        // TODO: Listener funktioniert mit Ctrl nicht
+        this.setEnabled(true)
+        this.addKeyListener(new IKeyListener() {
+            void keyTyped(KeyEvent keyEvent) {
+
+                if (keyEvent.shiftDown) {
+
+                    // copy
+                    if (keyEvent.keyChar == KeyEvent.VK_C || keyEvent.keyChar == KeyEvent.VK_X) {
+                        copyData.clear()
+
+                        int min_row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
+                        int max_row = CustomTable.this.getSelectionModel().getMaxSelectionIndex()
+                        int min_col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
+                        int max_col = CustomTable.this.getColumnModel().getSelectionModel().getMaxSelectionIndex()
+
+                        for (int row = min_row; row <= max_row; row++) {
+                            for (int col = min_col; col <= max_col; col++) {
+                                copyData.add(new CopyCellData(row, col, CustomTable.this.customTableModel.getDataAt(row, col)))
+
+                                // cut
+                                if (keyEvent.keyChar == KeyEvent.VK_X) {
+                                    CustomTable.this.customTableModel.setValueAt("", row, col)
+                                }
+                            }
+                        }
+
+                    }
+
+                    // paste
+                    if (keyEvent.keyChar == KeyEvent.VK_V) {
+                        int row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
+                        int col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
+
+                        int last_origin_row = null
+                        int last_origin_col = null
+
+                        for (CopyCellData copyCellData: copyData) {
+                            if (last_origin_row != null && last_origin_col != null) {
+                                row += copyCellData.origin_row - last_origin_row
+                                col += copyCellData.origin_col - last_origin_col
+                            }
+
+                            Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
+                            CustomTable.this.customTableModel.setValueAt(data, row, col)
+
+                            last_origin_row = copyCellData.origin_row
+                            last_origin_col = copyCellData.origin_col
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    /**
+     * Class which contains the data for a copy-operation
+     */
+    private class CopyCellData {
+        public int origin_row
+        public int origin_col
+        public Object data
+
+        public CopyCellData(int origin_row, int origin_col, Object data) {
+            this.origin_row = origin_row
+            this.origin_col = origin_col
+            this.data = data
+        }
     }
 
     /**
      * CellChangedListener for the CustomTable
      */
-    public class CellChangedListener implements IListSelectionListener {
+    private class CellChangedListener implements IListSelectionListener {
         void valueChanged(ListSelectionEvent listSelectionEvent) {
-
             if (CustomTable.this.customTableView.cellEditTextField.selectDataMode) {
                 // If selectDataMode is on
                 // get the selected Cells, and insert them in the CellEditTextField
@@ -189,76 +264,54 @@ public class CustomTable extends ULCTable {
 
                 StringBuilder sb = new StringBuilder()
 
-                if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount-1) sb.append (CustomTableHelper.getColString(colIndexStart+1))
-                if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount-1) sb.append ((rowIndexStart+1).toString())
-                sb.append (":")
-                if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount-1) sb.append (CustomTableHelper.getColString(colIndexEnd+1))
-                if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount-1) sb.append ((rowIndexEnd+1).toString())
+                if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount - 1) sb.append(CustomTableHelper.getColString(colIndexStart + 1))
+                if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount - 1) sb.append((rowIndexStart + 1).toString())
+                sb.append(":")
+                if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount - 1) sb.append(CustomTableHelper.getColString(colIndexEnd + 1))
+                if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount - 1) sb.append((rowIndexEnd + 1).toString())
 
-                CustomTable.this.customTableView.cellEditTextField.insertData (sb.toString())
+                CustomTable.this.customTableView.cellEditTextField.insertData(sb.toString())
 
             } else {
-                Object cellData = CustomTable.this.customTableModel.getDataAt (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+                Object cellData = CustomTable.this.customTableModel.getDataAt(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 if (cellData instanceof OutputElement) {
                     CustomTable.this.customTableView.cellEditTextField.setVisible(false)
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(true)
-                    CustomTable.this.customTableView.dataCellEditPane.setData (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+                    CustomTable.this.customTableView.dataCellEditPane.setData(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 } else {
                     // If the selectDataMode is off
                     // set the Value of the cell into the cellEditTextField
                     CustomTable.this.customTableView.cellEditTextField.setVisible(true)
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(false)
-                    CustomTable.this.customTableView.cellEditTextField.setText (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+                    CustomTable.this.customTableView.cellEditTextField.setText(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
                 }
             }
         }
     }
 
-
     /**
      * TransferHandler for DnD for the CustomTable, to import Data from the PreviewTree
      */
-    public class MyTransferHandler extends TransferHandler {
+    private class MyTransferHandler extends TransferHandler {
         @Override
         public boolean importData(ULCComponent ulcComponent, Transferable transferable) {
             Object dragData = transferable.getTransferData(DataFlavor.DRAG_FLAVOR)
             Object dropData = transferable.getTransferData(DataFlavor.DROP_FLAVOR)
 
-            if (dragData instanceof DnDTableTreeData) {
-                TreePath[] treePaths = ((DnDTableTreeData)dragData).getTreePaths()
-
-                for (TreePath treePath in treePaths) {
-                    /*PreviewNode node = (PreviewNode)treePath.getLastPathComponent();
-
-                    String colString = node.getValueAt(0)
-                    int colIndex = pivotModel.customTableModel.columnHeaderData.get (colString)
-                    if (colIndex == null) {
-                        colIndex = pivotModel.customTableModel.addCol (colString, true)
-                    }
-
-                    String rowString = node.parent.getPathString()
-                    int rowIndex = pivotModel.customTableModel.rowHeaderData.get(rowString)
-                    if (rowIndex == null) {
-                        rowIndex = pivotModel.customTableModel.addRow ([], rowString, true)
-                    }
-
-                    pivotModel.customTableModel.setValueAt(node.getValueAt(1), rowIndex, colIndex)   */
-                }
-
-            } else if (dragData instanceof DnDTableData) {
+            if (dragData instanceof DnDTableData) {
 
 
-                OutputElementTable table = ((DnDTableData)dragData).getTable()
+                OutputElementTable table = ((DnDTableData) dragData).getTable()
                 OutputElementTableModel tableModel = table.getModel()
 
-                int rowToInsert = ((DnDTableData)dropData).getSelectedRows()[0]
-                int colToInsert = ((DnDTableData)dropData).getSelectedColumns()[0]
-                for (int row : table.getSelectedRows()) {
+                int rowToInsert = ((DnDTableData) dropData).getSelectedRows()[0]
+                int colToInsert = ((DnDTableData) dropData).getSelectedColumns()[0]
+                for (int row: table.getSelectedRows()) {
                     OutputElement outputElement = tableModel.getRowElement(row)
 
-                    CustomTable.this.customTableModel.setValueAt (outputElement, rowToInsert++, colToInsert)
+                    CustomTable.this.customTableModel.setValueAt(outputElement, rowToInsert++, colToInsert)
 
                     if (rowToInsert >= CustomTable.this.rowCount) {
                         rowToInsert = 0
@@ -272,45 +325,38 @@ public class CustomTable extends ULCTable {
             }
         }
 
-//                ULCTable table = ((DnDTableData)transferable.getTransferData(DataFlavor.DRAG_FLAVOR)).getTable()
-//                if (customTableView.resultNavigator != null) {
-//                    return true;
-                    // TODO: simRun property in ResultNavigator
-//                    SimulationRun simRun = customTableView.resultNavigator.simRun
-//
-//                    for (int row : table.getSelectedRows()) {
-//
-//                        List<Object> data = new LinkedList<Object>()
-//                        for (int col = 0; col < table.columnCount; col++)
-//                            data.add (table.getValueAt(row, col))
-//
-//                        String path_field = data[0]
-//
-//                        int periodIndex = 0
-//                        String pathName = path_field.split("__")[0]
-//                        String collectorName = "AGGREGATED"
-//                        String fieldName = path_field.split("__")[1]
-//
-//                        double mean = ResultAccessor.getMean (simRun, periodIndex, pathName, collectorName, fieldName)
-//                        if (mean == Double.NaN) {
-//                            collectorName = "AGGREGATED_DRILL_DOWN"
-//                            mean = ResultAccessor.getMean (simRun, periodIndex, pathName, collectorName, fieldName)
-//                        }
-//
-//                        if (pivotModel.customTableModel.getColumnCount() < 1) {
-//                            pivotModel.customTableModel.addCol ("Mean")
-//                        }
-//
-//                        pivotModel.customTableModel.addRow ([mean], "")
-//                    }
-//                }
-//            }
-//
-//            return true
-//        }
-
         @Override
         public void exportDone(ULCComponent ulcComponent, Transferable transferable, int i) {
+        }
+    }
+
+    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
+        IRendererComponent getTableCellRendererComponent(ULCTable ulcTable, Object value, boolean isSelected, boolean hasFocus, int row) {
+
+            if (CustomTable.this.customTableView.cellEditTextField.selectDataMode) {
+                if (isSelected) {
+                    this.setBorder(BorderFactory.createLineBorder(Color.red))
+
+                } else if (hasFocus) {
+                    this.setBorder(BorderFactory.createLineBorder(Color.blue))
+
+                } else {
+//                    this.setBorder(BorderFactory.createLineBorder(Color.green))
+                    this.setBorder(BorderFactory.createEmptyBorder())
+                }
+            } else {
+                if (isSelected) {
+                    this.setBorder(BorderFactory.createLineBorder(Color.yellow))
+
+                } else if (hasFocus) {
+                    this.setBorder(BorderFactory.createLineBorder(Color.orange))
+
+                } else {
+//                    this.setBorder(BorderFactory.createLineBorder(Color.magenta))
+                    this.setBorder(BorderFactory.createEmptyBorder())
+                }
+            }
+            return this
         }
     }
 }

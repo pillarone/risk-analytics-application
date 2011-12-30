@@ -5,21 +5,27 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import org.pillarone.riskanalytics.application.ui.customtable.view.CustomTableView
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
+import com.ulcjava.testframework.operator.ULCTableOperator
+import com.ulcjava.testframework.operator.ULCButtonOperator
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.testframework.operator.ULCTextFieldOperator
+import com.ulcjava.testframework.operator.ULCComponentOperator
 
 
 class PivotTests extends AbstractSimpleFunctionalTest {
-
+    CustomTableView      customTableView
 
     @Override
     protected void doStart() {
         ULCFrame frame = new ULCFrame("test")
 
-        CustomTableView view = new CustomTableView()
-        view.parent = frame
+        customTableView = new CustomTableView()
+        customTableView.parent = frame
 
         frame.setSize(800, 600)
-        frame.setContentPane(view.content)
+        frame.setContentPane(customTableView.content)
         frame.visible = true
+
     }
 
 
@@ -39,8 +45,9 @@ class PivotTests extends AbstractSimpleFunctionalTest {
         assert CustomTableHelper.getColNo("ABA") == 729
         assert CustomTableHelper.getColNo("ABB") == 730
         assert CustomTableHelper.getColNo("ABC") == 731
+    }
 
-
+    void testColString() {
         assert CustomTableHelper.getColString(1) == "A"
         assert CustomTableHelper.getColString(2) == "B"
         assert CustomTableHelper.getColString(3) == "C"
@@ -58,8 +65,59 @@ class PivotTests extends AbstractSimpleFunctionalTest {
         assert CustomTableHelper.getColString(731) == "ABC"
     }
 
-    void testFrame() {
-        ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        sleep 10000
+    void testCopyData () {
+        assert CustomTableHelper.copyData ("=SUM(A1;A2;A3)", 0, 1) == "=SUM(B1;B2;B3)"
+        assert CustomTableHelper.copyData ("=SUM(A1;B1;C1)", 1, 0) == "=SUM(A2;B2;C2)"
+        assert CustomTableHelper.copyData ("=SUM(A1;B1;C1)", 1, 1) == "=SUM(B2;C2;D2)"
+
+        assert CustomTableHelper.copyData ("=SUM(A1;A2;A3)", 0, 2) == "=SUM(C1;C2;C3)"
+        assert CustomTableHelper.copyData ("=SUM(A1;B1;C1)", 2, 0) == "=SUM(A3;B3;C3)"
+        assert CustomTableHelper.copyData ("=SUM(A1;B1;C1)", 2, 2) == "=SUM(C3;D3;E3)"
+
+        assert CustomTableHelper.copyData ("=SUM(\$A1;A\$2;A3)", 0, 1) == "=SUM(\$A1;B\$2;B3)"
+        assert CustomTableHelper.copyData ("=SUM(A\$1;\$B1;C1)", 1, 0) == "=SUM(A\$1;\$B2;C2)"
+        assert CustomTableHelper.copyData ("=SUM(\$A\$1;\$B1;C\$1)", 1, 1) == "=SUM(\$A\$1;\$B2;D\$1)"
     }
+
+    void testFrame() {
+        ULCButtonOperator    insertRowButton    = new ULCButtonOperator(customTableView.newRowButton)
+        ULCButtonOperator    insertColButton    = new ULCButtonOperator(customTableView.newColButton)
+        ULCTableOperator     table              = new ULCTableOperator(customTableView.customTable)
+//        ULCTextFieldOperator cellEditTextField  = new ULCTextFieldOperator(customTableView.cellEditTextField)
+//        ULCComponentOperator dataCellEditPane   = new ULCComponentOperator(customTableView.dataCellEditPane)
+
+        // Test insert Row
+        assert table.rowCount == 0
+        insertRowButton.clickMouse()
+        assert table.rowCount == 1
+        insertRowButton.clickMouse(3)
+        assert table.rowCount == 4
+
+        // Test insert Col
+        assert table.columnCount == 0
+        insertColButton.clickMouse()
+        assert table.columnCount == 1
+        insertColButton.clickMouse(3)
+        assert table.columnCount == 4
+
+        // Insert data test
+//        setTextOnCell(0,0,"10")
+//        setTextOnCell(1,0,"20")
+//        setTextOnCell(2,0,"30")
+//        setTextOnCell(0,1,"=SUM(A1:A3)")
+
+//        sleep 10000
+    }
+
+//    private setTextOnCell (int row, int col, String text) {
+//        table.selectCell(row,col)
+//        assert cellEditTextField.isVisible() == true
+//        assert dataCellEditPane.isVisible() == false
+//        assert cellEditTextField.hasFocus() == false
+//        table.pressKey (KeyEvent.VK_ENTER)
+//        assert cellEditTextField.hasFocus() == true
+//        cellEditTextField.enterText(text)
+//        cellEditTextField.pressKey (KeyEvent.VK_ENTER)
+//        assert table.getValueAt(row,col) == text
+//    }
 }

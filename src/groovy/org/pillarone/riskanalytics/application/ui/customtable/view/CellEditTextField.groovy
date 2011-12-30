@@ -31,7 +31,7 @@ public class CellEditTextField extends ULCTextField {
         this.addKeyListener(new IKeyListener() {
             void keyTyped(KeyEvent keyEvent) {
                 if (keyEvent.keyChar == "=" || CellEditTextField.this.text == "=") {
-                    selectDataMode = true;
+                    selectDataMode = true
                 }
             }
         })
@@ -74,7 +74,6 @@ public class CellEditTextField extends ULCTextField {
                 } else {
                     CellEditTextField.this.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
                 }
-
             }
         })
     }

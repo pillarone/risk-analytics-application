@@ -11,6 +11,7 @@ import com.ulcjava.base.application.ULCToolBar
 import org.pillarone.riskanalytics.application.ui.resultnavigator.StandaloneResultNavigator
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
+import com.ulcjava.base.application.util.Color
 
 /**
  * The View which contains the CustomTable, and its other elements (cellEditTextField)
@@ -22,11 +23,15 @@ public class CustomTableView {
     private ULCBoxPane content
     private CustomTableModel customTableModel
 
-    private CustomTable customTable
+    public CustomTable customTable
     private ResultNavigator resultNavigator
 
-    private CellEditTextField cellEditTextField
-    private DataCellEditPane dataCellEditPane
+    public CellEditTextField cellEditTextField
+    public DataCellEditPane dataCellEditPane
+
+    public ULCButton newRowButton
+    public ULCButton newColButton
+    public ULCCheckBox editModeButton
 
     /**
      * Constructor
@@ -93,7 +98,7 @@ public class CustomTableView {
         // EditMode checkBox
         ULCBoxPane customTableButtonPane = new ULCBoxPane (false)
 
-        ULCCheckBox editModeButton = new ULCCheckBox("Edit Mode")
+        editModeButton = new ULCCheckBox("Edit Mode")
         editModeButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 customTableModel.editMode = editModeButton.isSelected()
@@ -102,7 +107,7 @@ public class CustomTableView {
         })
         customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, editModeButton)
 
-        ULCButton newRowButton = new ULCButton("Insert Row")
+        newRowButton = new ULCButton("Insert Row")
         newRowButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 customTableModel.addRow([])
@@ -110,7 +115,7 @@ public class CustomTableView {
         })
         customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newRowButton)
 
-        ULCButton newColButton = new ULCButton("Insert Column")
+        newColButton = new ULCButton("Insert Column")
         newColButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 customTableModel.addCol ()
