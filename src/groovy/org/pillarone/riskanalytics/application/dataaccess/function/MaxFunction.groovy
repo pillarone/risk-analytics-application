@@ -10,7 +10,7 @@ class MaxFunction extends AbstractResultFunction {
     public static final String MAX = "Max"
 
     @Override
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getMax(simulationRun, periodIndex, node.path, node.collector, node.field)
 
     }

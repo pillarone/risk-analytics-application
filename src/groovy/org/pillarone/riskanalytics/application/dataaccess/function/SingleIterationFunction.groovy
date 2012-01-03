@@ -24,7 +24,7 @@ class SingleIterationFunction extends AbstractResultFunction implements IParamet
         return ITERATION
     }
 
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getUltimatesForOneIteration(simulationRun, periodIndex, node.path, node.collector, node.field, iteration)
     }
 

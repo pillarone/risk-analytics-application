@@ -21,7 +21,7 @@ class VarFunction extends AbstractQuantilePerspectiveBasedFunction<Double> {
     }
 
     @Override
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getVar(simulationRun, periodIndex, node.path, node.collector, node.field, varValue, quantilePerspective)
     }
 

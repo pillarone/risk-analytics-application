@@ -25,7 +25,7 @@ class PercentileFunction extends AbstractQuantilePerspectiveBasedFunction<Double
         return PERCENTILE
     }
 
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getPercentile(simulationRun, periodIndex, node.path, node.collector, node.field, percentile, quantilePerspective)
     }
 
