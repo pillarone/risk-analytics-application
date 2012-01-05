@@ -87,7 +87,7 @@ class ModellingItemSearchService {
             for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
                 indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResultConfiguration(dao)))
             }
-            for (SimulationRun dao in SimulationRun.list()) {
+            for (SimulationRun dao in SimulationRun.list().findAll { ! it.toBeDeleted }) {
                 indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
             }
         } finally {
