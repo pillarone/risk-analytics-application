@@ -46,7 +46,8 @@ static class CustomTableHelper {
                     }
                 }
             }
-            range.deleteCharAt(range.length()-1)
+            if (range.toString().endsWith(";"))
+                range.deleteCharAt(range.length()-1)
 
             formula = formula.replace (s, range.toString())
         }
@@ -108,11 +109,35 @@ static class CustomTableHelper {
         return formula
     }
 
+    public static String getSpecificPathWithVariables (OutputElement outputElement, CustomTableModel customTableModel) {
+        Map<String, String> categoryMapCopy = new HashMap<String, String>()
+
+        for (String category : outputElement.categoryMap.keySet()) {
+            String value = outputElement.categoryMap[category]
+            if (value.startsWith("=")) {
+                value = customTableModel.getValueAt(value.substring(1))
+            }
+            categoryMapCopy.put (category, value)
+        }
+
+        return outputElement.getWildCardPath().getSpecificPath(categoryMapCopy)
+    }
+
 
     public static Pattern variable_dollar_pattern = ~/[$]?[A-Z]+[$]?[0-9]+/
+    public static Pattern row_range_dollar_pattern = ~/[$]?[0-9]+:[$]?[0-9]+/
+    public static Pattern col_range_dollar_pattern = ~/[$]?[A-Z]+:[$]?[A-Z]+/
     public static Pattern col_dollar_pattern = ~/[$]?[A-Z]+/
     public static Pattern row_dollar_pattern = ~/[$]?[0-9]+/
 
+    /**
+     * Changes the variables in the data to copy (OutputElement or String)
+     *
+     * @param data     the data to copy
+     * @param row_diff the difference between the origin row and the row which the data is pasted in
+     * @param col_diff the difference between the origin col and the col which the data is pasted in
+     * @return the resulting data
+     */
     public static Object copyData (Object data, int row_diff, int col_diff) {
 
         if (data instanceof OutputElement) {
@@ -122,7 +147,8 @@ static class CustomTableHelper {
             for (String category : outputElement.categoryMap.keySet()) {
                 String value = outputElement.categoryMap[category]
 
-                if (value ==~ variable_dollar_pattern) {
+                if (value.startsWith("=")) {
+                    value = value.substring(1)
                     String col_string = col_dollar_pattern.matcher(value)[0]
                     String row_string = row_dollar_pattern.matcher(value)[0]
 
@@ -135,19 +161,17 @@ static class CustomTableHelper {
                         int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
                         row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                     }
-                    outputElement.categoryMap[category] = col_string + row_string
+                    outputElement.categoryMap[category] = "=" + col_string + row_string
                 }
             }
             return outputElement
         }
 
         if (data instanceof String) {
-            String formula = data
-
-            if (formula.startsWith("=")) {
+            if (data.startsWith("=")) {
 
                  // Check for variables
-                for (String variable : variable_dollar_pattern.matcher(formula)) {
+                for (String variable : variable_dollar_pattern.matcher(data)) {
                     String col_string = col_dollar_pattern.matcher(variable)[0]
                     String row_string = row_dollar_pattern.matcher(variable)[0]
 
@@ -160,10 +184,46 @@ static class CustomTableHelper {
                         int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
                         row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                     }
-                    formula = formula.replace (variable, col_string + row_string)
+
+                    // TODO: replaces all occurrences of the variable, so if e.g. B1 was changed to B2, and the next variable is also B2, which should be changed to B3, then the first variable is also changed to B3
+                    data = data.replace (variable, col_string + row_string)
                 }
 
-                return formula
+                // Check for Row range variables
+                for (String variable : row_range_dollar_pattern.matcher(data)) {
+                    String first_row_string = variable.split (":")[0]
+                    String second_row_string = variable.split (":")[0]
+                    if (row_diff != 0) {
+                        if (first_row_string.startsWith('$') == false) {
+                            int row = (first_row_string != null) ? Integer.parseInt(first_row_string.replace('$', ''))-1 : 0
+                            first_row_string = first_row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
+                        }
+                        if (second_row_string.startsWith('$') == false) {
+                            int row = (second_row_string != null) ? Integer.parseInt(second_row_string.replace('$', ''))-1 : 0
+                            second_row_string = second_row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
+                        }
+                        data = data.replace (variable, first_row_string + ":" + second_row_string)
+                    }
+                }
+
+                // Check for Column range variables
+                for (String variable : col_range_dollar_pattern.matcher(data)) {
+                    String first_col_string = variable.split (":")[0]
+                    String second_col_string = variable.split (":")[0]
+                    if (col_diff != 0) {
+                        if (first_col_string.startsWith('$') == false) {
+                            int col = (first_col_string != null) ? CustomTableHelper.getColNo(first_col_string.replace('$', ''))-1 : 0
+                            first_col_string = first_col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
+                        }
+                        if (second_col_string.startsWith('$') == false) {
+                            int col = (second_col_string != null) ? CustomTableHelper.getColNo(second_col_string.replace('$', ''))-1 : 0
+                            second_col_string = second_col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
+                        }
+                        data = data.replace (variable, first_col_string + ":" + second_col_string)
+                    }
+                }
+
+                return data
             }
         }
 

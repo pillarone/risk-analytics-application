@@ -66,7 +66,6 @@ public class DataCellEditPane extends ULCBoxPane {
             if (wildCardValues != null) {
                 ULCLabel categoryLabel = new ULCLabel(category)
 
-
                 ULCTextField cellReferenceTextField = new ULCTextField()
                 cellReferenceTextField.setName(category)
                 cellReferenceTextField.setVisible(false)
@@ -79,8 +78,8 @@ public class DataCellEditPane extends ULCBoxPane {
 
                 String itemToSelect = outputElement.categoryMap[category]
 
-                if (itemToSelect.replace ('$', '') ==~ CustomTableHelper.variable_pattern) {
-                    cellReferenceTextField.text = itemToSelect
+                if (itemToSelect.startsWith('=')) {
+                    cellReferenceTextField.text = itemToSelect.substring(1)
                     itemToSelect = cellReferenceString
                     cellReferenceTextField.setVisible(true)
                 }
@@ -94,12 +93,14 @@ public class DataCellEditPane extends ULCBoxPane {
             }
         }
 
-        pathLabel.text = generatePath()
-
+        refreshPath()
     }
 
-    private String generatePath() {
-        StringBuilder path = new StringBuilder (outputElement.path)
+    private void refreshPath() {
+        String path = CustomTableHelper.getSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)
+
+        outputElement.path = path
+        pathLabel.text = path
     }
 
     /**
@@ -108,10 +109,9 @@ public class DataCellEditPane extends ULCBoxPane {
     private class CellReferenceChangedListener implements IActionListener {
         void actionPerformed(ActionEvent textFieldActionEvent) {
             ULCTextField textField = textFieldActionEvent.source
-            DataCellEditPane.this.outputElement.categoryMap[textField.getName()] = textField.getText()
-            System.out.println ("path: " + DataCellEditPane.this.outputElement.path)
-            System.out.println ("category: " + textField.getName())
-            System.out.println ("cell-value: " + CustomTableHelper.replaceVariables(DataCellEditPane.this.customTableModel, textField.getText(), -1, -1))
+            DataCellEditPane.this.outputElement.categoryMap[textField.getName()] = "=" + textField.getText()
+
+            DataCellEditPane.this.refreshPath()
         }
     }
 
@@ -134,10 +134,9 @@ public class DataCellEditPane extends ULCBoxPane {
 
                     // save the selected item to the outputElement
                     DataCellEditPane.this.outputElement.categoryMap[combo.getName()] = combo.selectedItem
-                }
 
-                System.out.println ("path: " + DataCellEditPane.this.outputElement.path)
-                System.out.println ("category: " + combo.getName())
+                    DataCellEditPane.this.refreshPath()
+                }
             }
         }
     }

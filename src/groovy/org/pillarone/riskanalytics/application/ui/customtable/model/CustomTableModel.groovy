@@ -163,10 +163,28 @@ public class CustomTableModel extends AbstractTableModel {
 
         Object cellData = data[row][col]
         if (editMode == true && cellData instanceof OutputElement) {
-            return "#" + ((OutputElement)cellData).path
+            return "#" + cellData.path
         }
 
         return cellData
+    }
+
+    /**
+     * Returns the value to display (resolved formula, value of a data-cell) in the table of a cell
+     *
+     * @param variable The variable, which is a excel-like String (e.g. B4)
+     * @return the value to display of the cell
+     */
+    public Object getValueAt (String variable) {
+        variable = variable.replace ('$', '')
+
+        String row_string = CustomTableHelper.row_pattern.matcher(variable)[0]
+        String col_string = CustomTableHelper.col_pattern.matcher(variable)[0]
+
+        int row = Integer.parseInt(row_string)-1
+        int col = CustomTableHelper.getColNo(col_string)-1
+
+        return getValueAt(row, col)
     }
 
     /**
@@ -189,20 +207,26 @@ public class CustomTableModel extends AbstractTableModel {
 
         // if cellData is a formula, resolve the formula
         if (cellData instanceof String) {
-            String cellString = (String)cellData
-            if (cellString.startsWith("=")) {
-                String formula = CustomTableHelper.replaceVariables (this, cellString.substring(1), row, col)
+            if (cellData.startsWith("=")) {
+                String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
                 formula = CustomTableHelper.executeFunctions (formula)
-                Object value = groovyShell.evaluate("return " + formula)
-                return value
+                try {
+                    Object value = groovyShell.evaluate("return " + formula)
+                    return value
+                } catch (Exception e) {
+                    return "#ERROR"
+                }
             }
         }
 
         // if cellData is a data-Reference, get the value from the database
         if (cellData instanceof OutputElement) {
-            OutputElement outputElement = cellData
-            double mean = ResultAccessor.getMean (outputElement.run, 0, outputElement.path, outputElement.collector, outputElement.field)
-            return mean.toString()
+            try {
+                double mean = ResultAccessor.getMean (cellData.run, 0, cellData.path, cellData.collector, cellData.field)
+                return mean.toString()
+            } catch (Exception e) {
+                return "#ERROR"
+            }
         }
 
         return cellData

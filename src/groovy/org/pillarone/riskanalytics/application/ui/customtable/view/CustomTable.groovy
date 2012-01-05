@@ -223,6 +223,10 @@ public class CustomTable extends ULCTable {
                             }
 
                             Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
+
+                            if ((data instanceof String) == false) {
+                                ((OutputElement)data).path = CustomTableHelper.getSpecificPathWithVariables(data, CustomTable.this.customTableModel)
+                            }
                             CustomTable.this.customTableModel.setValueAt(data, row, col)
 
                             last_origin_row = copyCellData.origin_row
@@ -300,15 +304,14 @@ public class CustomTable extends ULCTable {
             Object dragData = transferable.getTransferData(DataFlavor.DRAG_FLAVOR)
             Object dropData = transferable.getTransferData(DataFlavor.DROP_FLAVOR)
 
-            if (dragData instanceof DnDTableData) {
+            if (dragData instanceof DnDTableData && dropData instanceof DnDTableData) {
 
-
-                OutputElementTable table = ((DnDTableData) dragData).getTable()
+                OutputElementTable table = dragData.getTable()
                 OutputElementTableModel tableModel = table.getModel()
 
-                int rowToInsert = ((DnDTableData) dropData).getSelectedRows()[0]
-                int colToInsert = ((DnDTableData) dropData).getSelectedColumns()[0]
-                for (int row: table.getSelectedRows()) {
+                int rowToInsert = dropData.getSelectedRows()[0]
+                int colToInsert = dropData.getSelectedColumns()[0]
+                for (int row : table.getSelectedRows()) {
                     OutputElement outputElement = tableModel.getRowElement(row)
 
                     CustomTable.this.customTableModel.setValueAt(outputElement, rowToInsert++, colToInsert)
