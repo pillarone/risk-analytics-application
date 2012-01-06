@@ -109,9 +109,15 @@ public class DataCellEditPane extends ULCBoxPane {
     private class CellReferenceChangedListener implements IActionListener {
         void actionPerformed(ActionEvent textFieldActionEvent) {
             ULCTextField textField = textFieldActionEvent.source
+
+
+            if (("=" + textField.getText()) == DataCellEditPane.this.outputElement.categoryMap[textField.getName()])
+                return
+
             DataCellEditPane.this.outputElement.categoryMap[textField.getName()] = "=" + textField.getText()
 
             DataCellEditPane.this.refreshPath()
+            DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
         }
     }
 
@@ -122,6 +128,8 @@ public class DataCellEditPane extends ULCBoxPane {
         void actionPerformed(ActionEvent comboActionEvent) {
             if (comboActionEvent.source instanceof ULCComboBox) {
                 ULCComboBox combo = comboActionEvent.source
+
+
                 int rowOfCombo = DataCellEditPane.this.categoriesPane.getRowOf (combo)
 
                 // When the selectedItem is the CellReference
@@ -132,10 +140,14 @@ public class DataCellEditPane extends ULCBoxPane {
                 } else {
                     DataCellEditPane.this.categoriesPane.getComponent(rowOfCombo*3 + 2).setVisible(false)
 
+                    if (combo.selectedItem == DataCellEditPane.this.outputElement.categoryMap[combo.getName()])
+                        return
+
                     // save the selected item to the outputElement
                     DataCellEditPane.this.outputElement.categoryMap[combo.getName()] = combo.selectedItem
 
                     DataCellEditPane.this.refreshPath()
+                    DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
                 }
             }
         }

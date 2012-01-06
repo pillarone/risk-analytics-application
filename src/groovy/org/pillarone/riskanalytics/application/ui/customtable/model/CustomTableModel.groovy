@@ -4,6 +4,9 @@ import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.AbstractListModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.nfunk.jep.JEP
+import org.quartz.JobPersistenceException
+import org.nfunk.jep.ParseException
 
 /**
  * TableModel for the CustomTable
@@ -13,7 +16,9 @@ import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 public class CustomTableModel extends AbstractTableModel {
     private List<List<Object>> data
     private RowHeaderListModel rowHeaderModel
-    private GroovyShell groovyShell
+
+//    private GroovyShell groovyShell
+    private JEP myParser
 
     public boolean editMode
 
@@ -24,9 +29,13 @@ public class CustomTableModel extends AbstractTableModel {
      */
     public CustomTableModel(List<List<Object>> data) {
         this.data = data
-        
-        groovyShell = new GroovyShell()
+
         rowHeaderModel = new RowHeaderListModel(this)
+
+
+//        groovyShell = new GroovyShell()
+        myParser = new JEP();
+        myParser.addStandardFunctions()
     }
 
     /**
@@ -209,12 +218,24 @@ public class CustomTableModel extends AbstractTableModel {
         if (cellData instanceof String) {
             if (cellData.startsWith("=")) {
                 String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
-                formula = CustomTableHelper.executeFunctions (formula)
+
+//                formula = CustomTableHelper.executeFunctions (formula)
+//                try {
+//                    Object value = groovyShell.evaluate("return " + formula)
+//                    return value
+//                } catch (Exception e) {
+//                    return "#ERROR"
+//                }
+
                 try {
-                    Object value = groovyShell.evaluate("return " + formula)
-                    return value
-                } catch (Exception e) {
-                    return "#ERROR"
+                    myParser.parseExpression(formula)
+
+                    if (myParser.hasError())
+                        return myParser.getErrorInfo()
+
+                    return myParser.getValue()
+                } catch (ParseException e) {
+                    return e.getMessage()
                 }
             }
         }

@@ -31,6 +31,8 @@ import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.BorderFactory
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.applicationframework.application.Action
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -62,7 +64,7 @@ public class CustomTablePane extends ULCScrollPane {
      * Creates the RowHeader
      *
      * @param customTableModel the CustomTableModel
-     * @return the RowHeader as a ULCLisst
+     * @return the RowHeader as a ULCList
      */
     private ULCList initRowHeader(CustomTableModel customTableModel) {
         ULCList rowHeader = new ULCList(customTableModel.rowHeaderModel)
@@ -138,7 +140,6 @@ public class CustomTable extends ULCTable {
     private CustomTableView customTableView
     private CustomTableModel customTableModel
 
-    private List<CopyCellData> copyData = new LinkedList<CopyCellData>()
 
     /**
      * Constructor
@@ -179,79 +180,12 @@ public class CustomTable extends ULCTable {
         this.getSelectionModel().addListSelectionListener(cellChangedListener)
         this.getColumnModel().getSelectionModel().addListSelectionListener(cellChangedListener)
 
-        // TODO: Listener funktioniert mit Ctrl nicht
-        this.setEnabled(true)
-        this.addKeyListener(new IKeyListener() {
-            void keyTyped(KeyEvent keyEvent) {
-
-                if (keyEvent.shiftDown) {
-
-                    // copy
-                    if (keyEvent.keyChar == KeyEvent.VK_C || keyEvent.keyChar == KeyEvent.VK_X) {
-                        copyData.clear()
-
-                        int min_row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
-                        int max_row = CustomTable.this.getSelectionModel().getMaxSelectionIndex()
-                        int min_col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
-                        int max_col = CustomTable.this.getColumnModel().getSelectionModel().getMaxSelectionIndex()
-
-                        for (int row = min_row; row <= max_row; row++) {
-                            for (int col = min_col; col <= max_col; col++) {
-                                copyData.add(new CopyCellData(row, col, CustomTable.this.customTableModel.getDataAt(row, col)))
-
-                                // cut
-                                if (keyEvent.keyChar == KeyEvent.VK_X) {
-                                    CustomTable.this.customTableModel.setValueAt("", row, col)
-                                }
-                            }
-                        }
-
-                    }
-
-                    // paste
-                    if (keyEvent.keyChar == KeyEvent.VK_V) {
-                        int row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
-                        int col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
-
-                        int last_origin_row = null
-                        int last_origin_col = null
-
-                        for (CopyCellData copyCellData: copyData) {
-                            if (last_origin_row != null && last_origin_col != null) {
-                                row += copyCellData.origin_row - last_origin_row
-                                col += copyCellData.origin_col - last_origin_col
-                            }
-
-                            Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
-
-                            if ((data instanceof String) == false) {
-                                ((OutputElement)data).path = CustomTableHelper.getSpecificPathWithVariables(data, CustomTable.this.customTableModel)
-                            }
-                            CustomTable.this.customTableModel.setValueAt(data, row, col)
-
-                            last_origin_row = copyCellData.origin_row
-                            last_origin_col = copyCellData.origin_col
-                        }
-                    }
-                }
-            }
-        })
+        // Copy/Paste Listener
+        this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.COPY), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.CUT), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.PASTE), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
     }
 
-    /**
-     * Class which contains the data for a copy-operation
-     */
-    private class CopyCellData {
-        public int origin_row
-        public int origin_col
-        public Object data
-
-        public CopyCellData(int origin_row, int origin_col, Object data) {
-            this.origin_row = origin_row
-            this.origin_col = origin_col
-            this.data = data
-        }
-    }
 
     /**
      * CellChangedListener for the CustomTable
@@ -268,11 +202,16 @@ public class CustomTable extends ULCTable {
 
                 StringBuilder sb = new StringBuilder()
 
-                if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount - 1) sb.append(CustomTableHelper.getColString(colIndexStart + 1))
-                if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount - 1) sb.append((rowIndexStart + 1).toString())
-                sb.append(":")
-                if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount - 1) sb.append(CustomTableHelper.getColString(colIndexEnd + 1))
-                if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount - 1) sb.append((rowIndexEnd + 1).toString())
+                if (CustomTable.this.selectedRowCount == 1 && CustomTable.this.selectedColumnCount == 1) {
+                    sb.append(CustomTableHelper.getColString(colIndexStart + 1))
+                    sb.append((rowIndexStart + 1).toString())
+                } else {
+                    if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount - 1) sb.append(CustomTableHelper.getColString(colIndexStart + 1))
+                    if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount - 1) sb.append((rowIndexStart + 1).toString())
+                    sb.append(":")
+                    if (colIndexStart != 0 || colIndexEnd != CustomTable.this.columnCount - 1) sb.append(CustomTableHelper.getColString(colIndexEnd + 1))
+                    if (rowIndexStart != 0 || rowIndexEnd != CustomTable.this.rowCount - 1) sb.append((rowIndexEnd + 1).toString())
+                }
 
                 CustomTable.this.customTableView.cellEditTextField.insertData(sb.toString())
 
@@ -334,6 +273,12 @@ public class CustomTable extends ULCTable {
     }
 
     private class CustomTableCellRenderer extends DefaultTableCellRenderer {
+        private int col
+        public CustomTableCellRenderer(int col) {
+            super ()
+            this.col = col
+        }
+
         IRendererComponent getTableCellRendererComponent(ULCTable ulcTable, Object value, boolean isSelected, boolean hasFocus, int row) {
 
             if (CustomTable.this.customTableView.cellEditTextField.selectDataMode) {
@@ -360,6 +305,84 @@ public class CustomTable extends ULCTable {
                 }
             }
             return this
+        }
+    }
+
+    /**
+     * Class which contains the data for a copy-operation
+     */
+    private class CopyCellData {
+        public int origin_row
+        public int origin_col
+        public Object data
+
+        public CopyCellData(int origin_row, int origin_col, Object data) {
+            this.origin_row = origin_row
+            this.origin_col = origin_col
+            this.data = data
+        }
+    }
+
+    private List<CopyCellData> copyData = new LinkedList<CopyCellData>()
+    private class CopyPasteActionListener implements IActionListener {
+        public enum Mode {
+            COPY,
+            CUT,
+            PASTE
+        }
+
+        private Mode mode
+
+        public CopyPasteActionListener (Mode mode) {
+            this.mode = mode
+        }
+
+        void actionPerformed(ActionEvent actionEvent) {
+            switch (mode) {
+                case Mode.COPY:
+                case Mode.CUT:
+                    CustomTable.this.copyData.clear()
+                    int min_row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
+                    int max_row = CustomTable.this.getSelectionModel().getMaxSelectionIndex()
+                    int min_col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
+                    int max_col = CustomTable.this.getColumnModel().getSelectionModel().getMaxSelectionIndex()
+                    for (int row = min_row; row <= max_row; row++) {
+                        for (int col = min_col; col <= max_col; col++) {
+                            CustomTable.this.copyData.add(new CopyCellData(row, col, CustomTable.this.customTableModel.getDataAt(row, col)))
+
+                            // cut
+                            if (mode == Mode.CUT) {
+                                CustomTable.this.customTableModel.setValueAt("", row, col)
+                            }
+                        }
+                    }
+                    break
+                
+                case Mode.PASTE:
+                    int row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
+                    int col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
+                    int last_origin_row = null
+                    int last_origin_col = null
+                    for (CopyCellData copyCellData: CustomTable.this.copyData) {
+                        if (last_origin_row != null && last_origin_col != null) {
+                            row += copyCellData.origin_row - last_origin_row
+                            col += copyCellData.origin_col - last_origin_col
+                        }
+
+                        Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
+
+                        if ((data instanceof String) == false) {
+                            ((OutputElement)data).path = CustomTableHelper.getSpecificPathWithVariables(data, CustomTable.this.customTableModel)
+                        }
+                        CustomTable.this.customTableModel.setValueAt(data, row, col)
+
+                        last_origin_row = copyCellData.origin_row
+                        last_origin_col = copyCellData.origin_col
+                    }
+                    CustomTable.this.selectionModel.setSelectionInterval(row, row)
+                    CustomTable.this.getColumnModel().selectionModel.setSelectionInterval(col, col)
+                    break
+            }
         }
     }
 }

@@ -42,11 +42,11 @@ static class CustomTableHelper {
                     String value = model.getValueAt(row, col).toString()
                     if (value.isEmpty() == false) {
                         range.append (value)
-                        range.append (";")
+                        range.append (",")
                     }
                 }
             }
-            if (range.toString().endsWith(";"))
+            if (range.toString().endsWith(","))
                 range.deleteCharAt(range.length()-1)
 
             formula = formula.replace (s, range.toString())
@@ -64,8 +64,8 @@ static class CustomTableHelper {
 
             if (row == cellRow && col == cellCol) {
                 System.out.println ("Zirkelbezug")
-                formula = formula.replace (variable + ";", "")
-                formula = formula.replace (";" + variable, "")
+                formula = formula.replace (variable + ",", "")
+                formula = formula.replace ("," + variable, "")
                 continue
             }
             formula = formula.replace (variable, model.getValueAt(row, col).toString())
@@ -74,40 +74,42 @@ static class CustomTableHelper {
         return formula
     }
 
-    static enum Functions {
-        SUM,
-        MEAN
-    }
-
-    public static String executeFunctions (String formula) {
-
-        // TODO: More than one function as a parameter doesn't work yet
-
-        Pattern formula_pattern = ~/[A-Z]+\([\p{Print}]*\)/
-        for (String function : formula_pattern.matcher(formula)) {
-            int bracePos      = function.indexOf("(")
-            String func       = function.substring(0, bracePos)
-            String parameters = function.substring(bracePos)
-
-            parameters = "(" + executeFunctions(parameters.substring(1, parameters.length()-1)) + ")"
-
-            switch (func) {
-                case Functions.SUM.toString():
-                    parameters = parameters.replace(';', '+')
-                    break;
-
-                case Functions.MEAN.toString():
-                    int numParam = parameters.count(";") + 1
-                    parameters = parameters.replace(';', '+')
-                    parameters += "/" + numParam
-                    break;
-            }
-
-            formula = formula.replace (function, parameters)
-        }
-
-        return formula
-    }
+// Not used anymore, because JEP is evaluating mathematical expressions now
+//
+//    static enum Functions {
+//        SUM,
+//        MEAN
+//    }
+//
+//    public static String executeFunctions (String formula) {
+//
+//        // TODO: More than one function as a parameter doesn't work yet
+//
+//        Pattern formula_pattern = ~/[A-Z]+\([\p{Print}]*\)/
+//        for (String function : formula_pattern.matcher(formula)) {
+//            int bracePos      = function.indexOf("(")
+//            String func       = function.substring(0, bracePos)
+//            String parameters = function.substring(bracePos)
+//
+//            parameters = "(" + executeFunctions(parameters.substring(1, parameters.length()-1)) + ")"
+//
+//            switch (func) {
+//                case Functions.SUM.toString():
+//                    parameters = parameters.replace(',', '+')
+//                    break;
+//
+//                case Functions.MEAN.toString():
+//                    int numParam = parameters.count(",") + 1
+//                    parameters = parameters.replace(',', '+')
+//                    parameters += "/" + numParam
+//                    break;
+//            }
+//
+//            formula = formula.replace (function, parameters)
+//        }
+//
+//        return formula
+//    }
 
     public static String getSpecificPathWithVariables (OutputElement outputElement, CustomTableModel customTableModel) {
         Map<String, String> categoryMapCopy = new HashMap<String, String>()

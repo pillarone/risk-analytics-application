@@ -4,6 +4,7 @@ import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.*
 import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
+import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
 
 /**
  * A TextField for editing the values in the CustomTable
@@ -41,12 +42,12 @@ public class CellEditTextField extends ULCTextField {
             void focusGained(FocusEvent focusEvent) {
             }
             void focusLost(FocusEvent focusEvent) {
-                Pattern variable_pattern = ~/[A-Z]+[0-9]+/
-                Pattern variables_pattern = ~/[A-Z]+[0-9]+[A-Z0-9;]+[A-Z]+[0-9]+/
-                Pattern range_pattern = ~/[A-Z]*[0-9]*:[A-Z]*[0-9]*/
+                Pattern variables_pattern = ~/[A-Z]+[0-9]+[A-Z0-9,]+[A-Z]+[0-9]+/
                 String selectedText = CellEditTextField.this.getSelectedText()
 
-                if (selectedText ==~ variable_pattern || selectedText ==~ range_pattern || selectedText ==~ variables_pattern) {
+                if (selectedText ==~ CustomTableHelper.variable_pattern ||
+                    selectedText ==~ CustomTableHelper.range_pattern ||
+                    selectedText ==~ variables_pattern) {
                     selectDataMode = true;
                 }
             }
