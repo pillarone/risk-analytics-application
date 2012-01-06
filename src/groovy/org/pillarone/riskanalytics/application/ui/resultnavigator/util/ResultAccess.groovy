@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 import org.pillarone.riskanalytics.core.output.PathMapping
 import org.pillarone.riskanalytics.core.output.FieldMapping
 import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.simulation.engine.grid.GridHelper
 
 /**
  *
@@ -33,15 +34,7 @@ class ResultAccess {
     }
 
     public List<OutputElement> getOutputElements(SimulationRun run) {
-        StringBuilder builder = new StringBuilder(System.getProperty("user.home"));
-        builder.append(File.separatorChar);
-        builder.append(".pillarone");
-        builder.append(File.separatorChar);
-        builder.append("RiskAnalytics-1.4-BETA-8");
-        builder.append(File.separatorChar);
-        builder.append("database");
-        String location = builder.toString() + File.separator + "simulations" + File.separator + run.id
-        File file = new File(location)
+        File file = new File(GridHelper.getResultLocation(run.id))
         List<OutputElement> result = []
         for (File f in file.listFiles()) {
             String[] ids = f.name.split("_")
