@@ -90,10 +90,11 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
     private List getParameterizationNames(SessionFactory sessionFactory) {
         StringBuilder sb = new StringBuilder("SELECT concat_ws( " + SQL_SEPARATOR)
-        sb.append(" ,dao.name, (select GROUP_CONCAT(t.name)  from parameterization_tag ptag, tag t")
-        sb.append(" where ptag.parameterizationdao_id = dao.id and t.id = ptag.tag_id) ")
-        sb.append(" ,(select GROUP_CONCAT(run.name) from simulation_run run where run.parameterization_id = dao.id) )")
-        sb.append(" FROM parameterizationdao dao ")
+        sb.append(" ,CONCAT(dao.name, ' v', dao.item_version), (select GROUP_CONCAT(t.name SEPARATOR " + SQL_SEPARATOR + ")  from parameterization_tag ptag JOIN tag t ON t.id = ptag.tag_id")
+        sb.append(" where ptag.parameterizationdao_id = dao.id) ")
+        sb.append(" ,(select GROUP_CONCAT(run.name SEPARATOR " + SQL_SEPARATOR + ") from simulation_run run where run.parameterization_id = dao.id)")
+        sb.append(" ,(SELECT GROUP_CONCAT(DISTINCT(CONCAT(rc.name, ' v', rc.item_version)) SEPARATOR " + SQL_SEPARATOR + ") FROM result_configurationdao rc JOIN simulation_run r2 ON r2.result_configuration_id = rc.id WHERE r2.parameterization_id = dao.id)")
+        sb.append(" ) FROM parameterizationdao dao ")
         String whereClause = clauseByModel("model_class_name")
         if (whereClause) {
             sb.append(" where " + whereClause)
@@ -104,9 +105,9 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
     private List getRunNames(SessionFactory sessionFactory, String modelClass) {
         //, (select GROUP_CONCAT(t.name)  from parameterization_tag ptag, tag t
         StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
-        sb.append(",dao.name, (select GROUP_CONCAT(t.name)  from simulation_tag stag, tag t")
-        sb.append(" where stag.simulation_run_id = dao.id and t.id = stag.tag_id) ")
-        sb.append(" ,p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
+        sb.append(", dao.name, (select GROUP_CONCAT(t.name SEPARATOR " + SQL_SEPARATOR + ")  from simulation_tag stag JOIN tag t ON t.id = stag.tag_id")
+        sb.append(" where stag.simulation_run_id = dao.id) ")
+        sb.append(" , CONCAT(p.name, ' v', p.item_version), r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
         sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
 //        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
         //        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
@@ -122,9 +123,10 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
     private List getResultConfigurationNames(SessionFactory sessionFactory, String modelClass) {
         //SELECT concat_ws(' /// ', r.name, (select group_concat(run.name) from simulation_run run
         // where run.result_configuration_id = r.id)) FROM result_configurationdao r;
-        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
-        sb.append(", dao.name, (select group_concat(run.name) from simulation_run run ")
-        sb.append(" where run.result_configuration_id = dao.id)) FROM result_configurationdao as dao ")
+        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR + ", CONCAT(dao.name, ' v', dao.item_version)")
+        sb.append(" ,(SELECT GROUP_CONCAT(run.name SEPARATOR " + SQL_SEPARATOR + ") from simulation_run run where run.result_configuration_id = dao.id)")
+        sb.append(" ,(SELECT GROUP_CONCAT(CONCAT(p.name, ' v', p.item_version) SEPARATOR " + SQL_SEPARATOR + ") FROM parameterizationdao p JOIN simulation_run run ON run.parameterization_id = p.id WHERE run.result_configuration_id = dao.id) ")
+        sb.append(" ) FROM result_configurationdao as dao ")
         String whereClause = clauseByModel(modelClass)
         if (whereClause) {
             sb.append(" where (" + whereClause + ")")
@@ -149,13 +151,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
     private List getNames(SessionFactory sessionFactory, StringBuilder sb) {
         SQLQuery query = sessionFactory.currentSession.createSQLQuery(sb.toString())
-        List<String> names = []
-        List objects = query.list()
-        for (Object name in objects) {
-            if (name.indexOf(",") != -1)
-                name = name.replaceAll(",", SEPARATOR)
-            names << name
-        }
+        List<String> names = query.list()
         return names
     }
 

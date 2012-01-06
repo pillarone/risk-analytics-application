@@ -26,7 +26,7 @@ public class ModellingTableTreeColumn {
 
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return node.abstractUIItem.item.name
+            return node.abstractUIItem.getNameAndVersion()
         }
     }
 
