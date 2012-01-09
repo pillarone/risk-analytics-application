@@ -19,29 +19,23 @@ import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableH
 public class DataCellEditPane extends ULCBoxPane {
     private final String cellReferenceString = "Cell-Reference"
 
-    private CustomTable customTable
+    private CustomTableView customTableView
     private CustomTableModel customTableModel
     private int row = 0
     private int col = 0
     private OutputElement outputElement
 
-    private ULCBoxPane categoriesPane
-    private ULCLabel   pathLabel
+    private Map<String, ULCTextField> cellRefTextFields = new HashMap<String, ULCTextField>()
 
     /**
      * Constructor
      * @param customTable the CustomTable
      */
-    public DataCellEditPane (CustomTable customTable) {
-        super (1, 2)
-        categoriesPane = new ULCBoxPane(2, 0)
-        pathLabel = new ULCLabel()
+    public DataCellEditPane (CustomTableView customTableView) {
+        super (true)
 
-        this.add (ULCBoxPane.BOX_EXPAND_EXPAND, categoriesPane)
-        this.add (ULCBoxPane.BOX_EXPAND_EXPAND, pathLabel)
-
-        this.customTable = customTable
-        this.customTableModel = customTable.getModel()
+        this.customTableView = customTableView
+        this.customTableModel = customTableView.customTable.getModel()
     }
 
     /**
@@ -56,25 +50,28 @@ public class DataCellEditPane extends ULCBoxPane {
 
         outputElement = customTableModel.getDataAt (row, col)
 
-        categoriesPane.removeAll()
+        this.removeAll()
+        cellRefTextFields.clear()
 
-        categoriesPane.setRows (outputElement.getCategoryMap().size())
-        int insertRow = 0
         for (String category : outputElement.getCategoryMap().keySet()) {
 
             List<String> wildCardValues = outputElement.getWildCardPath().getWildCardValues(category)
             if (wildCardValues != null) {
                 ULCLabel categoryLabel = new ULCLabel(category)
 
+                ULCBoxPane comboTextFieldPane = new ULCBoxPane(false)
+
                 ULCTextField cellReferenceTextField = new ULCTextField()
                 cellReferenceTextField.setName(category)
                 cellReferenceTextField.setVisible(false)
+                cellReferenceTextField.setPreferredSize(new Dimension (100,25))
                 cellReferenceTextField.addActionListener(new CellReferenceChangedListener())
 
                 ULCComboBox categoryValueCombo = new ULCComboBox(wildCardValues.toArray())
                 categoryValueCombo.addItem(cellReferenceString)
                 categoryValueCombo.setName(category)
-                categoryValueCombo.addActionListener(new CategoyValueComboListener())
+                categoryValueCombo.setPreferredSize(new Dimension (200,25))
+                categoryValueCombo.addActionListener(new CategoryValueComboListener())
 
                 String itemToSelect = outputElement.categoryMap[category]
 
@@ -84,10 +81,12 @@ public class DataCellEditPane extends ULCBoxPane {
                     cellReferenceTextField.setVisible(true)
                 }
 
-                categoriesPane.set (0, insertRow, BOX_LEFT_EXPAND, categoryLabel)
-                categoriesPane.set (1, insertRow, 0.8, 1, BOX_EXPAND_EXPAND, categoryValueCombo)
-                categoriesPane.set (2, insertRow, 0.2, 1, BOX_EXPAND_EXPAND, cellReferenceTextField)
-                insertRow++
+                this.add (BOX_EXPAND_TOP, categoryLabel)
+                comboTextFieldPane.add (BOX_EXPAND_EXPAND, categoryValueCombo)
+                comboTextFieldPane.add (BOX_RIGHT_EXPAND, cellReferenceTextField)
+                this.add (BOX_EXPAND_TOP, comboTextFieldPane)
+
+                cellRefTextFields.put (category, cellReferenceTextField)
 
                 categoryValueCombo.selectedItem = itemToSelect
             }
@@ -100,7 +99,7 @@ public class DataCellEditPane extends ULCBoxPane {
         String path = CustomTableHelper.getSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)
 
         outputElement.path = path
-        pathLabel.text = path
+        customTableView.cellEditTextField.text = path
     }
 
     /**
@@ -109,7 +108,6 @@ public class DataCellEditPane extends ULCBoxPane {
     private class CellReferenceChangedListener implements IActionListener {
         void actionPerformed(ActionEvent textFieldActionEvent) {
             ULCTextField textField = textFieldActionEvent.source
-
 
             if (("=" + textField.getText()) == DataCellEditPane.this.outputElement.categoryMap[textField.getName()])
                 return
@@ -124,27 +122,27 @@ public class DataCellEditPane extends ULCBoxPane {
     /**
      * Listener for the Category-ComboBoxes
      */
-    private class CategoyValueComboListener implements IActionListener {
+    private class CategoryValueComboListener implements IActionListener {
         void actionPerformed(ActionEvent comboActionEvent) {
             if (comboActionEvent.source instanceof ULCComboBox) {
                 ULCComboBox combo = comboActionEvent.source
-
-
-                int rowOfCombo = DataCellEditPane.this.categoriesPane.getRowOf (combo)
+                String category = combo.getName()
 
                 // When the selectedItem is the CellReference
                 // add a TextField to the row
                 if (combo.selectedItem == cellReferenceString) {
-                    DataCellEditPane.this.categoriesPane.getComponent(rowOfCombo*3 + 2).setVisible(true)
+                    combo.setPreferredSize(new Dimension (100,25))
+                    DataCellEditPane.this.cellRefTextFields[category].setVisible(true)
 
                 } else {
-                    DataCellEditPane.this.categoriesPane.getComponent(rowOfCombo*3 + 2).setVisible(false)
+                    combo.setPreferredSize(new Dimension (200,25))
+                    DataCellEditPane.this.cellRefTextFields[category].setVisible(false)
 
-                    if (combo.selectedItem == DataCellEditPane.this.outputElement.categoryMap[combo.getName()])
+                    if (combo.selectedItem == DataCellEditPane.this.outputElement.categoryMap[category])
                         return
 
                     // save the selected item to the outputElement
-                    DataCellEditPane.this.outputElement.categoryMap[combo.getName()] = combo.selectedItem
+                    DataCellEditPane.this.outputElement.categoryMap[category] = combo.selectedItem
 
                     DataCellEditPane.this.refreshPath()
                     DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)

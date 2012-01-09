@@ -5,7 +5,6 @@ import com.ulcjava.base.application.AbstractListModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.nfunk.jep.JEP
-import org.quartz.JobPersistenceException
 import org.nfunk.jep.ParseException
 
 /**
@@ -31,7 +30,6 @@ public class CustomTableModel extends AbstractTableModel {
         this.data = data
 
         rowHeaderModel = new RowHeaderListModel(this)
-
 
 //        groovyShell = new GroovyShell()
         myParser = new JEP();

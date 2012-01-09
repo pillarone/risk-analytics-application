@@ -21,7 +21,7 @@ import com.ulcjava.base.application.UlcUtilities
 public class CustomTableView {
     private ULCFrame parent
     private ULCBoxPane content
-    CustomTableModel customTableModel
+    private CustomTableModel customTableModel
 
     public CustomTable customTable
     private ResultNavigator resultNavigator
@@ -37,11 +37,7 @@ public class CustomTableView {
      * Constructor
      */
     public CustomTableView() {
-        this([[""]])
-    }
-
-    public CustomTableView(List<List<Object>> data) {
-        this.customTableModel = new CustomTableModel(data)
+        this.customTableModel = new CustomTableModel(new LinkedList<List<Object>>())
         initComponents()
     }
 
@@ -49,8 +45,8 @@ public class CustomTableView {
      * Initalize the Compontents
      */
     private void initComponents() {
-        content = new ULCBoxPane(true)
-        content.setPreferredSize(new Dimension(400, 400))
+        content = new ULCBoxPane(2, 3)
+        content.setPreferredSize(new Dimension (400,400))
 
         ULCToolBar toolbar = createToolbar()
         ULCBoxPane customTablePane = createCustomTable()
@@ -58,10 +54,11 @@ public class CustomTableView {
 
         dataCellEditPane = new DataCellEditPane(customTable)
 
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, toolbar)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, cellEditTextField)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, dataCellEditPane)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
+        //           col  row  hspan  vspan
+        content.set (0,   0,   2,     1,    ULCBoxPane.BOX_EXPAND_TOP, toolbar)
+        content.set (0,   1,   2,     1,    ULCBoxPane.BOX_EXPAND_TOP, cellEditTextField)
+        content.set (0,   2,   1,     1,    ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
+        content.set (1,   2,   1,     1,    ULCBoxPane.BOX_RIGHT_TOP, dataCellEditPane)
     }
 
     /**
@@ -75,17 +72,9 @@ public class CustomTableView {
         toolBar.add(startResultNavigator)
         startResultNavigator.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                ULCFrame frame = new ULCFrame()
-                frame.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
-                frame.setSize(1000, 750)
-                frame.setExtendedState(ULCFrame.NORMAL)
-                frame.toFront()
-                frame.locationRelativeTo = UlcUtilities.getWindowAncestor(parent)
-
-                resultNavigator = new ResultNavigator()
-                frame.contentPane = resultNavigator.contentView
-
-                frame.visible = true
+                StandaloneResultNavigator res = new StandaloneResultNavigator()
+                res.start()
+                resultNavigator = res.contents
             }
         })
 
@@ -105,10 +94,10 @@ public class CustomTableView {
         CustomTablePane customTablePane = new CustomTablePane(customTable)
 
         // add CustomTablePane to the window
-        pane.add(ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
+        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
 
         // EditMode checkBox
-        ULCBoxPane customTableButtonPane = new ULCBoxPane(false)
+        ULCBoxPane customTableButtonPane = new ULCBoxPane (false)
 
         editModeButton = new ULCCheckBox("Edit Mode")
         editModeButton.addActionListener(new IActionListener() {
@@ -117,7 +106,7 @@ public class CustomTableView {
                 customTableModel.fireTableDataChanged()
             }
         })
-        customTableButtonPane.add(ULCBoxPane.BOX_CENTER_CENTER, editModeButton)
+        customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, editModeButton)
 
         newRowButton = new ULCButton("Insert Row")
         newRowButton.addActionListener(new IActionListener() {
@@ -125,23 +114,17 @@ public class CustomTableView {
                 customTableModel.addRow([])
             }
         })
-        customTableButtonPane.add(ULCBoxPane.BOX_CENTER_CENTER, newRowButton)
+        customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newRowButton)
 
         newColButton = new ULCButton("Insert Column")
         newColButton.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                customTableModel.addCol()
+                customTableModel.addCol ()
             }
         })
-        customTableButtonPane.add(ULCBoxPane.BOX_CENTER_CENTER, newColButton)
-        pane.add(ULCBoxPane.BOX_LEFT_CENTER, customTableButtonPane)
+        customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newColButton)
+        pane.add (ULCBoxPane.BOX_LEFT_CENTER, customTableButtonPane)
 
         return pane
     }
-
-    ULCBoxPane getContent() {
-        return content
-    }
-
-
 }

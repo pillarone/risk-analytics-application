@@ -184,6 +184,16 @@ public class CustomTable extends ULCTable {
         this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.COPY), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.CUT), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.PASTE), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+
+        this.registerKeyboardAction(new IActionListener() {
+            void actionPerformed(ActionEvent actionEvent) {
+                for (int row : CustomTable.this.getSelectedRows()) {
+                    for (int col : CustomTable.this.getSelectedColumns()) {
+                        CustomTable.this.customTableModel.setValueAt(null, row, col)
+                    }
+                }
+            }
+        }, KeyStroke.getKeyStroke (KeyEvent.VK_DELETE, 0), ULCComponent.WHEN_FOCUSED)
     }
 
 
@@ -219,14 +229,14 @@ public class CustomTable extends ULCTable {
                 Object cellData = CustomTable.this.customTableModel.getDataAt(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 if (cellData instanceof OutputElement) {
-                    CustomTable.this.customTableView.cellEditTextField.setVisible(false)
+                    //CustomTable.this.customTableView.cellEditTextField.setVisible(false)
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(true)
                     CustomTable.this.customTableView.dataCellEditPane.setData(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 } else {
                     // If the selectDataMode is off
                     // set the Value of the cell into the cellEditTextField
-                    CustomTable.this.customTableView.cellEditTextField.setVisible(true)
+                    //CustomTable.this.customTableView.cellEditTextField.setVisible(true)
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(false)
                     CustomTable.this.customTableView.cellEditTextField.setText(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
                 }
