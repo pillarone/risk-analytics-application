@@ -37,7 +37,11 @@ public class CustomTableView {
      * Constructor
      */
     public CustomTableView() {
-        this.customTableModel = new CustomTableModel(new LinkedList<List<Object>>())
+        this([[""]])
+    }
+
+    public CustomTableView(List<List<Object>> data) {
+        this.customTableModel = new CustomTableModel(data)
         initComponents()
     }
 
@@ -52,7 +56,7 @@ public class CustomTableView {
         ULCBoxPane customTablePane = createCustomTable()
         cellEditTextField = new CellEditTextField(customTable)
 
-        dataCellEditPane = new DataCellEditPane(customTable)
+        dataCellEditPane = new DataCellEditPane(this)
 
         //           col  row  hspan  vspan
         content.set (0,   0,   2,     1,    ULCBoxPane.BOX_EXPAND_TOP, toolbar)
@@ -72,9 +76,17 @@ public class CustomTableView {
         toolBar.add(startResultNavigator)
         startResultNavigator.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                StandaloneResultNavigator res = new StandaloneResultNavigator()
-                res.start()
-                resultNavigator = res.contents
+                ULCFrame frame = new ULCFrame()
+                frame.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
+                frame.setSize(1000, 750)
+                frame.setExtendedState(ULCFrame.NORMAL)
+                frame.toFront()
+                frame.locationRelativeTo = UlcUtilities.getWindowAncestor(parent)
+
+                resultNavigator = new ResultNavigator()
+                frame.contentPane = resultNavigator.contentView
+
+                frame.visible = true
             }
         })
 
@@ -126,5 +138,9 @@ public class CustomTableView {
         pane.add (ULCBoxPane.BOX_LEFT_CENTER, customTableButtonPane)
 
         return pane
+    }
+
+    ULCBoxPane getContent() {
+        return content
     }
 }
