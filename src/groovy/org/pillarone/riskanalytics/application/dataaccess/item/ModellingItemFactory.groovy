@@ -14,6 +14,8 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.transaction.TransactionStatus
+import org.pillarone.riskanalytics.application.output.CustomTableDAO
+import org.pillarone.riskanalytics.application.output.result.item.CustomTable
 
 class ModellingItemFactory {
 
@@ -210,6 +212,12 @@ class ModellingItemFactory {
         }
     }
 
+    static List<CustomTable> getCustomTablesForModel(Class modelClass) {
+        CustomTableDAO.findAllByModelClassName(modelClass.name).collect {
+            getItem(it)
+        }
+    }
+
     static ModelStructure getModelStructure(ModelStructureDAO dao) {
         return getItem(dao)
     }
@@ -378,6 +386,16 @@ class ModellingItemFactory {
             item.versionNumber = new VersionNumber(dao.itemVersion)
 
             getItemInstances()[key(ResultStructure, dao.id)] = item
+        }
+        item
+    }
+
+    private static ModellingItem getItem(CustomTableDAO dao) {
+        CustomTable item = getItemInstances()[key(CustomTable, dao.id)]
+        if (!item) {
+            item = new CustomTable(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.modelClassName))
+
+            getItemInstances()[key(CustomTable, dao.id)] = item
         }
         item
     }

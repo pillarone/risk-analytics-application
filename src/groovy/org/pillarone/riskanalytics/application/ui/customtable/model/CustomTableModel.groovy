@@ -14,7 +14,7 @@ import org.nfunk.jep.ParseException
  * @author ivo.nussbaumer
  */
 public class CustomTableModel extends AbstractTableModel {
-    private List<List<Object>> data
+    List<List<Object>> data
     private RowHeaderListModel rowHeaderModel
 
 //    private GroovyShell groovyShell

@@ -27,6 +27,7 @@ import com.ulcjava.base.application.ULCSplitPane
 import com.ulcjava.base.application.IComboBoxModel
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.ULCContainer
 
 /**
  * @author martin.melchior
@@ -57,7 +58,7 @@ class ResultNavigator extends AbstractBean {
     /**
      *
      */
-    public ULCComponent getContentView() {
+    public ULCContainer getContentView() {
         return contents;
     }
 
@@ -169,7 +170,7 @@ class ResultNavigator extends AbstractBean {
         splitPane.setTopComponent(resultEntryTable)
 
         propertiesArea = new ULCBoxPane(false)
-        propertiesArea.setBorder(BorderFactory.createTitledBorder("Properties"))        
+        propertiesArea.setBorder(BorderFactory.createTitledBorder("Properties"))
         splitPane.setBottomComponent(propertiesArea)
 
         contentView.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane);

@@ -5,11 +5,11 @@ class CustomTableEntryPair {
 
     static belongsTo = [customTableEntry: CustomTableEntry]
 
-    String key
-    String value
+    String entryKey
+    String entryValue
 
 
     static constraints = {
-        key(blank: false)
+        entryKey(blank: false)
     }
 }

@@ -46,10 +46,10 @@ class CustomTable extends ModellingItem {
             for (def element in row) {
                 CustomTableEntry entry = new CustomTableEntry(row: i, col: j)
                 if (element instanceof String) {
-                    entry.addToPairs(new CustomTableEntryPair(key: TEXT_KEY, value: element))
+                    entry.addToPairs(new CustomTableEntryPair(entryKey: TEXT_KEY, entryValue: element))
                 } else if (element instanceof OutputElement) {
                     for (Map.Entry<String, String> category in element.categoryMap) {
-                        entry.addToPairs(new CustomTableEntryPair(key: category.key, value: category.value))
+                        entry.addToPairs(new CustomTableEntryPair(entryKey: category.key, entryValue: category.value))
                     }
                 }
                 customTableDAO.addToEntries(entry)
@@ -69,12 +69,12 @@ class CustomTable extends ModellingItem {
             final List<CustomTableEntry> entries = customTableDAO.entries.findAll { it.row == i }.sort { it.col }
             List rowData = []
             for (CustomTableEntry entry in entries) {
-                if (entry.pairs.size() == 1 && entry.pairs.toList()[0].key == TEXT_KEY) {
-                    rowData << entry.pairs.toList()[0].value
+                if (entry.pairs.size() == 1 && entry.pairs.toList()[0].entryKey == TEXT_KEY) {
+                    rowData << entry.pairs.toList()[0].entryValue
                 } else {
                     OutputElement element = new OutputElement()
                     for (CustomTableEntryPair pair in entry.pairs) {
-                        element.addCategoryValue(pair.key, pair.value)
+                        element.addCategoryValue(pair.entryKey, pair.entryValue)
                     }
 
                     rowData << element

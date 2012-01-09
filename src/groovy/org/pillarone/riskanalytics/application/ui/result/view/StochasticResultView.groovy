@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.KeyEvent
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.customtable.view.TableView
 
 class StochasticResultView extends ResultView {
 
@@ -76,6 +77,7 @@ class StochasticResultView extends ResultView {
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, content)
 
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), contentPane)
+        tabbedPane.addTab("Table", UIUtils.getIcon(getText("Settings.icon")), new TableView(model.model).content)
         tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), getResultSettingView())
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
