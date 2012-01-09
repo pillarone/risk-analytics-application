@@ -87,18 +87,18 @@ class PivotTests extends AbstractSimpleFunctionalTest {
 //        ULCComponentOperator dataCellEditPane   = new ULCComponentOperator(customTableView.dataCellEditPane)
 
         // Test insert Row
-        assert table.rowCount == 0
-        insertRowButton.clickMouse()
         assert table.rowCount == 1
+        insertRowButton.clickMouse()
+        assert table.rowCount == 2
         insertRowButton.clickMouse(3)
-        assert table.rowCount == 4
+        assert table.rowCount == 5
 
         // Test insert Col
-        assert table.columnCount == 0
-        insertColButton.clickMouse()
         assert table.columnCount == 1
+        insertColButton.clickMouse()
+        assert table.columnCount == 2
         insertColButton.clickMouse(3)
-        assert table.columnCount == 4
+        assert table.columnCount == 5
 
         // Insert data test
 //        setTextOnCell(0,0,"10")
