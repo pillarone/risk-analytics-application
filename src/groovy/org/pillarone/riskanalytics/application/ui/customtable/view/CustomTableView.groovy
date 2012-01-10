@@ -19,7 +19,7 @@ import com.ulcjava.base.application.UlcUtilities
  * @author ivo.nussbaumer
  */
 public class CustomTableView {
-    private ULCFrame parent
+    public ULCFrame parent
     private ULCBoxPane content
     private CustomTableModel customTableModel
 
@@ -28,10 +28,6 @@ public class CustomTableView {
 
     public CellEditTextField cellEditTextField
     public DataCellEditPane dataCellEditPane
-
-    public ULCButton newRowButton
-    public ULCButton newColButton
-    public ULCCheckBox editModeButton
 
     /**
      * Constructor
@@ -52,10 +48,13 @@ public class CustomTableView {
         content = new ULCBoxPane(2, 3)
         content.setPreferredSize(new Dimension (400,400))
 
-        ULCToolBar toolbar = createToolbar()
-        ULCBoxPane customTablePane = createCustomTable()
-        cellEditTextField = new CellEditTextField(customTable)
+        // Create Custom Table
+        customTable = new CustomTable(customTableModel, this)
+        // Create CustomTablePane (which is a ScrollPane with a row header)
+        CustomTablePane customTablePane = new CustomTablePane(customTable)
 
+        ULCToolBar toolbar = createToolbar()
+        cellEditTextField = new CellEditTextField(customTable)
         dataCellEditPane = new DataCellEditPane(this)
 
         //           col  row  hspan  vspan
@@ -91,53 +90,6 @@ public class CustomTableView {
         })
 
         return toolBar
-    }
-
-    /**
-     * Creates the Custom Table and the corresponding Buttons
-     */
-    private ULCBoxPane createCustomTable() {
-        ULCBoxPane pane = new ULCBoxPane(true)
-
-        // Create Custom Table
-        customTable = new CustomTable(customTableModel, this)
-
-        // Create CustomTablePane (which is a ScrollPane with a row header)
-        CustomTablePane customTablePane = new CustomTablePane(customTable)
-
-        // add CustomTablePane to the window
-        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
-
-        // EditMode checkBox
-        ULCBoxPane customTableButtonPane = new ULCBoxPane (false)
-
-        editModeButton = new ULCCheckBox("Edit Mode")
-        editModeButton.addActionListener(new IActionListener() {
-            void actionPerformed(ActionEvent actionEvent) {
-                customTableModel.editMode = editModeButton.isSelected()
-                customTableModel.fireTableDataChanged()
-            }
-        })
-        customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, editModeButton)
-
-        newRowButton = new ULCButton("Insert Row")
-        newRowButton.addActionListener(new IActionListener() {
-            void actionPerformed(ActionEvent actionEvent) {
-                customTableModel.addRow([])
-            }
-        })
-        customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newRowButton)
-
-        newColButton = new ULCButton("Insert Column")
-        newColButton.addActionListener(new IActionListener() {
-            void actionPerformed(ActionEvent actionEvent) {
-                customTableModel.addCol ()
-            }
-        })
-        customTableButtonPane.add (ULCBoxPane.BOX_CENTER_CENTER, newColButton)
-        pane.add (ULCBoxPane.BOX_LEFT_CENTER, customTableButtonPane)
-
-        return pane
     }
 
     ULCBoxPane getContent() {

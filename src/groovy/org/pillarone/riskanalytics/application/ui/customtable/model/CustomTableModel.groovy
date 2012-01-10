@@ -53,11 +53,7 @@ public class CustomTableModel extends AbstractTableModel {
      * @return new Number of Columns
      */
     public int addCol () {
-        for (List<Object> rowData : data) {
-            rowData.add ("")
-        }
-
-        fireTableStructureChanged()
+        insertCol (columnCount)
         return columnCount-1
     }
 
@@ -66,10 +62,60 @@ public class CustomTableModel extends AbstractTableModel {
      * @param col Index of the Column to delete
      */
     public void deleteCol (int col) {
+        if (columnCount <= 1)
+            return
+
         for (List<Object> rowData : data) {
             rowData.remove(col)
         }
         fireTableStructureChanged()
+    }
+
+    public void setNumberCols (int cols) {
+        int colDiff = cols - columnCount
+
+        if (colDiff == 0)
+            return
+
+        if (colDiff > 0) {
+            for (List<Object> rowData : data) {
+                while (rowData.size() < cols)
+                    rowData.add ("")
+            }
+            fireTableStructureChanged()
+            return
+        }
+        if (colDiff < 0) {
+            for (List<Object> rowData : data) {
+                while (rowData.size() > cols)
+                    rowData.remove(rowData.size()-1)
+            }
+            fireTableStructureChanged()
+            return
+        }
+    }
+
+    public void setNumberRows (int rows) {
+        int rowDiff = rows - rowCount
+
+        if (rowDiff == 0)
+            return
+
+        if (rowDiff > 0) {
+            for (int i = 0; i < rowDiff; i++)
+                this.data.add ([])
+            fireTableRowsInserted(rowCount-1 - rowDiff, rowCount-1)
+            rowHeaderModel.fireIntervalAdded(this, rowCount-1 - rowDiff, rowCount-1)
+            return
+        }
+
+        if (rowDiff < 0) {
+            for (int i = 0; i < -rowDiff; i++)
+                this.data.remove(this.data.size()-1)
+            fireTableRowsDeleted(rowCount-1, rowCount-1 - rowDiff)
+            rowHeaderModel.fireIntervalRemoved(this, rowCount-1, rowCount-1 - rowDiff)
+            return
+        }
     }
 
     /**
@@ -80,6 +126,9 @@ public class CustomTableModel extends AbstractTableModel {
     public void insertRow (int row, List<Object> rowData = null) {
         if (rowData == null)
             rowData = new LinkedList<Object>()
+
+        if (row < 0)
+            row = rowCount
 
         while (rowData.size() < columnCount) {
             rowData.add ("")
@@ -96,17 +145,7 @@ public class CustomTableModel extends AbstractTableModel {
      * @return new Number of Row
      */
     public int addRow (List<Object> rowData = null) {
-        if (rowData == null)
-            rowData = new LinkedList<Object>()
-
-        while (rowData.size() < columnCount) {
-            rowData.add ("")
-        }
-
-        this.data.add(rowData)
-
-        fireTableRowsInserted(rowCount-1, rowCount-1)
-        rowHeaderModel.fireContentsChanged(this, rowCount-1, rowCount-1)
+        insertRow (rowCount, rowData)
         return rowCount-1
     }
 
@@ -115,8 +154,11 @@ public class CustomTableModel extends AbstractTableModel {
      * @param row Index of the Row to delete
      */
     public void deleteRow (int row) {
+        if (rowCount <= 1 || row < 0 || row >= rowCount)
+            return
+
         data.remove(row)
-        fireTableStructureChanged()
+        fireTableRowsDeleted(row, row)
         rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
     }
 
@@ -154,7 +196,7 @@ public class CustomTableModel extends AbstractTableModel {
     }
 
     public boolean isCellEditable(int row, int col) {
-        return editMode
+        return false
     }
 
     /**
@@ -168,12 +210,7 @@ public class CustomTableModel extends AbstractTableModel {
         if (row >= rowCount || col >= columnCount)
             return null
 
-        Object cellData = data[row][col]
-        if (editMode == true && cellData instanceof OutputElement) {
-            return "#" + cellData.path
-        }
-
-        return cellData
+        return data[row][col]
     }
 
     /**
@@ -209,7 +246,9 @@ public class CustomTableModel extends AbstractTableModel {
 
         // If editMode, just return the original data
         if (editMode == true) {
-            return getDataAt (row, col)
+            if (cellData instanceof OutputElement)
+                cellData = "#" + cellData.path
+            return cellData
         }
 
         // if cellData is a formula, resolve the formula

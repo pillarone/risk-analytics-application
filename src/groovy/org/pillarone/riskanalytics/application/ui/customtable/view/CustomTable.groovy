@@ -33,6 +33,10 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.applicationframework.application.Action
+import com.ulcjava.base.application.event.IWindowListener
+import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.ULCButton
+import org.pillarone.riskanalytics.application.ui.main.action.ImportAllAction
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -106,7 +110,11 @@ public class CustomTablePane extends ULCScrollPane {
         ULCMenuItem insertColMenuItem = new ULCMenuItem("Insert Column")
         insertColMenuItem.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                customTableModel.insertCol(lastLeftClickedColumn.getModelIndex())
+                if (lastLeftClickedColumn != null) {
+                    customTableModel.insertCol(lastLeftClickedColumn.getModelIndex())
+                } else {
+                    customTableModel.addCol()
+                }
             }
         })
         colHeaderPopupMenu.add(insertColMenuItem)
@@ -114,7 +122,9 @@ public class CustomTablePane extends ULCScrollPane {
         ULCMenuItem deleteColMenuItem = new ULCMenuItem("Delete Column")
         deleteColMenuItem.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                customTableModel.deleteCol(lastLeftClickedColumn.getModelIndex())
+                if (lastLeftClickedColumn != null) {
+                    customTableModel.deleteCol(lastLeftClickedColumn.getModelIndex())
+                }
             }
         })
         colHeaderPopupMenu.add(deleteColMenuItem)
@@ -194,6 +204,40 @@ public class CustomTable extends ULCTable {
                 }
             }
         }, KeyStroke.getKeyStroke (KeyEvent.VK_DELETE, 0), ULCComponent.WHEN_FOCUSED)
+
+
+        ULCPopupMenu tablePopupMenu = new ULCPopupMenu()
+
+        ULCMenuItem setTableSizeMenuItem = new ULCMenuItem("Set table size...")
+        setTableSizeMenuItem.addActionListener(new IActionListener() {
+            void actionPerformed(ActionEvent actionEvent) {
+                TableSizeDialog dlg = new TableSizeDialog(CustomTable.this.customTableView.parent, CustomTable.this.rowCount, CustomTable.this.columnCount)
+                dlg.visible = true
+
+                dlg.addWindowListener(new IWindowListener() {
+                    void windowClosing(WindowEvent windowEvent) {
+                        if (windowEvent.source instanceof ULCButton && windowEvent.source.text == "OK") {
+                            CustomTable.this.customTableModel.setNumberRows (dlg.getNumberRows())
+                            CustomTable.this.customTableModel.setNumberCols (dlg.getNumberColumns())
+                        }
+                    }
+                })
+
+            }
+        })
+        tablePopupMenu.add(setTableSizeMenuItem)
+
+        ULCMenuItem showFormulasMenuItem = new ULCMenuItem (customTableModel.editMode ? "show values" : "show formulas")
+        showFormulasMenuItem.addActionListener(new IActionListener(){
+            void actionPerformed(ActionEvent actionEvent) {
+                customTableModel.editMode = !customTableModel.editMode
+                customTableModel.fireTableDataChanged()
+                showFormulasMenuItem.text = customTableModel.editMode ? "show values" : "show formulas"
+            }
+        })
+        tablePopupMenu.add(showFormulasMenuItem)
+
+        this.setComponentPopupMenu(tablePopupMenu)
     }
 
 
@@ -229,14 +273,14 @@ public class CustomTable extends ULCTable {
                 Object cellData = CustomTable.this.customTableModel.getDataAt(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 if (cellData instanceof OutputElement) {
-                    //CustomTable.this.customTableView.cellEditTextField.setVisible(false)
+                    CustomTable.this.customTableView.cellEditTextField.editable = false
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(true)
                     CustomTable.this.customTableView.dataCellEditPane.setData(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 } else {
                     // If the selectDataMode is off
                     // set the Value of the cell into the cellEditTextField
-                    //CustomTable.this.customTableView.cellEditTextField.setVisible(true)
+                    CustomTable.this.customTableView.cellEditTextField.editable = true
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(false)
                     CustomTable.this.customTableView.cellEditTextField.setText(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
                 }
@@ -258,22 +302,29 @@ public class CustomTable extends ULCTable {
                 OutputElementTable table = dragData.getTable()
                 OutputElementTableModel tableModel = table.getModel()
 
-                int rowToInsert = dropData.getSelectedRows()[0]
-                int colToInsert = dropData.getSelectedColumns()[0]
-                for (int row : table.getSelectedRows()) {
-                    OutputElement outputElement = tableModel.getRowElement(row)
+                int dropRowOrigin = dropData.getSelectedRows()[0]
+                int dropColOrigin = dropData.getSelectedColumns()[0]
 
-                    CustomTable.this.customTableModel.setValueAt(outputElement, rowToInsert++, colToInsert)
+                int dropRow = dropRowOrigin
+                int dropCol = dropColOrigin
 
-                    if (rowToInsert >= CustomTable.this.rowCount) {
-                        rowToInsert = 0
-                        colToInsert++
+                for (int dragRow : table.getSelectedRows()) {
+                    OutputElement outputElement = tableModel.getRowElement(dragRow)
 
-                        if (colToInsert >= CustomTable.this.columnCount) {
-                            colToInsert = 0
+                    CustomTable.this.customTableModel.setValueAt(outputElement, dropRow++, dropCol)
+
+                    if (dropRow >= CustomTable.this.rowCount) {
+                        dropRow = 0
+                        dropCol++
+
+                        if (dropCol >= CustomTable.this.columnCount) {
+                            dropCol = 0
                         }
                     }
                 }
+
+                CustomTable.this.selectionModel.setSelectionInterval(dropRowOrigin, dropRowOrigin)
+                CustomTable.this.columnModel.selectionModel.setSelectionInterval(dropColOrigin, dropColOrigin)
             }
         }
 

@@ -10,6 +10,9 @@ import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import com.ulcjava.testframework.operator.ULCComponentOperator
+import com.ulcjava.testframework.operator.ULCPopupMenuOperator
+import com.ulcjava.testframework.operator.ULCDialogOperator
+import org.pillarone.riskanalytics.application.ui.customtable.view.TableSizeDialog
 
 
 class PivotTests extends AbstractSimpleFunctionalTest {
@@ -78,46 +81,4 @@ class PivotTests extends AbstractSimpleFunctionalTest {
         assert CustomTableHelper.copyData ("=SUM(A\$1;\$B1;C1)", 1, 0) == "=SUM(A\$1;\$B2;C2)"
         assert CustomTableHelper.copyData ("=SUM(\$A\$1;\$B1;C\$1)", 1, 1) == "=SUM(\$A\$1;\$B2;D\$1)"
     }
-
-    void testFrame() {
-        ULCButtonOperator    insertRowButton    = new ULCButtonOperator(customTableView.newRowButton)
-        ULCButtonOperator    insertColButton    = new ULCButtonOperator(customTableView.newColButton)
-        ULCTableOperator     table              = new ULCTableOperator(customTableView.customTable)
-//        ULCTextFieldOperator cellEditTextField  = new ULCTextFieldOperator(customTableView.cellEditTextField)
-//        ULCComponentOperator dataCellEditPane   = new ULCComponentOperator(customTableView.dataCellEditPane)
-
-        // Test insert Row
-        assert table.rowCount == 1
-        insertRowButton.clickMouse()
-        assert table.rowCount == 2
-        insertRowButton.clickMouse(3)
-        assert table.rowCount == 5
-
-        // Test insert Col
-        assert table.columnCount == 1
-        insertColButton.clickMouse()
-        assert table.columnCount == 2
-        insertColButton.clickMouse(3)
-        assert table.columnCount == 5
-
-        // Insert data test
-//        setTextOnCell(0,0,"10")
-//        setTextOnCell(1,0,"20")
-//        setTextOnCell(2,0,"30")
-//        setTextOnCell(0,1,"=SUM(A1:A3)")
-
-//        sleep 10000
-    }
-
-//    private setTextOnCell (int row, int col, String text) {
-//        table.selectCell(row,col)
-//        assert cellEditTextField.isVisible() == true
-//        assert dataCellEditPane.isVisible() == false
-//        assert cellEditTextField.hasFocus() == false
-//        table.pressKey (KeyEvent.VK_ENTER)
-//        assert cellEditTextField.hasFocus() == true
-//        cellEditTextField.enterText(text)
-//        cellEditTextField.pressKey (KeyEvent.VK_ENTER)
-//        assert table.getValueAt(row,col) == text
-//    }
 }
