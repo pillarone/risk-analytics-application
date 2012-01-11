@@ -37,6 +37,7 @@ import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.ULCButton
 import org.pillarone.riskanalytics.application.ui.main.action.ImportAllAction
+import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -309,9 +310,13 @@ public class CustomTable extends ULCTable {
                 int dropCol = dropColOrigin
 
                 for (int dragRow : table.getSelectedRows()) {
-                    OutputElement outputElement = tableModel.getRowElement(dragRow)
-                    outputElement.updateValue()
-                    CustomTable.this.customTableModel.setValueAt(outputElement, dropRow++, dropCol)
+                    DataCellElement dataCellElement = new DataCellElement (tableModel.getRowElement(table.convertRowIndexToModel(dragRow)))
+
+                    // TODO: add period, statistic to DataCellElement
+                    dataCellElement.periodIndex = 0
+
+                    dataCellElement.updateValue()
+                    CustomTable.this.customTableModel.setValueAt(dataCellElement, dropRow++, dropCol)
 
                     if (dropRow >= CustomTable.this.rowCount) {
                         dropRow = 0
@@ -402,8 +407,8 @@ public class CustomTable extends ULCTable {
                             Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
 
                             if ((data instanceof String) == false) {
-                                if (CustomTableHelper.updateSpecificPathWithVariables(data, CustomTable.this.customTableModel))
-                                    ((OutputElement)data).updateValue()
+                                if (((DataCellElement)data).updateSpecificPathWithVariables(CustomTable.this.customTableModel))
+                                    ((DataCellElement)data).updateValue()
                             }
                             CustomTable.this.customTableModel.setValueAt(data, row, col)
 
@@ -426,8 +431,8 @@ public class CustomTable extends ULCTable {
                             for (int col = min_col; col <= max_col; col++) {
                                 Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
                                 if ((data instanceof String) == false) {
-                                    if (CustomTableHelper.updateSpecificPathWithVariables(data, CustomTable.this.customTableModel))
-                                        ((OutputElement)data).updateValue()
+                                    if (((DataCellElement)data).updateSpecificPathWithVariables(CustomTable.this.customTableModel))
+                                        ((DataCellElement)data).updateValue()
                                 }
                                 CustomTable.this.customTableModel.setValueAt(data, row, col)
                             }

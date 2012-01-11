@@ -159,27 +159,6 @@ static class CustomTableHelper {
 //        return formula
 //    }
 
-    public static boolean updateSpecificPathWithVariables (OutputElement outputElement, CustomTableModel customTableModel) {
-        Map<String, String> categoryMapCopy = new HashMap<String, String>()
-
-        for (String category : outputElement.categoryMap.keySet()) {
-            String value = outputElement.categoryMap[category]
-            if (value.startsWith("=")) {
-                value = customTableModel.getValueAt(value.substring(1))
-            }
-            categoryMapCopy.put (category, value)
-        }
-
-        String new_path = outputElement.getWildCardPath().getSpecificPath(categoryMapCopy)
-
-        if (outputElement.path.equals(new_path) == false) {
-            outputElement.path = new_path
-            return true
-        }
-
-        return false
-    }
-
 
     public static Pattern variable_dollar_pattern = ~/[$]?[A-Z]+[$]?[0-9]+/
     public static Pattern row_range_dollar_pattern = ~/[$]?[0-9]+:[$]?[0-9]+/
@@ -188,7 +167,7 @@ static class CustomTableHelper {
     public static Pattern row_dollar_pattern = ~/[$]?[0-9]+/
 
     /**
-     * Changes the variables in the data to copy (OutputElement or String)
+     * Changes the variables in the data to copy (DataCellElement or String)
      *
      * @param data     the data to copy
      * @param row_diff the difference between the origin row and the row which the data is pasted in
@@ -196,12 +175,12 @@ static class CustomTableHelper {
      * @return the resulting data
      */
     public static Object copyData (Object data, int row_diff, int col_diff) {
-        if (data instanceof OutputElement) {
-            // clone the outputElement
-            OutputElement outputElement = new OutputElement (data)
+        if (data instanceof DataCellElement) {
+            // clone the dataCellElement
+            DataCellElement dataCellElement = new DataCellElement (data)
 
-            for (String category : outputElement.categoryMap.keySet()) {
-                String value = outputElement.categoryMap[category]
+            for (String category : dataCellElement.categoryMap.keySet()) {
+                String value = dataCellElement.categoryMap[category]
 
                 if (value.startsWith("=")) {
                     value = value.substring(1)
@@ -217,10 +196,10 @@ static class CustomTableHelper {
                         int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
                         row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                     }
-                    outputElement.categoryMap[category] = "=" + col_string + row_string
+                    dataCellElement.categoryMap[category] = "=" + col_string + row_string
                 }
             }
-            return outputElement
+            return dataCellElement
         }
 
         if (data instanceof String) {

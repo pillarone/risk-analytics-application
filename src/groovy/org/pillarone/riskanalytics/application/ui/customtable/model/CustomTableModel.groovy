@@ -258,7 +258,7 @@ public class CustomTableModel extends AbstractTableModel {
 
         // If editMode, just return the original data
         if (editMode == true) {
-            if (cellData instanceof OutputElement)
+            if (cellData instanceof DataCellElement)
                 cellData = "#" + cellData.path
             return cellData
         }
@@ -290,7 +290,7 @@ public class CustomTableModel extends AbstractTableModel {
         }
 
         // if cellData is a data-Reference, get the value from the database
-        if (cellData instanceof OutputElement) {
+        if (cellData instanceof DataCellElement) {
             return cellData.value.toString()
         }
 
@@ -309,8 +309,8 @@ public class CustomTableModel extends AbstractTableModel {
             return
 
         // remove references
-        if (data[row][col] instanceof OutputElement) {
-            OutputElement oe = data[row][col]
+        if (data[row][col] instanceof DataCellElement) {
+            DataCellElement oe = data[row][col]
             for (String category : oe.categoryMap.keySet()) {
                 if (oe.categoryMap[category].startsWith("=")) {
                     removeReference(oe.categoryMap[category].substring(1),
@@ -327,8 +327,8 @@ public class CustomTableModel extends AbstractTableModel {
         fireTableCellUpdated(row, col)
 
         // add references
-        if (value instanceof OutputElement) {
-            OutputElement oe = value
+        if (value instanceof DataCellElement) {
+            DataCellElement oe = value
             for (String category : oe.categoryMap.keySet()) {
                 if (oe.categoryMap[category].startsWith("=")) {
                     addReference(oe.categoryMap[category].substring(1),
@@ -350,9 +350,9 @@ public class CustomTableModel extends AbstractTableModel {
             for (String cell : references[CustomTableHelper.getVariable(row, col)]) {
                 int r = CustomTableHelper.getRow (cell)
                 int c = CustomTableHelper.getCol (cell)
-                if (getDataAt(r, c) instanceof OutputElement){
-                    OutputElement oe = getDataAt(r, c)
-                    if (CustomTableHelper.updateSpecificPathWithVariables(oe, this))
+                if (getDataAt(r, c) instanceof DataCellElement){
+                    DataCellElement oe = getDataAt(r, c)
+                    if (oe.updateSpecificPathWithVariables(this))
                         oe.updateValue()
                 }
                 fireTableCellUpdated(r, c)

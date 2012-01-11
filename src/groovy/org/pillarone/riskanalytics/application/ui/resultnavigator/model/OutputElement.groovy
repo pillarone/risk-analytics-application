@@ -19,23 +19,6 @@ class OutputElement {
     Map<String,String> categoryMap = [:]  // may also contain elements with null value
     List<String> wildCards
     WildCardPath wildCardPath
-    Object value
-
-    public OutputElement () {
-    }
-
-    // Copy constructor
-    public OutputElement (OutputElement outputElement) {
-        this.run = outputElement.run
-        this.path = outputElement.path
-        this.templatePath = outputElement.templatePath
-        this.field = outputElement.field
-        this.collector = outputElement.collector
-        this.categoryMap = outputElement.categoryMap.clone()
-        this.wildCards = outputElement.wildCards
-        this.wildCardPath = outputElement.wildCardPath
-        this.value = outputElement.value
-    }
 
     void addCategoryValue(String category, String value) {
         categoryMap[category] = value
@@ -58,12 +41,4 @@ class OutputElement {
         return path.hashCode()+field.hashCode()+collector.hashCode()
     }
 
-    public void updateValue() {
-        try {
-            // TODO: include period and statistics
-            value = ResultAccessor.getMean (run, 0, path, collector, field)
-        } catch (Exception e) {
-            value = "#ERROR"
-        }
-    }
 }

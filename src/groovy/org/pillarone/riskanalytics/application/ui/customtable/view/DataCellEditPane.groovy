@@ -10,6 +10,7 @@ import com.ulcjava.base.application.ULCComboBox
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
+import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
 
 /**
  *
@@ -23,7 +24,7 @@ public class DataCellEditPane extends ULCBoxPane {
     private CustomTableModel customTableModel
     private int row = 0
     private int col = 0
-    private OutputElement outputElement
+    private DataCellElement dataCellElement
 
     private Map<String, ULCTextField> cellRefTextFields = new HashMap<String, ULCTextField>()
 
@@ -48,16 +49,16 @@ public class DataCellEditPane extends ULCBoxPane {
         this.row = row
         this.col = col
 
-        outputElement = customTableModel.getDataAt (row, col)
+        dataCellElement = customTableModel.getDataAt (row, col)
 
         this.removeAll()
         cellRefTextFields.clear()
 
-        customTableView.cellEditTextField.text = outputElement.path
+        customTableView.cellEditTextField.text = dataCellElement.path
 
-        for (String category : outputElement.getCategoryMap().keySet()) {
+        for (String category : dataCellElement.getCategoryMap().keySet()) {
 
-            List<String> wildCardValues = outputElement.getWildCardPath().getWildCardValues(category)
+            List<String> wildCardValues = dataCellElement.getWildCardPath().getWildCardValues(category)
             if (wildCardValues != null) {
                 ULCLabel categoryLabel = new ULCLabel(category)
 
@@ -75,7 +76,7 @@ public class DataCellEditPane extends ULCBoxPane {
                 categoryValueCombo.setPreferredSize(new Dimension (200,25))
                 categoryValueCombo.addActionListener(new CategoryValueComboListener())
 
-                String itemToSelect = outputElement.categoryMap[category]
+                String itemToSelect = dataCellElement.categoryMap[category]
 
                 if (itemToSelect.startsWith('=')) {
                     cellReferenceTextField.text = itemToSelect.substring(1)
@@ -96,9 +97,9 @@ public class DataCellEditPane extends ULCBoxPane {
     }
 
     private void refreshPath() {
-        if (CustomTableHelper.updateSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)) {
-            outputElement.updateValue()
-            customTableView.cellEditTextField.text = outputElement.path
+        if (dataCellElement.updateSpecificPathWithVariables((CustomTableModel)customTableModel)) {
+            dataCellElement.updateValue()
+            customTableView.cellEditTextField.text = dataCellElement.path
         }
     }
 
@@ -109,14 +110,14 @@ public class DataCellEditPane extends ULCBoxPane {
         void actionPerformed(ActionEvent textFieldActionEvent) {
             ULCTextField textField = textFieldActionEvent.source
 
-            if (("=" + textField.getText()) == DataCellEditPane.this.outputElement.categoryMap[textField.getName()])
+            if (("=" + textField.getText()) == DataCellEditPane.this.dataCellElement.categoryMap[textField.getName()])
                 return
 
             // remove reference from old variable
-            DataCellEditPane.this.customTableModel.removeReference(DataCellEditPane.this.outputElement.categoryMap[textField.getName()].substring(1),
+            DataCellEditPane.this.customTableModel.removeReference(DataCellEditPane.this.dataCellElement.categoryMap[textField.getName()].substring(1),
                                                                    CustomTableHelper.getVariable(DataCellEditPane.this.row, DataCellEditPane.this.col))
 
-            DataCellEditPane.this.outputElement.categoryMap[textField.getName()] = "=" + textField.getText()
+            DataCellEditPane.this.dataCellElement.categoryMap[textField.getName()] = "=" + textField.getText()
 
             DataCellEditPane.this.refreshPath()
             DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
@@ -146,11 +147,11 @@ public class DataCellEditPane extends ULCBoxPane {
                     combo.setPreferredSize(new Dimension (200,25))
                     DataCellEditPane.this.cellRefTextFields[category].setVisible(false)
 
-                    if (combo.selectedItem == DataCellEditPane.this.outputElement.categoryMap[category])
+                    if (combo.selectedItem == DataCellEditPane.this.dataCellElement.categoryMap[category])
                         return
 
-                    // save the selected item to the outputElement
-                    DataCellEditPane.this.outputElement.categoryMap[category] = combo.selectedItem
+                    // save the selected item to the dataCellElement
+                    DataCellEditPane.this.dataCellElement.categoryMap[category] = combo.selectedItem
 
                     DataCellEditPane.this.refreshPath()
                     DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
