@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 /**
  * @author martin.melchior
@@ -18,6 +19,7 @@ class OutputElement {
     Map<String,String> categoryMap = [:]  // may also contain elements with null value
     List<String> wildCards
     WildCardPath wildCardPath
+    Object value
 
     public OutputElement () {
     }
@@ -32,6 +34,7 @@ class OutputElement {
         this.categoryMap = outputElement.categoryMap.clone()
         this.wildCards = outputElement.wildCards
         this.wildCardPath = outputElement.wildCardPath
+        this.value = outputElement.value
     }
 
     void addCategoryValue(String category, String value) {
@@ -53,5 +56,14 @@ class OutputElement {
 
     public int hashCode() {
         return path.hashCode()+field.hashCode()+collector.hashCode()
+    }
+
+    public void updateValue() {
+        try {
+            // TODO: include period and statistics
+            value = ResultAccessor.getMean (run, 0, path, collector, field)
+        } catch (Exception e) {
+            value = "#ERROR"
+        }
     }
 }

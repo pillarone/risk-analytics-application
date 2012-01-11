@@ -310,7 +310,7 @@ public class CustomTable extends ULCTable {
 
                 for (int dragRow : table.getSelectedRows()) {
                     OutputElement outputElement = tableModel.getRowElement(dragRow)
-
+                    outputElement.updateValue()
                     CustomTable.this.customTableModel.setValueAt(outputElement, dropRow++, dropCol)
 
                     if (dropRow >= CustomTable.this.rowCount) {
@@ -420,28 +420,57 @@ public class CustomTable extends ULCTable {
                     break
                 
                 case Mode.PASTE:
-                    int row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
-                    int col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
-                    int last_origin_row = null
-                    int last_origin_col = null
-                    for (CopyCellData copyCellData: CustomTable.this.copyData) {
-                        if (last_origin_row != null && last_origin_col != null) {
-                            row += copyCellData.origin_row - last_origin_row
-                            col += copyCellData.origin_col - last_origin_col
+
+                    if (CustomTable.this.copyData.size() > 1) {
+                        int row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
+                        int col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
+
+                        int last_origin_row = null
+                        int last_origin_col = null
+
+                        for (CopyCellData copyCellData: CustomTable.this.copyData) {
+                            if (last_origin_row != null && last_origin_col != null) {
+                                row += copyCellData.origin_row - last_origin_row
+                                col += copyCellData.origin_col - last_origin_col
+                            }
+
+                            Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
+
+                            if ((data instanceof String) == false) {
+                                if (CustomTableHelper.updateSpecificPathWithVariables(data, CustomTable.this.customTableModel))
+                                    ((OutputElement)data).updateValue()
+                            }
+                            CustomTable.this.customTableModel.setValueAt(data, row, col)
+
+                            last_origin_row = copyCellData.origin_row
+                            last_origin_col = copyCellData.origin_col
+                        }
+                        CustomTable.this.selectionModel.setSelectionInterval(row, row)
+                        CustomTable.this.getColumnModel().selectionModel.setSelectionInterval(col, col)
+
+
+                    } else if (CustomTable.this.copyData.size() > 0) {
+                        int min_row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
+                        int max_row = CustomTable.this.getSelectionModel().getMaxSelectionIndex()
+                        int min_col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
+                        int max_col = CustomTable.this.getColumnModel().getSelectionModel().getMaxSelectionIndex()
+
+                        CopyCellData copyCellData = CustomTable.this.copyData[0]
+
+                        for (int row = min_row; row <= max_row; row++) {
+                            for (int col = min_col; col <= max_col; col++) {
+                                Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
+                                if ((data instanceof String) == false) {
+                                    if (CustomTableHelper.updateSpecificPathWithVariables(data, CustomTable.this.customTableModel))
+                                        ((OutputElement)data).updateValue()
+                                }
+                                CustomTable.this.customTableModel.setValueAt(data, row, col)
+                            }
                         }
 
-                        Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
-
-                        if ((data instanceof String) == false) {
-                            ((OutputElement)data).path = CustomTableHelper.getSpecificPathWithVariables(data, CustomTable.this.customTableModel)
-                        }
-                        CustomTable.this.customTableModel.setValueAt(data, row, col)
-
-                        last_origin_row = copyCellData.origin_row
-                        last_origin_col = copyCellData.origin_col
+                        CustomTable.this.selectionModel.setSelectionInterval(min_row, max_row)
+                        CustomTable.this.getColumnModel().selectionModel.setSelectionInterval(min_col, max_col)
                     }
-                    CustomTable.this.selectionModel.setSelectionInterval(row, row)
-                    CustomTable.this.getColumnModel().selectionModel.setSelectionInterval(col, col)
                     break
             }
         }

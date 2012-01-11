@@ -96,10 +96,9 @@ public class DataCellEditPane extends ULCBoxPane {
     }
 
     private void refreshPath() {
-        String path = CustomTableHelper.getSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)
+        CustomTableHelper.updateSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)
 
-        outputElement.path = path
-        customTableView.cellEditTextField.text = path
+        customTableView.cellEditTextField.text = outputElement.path
     }
 
     /**
@@ -115,6 +114,7 @@ public class DataCellEditPane extends ULCBoxPane {
             DataCellEditPane.this.outputElement.categoryMap[textField.getName()] = "=" + textField.getText()
 
             DataCellEditPane.this.refreshPath()
+            DataCellEditPane.this.outputElement.updateValue()
             DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
         }
     }
@@ -145,6 +145,7 @@ public class DataCellEditPane extends ULCBoxPane {
                     DataCellEditPane.this.outputElement.categoryMap[category] = combo.selectedItem
 
                     DataCellEditPane.this.refreshPath()
+                    DataCellEditPane.this.outputElement.updateValue()
                     DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
                 }
             }

@@ -111,18 +111,21 @@ static class CustomTableHelper {
 //        return formula
 //    }
 
-    public static String getSpecificPathWithVariables (OutputElement outputElement, CustomTableModel customTableModel) {
+    public static boolean updateSpecificPathWithVariables (OutputElement outputElement, CustomTableModel customTableModel) {
+        boolean variables = false
         Map<String, String> categoryMapCopy = new HashMap<String, String>()
 
         for (String category : outputElement.categoryMap.keySet()) {
             String value = outputElement.categoryMap[category]
             if (value.startsWith("=")) {
                 value = customTableModel.getValueAt(value.substring(1))
+                variables = true
             }
             categoryMapCopy.put (category, value)
         }
+        outputElement.path = outputElement.getWildCardPath().getSpecificPath(categoryMapCopy)
 
-        return outputElement.getWildCardPath().getSpecificPath(categoryMapCopy)
+        return variables
     }
 
 

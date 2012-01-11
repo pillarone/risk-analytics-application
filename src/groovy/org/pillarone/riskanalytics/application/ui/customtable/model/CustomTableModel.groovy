@@ -279,12 +279,7 @@ public class CustomTableModel extends AbstractTableModel {
 
         // if cellData is a data-Reference, get the value from the database
         if (cellData instanceof OutputElement) {
-            try {
-                double mean = ResultAccessor.getMean (cellData.run, 0, cellData.path, cellData.collector, cellData.field)
-                return mean.toString()
-            } catch (Exception e) {
-                return "#ERROR"
-            }
+            return cellData.value.toString()
         }
 
         return cellData
