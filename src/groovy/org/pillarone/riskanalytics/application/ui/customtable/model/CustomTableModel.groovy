@@ -21,6 +21,21 @@ public class CustomTableModel extends AbstractTableModel {
 
     public boolean editMode
 
+    Map<String, List<String>> references = new HashMap<String, List<String>>()
+
+    public void addReference (String targetCell, String variableCell) {
+        if (references[targetCell] == null)
+            references[targetCell] = new LinkedList<String>()
+
+        references[targetCell].add (variableCell)
+    }
+    public void removeReference (String targetCell, String variableCell) {
+        if (references[targetCell] == null)
+            return
+
+        references[targetCell].remove (variableCell)
+    }
+
     /**
      * Constructor
      *
@@ -222,11 +237,8 @@ public class CustomTableModel extends AbstractTableModel {
     public Object getValueAt (String variable) {
         variable = variable.replace ('$', '')
 
-        String row_string = CustomTableHelper.row_pattern.matcher(variable)[0]
-        String col_string = CustomTableHelper.col_pattern.matcher(variable)[0]
-
-        int row = Integer.parseInt(row_string)-1
-        int col = CustomTableHelper.getColNo(col_string)-1
+        int row = CustomTableHelper.getRow (variable)
+        int col = CustomTableHelper.getCol (variable)
 
         return getValueAt(row, col)
     }
@@ -296,8 +308,57 @@ public class CustomTableModel extends AbstractTableModel {
         if (row >= rowCount || col >= columnCount)
             return
 
+        // remove references
+        if (data[row][col] instanceof OutputElement) {
+            OutputElement oe = data[row][col]
+            for (String category : oe.categoryMap.keySet()) {
+                if (oe.categoryMap[category].startsWith("=")) {
+                    removeReference(oe.categoryMap[category].substring(1),
+                                    CustomTableHelper.getVariable(row, col))
+                }
+            }
+        }
+        if (data[row][col] instanceof String && ((String)data[row][col]).startsWith("=")) {
+            for (String variable : CustomTableHelper.getVariables (this, data[row][col], row, col))
+                removeReference(variable, CustomTableHelper.getVariable(row, col))
+        }
+
         data[row][col] = value
         fireTableCellUpdated(row, col)
+
+        // add references
+        if (value instanceof OutputElement) {
+            OutputElement oe = value
+            for (String category : oe.categoryMap.keySet()) {
+                if (oe.categoryMap[category].startsWith("=")) {
+                    addReference(oe.categoryMap[category].substring(1),
+                                 CustomTableHelper.getVariable(row, col))
+                }
+            }
+        }
+        if (value instanceof String && ((String)value).startsWith("=")) {
+            for (String variable : CustomTableHelper.getVariables (this, value, row, col))
+                addReference(variable, CustomTableHelper.getVariable(row, col))
+        }
+
+        // update referencing cells
+        updateCellReferences (row, col)
+    }
+
+    private void updateCellReferences (int row, int col) {
+        if (references[CustomTableHelper.getVariable(row, col)] != null) {
+            for (String cell : references[CustomTableHelper.getVariable(row, col)]) {
+                int r = CustomTableHelper.getRow (cell)
+                int c = CustomTableHelper.getCol (cell)
+                if (getDataAt(r, c) instanceof OutputElement){
+                    OutputElement oe = getDataAt(r, c)
+                    if (CustomTableHelper.updateSpecificPathWithVariables(oe, this))
+                        oe.updateValue()
+                }
+                fireTableCellUpdated(r, c)
+                updateCellReferences (r, c)
+            }
+        }
     }
 
     /**

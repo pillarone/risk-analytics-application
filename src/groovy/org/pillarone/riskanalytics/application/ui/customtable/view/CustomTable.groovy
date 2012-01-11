@@ -199,7 +199,7 @@ public class CustomTable extends ULCTable {
             void actionPerformed(ActionEvent actionEvent) {
                 for (int row : CustomTable.this.getSelectedRows()) {
                     for (int col : CustomTable.this.getSelectedColumns()) {
-                        CustomTable.this.customTableModel.setValueAt(null, row, col)
+                        CustomTable.this.customTableModel.setValueAt("", row, col)
                     }
                 }
             }
@@ -333,41 +333,6 @@ public class CustomTable extends ULCTable {
         }
     }
 
-    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
-        private int col
-        public CustomTableCellRenderer(int col) {
-            super ()
-            this.col = col
-        }
-
-        IRendererComponent getTableCellRendererComponent(ULCTable ulcTable, Object value, boolean isSelected, boolean hasFocus, int row) {
-
-            if (CustomTable.this.customTableView.cellEditTextField.selectDataMode) {
-                if (isSelected) {
-                    this.setBorder(BorderFactory.createLineBorder(Color.red))
-
-                } else if (hasFocus) {
-                    this.setBorder(BorderFactory.createLineBorder(Color.blue))
-
-                } else {
-//                    this.setBorder(BorderFactory.createLineBorder(Color.green))
-                    this.setBorder(BorderFactory.createEmptyBorder())
-                }
-            } else {
-                if (isSelected) {
-                    this.setBorder(BorderFactory.createLineBorder(Color.yellow))
-
-                } else if (hasFocus) {
-                    this.setBorder(BorderFactory.createLineBorder(Color.orange))
-
-                } else {
-//                    this.setBorder(BorderFactory.createLineBorder(Color.magenta))
-                    this.setBorder(BorderFactory.createEmptyBorder())
-                }
-            }
-            return this
-        }
-    }
 
     /**
      * Class which contains the data for a copy-operation
@@ -475,4 +440,40 @@ public class CustomTable extends ULCTable {
             }
         }
     }
+
+//    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
+//        private int col
+//        public CustomTableCellRenderer(int col) {
+//            super ()
+//            this.col = col
+//        }
+//
+//        IRendererComponent getTableCellRendererComponent(ULCTable ulcTable, Object value, boolean isSelected, boolean hasFocus, int row) {
+//
+//            if (CustomTable.this.customTableView.cellEditTextField.selectDataMode) {
+//                if (isSelected) {
+//                    this.setBorder(BorderFactory.createLineBorder(Color.red))
+//
+//                } else if (hasFocus) {
+//                    this.setBorder(BorderFactory.createLineBorder(Color.blue))
+//
+//                } else {
+////                    this.setBorder(BorderFactory.createLineBorder(Color.green))
+//                    this.setBorder(BorderFactory.createEmptyBorder())
+//                }
+//            } else {
+//                if (isSelected) {
+//                    this.setBorder(BorderFactory.createLineBorder(Color.yellow))
+//
+//                } else if (hasFocus) {
+//                    this.setBorder(BorderFactory.createLineBorder(Color.orange))
+//
+//                } else {
+////                    this.setBorder(BorderFactory.createLineBorder(Color.magenta))
+//                    this.setBorder(BorderFactory.createEmptyBorder())
+//                }
+//            }
+//            return this
+//        }
+//    }
 }

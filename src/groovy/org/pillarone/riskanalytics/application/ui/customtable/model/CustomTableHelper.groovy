@@ -54,14 +54,10 @@ static class CustomTableHelper {
 
         // Check for other variables and replace them with their value
         for (String variable : variable_pattern.matcher(formula)) {
-            String col_string = col_pattern.matcher(variable)[0]
-            String row_string = row_pattern.matcher(variable)[0]
-
-            int col = (col_string != null) ? CustomTableHelper.getColNo(col_string)-1 : 0
-            int row = (row_string != null) ? Integer.parseInt(row_string)-1 : 0
+            int col = getCol (variable)
+            int row = getRow (variable)
 
             // TODO: don't insert if cell doesn't exist
-
             if (row == cellRow && col == cellCol) {
                 System.out.println ("Zirkelbezug")
                 formula = formula.replace (variable + ",", "")
@@ -73,6 +69,58 @@ static class CustomTableHelper {
 
         return formula
     }
+
+
+
+    public static List<String> getVariables (CustomTableModel model, String formula, int cellRow, int cellCol) {
+        formula = formula.replace ('$', '')
+
+        List<String> variables = new LinkedList<String>()
+
+        // Check for Ranges, and replace the Range with the corresponding values
+        for (String s : range_pattern.matcher(formula)) {
+
+            String first = s.split (":")[0]
+            String last = s.split (":")[1]
+
+            String first_col_string = (col_pattern.matcher(first).find()) ? col_pattern.matcher(first)[0] : "A"
+            String first_row_string = (row_pattern.matcher(first).find()) ? row_pattern.matcher(first)[0] : 1
+            String last_col_string = (col_pattern.matcher(last).find()) ? col_pattern.matcher(last)[0] : CustomTableHelper.getColString(model.columnCount)
+            String last_row_string = (row_pattern.matcher(last).find()) ? row_pattern.matcher(last)[0] : model.rowCount
+
+            int first_col = CustomTableHelper.getColNo(first_col_string)-1
+            int first_row = Integer.parseInt(first_row_string)-1
+            int last_col = CustomTableHelper.getColNo(last_col_string)-1
+            int last_row = Integer.parseInt(last_row_string)-1
+
+            for (int col = first_col; col <= last_col; col++) {
+                for (int row = first_row; row <= last_row; row++) {
+
+                    // TODO: don't insert if cell doesn't exist
+
+                    if (row == cellRow && col == cellCol) {
+                        continue
+                    }
+
+                    if (variables.contains(getVariable (row, col)) == false)
+                        variables.add (getVariable (row, col))
+                }
+            }
+            formula = formula.replace (s, "")
+        }
+
+        // Check for other variables and replace them with their value
+        for (String variable : variable_pattern.matcher(formula)) {
+            if (variables.contains(variable) == false)
+                variables.add (variable)
+
+            formula = formula.replace (variable, "")
+        }
+
+        return variables
+    }
+
+
 
 // Not used anymore, because JEP is evaluating mathematical expressions now
 //
@@ -112,20 +160,24 @@ static class CustomTableHelper {
 //    }
 
     public static boolean updateSpecificPathWithVariables (OutputElement outputElement, CustomTableModel customTableModel) {
-        boolean variables = false
         Map<String, String> categoryMapCopy = new HashMap<String, String>()
 
         for (String category : outputElement.categoryMap.keySet()) {
             String value = outputElement.categoryMap[category]
             if (value.startsWith("=")) {
                 value = customTableModel.getValueAt(value.substring(1))
-                variables = true
             }
             categoryMapCopy.put (category, value)
         }
-        outputElement.path = outputElement.getWildCardPath().getSpecificPath(categoryMapCopy)
 
-        return variables
+        String new_path = outputElement.getWildCardPath().getSpecificPath(categoryMapCopy)
+
+        if (outputElement.path.equals(new_path) == false) {
+            outputElement.path = new_path
+            return true
+        }
+
+        return false
     }
 
 
@@ -144,7 +196,6 @@ static class CustomTableHelper {
      * @return the resulting data
      */
     public static Object copyData (Object data, int row_diff, int col_diff) {
-
         if (data instanceof OutputElement) {
             // clone the outputElement
             OutputElement outputElement = new OutputElement (data)
@@ -267,5 +318,22 @@ static class CustomTableHelper {
 
         String value = getColString (times) + letter.toString()
         return value
+    }
+
+
+    public static String getVariable (int row, int col) {
+        return getColString(col+1) + (row+1).toString()
+    }
+
+    public static int getCol (String variable) {
+        String col_string = col_pattern.matcher(variable)[0]
+        int col = (col_string != null) ? CustomTableHelper.getColNo(col_string)-1 : 0
+        return col
+    }
+
+    public static int getRow (String variable) {
+        String row_string = row_pattern.matcher(variable)[0]
+        int row = (row_string != null) ? Integer.parseInt(row_string)-1 : 0
+        return row
     }
 }

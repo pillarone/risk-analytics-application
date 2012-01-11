@@ -53,6 +53,8 @@ public class DataCellEditPane extends ULCBoxPane {
         this.removeAll()
         cellRefTextFields.clear()
 
+        customTableView.cellEditTextField.text = outputElement.path
+
         for (String category : outputElement.getCategoryMap().keySet()) {
 
             List<String> wildCardValues = outputElement.getWildCardPath().getWildCardValues(category)
@@ -91,14 +93,13 @@ public class DataCellEditPane extends ULCBoxPane {
                 categoryValueCombo.selectedItem = itemToSelect
             }
         }
-
-        refreshPath()
     }
 
     private void refreshPath() {
-        CustomTableHelper.updateSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)
-
-        customTableView.cellEditTextField.text = outputElement.path
+        if (CustomTableHelper.updateSpecificPathWithVariables((OutputElement)outputElement, (CustomTableModel)customTableModel)) {
+            outputElement.updateValue()
+            customTableView.cellEditTextField.text = outputElement.path
+        }
     }
 
     /**
@@ -111,11 +112,18 @@ public class DataCellEditPane extends ULCBoxPane {
             if (("=" + textField.getText()) == DataCellEditPane.this.outputElement.categoryMap[textField.getName()])
                 return
 
+            // remove reference from old variable
+            DataCellEditPane.this.customTableModel.removeReference(DataCellEditPane.this.outputElement.categoryMap[textField.getName()].substring(1),
+                                                                   CustomTableHelper.getVariable(DataCellEditPane.this.row, DataCellEditPane.this.col))
+
             DataCellEditPane.this.outputElement.categoryMap[textField.getName()] = "=" + textField.getText()
 
             DataCellEditPane.this.refreshPath()
-            DataCellEditPane.this.outputElement.updateValue()
             DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
+
+            // add reference from new variable
+            DataCellEditPane.this.customTableModel.addReference(textField.getText(),
+                                                                CustomTableHelper.getVariable(DataCellEditPane.this.row, DataCellEditPane.this.col))
         }
     }
 
@@ -145,7 +153,6 @@ public class DataCellEditPane extends ULCBoxPane {
                     DataCellEditPane.this.outputElement.categoryMap[category] = combo.selectedItem
 
                     DataCellEditPane.this.refreshPath()
-                    DataCellEditPane.this.outputElement.updateValue()
                     DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
                 }
             }
