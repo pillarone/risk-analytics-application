@@ -22,14 +22,17 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     ResultConfiguration configuration
     PacketCollector collector
 
-    public ResultConfigurationTableTreeNode(String name, ResultConfiguration configuration) {
+    Class packetClass
+
+    public ResultConfigurationTableTreeNode(String name, ResultConfiguration configuration, Class packetClass) {
         super(name);
+        this.packetClass = packetClass
         this.configuration = configuration
         keyToValue.put(NO_COLLECTOR, getText(NO_COLLECTOR))
         Locale locale = LocaleResources.getLocale()
         for (ICollectingModeStrategy key in CollectingModeFactory.getAvailableStrategies()) {
             //AggregatedWithSingleAvailableCollectingModeStrategy is only used internally
-            if (!(key instanceof AggregatedWithSingleAvailableCollectingModeStrategy)) {
+            if (key.isCompatibleWith(packetClass)) {
                 keyToValue.put(key.getIdentifier(), key.getDisplayName(locale))
             }
         }

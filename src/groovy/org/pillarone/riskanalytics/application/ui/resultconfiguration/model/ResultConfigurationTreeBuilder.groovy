@@ -58,7 +58,7 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
                 }
             } else if (k.startsWith("out")) {
                 if (isSingleOrMultiValuePacket(component[k])) {
-                    componentNode.add(new ResultConfigurationTableTreeNode(k, item))
+                    componentNode.add(new ResultConfigurationTableTreeNode(k, item, component[k].type))
                 }
             }
         }
