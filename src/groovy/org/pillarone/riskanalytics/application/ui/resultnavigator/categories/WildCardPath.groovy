@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
 import groovy.text.Template
 import groovy.text.GStringTemplateEngine
+import java.util.HashMap.Entry
 
 /**
  * @author martin.melchior
@@ -13,13 +14,15 @@ class WildCardPath {
 
     // map category <-> wildcard values
     Map<String, List<String>> wildCardsMap
+    List<String> pathWildCards
 
-    WildCardPath(String spec, List<String> wildCards) {
+    void setWildCardPath(String spec, List<String> pathWildCards) {
         templatePath = spec
         GStringTemplateEngine engine = new GStringTemplateEngine()
         this.template = engine.createTemplate(spec)
+        this.pathWildCards = pathWildCards
         this.wildCardsMap = [:]
-        for (String wildCard : wildCards) {
+        for (String wildCard : pathWildCards) {
             wildCardsMap[wildCard] = []
         }
     }
@@ -28,7 +31,15 @@ class WildCardPath {
      * Method to return the wild card available for this template
      * @return
      */
-    List<String> getWildCards() {
+    List<String> getPathWildCards() {
+        return pathWildCards
+    }
+
+    /**
+     * Method to return the wild card available for this template
+     * @return
+     */
+    List<String> getAllWildCards() {
         return wildCardsMap.keySet().asList()
     }
 
@@ -47,9 +58,24 @@ class WildCardPath {
      * @return
      */
     void addWildCardValue(String category, String value) {
+        if (!wildCardsMap.containsKey(category)) {
+            wildCardsMap[category] = []
+        }
         if (!wildCardsMap[category].contains(value)) {
             this.wildCardsMap[category].add(value)
         }
+    }
+
+    /**
+     * Method to set the possible values for a given wild card element defined for this wild card path.
+     * @param category
+     * @return
+     */
+    void addPathWildCardValue(String category, String value) {
+        if (pathWildCards.indexOf(category)<0) {
+            pathWildCards.add(category)
+        }
+        addWildCardValue(category, value)
     }
 
     /**
@@ -59,6 +85,12 @@ class WildCardPath {
      * @return
      */
     String getSpecificPath(Map<String,String> wildCardValues) {
-        return template.make(wildCardValues)
+        Map map = [:]
+        for (String wc  : pathWildCards) {
+            if (wildCardValues.containsKey(wc)) {
+                map[wc] = wildCardValues[wc]
+            }
+        }
+        return template.make(map)
     }
 }

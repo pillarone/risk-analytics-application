@@ -29,7 +29,7 @@ class CategoryMapping {
     int getNumberOfCategories() {
         return matcherMap.size()
     }
-
+    
     List<String> getCategories() {
         return matcherMap.keySet().asList()
     }
@@ -80,7 +80,7 @@ class CategoryMapping {
     ICategoryResolver getCategoryMatcher(String category) {
         return matcherMap[category]
     }
-
+    
     String getValueForCategory(OutputElement element, String category) {
         return matcherMap[category]?.getResolvedValue(element)
     }
@@ -95,6 +95,9 @@ class CategoryMapping {
     }
 
     List<String> createTemplatePath(OutputElement element) {
+        if (element.templatePath==null) {
+            element.templatePath=new String(element.getPath())
+        }
         List<String> categories = []
         for (Entry<String, ICategoryResolver> entry in matcherMap.entrySet()) {
             String category = entry.key
@@ -106,24 +109,41 @@ class CategoryMapping {
         return categories
     }
 
-    void categorize(List<DataCellElement> elements) {
+    void categorize(List<OutputElement> elements) {
         for (OutputElement e : elements) {
-            // map all categories
+            // map all categories (including resolvers based on paths and fields)
             this.addCategoriesToElement(e)
 
-            // create template path
-            List<String> wildCards = this.createTemplatePath(e)
-            e.setWildCards(wildCards)
+            // create template path, get the wild cards for the path
+            List<String> pathWildCards = this.createTemplatePath(e)
+            e.setWildCards(pathWildCards)
 
             // create wild card path associated with template path or, if already existing, register the category values
             if (!wildCardPaths.containsKey(e.templatePath)) {
-                WildCardPath wildCardPath = new WildCardPath(e.templatePath, wildCards)
+                WildCardPath wildCardPath = new WildCardPath()
+                wildCardPath.setWildCardPath(e.templatePath, pathWildCards)
                 wildCardPaths[e.templatePath] = wildCardPath
             }
             WildCardPath wildCardPath = wildCardPaths[e.templatePath]
-            for (String category : wildCards) {
-                wildCardPath.addWildCardValue(category, e.getCategoryValue(category))
+            for (String category : pathWildCards) {
+                wildCardPath.addPathWildCardValue(category, e.getCategoryValue(category))
             }
+
+            // fields and associated synonym resolver
+            String synonymToField = null
+            Iterator<String> it = matcherMap.keySet().iterator()
+            while (synonymToField==null && it.hasNext()) {
+                String key = it.next()
+                ICategoryResolver resolver = matcherMap[key]
+                if (resolver instanceof SynonymToCategory && ((SynonymToCategory)resolver).category.equals(OutputElement.FIELD)) {
+                    synonymToField = key
+                }
+            }
+            if (synonymToField==null) {
+                synonymToField = OutputElement.FIELD
+            }
+            wildCardPath.addWildCardValue(synonymToField, e.getCategoryValue(OutputElement.FIELD))
+
             e.wildCardPath = wildCardPath
         }
     }
