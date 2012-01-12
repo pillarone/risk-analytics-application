@@ -2,16 +2,35 @@ package org.pillarone.riskanalytics.application.output.result.item
 
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
+import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.PathMapping
+import org.pillarone.riskanalytics.core.output.FieldMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
+import org.pillarone.riskanalytics.core.output.CollectorMapping
 
 
 class CustomTableTests extends GroovyTestCase {
+
+    @Override
+    protected void setUp() {
+        if(PathMapping.countByPathName("mypath") == 0) {
+            new PathMapping(pathName: "mypath").save()
+        }
+        if(FieldMapping.countByFieldName("myfield") == 0) {
+            new FieldMapping(fieldName: "myfield").save()
+        }
+        if(CollectorMapping.countByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER) == 0) {
+            new CollectorMapping(collectorName: AggregatedCollectingModeStrategy.IDENTIFIER).save()
+        }
+    }
 
     void testSaveLoad() {
 
         CustomTable table = new CustomTable("Name", ApplicationModel)
         table.tableData = [
-                ["string", new OutputElement(categoryMap: ["a":"b"])],
-                ["string2", new OutputElement(categoryMap: ["c":"d"])]
+                ["string", new DataCellElement(categoryMap: ["a":"=A1"], periodIndex: 0, path: "mypath", field: "myfield", collector: AggregatedCollectingModeStrategy.IDENTIFIER, templatePath: "")],
+                ["string2", new DataCellElement(categoryMap: ["c":"=A2"], periodIndex: 0, path: "mypath", field: "myfield", collector: AggregatedCollectingModeStrategy.IDENTIFIER, templatePath: "")]
         ]
 
         table.save()
@@ -22,11 +41,11 @@ class CustomTableTests extends GroovyTestCase {
         assertEquals("string", table.tableData[0][0])
         assertEquals("string2", table.tableData[1][0])
 
-        OutputElement outputElement = table.tableData[0][1]
-        assertEquals("b", outputElement.categoryMap["a"])
+        DataCellElement outputElement = table.tableData[0][1]
+        assertEquals("=A1", outputElement.categoryMap["a"])
 
         outputElement = table.tableData[1][1]
-        assertEquals("d", outputElement.categoryMap["c"])
+        assertEquals("=A2", outputElement.categoryMap["c"])
 
     }
 }

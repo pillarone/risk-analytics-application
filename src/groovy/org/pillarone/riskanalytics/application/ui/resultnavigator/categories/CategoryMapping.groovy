@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import java.util.Map.Entry
+import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
 
 /**
  * @author martin.melchior
@@ -28,7 +29,7 @@ class CategoryMapping {
     int getNumberOfCategories() {
         return matcherMap.size()
     }
-    
+
     List<String> getCategories() {
         return matcherMap.keySet().asList()
     }
@@ -79,7 +80,7 @@ class CategoryMapping {
     ICategoryResolver getCategoryMatcher(String category) {
         return matcherMap[category]
     }
-    
+
     String getValueForCategory(OutputElement element, String category) {
         return matcherMap[category]?.getResolvedValue(element)
     }
@@ -87,7 +88,7 @@ class CategoryMapping {
     void addCategoriesToElement(OutputElement element) {
         for (Entry<String, ICategoryResolver> entry in matcherMap.entrySet()) {
             Object value = entry.value?.getResolvedValue(element)
-            if (value) {
+            if (value && !element.categoryMap.keySet().contains(entry.key)) {
                 element.addCategoryValue(entry.key,value)
             }
         }
@@ -105,7 +106,7 @@ class CategoryMapping {
         return categories
     }
 
-    void categorize(List<OutputElement> elements) {
+    void categorize(List<DataCellElement> elements) {
         for (OutputElement e : elements) {
             // map all categories
             this.addCategoriesToElement(e)

@@ -20,6 +20,8 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.output.result.item.CustomTable
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
 
 class TableView extends AbstractView {
 
@@ -31,8 +33,10 @@ class TableView extends AbstractView {
     CustomTableView customTableView
 
     Model model
+    Simulation simulation
 
-    TableView(Model model) {
+    TableView(Model model, Simulation simulation) {
+        this.simulation = simulation
         this.model = model
         init()
     }
@@ -57,6 +61,9 @@ class TableView extends AbstractView {
 
             CustomTable table = new CustomTable(savedViews.selectedItem.toString(), model.class)
             table.load()
+            final List<DataCellElement> outputElements = table.tableData.flatten().findAll { it instanceof DataCellElement}
+            outputElements*.run = simulation.simulationRun
+            outputElements*.updateValue()
 
             customTableView = new CustomTableView(table.tableData)
             content.add(3, ULCBoxPane.BOX_EXPAND_EXPAND, customTableView.content)
