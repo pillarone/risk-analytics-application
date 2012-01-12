@@ -11,6 +11,9 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.event.IFocusListener
 import com.ulcjava.base.application.event.FocusEvent
+import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.ULCComponent
 
 /**
  *
@@ -19,6 +22,7 @@ import com.ulcjava.base.application.event.FocusEvent
 class TableSizeDialog extends ULCDialog {
     private ULCTextField rowTextField
     private ULCTextField colTextField
+    public boolean isCancel = true
 
     public TableSizeDialog (ULCFrame parent, int rows, int cols) {
         super (parent, "Set table size", true)
@@ -38,20 +42,13 @@ class TableSizeDialog extends ULCDialog {
         colTextField.addFocusListener(new TextFieldFocusListener())
 
         ULCButton okButton = new ULCButton("OK")
-        okButton.addActionListener(new IActionListener(){
-            void actionPerformed(ActionEvent actionEvent) {
-                TableSizeDialog.this.dispose()
-                TableSizeDialog.this.fireWindowClosing(new WindowEvent(actionEvent.source))
-            }
-        })
+        okButton.addActionListener(new CloseActionListener(false))
 
         ULCButton cancelButton = new ULCButton("Cancel")
-        cancelButton.addActionListener(new IActionListener(){
-            void actionPerformed(ActionEvent actionEvent) {
-                TableSizeDialog.this.dispose()
-                TableSizeDialog.this.fireWindowClosing(new WindowEvent(actionEvent.source))
-            }
-        })
+        cancelButton.addActionListener(new CloseActionListener(true))
+
+        rowTextField.registerKeyboardAction(new CloseActionListener(false), KeyStroke.getKeyStroke (KeyEvent.VK_ENTER, 0), ULCComponent.WHEN_FOCUSED)
+        colTextField.registerKeyboardAction(new CloseActionListener(false), KeyStroke.getKeyStroke (KeyEvent.VK_ENTER, 0), ULCComponent.WHEN_FOCUSED)
 
         pane.add (ULCBoxPane.BOX_LEFT_EXPAND, rowLabel)
         pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, rowTextField)
@@ -84,6 +81,21 @@ class TableSizeDialog extends ULCDialog {
             }
         }
         void focusLost(FocusEvent focusEvent) {
+        }
+    }
+
+    private class CloseActionListener implements IActionListener {
+        private boolean isCancel
+        public CloseActionListener(boolean isCancel) {
+            this.isCancel = isCancel
+        }
+
+        void actionPerformed(ActionEvent actionEvent) {
+            if (!isCancel)
+                TableSizeDialog.this.isCancel = false
+
+            TableSizeDialog.this.dispose()
+            TableSizeDialog.this.fireWindowClosing(new WindowEvent(actionEvent.source))
         }
     }
 }

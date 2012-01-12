@@ -11,6 +11,9 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
 import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
+import com.ulcjava.base.application.dnd.TransferHandler
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.dnd.Transferable
 
 /**
  *
@@ -27,6 +30,7 @@ public class DataCellEditPane extends ULCBoxPane {
     private DataCellElement dataCellElement
 
     private Map<String, ULCTextField> cellRefTextFields = new HashMap<String, ULCTextField>()
+    private Map<String, ULCComboBox> categoryComboBoxes = new HashMap<String, ULCComboBox>()
 
     /**
      * Constructor
@@ -61,6 +65,8 @@ public class DataCellEditPane extends ULCBoxPane {
             List<String> wildCardValues = dataCellElement.getWildCardPath().getWildCardValues(category)
             if (wildCardValues != null) {
                 ULCLabel categoryLabel = new ULCLabel(category)
+                categoryLabel.setName(category)
+                categoryLabel.setDragEnabled(true)
 
                 ULCBoxPane comboTextFieldPane = new ULCBoxPane(false)
 
@@ -90,6 +96,7 @@ public class DataCellEditPane extends ULCBoxPane {
                 this.add (BOX_EXPAND_TOP, comboTextFieldPane)
 
                 cellRefTextFields.put (category, cellReferenceTextField)
+                categoryComboBoxes.put (category, categoryValueCombo)
 
                 categoryValueCombo.selectedItem = itemToSelect
             }

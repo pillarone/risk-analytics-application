@@ -25,19 +25,25 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.OutputElementTable
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.IRendererComponent
-import com.ulcjava.base.application.table.DefaultTableCellRenderer
-import com.ulcjava.base.application.util.Color
-import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.util.KeyStroke
-import com.ulcjava.applicationframework.application.Action
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.ULCButton
-import org.pillarone.riskanalytics.application.ui.main.action.ImportAllAction
 import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
+import com.ulcjava.base.application.dnd.DnDLabelData
+import com.ulcjava.base.application.ULCComboBox
+import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.shared.IWindowConstants
+import com.ulcjava.base.application.table.DefaultTableCellRenderer
+import com.ulcjava.base.application.IRendererComponent
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Font
+import java.awt.Toolkit
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+import org.pillarone.riskanalytics.application.ui.result.view.NumberFormatRenderer
+import com.ulcjava.base.application.datatype.ULCNumberDataType
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -178,6 +184,7 @@ public class CustomTable extends ULCTable {
         this.setTransferHandler(new MyTransferHandler())
         this.setAutoResizeMode(ULCTable.AUTO_RESIZE_OFF)
 //        this.setDefaultRenderer(Object, new CustomTableCellRenderer())
+        this.setDefaultRenderer(Object.class, new CustomTableCellRenderer())
 
         // listen if the user press the Enter-Key, and sets the focus to the cellEditTextField
         this.addActionListener(new IActionListener() {
@@ -213,11 +220,14 @@ public class CustomTable extends ULCTable {
         setTableSizeMenuItem.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 TableSizeDialog dlg = new TableSizeDialog(CustomTable.this.customTableView.parent, CustomTable.this.rowCount, CustomTable.this.columnCount)
+                dlg.toFront()
+                dlg.locationRelativeTo = UlcUtilities.getWindowAncestor(CustomTable.this.customTableView.parent)
+                dlg.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
                 dlg.visible = true
 
                 dlg.addWindowListener(new IWindowListener() {
                     void windowClosing(WindowEvent windowEvent) {
-                        if (windowEvent.source instanceof ULCButton && windowEvent.source.text == "OK") {
+                        if (dlg.isCancel == false) {
                             CustomTable.this.customTableModel.setNumberRows (dlg.getNumberRows())
                             CustomTable.this.customTableModel.setNumberCols (dlg.getNumberColumns())
                         }
@@ -299,7 +309,6 @@ public class CustomTable extends ULCTable {
             Object dropData = transferable.getTransferData(DataFlavor.DROP_FLAVOR)
 
             if (dragData instanceof DnDTableData && dropData instanceof DnDTableData) {
-
                 OutputElementTable table = dragData.getTable()
                 OutputElementTableModel tableModel = table.getModel()
 
@@ -330,6 +339,21 @@ public class CustomTable extends ULCTable {
 
                 CustomTable.this.selectionModel.setSelectionInterval(dropRowOrigin, dropRowOrigin)
                 CustomTable.this.columnModel.selectionModel.setSelectionInterval(dropColOrigin, dropColOrigin)
+            }
+
+            if (dragData instanceof DnDLabelData && dropData instanceof DnDTableData) {
+                ULCComboBox combo = CustomTable.this.customTableView.dataCellEditPane.categoryComboBoxes[dragData.getLabel().getName()]
+
+                int dropRowOrigin = dropData.getSelectedRows()[0]
+                int dropColOrigin = dropData.getSelectedColumns()[0]
+
+                int dropRow = dropRowOrigin
+                int dropCol = dropColOrigin
+
+                // TODO: insert vertical / horizontal (keyPress, contextMenu)
+                for (int i = 0; i < combo.getItemCount()-1; i++) {
+                    CustomTable.this.customTableModel.setValueAt(combo.getItemAt(i), dropRow++, dropCol)
+                }
             }
         }
 
@@ -377,16 +401,31 @@ public class CustomTable extends ULCTable {
                     int max_row = CustomTable.this.getSelectionModel().getMaxSelectionIndex()
                     int min_col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
                     int max_col = CustomTable.this.getColumnModel().getSelectionModel().getMaxSelectionIndex()
+
+                    StringBuilder excelCopyData = new StringBuilder()
                     for (int row = min_row; row <= max_row; row++) {
                         for (int col = min_col; col <= max_col; col++) {
-                            CustomTable.this.copyData.add(new CopyCellData(row, col, CustomTable.this.customTableModel.getDataAt(row, col)))
+                            Object data = CustomTable.this.customTableModel.getDataAt(row, col)
+                            CustomTable.this.copyData.add(new CopyCellData(row, col, data))
+
+                            if (data instanceof DataCellElement) {
+                                excelCopyData.append (data.value)
+                            } else {
+                                excelCopyData.append (data)
+                            }
+                            excelCopyData.append ("\t")
 
                             // cut
                             if (mode == Mode.CUT) {
                                 CustomTable.this.customTableModel.setValueAt("", row, col)
                             }
                         }
+                        excelCopyData.deleteCharAt (excelCopyData.length()-1)
+                        excelCopyData.append ("\r\n")
                     }
+                    StringSelection ss = new StringSelection(excelCopyData.toString())
+                    Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard()
+                    clip.setContents(ss, ss)
                     break
                 
                 case Mode.PASTE:
@@ -446,39 +485,44 @@ public class CustomTable extends ULCTable {
         }
     }
 
-//    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
-//        private int col
-//        public CustomTableCellRenderer(int col) {
-//            super ()
-//            this.col = col
-//        }
-//
-//        IRendererComponent getTableCellRendererComponent(ULCTable ulcTable, Object value, boolean isSelected, boolean hasFocus, int row) {
-//
-//            if (CustomTable.this.customTableView.cellEditTextField.selectDataMode) {
-//                if (isSelected) {
-//                    this.setBorder(BorderFactory.createLineBorder(Color.red))
-//
-//                } else if (hasFocus) {
-//                    this.setBorder(BorderFactory.createLineBorder(Color.blue))
-//
-//                } else {
-////                    this.setBorder(BorderFactory.createLineBorder(Color.green))
-//                    this.setBorder(BorderFactory.createEmptyBorder())
-//                }
-//            } else {
-//                if (isSelected) {
-//                    this.setBorder(BorderFactory.createLineBorder(Color.yellow))
-//
-//                } else if (hasFocus) {
-//                    this.setBorder(BorderFactory.createLineBorder(Color.orange))
-//
-//                } else {
-////                    this.setBorder(BorderFactory.createLineBorder(Color.magenta))
-//                    this.setBorder(BorderFactory.createEmptyBorder())
-//                }
-//            }
-//            return this
-//        }
-//    }
+    private class CustomTableCellRenderer extends DefaultTableCellRenderer {
+        IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
+            setFormat(value)
+
+            if (value instanceof String && ((String)value).isNumber() || value instanceof Number) {
+                this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT)
+            } else {
+                this.setHorizontalAlignment(DefaultTableCellRenderer.LEFT)
+            }
+
+            if (isSelected) {
+                this.setBackground (Color.lightGray)
+            } else {
+                this.setBackground (Color.white)
+            }
+
+            this.setFont (this.getFont().deriveFont(Font.PLAIN))
+
+            return this
+        }
+
+
+        ULCNumberDataType numberDataType
+
+        public setFormat(def value) {
+            setDataType null
+        }
+        public setFormat(Number value) {
+            setDataType(getNumberDataType())
+        }
+        public ULCNumberDataType getNumberDataType() {
+            if (numberDataType == null) {
+                numberDataType = DataTypeFactory.numberDataType
+                numberDataType.setGroupingUsed true
+                numberDataType.setMinFractionDigits 2
+                numberDataType.setMaxFractionDigits 2
+            }
+            return numberDataType
+        }
+    }
 }

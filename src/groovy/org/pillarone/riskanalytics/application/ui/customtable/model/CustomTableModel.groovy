@@ -282,16 +282,22 @@ public class CustomTableModel extends AbstractTableModel {
                     if (myParser.hasError())
                         return myParser.getErrorInfo()
 
-                    return myParser.getValue()
+                    double value = myParser.getValue()
+                    return value
                 } catch (ParseException e) {
                     return e.getMessage()
                 }
+
+            } else if (cellData.isNumber()) {
+                double value = Double.parseDouble(cellData)
+                return value
             }
+            return cellData
         }
 
         // if cellData is a data-Reference, get the value from the database
         if (cellData instanceof DataCellElement) {
-            return cellData.value.toString()
+            return cellData.value
         }
 
         return cellData
