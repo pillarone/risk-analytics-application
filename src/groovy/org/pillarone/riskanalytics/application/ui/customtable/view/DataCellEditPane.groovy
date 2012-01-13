@@ -160,7 +160,13 @@ public class DataCellEditPane extends ULCBoxPane {
                     // save the selected item to the dataCellElement
                     DataCellEditPane.this.dataCellElement.categoryMap[category] = combo.selectedItem
 
-                    DataCellEditPane.this.refreshPath()
+                    // TODO: period / statistics
+                    if (category == "keyfigure") {
+                        DataCellEditPane.this.dataCellElement.updateValue()
+                    } else {
+                        DataCellEditPane.this.refreshPath()
+                    }
+
                     DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
                 }
             }

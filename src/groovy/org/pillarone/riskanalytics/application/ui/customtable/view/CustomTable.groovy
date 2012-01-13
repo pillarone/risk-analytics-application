@@ -344,16 +344,37 @@ public class CustomTable extends ULCTable {
             if (dragData instanceof DnDLabelData && dropData instanceof DnDTableData) {
                 ULCComboBox combo = CustomTable.this.customTableView.dataCellEditPane.categoryComboBoxes[dragData.getLabel().getName()]
 
-                int dropRowOrigin = dropData.getSelectedRows()[0]
-                int dropColOrigin = dropData.getSelectedColumns()[0]
-
-                int dropRow = dropRowOrigin
-                int dropCol = dropColOrigin
-
-                // TODO: insert vertical / horizontal (keyPress, contextMenu)
+                List<String> categoryValues = new LinkedList<String>()
                 for (int i = 0; i < combo.getItemCount()-1; i++) {
-                    CustomTable.this.customTableModel.setValueAt(combo.getItemAt(i), dropRow++, dropCol)
+                    categoryValues.add(combo.getItemAt(i))
                 }
+
+                int dropRow = dropData.getSelectedRows()[0]
+                int dropCol = dropData.getSelectedColumns()[0]
+
+                CategoryValuesInsertDialog dlg = new CategoryValuesInsertDialog(CustomTable.this.customTableView.parent,
+                                                                                CustomTableHelper.getVariable (dropRow, dropCol),
+                                                                                categoryValues)
+                dlg.toFront()
+                dlg.locationRelativeTo = UlcUtilities.getWindowAncestor(CustomTable.this.customTableView.parent)
+                dlg.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
+                dlg.visible = true
+
+                dlg.addWindowListener(new IWindowListener() {
+                    void windowClosing(WindowEvent windowEvent) {
+                        if (dlg.isCancel == false) {
+                            dropRow = CustomTableHelper.getRow (dlg.getStartCell())
+                            dropCol = CustomTableHelper.getCol (dlg.getStartCell())
+                            for (String categoryValue : categoryValues) {
+                                CustomTable.this.customTableModel.setValueAt(categoryValue, dropRow, dropCol)
+                                if (dlg.isVertical())
+                                    dropRow++
+                                else
+                                    dropCol++
+                            }
+                        }
+                    }
+                })
             }
         }
 

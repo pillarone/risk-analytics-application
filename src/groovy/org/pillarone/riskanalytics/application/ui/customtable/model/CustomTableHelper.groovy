@@ -39,8 +39,9 @@ static class CustomTableHelper {
                         continue
                     }
 
-                    String value = model.getValueAt(row, col).toString()
-                    if (value.isEmpty() == false) {
+                    // TODO: if value ist to big, it is converted to a number with format (e.g. 1000E7)
+                    Object value = model.getValueAt(row, col)
+                    if (value instanceof Number) {
                         range.append (value)
                         range.append (",")
                     }

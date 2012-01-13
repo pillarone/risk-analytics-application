@@ -44,6 +44,7 @@ class DataCellElement extends OutputElement {
     public void updateValue() {
         try {
             // TODO: include period and statistics
+            field = categoryMap["keyfigure"]
             value = ResultAccessor.getMean (run, periodIndex, path, collector, field)
         } catch (Exception e) {
             value = "#ERROR"

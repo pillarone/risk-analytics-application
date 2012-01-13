@@ -2,8 +2,6 @@ package org.pillarone.riskanalytics.application.ui.customtable.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.AbstractListModel
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.nfunk.jep.JEP
 import org.nfunk.jep.ParseException
 
@@ -49,7 +47,9 @@ public class CustomTableModel extends AbstractTableModel {
 //        groovyShell = new GroovyShell()
         myParser = new JEP();
         myParser.addStandardFunctions()
+        myParser.addFunction("mean", new Mean())
     }
+
 
     /**
      * Inserts a Column into the table
