@@ -128,10 +128,10 @@ class ResultNavigator extends AbstractBean {
         if (categoryMapping) {
             categoryMapping.categorize(elements)
         }
-        loadDataIntoResultEntriesArea(elements)
+        loadDataIntoResultEntriesArea(elements, run)
     }
 
-    private void loadDataIntoResultEntriesArea(List<OutputElement> elements) {
+    private void loadDataIntoResultEntriesArea(List<OutputElement> elements, SimulationRun run) {
         OutputElementTableModel model = new OutputElementTableModel(elements, categoryMapping)
         OutputElementTable table = new OutputElementTable(model)
         ULCScrollPane scrollPane = new ULCScrollPane()
@@ -147,6 +147,12 @@ class ResultNavigator extends AbstractBean {
 
         filterPanel.registerFilterListener table
         // table.addCategoryListChangeListener(filterPanel.getCategoryToFilter())
+
+        KeyfigureSelection keyfigureSelection = new KeyfigureSelection(run)
+        propertiesArea.removeAll()
+        propertiesArea.add(ULCBoxPane.BOX_LEFT_TOP, keyfigureSelection);
+
+        table.keyfigureSelection = keyfigureSelection.model
     }
 
     private ULCBoxPane createContentView() {
@@ -172,6 +178,7 @@ class ResultNavigator extends AbstractBean {
         propertiesArea = new ULCBoxPane(false)
         propertiesArea.setBorder(BorderFactory.createTitledBorder("Properties"))
         splitPane.setBottomComponent(propertiesArea)
+
 
         contentView.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane);
 

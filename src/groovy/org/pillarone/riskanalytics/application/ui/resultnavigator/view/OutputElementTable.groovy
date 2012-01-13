@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.table.ULCTableColumn
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 
 /**
  * @author martin.melchior
@@ -27,6 +28,7 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
 
     AssignCategoryDialog assignCategory
     List<Integer> selectedModelRows
+    KeyfigureSelectionModel keyfigureSelection // quite a hack to put this here
 
     OutputElementTable(OutputElementTableModel model) {
         // model and the like
