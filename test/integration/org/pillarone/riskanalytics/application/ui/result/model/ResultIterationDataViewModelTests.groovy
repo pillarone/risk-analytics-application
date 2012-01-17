@@ -57,9 +57,9 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
             field2 = new FieldMapping(fieldName: 'value').save()
         }
 
-        collector = CollectorMapping.findByCollectorName('collector')
+        collector = CollectorMapping.findByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER)
         if (collector == null) {
-            collector = new CollectorMapping(collectorName: 'collector').save()
+            collector = new CollectorMapping(collectorName: AggregatedCollectingModeStrategy.IDENTIFIER).save()
         }
     }
 

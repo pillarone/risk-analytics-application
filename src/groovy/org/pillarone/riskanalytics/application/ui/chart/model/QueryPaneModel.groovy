@@ -216,26 +216,14 @@ class QueryPaneModel extends AbstractPresentationModel {
 
     protected List queryResultsHQL(CriteriaViewModel criteria) {
         try {
-            String queryString
-            if (criteria.isSingleValueCollector()) {
-                queryString = "SELECT s.iteration " +
+            String queryString = "SELECT s.iteration " +
                     "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
                     "WHERE s.simulationRun.id = " + simulationRun.id +
                     " AND s.period = " + criteria.selectedPeriod +
                     " AND s.path.pathName = '" + criteria.selectedPath + "'" +
                     " AND s.field.fieldName = '" + criteria.field + "'" +
-                    " GROUP BY s.iteration" +
-                    " HAVING sum(s.value) " + criteria.selectedComparator.toString() + " " + criteria.interpretedValue
-            }
-            else {
-                queryString = "SELECT s.iteration " +
-                    "FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s " +
-                    "WHERE s.simulationRun.id = " + simulationRun.id +
-                    " AND s.period = " + criteria.selectedPeriod +
-                    " AND s.path.pathName = '" + criteria.selectedPath + "'" +
-                    " AND s.field.fieldName = '" + criteria.field + "'" +
+                    " AND s.collector.collectorName = '" + criteria.collector + "'" +
                     " AND s.value " + criteria.selectedComparator.toString() + " " + criteria.interpretedValue
-            }
             LOG.debug "Query: " + queryString
             return SingleValueResult.executeQuery(queryString)
         } catch (Exception ex) {
@@ -301,6 +289,7 @@ class QueryPaneModel extends AbstractPresentationModel {
             query.append(" AND s.period = " + period)
             query.append(" AND s.path.pathName = '" + path + "'")
             query.append(" AND s.field.fieldName = '" + field + "'")
+            query.append(" AND s.collector.collectorName = '" + node.collector + "'")
             query.append(" AND s.iteration in (:list) GROUP BY s.iteration ORDER BY s.iteration asc")
             periodList.addAll(SingleValueResult.executeQuery(query.toString(), ["list": list]))
         }

@@ -11,7 +11,7 @@ class MeanFunction extends AbstractResultFunction {
     public static final String MEAN = "Mean"
 
     @Override
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getMean(simulationRun, periodIndex, node.path, node.collector, node.field)
     }
 
