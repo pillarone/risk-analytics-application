@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.customtable.model
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.StatisticsKeyfigure
 
 /**
  *
@@ -9,12 +10,14 @@ import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
  */
 class DataCellElement extends OutputElement {
     Object value
-    int periodIndex
+    private int period
+    private StatisticsKeyfigure statistics
+    private Number parameter
 
     public DataCellElement () {
     }
 
-    public DataCellElement (OutputElement outputElement) {
+    public DataCellElement (OutputElement outputElement, int periodIndex = 0, StatisticsKeyfigure statistics = StatisticsKeyfigure.MEAN, Number statisticsParameter = 0) {
         this.run = outputElement.run
         this.path = outputElement.path
         this.templatePath = outputElement.templatePath
@@ -23,6 +26,23 @@ class DataCellElement extends OutputElement {
         this.categoryMap = outputElement.categoryMap.clone()
         this.wildCards = outputElement.wildCards
         this.wildCardPath = outputElement.wildCardPath
+
+        if (statisticsParameter == null)
+            statisticsParameter = 0
+
+        this.categoryMap["period"] = periodIndex.toString()
+        this.categoryMap["statistics"] = statistics.name
+        this.categoryMap["parameter"] = statisticsParameter.toString()
+
+        this.categoryMap.remove("Field")
+        this.categoryMap.remove("Path")
+        this.categoryMap.remove("Collector")
+
+        this.period = periodIndex
+        this.statistics = statistics
+        this.parameter = statisticsParameter
+
+        updateValue()
     }
 
     // Copy constructor
@@ -37,24 +57,63 @@ class DataCellElement extends OutputElement {
         this.wildCardPath = dataCellElement.wildCardPath
 
         this.value = dataCellElement.value
-        this.periodIndex = dataCellElement.periodIndex
+        this.period = dataCellElement.period
+        this.statistics = dataCellElement.statistics
+        this.parameter = dataCellElement.parameter
     }
 
-
+    /**
+     * just update the value of the DataCellElement
+     */
     public void updateValue() {
         try {
-            // TODO: include period and statistics
-            field = categoryMap["keyfigure"]
-            value = ResultAccessor.getMean (run, periodIndex, path, collector, field)
+            // TODO: check if the correct functions are called
+            switch (statistics) {
+                case StatisticsKeyfigure.VAR_PROFIT:
+                case StatisticsKeyfigure.VAR:
+                    value = ResultAccessor.getVar(run, period, path, collector, field, parameter)
+                    break;
+                case StatisticsKeyfigure.TVAR_PROFIT:
+                case StatisticsKeyfigure.TVAR:
+                    value = ResultAccessor.getTvar(run, period, path, collector, field, parameter)
+                    break;
+                case StatisticsKeyfigure.PERCENTILE_PROFIT:
+                case StatisticsKeyfigure.PERCENTILE:
+                    value = ResultAccessor.getPercentile(run, period, path, collector, field, parameter)
+                    break;
+                case StatisticsKeyfigure.STDEV:
+                    value = ResultAccessor.getStdDev(run, period, path, collector, field)
+                    break;
+                case StatisticsKeyfigure.MIN:
+                    value = ResultAccessor.getMin(run, period, path, collector, field)
+                    break;
+                case StatisticsKeyfigure.MEAN:
+                    value = ResultAccessor.getMean(run, period, path, collector, field)
+                    break;
+                case StatisticsKeyfigure.MAX:
+                    value = ResultAccessor.getMax(run, period, path, collector, field)
+                    break;
+                case StatisticsKeyfigure.ITERATION:
+                    value = ResultAccessor.getSingleIterationValue(run, period, path, field, parameter.intValue())
+                    break;
+            }
         } catch (Exception e) {
             value = "#ERROR"
         }
     }
 
-
-    public boolean updateSpecificPathWithVariables (CustomTableModel customTableModel) {
+    /**
+     * Update the DataCellElement, by resolving the variables in the categoryMap
+     * Also updates the values, if the DataCellElement has changed
+     *
+     * @param customTableModel the CustomTableModel (used for resolving the variables)
+     * @return true if DataCellElement has changed
+     */
+    public boolean update(CustomTableModel customTableModel) {
+        boolean changed = false
         Map<String, String> categoryMapCopy = new HashMap<String, String>()
 
+        // resolve the variables
         for (String category : this.categoryMap.keySet()) {
             String value = this.categoryMap[category]
             if (value.startsWith("=")) {
@@ -64,12 +123,39 @@ class DataCellElement extends OutputElement {
         }
 
         String new_path = this.getWildCardPath().getSpecificPath(categoryMapCopy)
-
-        if (this.path.equals(new_path) == false) {
+        if (this.path != new_path) {
             this.path = new_path
-            return true
+            changed = true
         }
 
-        return false
+        String new_filed = categoryMapCopy["keyfigure"]
+        if (this.field != new_filed) {
+            this.field = new_filed
+            changed = true
+        }
+
+        int new_period = (int)Double.parseDouble(categoryMapCopy["period"])
+        if (this.period != new_period) {
+            this.period = new_period
+            changed = true
+        }
+
+        StatisticsKeyfigure new_statistics = StatisticsKeyfigure.getEnumValue(categoryMapCopy["statistics"])
+        if (this.statistics != new_statistics) {
+            this.statistics = new_statistics
+            changed = true
+        }
+
+        Number new_parameter = Double.parseDouble(categoryMapCopy["parameter"])
+        if (this.parameter != new_parameter) {
+            this.parameter = new_parameter
+            changed = true
+        }
+
+        // update the values, if the DataCellElement has changed
+        if (changed)
+            updateValue()
+
+        return changed
     }
 }

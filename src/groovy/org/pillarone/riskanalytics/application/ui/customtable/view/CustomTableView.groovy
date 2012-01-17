@@ -38,6 +38,8 @@ public class CustomTableView {
 
     public CustomTableView(List<List<Object>> data) {
         this.customTableModel = new CustomTableModel(data)
+        this.customTableModel.setNumberCols(10)
+        this.customTableModel.setNumberRows(10)
         initComponents()
     }
 

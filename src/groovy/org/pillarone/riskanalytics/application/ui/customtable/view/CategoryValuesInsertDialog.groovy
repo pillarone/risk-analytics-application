@@ -19,12 +19,11 @@ import com.ulcjava.base.application.ULCRadioButton
 import com.ulcjava.base.application.ULCButtonGroup
 
 /**
+ * Dialog for the configuration of drag/drop category values
  *
  * @author ivo.nussbaumer
  */
 class CategoryValuesInsertDialog extends ULCDialog {
-
-
     private ULCTextField startCellTextField
     private ULCTextField endCellTextField
     private ULCRadioButton verticalRadioButton
@@ -34,25 +33,38 @@ class CategoryValuesInsertDialog extends ULCDialog {
 
     public boolean isCancel = true
 
-
-    public CategoryValuesInsertDialog (ULCFrame parent, String startCell, List<String> categoryValues) {
+    /**
+     * Constructor
+     *
+     * @param parent         parentFrame
+     * @param startCell      the cell where the data was dropped to
+     * @param categoryValues the List of the category values (used for calculating the lastCell)
+     * @param vertical       if default inserting is vertical
+     */
+    public CategoryValuesInsertDialog (ULCFrame parent, String startCell, List<String> categoryValues, boolean vertical = true) {
         super (parent, "Insert category values", true)
 
         this.categoryValues = categoryValues
-        init(startCell)
+        init(startCell, vertical)
     }
 
-    private void init(String startCell) {
+    /**
+     * inits the components
+     * @param startCell      the cell where the data was dropped to
+     * @param vertical       if default inserting is vertical
+     */
+    private void init(String startCell, boolean vertical) {
         ULCBoxPane pane = new ULCBoxPane(2, 4)
 
         ULCButtonGroup buttonGroup = new ULCButtonGroup()
         verticalRadioButton   = new ULCRadioButton("vertical")
         verticalRadioButton.setGroup(buttonGroup)
-        verticalRadioButton.setSelected(true)
+        verticalRadioButton.setSelected(vertical)
         verticalRadioButton.addActionListener(new ChangeListener())
 
         horizontalRadioButton = new ULCRadioButton("horizontal")
         horizontalRadioButton.setGroup(buttonGroup)
+        horizontalRadioButton.setSelected(!vertical)
         horizontalRadioButton.addActionListener(new ChangeListener())
 
         ULCLabel startCellLabel = new ULCLabel("First cell: ")
@@ -88,31 +100,48 @@ class CategoryValuesInsertDialog extends ULCDialog {
         this.contentPane = pane
     }
 
+    /**
+     * updates the EndCell TextField (startCell + #values
+     */
     private void updateEndCellTextField () {
         int startRow = CustomTableHelper.getRow(startCellTextField.text)
         int startCol = CustomTableHelper.getCol(startCellTextField.text)
 
         if (verticalRadioButton.isSelected()) {
-            endCellTextField.text = CustomTableHelper.getVariable(startRow + categoryValues.size(), startCol)
+            endCellTextField.text = CustomTableHelper.getVariable(startRow + categoryValues.size()-1, startCol)
         } else {
-            endCellTextField.text = CustomTableHelper.getVariable(startRow, startCol + categoryValues.size())
+            endCellTextField.text = CustomTableHelper.getVariable(startRow, startCol + categoryValues.size()-1)
         }
     }
 
+    /**
+     * return the starting cell the user selected
+     * @return the starting cell the user selected
+     */
     public String getStartCell() {
         return startCellTextField.text
     }
 
+    /**
+     * return true if the user selected vertical
+     * @return true if the user selected vertical
+     */
     public boolean isVertical() {
         return verticalRadioButton.isSelected()
     }
 
+    /**
+     * Listener for the RadioButtons -> update EndCell Text Field
+     */
     private class ChangeListener implements IActionListener {
         void actionPerformed(ActionEvent actionEvent) {
             CategoryValuesInsertDialog.this.updateEndCellTextField()
         }
     }
 
+    /**
+     * Listener for the StartTextField -> update EndCell Text Field
+     */
     private class TextFieldFocusListener implements IFocusListener {
         void focusGained(FocusEvent focusEvent) {
             ULCTextField textField = focusEvent.source
@@ -126,6 +155,9 @@ class CategoryValuesInsertDialog extends ULCDialog {
         }
     }
 
+    /**
+     * Close Action Listener
+     */
     private class CloseActionListener implements IActionListener {
         private boolean isCancel
         public CloseActionListener(boolean isCancel) {

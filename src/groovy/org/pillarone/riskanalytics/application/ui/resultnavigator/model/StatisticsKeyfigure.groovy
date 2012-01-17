@@ -45,6 +45,6 @@ public enum StatisticsKeyfigure {
     }
     
     static StatisticsKeyfigure getEnumValue(String name) {
-        return values().find { it -> it.name.equals(name)}
+        return values().find { it -> it.name.equalsIgnoreCase(name)}
     }
 }

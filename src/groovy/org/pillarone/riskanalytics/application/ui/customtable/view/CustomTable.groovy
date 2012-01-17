@@ -17,7 +17,6 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.ULCList
 import com.ulcjava.base.application.ULCScrollPane
-
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCMenuItem
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
@@ -41,7 +40,6 @@ import com.ulcjava.base.application.util.Font
 import java.awt.Toolkit
 import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
-import org.pillarone.riskanalytics.application.ui.result.view.NumberFormatRenderer
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 
@@ -308,6 +306,7 @@ public class CustomTable extends ULCTable {
             Object dragData = transferable.getTransferData(DataFlavor.DRAG_FLAVOR)
             Object dropData = transferable.getTransferData(DataFlavor.DROP_FLAVOR)
 
+            // insert data from the result navigator
             if (dragData instanceof DnDTableData && dropData instanceof DnDTableData) {
                 OutputElementTable table = dragData.getTable()
                 OutputElementTableModel tableModel = table.getModel()
@@ -319,12 +318,11 @@ public class CustomTable extends ULCTable {
                 int dropCol = dropColOrigin
 
                 for (int dragRow : table.getSelectedRows()) {
-                    DataCellElement dataCellElement = new DataCellElement (tableModel.getRowElement(table.convertRowIndexToModel(dragRow)))
+                    DataCellElement dataCellElement = new DataCellElement (tableModel.getRowElement(table.convertRowIndexToModel(dragRow)),
+                                                                           table.keyfigureSelection.period,
+                                                                           table.keyfigureSelection.keyfigure,
+                                                                           table.keyfigureSelection.keyfigureParameter)
 
-                    // TODO: add period, statistic to DataCellElement
-                    dataCellElement.periodIndex = 0
-
-                    dataCellElement.updateValue()
                     CustomTable.this.customTableModel.setValueAt(dataCellElement, dropRow++, dropCol)
 
                     if (dropRow >= CustomTable.this.rowCount) {
@@ -341,25 +339,37 @@ public class CustomTable extends ULCTable {
                 CustomTable.this.columnModel.selectionModel.setSelectionInterval(dropColOrigin, dropColOrigin)
             }
 
+            // insert category values from the comboBox in the DataCellEditPane
             if (dragData instanceof DnDLabelData && dropData instanceof DnDTableData) {
+                // get the comboBox with the values
                 ULCComboBox combo = CustomTable.this.customTableView.dataCellEditPane.categoryComboBoxes[dragData.getLabel().getName()]
 
+                // copy the values of the combo in a list
                 List<String> categoryValues = new LinkedList<String>()
-                for (int i = 0; i < combo.getItemCount()-1; i++) {
+                for (int i = 0; i < combo.getItemCount(); i++) {
                     categoryValues.add(combo.getItemAt(i))
                 }
 
                 int dropRow = dropData.getSelectedRows()[0]
                 int dropCol = dropData.getSelectedColumns()[0]
 
+                // show category value insert dialog
+                boolean vertical = true
+                if (CustomTable.this.customTableModel.getDataAt(dropRow+1, dropCol) != null &&
+                    CustomTable.this.customTableModel.getDataAt(dropRow, dropCol+1) == null) {
+                    vertical = false
+                }
+
                 CategoryValuesInsertDialog dlg = new CategoryValuesInsertDialog(CustomTable.this.customTableView.parent,
                                                                                 CustomTableHelper.getVariable (dropRow, dropCol),
-                                                                                categoryValues)
+                                                                                categoryValues,
+                                                                                vertical)
                 dlg.toFront()
                 dlg.locationRelativeTo = UlcUtilities.getWindowAncestor(CustomTable.this.customTableView.parent)
                 dlg.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
                 dlg.visible = true
 
+                // when dialog is closed, insert the values into the table
                 dlg.addWindowListener(new IWindowListener() {
                     void windowClosing(WindowEvent windowEvent) {
                         if (dlg.isCancel == false) {
@@ -399,7 +409,12 @@ public class CustomTable extends ULCTable {
         }
     }
 
+    // internal clipboard
     private List<CopyCellData> copyData = new LinkedList<CopyCellData>()
+
+    /**
+     * Class which handles the copy/paste/cut operations
+     */
     private class CopyPasteActionListener implements IActionListener {
         public enum Mode {
             COPY,
@@ -426,14 +441,14 @@ public class CustomTable extends ULCTable {
                     StringBuilder excelCopyData = new StringBuilder()
                     for (int row = min_row; row <= max_row; row++) {
                         for (int col = min_col; col <= max_col; col++) {
+                            // add data to the internal clipboard
                             Object data = CustomTable.this.customTableModel.getDataAt(row, col)
+                            if (data == null)
+                                data = ""
                             CustomTable.this.copyData.add(new CopyCellData(row, col, data))
 
-                            if (data instanceof DataCellElement) {
-                                excelCopyData.append (data.value)
-                            } else {
-                                excelCopyData.append (data)
-                            }
+                            // build the string, which will be added to the Windows clipboard
+                            excelCopyData.append (CustomTable.this.customTableModel.getValueAt(row, col) )
                             excelCopyData.append ("\t")
 
                             // cut
@@ -441,9 +456,11 @@ public class CustomTable extends ULCTable {
                                 CustomTable.this.customTableModel.setValueAt("", row, col)
                             }
                         }
+                        // remove last TAB and add newline
                         excelCopyData.deleteCharAt (excelCopyData.length()-1)
                         excelCopyData.append ("\r\n")
                     }
+                    // add data to the Windows clipboard
                     StringSelection ss = new StringSelection(excelCopyData.toString())
                     Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard()
                     clip.setContents(ss, ss)
@@ -451,6 +468,7 @@ public class CustomTable extends ULCTable {
                 
                 case Mode.PASTE:
 
+                    // copy more than one value
                     if (CustomTable.this.copyData.size() > 1) {
                         int row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
                         int col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
@@ -464,11 +482,11 @@ public class CustomTable extends ULCTable {
                                 col += copyCellData.origin_col - last_origin_col
                             }
 
+                            // update the variables
                             Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
 
                             if ((data instanceof String) == false) {
-                                if (((DataCellElement)data).updateSpecificPathWithVariables(CustomTable.this.customTableModel))
-                                    ((DataCellElement)data).updateValue()
+                                ((DataCellElement)data).update(CustomTable.this.customTableModel)
                             }
                             CustomTable.this.customTableModel.setValueAt(data, row, col)
 
@@ -478,8 +496,8 @@ public class CustomTable extends ULCTable {
                         CustomTable.this.selectionModel.setSelectionInterval(row, row)
                         CustomTable.this.getColumnModel().selectionModel.setSelectionInterval(col, col)
 
-
-                    } else if (CustomTable.this.copyData.size() > 0) {
+                    // just one cell to copy --> insert the cell, in the whole selection
+                    } else if (CustomTable.this.copyData.size() == 1) {
                         int min_row = CustomTable.this.getSelectionModel().getMinSelectionIndex()
                         int max_row = CustomTable.this.getSelectionModel().getMaxSelectionIndex()
                         int min_col = CustomTable.this.getColumnModel().getSelectionModel().getMinSelectionIndex()
@@ -491,8 +509,7 @@ public class CustomTable extends ULCTable {
                             for (int col = min_col; col <= max_col; col++) {
                                 Object data = CustomTableHelper.copyData(copyCellData.data, row - copyCellData.origin_row, col - copyCellData.origin_col)
                                 if ((data instanceof String) == false) {
-                                    if (((DataCellElement)data).updateSpecificPathWithVariables(CustomTable.this.customTableModel))
-                                        ((DataCellElement)data).updateValue()
+                                    ((DataCellElement)data).update(CustomTable.this.customTableModel)
                                 }
                                 CustomTable.this.customTableModel.setValueAt(data, row, col)
                             }

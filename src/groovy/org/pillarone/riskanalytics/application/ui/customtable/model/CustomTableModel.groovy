@@ -21,18 +21,7 @@ public class CustomTableModel extends AbstractTableModel {
 
     Map<String, List<String>> references = new HashMap<String, List<String>>()
 
-    public void addReference (String targetCell, String variableCell) {
-        if (references[targetCell] == null)
-            references[targetCell] = new LinkedList<String>()
 
-        references[targetCell].add (variableCell)
-    }
-    public void removeReference (String targetCell, String variableCell) {
-        if (references[targetCell] == null)
-            return
-
-        references[targetCell].remove (variableCell)
-    }
 
     /**
      * Constructor
@@ -50,72 +39,17 @@ public class CustomTableModel extends AbstractTableModel {
         myParser.addFunction("mean", new Mean())
     }
 
-
     /**
-     * Inserts a Column into the table
-     *
-     * @param col Position to insert the new Column
+     * set the number of rows
+     * @param rows the number of row
      */
-    public void insertCol (int col) {
-        for (List<Object> rowData : data) {
-            rowData.add (col, "")
-        }
-        fireTableStructureChanged()
-    }
-
-    /**
-     * Adds a Column to the end of the table
-     * @return new Number of Columns
-     */
-    public int addCol () {
-        insertCol (columnCount)
-        return columnCount-1
-    }
-
-    /**
-     * Deletes a Column
-     * @param col Index of the Column to delete
-     */
-    public void deleteCol (int col) {
-        if (columnCount <= 1)
-            return
-
-        for (List<Object> rowData : data) {
-            rowData.remove(col)
-        }
-        fireTableStructureChanged()
-    }
-
-    public void setNumberCols (int cols) {
-        int colDiff = cols - columnCount
-
-        if (colDiff == 0)
-            return
-
-        if (colDiff > 0) {
-            for (List<Object> rowData : data) {
-                while (rowData.size() < cols)
-                    rowData.add ("")
-            }
-            fireTableStructureChanged()
-            return
-        }
-        if (colDiff < 0) {
-            for (List<Object> rowData : data) {
-                while (rowData.size() > cols)
-                    rowData.remove(rowData.size()-1)
-            }
-            fireTableStructureChanged()
-            return
-        }
-    }
-
     public void setNumberRows (int rows) {
         int rowDiff = rows - rowCount
 
         if (rowDiff == 0)
             return
 
+        // more rows ?
         if (rowDiff > 0) {
             for (int i = 0; i < rowDiff; i++)
                 this.data.add ([])
@@ -124,11 +58,43 @@ public class CustomTableModel extends AbstractTableModel {
             return
         }
 
+        // less rows?
         if (rowDiff < 0) {
             for (int i = 0; i < -rowDiff; i++)
                 this.data.remove(this.data.size()-1)
             fireTableRowsDeleted(rowCount-1, rowCount-1 - rowDiff)
             rowHeaderModel.fireIntervalRemoved(this, rowCount-1, rowCount-1 - rowDiff)
+            return
+        }
+    }
+
+    /**
+    * set the number of cols
+     * @param cols the number of cols
+     */
+    public void setNumberCols (int cols) {
+        int colDiff = cols - columnCount
+
+        if (colDiff == 0)
+            return
+
+        // more cols?
+        if (colDiff > 0) {
+            for (List<Object> rowData : data) {
+                while (rowData.size() < cols)
+                    rowData.add ("")
+            }
+            fireTableStructureChanged()
+            return
+        }
+
+        // less cols?
+        if (colDiff < 0) {
+            for (List<Object> rowData : data) {
+                while (rowData.size() > cols)
+                    rowData.remove(rowData.size()-1)
+            }
+            fireTableStructureChanged()
             return
         }
     }
@@ -156,12 +122,33 @@ public class CustomTableModel extends AbstractTableModel {
     }
 
     /**
+     * Inserts a Column into the table
+     *
+     * @param col Position to insert the new Column
+     */
+    public void insertCol (int col) {
+        for (List<Object> rowData : data) {
+            rowData.add (col, "")
+        }
+        fireTableStructureChanged()
+    }
+
+    /**
      * Adds a Row to the end of the table
      * @return new Number of Row
      */
     public int addRow (List<Object> rowData = null) {
         insertRow (rowCount, rowData)
         return rowCount-1
+    }
+
+    /**
+     * Adds a Column to the end of the table
+     * @return new Number of Columns
+     */
+    public int addCol () {
+        insertCol (columnCount)
+        return columnCount-1
     }
 
     /**
@@ -175,6 +162,20 @@ public class CustomTableModel extends AbstractTableModel {
         data.remove(row)
         fireTableRowsDeleted(row, row)
         rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
+    }
+
+    /**
+     * Deletes a Column
+     * @param col Index of the Column to delete
+     */
+    public void deleteCol (int col) {
+        if (columnCount <= 1)
+            return
+
+        for (List<Object> rowData : data) {
+            rowData.remove(col)
+        }
+        fireTableStructureChanged()
     }
 
     /**
@@ -222,7 +223,7 @@ public class CustomTableModel extends AbstractTableModel {
      * @return the data of the cell
      */
     public Object getDataAt(int row, int col) {
-        if (row >= rowCount || col >= columnCount)
+        if (row >= rowCount || col >= columnCount || row < 0 || col < 0)
             return null
 
         return data[row][col]
@@ -251,10 +252,13 @@ public class CustomTableModel extends AbstractTableModel {
      * @return the value to display of the cell
      */
     public Object getValueAt(int row, int col) {
-        if (row >= rowCount || col >= columnCount)
-            return null
+        if (row >= rowCount || col >= columnCount || row < 0 || col < 0)
+            return ""
 
         Object cellData = data[row][col]
+
+        if (cellData == null)
+            return ""
 
         // If editMode, just return the original data
         if (editMode == true) {
@@ -306,44 +310,43 @@ public class CustomTableModel extends AbstractTableModel {
     /**
      * sets the data of a cell
      *
-     * @param value the data to set
+     * @param new_data the data to set
      * @param row the row of the cell
      * @param col the column of the cell
      */
-    public void setValueAt(Object value, int row, int col) {
-        if (row >= rowCount || col >= columnCount)
+    public void setValueAt(Object new_data, int row, int col) {
+        if (row >= rowCount || col >= columnCount || row < 0 || col < 0)
             return
 
-        // remove references
-        if (data[row][col] instanceof DataCellElement) {
-            DataCellElement oe = data[row][col]
-            for (String category : oe.categoryMap.keySet()) {
-                if (oe.categoryMap[category].startsWith("=")) {
-                    removeReference(oe.categoryMap[category].substring(1),
+        // remove references on the changed cell
+        Object old_data = getDataAt(row,col)
+        if (old_data instanceof DataCellElement) {
+            for (String categoryValue : old_data.categoryMap.values()) {
+                if (categoryValue.startsWith("=")) {
+                    removeReference(categoryValue.substring(1).replace('$', ''),
                                     CustomTableHelper.getVariable(row, col))
                 }
             }
         }
-        if (data[row][col] instanceof String && ((String)data[row][col]).startsWith("=")) {
-            for (String variable : CustomTableHelper.getVariables (this, data[row][col], row, col))
+        if (old_data instanceof String && ((String)data[row][col]).startsWith("=")) {
+            for (String variable : CustomTableHelper.getVariables (this, old_data, row, col))
                 removeReference(variable, CustomTableHelper.getVariable(row, col))
         }
 
-        data[row][col] = value
+        data[row][col] = new_data
         fireTableCellUpdated(row, col)
 
-        // add references
-        if (value instanceof DataCellElement) {
-            DataCellElement oe = value
-            for (String category : oe.categoryMap.keySet()) {
-                if (oe.categoryMap[category].startsWith("=")) {
-                    addReference(oe.categoryMap[category].substring(1),
+        // add references to the changed cell
+        if (new_data instanceof DataCellElement) {
+            for (String categoryValue : new_data.categoryMap.values()) {
+                if (categoryValue.startsWith("=")) {
+                    addReference(categoryValue.substring(1).replace('$', ''),
                                  CustomTableHelper.getVariable(row, col))
                 }
             }
         }
-        if (value instanceof String && ((String)value).startsWith("=")) {
-            for (String variable : CustomTableHelper.getVariables (this, value, row, col))
+        if (new_data instanceof String && new_data.startsWith("=")) {
+            for (String variable : CustomTableHelper.getVariables (this, new_data, row, col))
                 addReference(variable, CustomTableHelper.getVariable(row, col))
         }
 
@@ -351,6 +354,40 @@ public class CustomTableModel extends AbstractTableModel {
         updateCellReferences (row, col)
     }
 
+    /**
+     * Add a reference to the reference list
+     * @param targetCell   the cell which is referenced to
+     * @param variableCell the referencing cell
+     */
+    public void addReference (String targetCell, String variableCell) {
+        targetCell = targetCell.replace('$', '')
+        variableCell = variableCell.replace('$', '')
+        if (references[targetCell] == null)
+            references[targetCell] = new LinkedList<String>()
+
+        references[targetCell].add (variableCell)
+    }
+
+    /**
+     * Removes a reference to the reference list
+     * @param targetCell   the cell which is referenced to
+     * @param variableCell the referencing cell
+     */
+    public void removeReference (String targetCell, String variableCell) {
+        targetCell = targetCell.replace('$', '')
+        variableCell = variableCell.replace('$', '')
+        if (references[targetCell] == null)
+            return
+
+        references[targetCell].remove (variableCell)
+    }
+
+    /**
+     * Updates all cell, which are referencing to the changed cell (row, col)
+     *
+     * @param row the row of the changed cell
+     * @param col the col of the changed cell
+     */
     private void updateCellReferences (int row, int col) {
         if (references[CustomTableHelper.getVariable(row, col)] != null) {
             for (String cell : references[CustomTableHelper.getVariable(row, col)]) {
@@ -358,8 +395,7 @@ public class CustomTableModel extends AbstractTableModel {
                 int c = CustomTableHelper.getCol (cell)
                 if (getDataAt(r, c) instanceof DataCellElement){
                     DataCellElement oe = getDataAt(r, c)
-                    if (oe.updateSpecificPathWithVariables(this))
-                        oe.updateValue()
+                    oe.update(this)
                 }
                 fireTableCellUpdated(r, c)
                 updateCellReferences (r, c)

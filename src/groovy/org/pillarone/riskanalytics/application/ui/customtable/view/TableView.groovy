@@ -63,9 +63,11 @@ class TableView extends AbstractView {
             table.load()
             final List<DataCellElement> outputElements = table.tableData.flatten().findAll { it instanceof DataCellElement}
             outputElements*.run = simulation.simulationRun
-            outputElements*.updateValue()
 
             customTableView = new CustomTableView(table.tableData)
+
+            outputElements*.update(model)
+
             content.add(3, ULCBoxPane.BOX_EXPAND_EXPAND, customTableView.content)
 
         }] as IActionListener)

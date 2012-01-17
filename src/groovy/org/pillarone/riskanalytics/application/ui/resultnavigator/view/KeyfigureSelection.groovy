@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.StatisticsKeyfigure
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.event.IKeyListener
 
 /**
  * @author martin.melchior
@@ -57,19 +58,18 @@ class KeyfigureSelection extends ULCBoxPane {
         keyfigureParameterSelector = new ULCTextField(30)
         keyfigureParameterSelector.setEditable(false)
         keyfigureParameterSelector.setBackground(Color.lightGray)
-        keyfigureParameterSelector.addActionListener(
-                new IActionListener() {
-                    public void actionPerformed(ActionEvent actionEvent) {
-                        String value = keyfigureParameterSelector.text
-                        StatisticsKeyfigure enumValue = StatisticsKeyfigure.getEnumValue( (String) keyfigureSelector.selectedItem)
-                        if (enumValue.equals(StatisticsKeyfigure.ITERATION)) {
-                            model.keyfigureParameter = Integer.parseInt(value)
-                        } else {
-                            model.keyfigureParameter = Double.parseDouble(value)
-                        }
-                    }
+        keyfigureParameterSelector.addKeyListener(new IKeyListener() {
+            void keyTyped(KeyEvent keyEvent) {
+                String value = keyfigureParameterSelector.text
+                StatisticsKeyfigure enumValue = StatisticsKeyfigure.getEnumValue( (String) keyfigureSelector.selectedItem)
+                if (enumValue.equals(StatisticsKeyfigure.ITERATION)) {
+                    model.keyfigureParameter = Integer.parseInt(value)
+                } else {
+                    model.keyfigureParameter = Double.parseDouble(value)
                 }
-        )
+
+            }
+        })
         this.add(ULCBoxPane.BOX_LEFT_CENTER, keyfigureParameterSelector)
 
         this.add(ULCBoxPane.BOX_LEFT_CENTER, ULCFiller.createHorizontalGlue())

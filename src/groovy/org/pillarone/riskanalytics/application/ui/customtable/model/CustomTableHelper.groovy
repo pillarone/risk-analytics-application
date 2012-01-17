@@ -50,7 +50,7 @@ static class CustomTableHelper {
             if (range.toString().endsWith(","))
                 range.deleteCharAt(range.length()-1)
 
-            formula = formula.replace (s, range.toString())
+            formula = formula.replace (s, range.toString().replace('E', '#')) // TODO: hack
         }
 
         // Check for other variables and replace them with their value
@@ -68,10 +68,8 @@ static class CustomTableHelper {
             formula = formula.replace (variable, model.getValueAt(row, col).toString())
         }
 
-        return formula
+        return formula.replace ('#', 'E') // TODO: hack
     }
-
-
 
     public static List<String> getVariables (CustomTableModel model, String formula, int cellRow, int cellCol) {
         formula = formula.replace ('$', '')
