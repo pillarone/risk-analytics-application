@@ -49,6 +49,7 @@ class TableView extends AbstractView {
             SaveDialog dialog = new SaveDialog(UlcUtilities.getWindowAncestor(content), model)
             dialog.okAction = {
                 CustomTable customTable = new CustomTable(dialog.nameInput.text, model.class)
+                customTable.parameterization = simulation.parameterization
                 customTable.tableData = customTableView.customTableModel.data
                 savedViews.addItem(customTable.name)
                 customTable.save()

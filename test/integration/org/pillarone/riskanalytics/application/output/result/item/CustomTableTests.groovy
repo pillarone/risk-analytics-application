@@ -8,6 +8,8 @@ import org.pillarone.riskanalytics.core.output.PathMapping
 import org.pillarone.riskanalytics.core.output.FieldMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 
 class CustomTableTests extends GroovyTestCase {
@@ -23,14 +25,19 @@ class CustomTableTests extends GroovyTestCase {
         if(CollectorMapping.countByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER) == 0) {
             new CollectorMapping(collectorName: AggregatedCollectingModeStrategy.IDENTIFIER).save()
         }
+
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
     }
 
     void testSaveLoad() {
 
+        Parameterization parameterization = new Parameterization("ApplicationParameters", ApplicationModel)
+
         CustomTable table = new CustomTable("Name", ApplicationModel)
+        table.parameterization = parameterization
         table.tableData = [
-                ["string", new DataCellElement(categoryMap: ["a":"=A1"], periodIndex: 0, path: "mypath", field: "myfield", collector: AggregatedCollectingModeStrategy.IDENTIFIER, templatePath: "")],
-                ["string2", new DataCellElement(categoryMap: ["c":"=A2"], periodIndex: 0, path: "mypath", field: "myfield", collector: AggregatedCollectingModeStrategy.IDENTIFIER, templatePath: "")]
+                ["string", new DataCellElement(categoryMap: ["a":"=A1"], period: 0, path: "mypath", field: "myfield", collector: AggregatedCollectingModeStrategy.IDENTIFIER, templatePath: "")],
+                ["string2", new DataCellElement(categoryMap: ["c":"=A2"], period: 0, path: "mypath", field: "myfield", collector: AggregatedCollectingModeStrategy.IDENTIFIER, templatePath: "")]
         ]
 
         table.save()

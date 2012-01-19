@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.core.persistence.DateTimeMillisUserType
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.util.DatabaseUtils
 import org.pillarone.riskanalytics.core.output.CollectorInformation
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 class CustomTableDAO {
 
@@ -17,6 +18,9 @@ class CustomTableDAO {
     Person creator
     Person lastUpdater
 
+    ParameterizationDAO parameterization
+    Person person
+
 
     static hasMany = [entries: CustomTableEntry]
 
@@ -26,6 +30,7 @@ class CustomTableDAO {
         modificationDate(nullable: true)
         creator nullable: true
         lastUpdater nullable: true
+        person(nullable: true)
     }
 
     static mapping = {

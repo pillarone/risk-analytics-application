@@ -13,6 +13,11 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.Cat
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
 
 class CustomTable extends ModellingItem {
@@ -21,6 +26,9 @@ class CustomTable extends ModellingItem {
     Class modelClass
 
     List<List> tableData
+
+    Parameterization parameterization
+
 
     CustomTable(String name, Class modelClass) {
         super(name)
@@ -41,6 +49,8 @@ class CustomTable extends ModellingItem {
     protected void mapToDao(Object dao) {
         CustomTableDAO customTableDAO = dao as CustomTableDAO
         customTableDAO.modelClassName = modelClass.name
+        customTableDAO.person = UserManagement.currentUser
+        customTableDAO.parameterization = ParameterizationDAO.find(parameterization.name, parameterization.modelClass.name, parameterization.versionNumber.toString())
         if (customTableDAO.entries != null) {
             for (CustomTableEntry entry in new ArrayList<CustomTableEntry>(customTableDAO.entries)) {
                 customTableDAO.removeFromEntries(entry)
@@ -78,7 +88,7 @@ class CustomTable extends ModellingItem {
     @Override
     protected void mapFromDao(Object dao, boolean completeLoad) {
         CustomTableDAO customTableDAO = dao as CustomTableDAO
-
+        parameterization = ModellingItemFactory.getParameterization(customTableDAO.parameterization)
         List<DataCellElement> elements = []
 
         tableData = []
