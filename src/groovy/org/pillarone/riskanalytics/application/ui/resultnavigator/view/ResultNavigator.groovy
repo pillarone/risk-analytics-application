@@ -28,6 +28,7 @@ import com.ulcjava.base.application.IComboBoxModel
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCContainer
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 
 /**
  * @author martin.melchior
@@ -38,7 +39,6 @@ class ResultNavigator extends AbstractBean {
 
     private ULCBoxPane contents
     private ULCBoxPane resultEntryTable
-    private ULCBoxPane propertiesArea
 
     CategoryConfigurationDialog configurationDialog
     CategoryMapping categoryMapping
@@ -46,13 +46,21 @@ class ResultNavigator extends AbstractBean {
     private ResultAccess resultAccess
 
     /**
-     * @param context Application context is used for accessing and using resources (such as icons, etc.).
      */
     public ResultNavigator() {
         super()
         resultAccess = new ResultAccess()
-        contents = createContentView()
+        contents = createContentView(true)
         contents.setVisible true
+    }
+
+    public ResultNavigator(SimulationRun run) {
+        super()
+        resultAccess = new ResultAccess()
+        contents = createContentView(false)
+        contents.setVisible true
+        loadSimulationRun(run)
+
     }
 
     /**
@@ -62,18 +70,20 @@ class ResultNavigator extends AbstractBean {
         return contents;
     }
 
-    private ULCToolBar createToolbar() {
+    private ULCToolBar createToolbar(boolean enabled) {
         SimulationRunsModel simulationRunsModel = new SimulationRunsModel()
 
         ULCToolBar toolBar = new ULCToolBar("Simulation Run", ULCToolBar.HORIZONTAL)
         ULCLabel modelLabel = new ULCLabel("Model ")
         toolBar.add(modelLabel)
         ULCComboBox modelSelector = new ULCComboBox(simulationRunsModel.getModelComboBoxModel())
+        modelSelector.setEnabled(enabled)
         toolBar.add(modelSelector)
         toolBar.addSeparator()
         ULCLabel simRunLabel = new ULCLabel("Simulation Run ")
         toolBar.add(simRunLabel)
         ULCComboBox simulationRunSelector = new ULCComboBox(simulationRunsModel.getSimulationRunsComboBoxModel())
+        simulationRunSelector.setEnabled(enabled)
         simulationRunSelector.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent event) {
                 ULCComboBox source = (ULCComboBox)event.getSource();
@@ -93,6 +103,7 @@ class ResultNavigator extends AbstractBean {
         toolBar.add(simulationRunSelector)
         toolBar.addSeparator()
         ULCButton loadButton = new ULCButton("Load")
+        loadButton.setEnabled(enabled)
         loadButton.addActionListener( new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 loadSimulationRun(simulationRunsModel.getSelectedRun())
@@ -101,7 +112,7 @@ class ResultNavigator extends AbstractBean {
         toolBar.add(loadButton)
         toolBar.add(ULCFiller.createHorizontalGlue())
 
-        ULCButton configureMapping = new ULCButton("Edit Mapping")
+        ULCButton configureMapping = new ULCButton("Mapping Specification")
         toolBar.add(configureMapping)
         configureMapping.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
@@ -139,7 +150,9 @@ class ResultNavigator extends AbstractBean {
 
         table.setDragEnabled(true)
 
-        FilterPanel filterPanel = new FilterPanel(model)
+        KeyfigureSelectionModel keyfigureSelectionModel = new KeyfigureSelectionModel(run)
+        table.keyfigureSelection = keyfigureSelectionModel
+        FilterPanel filterPanel = new FilterPanel(model, keyfigureSelectionModel)
 
         resultEntryTable.removeAll()
         resultEntryTable.add(ULCBoxPane.BOX_EXPAND_TOP, filterPanel);
@@ -147,40 +160,22 @@ class ResultNavigator extends AbstractBean {
 
         filterPanel.registerFilterListener table
         // table.addCategoryListChangeListener(filterPanel.getCategoryToFilter())
-
-        KeyfigureSelection keyfigureSelection = new KeyfigureSelection(run)
-        propertiesArea.removeAll()
-        propertiesArea.add(ULCBoxPane.BOX_LEFT_TOP, keyfigureSelection);
-
-        table.keyfigureSelection = keyfigureSelection.model
     }
 
-    private ULCBoxPane createContentView() {
+    private ULCBoxPane createContentView(boolean toolbarEnabled) {
         ULCBoxPane contentView = new ULCBoxPane(true)
         // contentView.setPreferredSize(new Dimension(800, 600))
         contentView.setBorder(BorderFactory.createEmptyBorder())
 
         ULCBoxPane toolbarArea = new ULCBoxPane(false)
         toolbarArea.setBorder(BorderFactory.createTitledBorder("Data Access"))
-        ULCToolBar toolbar = createToolbar()
+        ULCToolBar toolbar = createToolbar(toolbarEnabled)
         toolbarArea.add(ULCBoxPane.BOX_EXPAND_TOP, toolbar);
         contentView.add(ULCBoxPane.BOX_EXPAND_TOP, toolbarArea);
 
-        ULCSplitPane splitPane = new ULCSplitPane(ULCSplitPane.VERTICAL_SPLIT)
-        splitPane.setDividerLocation(0.7)
-        splitPane.setDividerSize(10)
-        splitPane.setDividerLocationAnimationEnabled(true)
-
         resultEntryTable = new ULCBoxPane(true)
         resultEntryTable.setBorder(BorderFactory.createTitledBorder("Data Selection"))
-        splitPane.setTopComponent(resultEntryTable)
-
-        propertiesArea = new ULCBoxPane(false)
-        propertiesArea.setBorder(BorderFactory.createTitledBorder("Properties"))
-        splitPane.setBottomComponent(propertiesArea)
-
-
-        contentView.add(ULCBoxPane.BOX_EXPAND_EXPAND, splitPane);
+        contentView.add(ULCBoxPane.BOX_EXPAND_EXPAND, resultEntryTable)
 
         return contentView
     }

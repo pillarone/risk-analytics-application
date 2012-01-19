@@ -28,14 +28,13 @@ class KeyfigureSelection extends ULCBoxPane {
     private ULCComboBox periodSelector
     KeyfigureSelectionModel model
 
-    KeyfigureSelection(SimulationRun run) {
+    KeyfigureSelection(KeyfigureSelectionModel model) {
         super(false, 2)
-        model = new KeyfigureSelectionModel(run)
+        this.model = model
         createView()
     }
 
     void createView() {
-        this.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel("Statistics Measure: "))
         keyfigureSelector = new ULCComboBox(model.getKeyfigureModel())
         this.add(ULCBoxPane.BOX_LEFT_CENTER, keyfigureSelector)
         keyfigureSelector.addActionListener(
@@ -55,7 +54,7 @@ class KeyfigureSelection extends ULCBoxPane {
         this.add(ULCBoxPane.BOX_LEFT_CENTER, ULCFiller.createHorizontalGlue())
 
         this.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel("Parameter: "))
-        keyfigureParameterSelector = new ULCTextField(30)
+        keyfigureParameterSelector = new ULCTextField(8)
         keyfigureParameterSelector.setEditable(false)
         keyfigureParameterSelector.setBackground(Color.lightGray)
         keyfigureParameterSelector.addKeyListener(new IKeyListener() {
