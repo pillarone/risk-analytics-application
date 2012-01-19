@@ -19,6 +19,9 @@ class CustomTableEntry {
     CollectorMapping collector
     Integer periodIndex
 
+    String keyFigure
+    BigDecimal keyFigureParameter
+
     static hasMany = [pairs: CustomTableEntryPair]
 
     static constraints = {
@@ -30,5 +33,7 @@ class CustomTableEntry {
         field(nullable: true)
         collector(nullable: true)
         periodIndex(nullable: true)
+        keyFigure(nullable: true)
+        keyFigureParameter(nullable: true)
     }
 }

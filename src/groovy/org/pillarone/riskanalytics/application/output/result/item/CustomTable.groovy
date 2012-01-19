@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.output.CollectorMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMappingRegistry
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
 
 class CustomTable extends ModellingItem {
@@ -63,7 +64,9 @@ class CustomTable extends ModellingItem {
                     entry.path = PathMapping.findByPathName(element.path)
                     entry.field = FieldMapping.findByFieldName(element.field)
                     entry.collector = CollectorMapping.findByCollectorName(element.collector)
-                    entry.periodIndex = element.periodIndex
+                    entry.periodIndex = element.period
+                    entry.keyFigure = element.statistics.toString()
+                    entry.keyFigureParameter = element.parameter
                 }
                 customTableDAO.addToEntries(entry)
                 j++
@@ -87,13 +90,16 @@ class CustomTable extends ModellingItem {
                 if (entry.text != null) {
                     rowData << entry.text
                 } else {
-                    DataCellElement element = new DataCellElement(periodIndex: entry.periodIndex, path: entry.path.pathName, field: entry.field.fieldName, collector: entry.collector.collectorName)
+                    DataCellElement element = new DataCellElement(period: entry.periodIndex, path: entry.path.pathName, field: entry.field.fieldName, collector: entry.collector.collectorName)
                     for (CustomTableEntryPair pair in entry.pairs) {
                         element.addCategoryValue(pair.entryKey, pair.entryValue)
                     }
                     element.addCategoryValue(OutputElement.PATH, element.path)
                     element.addCategoryValue(OutputElement.FIELD, element.field)
                     element.addCategoryValue(OutputElement.COLLECTOR, element.collector)
+                    element.addCategoryValue(OutputElement.PERIOD, element.period.toString())
+                    element.addCategoryValue(OutputElement.STATISTICS, entry.keyFigure)
+                    element.addCategoryValue(OutputElement.STATISTICS_PARAMETER, entry.keyFigureParameter.toString())
                     elements << element
                     rowData << element
                 }

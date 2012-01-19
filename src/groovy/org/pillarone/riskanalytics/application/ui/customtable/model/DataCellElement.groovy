@@ -10,9 +10,9 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.Statisti
  */
 class DataCellElement extends OutputElement {
     Object value
-    private int period
-    private StatisticsKeyfigure statistics
-    private Number parameter
+    int period
+    StatisticsKeyfigure statistics
+    Number parameter
 
     public DataCellElement () {
     }
@@ -30,9 +30,9 @@ class DataCellElement extends OutputElement {
         if (statisticsParameter == null)
             statisticsParameter = 0
 
-        this.categoryMap["period"] = periodIndex.toString()
-        this.categoryMap["statistics"] = statistics.name
-        this.categoryMap["parameter"] = statisticsParameter.toString()
+        this.categoryMap[OutputElement.PERIOD] = periodIndex.toString()
+        this.categoryMap[OutputElement.STATISTICS] = statistics.name
+        this.categoryMap[OutputElement.STATISTICS_PARAMETER] = statisticsParameter.toString()
 
         this.categoryMap.remove("Field")
         this.categoryMap.remove("Path")
@@ -134,19 +134,19 @@ class DataCellElement extends OutputElement {
             changed = true
         }
 
-        int new_period = (int)Double.parseDouble(categoryMapCopy["period"])
+        int new_period = (int)Double.parseDouble(categoryMapCopy[OutputElement.PERIOD])
         if (this.period != new_period) {
             this.period = new_period
             changed = true
         }
 
-        StatisticsKeyfigure new_statistics = StatisticsKeyfigure.getEnumValue(categoryMapCopy["statistics"])
+        StatisticsKeyfigure new_statistics = StatisticsKeyfigure.getEnumValue(categoryMapCopy[OutputElement.STATISTICS])
         if (this.statistics != new_statistics) {
             this.statistics = new_statistics
             changed = true
         }
 
-        Number new_parameter = Double.parseDouble(categoryMapCopy["parameter"])
+        Number new_parameter = Double.parseDouble(categoryMapCopy[OutputElement.STATISTICS_PARAMETER])
         if (this.parameter != new_parameter) {
             this.parameter = new_parameter
             changed = true

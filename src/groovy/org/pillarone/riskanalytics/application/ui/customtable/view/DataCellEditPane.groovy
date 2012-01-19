@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElem
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.StatisticsKeyfigure
 import com.ulcjava.base.application.ULCComponent
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
  *
@@ -105,13 +106,13 @@ public class DataCellEditPane extends ULCBoxPane {
         statisticsCombo.setName("statistics")
         statisticsCombo.setEditable(true)
         statisticsCombo.setPreferredSize(new Dimension (200,25))
-        statisticsCombo.selectedItem = dataCellElement.categoryMap["statistics"]
+        statisticsCombo.selectedItem = dataCellElement.categoryMap[OutputElement.STATISTICS]
         statisticsCombo.addActionListener(new CategoryValueComboListener())
 
         ULCTextField parameterTextField = new ULCTextField()
         parameterTextField.setName("parameter")
         parameterTextField.setPreferredSize(new Dimension (100,25))
-        parameterTextField.text = dataCellElement.categoryMap["parameter"]
+        parameterTextField.text = dataCellElement.categoryMap[OutputElement.STATISTICS_PARAMETER]
         parameterTextField.addActionListener(new CategoryValueComboListener())
 
         // add statistics components to pane and list
@@ -138,7 +139,7 @@ public class DataCellEditPane extends ULCBoxPane {
         ULCComboBox periodCombo = new ULCComboBox(model.getPeriodSelectionModel())
         periodCombo.setName("period")
         periodCombo.setEditable(true)
-        periodCombo.selectedItem = dataCellElement.categoryMap["period"]
+        periodCombo.selectedItem = dataCellElement.categoryMap[OutputElement.PERIOD]
         periodCombo.addActionListener(new CategoryValueComboListener())
 
         // add period components to pane and list

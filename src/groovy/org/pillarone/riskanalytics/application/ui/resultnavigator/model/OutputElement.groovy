@@ -11,6 +11,11 @@ class OutputElement {
     static final String PATH = "Path"
     static final String FIELD = "Field"
     static final String COLLECTOR = "Collector"
+    static final String PERIOD = "period"
+    static final String STATISTICS = "statistics"
+    static final String STATISTICS_PARAMETER = "parameter"
+
+
     SimulationRun run
     String path
     String templatePath

@@ -66,7 +66,7 @@ class TableView extends AbstractView {
 
             customTableView = new CustomTableView(table.tableData)
 
-            outputElements*.update(model)
+            outputElements*.update(customTableView.customTable.customTableModel)
 
             content.add(3, ULCBoxPane.BOX_EXPAND_EXPAND, customTableView.content)
 

@@ -154,7 +154,7 @@ public class CustomTablePane extends ULCScrollPane {
  */
 public class CustomTable extends ULCTable {
     private CustomTableView customTableView
-    private CustomTableModel customTableModel
+    CustomTableModel customTableModel
 
 
     /**
@@ -478,7 +478,7 @@ public class CustomTable extends ULCTable {
                     Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard()
                     clip.setContents(ss, ss)
                     break
-                
+
                 case Mode.PASTE:
 
                     // copy more than one value
