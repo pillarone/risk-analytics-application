@@ -5,6 +5,7 @@ import com.ulcjava.base.application.event.*
 import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
+import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
 
 /**
  * A TextField for editing the values in the CustomTable
@@ -85,7 +86,12 @@ public class CellEditTextField extends ULCTextField {
      * @param col the col of the cell, from where the value is
      */
     public void setText (int row, int col) {
-        this.text = customTableModel.getDataAt (row, col)
+        Object data = customTableModel.getDataAt (row, col)
+        if (data instanceof DataCellElement) {
+            this.text = data.path
+        } else {
+            this.text = data
+        }
         this.row = row
         this.col = col
         selectDataMode = false

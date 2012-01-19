@@ -56,8 +56,6 @@ public class DataCellEditPane extends ULCBoxPane {
         dataCellElement = customTableModel.getDataAt (row, col)
         model = new KeyfigureSelectionModel(dataCellElement.run)
 
-        customTableView.cellEditTextField.text = dataCellElement.path
-
         // remove all elements from the pane
         this.removeAll()
 
@@ -195,7 +193,7 @@ public class DataCellEditPane extends ULCBoxPane {
             if (selectedValue == DataCellEditPane.this.dataCellElement.categoryMap[category])
                 return
 
-            // remove reference fr om old variable
+            // remove reference from old variable
             if (DataCellEditPane.this.dataCellElement.categoryMap[category].startsWith("=")) {
                 DataCellEditPane.this.customTableModel.removeReference(DataCellEditPane.this.dataCellElement.categoryMap[category].substring(1).replace('$', ''),
                                                                       CustomTableHelper.getVariable(DataCellEditPane.this.row, DataCellEditPane.this.col))
@@ -205,9 +203,12 @@ public class DataCellEditPane extends ULCBoxPane {
             DataCellEditPane.this.dataCellElement.categoryMap[category] = selectedValue
 
             dataCellElement.update((CustomTableModel)customTableModel)
-            customTableView.cellEditTextField.text = dataCellElement.path
+            DataCellEditPane.this.customTableView.cellEditTextField.text = dataCellElement.path
 
             DataCellEditPane.this.customTableModel.fireTableCellUpdated(DataCellEditPane.this.row, DataCellEditPane.this.col)
+
+            // Update cells which are referencing on this cell
+            DataCellEditPane.this.customTableModel.updateCellReferences(DataCellEditPane.this.row, DataCellEditPane.this.col)
 
             // add reference from new variable
             if (selectedValue.startsWith("=")) {

@@ -388,7 +388,7 @@ public class CustomTableModel extends AbstractTableModel {
      * @param row the row of the changed cell
      * @param col the col of the changed cell
      */
-    private void updateCellReferences (int row, int col) {
+    public void updateCellReferences (int row, int col) {
         if (references[CustomTableHelper.getVariable(row, col)] != null) {
             for (String cell : references[CustomTableHelper.getVariable(row, col)]) {
                 int r = CustomTableHelper.getRow (cell)

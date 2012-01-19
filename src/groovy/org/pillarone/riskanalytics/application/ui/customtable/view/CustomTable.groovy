@@ -42,6 +42,7 @@ import java.awt.datatransfer.Clipboard
 import java.awt.datatransfer.StringSelection
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import com.ulcjava.base.application.event.IKeyListener
 
 /**
  * The ScrollPane which contains the CustomTable and the RowHeader for the CustomTable
@@ -201,6 +202,7 @@ public class CustomTable extends ULCTable {
         this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.CUT), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         this.registerKeyboardAction(new CopyPasteActionListener(CopyPasteActionListener.Mode.PASTE), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
 
+         // Delete Listener
         this.registerKeyboardAction(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 for (int row : CustomTable.this.getSelectedRows()) {
@@ -210,6 +212,16 @@ public class CustomTable extends ULCTable {
                 }
             }
         }, KeyStroke.getKeyStroke (KeyEvent.VK_DELETE, 0), ULCComponent.WHEN_FOCUSED)
+
+        // Other Keys Listener -> focus on cellEditTextField and start typing
+        this.addKeyListener(new IKeyListener(){
+            void keyTyped(KeyEvent keyEvent) {
+                if (CustomTable.this.customTableModel.getDataAt (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn()) instanceof DataCellElement == false) {
+                    CustomTable.this.customTableView.cellEditTextField.requestFocus()
+                    CustomTable.this.customTableView.cellEditTextField.text = keyEvent.keyChar
+                }
+            }
+        })
 
 
         ULCPopupMenu tablePopupMenu = new ULCPopupMenu()
@@ -285,6 +297,7 @@ public class CustomTable extends ULCTable {
                     CustomTable.this.customTableView.cellEditTextField.editable = false
                     CustomTable.this.customTableView.dataCellEditPane.setVisible(true)
                     CustomTable.this.customTableView.dataCellEditPane.setData(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
+                    CustomTable.this.customTableView.cellEditTextField.setText(CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn())
 
                 } else {
                     // If the selectDataMode is off
