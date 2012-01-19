@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 import com.ulcjava.base.application.table.AbstractTableModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
 
 /**
  */
@@ -11,6 +12,7 @@ class OutputElementTableModel extends AbstractTableModel implements ICategoryCha
     private Map<String, Integer> categoryToColMap = new HashMap<String, Integer>()
     private List<String> categories = new LinkedList<String>();
     CategoryMapping categoryMapping
+    boolean isTemplateMode
 
     List<OutputElement> allElements = []
 
@@ -58,7 +60,17 @@ class OutputElementTableModel extends AbstractTableModel implements ICategoryCha
         OutputElement element = allElements.get(rowIndex)
         String columnName = getColumnName(columnIndex)
         if (columnName) {
-            return element.getCategoryValue(columnName)
+            if (isTemplateMode) {
+                if (columnName==OutputElement.PATH) {
+                    return element.templatePath
+                } else {
+                    WildCardPath wcp = element.getWildCardPath()
+                    List<String> list = wcp.getWildCardValues(columnName)
+                    return list ? list.toListString() : ""
+                }
+            } else {
+                return element.getCategoryValue(columnName)
+            }
         } else {
             return null
         }

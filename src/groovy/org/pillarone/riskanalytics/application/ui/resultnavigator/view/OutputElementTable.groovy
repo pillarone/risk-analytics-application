@@ -58,18 +58,15 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
     }
 
     private void setRenderer() {
-        DefaultTableCellRenderer defaultTableTreeCellRenderer = new DefaultTableCellRenderer()
-        PathCellRenderer cellRendererWithTooltip = new PathCellRenderer()
         for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
+            String colName = getModel().getColumnName(i)                        
             ULCTableColumn column = getColumnModel().getColumn(i);
-            if (i != ((OutputElementTableModel)this.model).getColumnIndex(OutputElement.PATH)) {
-                column.setCellRenderer(defaultTableTreeCellRenderer);
+            if (colName == OutputElement.PATH) {
+                column.setCellRenderer(new PathCellRenderer());
             } else {
-                column.setCellRenderer(cellRendererWithTooltip)
-                // column.setMaxWidth(50)
+                column.setCellRenderer(new CategoryCellRenderer(colName))
             }
         }
-
     }
 
     void setFilter(TableRowFilter filter) {
@@ -150,8 +147,39 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
             DefaultTableCellRenderer rendererComponent = (DefaultTableCellRenderer) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row);
             OutputElement rowElement = ((OutputElementTableModel) OutputElementTable.this.model).getRowElement(row)
-            rendererComponent.setToolTipText(rowElement.getWildCardPath().templatePath)
+            String templatePath = new String(rowElement.templatePath)
+            for (String wc : rowElement.wildCardPath.allWildCards) {
+                templatePath = templatePath.replace("\${${wc}}", "<b style='color:green'>\${${wc}}</b>")
+            }
+            rendererComponent.setToolTipText("<html>Template based on categories ${rowElement.wildCardPath.allWildCards.toListString()}: <br>"
+                                                                                    + " &nbsp; ${templatePath}</html>")
             return rendererComponent
         }
     }
+    
+    private class CategoryCellRenderer extends DefaultTableCellRenderer {
+        
+        String category
+        
+        CategoryCellRenderer(String category) {
+            super()
+            this.category=category
+        }
+
+        @Override
+        public IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
+            DefaultTableCellRenderer rendererComponent = (DefaultTableCellRenderer) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row);
+            OutputElement rowElement = ((OutputElementTableModel) OutputElementTable.this.model).getRowElement(row)
+            String text = "<b>Possible values for the category <b style='color:green'>${category}:</b> <br> "
+            List<String> values = rowElement.wildCardPath.getWildCardValues(category)
+            if (values != null) {
+                for (String val : values) {
+                    text = text + "&nbsp; ${val} <br>"
+                }
+                rendererComponent.setToolTipText("<html>${text}</html>")
+            }
+            return rendererComponent
+        }
+    }
+    
 }
