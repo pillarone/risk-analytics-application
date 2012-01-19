@@ -17,6 +17,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.ULCRadioButton
 import com.ulcjava.base.application.ULCButtonGroup
+import com.ulcjava.base.application.BorderFactory
+import com.ulcjava.base.application.ULCCheckBox
 
 /**
  * Dialog for the configuration of drag/drop category values
@@ -54,7 +56,7 @@ class CategoryValuesInsertDialog extends ULCDialog {
      * @param vertical       if default inserting is vertical
      */
     private void init(String startCell, boolean vertical) {
-        ULCBoxPane pane = new ULCBoxPane(2, 4)
+        ULCBoxPane pane = new ULCBoxPane(3, 4)
 
         ULCButtonGroup buttonGroup = new ULCButtonGroup()
         verticalRadioButton   = new ULCRadioButton("vertical")
@@ -85,17 +87,44 @@ class CategoryValuesInsertDialog extends ULCDialog {
         ULCButton cancelButton = new ULCButton("Cancel")
         cancelButton.addActionListener(new CloseActionListener(true))
 
-        pane.add (ULCBoxPane.BOX_LEFT_EXPAND, verticalRadioButton)
-        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, horizontalRadioButton)
+        ULCBoxPane valuesPane = new ULCBoxPane(true)
+        valuesPane.setBorder(BorderFactory.createTitledBorder("Values"))
 
-        pane.add (ULCBoxPane.BOX_LEFT_EXPAND, startCellLabel)
-        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, startCellTextField)
+        for (Object value : categoryValues) {
+            ULCCheckBox checkBox = new ULCCheckBox(value.toString())
+            checkBox.setSelected(true)
+            checkBox.setName(value.toString())
+            checkBox.addActionListener(new IActionListener(){
+                void actionPerformed(ActionEvent actionEvent) {
+                    ULCCheckBox clickedCheckBox = actionEvent.source
+                    if (clickedCheckBox.isSelected()) {
+                        CategoryValuesInsertDialog.this.categoryValues.add(clickedCheckBox.getName())
+                    } else {
+                        CategoryValuesInsertDialog.this.categoryValues.remove(clickedCheckBox.getName())
+                    }
+                    updateEndCellTextField()
+                }
+            })
+            valuesPane.add (ULCBoxPane.BOX_EXPAND_TOP, checkBox)
+        }
 
-        pane.add (ULCBoxPane.BOX_LEFT_EXPAND, endCellLabel)
-        pane.add (ULCBoxPane.BOX_EXPAND_EXPAND, endCellTextField)
+
+        pane.add (ULCBoxPane.BOX_LEFT_TOP, verticalRadioButton)
+        pane.add (ULCBoxPane.BOX_EXPAND_TOP, horizontalRadioButton)
+        pane.skip(1)
+
+        pane.add (ULCBoxPane.BOX_LEFT_TOP, startCellLabel)
+        pane.add (ULCBoxPane.BOX_EXPAND_TOP, startCellTextField)
+        pane.skip(1)
+
+        pane.add (ULCBoxPane.BOX_LEFT_TOP, endCellLabel)
+        pane.add (ULCBoxPane.BOX_EXPAND_TOP, endCellTextField)
+        pane.skip(1)
 
         pane.add (ULCBoxPane.BOX_RIGHT_EXPAND, okButton)
         pane.add (ULCBoxPane.BOX_LEFT_EXPAND, cancelButton)
+
+        pane.set (2, 0, 1, 3, ULCBoxPane.BOX_EXPAND_EXPAND, valuesPane)
 
         this.contentPane = pane
     }
@@ -128,6 +157,14 @@ class CategoryValuesInsertDialog extends ULCDialog {
      */
     public boolean isVertical() {
         return verticalRadioButton.isSelected()
+    }
+
+    /**
+     * return the values the user selected
+     * @return the selected values
+     */
+    public List<String> getValues() {
+        return categoryValues
     }
 
     /**

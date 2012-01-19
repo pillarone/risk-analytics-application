@@ -77,6 +77,7 @@ public class DataCellEditPane extends ULCBoxPane {
                 ULCLabel categoryLabel = new ULCLabel(category)
                 categoryLabel.setName(category)
                 categoryLabel.setDragEnabled(true)
+                categoryLabel.setToolTipText("Drag this label into the Table for inserting the values of combobox")
 
                 ULCComboBox categoryValueCombo = new ULCComboBox(wildCardValues.toArray())
                 categoryValueCombo.setName(category)
@@ -84,6 +85,7 @@ public class DataCellEditPane extends ULCBoxPane {
                 categoryValueCombo.setPreferredSize(new Dimension (200,25))
                 categoryValueCombo.selectedItem = dataCellElement.categoryMap[category]
                 categoryValueCombo.addActionListener(new CategoryValueComboListener())
+                categoryValueCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
                 // add elements on pane and list
                 this.add (BOX_EXPAND_TOP, categoryLabel)
@@ -101,6 +103,7 @@ public class DataCellEditPane extends ULCBoxPane {
         ULCLabel statisticsLabel = new ULCLabel("statistics")
         statisticsLabel.setName("statistics")
         statisticsLabel.setDragEnabled(true)
+        statisticsLabel.setToolTipText("Drag this label into the Table for inserting the values of combobox")
 
         ULCComboBox statisticsCombo = new ULCComboBox(model.getKeyfigureModel())
         statisticsCombo.setName("statistics")
@@ -108,12 +111,14 @@ public class DataCellEditPane extends ULCBoxPane {
         statisticsCombo.setPreferredSize(new Dimension (200,25))
         statisticsCombo.selectedItem = dataCellElement.categoryMap[OutputElement.STATISTICS]
         statisticsCombo.addActionListener(new CategoryValueComboListener())
+        statisticsCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
         ULCTextField parameterTextField = new ULCTextField()
         parameterTextField.setName("parameter")
         parameterTextField.setPreferredSize(new Dimension (100,25))
         parameterTextField.text = dataCellElement.categoryMap[OutputElement.STATISTICS_PARAMETER]
         parameterTextField.addActionListener(new CategoryValueComboListener())
+        statisticsCombo.setToolTipText("Enter a parameter value, or reference to a value in a cell (e.g. =A\$1")
 
         // add statistics components to pane and list
         this.add (BOX_EXPAND_TOP, statisticsLabel)
@@ -135,12 +140,14 @@ public class DataCellEditPane extends ULCBoxPane {
         ULCLabel periodLabel = new ULCLabel("period")
         periodLabel.setName("period")
         periodLabel.setDragEnabled(true)
+        periodLabel.setToolTipText("Drag this label into the Table for inserting the values of combobox")
 
         ULCComboBox periodCombo = new ULCComboBox(model.getPeriodSelectionModel())
         periodCombo.setName("period")
         periodCombo.setEditable(true)
         periodCombo.selectedItem = dataCellElement.categoryMap[OutputElement.PERIOD]
         periodCombo.addActionListener(new CategoryValueComboListener())
+        periodCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
         // add period components to pane and list
         this.add (BOX_EXPAND_TOP, periodLabel)

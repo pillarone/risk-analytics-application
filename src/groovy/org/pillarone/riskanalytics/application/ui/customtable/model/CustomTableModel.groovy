@@ -51,8 +51,9 @@ public class CustomTableModel extends AbstractTableModel {
 
         // more rows ?
         if (rowDiff > 0) {
-            for (int i = 0; i < rowDiff; i++)
-                this.data.add ([])
+            for (int i = 0; i < rowDiff; i++) {
+                this.data.add (new LinkedList<Object>(Collections.nCopies(this.columnCount, "")))
+            }
             fireTableRowsInserted(rowCount-1 - rowDiff, rowCount-1)
             rowHeaderModel.fireIntervalAdded(this, rowCount-1 - rowDiff, rowCount-1)
             return
@@ -111,6 +112,8 @@ public class CustomTableModel extends AbstractTableModel {
         if (row < 0)
             row = rowCount
 
+        // TODO: update variables in cells referencing to a row below the inserted row and update the references-map
+
         while (rowData.size() < columnCount) {
             rowData.add ("")
         }
@@ -127,6 +130,11 @@ public class CustomTableModel extends AbstractTableModel {
      * @param col Position to insert the new Column
      */
     public void insertCol (int col) {
+        // TODO: update variables in cells referencing to a col below the inserted col and update the references-map
+
+        if (col < 0)
+            col = columnCount
+
         for (List<Object> rowData : data) {
             rowData.add (col, "")
         }
@@ -159,6 +167,15 @@ public class CustomTableModel extends AbstractTableModel {
         if (rowCount <= 1 || row < 0 || row >= rowCount)
             return
 
+        // TODO: update variables in cells referencing to a row below the deleted row and update the references-map
+        //for (String referencedCell : references.keySet()) {
+        //    if (CustomTableHelper.getRow (referencedCell) >= row) {
+        //        for (String referencingCell : references[referencedCell]) {
+        //
+        //        }
+        //    }
+        //}
+
         data.remove(row)
         fireTableRowsDeleted(row, row)
         rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
@@ -171,6 +188,8 @@ public class CustomTableModel extends AbstractTableModel {
     public void deleteCol (int col) {
         if (columnCount <= 1)
             return
+
+        // TODO: update variables in cells referencing to a col below the deleted col and update the references-map
 
         for (List<Object> rowData : data) {
             rowData.remove(col)

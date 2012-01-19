@@ -67,17 +67,13 @@ class DataCellElement extends OutputElement {
      */
     public void updateValue() {
         try {
-            // TODO: check if the correct functions are called
             switch (statistics) {
-                case StatisticsKeyfigure.VAR_PROFIT:
                 case StatisticsKeyfigure.VAR:
                     value = ResultAccessor.getVar(run, period, path, collector, field, parameter)
                     break;
-                case StatisticsKeyfigure.TVAR_PROFIT:
                 case StatisticsKeyfigure.TVAR:
                     value = ResultAccessor.getTvar(run, period, path, collector, field, parameter)
                     break;
-                case StatisticsKeyfigure.PERCENTILE_PROFIT:
                 case StatisticsKeyfigure.PERCENTILE:
                     value = ResultAccessor.getPercentile(run, period, path, collector, field, parameter)
                     break;
@@ -94,7 +90,9 @@ class DataCellElement extends OutputElement {
                     value = ResultAccessor.getMax(run, period, path, collector, field)
                     break;
                 case StatisticsKeyfigure.ITERATION:
+                    // TODO: doesn't work yet - collector as parameter?
                     value = ResultAccessor.getSingleIterationValue(run, period, path, field, parameter.intValue())
+                    value = "#Iteration not implemented"
                     break;
             }
         } catch (Exception e) {

@@ -13,9 +13,6 @@ public enum StatisticsKeyfigure {
     PERCENTILE(PostSimulationCalculation.PERCENTILE),
     VAR(PostSimulationCalculation.VAR),
     TVAR(PostSimulationCalculation.TVAR),
-    PERCENTILE_PROFIT(PostSimulationCalculation.PERCENTILE_PROFIT),
-    VAR_PROFIT(PostSimulationCalculation.VAR_PROFIT),
-    TVAR_PROFIT(PostSimulationCalculation.TVAR_PROFIT),
     ITERATION("Iteration");
     
     String name

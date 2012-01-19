@@ -388,7 +388,7 @@ public class CustomTable extends ULCTable {
                         if (dlg.isCancel == false) {
                             dropRow = CustomTableHelper.getRow (dlg.getStartCell())
                             dropCol = CustomTableHelper.getCol (dlg.getStartCell())
-                            for (String categoryValue : categoryValues) {
+                            for (String categoryValue : dlg.getValues()) {
                                 CustomTable.this.customTableModel.setValueAt(categoryValue, dropRow, dropCol)
                                 if (dlg.isVertical())
                                     dropRow++
