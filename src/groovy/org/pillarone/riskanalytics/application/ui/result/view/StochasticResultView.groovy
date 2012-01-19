@@ -37,6 +37,7 @@ class StochasticResultView extends ResultView {
     UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
     private int nextModelIndex = 0
     final static String FUNCTION_VALUE = "functionValue_"
+    private @Lazy TableView tableView = { new TableView(model.model, model.item) }()
 
     @Lazy MeanFunction meanFunction
 
@@ -77,7 +78,7 @@ class StochasticResultView extends ResultView {
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, content)
 
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), contentPane)
-        tabbedPane.addTab("Table", UIUtils.getIcon(getText("Settings.icon")), new TableView(model.model, model.item).content)
+        tabbedPane.addTab("Table", UIUtils.getIcon(getText("Settings.icon")), tableView.content)
         tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), getResultSettingView())
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
