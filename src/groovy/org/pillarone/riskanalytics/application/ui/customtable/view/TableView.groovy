@@ -65,7 +65,7 @@ class TableView extends AbstractView {
             final List<DataCellElement> outputElements = table.tableData.flatten().findAll { it instanceof DataCellElement}
             outputElements*.run = simulation.simulationRun
 
-            customTableView = new CustomTableView(table.tableData)
+            customTableView = new CustomTableView(table.tableData, simulation.simulationRun)
 
             outputElements*.update(customTableView.customTable.customTableModel)
 

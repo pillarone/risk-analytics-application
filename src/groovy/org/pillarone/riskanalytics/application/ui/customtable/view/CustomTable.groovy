@@ -538,7 +538,7 @@ public class CustomTable extends ULCTable {
 
     private class CustomTableCellRenderer extends DefaultTableCellRenderer {
         IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
-            setFormat(value)
+            CustomTableModel model = table.model
 
             if (value instanceof String && ((String)value).isNumber() || value instanceof Number) {
                 this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT)
@@ -554,26 +554,17 @@ public class CustomTable extends ULCTable {
 
             this.setFont (this.getFont().deriveFont(Font.PLAIN))
 
-            return this
-        }
-
-
-        ULCNumberDataType numberDataType
-
-        public setFormat(def value) {
-            setDataType null
-        }
-        public setFormat(Number value) {
-            setDataType(getNumberDataType())
-        }
-        public ULCNumberDataType getNumberDataType() {
-            if (numberDataType == null) {
-                numberDataType = DataTypeFactory.numberDataType
-                numberDataType.setGroupingUsed true
-                numberDataType.setMinFractionDigits 2
-                numberDataType.setMaxFractionDigits 2
+            if (value instanceof String && ((String)value).isNumber() || value instanceof Number) {
+                ULCNumberDataType dT = DataTypeFactory.numberDataType
+                dT.minFractionDigits = model.numberDataType.minFractionDigits
+                dT.maxFractionDigits = model.numberDataType.maxFractionDigits
+                setDataType (dT)
+            } else {
+                setDataType (null)
+                this.setFont (this.getFont().deriveFont(Font.BOLD))
             }
-            return numberDataType
+
+            return this
         }
     }
 }

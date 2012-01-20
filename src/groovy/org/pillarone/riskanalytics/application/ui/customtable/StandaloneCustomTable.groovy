@@ -30,7 +30,7 @@ class StandaloneCustomTable extends SingleFrameApplication {
      * @return the component with the content of the main application window.
      */
     protected ULCComponent getContentView() {
-        customTableView = new CustomTableView();
+        customTableView = new CustomTableView(null);
         return customTableView.content;
     }
 }

@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNav
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 import com.ulcjava.base.shared.IWindowConstants
 import com.ulcjava.base.application.UlcUtilities
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
  * The View which contains the CustomTable, and its other elements (cellEditTextField)
@@ -29,14 +31,17 @@ public class CustomTableView {
     public CellEditTextField cellEditTextField
     public DataCellEditPane dataCellEditPane
 
+    private SimulationRun simulationRun
+
     /**
      * Constructor
      */
-    public CustomTableView() {
-        this([[""]])
+    public CustomTableView(SimulationRun simulationRun) {
+        this([[""]], simulationRun)
     }
 
-    public CustomTableView(List<List<Object>> data) {
+    public CustomTableView(List<List<Object>> data, SimulationRun simulationRun) {
+        this.simulationRun = simulationRun
         this.customTableModel = new CustomTableModel(data)
         this.customTableModel.setNumberCols(10)
         this.customTableModel.setNumberRows(10)
@@ -84,12 +89,20 @@ public class CustomTableView {
                 frame.toFront()
                 frame.locationRelativeTo = UlcUtilities.getWindowAncestor(parent)
 
-                resultNavigator = new ResultNavigator()
+                if (CustomTableView.this.simulationRun != null) {
+                    resultNavigator = new ResultNavigator(CustomTableView.this.simulationRun)
+                } else {
+                    resultNavigator = new ResultNavigator()
+                }
                 frame.contentPane = resultNavigator.contentView
 
                 frame.visible = true
             }
         })
+
+
+        toolBar.add new ULCButton(new PrecisionAction(this.customTableModel, -1, "reducePrecision"))
+        toolBar.add new ULCButton(new PrecisionAction(this.customTableModel, +1, "increasePrecision"))
 
         return toolBar
     }

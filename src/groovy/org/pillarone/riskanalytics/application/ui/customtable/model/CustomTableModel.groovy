@@ -4,6 +4,9 @@ import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.AbstractListModel
 import org.nfunk.jep.JEP
 import org.nfunk.jep.ParseException
+import com.ulcjava.base.application.datatype.ULCNumberDataType
+import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import com.ulcjava.base.application.event.TableModelEvent
 
 /**
  * TableModel for the CustomTable
@@ -23,6 +26,14 @@ public class CustomTableModel extends AbstractTableModel {
 
 
 
+    ULCNumberDataType numberDataType
+
+    void adjust(int adjustment) {
+        numberDataType.maxFractionDigits = numberDataType.maxFractionDigits + adjustment
+        numberDataType.minFractionDigits = numberDataType.minFractionDigits + adjustment
+        fireTableDataChanged()
+    }
+
     /**
      * Constructor
      *
@@ -37,6 +48,12 @@ public class CustomTableModel extends AbstractTableModel {
         myParser = new JEP();
         myParser.addStandardFunctions()
         myParser.addFunction("mean", new Mean())
+
+
+        numberDataType = DataTypeFactory.numberDataType
+        numberDataType.setGroupingUsed true
+        numberDataType.setMinFractionDigits 2
+        numberDataType.setMaxFractionDigits 2
     }
 
     /**
