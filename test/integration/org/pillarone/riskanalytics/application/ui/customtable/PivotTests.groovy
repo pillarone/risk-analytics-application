@@ -22,7 +22,7 @@ class PivotTests extends AbstractSimpleFunctionalTest {
     protected void doStart() {
         ULCFrame frame = new ULCFrame("test")
 
-        customTableView = new CustomTableView()
+        customTableView = new CustomTableView(null)
         customTableView.parent = frame
 
         frame.setSize(800, 600)
