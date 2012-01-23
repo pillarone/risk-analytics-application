@@ -40,6 +40,7 @@ class ResultViewModel extends AbstractCommentableItemModel {
         model.init()
         resultStructures = ModellingItemFactory.getResultStructuresForModel(model.class)
         selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
+        simulation.load()
         buildTreeStructure(selectionViewModel.getSelectedObject())
     }
 
