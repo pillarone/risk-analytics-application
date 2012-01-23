@@ -29,7 +29,7 @@ public class DataCellEditPane extends ULCBoxPane {
     private int col = 0
     private DataCellElement dataCellElement
 
-    private Map<String, ULCComponent> categoryComboBoxes = new HashMap<String, ULCComboBox>()
+    public Map<String, ULCComponent> categoryComboBoxes = new HashMap<String, ULCComboBox>()
 
     private KeyfigureSelectionModel model
 
@@ -118,7 +118,7 @@ public class DataCellEditPane extends ULCBoxPane {
         parameterTextField.setPreferredSize(new Dimension (100,25))
         parameterTextField.text = dataCellElement.categoryMap[OutputElement.STATISTICS_PARAMETER]
         parameterTextField.addActionListener(new CategoryValueComboListener())
-        statisticsCombo.setToolTipText("Enter a parameter value, or reference to a value in a cell (e.g. =A\$1")
+        parameterTextField.setToolTipText("Enter a parameter value, or reference to a value in a cell (e.g. =A\$1")
 
         // add statistics components to pane and list
         this.add (BOX_EXPAND_TOP, statisticsLabel)
@@ -172,6 +172,14 @@ public class DataCellEditPane extends ULCBoxPane {
         if (statistics != null && statistics.needsParameters()) {
             statisticsCombo.setPreferredSize(new Dimension (100,25))
             parameterTextField.setVisible(true)
+
+//            switch (statistics) {
+//                case StatisticsKeyfigure.VAR:
+//                case StatisticsKeyfigure.TVAR:
+//                case StatisticsKeyfigure.PERCENTILE:
+//                case StatisticsKeyfigure.ITERATION:
+//            }
+
         } else {
             statisticsCombo.setPreferredSize(new Dimension (200,25))
             parameterTextField.setVisible(false)

@@ -29,6 +29,8 @@ public class CellEditTextField extends ULCTextField {
         this.customTable = customTable
         this.customTableModel = customTable.getModel()
 
+        this.setToolTipText("<html>Enter a value or a formula with cell references<br/>To enter a formula start with a '=' (e.g. '=sum(A1:C3)')<br/><br/>Supported functions:<br/>sum, mean, abs</html>")
+
         // If the users enters a '=' in the textbox, enable the selectDataMode
         this.addKeyListener(new IKeyListener() {
             void keyTyped(KeyEvent keyEvent) {

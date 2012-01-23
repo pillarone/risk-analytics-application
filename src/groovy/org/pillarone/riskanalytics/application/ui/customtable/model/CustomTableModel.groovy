@@ -2,11 +2,9 @@ package org.pillarone.riskanalytics.application.ui.customtable.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.AbstractListModel
-import org.nfunk.jep.JEP
 import org.nfunk.jep.ParseException
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
-import com.ulcjava.base.application.event.TableModelEvent
 
 /**
  * TableModel for the CustomTable
@@ -18,7 +16,7 @@ public class CustomTableModel extends AbstractTableModel {
     private RowHeaderListModel rowHeaderModel
 
 //    private GroovyShell groovyShell
-    private JEP myParser
+    private MathParser mathParser
 
     public boolean editMode
 
@@ -45,9 +43,7 @@ public class CustomTableModel extends AbstractTableModel {
         rowHeaderModel = new RowHeaderListModel(this)
 
 //        groovyShell = new GroovyShell()
-        myParser = new JEP();
-        myParser.addStandardFunctions()
-        myParser.addFunction("mean", new Mean())
+        mathParser = new MathParser();
 
 
         numberDataType = DataTypeFactory.numberDataType
@@ -306,8 +302,6 @@ public class CustomTableModel extends AbstractTableModel {
         // if cellData is a formula, resolve the formula
         if (cellData instanceof String) {
             if (cellData.startsWith("=")) {
-                String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
-
 //                formula = CustomTableHelper.executeFunctions (formula)
 //                try {
 //                    Object value = groovyShell.evaluate("return " + formula)
@@ -316,16 +310,21 @@ public class CustomTableModel extends AbstractTableModel {
 //                    return "#ERROR"
 //                }
 
+                String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
+
+                // error in variable replacing?
+                if (formula.startsWith("#"))
+                    return formula
+
                 try {
-                    myParser.parseExpression(formula)
+                    mathParser.parseExpression(formula)
 
-                    if (myParser.hasError())
-                        return myParser.getErrorInfo()
+                    if (mathParser.hasError())
+                        return "#" + mathParser.getErrorInfo()
 
-                    double value = myParser.getValue()
-                    return value
+                    return mathParser.getValue()
                 } catch (ParseException e) {
-                    return e.getMessage()
+                    return "#" + e.getMessage()
                 }
 
             } else if (cellData.isNumber()) {

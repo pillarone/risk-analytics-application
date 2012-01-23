@@ -28,12 +28,14 @@ static class CustomTableHelper {
             int last_col = CustomTableHelper.getColNo(last_col_string)-1
             int last_row = Integer.parseInt(last_row_string)-1
 
+            if (first_col >= model.columnCount || last_col >= model.columnCount ||
+                first_row >= model.rowCount    || last_row >= model.rowCount) {
+                return "#Cell doesn't exists"
+            }
+
             StringBuilder range = new StringBuilder()
             for (int col = first_col; col <= last_col; col++) {
                 for (int row = first_row; row <= last_row; row++) {
-
-                    // TODO: don't insert if cell doesn't exist
-
                     if (row == cellRow && col == cellCol) {
                         System.out.println ("Zirkelbezug")
                         continue
@@ -58,7 +60,11 @@ static class CustomTableHelper {
             int col = getCol (variable)
             int row = getRow (variable)
 
-            // TODO: don't insert if cell doesn't exist
+            if (col >= model.columnCount ||
+                row >= model.rowCount) {
+                return "#Cell doesn't exists"
+            }
+
             if (row == cellRow && col == cellCol) {
                 System.out.println ("Zirkelbezug")
                 formula = formula.replace (variable + ",", "")
@@ -94,9 +100,6 @@ static class CustomTableHelper {
 
             for (int col = first_col; col <= last_col; col++) {
                 for (int row = first_row; row <= last_row; row++) {
-
-                    // TODO: don't insert if cell doesn't exist
-
                     if (row == cellRow && col == cellCol) {
                         continue
                     }
@@ -130,7 +133,7 @@ static class CustomTableHelper {
 //
 //    public static String executeFunctions (String formula) {
 //
-//        // TODO: More than one function as a parameter doesn't work yet
+//        // T O D O: More than one function as a parameter doesn't work yet
 //
 //        Pattern formula_pattern = ~/[A-Z]+\([\p{Print}]*\)/
 //        for (String function : formula_pattern.matcher(formula)) {
