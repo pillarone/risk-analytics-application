@@ -390,6 +390,7 @@ class ModellingItemFactory {
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
             item.status = dao.status
+            item.dealId = dao.dealId
             if (modelClass != null) {
                 item.modelClass = modelClass
                 item.creator = dao.creator
