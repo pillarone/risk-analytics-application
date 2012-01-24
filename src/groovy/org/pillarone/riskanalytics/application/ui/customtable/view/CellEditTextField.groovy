@@ -27,11 +27,11 @@ public class CellEditTextField extends ULCTextField {
      */
     public CellEditTextField(CustomTable customTable) {
         this.customTable = customTable
-        this.customTableModel = customTable.getModel()
+        this.customTableModel = (CustomTableModel)customTable.getModel()
 
         this.setToolTipText("<html>Enter a value or a formula with cell references<br/>To enter a formula start with a '=' (e.g. '=sum(A1:C3)')<br/><br/>Supported functions:<br/>sum, mean, abs</html>")
 
-        // If the users enters a '=' in the textbox, enable the selectDataMode
+        // If the users enters a '=' in the textField, enable the selectDataMode
         this.addKeyListener(new IKeyListener() {
             void keyTyped(KeyEvent keyEvent) {
                 if (keyEvent.keyChar == "=" || CellEditTextField.this.text == "=") {
@@ -40,7 +40,7 @@ public class CellEditTextField extends ULCTextField {
             }
         })
 
-        // When the focus on the textbox is lost, check if the selected text are variables, and enable the selectDataMode
+        // When the focus on the textField is lost, check if the selected text are variables, and enable the selectDataMode
         this.addFocusListener(new IFocusListener() {
             void focusGained(FocusEvent focusEvent) {
             }
@@ -56,20 +56,20 @@ public class CellEditTextField extends ULCTextField {
             }
         })
 
-        // when the user preses the Enter-key, copy the value of the textbox into the table, and move the cursor in the table
+        // when the user preses the Enter-key, copy the value of the textField into the table, and move the cursor in the table
         this.addActionListener(new IActionListener(){
             void actionPerformed(ActionEvent actionEvent) {
                 selectDataMode = false;
-                customTableModel.setValueAt (CellEditTextField.this.text, CellEditTextField.this.row, CellEditTextField.this.col)
+                CellEditTextField.this.customTableModel.setValueAt (CellEditTextField.this.text, CellEditTextField.this.row, CellEditTextField.this.col)
 
                 int selectRow = CellEditTextField.this.row+1
                 int selectCol = CellEditTextField.this.col
 
-                if (selectRow >= CellEditTextField.this.customTable.rowCount) {
+                if (selectRow >= CellEditTextField.this.customTableModel.rowCount) {
                     selectRow = 0
                     selectCol++
 
-                    if (selectCol >= CellEditTextField.this.customTable.columnCount) {
+                    if (selectCol >= CellEditTextField.this.customTableModel.columnCount) {
                         selectCol = 0
                     }
 
@@ -83,7 +83,7 @@ public class CellEditTextField extends ULCTextField {
     }
 
     /**
-     * Set the Text in the textbox
+     * Set the Text in the textField
      * @param row the row of the cell, from where the value is
      * @param col the col of the cell, from where the value is
      */
@@ -100,7 +100,7 @@ public class CellEditTextField extends ULCTextField {
     }
 
     /**
-     * Inserts a string into the textfield (used for inserting variables of the selected cells)
+     * Inserts a string into the textField (used for inserting variables of the selected cells)
      * @param data the string to insert
      */
     public void insertData (String data) {

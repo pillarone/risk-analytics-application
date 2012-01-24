@@ -27,93 +27,93 @@ class CustomTableDropHandler extends TransferHandler {
             Object dragData = transferable.getTransferData(DataFlavor.DRAG_FLAVOR)
             Object dropData = transferable.getTransferData(DataFlavor.DROP_FLAVOR)
 
-            CustomTable customTable
-            if (dropData instanceof DnDTableData)
-                customTable = dropData.getTable()
+            if (dropData instanceof DnDTableData) {
+                CustomTable customTable = (CustomTable)dropData.getTable()
 
+                // insert data from the result navigator
+                if (dragData instanceof DnDTableData && dropData instanceof DnDTableData) {
+                    OutputElementTable table = (OutputElementTable)dragData.getTable()
+                    OutputElementTableModel tableModel = (OutputElementTableModel)table.getModel()
 
-            // insert data from the result navigator
-            if (dragData instanceof DnDTableData && dropData instanceof DnDTableData) {
-                OutputElementTable table = dragData.getTable()
-                OutputElementTableModel tableModel = table.getModel()
+                    int dropRowOrigin = dropData.getSelectedRows()[0]
+                    int dropColOrigin = dropData.getSelectedColumns()[0]
 
-                int dropRowOrigin = dropData.getSelectedRows()[0]
-                int dropColOrigin = dropData.getSelectedColumns()[0]
+                    int dropRow = dropRowOrigin
+                    int dropCol = dropColOrigin
 
-                int dropRow = dropRowOrigin
-                int dropCol = dropColOrigin
+                    for (int dragRow : table.getSelectedRows()) {
+                        DataCellElement dataCellElement = new DataCellElement (tableModel.getRowElement(table.convertRowIndexToModel(dragRow)),
+                                                                               table.keyfigureSelection.period,
+                                                                               table.keyfigureSelection.keyfigure,
+                                                                               table.keyfigureSelection.keyfigureParameter)
 
-                for (int dragRow : table.getSelectedRows()) {
-                    DataCellElement dataCellElement = new DataCellElement (tableModel.getRowElement(table.convertRowIndexToModel(dragRow)),
-                                                                           table.keyfigureSelection.period,
-                                                                           table.keyfigureSelection.keyfigure,
-                                                                           table.keyfigureSelection.keyfigureParameter)
+                        customTable.customTableModel.setValueAt(dataCellElement, dropRow++, dropCol)
 
-                    customTable.customTableModel.setValueAt(dataCellElement, dropRow++, dropCol)
+                        if (dropRow >= customTable.rowCount) {
+                            dropRow = 0
+                            dropCol++
 
-                    if (dropRow >= customTable.rowCount) {
-                        dropRow = 0
-                        dropCol++
-
-                        if (dropCol >= customTable.columnCount) {
-                            dropCol = 0
-                        }
-                    }
-                }
-
-                customTable.selectionModel.setSelectionInterval(dropRowOrigin, dropRowOrigin)
-                customTable.columnModel.selectionModel.setSelectionInterval(dropColOrigin, dropColOrigin)
-            }
-
-            // insert category values from the comboBox in the DataCellEditPane
-            if (dragData instanceof DnDLabelData && dropData instanceof DnDTableData) {
-                // get the comboBox with the values
-                ULCComboBox combo = customTable.customTableView.dataCellEditPane.categoryComboBoxes[dragData.getLabel().getName()]
-
-                // copy the values of the combo in a list
-                List<String> categoryValues = new LinkedList<String>()
-                for (int i = 0; i < combo.getItemCount(); i++) {
-                    categoryValues.add(combo.getItemAt(i))
-                }
-
-                int dropRow = dropData.getSelectedRows()[0]
-                int dropCol = dropData.getSelectedColumns()[0]
-
-                // show category value insert dialog
-                CategoryValuesInsertDialog dlg = new CategoryValuesInsertDialog(customTable.customTableView.parent,
-                                                                                CustomTableHelper.getVariable (dropRow, dropCol),
-                                                                                categoryValues,
-                                                                                customTable.customTableModel.getDataAt(dropRow+1, dropCol) == "")
-                dlg.toFront()
-                dlg.locationRelativeTo = UlcUtilities.getWindowAncestor(customTable.customTableView.parent)
-                dlg.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
-                dlg.visible = true
-
-                // when dialog is closed, insert the values into the table
-                dlg.addWindowListener(new IWindowListener() {
-                    void windowClosing(WindowEvent windowEvent) {
-                        if (dlg.isCancel == false) {
-                            dropRow = CustomTableHelper.getRow (dlg.getStartCell())
-                            dropCol = CustomTableHelper.getCol (dlg.getStartCell())
-
-                            // Change value in comboBox on DataCellEditPane to the variable
-                            if (dlg.isVertical())
-                                combo.setSelectedItem("=\$" + dlg.getStartCell())
-                            else
-                                combo.setSelectedItem("=" + CustomTableHelper.getColString(dropCol+1) + "\$" + (dropRow+1).toString())
-
-                            // insert values into the table
-                            for (String categoryValue : dlg.getValues()) {
-                                customTable.customTableModel.setValueAt(categoryValue, dropRow, dropCol)
-                                if (dlg.isVertical())
-                                    dropRow++
-                                else
-                                    dropCol++
+                            if (dropCol >= customTable.columnCount) {
+                                dropCol = 0
                             }
                         }
                     }
-                })
+
+                    customTable.selectionModel.setSelectionInterval(dropRowOrigin, dropRowOrigin)
+                    customTable.columnModel.selectionModel.setSelectionInterval(dropColOrigin, dropColOrigin)
+                }
+
+                // insert category values from the comboBox in the DataCellEditPane
+                if (dragData instanceof DnDLabelData && dropData instanceof DnDTableData) {
+                    // get the comboBox with the values
+                    ULCComboBox combo = customTable.customTableView.dataCellEditPane.categoryComboBoxes[dragData.getLabel().getName()]
+
+                    // copy the values of the combo in a list
+                    List<String> categoryValues = new LinkedList<String>()
+                    for (int i = 0; i < combo.getItemCount(); i++) {
+                        categoryValues.add(combo.getItemAt(i).toString())
+                    }
+
+                    int dropRow = dropData.getSelectedRows()[0]
+                    int dropCol = dropData.getSelectedColumns()[0]
+
+                    // show category value insert dialog
+                    CategoryValuesInsertDialog dlg = new CategoryValuesInsertDialog(customTable.customTableView.parent,
+                                                                                    CustomTableHelper.getVariable (dropRow, dropCol),
+                                                                                    categoryValues,
+                                                                                    customTable.customTableModel.getDataAt(dropRow+1, dropCol) == "")
+                    dlg.toFront()
+                    dlg.locationRelativeTo = UlcUtilities.getWindowAncestor(customTable.customTableView.parent)
+                    dlg.defaultCloseOperation = IWindowConstants.DISPOSE_ON_CLOSE
+                    dlg.visible = true
+
+                    // when dialog is closed, insert the values into the table
+                    dlg.addWindowListener(new IWindowListener() {
+                        void windowClosing(WindowEvent windowEvent) {
+                            if (!dlg.isCancel) {
+                                dropRow = CustomTableHelper.getRow (dlg.getStartCell())
+                                dropCol = CustomTableHelper.getCol (dlg.getStartCell())
+
+                                // Change value in comboBox on DataCellEditPane to the variable
+                                if (dlg.isVertical())
+                                    combo.setSelectedItem("=\$" + dlg.getStartCell())
+                                else
+                                    combo.setSelectedItem("=" + CustomTableHelper.getColString(dropCol+1) + "\$" + (dropRow+1).toString())
+
+                                // insert values into the table
+                                for (String categoryValue : dlg.getValues()) {
+                                    customTable.customTableModel.setValueAt(categoryValue, dropRow, dropCol)
+                                    if (dlg.isVertical())
+                                        dropRow++
+                                    else
+                                        dropCol++
+                                }
+                            }
+                        }
+                    })
+                }
             }
+            return true
         }
 
         @Override

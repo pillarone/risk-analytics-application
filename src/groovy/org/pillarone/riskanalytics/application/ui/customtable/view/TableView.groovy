@@ -82,7 +82,7 @@ class TableView extends AbstractView {
         loadButton = new ULCButton("Load")
         saveButton = new ULCButton("Save")
 
-        customTableView = new CustomTableView()
+        customTableView = new CustomTableView(simulation.simulationRun)
     }
 
     @Override

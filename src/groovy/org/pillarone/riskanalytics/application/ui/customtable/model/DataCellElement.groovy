@@ -23,7 +23,7 @@ class DataCellElement extends OutputElement {
         this.templatePath = outputElement.templatePath
         this.field = outputElement.field
         this.collector = outputElement.collector
-        this.categoryMap = outputElement.categoryMap.clone()
+        this.categoryMap = (Map)outputElement.categoryMap.clone()
         this.wildCards = outputElement.wildCards
         this.wildCardPath = outputElement.wildCardPath
 
@@ -34,9 +34,9 @@ class DataCellElement extends OutputElement {
         this.categoryMap[OutputElement.STATISTICS] = statistics.name
         this.categoryMap[OutputElement.STATISTICS_PARAMETER] = statisticsParameter.toString()
 
-        this.categoryMap.remove("Field")
-        this.categoryMap.remove("Path")
-        this.categoryMap.remove("Collector")
+        this.categoryMap.remove(OutputElement.FIELD)
+        this.categoryMap.remove(OutputElement.PATH)
+        this.categoryMap.remove(OutputElement.COLLECTOR)
 
         this.period = periodIndex
         this.statistics = statistics
@@ -52,7 +52,7 @@ class DataCellElement extends OutputElement {
         this.templatePath = dataCellElement.templatePath
         this.field = dataCellElement.field
         this.collector = dataCellElement.collector
-        this.categoryMap = dataCellElement.categoryMap.clone()
+        this.categoryMap = (Map)dataCellElement.categoryMap.clone()
         this.wildCards = dataCellElement.wildCards
         this.wildCardPath = dataCellElement.wildCardPath
 
@@ -126,9 +126,9 @@ class DataCellElement extends OutputElement {
             changed = true
         }
 
-        String new_filed = categoryMapCopy["keyfigure"]
-        if (this.field != new_filed) {
-            this.field = new_filed
+        String new_field = categoryMapCopy["keyfigure"]
+        if (this.field != new_field) {
+            this.field = new_field
             changed = true
         }
 

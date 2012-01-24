@@ -104,7 +104,7 @@ static class CustomTableHelper {
                         continue
                     }
 
-                    if (variables.contains(getVariable (row, col)) == false)
+                    if (!variables.contains(getVariable (row, col)))
                         variables.add (getVariable (row, col))
                 }
             }
@@ -113,7 +113,7 @@ static class CustomTableHelper {
 
         // Check for other variables and replace them with their value
         for (String variable : variable_pattern.matcher(formula)) {
-            if (variables.contains(variable) == false)
+            if (!variables.contains(variable))
                 variables.add (variable)
 
             formula = formula.replace (variable, "")
@@ -189,12 +189,12 @@ static class CustomTableHelper {
                     String col_string = col_dollar_pattern.matcher(value)[0]
                     String row_string = row_dollar_pattern.matcher(value)[0]
 
-                    if (col_diff != 0 && col_string.startsWith('$') == false) {
+                    if (col_diff != 0 && !col_string.startsWith('$')) {
                         int col = (col_string != null) ? CustomTableHelper.getColNo(col_string.replace('$', ''))-1 : 0
                         col_string = col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
                     }
 
-                    if (row_diff != 0 && row_string.startsWith('$') == false) {
+                    if (row_diff != 0 && !row_string.startsWith('$')) {
                         int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
                         row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                     }
@@ -212,12 +212,12 @@ static class CustomTableHelper {
                     String col_string = col_dollar_pattern.matcher(variable)[0]
                     String row_string = row_dollar_pattern.matcher(variable)[0]
 
-                    if (col_diff != 0 && col_string.startsWith('$') == false) {
+                    if (col_diff != 0 && !col_string.startsWith('$')) {
                         int col = (col_string != null) ? CustomTableHelper.getColNo(col_string.replace('$', ''))-1 : 0
                         col_string = col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
                     }
 
-                    if (row_diff != 0 && row_string.startsWith('$') == false) {
+                    if (row_diff != 0 && !row_string.startsWith('$')) {
                         int row = (row_string != null) ? Integer.parseInt(row_string.replace('$', ''))-1 : 0
                         row_string = row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                     }
@@ -231,11 +231,11 @@ static class CustomTableHelper {
                     String first_row_string = variable.split (":")[0]
                     String second_row_string = variable.split (":")[0]
                     if (row_diff != 0) {
-                        if (first_row_string.startsWith('$') == false) {
+                        if (!first_row_string.startsWith('$')) {
                             int row = (first_row_string != null) ? Integer.parseInt(first_row_string.replace('$', ''))-1 : 0
                             first_row_string = first_row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                         }
-                        if (second_row_string.startsWith('$') == false) {
+                        if (!second_row_string.startsWith('$')) {
                             int row = (second_row_string != null) ? Integer.parseInt(second_row_string.replace('$', ''))-1 : 0
                             second_row_string = second_row_string.replace ((row+1).toString(), (row+row_diff+1).toString())
                         }
@@ -248,11 +248,11 @@ static class CustomTableHelper {
                     String first_col_string = variable.split (":")[0]
                     String second_col_string = variable.split (":")[0]
                     if (col_diff != 0) {
-                        if (first_col_string.startsWith('$') == false) {
+                        if (!first_col_string.startsWith('$')) {
                             int col = (first_col_string != null) ? CustomTableHelper.getColNo(first_col_string.replace('$', ''))-1 : 0
                             first_col_string = first_col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
                         }
-                        if (second_col_string.startsWith('$') == false) {
+                        if (!second_col_string.startsWith('$')) {
                             int col = (second_col_string != null) ? CustomTableHelper.getColNo(second_col_string.replace('$', ''))-1 : 0
                             second_col_string = second_col_string.replace (CustomTableHelper.getColString (col+1), CustomTableHelper.getColString (col+col_diff+1))
                         }

@@ -44,7 +44,7 @@ public class MathParser extends JEP {
             Object value
 
             // get the parameters from the stack, and calc the sum
-            while (stack.empty() == false) {
+            while (!stack.empty()) {
                 value = stack.pop()
                 if (value instanceof Number) {
                     sum += value
@@ -72,7 +72,7 @@ public class MathParser extends JEP {
             double minValue = Double.MAX_VALUE
             Object value
 
-            while (stack.empty() == false) {
+            while (!stack.empty()) {
                 value = stack.pop()
                 if (value instanceof Number && value < minValue) {
                     minValue = value
@@ -94,7 +94,7 @@ public class MathParser extends JEP {
             double maxValue = Double.MIN_VALUE
             Object value
 
-            while (stack.empty() == false) {
+            while (!stack.empty()) {
                 value = stack.pop()
                 if (value instanceof Number && value > maxValue) {
                     maxValue = value
@@ -116,7 +116,7 @@ public class MathParser extends JEP {
             List params = new LinkedList<Number>()
             Object value
 
-            while (stack.empty() == false) {
+            while (!stack.empty()) {
                 value = stack.pop()
                 if (value instanceof Number) {
                     params.add(value)
@@ -146,7 +146,7 @@ public class MathParser extends JEP {
             // get parameters
             List params = new LinkedList<Number>()
             Object value
-            while (stack.empty() == false) {
+            while (!stack.empty()) {
                 value = stack.pop()
                 if (value instanceof Number) {
                     params.add(value)

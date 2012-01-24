@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
  */
 public class CustomTableCellRenderer extends DefaultTableCellRenderer {
         IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean isSelected, boolean hasFocus, int row) {
-            CustomTableModel model = table.model
+            CustomTableModel model = (CustomTableModel)table.model
 
             if (value instanceof String && ((String)value).isNumber() || value instanceof Number) {
                 this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT)

@@ -47,8 +47,8 @@ public class CustomTablePane extends ULCScrollPane {
 
         this.customTable = customTable
 
-        rowHeader = initRowHeader(this.customTable.getModel())
-        initColHeader(this.customTable.getModel())
+        rowHeader = initRowHeader((CustomTableModel)this.customTable.getModel())
+        initColHeader((CustomTableModel)this.customTable.getModel())
 
         this.setPreferredSize(new Dimension(300, 300))
         this.setRowHeaderView(rowHeader)
@@ -139,12 +139,12 @@ public class CustomTablePane extends ULCScrollPane {
  * @author ivo.nussbaumer
  */
 public class CustomTable extends ULCTable {
-    private CustomTableView customTableView
+    CustomTableView customTableView
     CustomTableModel customTableModel
 
 
     // internal clipboard
-    private List<CopyCellData> copyData = new LinkedList<CopyCellData>()
+    List<CopyCellData> copyData = new LinkedList<CopyCellData>()
 
 
     /**
@@ -242,7 +242,7 @@ public class CustomTable extends ULCTable {
 
                 dlg.addWindowListener(new IWindowListener() {
                     void windowClosing(WindowEvent windowEvent) {
-                        if (dlg.isCancel == false) {
+                        if (!dlg.isCancel) {
                             CustomTable.this.customTableModel.setNumberRows (dlg.getNumberRows())
                             CustomTable.this.customTableModel.setNumberCols (dlg.getNumberColumns())
                         }

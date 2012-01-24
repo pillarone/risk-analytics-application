@@ -74,7 +74,7 @@ class TableSizeDialog extends ULCDialog {
 
     private class TextFieldFocusListener implements IFocusListener {
         void focusGained(FocusEvent focusEvent) {
-            ULCTextField textField = focusEvent.source
+            ULCTextField textField = (ULCTextField)focusEvent.source
 
             if (textField != null) {
                 textField.select(0, textField.text.size())

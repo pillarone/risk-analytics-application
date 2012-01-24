@@ -21,15 +21,18 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
  * @author ivo.nussbaumer
  */
 public class DataCellEditPane extends ULCBoxPane {
-    private final String cellReferenceString = "Cell-Reference"
-
     private CustomTableView customTableView
     private CustomTableModel customTableModel
-    private int row = 0
-    private int col = 0
+
+    // The dataCellElement of the cell which is currently selected
     private DataCellElement dataCellElement
 
-    public Map<String, ULCComponent> categoryComboBoxes = new HashMap<String, ULCComboBox>()
+    // The row and col of the cell, which the dataCellElement belongs to
+    private int row = 0
+    private int col = 0
+
+    public Map<String, ULCComboBox> categoryComboBoxes = new HashMap<String, ULCComboBox>()
+    private ULCTextField parameterTextField
 
     private KeyfigureSelectionModel model
 
@@ -41,7 +44,7 @@ public class DataCellEditPane extends ULCBoxPane {
         super (true)
 
         this.customTableView = customTableView
-        this.customTableModel = customTableView.customTable.getModel()
+        this.customTableModel = (CustomTableModel)customTableView.customTable.getModel()
     }
 
     /**
@@ -54,7 +57,7 @@ public class DataCellEditPane extends ULCBoxPane {
         this.row = row
         this.col = col
 
-        dataCellElement = customTableModel.getDataAt (row, col)
+        dataCellElement = (DataCellElement)customTableModel.getDataAt (row, col)
         model = new KeyfigureSelectionModel(dataCellElement.run)
 
         // remove all elements from the pane
@@ -84,7 +87,7 @@ public class DataCellEditPane extends ULCBoxPane {
                 categoryValueCombo.setEditable(true)
                 categoryValueCombo.setPreferredSize(new Dimension (200,25))
                 categoryValueCombo.selectedItem = dataCellElement.categoryMap[category]
-                categoryValueCombo.addActionListener(new CategoryValueComboListener())
+                categoryValueCombo.addActionListener(new CategoryValueChangedListener())
                 categoryValueCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
                 // add elements on pane and list
@@ -100,24 +103,24 @@ public class DataCellEditPane extends ULCBoxPane {
      */
     private void initStatisticsComponents () {
         // init Statistics components
-        ULCLabel statisticsLabel = new ULCLabel("statistics")
-        statisticsLabel.setName("statistics")
+        ULCLabel statisticsLabel = new ULCLabel(OutputElement.STATISTICS)
+        statisticsLabel.setName(OutputElement.STATISTICS)
         statisticsLabel.setDragEnabled(true)
         statisticsLabel.setToolTipText("Drag this label into the Table for inserting the values of combobox")
 
         ULCComboBox statisticsCombo = new ULCComboBox(model.getKeyfigureModel())
-        statisticsCombo.setName("statistics")
+        statisticsCombo.setName(OutputElement.STATISTICS)
         statisticsCombo.setEditable(true)
         statisticsCombo.setPreferredSize(new Dimension (200,25))
         statisticsCombo.selectedItem = dataCellElement.categoryMap[OutputElement.STATISTICS]
-        statisticsCombo.addActionListener(new CategoryValueComboListener())
+        statisticsCombo.addActionListener(new CategoryValueChangedListener())
         statisticsCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
-        ULCTextField parameterTextField = new ULCTextField()
-        parameterTextField.setName("parameter")
+        parameterTextField = new ULCTextField()
+        parameterTextField.setName(OutputElement.STATISTICS_PARAMETER)
         parameterTextField.setPreferredSize(new Dimension (100,25))
         parameterTextField.text = dataCellElement.categoryMap[OutputElement.STATISTICS_PARAMETER]
-        parameterTextField.addActionListener(new CategoryValueComboListener())
+        parameterTextField.addActionListener(new CategoryValueChangedListener())
         parameterTextField.setToolTipText("Enter a parameter value, or reference to a value in a cell (e.g. =A\$1")
 
         // add statistics components to pane and list
@@ -126,8 +129,7 @@ public class DataCellEditPane extends ULCBoxPane {
         statisticsPane.add (BOX_EXPAND_EXPAND, statisticsCombo)
         statisticsPane.add (BOX_RIGHT_EXPAND, parameterTextField)
         this.add (BOX_EXPAND_TOP, statisticsPane)
-        categoryComboBoxes.put ("statistics", statisticsCombo)
-        categoryComboBoxes.put ("parameter", parameterTextField)
+        categoryComboBoxes.put (OutputElement.STATISTICS, statisticsCombo)
 
         updateParameterVisibility()
     }
@@ -137,30 +139,29 @@ public class DataCellEditPane extends ULCBoxPane {
      */
     private void initPeriodComponents () {
         // init Period components
-        ULCLabel periodLabel = new ULCLabel("period")
-        periodLabel.setName("period")
+        ULCLabel periodLabel = new ULCLabel(OutputElement.PERIOD)
+        periodLabel.setName(OutputElement.PERIOD)
         periodLabel.setDragEnabled(true)
         periodLabel.setToolTipText("Drag this label into the Table for inserting the values of combobox")
 
         ULCComboBox periodCombo = new ULCComboBox(model.getPeriodSelectionModel())
-        periodCombo.setName("period")
+        periodCombo.setName(OutputElement.PERIOD)
         periodCombo.setEditable(true)
         periodCombo.selectedItem = dataCellElement.categoryMap[OutputElement.PERIOD]
-        periodCombo.addActionListener(new CategoryValueComboListener())
+        periodCombo.addActionListener(new CategoryValueChangedListener())
         periodCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
         // add period components to pane and list
         this.add (BOX_EXPAND_TOP, periodLabel)
         this.add (BOX_EXPAND_EXPAND, periodCombo)
-        categoryComboBoxes.put ("period", periodCombo)
+        categoryComboBoxes.put (OutputElement.PERIOD, periodCombo)
     }
 
     /**
      * checks if the selected statistics needs parameters, and hides/shows the parameter textField
      */
     private void updateParameterVisibility () {
-        ULCComboBox statisticsCombo = categoryComboBoxes["statistics"]
-        ULCTextField parameterTextField = categoryComboBoxes["parameter"]
+        ULCComboBox statisticsCombo = categoryComboBoxes[OutputElement.STATISTICS]
 
         String statisticsString = statisticsCombo.selectedItem
         if (statisticsString.startsWith("=")) {
@@ -173,13 +174,6 @@ public class DataCellEditPane extends ULCBoxPane {
             statisticsCombo.setPreferredSize(new Dimension (100,25))
             parameterTextField.setVisible(true)
 
-//            switch (statistics) {
-//                case StatisticsKeyfigure.VAR:
-//                case StatisticsKeyfigure.TVAR:
-//                case StatisticsKeyfigure.PERCENTILE:
-//                case StatisticsKeyfigure.ITERATION:
-//            }
-
         } else {
             statisticsCombo.setPreferredSize(new Dimension (200,25))
             parameterTextField.setVisible(false)
@@ -189,19 +183,19 @@ public class DataCellEditPane extends ULCBoxPane {
     /**
      * Listener for the Category-ComboBoxes
      */
-    private class CategoryValueComboListener implements IActionListener {
+    private class CategoryValueChangedListener implements IActionListener {
         void actionPerformed(ActionEvent actionEvent) {
 
-            String category, selectedValue
-
+            // get the category and the new selected value
+            String category = ""
+            String selectedValue = ""
             if (actionEvent.source instanceof ULCTextField) {
-                ULCTextField textField = actionEvent.source
+                ULCTextField textField = (ULCTextField)actionEvent.source
                 category = textField.getName()
                 selectedValue = textField.text
             }
-
             if (actionEvent.source instanceof ULCComboBox) {
-                ULCComboBox combo = actionEvent.source
+                ULCComboBox combo = (ULCComboBox)actionEvent.source
                 category = combo.getName()
                 selectedValue = combo.selectedItem
             }
@@ -233,7 +227,7 @@ public class DataCellEditPane extends ULCBoxPane {
             }
 
             // update the visibility of the parameter text field
-            if (category == "statistics")
+            if (category == OutputElement.STATISTICS)
                 DataCellEditPane.this.updateParameterVisibility()
         }
     }

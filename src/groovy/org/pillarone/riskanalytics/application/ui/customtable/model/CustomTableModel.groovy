@@ -18,7 +18,7 @@ public class CustomTableModel extends AbstractTableModel {
 //    private GroovyShell groovyShell
     private MathParser mathParser
 
-    public boolean editMode
+    public boolean editMode = false
 
     Map<String, List<String>> references = new HashMap<String, List<String>>()
 
@@ -293,7 +293,7 @@ public class CustomTableModel extends AbstractTableModel {
             return ""
 
         // If editMode, just return the original data
-        if (editMode == true) {
+        if (editMode) {
             if (cellData instanceof DataCellElement)
                 cellData = "#" + cellData.path
             return cellData
@@ -302,13 +302,8 @@ public class CustomTableModel extends AbstractTableModel {
         // if cellData is a formula, resolve the formula
         if (cellData instanceof String) {
             if (cellData.startsWith("=")) {
-//                formula = CustomTableHelper.executeFunctions (formula)
-//                try {
-//                    Object value = groovyShell.evaluate("return " + formula)
-//                    return value
-//                } catch (Exception e) {
-//                    return "#ERROR"
-//                }
+//
+
 
                 String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
 
@@ -429,7 +424,7 @@ public class CustomTableModel extends AbstractTableModel {
                 int r = CustomTableHelper.getRow (cell)
                 int c = CustomTableHelper.getCol (cell)
                 if (getDataAt(r, c) instanceof DataCellElement){
-                    DataCellElement oe = getDataAt(r, c)
+                    DataCellElement oe = (DataCellElement)getDataAt(r, c)
                     oe.update(this)
                 }
                 fireTableCellUpdated(r, c)

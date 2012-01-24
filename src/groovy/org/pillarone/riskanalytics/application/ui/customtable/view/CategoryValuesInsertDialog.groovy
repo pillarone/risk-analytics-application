@@ -51,7 +51,7 @@ class CategoryValuesInsertDialog extends ULCDialog {
     }
 
     /**
-     * inits the components
+     * initialize the components
      * @param startCell      the cell where the data was dropped to
      * @param vertical       if default inserting is vertical
      */
@@ -96,7 +96,7 @@ class CategoryValuesInsertDialog extends ULCDialog {
             checkBox.setName(value.toString())
             checkBox.addActionListener(new IActionListener(){
                 void actionPerformed(ActionEvent actionEvent) {
-                    ULCCheckBox clickedCheckBox = actionEvent.source
+                    ULCCheckBox clickedCheckBox = (ULCCheckBox)actionEvent.source
                     if (clickedCheckBox.isSelected()) {
                         CategoryValuesInsertDialog.this.categoryValues.add(clickedCheckBox.getName())
                     } else {
@@ -181,7 +181,7 @@ class CategoryValuesInsertDialog extends ULCDialog {
      */
     private class TextFieldFocusListener implements IFocusListener {
         void focusGained(FocusEvent focusEvent) {
-            ULCTextField textField = focusEvent.source
+            ULCTextField textField = (ULCTextField)focusEvent.source
 
             if (textField != null) {
                 textField.select(0, textField.text.size())

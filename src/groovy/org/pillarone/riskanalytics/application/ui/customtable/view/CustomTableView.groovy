@@ -23,7 +23,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 public class CustomTableView {
     public ULCFrame parent
     private ULCBoxPane content
-    private CustomTableModel customTableModel
+    public CustomTableModel customTableModel
 
     public CustomTable customTable
     private ResultNavigator resultNavigator
@@ -49,7 +49,7 @@ public class CustomTableView {
     }
 
     /**
-     * Initalize the Compontents
+     * Initialize the Components
      */
     private void initComponents() {
         content = new ULCBoxPane(2, 3)
@@ -64,7 +64,7 @@ public class CustomTableView {
         cellEditTextField = new CellEditTextField(customTable)
         dataCellEditPane = new DataCellEditPane(this)
 
-        //           col  row  hspan  vspan
+        //           col  row  hSpan  vSpan
         content.set (0,   0,   2,     1,    ULCBoxPane.BOX_EXPAND_TOP, toolbar)
         content.set (0,   1,   2,     1,    ULCBoxPane.BOX_EXPAND_TOP, cellEditTextField)
         content.set (0,   2,   1,     1,    ULCBoxPane.BOX_EXPAND_EXPAND, customTablePane)
