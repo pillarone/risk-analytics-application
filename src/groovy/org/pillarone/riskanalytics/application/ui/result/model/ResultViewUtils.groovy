@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import java.text.NumberFormat
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
@@ -31,7 +32,7 @@ abstract class ResultViewUtils {
         ConfigObject results = new ConfigObject()
 
         List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT period, path.pathName, field.fieldName, keyFigure, keyFigureParameter, result FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
-                " WHERE p.run.id = ? order by p.keyFigureParameter asc", [simulationRun.id])
+                " WHERE p.run.id = ? AND p.keyFigure != '${PostSimulationCalculation.PDF}'", [simulationRun.id])
         for (Object[] psc in calculations) {
             Map periodMap = results[psc[0].toString()]
             Map pathMap = periodMap[psc[1]]
@@ -50,8 +51,8 @@ abstract class ResultViewUtils {
 
     public static Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
         Map<String, ICollectingModeStrategy> result = [:]
-        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
-                " WHERE p.run.id = ?", [simulationRun.id])
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT DISTINCT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation as p " +
+                " WHERE p.run.id = ? AND keyFigure != '${PostSimulationCalculation.PDF}'", [simulationRun.id])
         for (Object[] psc in calculations) {
             String path = "${psc[0]}:${psc[1]}"
             String collector = psc[2]
