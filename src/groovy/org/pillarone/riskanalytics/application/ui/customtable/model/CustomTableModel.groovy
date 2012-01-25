@@ -5,6 +5,7 @@ import com.ulcjava.base.application.AbstractListModel
 import org.nfunk.jep.ParseException
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import java.util.regex.Pattern
 
 /**
  * TableModel for the CustomTable
@@ -125,7 +126,7 @@ public class CustomTableModel extends AbstractTableModel {
         if (row < 0)
             row = rowCount
 
-        // TODO: update variables in cells referencing to a row below the inserted row and update the references-map
+        updateVariables (row, +1, true)
 
         while (rowData.size() < columnCount) {
             rowData.add ("")
@@ -137,13 +138,14 @@ public class CustomTableModel extends AbstractTableModel {
         rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
     }
 
+
     /**
      * Inserts a Column into the table
      *
      * @param col Position to insert the new Column
      */
     public void insertCol (int col) {
-        // TODO: update variables in cells referencing to a col below the inserted col and update the references-map
+        updateVariables (col, +1, false)
 
         if (col < 0)
             col = columnCount
@@ -180,14 +182,7 @@ public class CustomTableModel extends AbstractTableModel {
         if (rowCount <= 1 || row < 0 || row >= rowCount)
             return
 
-        // TODO: update variables in cells referencing to a row below the deleted row and update the references-map
-        //for (String referencedCell : references.keySet()) {
-        //    if (CustomTableHelper.getRow (referencedCell) >= row) {
-        //        for (String referencingCell : references[referencedCell]) {
-        //
-        //        }
-        //    }
-        //}
+        updateVariables (row, -1, true)
 
         data.remove(row)
         fireTableRowsDeleted(row, row)
@@ -202,7 +197,7 @@ public class CustomTableModel extends AbstractTableModel {
         if (columnCount <= 1)
             return
 
-        // TODO: update variables in cells referencing to a col below the deleted col and update the references-map
+        updateVariables (col, -1, false)
 
         for (List<Object> rowData : data) {
             rowData.remove(col)
@@ -245,6 +240,11 @@ public class CustomTableModel extends AbstractTableModel {
 
     public boolean isCellEditable(int row, int col) {
         return false
+    }
+
+
+    public Object getDataAt(String variable) {
+        return getDataAt (CustomTableHelper.getRow (variable), CustomTableHelper.getCol (variable))
     }
 
     /**
@@ -341,6 +341,14 @@ public class CustomTableModel extends AbstractTableModel {
     }
 
     /**
+     *
+     * @param new_data
+     * @param variable
+     */
+    public void setValueAt(Object new_data, String variable) {
+        setValueAt (new_data, CustomTableHelper.getRow(variable), CustomTableHelper.getCol(variable))
+    }
+    /**
      * sets the data of a cell
      *
      * @param new_data the data to set
@@ -436,6 +444,62 @@ public class CustomTableModel extends AbstractTableModel {
                 }
                 fireTableCellUpdated(r, c)
                 updateCellReferences (r, c)
+            }
+        }
+    }
+
+    /**
+     * after inserting/deleting a row/col update the variables in the cells, so they still refer to the same cell
+     *
+     * @param insertPos  position where the col/row was inserted/deleted
+     * @param numInserts how many rows/cols were inserted/deleted (value < 0 -> deleted, value > 0 -> inserted)
+     * @param row        true if a row was inserted/deleted, false if it was a column
+     */
+    private void updateVariables (int insertPos, int numInserts, boolean row) {
+        // deep clone references map
+        Map<String, List<String>> referencesClone = new HashMap<String, List<String>>()
+        for (String key : references.keySet())
+            referencesClone.put (key, references[key].clone())
+
+        for (String referencedCell : referencesClone.keySet()) {
+
+            if ( row && CustomTableHelper.getRow (referencedCell) >= insertPos ||
+                !row && CustomTableHelper.getCol (referencedCell) >= insertPos) {
+
+                for (String referencingCell : referencesClone[referencedCell]) {
+
+                    String old_formula = getDataAt(referencingCell)
+                    int old_row = CustomTableHelper.getRow(referencedCell)
+                    int old_col = CustomTableHelper.getCol(referencedCell)
+
+                    // catch exceptions, if referencing cell is in the references-map because of a range
+                    try {
+                        // get old variable
+                        Pattern variable_dollar_pattern = Pattern.compile("[\$]?" + CustomTableHelper.getColString(old_col+1) + "[\$]?" + (old_row+1).toString())
+                        String old_variable = variable_dollar_pattern.matcher(old_formula)[0]
+
+                        // generate new variable
+                        String new_variable = ""
+                        if (row)
+                            new_variable = old_variable.replace ((old_row+1).toString(), (old_row+1+numInserts).toString())
+                        else
+                            new_variable = old_variable.replace (CustomTableHelper.getColString(old_col+1), CustomTableHelper.getColString(old_col+1+numInserts))
+
+                        // replace old variable with new variable in the formula
+                        int pos = 0
+                        if (numInserts > 0) {
+                            pos = old_formula.lastIndexOf(old_variable)
+                        } else {
+                            pos = old_formula.indexOf(old_variable)
+                        }
+                        StringBuilder new_formula = new StringBuilder(old_formula)
+                        new_formula.replace (pos, pos+old_variable.size(), new_variable)
+
+                        // set the new formula in the cell
+                        setValueAt (new_formula.toString(), referencingCell)
+                    } catch (Exception e) {
+                    }
+                }
             }
         }
     }

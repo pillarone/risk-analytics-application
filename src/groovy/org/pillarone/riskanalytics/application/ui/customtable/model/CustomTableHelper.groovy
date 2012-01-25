@@ -102,7 +102,7 @@ static class CustomTableHelper {
                         continue
                     }
 
-                    if (!variables.contains(getVariable (row, col)))
+//                    if (!variables.contains(getVariable (row, col)))
                         variables.add (getVariable (row, col))
                 }
             }
@@ -111,7 +111,7 @@ static class CustomTableHelper {
 
         // Check for other variables and replace them with their value
         for (String variable : variable_pattern.matcher(formula)) {
-            if (!variables.contains(variable))
+//            if (!variables.contains(variable))
                 variables.add (variable)
 
             formula = formula.replace (variable, "")
