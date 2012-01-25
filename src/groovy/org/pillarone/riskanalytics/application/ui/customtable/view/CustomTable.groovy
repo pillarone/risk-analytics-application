@@ -204,9 +204,10 @@ public class CustomTable extends ULCTable {
          // Delete Listener
         this.registerKeyboardAction(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                for (int row : CustomTable.this.getSelectedRows()) {
-                    for (int col : CustomTable.this.getSelectedColumns()) {
-                        CustomTable.this.customTableModel.setValueAt("", row, col)
+                CustomTable table = (CustomTable)actionEvent.source
+                for (int row = table.getSelectedRow(); row <= table.getSelectionModel().getMaxSelectionIndex(); row++) {
+                    for (int col = table.getSelectedColumn(); col <= table.getColumnModel().getSelectionModel().getMaxSelectionIndex(); col++) {
+                        table.customTableModel.setValueAt("", row, col)
                     }
                 }
             }
@@ -215,12 +216,15 @@ public class CustomTable extends ULCTable {
         // Other Keys Listener -> focus on cellEditTextField and start typing
         this.addKeyListener(new IKeyListener(){
             void keyTyped(KeyEvent keyEvent) {
+                CustomTable table = (CustomTable)keyEvent.source
                 if (keyEvent.keyChar < 32 || keyEvent.keyChar == KeyEvent.VK_DELETE)
                     return
 
-                if (CustomTable.this.customTableModel.getDataAt (CustomTable.this.getSelectedRow(), CustomTable.this.getSelectedColumn()) instanceof DataCellElement == false) {
-                    CustomTable.this.customTableView.cellEditTextField.requestFocus()
-                    CustomTable.this.customTableView.cellEditTextField.text = keyEvent.keyChar
+                if (table.customTableModel.getDataAt (table.getSelectedRow(), table.getSelectedColumn()) instanceof DataCellElement == false) {
+                    table.customTableView.cellEditTextField.requestFocus()
+                    table.customTableView.cellEditTextField.text = keyEvent.keyChar
+                    if (keyEvent.keyChar == "=")
+                        table.customTableView.cellEditTextField.selectDataMode = true
                 }
             }
         })

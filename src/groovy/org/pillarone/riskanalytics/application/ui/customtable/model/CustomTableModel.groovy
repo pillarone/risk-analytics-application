@@ -270,10 +270,13 @@ public class CustomTableModel extends AbstractTableModel {
     public Object getValueAt (String variable) {
         variable = variable.replace ('$', '')
 
-        int row = CustomTableHelper.getRow (variable)
-        int col = CustomTableHelper.getCol (variable)
-
-        return getValueAt(row, col)
+        try {
+            int row = CustomTableHelper.getRow (variable)
+            int col = CustomTableHelper.getCol (variable)
+            return getValueAt(row, col)
+        } catch (Exception e) {
+            return "#ERROR"
+        }
     }
 
     /**
@@ -389,13 +392,17 @@ public class CustomTableModel extends AbstractTableModel {
      * @param targetCell   the cell which is referenced to
      * @param variableCell the referencing cell
      */
-    public void addReference (String targetCell, String variableCell) {
+    public boolean addReference (String targetCell, String variableCell) {
+        if (targetCell == variableCell)
+            return false
+
         targetCell = targetCell.replace('$', '')
         variableCell = variableCell.replace('$', '')
         if (references[targetCell] == null)
             references[targetCell] = new LinkedList<String>()
 
         references[targetCell].add (variableCell)
+        return true
     }
 
     /**

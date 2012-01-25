@@ -37,8 +37,7 @@ static class CustomTableHelper {
             for (int col = first_col; col <= last_col; col++) {
                 for (int row = first_row; row <= last_row; row++) {
                     if (row == cellRow && col == cellCol) {
-                        System.out.println ("Zirkelbezug")
-                        continue
+                        return "#circular reference"
                     }
 
                     // TODO: if value ist to big, it is converted to a number with format (e.g. 1000E7)
@@ -66,10 +65,9 @@ static class CustomTableHelper {
             }
 
             if (row == cellRow && col == cellCol) {
-                System.out.println ("Zirkelbezug")
-                formula = formula.replace (variable + ",", "")
-                formula = formula.replace ("," + variable, "")
-                continue
+//                formula = formula.replace (variable + ",", "")
+//                formula = formula.replace ("," + variable, "")
+                return "#circular reference"
             }
             formula = formula.replace (variable, model.getValueAt(row, col).toString())
         }
