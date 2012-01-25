@@ -59,25 +59,28 @@ public class CellEditTextField extends ULCTextField {
         // when the user preses the Enter-key, copy the value of the textField into the table, and move the cursor in the table
         this.addActionListener(new IActionListener(){
             void actionPerformed(ActionEvent actionEvent) {
+                CellEditTextField textField = (CellEditTextField)actionEvent.source
+
                 selectDataMode = false;
-                CellEditTextField.this.customTableModel.setValueAt (CellEditTextField.this.text, CellEditTextField.this.row, CellEditTextField.this.col)
+                textField.customTableModel.setValueAt (textField.text, textField.row, textField.col)
 
                 int selectRow = CellEditTextField.this.row+1
                 int selectCol = CellEditTextField.this.col
 
-                if (selectRow >= CellEditTextField.this.customTableModel.rowCount) {
+                if (selectRow >= textField.customTableModel.rowCount) {
                     selectRow = 0
                     selectCol++
 
-                    if (selectCol >= CellEditTextField.this.customTableModel.columnCount) {
+                    if (selectCol >= textField.customTableModel.columnCount) {
                         selectCol = 0
                     }
 
-                    CellEditTextField.this.customTable.getColumnModel().getSelectionModel().setSelectionInterval(selectCol, selectCol)
-                    CellEditTextField.this.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
+                    textField.customTable.getColumnModel().getSelectionModel().setSelectionInterval(selectCol, selectCol)
+                    textField.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
                 } else {
-                    CellEditTextField.this.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
+                    textField.customTable.getSelectionModel().setSelectionInterval(selectRow, selectRow)
                 }
+                textField.customTable.requestFocus()
             }
         })
     }
