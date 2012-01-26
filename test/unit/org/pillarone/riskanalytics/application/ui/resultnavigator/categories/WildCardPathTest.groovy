@@ -9,9 +9,9 @@ class WildCardPathTest extends GroovyTestCase {
 
     CategoryMapping getTestCategoryMapping() {
         CategoryMapping mapping = new CategoryMapping()
-        mapping.addCategory("lob", new EnclosingMatcher(":lines:",":",OutputElement.PATH))
-        mapping.addCategory("contracts", new EnclosingMatcher(":reinsurance:",":",OutputElement.PATH))
-        mapping.addCategory("perils", new EnclosingMatcher(":claims:",":",OutputElement.PATH))
+        mapping.addCategory("lob", new EnclosingMatchResolver(":lines:",":",OutputElement.PATH))
+        mapping.addCategory("contracts", new EnclosingMatchResolver(":reinsurance:",":",OutputElement.PATH))
+        mapping.addCategory("perils", new EnclosingMatchResolver(":claims:",":",OutputElement.PATH))
         return mapping
     }
 

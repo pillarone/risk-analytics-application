@@ -5,18 +5,26 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class EndingMatcher implements ICategoryResolver {
-    static final String NAME = "ByEnding"
+class EndingMatchResolver implements ICategoryResolver {
+    static final String NAME = "endingWith"
+    static final String EXCEPTION_MSG = "The endingWith resolver should be initialized with a prefix that defines the left bound of the ending."
     String prefix
     String refCategory = OutputElement.PATH
 
-    EndingMatcher(String prefix, String refCategory) {
+    EndingMatchResolver(String prefix) {
+        this(prefix, OutputElement.PATH)
+    }
+
+    EndingMatchResolver(String prefix, String refCategory) {
         this.refCategory = refCategory
         this.prefix = prefix
     }
 
     String getName() {
         return NAME
+    }
+
+    void addChildResolver(ICategoryResolver resolver) {
     }
 
     boolean isResolvable(OutputElement element) {

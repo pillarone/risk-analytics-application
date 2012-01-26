@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 class EnclosingMatcherTest extends GroovyTestCase {
 
     void testEnclosingMatcher() {
-        ICategoryResolver matcher = new EnclosingMatcher(["linesOfBusiness:sub", "AA"], ["SL", "WXL", "BB"], OutputElement.PATH)
+        ICategoryResolver matcher = new EnclosingMatchResolver(["linesOfBusiness:sub", "AA"], ["SL", "WXL", "BB"], OutputElement.PATH)
         String path = "podra:someother:path:linesOfBusiness:subMotorWXL:restofthe:path"
         OutputElement element = new OutputElement()
         element.setPath(path)
@@ -50,11 +50,11 @@ class EnclosingMatcherTest extends GroovyTestCase {
         element = new OutputElement()
         element.setPath(path)
         element.addCategoryValue(OutputElement.PATH, path)
-        matcher = new EnclosingMatcher(["linesOfBusiness:"], [":"], OutputElement.PATH)
+        matcher = new EnclosingMatchResolver(["linesOfBusiness:"], [":"], OutputElement.PATH)
         assertTrue matcher.createTemplatePath(element, "lob")
         assertEquals 'podra:someother:path:linesOfBusiness:${lob}:restofthe:reinsurance:WXL:path', element.getTemplatePath()
 
-        matcher = new EnclosingMatcher(["reinsurance:"], [":"], OutputElement.PATH)
+        matcher = new EnclosingMatchResolver(["reinsurance:"], [":"], OutputElement.PATH)
         assertTrue matcher.createTemplatePath(element, "contract")
         assertEquals 'podra:someother:path:linesOfBusiness:${lob}:restofthe:reinsurance:${contract}:path', element.getTemplatePath()
     }

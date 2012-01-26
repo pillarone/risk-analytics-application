@@ -10,12 +10,12 @@ class PodraModelCategoryMapping extends CategoryMapping {
 
     PodraModelCategoryMapping() {
         super()
-        ICategoryResolver m1 = new EnclosingMatcher("linesOfBusiness:sub",":", OutputElement.PATH)
-        ICategoryResolver m2 = new ConditionalAssignment("Aggregate", new SingleValueFromListMatcher(["linesOfBusiness:(?!sub)"],OutputElement.PATH))
-        matcherMap["lob"] = new OrMatcher([m1,m2])
-        matcherMap["peril"] = new EnclosingMatcher("claimsGenerators:sub",":",OutputElement.PATH)
-        matcherMap["reinsuranceContractType"] = new EnclosingMatcher(["subContracts:sub","reinsuranceContracts:sub"],[":"],OutputElement.PATH)
-        matcherMap["accountBasis"] = new SingleValueFromListMatcher(["Gross", "Ceded", "Net"],OutputElement.PATH)
+        ICategoryResolver m1 = new EnclosingMatchResolver("linesOfBusiness:sub",":", OutputElement.PATH)
+        ICategoryResolver m2 = new ConditionalAssignmentResolver("Aggregate", new WordMatchResolver(["linesOfBusiness:(?!sub)"],OutputElement.PATH))
+        matcherMap["lob"] = new OrResolver([m1,m2])
+        matcherMap["peril"] = new EnclosingMatchResolver("claimsGenerators:sub",":",OutputElement.PATH)
+        matcherMap["reinsuranceContractType"] = new EnclosingMatchResolver(["subContracts:sub","reinsuranceContracts:sub"],[":"],OutputElement.PATH)
+        matcherMap["accountBasis"] = new WordMatchResolver(["Gross", "Ceded", "Net"],OutputElement.PATH)
         matcherMap["keyfigure"] = new SynonymToCategory(OutputElement.FIELD)
     }
 }

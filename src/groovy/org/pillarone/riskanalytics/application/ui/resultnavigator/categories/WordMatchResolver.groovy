@@ -6,14 +6,19 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class SingleValueFromListMatcher implements ICategoryResolver {
-    static final String NAME = "BySingleValue"
+class WordMatchResolver implements ICategoryResolver {
+    static final String NAME = "matching"
+    static final String EXCEPTION_MSG = "The matching word resolver should be initialized with a List of words to match."
 
     String refCategory = OutputElement.PATH
     List<Pattern> patterns
     List<String> toMatch = []
 
-    SingleValueFromListMatcher(List<String> toMatch, String refCategory) {
+    WordMatchResolver(List<String> toMatch) {
+        this(toMatch, OutputElement.PATH)
+    }
+
+    WordMatchResolver(List<String> toMatch, String refCategory) {
         this.refCategory = refCategory
         initialize(toMatch)
     }
@@ -28,6 +33,9 @@ class SingleValueFromListMatcher implements ICategoryResolver {
 
     String getName() {
         return NAME
+    }
+
+    void addChildResolver(ICategoryResolver resolver) {
     }
 
     boolean isResolvable(OutputElement element) {

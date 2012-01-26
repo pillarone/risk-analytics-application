@@ -6,13 +6,19 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class RegexMatcher implements ICategoryResolver {
-    static final String NAME = "ByRegex"
+class RegexMatchResolver implements ICategoryResolver {
+    static final String NAME = "matchRegex"
+    static final String EXCEPTION_MSG = """The regex resolver should be initialized with a regex \n
+                            and an integer that denotes the index of the group that defines the value."""
     Pattern pattern
     String refCategory = OutputElement.PATH
     int groupDefiningMemberName
 
-    RegexMatcher(String regex, int groupDefiningMemberName, String refCategory) {
+    RegexMatchResolver(String regex, int groupDefiningMemberName) {
+        this(regex, groupDefiningMemberName, OutputElement.PATH)
+    }
+
+    RegexMatchResolver(String regex, int groupDefiningMemberName, String refCategory) {
         pattern = ~regex
         this.refCategory = refCategory
         this.groupDefiningMemberName = groupDefiningMemberName
@@ -20,6 +26,9 @@ class RegexMatcher implements ICategoryResolver {
 
     String getName() {
         return NAME
+    }
+
+    void addChildResolver(ICategoryResolver resolver) {
     }
 
     boolean isResolvable(OutputElement element) {

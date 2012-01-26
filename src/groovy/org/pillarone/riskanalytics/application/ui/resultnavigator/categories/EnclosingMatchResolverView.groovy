@@ -12,11 +12,11 @@ import com.ulcjava.base.application.util.KeyStroke
 /**
  * @author martin.melchior
  */
-class EnclosingMatcherView extends ULCBoxPane {
+class EnclosingMatchResolverView extends ULCBoxPane {
 
-    EnclosingMatcher matcher
+    EnclosingMatchResolver matcher
 
-    EnclosingMatcherView(EnclosingMatcher matcher) {
+    EnclosingMatchResolverView(EnclosingMatchResolver matcher) {
         super(2,2)
         setMatcher(matcher)
         createView()
@@ -48,8 +48,8 @@ class EnclosingMatcherView extends ULCBoxPane {
         textPre.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
         textSuff.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
 
-        textPre.setText(CategoryUtils.writeList(matcher.prefixes))
-        textSuff.setText(CategoryUtils.writeList(matcher.suffixes))
+        textPre.setText(CategoryUtils.writeList(matcher.prefix))
+        textSuff.setText(CategoryUtils.writeList(matcher.suffix))
 
         this.add(ULCBoxPane.BOX_LEFT_TOP, labelPre)
         this.add(ULCBoxPane.BOX_RIGHT_TOP, textPre)

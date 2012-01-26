@@ -7,6 +7,60 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
  */
 class CategoryMappingTest extends GroovyTestCase {
 
+    void testCategoryMapping() {
+        def mappingClosure = {
+            lob {
+                or {
+                    enclosedBy(prefix: ['linesOfBusiness:sub'], suffix: [':'])
+                    conditionedOn (value: 'Aggregate') {
+                        matching(toMatch: ["linesOfBusiness:(?!sub)"])
+                    }
+                }
+            }
+            peril {
+                enclosedBy(prefix: ["claimsGenerators:sub"], suffix: [":"])
+            }
+            reinsuranceContractType {
+                enclosedBy(prefix: ["subContracts:sub","reinsuranceContracts:sub"], suffix: [":"])
+            }
+            accountBasis {
+                matching(toMatch: ["Gross", "Ceded", "Net"])
+            }
+            keyfigure {
+                synonymousTo(category : "Field")
+            }
+        }
+
+        MappingEntry categories = (MappingEntry) new MapCategoriesBuilder().invokeMethod("categories", mappingClosure)
+        CategoryMapping mapping = new CategoryMapping(categories)
+
+        assertTrue mapping.matcherMap.containsKey("lob")
+        assertTrue mapping.matcherMap["lob"] instanceof OrResolver
+        List<ICategoryResolver> orChildren = ((OrResolver)mapping.matcherMap["lob"]).children
+        assertTrue orChildren[0] instanceof EnclosingMatchResolver
+        assertEquals(((EnclosingMatchResolver)orChildren[0]).prefix, ['linesOfBusiness:sub'])
+        assertEquals(((EnclosingMatchResolver)orChildren[0]).suffix, [':'])
+        assertTrue orChildren[1] instanceof ConditionalAssignmentResolver
+        assertEquals(((ConditionalAssignmentResolver)orChildren[1]).value, "Aggregate")
+        assertTrue(((ConditionalAssignmentResolver)orChildren[1]).condition instanceof WordMatchResolver)
+
+        assertTrue mapping.matcherMap.containsKey("peril")
+        assertTrue mapping.matcherMap["peril"] instanceof EnclosingMatchResolver
+
+        assertTrue mapping.matcherMap.containsKey("reinsuranceContractType")
+        assertTrue mapping.matcherMap["reinsuranceContractType"] instanceof EnclosingMatchResolver
+
+        assertTrue mapping.matcherMap.containsKey("accountBasis")
+        assertTrue mapping.matcherMap["accountBasis"] instanceof WordMatchResolver
+        assertEquals(((WordMatchResolver)mapping.matcherMap["accountBasis"]).toMatch, ["Gross", "Ceded", "Net"])
+
+        assertTrue mapping.matcherMap.containsKey("keyfigure")
+        assertTrue mapping.matcherMap["keyfigure"] instanceof SynonymToCategory
+    }
+
+    
+    
+    
     List<OutputElement> getTestOutputElements() {
         List<OutputElement> elements = []
         // a single wild card --> lob
@@ -43,9 +97,9 @@ class CategoryMappingTest extends GroovyTestCase {
 
     CategoryMapping getTestCategoryMapping() {
         CategoryMapping mapping = new CategoryMapping()
-        mapping.addCategory("lob", new EnclosingMatcher(":lines:",":",OutputElement.PATH))
-        mapping.addCategory("contracts", new EnclosingMatcher(":reinsurance:",":",OutputElement.PATH))
-        mapping.addCategory("perils", new EnclosingMatcher(":claims:",":",OutputElement.PATH))
+        mapping.addCategory("lob", new EnclosingMatchResolver(":lines:",":",OutputElement.PATH))
+        mapping.addCategory("contracts", new EnclosingMatchResolver(":reinsurance:",":",OutputElement.PATH))
+        mapping.addCategory("perils", new EnclosingMatchResolver(":claims:",":",OutputElement.PATH))
         return mapping
     }
 
@@ -86,9 +140,9 @@ class CategoryMappingTest extends GroovyTestCase {
 
     CategoryMapping getTestCategoryMappingInclField() {
         CategoryMapping mapping = new CategoryMapping()
-        mapping.addCategory("lob", new EnclosingMatcher(":lines:",":",OutputElement.PATH))
-        mapping.addCategory("contracts", new EnclosingMatcher(":reinsurance:",":",OutputElement.PATH))
-        mapping.addCategory("perils", new EnclosingMatcher(":claims:",":",OutputElement.PATH))
+        mapping.addCategory("lob", new EnclosingMatchResolver(":lines:",":",OutputElement.PATH))
+        mapping.addCategory("contracts", new EnclosingMatchResolver(":reinsurance:",":",OutputElement.PATH))
+        mapping.addCategory("perils", new EnclosingMatchResolver(":claims:",":",OutputElement.PATH))
         mapping.addCategory("keyfigure", new SynonymToCategory(OutputElement.FIELD))
         return mapping
     }

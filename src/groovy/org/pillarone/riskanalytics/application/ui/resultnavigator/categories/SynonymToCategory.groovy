@@ -6,7 +6,8 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
  * @author martin.melchior
  */
 class SynonymToCategory implements ICategoryResolver {
-    static final String NAME = "Synonym to category"
+    static final String NAME = "synonymousTo"
+    static final String EXCEPTION_MSG = "The synonymousTo resolver should be initialized with the name of the category this category is synonymous with."
     String category
 
     SynonymToCategory(String category) {
@@ -15,6 +16,9 @@ class SynonymToCategory implements ICategoryResolver {
 
     String getName() {
         return NAME
+    }
+
+    void addChildResolver(ICategoryResolver resolver) {
     }
 
     boolean isResolvable(OutputElement element) {

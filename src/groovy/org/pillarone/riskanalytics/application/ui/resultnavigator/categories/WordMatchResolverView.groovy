@@ -12,11 +12,11 @@ import com.ulcjava.base.application.ULCComponent
 /**
  * @author martin.melchior
  */
-class SingleValueFromListMatcherView extends ULCBoxPane {
+class WordMatchResolverView extends ULCBoxPane {
 
-    SingleValueFromListMatcher matcher
+    WordMatchResolver matcher
 
-    SingleValueFromListMatcherView(SingleValueFromListMatcher matcher) {
+    WordMatchResolverView(WordMatchResolver matcher) {
         super(false)
         setMatcher(matcher)
         createView()

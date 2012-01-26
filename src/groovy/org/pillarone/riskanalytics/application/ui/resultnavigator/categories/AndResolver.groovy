@@ -5,16 +5,24 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class AndMatcher implements ICategoryResolver {
-    static final String NAME = "And"
+class AndResolver implements ICategoryResolver {
+    static final String NAME = "and"
     List<ICategoryResolver> children
 
-    AndMatcher(List<ICategoryResolver> children) {
+    AndResolver() {
+        children = []
+    }
+
+    AndResolver(List<ICategoryResolver> children) {
         this.children = children
     }
 
     String getName() {
         return NAME
+    }
+
+    void addChildResolver(ICategoryResolver resolver) {
+        children << resolver
     }
 
     boolean isResolvable(OutputElement element) {

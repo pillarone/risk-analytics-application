@@ -10,5 +10,6 @@ public interface ICategoryResolver {
     String getResolvedValue(OutputElement element)
     boolean createTemplatePath(OutputElement element, String category)
     String getName()
+    void addChildResolver(ICategoryResolver resolver)
 }
 

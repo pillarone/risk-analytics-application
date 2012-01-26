@@ -5,16 +5,24 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class OrMatcher implements ICategoryResolver {
-    static final String NAME = "Or"
+class OrResolver implements ICategoryResolver {
+    static final String NAME = "or"
     List<ICategoryResolver> children
 
-    OrMatcher(List<ICategoryResolver> children) {
+    OrResolver() {
+        this.children = []
+    }
+
+    OrResolver(List<ICategoryResolver> children) {
         this.children = children
     }
 
     String getName() {
         return NAME
+    }
+
+    void addChildResolver(ICategoryResolver resolver) {
+        children << resolver
     }
 
     boolean isResolvable(OutputElement element) {

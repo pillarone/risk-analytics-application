@@ -6,42 +6,54 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 /**
  * @author martin.melchior
  */
-class EnclosingMatcher implements ICategoryResolver {
-    static final String NAME = "EnclosingMatch"
-    List<String> prefixes = []
-    List<String> suffixes = []
+class EnclosingMatchResolver implements ICategoryResolver {
+    static final String NAME = "enclosedBy"
+    static final String EXCEPTION_MSG = "The enclosedBy resolver should be initialized with a List of prefixes and a list of suffix."
+    List<String> prefix = []
+    List<String> suffix = []
     String refCategory
     Pattern pattern
 
-    EnclosingMatcher(String prefix, String suffix, String refCategory) {
+    EnclosingMatchResolver(String prefix, String suffix) {
+        this(prefix,suffix,OutputElement.PATH)
+    }
+
+    EnclosingMatchResolver(List<String> prefix, List<String> suffix) {
+        this(prefix,suffix, OutputElement.PATH)
+    }
+
+    EnclosingMatchResolver(String prefix, String suffix, String refCategory) {
         this.refCategory = refCategory
         initialize([prefix], [suffix])
     }
 
-    EnclosingMatcher(List<String> prefixes, List<String> suffixes, String refCategory) {
+    EnclosingMatchResolver(List<String> prefix, List<String> suffix, String refCategory) {
         this.refCategory = refCategory
-        initialize(prefixes, suffixes)
+        initialize(prefix, suffix)
     }
 
     String getName() {
         return NAME
     }
 
-    void initialize(List<String> prefixes, List<String> suffixes) {
-        this.prefixes = prefixes
-        this.suffixes = suffixes
+    void addChildResolver(ICategoryResolver resolver) {
+    }
 
-        String prefix = prefixes[0]
-        String str = "($prefix"
-        for (int i = 1; i < prefixes.size(); i++) {
-            prefix = prefixes[i]
-            str += "|$prefix"
+    void initialize(List<String> prefix, List<String> suffix) {
+        this.prefix = prefix
+        this.suffix = suffix
+
+        String pref = prefix[0]
+        String str = "($pref"
+        for (int i = 1; i < prefix.size(); i++) {
+            pref = prefix[i]
+            str += "|$pref"
         }
-        String suffix = suffixes[0]
-        str += ")(\\w*)($suffix"
-        for (int i = 1; i < suffixes.size(); i++) {
-            suffix = suffixes[i]
-            str += "|$suffix"
+        String suff = suffix[0]
+        str += ")(\\w*)($suff"
+        for (int i = 1; i < suffix.size(); i++) {
+            suff = suffix[i]
+            str += "|$suff"
         }
         str += ")"
         pattern = ~str
