@@ -14,6 +14,7 @@ import com.ulcjava.base.shared.IWindowConstants
 import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * The View which contains the CustomTable, and its other elements (cellEditTextField)
@@ -87,6 +88,7 @@ public class CustomTableView {
                 frame.setSize(1000, 750)
                 frame.setExtendedState(ULCFrame.NORMAL)
                 frame.toFront()
+                frame.setIconImage(UIUtils.getIcon("application.png"))
                 frame.locationRelativeTo = UlcUtilities.getWindowAncestor(parent)
 
                 if (CustomTableView.this.simulationRun != null) {
