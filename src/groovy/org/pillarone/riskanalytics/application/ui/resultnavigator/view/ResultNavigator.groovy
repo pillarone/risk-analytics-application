@@ -118,14 +118,18 @@ class ResultNavigator extends AbstractBean {
             void actionPerformed(ActionEvent actionEvent) {
                 if (configurationDialog==null) {
                     configurationDialog = new CategoryConfigurationDialog(UlcUtilities.getWindowAncestor(contents))
+                    if (!categoryMapping) {
+                        categoryMapping = CategoryMappingRegistry.getCategoryMapping(simulationRunsModel.getSelectedRun())
+                    }
+                    if (categoryMapping) {
+                        configurationDialog.createContent categoryMapping
+                    } else {
+                        ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(configurationDialog), "No mapping available", "No mapping available for this simulation run", "ok")
+                        alert.show()
+                    }
                 }
-                categoryMapping = CategoryMappingRegistry.getCategoryMapping(simulationRunsModel.getSelectedRun())
                 if (categoryMapping) {
-                    configurationDialog.createContent categoryMapping
                     configurationDialog.setVisible true
-                } else {
-                    ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(configurationDialog), "No mapping available", "No mapping available for this simulation run", "ok")
-                    alert.show()
                 }
             }
         })
