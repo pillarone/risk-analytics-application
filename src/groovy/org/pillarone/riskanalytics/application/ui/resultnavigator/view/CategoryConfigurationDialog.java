@@ -5,7 +5,7 @@ import com.ulcjava.base.application.event.*;
 import com.ulcjava.base.application.tree.TreePath;
 import com.ulcjava.base.application.util.Color;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping;
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMatcherFactory;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryResolverFactory;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.MatcherTreeNode;
@@ -135,7 +135,7 @@ public class CategoryConfigurationDialog extends ULCDialog {
 
     public void showMatcher(ICategoryResolver matcher) {
         if (!matcherCache.containsKey(matcher)) {
-            ULCBoxPane view = CategoryMatcherFactory.getMatcherView(matcher);
+            ULCBoxPane view = CategoryResolverFactory.getMatcherView(matcher);
             if (view != null) {
                 matcherConfigPane.addCard(matcher.toString(), view);
                 matcherCache.put(matcher, view);

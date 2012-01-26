@@ -3,10 +3,11 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.view
 import com.ulcjava.base.application.ULCTree
 import com.ulcjava.base.application.tree.DefaultTreeModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AndMatcher
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.OrMatcher
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ConditionalAssignment
+
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.MatcherTreeNode
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AndResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ConditionalAssignmentResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.OrResolver
 
 /**
  * @author martin.melchior
@@ -25,20 +26,20 @@ class MatcherTree extends ULCTree {
     private MatcherTreeNode createTreeNode(ICategoryResolver matcher, MatcherTreeNode parent) {
         MatcherTreeNode node = new MatcherTreeNode(matcher, parent);
         switch(matcher) {
-            case AndMatcher:
-                for (ICategoryResolver child : ((AndMatcher) matcher).children) {
+            case AndResolver:
+                for (ICategoryResolver child : ((AndResolver) matcher).children) {
                     MatcherTreeNode childNode = createTreeNode(child, parent)
                     node.add(childNode)
                 }
                 return node
-            case OrMatcher:
-                for (ICategoryResolver child : ((OrMatcher) matcher).children) {
+            case OrResolver:
+                for (ICategoryResolver child : ((OrResolver) matcher).children) {
                     MatcherTreeNode childNode = createTreeNode(child, parent)
                     node.add(childNode)
                 }
                 return node
-            case ConditionalAssignment:
-                MatcherTreeNode childNode = createTreeNode(((ConditionalAssignment) matcher).condition, parent)
+            case ConditionalAssignmentResolver:
+                MatcherTreeNode childNode = createTreeNode(((ConditionalAssignmentResolver) matcher).condition, parent)
                 node.add(childNode)
                 return node
             default:
