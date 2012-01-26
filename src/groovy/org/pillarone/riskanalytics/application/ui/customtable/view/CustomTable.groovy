@@ -3,12 +3,9 @@ package org.pillarone.riskanalytics.application.ui.customtable.view
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.event.ListSelectionEvent
-import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCListSelectionModel
 import com.ulcjava.base.shared.UlcEventConstants
-import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableHelper
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.ULCList
@@ -17,7 +14,6 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCMenuItem
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 import com.ulcjava.base.application.table.ULCTableColumn
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.event.IWindowListener
@@ -105,6 +101,15 @@ public class CustomTablePane extends ULCScrollPane {
                 } else {
                     customTableModel.addCol()
                 }
+
+                for (int col = 0; col < CustomTablePane.this.customTable.columnCount; col++) {
+                    ULCTableColumn tableColumn = CustomTablePane.this.customTable.getColumnModel().getColumn(col)
+
+                    if (!(tableColumn.getCellRenderer() instanceof CustomTableCellRenderer))
+                        tableColumn.setCellRenderer (new CustomTableCellRenderer(col))
+                    else if (((CustomTableCellRenderer)tableColumn.getCellRenderer()).col != col)
+                        ((CustomTableCellRenderer)tableColumn.getCellRenderer()).col = col
+                }
             }
         })
         colHeaderPopupMenu.add(insertColMenuItem)
@@ -114,6 +119,14 @@ public class CustomTablePane extends ULCScrollPane {
             void actionPerformed(ActionEvent actionEvent) {
                 if (lastLeftClickedColumn != null) {
                     customTableModel.deleteCol(lastLeftClickedColumn.getModelIndex())
+                }
+                for (int col = 0; col < CustomTablePane.this.customTable.columnCount; col++) {
+                    ULCTableColumn tableColumn = CustomTablePane.this.customTable.getColumnModel().getColumn(col)
+
+                    if (!(tableColumn.getCellRenderer() instanceof CustomTableCellRenderer))
+                        tableColumn.setCellRenderer (new CustomTableCellRenderer(col))
+                    else if (((CustomTableCellRenderer)tableColumn.getCellRenderer()).col != col)
+                        ((CustomTableCellRenderer)tableColumn.getCellRenderer()).col = col
                 }
             }
         })
@@ -175,8 +188,9 @@ public class CustomTable extends ULCTable {
         ClientContext.setModelUpdateMode(customTableModel, UlcEventConstants.SYNCHRONOUS_MODE);
         this.setTransferHandler(new CustomTableDropHandler())
         this.setAutoResizeMode(ULCTable.AUTO_RESIZE_OFF)
-        this.setDefaultRenderer(Object.class, new CustomTableCellRenderer())
 
+        for (int col = 0; col < this.columnCount; col++)
+            this.getColumnModel().getColumn(col).setCellRenderer (new CustomTableCellRenderer(col))
 
         // Add a listener the the column and the rows, so if another cell is selected, the CellEditTextField can be updated
         CustomTableCellChangedListener cellChangedListener = new CustomTableCellChangedListener(this)
@@ -250,9 +264,17 @@ public class CustomTable extends ULCTable {
                             CustomTable.this.customTableModel.setNumberRows (dlg.getNumberRows())
                             CustomTable.this.customTableModel.setNumberCols (dlg.getNumberColumns())
                         }
+
+                        for (int col = 0; col < CustomTable.this.columnCount; col++) {
+                            ULCTableColumn tableColumn = CustomTable.this.getColumnModel().getColumn(col)
+
+                            if (!(tableColumn.getCellRenderer() instanceof CustomTableCellRenderer))
+                                tableColumn.setCellRenderer (new CustomTableCellRenderer(col))
+                            else if (((CustomTableCellRenderer)tableColumn.getCellRenderer()).col != col)
+                                ((CustomTableCellRenderer)tableColumn.getCellRenderer()).col = col
+                        }
                     }
                 })
-
             }
         })
         tableContextMenu.add(setTableSizeMenuItem)

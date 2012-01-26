@@ -5,15 +5,14 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCButton
-import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.ULCToolBar
 import org.pillarone.riskanalytics.application.ui.resultnavigator.view.ResultNavigator
 import org.pillarone.riskanalytics.application.ui.customtable.model.CustomTableModel
 import com.ulcjava.base.shared.IWindowConstants
 import com.ulcjava.base.application.UlcUtilities
-import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
@@ -38,14 +37,16 @@ public class CustomTableView {
      * Constructor
      */
     public CustomTableView(SimulationRun simulationRun) {
-        this([[""]], simulationRun)
+        this.simulationRun = simulationRun
+        this.customTableModel = new CustomTableModel([[""]])
+        this.customTableModel.setNumberCols(10)
+        this.customTableModel.setNumberRows(10)
+        initComponents()
     }
 
     public CustomTableView(List<List<Object>> data, SimulationRun simulationRun) {
         this.simulationRun = simulationRun
         this.customTableModel = new CustomTableModel(data)
-        this.customTableModel.setNumberCols(10)
-        this.customTableModel.setNumberRows(10)
         initComponents()
     }
 
@@ -103,13 +104,34 @@ public class CustomTableView {
         })
 
 
-        toolBar.add new ULCButton(new PrecisionAction(this.customTableModel, -1, "reducePrecision"))
-        toolBar.add new ULCButton(new PrecisionAction(this.customTableModel, +1, "increasePrecision"))
+        toolBar.add new ULCButton(new PrecisionAction(this.customTable, -1, "reducePrecision"))
+        toolBar.add new ULCButton(new PrecisionAction(this.customTable, +1, "increasePrecision"))
 
         return toolBar
     }
 
     ULCBoxPane getContent() {
         return content
+    }
+
+     private class PrecisionAction extends ResourceBasedAction {
+        CustomTable table
+        CustomTableModel tableModel
+        int adjustment
+
+        public PrecisionAction(CustomTable table, int adjustment, String label) {
+            super(label)
+            this.table = table
+            this.tableModel = (CustomTableModel)table.model
+            this.adjustment = adjustment
+        }
+
+        public void doActionPerformed(ActionEvent event) {
+            for (int row = table.getSelectedRow(); row <= table.getSelectionModel().getMaxSelectionIndex(); row++) {
+                for (int col = table.getSelectedColumn(); col <= table.getColumnModel().getSelectionModel().getMaxSelectionIndex(); col++) {
+                    tableModel.adjustPrecision(row, col, adjustment)
+                }
+            }
+        }
     }
 }

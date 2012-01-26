@@ -3,9 +3,8 @@ package org.pillarone.riskanalytics.application.ui.customtable.model
 import com.ulcjava.base.application.table.AbstractTableModel
 import com.ulcjava.base.application.AbstractListModel
 import org.nfunk.jep.ParseException
-import com.ulcjava.base.application.datatype.ULCNumberDataType
-import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import java.util.regex.Pattern
+import org.pillarone.riskanalytics.application.ui.customtable.view.CellRendererInformation
 
 /**
  * TableModel for the CustomTable
@@ -23,15 +22,11 @@ public class CustomTableModel extends AbstractTableModel {
 
     Map<String, List<String>> references = new HashMap<String, List<String>>()
 
+    // list for the rendering information
+    private List<List<CellRendererInformation>> rendererInformation = new LinkedList<List<CellRendererInformation>>()
 
 
-    ULCNumberDataType numberDataType
 
-    void adjust(int adjustment) {
-        numberDataType.maxFractionDigits = numberDataType.maxFractionDigits + adjustment
-        numberDataType.minFractionDigits = numberDataType.minFractionDigits + adjustment
-        fireTableDataChanged()
-    }
 
     /**
      * Constructor
@@ -45,12 +40,6 @@ public class CustomTableModel extends AbstractTableModel {
 
 //        groovyShell = new GroovyShell()
         mathParser = new MathParser();
-
-
-        numberDataType = DataTypeFactory.numberDataType
-        numberDataType.setGroupingUsed true
-        numberDataType.setMinFractionDigits 2
-        numberDataType.setMaxFractionDigits 2
     }
 
     /**
@@ -134,6 +123,8 @@ public class CustomTableModel extends AbstractTableModel {
 
         this.data.add(row, rowData)
 
+        rendererInformation.add(row, [])
+
         fireTableRowsInserted(row, row)
         rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
     }
@@ -152,6 +143,9 @@ public class CustomTableModel extends AbstractTableModel {
 
         for (List<Object> rowData : data) {
             rowData.add (col, "")
+        }
+        for (List<CellRendererInformation> rowRenderInfoData : rendererInformation) {
+            rowRenderInfoData.add (col, null)
         }
         fireTableStructureChanged()
     }
@@ -185,6 +179,7 @@ public class CustomTableModel extends AbstractTableModel {
         updateVariables (row, -1, true)
 
         data.remove(row)
+        rendererInformation.remove(row)
         fireTableRowsDeleted(row, row)
         rowHeaderModel.fireContentsChanged(this, row, rowCount-1)
     }
@@ -201,6 +196,9 @@ public class CustomTableModel extends AbstractTableModel {
 
         for (List<Object> rowData : data) {
             rowData.remove(col)
+        }
+        for (List<CellRendererInformation> rowRenderInfoData : rendererInformation) {
+            rowRenderInfoData.remove(col)
         }
         fireTableStructureChanged()
     }
@@ -502,6 +500,21 @@ public class CustomTableModel extends AbstractTableModel {
                 }
             }
         }
+    }
+    
+    public CellRendererInformation getCellRendererInformation (int row, int col) {
+        if (rendererInformation[row] == null)
+            rendererInformation[row] = new LinkedList<String>()
+
+        if (rendererInformation[row][col] == null)
+            rendererInformation[row][col] = new CellRendererInformation()
+
+        return rendererInformation[row][col]
+    }
+
+    public void adjustPrecision (int row, int col, int adjustment) {
+        getCellRendererInformation(row, col).precision += adjustment
+        fireTableCellUpdated(row, col)
     }
 
     /**
