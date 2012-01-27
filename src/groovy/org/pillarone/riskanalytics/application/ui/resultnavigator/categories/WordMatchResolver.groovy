@@ -4,15 +4,22 @@ import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Returns <code>isResolved = true</code> if one of the words specified in the 'toMatch'-list is found
+ * in the path of the output element. As resolved value it returns the first matched word found.
+ *
  * @author martin.melchior
  */
 class WordMatchResolver implements ICategoryResolver {
     static final String NAME = "matching"
     static final String EXCEPTION_MSG = "The matching word resolver should be initialized with a List of words to match."
 
+    /**
+     * the resolver may refer to A reference category can be set (which is by default the path)
+     */
     String refCategory = OutputElement.PATH
-    List<Pattern> patterns
     List<String> toMatch = []
+
+    private List<Pattern> patterns
 
     WordMatchResolver(List<String> toMatch) {
         this(toMatch, OutputElement.PATH)

@@ -9,30 +9,53 @@ import org.pillarone.riskanalytics.core.output.CollectorMapping
 import org.pillarone.riskanalytics.core.simulation.engine.grid.GridHelper
 
 /**
+ * Helper class for accessing the meta information on the data included in the db or the file system,
+ * in particular the information on what simulation runs are available, and what single value result entries
+ * are available for a given simulation run (path, field, collector).
  *
+ * @ martin.melchior
  */
 class ResultAccess {
 
-    Map<Long, String> pathCache = [:]
-    Map<Long, String> fieldCache = [:]
-
+    /**
+     * Returns all the simulation runs found in the db.
+     * @return
+     */
     static List<SimulationRun> getSimulationRuns() {
         SimulationRun.withTransaction {
             return SimulationRun.findAll()
         }
     }
 
+    /**
+     * Returns all the simulation runs found in the db for a given model
+     * @param model
+     * @return
+     */
     static List getSimulationRuns(Model model) {
         Class clazz = model.class
         return getSimulationRuns(clazz)
     }
 
+    /**
+     * Returns all the simulation runs found in the db for a given model class
+     * @param modelClass
+     * @return
+     */
     static List getSimulationRuns(Class modelClass) {
         SimulationRun.withTransaction {
             return SimulationRun.findAllByModel(modelClass.name)
         }
     }
 
+    /**
+     * Creates a list of OutputElement's for the given simulation run.
+     * Only data is considered for which corresponding raw simulation data is found in the file system store.
+     * These OutputElement's contain the necessary information on how to retrieve the data.
+     * Category information is initialized with the path, field and collector information.
+     * @param run
+     * @return
+     */
     public List<OutputElement> getOutputElements(SimulationRun run) {
         File file = new File(GridHelper.getResultLocation(run.id))
         List<OutputElement> result = []

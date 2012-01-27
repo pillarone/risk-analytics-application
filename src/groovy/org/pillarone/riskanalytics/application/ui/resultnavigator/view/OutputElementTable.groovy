@@ -22,23 +22,30 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 
 /**
+ * Table for the OutputElement's that also views the different categories
+ * associated with the elements in different columns.
+ *
  * @author martin.melchior
  */
 class OutputElementTable extends ULCTable implements ITableRowFilterListener {
 
-    AssignCategoryDialog assignCategory
-    List<Integer> selectedModelRows
-    KeyfigureSelectionModel keyfigureSelection // quite a hack to put this here
+    /**
+     * A reference to the model underlying the period and statistics keyfigure selection panel.
+     */
+    KeyfigureSelectionModel keyfigureSelection // quite a hack to put this here, but is convenient for DnD to the CustomTable
+
+    // private AssignCategoryDialog assignCategory
+    private List<Integer> selectedModelRows
 
     OutputElementTable(OutputElementTableModel model) {
         // model and the like
         this.setModel model
         this.setRowSorter(new TableRowSorter(model))
-        // this.setSelectionBackground(Color.black)
-        // this.setSelectionForeground(Color.white)
         this.setSelectionMode(ULCListSelectionModel.MULTIPLE_INTERVAL_SELECTION)
         this.setRowSelectionAllowed(true)
         this.setAutoCreateColumnsFromModel(true)
+        this.keyfigureSelection = model.keyFigureSelectionModel
+        ClientContext.setModelUpdateMode(model, UlcEventConstants.SYNCHRONOUS_MODE)
 
         // view
         this.setShowHorizontalLines(true)
@@ -46,17 +53,24 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         // this.setAutoResizeMode(ULCTable.AUTO_RESIZE_ALL_COLUMNS)
         this.setVisible true
 
-        ClientContext.setModelUpdateMode(model, UlcEventConstants.SYNCHRONOUS_MODE)
-
         // renderer
         setRenderer()
 
         // context menu
         createContextMenu()
-
-
     }
 
+    /**
+     * Set a filter to be applied to the table.
+     * @param filter
+     */
+    public void setFilter(TableRowFilter filter) {
+        this.getRowSorter().setRowFilter(filter)
+    }
+
+    /**
+     * Set the renderer components that will e.g. depict tooltips
+     */
     private void setRenderer() {
         for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
             String colName = getModel().getColumnName(i)                        
@@ -69,35 +83,39 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         }
     }
 
-    void setFilter(TableRowFilter filter) {
-        this.getRowSorter().setRowFilter(filter)
-    }
-
+    /**
+     * Create the context menu shown on left clicks
+     */
     private void createContextMenu() {
-        OutputElementTableModel tableModel = (OutputElementTableModel) this.getModel()
-        List<String> categories = tableModel.getCategories()
 
+        // create the entries
         ULCPopupMenu menu = new ULCPopupMenu();
-
         ULCMenuItem selectAllItem = new ULCMenuItem("select all");
+        ULCMenuItem deselectAllItem = new ULCMenuItem("de-select all");
+        menu.add(selectAllItem);
+        menu.add(deselectAllItem);
+        this.setComponentPopupMenu(menu);
+
+        // attach selection listeners so that associated actions will be called
         selectAllItem.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 OutputElementTable.this.getSelectionModel().clearSelection()
                 OutputElementTable.this.getSelectionModel().setSelectionInterval(0, OutputElementTable.this.getRowCount()-1) //upperIndex is inclusive
             }
         });
-        menu.add(selectAllItem);
 
-        ULCMenuItem deselectAllItem = new ULCMenuItem("de-select all");
         deselectAllItem.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 OutputElementTable.this.getSelectionModel().setSelectionInterval(0, 0)
             }
         });
-        menu.add(deselectAllItem);
 
-        assignCategory = new AssignCategoryDialog(UlcUtilities.getWindowAncestor(this), categories)
+        /*
         ULCMenuItem assignCategoryItem = new ULCMenuItem("assign category");
+        menu.add(assignCategoryItem); // --> disabled since of little use
+        OutputElementTableModel tableModel = (OutputElementTableModel) this.getModel()
+        List<String> categories = tableModel.getCategories()
+        assignCategory = new AssignCategoryDialog(UlcUtilities.getWindowAncestor(this), categories)
         assignCategoryItem.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
                 selectedModelRows = []
@@ -111,7 +129,6 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
                 }
             }
         });
-        menu.add(assignCategoryItem);
         assignCategory.addSaveActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 String[] assignment = assignCategory.getAssignment()
@@ -121,13 +138,11 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
                 }
                 tableModel.fireTableDataChanged()
             }
-        })
-        // addCategoryListChangeListener(assignCategory.getCategoryComboBox())
+        })*/
 
-        this.setComponentPopupMenu(menu);
     }
 
-    void addCategory(String newCategory) {
+    /*void addCategory(String newCategory) {
         OutputElementTableModel tableModel = (OutputElementTableModel) this.getModel()
         tableModel.addCategory(newCategory)
         // work around due to UBA-8496 --> fixed in RIA Suite Update 5.
@@ -135,11 +150,7 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         this.setRowSorter(null)
         tableModel.fireTableStructureChanged()
         this.setRowSorter(sorter)
-        /*ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, categories.size())
-        for (IListDataListener listener : categoryListChangeListeners) {
-            listener.contentsChanged e
-        } */       
-    }
+    }*/
 
     private class PathCellRenderer extends DefaultTableCellRenderer {
 

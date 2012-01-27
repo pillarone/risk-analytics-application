@@ -7,6 +7,11 @@ import com.ulcjava.base.application.ULCBoxPane
  */
 class CategoryResolverFactory {
 
+    /**
+     * Provides for given ICategoryResolver a suitable view in form of a ULCBoxPane.
+     * @param matcher
+     * @return
+     */
     static ULCBoxPane getMatcherView(ICategoryResolver matcher) {
         switch (matcher) {
             case WordMatchResolver:
@@ -18,12 +23,24 @@ class CategoryResolverFactory {
         }
     }
 
-    static ICategoryResolver getCategoryMatcher(String matcherType, Map params, List children) {
+    /**
+     * Creates suitably configured instances of ICategoryResolver by referring to
+     * <ul>
+     *     <it> name of the category resolver (see ICategoryResolver.getName()) </it>
+     *     <it> named parameters passed by the map</it>
+     * </ul>
+     * This method is used by the MapCategoriesBuilder to create ICategoryResolver instances at the nodes.
+     * @param matcherType
+     * @param params
+     * @param children
+     * @return
+     */
+    public static ICategoryResolver getCategoryMatcher(String matcherType, Map params) {
         switch(matcherType) {
             case AndResolver.NAME:
-                return children ? new AndResolver(children) : AndResolver()
+                return new AndResolver()
             case OrResolver.NAME:
-                return children ? new OrResolver(children) : new OrResolver()
+                return new OrResolver()
             case WordMatchResolver.NAME:
                 try {
                     return new WordMatchResolver((List<String>) params["toMatch"])
@@ -50,8 +67,7 @@ class CategoryResolverFactory {
                 }
             case ConditionalAssignmentResolver.NAME:
                 try {
-                    return children ? new ConditionalAssignmentResolver((String) params["value"], (ICategoryResolver) children[0]) \
-                                    : new ConditionalAssignmentResolver((String) params["value"])
+                    return new ConditionalAssignmentResolver((String) params["value"])
                 } catch (Exception ex) {
                     throw new IllegalArgumentException(ConditionalAssignmentResolver.EXCEPTION_MSG)
                 }

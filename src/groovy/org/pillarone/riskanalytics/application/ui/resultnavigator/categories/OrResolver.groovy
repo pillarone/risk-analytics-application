@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Applies the logical OR to all resolvers set as children.
+ * As resolved value the first resolved value when iterating through the child resolvers
+ * is returned. In case there is no unique common resolved value null is returned.
  * @author martin.melchior
  */
 class OrResolver implements ICategoryResolver {

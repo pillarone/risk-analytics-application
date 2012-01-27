@@ -6,13 +6,11 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
  */
 class CategoryUtils {
 
-    static String getWordAtStart(String path, String startSuffix) {
-        int index = path.indexOf(startSuffix)
-        if (index>=0) {
-            return path[0..startSuffix]
-        }
-        return null
-    }
+    /**
+     * Utility method to parse from a String that contains 'words' separated by comma's a List of String.
+     * @param str
+     * @return
+     */
 
     public static List<String> parseList(String str) {
         String[] array = str.split(",")
@@ -24,6 +22,11 @@ class CategoryUtils {
         return values
     }
 
+    /**
+     * Utility method to write a List of String to a single String with the elements of the list separated by comma's.
+     * @param list
+     * @return
+     */
     static String writeList(List<String> list) {
         StringBuilder builder = new StringBuilder()
         for (String value : list) {

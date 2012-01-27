@@ -31,8 +31,9 @@ class CategoryMappingTest extends GroovyTestCase {
             }
         }
 
-        MappingEntry categories = (MappingEntry) new MapCategoriesBuilder().invokeMethod("categories", mappingClosure)
-        CategoryMapping mapping = new CategoryMapping(categories)
+        Map<String,ICategoryResolver> map = MapCategoriesBuilder.getCategories(mappingClosure)
+        
+        CategoryMapping mapping = new CategoryMapping(map)
 
         assertTrue mapping.matcherMap.containsKey("lob")
         assertTrue mapping.matcherMap["lob"] instanceof OrResolver
@@ -58,9 +59,6 @@ class CategoryMappingTest extends GroovyTestCase {
         assertTrue mapping.matcherMap["keyfigure"] instanceof SynonymToCategory
     }
 
-    
-    
-    
     List<OutputElement> getTestOutputElements() {
         List<OutputElement> elements = []
         // a single wild card --> lob

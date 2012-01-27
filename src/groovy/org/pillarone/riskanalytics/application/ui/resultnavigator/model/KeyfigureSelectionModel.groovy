@@ -7,6 +7,8 @@ import com.ulcjava.base.application.IComboBoxModel
 import com.ulcjava.base.application.DefaultComboBoxModel
 
 /**
+ * Data model underlying the panel for selecting the period and the statistics key figure.
+ *
  * @author martin.melchior
  */
 class KeyfigureSelectionModel {
@@ -15,10 +17,10 @@ class KeyfigureSelectionModel {
     Number keyfigureParameter
     IComboBoxModel periodSelectionModel
 
-    int numOfIterations
-    int numOfPeriods
-    DateTime startPeriod
-    DateTime endPeriod
+    private int numOfIterations
+    private int numOfPeriods
+    private DateTime startPeriod
+    private DateTime endPeriod
 
     KeyfigureSelectionModel(SimulationRun run) {
         numOfIterations = run.iterations

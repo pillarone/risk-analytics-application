@@ -2,9 +2,6 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import java.util.Map.Entry
-import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
-import org.pillarone.riskanalytics.core.output.PacketCollector
-import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 
 /**
  * @author martin.melchior
@@ -28,22 +25,12 @@ class CategoryMapping {
     }
 
     /**
-     * constructor using the output of the MapCategoriesBuilder builder
+     * constructor using a map with category descriptor as key and ICategoryResolver as value.
     */
-    CategoryMapping(MappingEntry categories) {
+    CategoryMapping(Map<String, ICategoryResolver> mapping) {
         this()
-        for (MappingEntry categoryEntry : categories.value) {
-            String categoryName = categoryEntry.name
-            if (((ArrayList)categoryEntry.value).size() != 1) {
-                println "Invalid category specification found: category name ${categoryName}."
-                throw new RuntimeException("Invalid category specification found: category name ${categoryName}.")
-            } 
-            Object value = ((MappingEntry) ((ArrayList)categoryEntry.value)[0]).value
-            if (!(value instanceof ICategoryResolver)) {
-                println "Problem in resolving the mapping for category ${categoryName}."
-                throw new RuntimeException("Problem in resolving the mapping for category ${categoryName}.")
-            }
-            addCategory(categoryName, (ICategoryResolver) value)
+        for (Entry<String,ICategoryResolver> entry : mapping) {
+            addCategory(entry.key, entry.value)
         }
     }
 
@@ -225,12 +212,12 @@ class CategoryMapping {
             // create wild card path associated with template path or, if already existing, register the category values
             if (!wildCardPaths.containsKey(e.templatePath)) {
                 WildCardPath wildCardPath = new WildCardPath()
-                wildCardPath.setWildCardPath(e.templatePath, pathWildCards)
+                wildCardPath.initialize(e.templatePath, pathWildCards)
                 wildCardPaths[e.templatePath] = wildCardPath
             }
             WildCardPath wildCardPath = wildCardPaths[e.templatePath]
             for (String category : pathWildCards) {
-                wildCardPath.addPathWildCardValue(category, e.getCategoryValue(category))
+                wildCardPath.addPathWildCardValue(category, (String) e.getCategoryValue(category))
             }
 
             // fields and associated synonym resolver
@@ -246,7 +233,7 @@ class CategoryMapping {
             if (synonymToField==null) {
                 synonymToField = OutputElement.FIELD
             }
-            wildCardPath.addWildCardValue(synonymToField, e.getCategoryValue(OutputElement.FIELD))
+            wildCardPath.addWildCardValue(synonymToField, (String) e.getCategoryValue(OutputElement.FIELD))
 
             e.wildCardPath = wildCardPath
         }

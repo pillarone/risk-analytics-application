@@ -2,9 +2,15 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 /**
+ * Bean-like class that contains the information on how to retrieve a single value result item
+ * from a simulation run. In addition, category information can be added in the form of assigning
+ * keyword for suitable categories, such as 'MTPL' for 'lob' or 'Storm' for 'peril', etc.
+ * These keywords per category are hold in a map with the category as key and the 'keyword' as value.
+ * The output path, output field and output collector are also included in this map,
+ * but are also available as fields.
+ *
  * @author martin.melchior
  */
 class OutputElement {
@@ -15,20 +21,31 @@ class OutputElement {
     static final String STATISTICS = "statistics"
     static final String STATISTICS_PARAMETER = "parameter"
 
-
     SimulationRun run
+
     String path
-    String templatePath
     String field
     String collector
+
+    String templatePath
     Map<String,String> categoryMap = [:]  // may also contain elements with null value
     List<String> wildCards
     WildCardPath wildCardPath
 
+    /**
+     * Allows to set a value ('keyword') for a given category.
+     * @param category
+     * @param value
+     */
     void addCategoryValue(String category, String value) {
         categoryMap[category] = value
     }
 
+    /**
+     * Returns the category value ('keyword') for a given category.
+     * @param category
+     * @return
+     */
     Object getCategoryValue(String category) {
         return categoryMap[category]
     }

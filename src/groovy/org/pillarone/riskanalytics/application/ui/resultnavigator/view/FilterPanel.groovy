@@ -19,9 +19,7 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
 import com.ulcjava.base.application.ULCFiller
-import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.BorderFactory
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 
 /**
  * @author martin.melchior
@@ -33,12 +31,10 @@ class FilterPanel extends ULCBoxPane {
     List<ITableRowFilterListener> filterListeners = []
     ULCComboBox categoryToFilter
     CategoryConfigurationDialog configurationDialog
-    KeyfigureSelectionModel keyfigureSelectionModel
 
-    FilterPanel(OutputElementTableModel tableModel, KeyfigureSelectionModel keyfigureSelectionModel) {
+    FilterPanel(OutputElementTableModel tableModel) {
         super(false, 2)
         this.tableModel = tableModel
-        this.keyfigureSelectionModel = keyfigureSelectionModel
         this.filterFactory = new FilterFactory(tableModel)
         createView()
     }
@@ -121,7 +117,7 @@ class FilterPanel extends ULCBoxPane {
 
         this.add(ULCBoxPane.BOX_EXPAND_CENTER, ULCFiller.createHorizontalGlue())
 
-        KeyfigureSelection keyfigureSelection = new KeyfigureSelection(this.keyfigureSelectionModel)
+        KeyfigureSelection keyfigureSelection = new KeyfigureSelection(this.tableModel.keyFigureSelectionModel)
         keyfigureSelection.setBorder(BorderFactory.createTitledBorder("Selection Statistics & Period"))
         this.add(ULCBoxPane.BOX_LEFT_CENTER, keyfigureSelection)
 

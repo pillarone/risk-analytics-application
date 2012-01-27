@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.Cat
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryResolverFactory;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener;
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver;
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.MatcherTreeNode;
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.CategoryResolverTreeNode;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -125,8 +125,8 @@ public class CategoryConfigurationDialog extends ULCDialog {
             public void actionPerformed(ActionEvent actionEvent) {
                 TreePath selection = tree.getSelectionPath();
                 Object o = selection.getLastPathComponent();
-                if (o instanceof MatcherTreeNode) {
-                    showMatcher(((MatcherTreeNode) o).getMatcher());
+                if (o instanceof CategoryResolverTreeNode) {
+                    showMatcher(((CategoryResolverTreeNode) o).getResolver());
                 }
             }
         });

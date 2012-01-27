@@ -3,12 +3,16 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Returns as resolved value the 'value' set - once it passes the isResolvable-check
+ * which is the case if the ICategoryResolver returns true.
  * @author martin.melchior
  */
 class ConditionalAssignmentResolver implements ICategoryResolver {
+
     static final String NAME = "conditionedOn"
     static final String EXCEPTION_MSG = """The conditionedOn resolver should be initialized with a category value assigned and
                                                 a condition in form of another resolver."""
+
     ICategoryResolver condition
     String value
 

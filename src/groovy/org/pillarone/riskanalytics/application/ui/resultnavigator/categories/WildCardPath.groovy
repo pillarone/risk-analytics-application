@@ -1,25 +1,43 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
-import groovy.text.Template
 import groovy.text.GStringTemplateEngine
-import java.util.HashMap.Entry
+import groovy.text.Template
 
 /**
+ * The wild card path consists of a template path with suitable variable sub-sections
+ * referred to as wild cards. These sub-sections are identified by '${category}'
+ * which are interpreted by the GStringTemplateEngine.
+ * The available wild cards (categories) for which a value can be set in the template
+ * are hold in the list
+ *
  * @author martin.melchior
  */
 class WildCardPath {
 
-    Template template
+    /**
+     * The string that is used as template.
+     */
     String templatePath
 
-    // map category <-> wildcard values
-    Map<String, List<String>> wildCardsMap
+    /**
+     * The list of strings that occur as modifiable wild cards in the path.
+     */
     List<String> pathWildCards
 
-    void setWildCardPath(String spec, List<String> pathWildCards) {
-        templatePath = spec
+    // map category <-> wildcard values
+    private Map<String, List<String>> wildCardsMap
+    private Template template
+
+    /**
+     * Initialize the object with a given templatePath and a list of strings that should be considered as
+     * wild cards.
+     * @param spec
+     * @param pathWildCards
+     */
+    void initialize(String templatePath, List<String> pathWildCards) {
+        this.templatePath = templatePath
         GStringTemplateEngine engine = new GStringTemplateEngine()
-        this.template = engine.createTemplate(spec)
+        this.template = engine.createTemplate(templatePath)
         this.pathWildCards = pathWildCards
         this.wildCardsMap = [:]
         for (String wildCard : pathWildCards) {
@@ -28,23 +46,19 @@ class WildCardPath {
     }
 
     /**
-     * Method to return the wild card available for this template
-     * @return
-     */
-    List<String> getPathWildCards() {
-        return pathWildCards
-    }
-
-    /**
-     * Method to return the wild card available for this template
-     * @return
+     * Method to return all the wild cards available for this class.
+     * It differs from the wild cards occurring in the template path by
+     * wild cards that are not associated with the templatePath but rather
+     * by synonyms to the field.
+     *
+     * @return all the keys included in the map.
      */
     List<String> getAllWildCards() {
         return wildCardsMap.keySet().asList()
     }
 
     /**
-     * Method to return the possible values for a given wild card element defined for this wild card path.
+     * Method to return the possible values for a given wild card element defined.
      * @param category
      * @return
      */

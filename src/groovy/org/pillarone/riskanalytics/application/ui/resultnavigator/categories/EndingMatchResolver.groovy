@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Is identified as resolvable in case a given prefix is found in the given path and if the
+ * remainder ion the r.h.s. has length > 0.
+ * This remainder is returned as resolved value.
  * @author martin.melchior
  */
 class EndingMatchResolver implements ICategoryResolver {

@@ -4,12 +4,18 @@ import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Is resolvable if substring of the given path is matched by a regex
+ * If a given path is identified as resolvable, the string found in the <code>n</code>-th group
+ * where <code>n</code> can be defined by the through the parameter groupDefiningMemberName. -
+ * See how to use regular expressions and java.util.regex.Pattern for further details.
+ *
  * @author martin.melchior
  */
 class RegexMatchResolver implements ICategoryResolver {
     static final String NAME = "matchRegex"
     static final String EXCEPTION_MSG = """The regex resolver should be initialized with a regex \n
                             and an integer that denotes the index of the group that defines the value."""
+
     Pattern pattern
     String refCategory = OutputElement.PATH
     int groupDefiningMemberName

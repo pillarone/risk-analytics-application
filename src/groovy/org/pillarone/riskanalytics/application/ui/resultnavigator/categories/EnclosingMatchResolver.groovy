@@ -4,11 +4,16 @@ import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Is resolvable if a String of non-zero length is embraced by any pair of strings (prefix,suffix)
+ * where both, prefix and suffix can be specified by a list of possibilities.
+ * If a given path is identified as resolvable, String embraced by the (prefix,suffix)-pair is returned.
  * @author martin.melchior
  */
 class EnclosingMatchResolver implements ICategoryResolver {
+
     static final String NAME = "enclosedBy"
     static final String EXCEPTION_MSG = "The enclosedBy resolver should be initialized with a List of prefixes and a list of suffix."
+
     List<String> prefix = []
     List<String> suffix = []
     String refCategory

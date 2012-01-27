@@ -8,6 +8,17 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
 
 /**
+ * Factory that allows to construct for a given name and parameters a suitable filter
+ * of type TableRowFilter used to filter the OutputElementTable.
+ * Filters currently available are
+ * <ul>
+ *     <it>"no filter": no filtering (all elements are displayed).</it>
+ *     <it>"templates": rather a different view for presenting the different path templates
+ *     and the possible wild car values.</it>
+ *     <it>"string search": regex search in the values of a given category (column)
+ *     - delegates to TableRowFilter.RegexFilter.</it>
+ *     <it>"empty field": presents just the empty fields for a given category (column)</it>
+ * </ul>
  * @author martin.melchior
  */
 class FilterFactory {
@@ -18,13 +29,20 @@ class FilterFactory {
     static String EMPTY = "empty fields"
     static String[] FILTERNAMES = [NONE, TEMPLATES, REGEX, EMPTY]
 
-    OutputElementTableModel tableModel
+    private OutputElementTableModel tableModel
 
     FilterFactory(OutputElementTableModel tableModel) {
         this.tableModel = tableModel
     }
 
-    TableRowFilter getFilter(String type, Object value, String category) {
+    /**
+     * The method that provides the filters.
+     * @param type
+     * @param value
+     * @param category
+     * @return
+     */
+    public TableRowFilter getFilter(String type, Object value, String category) {
         if (type.equals(REGEX) && value && value instanceof String) {
             return getRegexFilter((String)value, category)
         } else if (type.equals(TEMPLATES)) {
@@ -37,7 +55,7 @@ class FilterFactory {
         return null
     }
 
-    TableRowFilter getRegexFilter(String regex, String category) {
+    private TableRowFilter getRegexFilter(String regex, String category) {
         int colIndex = tableModel.getColumnIndex(category)
         if (colIndex>=0) {
             int[] colIndices = new int[1]
@@ -47,7 +65,7 @@ class FilterFactory {
         return null
     }
 
-    TableRowFilter getEmptyFilter(String category) {
+    private TableRowFilter getEmptyFilter(String category) {
         int colIndex = category != OutputElement.PATH ? tableModel.getColumnIndex(category) : -1
         if (colIndex>=0) {
             int[] colIndices = new int[1]
@@ -57,7 +75,7 @@ class FilterFactory {
         return null
     }
 
-    TableRowFilter getTemplatePathFilter() {
+    private TableRowFilter getTemplatePathFilter() {
         int[] indices = new int[1]
         indices[0] = tableModel.getColumnIndex(OutputElement.PATH)
         return new TemplatePathFilter(indices)

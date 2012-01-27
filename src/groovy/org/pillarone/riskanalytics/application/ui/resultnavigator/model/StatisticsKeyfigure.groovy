@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
 /**
+ * An enumeration for the statistics key figures.
+ * Each element also provides the information whether a parameter is needed.
+ *
  * @author martin.melchior
  */
 public enum StatisticsKeyfigure {
@@ -21,6 +24,10 @@ public enum StatisticsKeyfigure {
         this.name = name
     }
 
+    /**
+     * Returns whether this given enumeration needs a parameter
+     * @return
+     */
     boolean needsParameters() {
         switch (this) {
             case MEAN:

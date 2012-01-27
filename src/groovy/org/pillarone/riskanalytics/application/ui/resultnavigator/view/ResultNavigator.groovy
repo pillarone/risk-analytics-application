@@ -31,36 +31,48 @@ import com.ulcjava.base.application.ULCContainer
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
 
 /**
+ * The main component that provides the view for navigating within result entries.
+ *
  * @author martin.melchior
  */
 class ResultNavigator extends AbstractBean {
 
     private static Log LOG = LogFactory.getLog(ResultNavigator.class);
 
-    private ULCBoxPane contents
-    private ULCBoxPane resultEntryTable
-
-    CategoryConfigurationDialog configurationDialog
-    CategoryMapping categoryMapping
-
+    private CategoryMapping categoryMapping
+    private SimulationRunsModel simulationRunsModel
     private ResultAccess resultAccess
+
+    private ULCBoxPane contents
+    private ULCComboBox modelSelector
+    private ULCComboBox simulationRunSelector
+    private ULCButton loadButton
+    private ULCBoxPane resultEntryTable
+    private CategoryConfigurationDialog configurationDialog
 
     /**
      */
     public ResultNavigator() {
         super()
+
+        // initialize data access helper
         resultAccess = new ResultAccess()
-        contents = createContentView(true)
-        contents.setVisible true
+
+        // initialize the models for the simulaton run selection and the category mapping
+        simulationRunsModel = new SimulationRunsModel()
+
+        // initialize the views
+        createContentView()
     }
 
     public ResultNavigator(SimulationRun run) {
-        super()
-        resultAccess = new ResultAccess()
-        contents = createContentView(false)
-        contents.setVisible true
+        this()
+
+        // load the run and put the data into the table
         loadSimulationRun(run)
 
+        //freeze the selection of the simulation run and disable the load button
+        freezeSimulationRunSelection(run)
     }
 
     /**
@@ -70,27 +82,56 @@ class ResultNavigator extends AbstractBean {
         return contents;
     }
 
-    private ULCToolBar createToolbar(boolean enabled) {
-        SimulationRunsModel simulationRunsModel = new SimulationRunsModel()
+    /**
+     * Initialize the view - note that the table area (from where data are selected) remains empty
+     * since no data available yet.
+     */
+    private void createContentView() {
+        // area where the output element table will go into
+        resultEntryTable = new ULCBoxPane(true)
+        resultEntryTable.setBorder(BorderFactory.createTitledBorder("Data Selection"))
 
+        // toolbar area --> selection of simulation run, load button
+        ULCBoxPane toolbarArea = new ULCBoxPane(false)
+        toolbarArea.setBorder(BorderFactory.createTitledBorder("Data Access"))
+        ULCToolBar toolbar = createToolbar()
+        toolbarArea.add(ULCBoxPane.BOX_EXPAND_TOP, toolbar);
+
+        // pack all into a content view
+        contents = new ULCBoxPane(true)
+        contents.setBorder(BorderFactory.createEmptyBorder())
+        contents.add(ULCBoxPane.BOX_EXPAND_TOP, toolbarArea);
+        contents.add(ULCBoxPane.BOX_EXPAND_EXPAND, resultEntryTable)
+        contents.setVisible true
+    }
+
+    /**
+     * Create the toolbar that contains the selection of the simulation run.
+     * @return
+     */
+    private ULCToolBar createToolbar() {
+
+        // initialize the components
         ULCToolBar toolBar = new ULCToolBar("Simulation Run", ULCToolBar.HORIZONTAL)
         ULCLabel modelLabel = new ULCLabel("Model ")
+        modelSelector = new ULCComboBox(simulationRunsModel.getModelComboBoxModel())
+        ULCLabel simRunLabel = new ULCLabel("Simulation Run ")
+        simulationRunSelector = new ULCComboBox(simulationRunsModel.getSimulationRunsComboBoxModel())
+        loadButton = new ULCButton("Load")
+        ULCButton configureMapping = new ULCButton("Mapping Specification")
+
+        // layout them
         toolBar.add(modelLabel)
-        ULCComboBox modelSelector = new ULCComboBox(simulationRunsModel.getModelComboBoxModel())
-        modelSelector.setEnabled(enabled)
         toolBar.add(modelSelector)
         toolBar.addSeparator()
-        ULCLabel simRunLabel = new ULCLabel("Simulation Run ")
         toolBar.add(simRunLabel)
-        ULCComboBox simulationRunSelector = new ULCComboBox(simulationRunsModel.getSimulationRunsComboBoxModel())
-        simulationRunSelector.setEnabled(enabled)
-        simulationRunSelector.addActionListener(new IActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                ULCComboBox source = (ULCComboBox)event.getSource();
-                String simulationRunName = source.getSelectedItem();
-                simulationRunsModel.setSelectedRun(simulationRunName);
-            }
-        });
+        toolBar.add(simulationRunSelector)
+        toolBar.addSeparator()
+        toolBar.add(loadButton)
+        toolBar.add(ULCFiller.createHorizontalGlue())
+        toolBar.add(configureMapping)
+
+        // attach listeners to react to selection changes or push button actions
         modelSelector.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent event) {
                 ULCComboBox source = (ULCComboBox)event.getSource()
@@ -100,20 +141,18 @@ class ResultNavigator extends AbstractBean {
                 simulationRunSelector.setModel(cbModel);
             }
         });
-        toolBar.add(simulationRunSelector)
-        toolBar.addSeparator()
-        ULCButton loadButton = new ULCButton("Load")
-        loadButton.setEnabled(enabled)
+        simulationRunSelector.addActionListener(new IActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                ULCComboBox source = (ULCComboBox)event.getSource();
+                String simulationRunName = source.getSelectedItem();
+                simulationRunsModel.setSelectedRun(simulationRunName);
+            }
+        });
         loadButton.addActionListener( new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 loadSimulationRun(simulationRunsModel.getSelectedRun())
             }
         })
-        toolBar.add(loadButton)
-        toolBar.add(ULCFiller.createHorizontalGlue())
-
-        ULCButton configureMapping = new ULCButton("Mapping Specification")
-        toolBar.add(configureMapping)
         configureMapping.addActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
                 if (configurationDialog==null) {
@@ -137,6 +176,11 @@ class ResultNavigator extends AbstractBean {
         return toolBar
     }
 
+    /**
+     * Load the data associated with the simulation run and fill them into the result entry table.
+     * Check for a category mapping and attach associated information also to the OutputElement's.
+     * @param run
+     */
     private void loadSimulationRun(SimulationRun run) {
         List<OutputElement> elements = resultAccess.getOutputElements(run)
         categoryMapping = CategoryMappingRegistry.getCategoryMapping(run)
@@ -146,41 +190,46 @@ class ResultNavigator extends AbstractBean {
         loadDataIntoResultEntriesArea(elements, run)
     }
 
+    /**
+     * Load the result entries (List of OutputElement's) into the result entry table
+      * @param elements
+     * @param run
+     */
     private void loadDataIntoResultEntriesArea(List<OutputElement> elements, SimulationRun run) {
-        OutputElementTableModel model = new OutputElementTableModel(elements, categoryMapping)
+        // instantiate the model
+        KeyfigureSelectionModel keyfigureSelectionModel = new KeyfigureSelectionModel(run)
+        OutputElementTableModel model = new OutputElementTableModel(elements, categoryMapping, keyfigureSelectionModel)
+
+        // initialize the components that go into the resultEntryArea
+        FilterPanel filterPanel = new FilterPanel(model)
         OutputElementTable table = new OutputElementTable(model)
+        table.setDragEnabled(true)
         ULCScrollPane scrollPane = new ULCScrollPane()
         scrollPane.setViewPortView(table)
 
-        table.setDragEnabled(true)
-
-        KeyfigureSelectionModel keyfigureSelectionModel = new KeyfigureSelectionModel(run)
-        table.keyfigureSelection = keyfigureSelectionModel
-        FilterPanel filterPanel = new FilterPanel(model, keyfigureSelectionModel)
-
+        // layout them
         resultEntryTable.removeAll()
         resultEntryTable.add(ULCBoxPane.BOX_EXPAND_TOP, filterPanel);
         resultEntryTable.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollPane);
 
+        // attach listeners
         filterPanel.registerFilterListener table
         // table.addCategoryListChangeListener(filterPanel.getCategoryToFilter())
     }
 
-    private ULCBoxPane createContentView(boolean toolbarEnabled) {
-        ULCBoxPane contentView = new ULCBoxPane(true)
-        // contentView.setPreferredSize(new Dimension(800, 600))
-        contentView.setBorder(BorderFactory.createEmptyBorder())
+    /**
+     * Freezes the selection boxes at the values specified by the simulation run.
+     * @param run
+     */
+    private void freezeSimulationRunSelection(SimulationRun run) {
+        // first set the selected items in the combo boxes
+        String model = run.model
+        simulationRunsModel.setSelectedModel(model)
+        simulationRunsModel.setSelectedRun(run.getName())
 
-        ULCBoxPane toolbarArea = new ULCBoxPane(false)
-        toolbarArea.setBorder(BorderFactory.createTitledBorder("Data Access"))
-        ULCToolBar toolbar = createToolbar(toolbarEnabled)
-        toolbarArea.add(ULCBoxPane.BOX_EXPAND_TOP, toolbar);
-        contentView.add(ULCBoxPane.BOX_EXPAND_TOP, toolbarArea);
-
-        resultEntryTable = new ULCBoxPane(true)
-        resultEntryTable.setBorder(BorderFactory.createTitledBorder("Data Selection"))
-        contentView.add(ULCBoxPane.BOX_EXPAND_EXPAND, resultEntryTable)
-
-        return contentView
+        // then disable the combo boxes and the load button
+        modelSelector.setEnabled(false)
+        simulationRunSelector.setEnabled(false)
+        loadButton.setEnabled(false)
     }
 }

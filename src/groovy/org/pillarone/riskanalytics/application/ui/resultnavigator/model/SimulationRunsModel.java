@@ -8,37 +8,41 @@ import org.pillarone.riskanalytics.core.output.SimulationRun;
 
 import java.util.*;
 
+/**
+ * Model used for the selection of the simulation runs.
+ * It accesses the database through ResultAccess to the db from which the available
+ * simulation runs are retrieved. Then, the simulation runs are grouped according to
+ * the model the simulation result has been generated with. For each of these groups
+ * a combo box model is prepared that can be used thereafter for subsequent selection
+ * of a) the model and b) the simulation run.
+ *
+ */
 public class SimulationRunsModel {
 
-    private List<String> models = null;
-    private Map<String, String> modelsLookup = null; // short name --> long name
-    private String selectedModel = null; // short name
+    private List<String> models = null; // long names
+    private String selectedModel = null; // long name
     private Map<String, Map<String,SimulationRun>> runsLookup = null; // simulation run name --> simulation run
     private Map<String,IComboBoxModel> runsComboBoxModels = null; // model name long name --> combo box model
+    private IComboBoxModel modelsComboBoxModel = null;
     private String selectedRunName = null;
 
-    static String getSimpleName(String modelName) {
+    public static String getShortName(String modelName) {
         return  modelName.substring(modelName.lastIndexOf(".")+1);
     }
 
-    public String getFullModelName(String shortModelName) {
-        return modelsLookup.get(shortModelName);
-    }
-
     public SimulationRunsModel() {
+        // get all the runs
         List<SimulationRun> runs = ResultAccess.getSimulationRuns();
+
+        // initialize the collections that keep the model names, simulation runs
         models = new ArrayList<String>();
         Map<String, List<SimulationRun>> simulationRuns = new HashMap<String, List<SimulationRun>>();
-        modelsLookup = new HashMap<String, String>();
         runsLookup = new HashMap<String, Map<String,SimulationRun>>();
-        runsComboBoxModels = new HashMap<String,IComboBoxModel>();
+
+        // Iterate through all the runs and organize them
         if (runs != null && runs.size() > 0) {
             for (SimulationRun run : runs) {
                 String modelName = run.getModel();
-                String modelShortName = getSimpleName(modelName);
-                if (!modelsLookup.containsKey(modelShortName)) {
-                    modelsLookup.put(modelShortName, modelName);
-                }
                 if (!simulationRuns.containsKey(modelName)) {
                     simulationRuns.put(modelName, new ArrayList<SimulationRun>());
                     models.add(modelName);
@@ -54,7 +58,13 @@ public class SimulationRunsModel {
                 }
             }
         }
+
+        // create the combo box model for the model selection
         Collections.sort(models);
+        modelsComboBoxModel = new DefaultComboBoxModel(models);
+
+        // create the combo box models (one for all the runs for a given model)
+        runsComboBoxModels = new HashMap<String,IComboBoxModel>();
         for (String modelName : models) {
             List<String> runsForModel = new ArrayList<String>();
             for (SimulationRun run : simulationRuns.get(modelName)) {
@@ -64,37 +74,37 @@ public class SimulationRunsModel {
             runsComboBoxModels.put(modelName, new DefaultComboBoxModel(runsForModel));
         }
 
-        selectedModel = getSimpleName(models.get(0));
-        selectedRunName = simulationRuns.get(models.get(0)).get(0).getName();
+        // initialize the values shown at the beginning
+        selectedModel = models.get(0);
+        modelsComboBoxModel.setSelectedItem(selectedModel);
+        selectedRunName = simulationRuns.get(selectedModel).get(0).getName();
+        runsComboBoxModels.get(selectedModel).setSelectedItem(selectedRunName);
     }
 
     public SimulationRun getSelectedRun() {
-        return runsLookup.get(modelsLookup.get(selectedModel)).get(selectedRunName);
-    }
-
-    public String getSelectedModelShortName() {
-        return selectedModel;
+        return runsLookup.get(selectedModel).get(selectedRunName);
     }
 
     public String getSelectedModelName() {
-        return modelsLookup.get(selectedModel);
+        return selectedModel;
     }
 
-    public void setSelectedModelShortName(String modelName) {
+    public void setSelectedModel(String modelName) {
         selectedModel = modelName;
+        modelsComboBoxModel.setSelectedItem(selectedModel);
     }
 
     public void setSelectedRun(String runName) {
         selectedRunName = runName;
+        runsComboBoxModels.get(selectedModel).setSelectedItem(runName);
     }
 
     public IComboBoxModel getModelComboBoxModel() {
-        return new DefaultComboBoxModel(models);
+        return modelsComboBoxModel;
     }
 
     public IComboBoxModel getSimulationRunsComboBoxModel() {
-        return runsComboBoxModels.get(modelsLookup.get(selectedModel));
+        return runsComboBoxModels.get(selectedModel);
     }
-
 
 }

@@ -5,21 +5,27 @@ import com.ulcjava.base.application.tree.ITreeNode
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 
 /**
+ * Tree node used for constructing the tree with the category resolvers.
+ * Note that a category defined in the CategoryMapping associates a category descriptor with
+ * a recipe to assign a value in that category by using a ICategoryResolver.
+ *
  * @author martin.melchior
  */
-class MatcherTreeNode implements IMutableTreeNode {
-    ICategoryResolver matcher = null
-    List<MatcherTreeNode> children = []
-    MatcherTreeNode parent = null
+class CategoryResolverTreeNode implements IMutableTreeNode {
 
-    MatcherTreeNode(ICategoryResolver matcher, MatcherTreeNode parent) {
-        this.matcher = matcher
+    ICategoryResolver resolver = null
+
+    private List<CategoryResolverTreeNode> children = []
+    private CategoryResolverTreeNode parent = null
+
+    CategoryResolverTreeNode(ICategoryResolver matcher, CategoryResolverTreeNode parent) {
+        this.resolver = matcher
         this.parent = parent
     }
 
     void add(IMutableTreeNode iMutableTreeNode) {
-        if (iMutableTreeNode instanceof MatcherTreeNode) {
-            children.add((MatcherTreeNode)iMutableTreeNode)
+        if (iMutableTreeNode instanceof CategoryResolverTreeNode) {
+            children.add((CategoryResolverTreeNode)iMutableTreeNode)
         }
     }
 
@@ -33,13 +39,13 @@ class MatcherTreeNode implements IMutableTreeNode {
 
     void setUserObject(Object o) {
         if (o instanceof ICategoryResolver) {
-            matcher = (ICategoryResolver) o
+            resolver = (ICategoryResolver) o
         }
     }
 
     void setParent(IMutableTreeNode iMutableTreeNode) {
-        if (iMutableTreeNode instanceof MatcherTreeNode) {
-            this.parent = (MatcherTreeNode) iMutableTreeNode
+        if (iMutableTreeNode instanceof CategoryResolverTreeNode) {
+            this.parent = (CategoryResolverTreeNode) iMutableTreeNode
         }
     }
 
@@ -64,6 +70,6 @@ class MatcherTreeNode implements IMutableTreeNode {
     }
 
     String toString() {
-        return matcher.getName()
+        return resolver.getName()
     }
 }

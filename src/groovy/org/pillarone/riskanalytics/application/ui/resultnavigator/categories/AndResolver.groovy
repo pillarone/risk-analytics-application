@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
+ * Applies the logical AND to all resolvers set as children.
+ * As resolved value the unique resolved value of all the child resolvers
+ * is returned. In case there is no unique common resolved value null is returned.
  * @author martin.melchior
  */
 class AndResolver implements ICategoryResolver {

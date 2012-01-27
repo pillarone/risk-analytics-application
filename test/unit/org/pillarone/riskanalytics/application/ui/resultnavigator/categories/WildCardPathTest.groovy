@@ -22,7 +22,7 @@ class WildCardPathTest extends GroovyTestCase {
         String spec = "TestModel:perils:\${${cat1}}:someotherrefs:lobs:\${${cat2}}"
 
         WildCardPath wcp = new WildCardPath()
-        wcp.setWildCardPath(spec, [cat1,cat2])
+        wcp.initialize(spec, [cat1,cat2])
         assertTrue wcp.allWildCards.contains(cat1)
         assertTrue wcp.pathWildCards.contains(cat1)
         assertTrue wcp.allWildCards.contains(cat2)
@@ -38,7 +38,7 @@ class WildCardPathTest extends GroovyTestCase {
         String spec = "TestModel:perils:\${${cat1}}:someotherrefs:lobs:\${${cat2}}"
 
         WildCardPath wcp = new WildCardPath()
-        wcp.setWildCardPath(spec, [cat1,cat2])
+        wcp.initialize(spec, [cat1,cat2])
         String path = wcp.getSpecificPath(["peril":"storm", "lob":"Property", "field":"claims"])
         assertEquals "TestModel:perils:storm:someotherrefs:lobs:Property", path
 
@@ -49,7 +49,7 @@ class WildCardPathTest extends GroovyTestCase {
 
         // trivial path
         wcp = new WildCardPath()
-        wcp.setWildCardPath("mypath", [])
+        wcp.initialize("mypath", [])
         assertEquals "mypath", wcp.getSpecificPath([:])
     }
 
@@ -61,7 +61,7 @@ class WildCardPathTest extends GroovyTestCase {
         String spec = "TestModel:perils:\${${cat1}}:someotherrefs:lobs:\${${cat2}}"
 
         WildCardPath wcp = new WildCardPath()
-        wcp.setWildCardPath(spec, [cat1,cat2])
+        wcp.initialize(spec, [cat1,cat2])
         wcp.addPathWildCardValue cat1, "Storm"
         wcp.addPathWildCardValue cat1, "Flood"
         wcp.addPathWildCardValue cat2, "Prop"
