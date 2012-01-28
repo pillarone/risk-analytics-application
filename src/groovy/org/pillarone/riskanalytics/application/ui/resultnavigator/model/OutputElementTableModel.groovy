@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 import com.ulcjava.base.application.table.AbstractTableModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryChangeListener
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
 
 /**
  */

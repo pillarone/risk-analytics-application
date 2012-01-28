@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.CategoryResolverFactory
+
 /**
  * A Builder class that extends from the BuilderSupport class.
  * It allows to read specifications for a category mapping that are arranged in a hierarchical fashion

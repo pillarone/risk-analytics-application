@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.*
 
 /**
  * @author martin.melchior
@@ -56,7 +57,7 @@ class CategoryMappingTest extends GroovyTestCase {
         assertEquals(((WordMatchResolver)mapping.matcherMap["accountBasis"]).toMatch, ["Gross", "Ceded", "Net"])
 
         assertTrue mapping.matcherMap.containsKey("keyfigure")
-        assertTrue mapping.matcherMap["keyfigure"] instanceof SynonymToCategory
+        assertTrue mapping.matcherMap["keyfigure"] instanceof SynonymToCategoryResolver
     }
 
     List<OutputElement> getTestOutputElements() {
@@ -141,7 +142,7 @@ class CategoryMappingTest extends GroovyTestCase {
         mapping.addCategory("lob", new EnclosingMatchResolver(":lines:",":",OutputElement.PATH))
         mapping.addCategory("contracts", new EnclosingMatchResolver(":reinsurance:",":",OutputElement.PATH))
         mapping.addCategory("perils", new EnclosingMatchResolver(":claims:",":",OutputElement.PATH))
-        mapping.addCategory("keyfigure", new SynonymToCategory(OutputElement.FIELD))
+        mapping.addCategory("keyfigure", new SynonymToCategoryResolver(OutputElement.FIELD))
         return mapping
     }
 

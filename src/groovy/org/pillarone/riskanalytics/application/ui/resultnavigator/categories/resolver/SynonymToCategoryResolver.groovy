@@ -1,5 +1,6 @@
-package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
+package org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver
 
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
@@ -8,13 +9,13 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
  * It returns the value found for that category as resolved value.
  * @author martin.melchior
  */
-class SynonymToCategory implements ICategoryResolver {
+class SynonymToCategoryResolver implements ICategoryResolver {
     static final String NAME = "synonymousTo"
     static final String EXCEPTION_MSG = "The synonymousTo resolver should be initialized with the name of the category this category is synonymous with."
 
     String category
 
-    SynonymToCategory(String category) {
+    SynonymToCategoryResolver(String category) {
         this.category = category
     }
 

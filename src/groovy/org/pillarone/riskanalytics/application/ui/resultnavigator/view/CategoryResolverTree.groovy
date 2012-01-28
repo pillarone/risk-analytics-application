@@ -3,23 +3,20 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.view
 import com.ulcjava.base.application.ULCTree
 import com.ulcjava.base.application.tree.DefaultTreeModel
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
-
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.AndResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ConditionalAssignmentResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.OrResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.CategoryResolverTreeNode
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.AndResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.CategoryResolverTreeNode
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.ConditionalAssignmentResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.OrResolver
 
 /**
  * @author martin.melchior
  */
-class MatcherTree extends ULCTree {
+class CategoryResolverTree extends ULCTree {
 
-    private DefaultTreeModel fTreeModel;
-
-    MatcherTree(ICategoryResolver matcher) {
+    CategoryResolverTree(ICategoryResolver resolver) {
         super()
-        fTreeModel = new DefaultTreeModel(createTreeNode(matcher, null));
-        this.setModel(fTreeModel);
+        DefaultTreeModel model = new DefaultTreeModel(createTreeNode(resolver, null));
+        this.setModel(model);
         this.setScrollsOnExpand(true);
     }
 

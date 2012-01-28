@@ -1,10 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.joda.time.DateTime
-import com.ulcjava.base.application.IComboBoxModel
 import com.ulcjava.base.application.DefaultComboBoxModel
+import com.ulcjava.base.application.IComboBoxModel
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ResultAccess
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
  * Data model underlying the panel for selecting the period and the statistics key figure.
@@ -15,7 +15,7 @@ class KeyfigureSelectionModel {
 
     IComboBoxModel keyfigureModel
     Number keyfigureParameter
-    IComboBoxModel periodSelectionModel
+    DefaultComboBoxModel periodSelectionModel
 
     private int numOfIterations
     private int numOfPeriods
@@ -29,7 +29,9 @@ class KeyfigureSelectionModel {
         endPeriod = run.endTime
 
         keyfigureModel = new DefaultComboBoxModel(StatisticsKeyfigure.getNames())
-        periodSelectionModel = new DefaultComboBoxModel(0..<numOfPeriods)
+        
+        List<String> periodLabels = ResultAccess.getPeriodLabels(run)
+        periodSelectionModel = new DefaultComboBoxModel(periodLabels)
     }
 
     StatisticsKeyfigure getKeyfigure() {
@@ -37,6 +39,6 @@ class KeyfigureSelectionModel {
     }
 
     int getPeriod() {
-        return (int) periodSelectionModel.selectedItem
+        return (int) periodSelectionModel.getIndexOf(periodSelectionModel.getSelectedItem())
     }
 }

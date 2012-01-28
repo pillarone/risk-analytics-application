@@ -1,6 +1,7 @@
-package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
+package org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver
 
 import com.ulcjava.base.application.ULCBoxPane
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 
 /**
  * @author martin.melchior
@@ -71,11 +72,11 @@ class CategoryResolverFactory {
                 } catch (Exception ex) {
                     throw new IllegalArgumentException(ConditionalAssignmentResolver.EXCEPTION_MSG)
                 }
-            case SynonymToCategory.NAME:
+            case SynonymToCategoryResolver.NAME:
                 try {
-                    return new SynonymToCategory((String) params["category"])
+                    return new SynonymToCategoryResolver((String) params["category"])
                 } catch (Exception ex) {
-                    throw new IllegalArgumentException(SynonymToCategory.EXCEPTION_MSG)
+                    throw new IllegalArgumentException(SynonymToCategoryResolver.EXCEPTION_MSG)
                 }
             default:
                 return null

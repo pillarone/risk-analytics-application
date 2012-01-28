@@ -1,79 +1,96 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.view;
 
 import com.ulcjava.base.application.*;
-import com.ulcjava.base.application.border.ULCAbstractBorder;
 import com.ulcjava.base.application.event.*;
-import com.ulcjava.base.application.util.Color;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * Dialog that allows specify a category value for a given category (column) in the OutputElementTable
+ */
 public class AssignCategoryDialog extends ULCDialog {
 
-    private ULCBoxPane buttonPane;
-    private ULCBoxPane contentPane;
-    private ULCButton saveButton;
-    private ArrayList<IActionListener> saveActions;
-    private ULCComboBox categorySelection;
-    private ULCTextField memberAssignment;
     private List<String> categories;
 
+    private ULCComboBox categorySelection;
+    private ULCTextField assignValueField;
+
+    private ArrayList<IActionListener> saveActionsListeners;
 
     public AssignCategoryDialog(ULCWindow parent, List<String> categories) {
         super(parent);
         this.categories = categories;
+        saveActionsListeners = new ArrayList<IActionListener>();
 
-        saveActions = new ArrayList<IActionListener>();
+        // some look&feel, title, ...etc.
         boolean metalLookAndFeel = "Metal".equals(ClientContext.getLookAndFeelName());
         if (!metalLookAndFeel && ClientContext.getLookAndFeelSupportsWindowDecorations()) {
             setUndecorated(true);
             setWindowDecorationStyle(ULCDialog.PLAIN_DIALOG);
         }
-        createView();
         setTitle("Assign Category");
         setLocationRelativeTo(parent);
-    }
-
-    @SuppressWarnings("serial")
-    private void createView() {
-        contentPane = new ULCBoxPane(true);
-        contentPane.setBorder(createBorder(10, 10, 10, 10));
-
-        ULCBoxPane assignment = new ULCBoxPane(false);
-        assignment.setBorder(createBorder(0, 10, 0, 10));
-        categorySelection = new ULCComboBox(categories);
-        categorySelection.setEditable(false);
-        assignment.add(ULCBoxPane.BOX_LEFT_EXPAND, categorySelection);
-        assignment.add(ULCBoxPane.BOX_EXPAND_TOP, ULCFiller.createHorizontalGlue());
-
-        memberAssignment = new ULCTextField(15);
-        memberAssignment.setEditable(true);
-        assignment.add(ULCBoxPane.BOX_RIGHT_EXPAND, memberAssignment);
-
-        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, assignment);
-
-        ULCBoxPane buttonRow = new ULCBoxPane(false);
-        buttonRow.add(ULCBoxPane.BOX_EXPAND_TOP, ULCFiller.createHorizontalGlue());
-        buttonPane = createButtonPane();
-        buttonRow.add(ULCBoxPane.BOX_RIGHT_EXPAND, buttonPane);
-        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, buttonRow);
-
-        this.add(contentPane);
-
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new IWindowListener() {
             public void windowClosing(WindowEvent event) {
                 setVisible(false);
             }
         });
+
+        // create view
+        createView();
+    }
+
+    @SuppressWarnings("serial")
+    private void createView() {
+        // initialize components
+        ULCBoxPane contentPane = new ULCBoxPane(true);
+        contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        ULCBoxPane assignValuePane = new ULCBoxPane(false);
+        assignValuePane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        categorySelection = new ULCComboBox(categories);
+        categorySelection.setEditable(false);
+        assignValueField = new ULCTextField(15);
+        assignValueField.setEditable(true);
+        ULCBoxPane buttonRow = new ULCBoxPane(false);
+        ULCBoxPane buttonPane = createButtonPane();
+
+        // layout components
+        assignValuePane.add(ULCBoxPane.BOX_LEFT_EXPAND, categorySelection);
+        assignValuePane.add(ULCBoxPane.BOX_EXPAND_TOP, ULCFiller.createHorizontalGlue());
+        assignValuePane.add(ULCBoxPane.BOX_RIGHT_EXPAND, assignValueField);
+        buttonRow.add(ULCBoxPane.BOX_EXPAND_TOP, ULCFiller.createHorizontalGlue());
+        buttonRow.add(ULCBoxPane.BOX_RIGHT_EXPAND, buttonPane);
+        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, assignValuePane);
+        contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, buttonRow);
+
+        this.add(contentPane);
+
         pack();
     }
+
 
     @SuppressWarnings("serial")
     private ULCBoxPane createButtonPane() {
         ULCButton cancelButton = new ULCButton("cancel");
+        ULCButton saveButton = new ULCButton("ok");
+        ULCBoxPane boxPane = new ULCBoxPane(false);
+        boxPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        ULCBoxPane boxPane1 = new ULCBoxPane(false);
+        boxPane1.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        ULCBoxPane boxPane2 = new ULCBoxPane(false);
+        boxPane2.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        setDefaultButton(saveButton);
+
+        // layout components
+        boxPane1.add(ULCBoxPane.BOX_RIGHT_EXPAND, saveButton);
+        boxPane2.add(ULCBoxPane.BOX_LEFT_EXPAND, cancelButton);
+        boxPane.add(ULCBoxPane.BOX_LEFT_EXPAND, boxPane2);
+        boxPane.add(ULCBoxPane.BOX_EXPAND_TOP, ULCFiller.createHorizontalGlue());
+        boxPane.add(ULCBoxPane.BOX_RIGHT_EXPAND, boxPane1);
+
+        // attach listeners
         cancelButton.addActionListener(
                 new IActionListener() {
                     public void actionPerformed(ActionEvent event) {
@@ -81,44 +98,24 @@ public class AssignCategoryDialog extends ULCDialog {
                     }
                 }
         );
-        ULCButton saveButton = new ULCButton("ok");
-        setDefaultButton(saveButton);
         saveButton.addActionListener(new IActionListener() {
             public void actionPerformed(ActionEvent event) {
                 setVisible(false);
-                for (IActionListener listener : saveActions) {
+                for (IActionListener listener : saveActionsListeners) {
                     listener.actionPerformed(event);
                 }
             }
         });
 
-        ULCBoxPane boxPane1 = new ULCBoxPane(false);
-        boxPane1.setBorder(createBorder(0, 10, 0, 10));
-        boxPane1.add(ULCBoxPane.BOX_RIGHT_EXPAND, saveButton);
-
-        ULCBoxPane boxPane2 = new ULCBoxPane(false);
-        boxPane2.setBorder(createBorder(0, 10, 0, 10));
-        boxPane2.add(ULCBoxPane.BOX_LEFT_EXPAND, cancelButton);
-
-        ULCBoxPane boxPane = new ULCBoxPane(false);
-        boxPane.setBorder(createBorder(0, 10, 0, 10));
-        boxPane.add(ULCBoxPane.BOX_LEFT_EXPAND, boxPane2);
-        boxPane.add(ULCBoxPane.BOX_EXPAND_TOP, ULCFiller.createHorizontalGlue());
-        boxPane.add(ULCBoxPane.BOX_RIGHT_EXPAND, boxPane1);
-
         return boxPane;
     }
 
-    private ULCAbstractBorder createBorder(int top, int left, int buttom, int right) {
-        return BorderFactory.createEmptyBorder(top, left, buttom, right);
-    }
-
     public void addSaveActionListener(IActionListener saveActionListener) {
-        saveActions.add(saveActionListener);
+        saveActionsListeners.add(saveActionListener);
     }
 
-    public String[] getAssignment() {
-        return new String[]{categorySelection.getSelectedItem().toString(), memberAssignment.getText()};
+    public String[] getAssignedValue() {
+        return new String[]{categorySelection.getSelectedItem().toString(), assignValueField.getText()};
     }
 
     public IListDataListener getCategoryComboBox() {

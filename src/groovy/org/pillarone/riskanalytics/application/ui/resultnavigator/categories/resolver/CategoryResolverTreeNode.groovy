@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.resultnavigator.model
+package org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver
 
 import com.ulcjava.base.application.tree.IMutableTreeNode
 import com.ulcjava.base.application.tree.ITreeNode

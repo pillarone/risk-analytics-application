@@ -1,11 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.WordMatchResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
  * User: martin.melchior
  */
-class SingleValueFromListMatcherTest extends GroovyTestCase {
+class WordMatchResolverTest extends GroovyTestCase {
 
     void testGetWordByUniqueMatch() {
         String path = "podra:someother:path:linesOfBusiness:motor:restofthe:path"

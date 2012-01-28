@@ -1,34 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.view
 
 import com.ulcjava.applicationframework.application.AbstractBean
+import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IActionListener
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCBoxPane
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ResultAccess
-
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.ULCScrollPane
-
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMappingRegistry
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
-import com.ulcjava.base.application.ULCToolBar
-import com.ulcjava.base.application.ULCLabel
-import com.ulcjava.base.application.ULCFiller
-import com.ulcjava.base.application.ULCComboBox
-import com.ulcjava.base.application.ULCButton
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.SimulationRunsModel
-import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.ULCSplitPane
-import com.ulcjava.base.application.IComboBoxModel
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCContainer
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMappingRegistry
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.SimulationRunsModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ResultAccess
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import com.ulcjava.base.application.*
 
 /**
  * The main component that provides the view for navigating within result entries.
@@ -201,7 +186,7 @@ class ResultNavigator extends AbstractBean {
         OutputElementTableModel model = new OutputElementTableModel(elements, categoryMapping, keyfigureSelectionModel)
 
         // initialize the components that go into the resultEntryArea
-        FilterPanel filterPanel = new FilterPanel(model)
+        OutputElementTableToolbar filterPanel = new OutputElementTableToolbar(model)
         OutputElementTable table = new OutputElementTable(model)
         table.setDragEnabled(true)
         ULCScrollPane scrollPane = new ULCScrollPane()

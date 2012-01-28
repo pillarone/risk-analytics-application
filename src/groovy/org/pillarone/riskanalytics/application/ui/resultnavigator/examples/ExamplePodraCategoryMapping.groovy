@@ -2,12 +2,11 @@ package org.pillarone.riskanalytics.application.ui.resultnavigator.examples
 
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
-
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.ConditionalAssignmentResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.EnclosingMatchResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.OrResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.WordMatchResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ConditionalAssignmentResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.EnclosingMatchResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.OrResolver
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WordMatchResolver
 
 /**
  * @author martin.melchior

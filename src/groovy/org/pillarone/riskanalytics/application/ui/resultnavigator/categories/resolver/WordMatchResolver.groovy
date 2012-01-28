@@ -1,6 +1,7 @@
-package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
+package org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver
 
 import java.util.regex.Pattern
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**

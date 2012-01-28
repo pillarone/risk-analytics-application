@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.util
 
 import com.ulcjava.base.application.table.TableRowFilter
+import com.ulcjava.base.application.table.TableRowFilter.AbstractFilter
 import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import com.ulcjava.base.application.table.TableRowFilter.AbstractFilter
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.WildCardPath
 
 /**
  * Factory that allows to construct for a given name and parameters a suitable filter

@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
+package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
 import groovy.text.GStringTemplateEngine
 import groovy.text.Template

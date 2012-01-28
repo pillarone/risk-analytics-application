@@ -1,25 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.view
 
-import com.ulcjava.base.application.ULCTable
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
-import com.ulcjava.base.application.table.TableRowSorter
-import com.ulcjava.base.application.table.TableRowFilter
-
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.shared.UlcEventConstants
-import com.ulcjava.base.application.ULCListSelectionModel
-
-import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ITableRowFilterListener
-import com.ulcjava.base.application.ULCPopupMenu
-import com.ulcjava.base.application.ULCMenuItem
-import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.UlcUtilities
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
-import com.ulcjava.base.application.IRendererComponent
+import com.ulcjava.base.application.table.TableRowFilter
+import com.ulcjava.base.application.table.TableRowSorter
 import com.ulcjava.base.application.table.ULCTableColumn
+import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.KeyfigureSelectionModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElementTableModel
+import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ITableRowFilterListener
+import com.ulcjava.base.application.*
 
 /**
  * Table for the OutputElement's that also views the different categories
@@ -131,7 +123,7 @@ class OutputElementTable extends ULCTable implements ITableRowFilterListener {
         });
         assignCategory.addSaveActionListener(new IActionListener() {
             void actionPerformed(ActionEvent actionEvent) {
-                String[] assignment = assignCategory.getAssignment()
+                String[] assignment = assignCategory.getAssignedValue()
                 for (int rowIndex : selectedModelRows) { 
                     OutputElement element = tableModel.getRowElement(rowIndex)
                     element.getCategoryMap()[assignment[0]]=assignment[1]

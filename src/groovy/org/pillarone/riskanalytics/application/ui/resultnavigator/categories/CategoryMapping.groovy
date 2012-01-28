@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import java.util.Map.Entry
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.SynonymToCategoryResolver
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.WildCardPath
 
 /**
  * @author martin.melchior
@@ -144,7 +146,7 @@ class CategoryMapping {
      * @param category
      * @return Return matcher of type ICategoryResolver for the given category descriptor.
      */
-    ICategoryResolver getCategoryMatcher(String category) {
+    ICategoryResolver getCategoryResolver(String category) {
         return matcherMap[category]
     }
 
@@ -226,7 +228,7 @@ class CategoryMapping {
             while (synonymToField==null && it.hasNext()) {
                 String key = it.next()
                 ICategoryResolver resolver = matcherMap[key]
-                if (resolver instanceof SynonymToCategory && ((SynonymToCategory)resolver).category.equals(OutputElement.FIELD)) {
+                if (resolver instanceof SynonymToCategoryResolver && ((SynonymToCategoryResolver)resolver).category.equals(OutputElement.FIELD)) {
                     synonymToField = key
                 }
             }

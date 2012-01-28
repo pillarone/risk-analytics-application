@@ -1,11 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.EnclosingMatchResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 /**
  * User: martin.melchior
  */
-class EnclosingMatcherTest extends GroovyTestCase {
+class EnclosingMatchResolverTest extends GroovyTestCase {
 
     void testEnclosingMatcher() {
         ICategoryResolver matcher = new EnclosingMatchResolver(["linesOfBusiness:sub", "AA"], ["SL", "WXL", "BB"], OutputElement.PATH)

@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.examples
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.*
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.ICategoryResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.*
 
 /**
  * @author martin.melchior
@@ -16,6 +18,6 @@ class PodraModelCategoryMapping extends CategoryMapping {
         matcherMap["peril"] = new EnclosingMatchResolver("claimsGenerators:sub",":",OutputElement.PATH)
         matcherMap["reinsuranceContractType"] = new EnclosingMatchResolver(["subContracts:sub","reinsuranceContracts:sub"],[":"],OutputElement.PATH)
         matcherMap["accountBasis"] = new WordMatchResolver(["Gross", "Ceded", "Net"],OutputElement.PATH)
-        matcherMap["keyfigure"] = new SynonymToCategory(OutputElement.FIELD)
+        matcherMap["keyfigure"] = new SynonymToCategoryResolver(OutputElement.FIELD)
     }
 }

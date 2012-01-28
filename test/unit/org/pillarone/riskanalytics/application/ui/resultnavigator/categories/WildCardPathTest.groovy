@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.EnclosingMatchResolver
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.pillarone.riskanalytics.application.ui.resultnavigator.model.WildCardPath
 
 /**
  * @author martin.melchior

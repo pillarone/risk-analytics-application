@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.model
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.WildCardPath
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
