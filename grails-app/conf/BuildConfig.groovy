@@ -52,9 +52,6 @@ grails.project.dependency.resolution = {
         compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
         compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
         compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
-
-        compile(group: 'com.canoo.ulc.ext.ULCMigLayout', name: 'ULCMigLayout-client', version: '1.0') { excludes "ulc-core-client" }
-        compile(group: 'com.canoo.ulc.ext.ULCMigLayout', name: 'ULCMigLayout-server', version: '1.0') { excludes "ulc-core-server" }
     }
 
 }

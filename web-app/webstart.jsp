@@ -48,13 +48,15 @@
 
     <resources>
         <j2se version="1.5+"/>
-        <jar href="./plugins/ulc-ria-suite-u2/lib/ulc-jnlp-client.jar"/>
-        <jar href="./plugins/ulc-ria-suite-u2/lib/ulc-base-client.jar"/>
-        <jar href="./plugins/ulc-ria-suite-u2/lib/ulc-servlet-client.jar"/>
-        <jar href="./plugins/ulc-ria-suite-u2/lib/ulc-base-trusted.jar"/>
+        <jar href="./plugins/ulc-ria-suite-u2-P1/lib/ulc-jnlp-client.jar"/>
+        <jar href="./plugins/ulc-ria-suite-u2-P1/lib/ulc-base-client.jar"/>
+        <jar href="./plugins/ulc-ria-suite-u2-P1/lib/ulc-servlet-client.jar"/>
+        <jar href="./plugins/ulc-ria-suite-u2-P1/lib/ulc-base-trusted.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-jnlp-client.jar" main="true"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-extensions-client.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-client.jar"/>
+        <jar href="<%= appPluginDir %>/lib/ULCMigLayout-client-1.0.jar"/>
+        <jar href="<%= appPluginDir %>/lib/miglayout-3.7.3.1.jar"/>
     </resources>
 
     <resources os="Windows">
