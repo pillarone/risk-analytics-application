@@ -5,32 +5,32 @@ import org.pillarone.riskanalytics.application.dataaccess.function.IParametrized
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
+import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeModel
 
 abstract class ParametrizedKeyFigureAction<E> extends AbstractKeyFigureAction {
 
-    private List<? extends E> usedParameters
     protected IParametrizedKeyFigureValueProvider<? extends E> valueProvider
 
     ParametrizedKeyFigureAction(IParametrizedKeyFigureValueProvider<? extends E> valueProvider, AbstractModellingModel model, ULCTableTree tree, String key) {
         super(model, tree, key)
-        usedParameters = []
         this.valueProvider = valueProvider
     }
 
     protected void addFunction(IParametrizedFunction<? extends E> function) {
         E parameter = function.parameter
-        if (!usedParameters.contains(parameter)) {
-            addFunction(function as IFunction)
-            usedParameters.add(parameter)
-        }
-    }
 
-    protected void removeFunction(IParametrizedFunction<? extends E> function) {
-        E parameter = function.parameter
-        if (usedParameters.contains(parameter)) {
-            removeFunction(function as IFunction)
-            usedParameters.remove(parameter)
+        ResultViewModel model = model as ResultViewModel
+        ITableTreeModel tableTreeModel = model.tableTreeModel
+        for (IFunction f in tableTreeModel.functions) {
+            if (f?.class == function.class) {
+                if (parameter == f.parameter) {
+                    return
+                }
+            }
         }
+        addFunction(function as IFunction)
     }
 
     @Override
