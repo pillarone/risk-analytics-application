@@ -100,10 +100,12 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         boolean different = false
         for (int i = 1; i < getColumnCount(); i += getParameterizationsSize()) {
             MultiDimensionalParameterHolder parameterHolder = compareNode.getParameterHolder(i)
+            if(parameterHolder == null) return true
             AbstractMultiDimensionalParameter multiDimensionalParameter = parameterHolder.getBusinessObject()
             List<List> values = multiDimensionalParameter.values
             for (int j = 1; j < 2 || j < getParameterizationsSize(); j++) {
                 MultiDimensionalParameterHolder currentParameterHolder = compareNode.getParameterHolder(i + j)
+                if(currentParameterHolder == null) return true
                 AbstractMultiDimensionalParameter currentMultiDimensionalParameter = currentParameterHolder.businessObject
                 List<List> currentValues = currentMultiDimensionalParameter.values
 
@@ -140,7 +142,10 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         } else {
             value = node.getValueAt(i)
         }
-        return value?.toString()
+        if(value != null && !(value instanceof Number)) {
+            value = value.toString()
+        }
+        return value
     }
 
     public Object getRoot() {

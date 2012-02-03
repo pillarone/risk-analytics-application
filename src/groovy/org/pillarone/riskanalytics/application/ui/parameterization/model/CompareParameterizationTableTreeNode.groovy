@@ -55,7 +55,11 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
     }
 
     ParameterHolder getParameterHolder(int column) {
-        return parametersMap[getParameterizationIndex(column)][getPeriodIndex(column)]
+        final List<ParameterHolder> periodList = parametersMap[getParameterizationIndex(column)]
+        if(periodList == null) {
+            return null
+        }
+        return periodList[getPeriodIndex(column)]
     }
 
 
