@@ -142,7 +142,10 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         } else {
             value = node.getValueAt(i)
         }
-        return value?.toString()
+        if(value != null && !(value instanceof Number)) {
+            value = value.toString()
+        }
+        return value
     }
 
     public Object getRoot() {
