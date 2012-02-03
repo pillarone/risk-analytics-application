@@ -13,7 +13,7 @@ abstract class AbstractResultFunction extends AbstractFunction {
         return null
     }
 
-    abstract double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node)
+    abstract Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node)
 
     abstract String getKeyFigureName()
 

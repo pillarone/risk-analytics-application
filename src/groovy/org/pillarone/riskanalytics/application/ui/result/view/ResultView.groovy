@@ -83,7 +83,7 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
     public ULCBoxPane createSelectionPane() {
         selectView = new ULCComboBox(model.selectionViewModel)
         selectView.name = "selectView"
-        selectView.setPreferredSize(new Dimension(120, 20))
+        selectView.setPreferredSize(new Dimension(300, 20))
         selectView.addActionListener(new ApplySelectionAction(model, this))
 
         filterSelection = new ULCComboBox()

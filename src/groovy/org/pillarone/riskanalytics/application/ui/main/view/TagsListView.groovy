@@ -77,7 +77,7 @@ class TagsListView extends AbstractView {
     }
 
     public List<Tag> getAllTags() {
-        return Tag.findAll(" from ${Tag.class.name} as tag where tag.tagType =? and tag.name != ? order by tag.name asc", [EnumTagType.PARAMETERIZATION, "LOCKED"])
+        return Tag.findAll(" from ${Tag.class.name} as tag where tag.tagType =? and tag.name != ? order by tag.name asc", [EnumTagType.PARAMETERIZATION, Tag.LOCKED_TAG])
     }
 
     private List<Tag> getAllModellingItemTages() {

@@ -36,7 +36,6 @@ class SaveAlreadyUsedParameterizationTests extends AbstractSimpleFunctionalTest 
 //    IActionListener saveAction
 
     protected void doStart() {
-        new DBCleanUpService().cleanUp()
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
 

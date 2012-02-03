@@ -34,7 +34,6 @@ class SaveParameterizationTests extends AbstractSimpleFunctionalTest {
     Parameterization parameterization
 
     protected void doStart() {
-        new DBCleanUpService().cleanUp()
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
 

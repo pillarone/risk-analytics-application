@@ -105,7 +105,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public void closeItem(Model model, AbstractUIItem abstractUIItem) {
         notifyCloseDetailView(model, abstractUIItem)
-        viewModelsInUse.remove(abstractUIItem)
         unregisterModel(abstractUIItem)
         abstractUIItem.removeAllModellingItemChangeListener()
     }
@@ -159,6 +158,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             if (viewModel instanceof SimulationConfigurationModel) {
                 viewModel.actionsPaneModel.removeSimulationListener(this)
                 removeModelChangedListener(viewModel.settingsPaneModel)
+                removeModelChangedListener(viewModel.actionsPaneModel)
                 removeNewSimulationListener(viewModel)
             }
             if (viewModel instanceof IModelChangedListener) {

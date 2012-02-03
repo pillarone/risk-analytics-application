@@ -7,6 +7,8 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjec
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Color
+import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
+import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 
 /**
  * User: Fouad Jaada
@@ -72,19 +74,65 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
     }
 
     public boolean isDifferent(Object node) {
+        if (node instanceof CompareParameterizationTableTreeNode) {
+            return internalIsDifferent(node.parameterizationTableTreeNode, node)
+        }
+        return false
+    }
+
+    protected boolean internalIsDifferent(ParameterizationTableTreeNode node, CompareParameterizationTableTreeNode compareNode) {
         boolean different = false
         for (int i = 1; i < getColumnCount(); i += getParameterizationsSize()) {
-            def refObject = getValueAt(node, i)
+            def refObject = getValueAt(compareNode, i)
             for (int j = 1; j < 2 || j < getParameterizationsSize(); j++) {
-                def object = getValueAt(node, i + j)
+                def object = getValueAt(compareNode, i + j)
                 if (refObject != object) {
                     different = true
-                    differentsNode << node
+                    differentsNode << compareNode
                     break;
                 }
             }
         }
         return different
+    }
+
+    protected boolean internalIsDifferent(MultiDimensionalParameterizationTableTreeNode node, CompareParameterizationTableTreeNode compareNode) {
+        boolean different = false
+        for (int i = 1; i < getColumnCount(); i += getParameterizationsSize()) {
+            MultiDimensionalParameterHolder parameterHolder = compareNode.getParameterHolder(i)
+            if(parameterHolder == null) return true
+            AbstractMultiDimensionalParameter multiDimensionalParameter = parameterHolder.getBusinessObject()
+            List<List> values = multiDimensionalParameter.values
+            for (int j = 1; j < 2 || j < getParameterizationsSize(); j++) {
+                MultiDimensionalParameterHolder currentParameterHolder = compareNode.getParameterHolder(i + j)
+                if(currentParameterHolder == null) return true
+                AbstractMultiDimensionalParameter currentMultiDimensionalParameter = currentParameterHolder.businessObject
+                List<List> currentValues = currentMultiDimensionalParameter.values
+
+                if (currentValues.size() != values.size()) {
+                    different = true
+                    differentsNode << compareNode
+                    break
+                }
+                for (int k = 0; k < values.size(); k++) {
+                    List currentList = currentValues[k]
+                    List list = values[k]
+                    if (currentList.size() != list.size()) {
+                        different = true
+                        differentsNode << compareNode
+                        break
+                    }
+                    for (int l = 0; l < list.size(); l++) {
+                        if (currentList[l] != list[l]) {
+                            different = true
+                            differentsNode << compareNode
+                            break
+                        }
+                    }
+                }
+            }
+            return different
+        }
     }
 
     public Object getValueAt(Object node, int i) {
@@ -94,7 +142,10 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         } else {
             value = node.getValueAt(i)
         }
-        return value?.toString()
+        if(value != null && !(value instanceof Number)) {
+            value = value.toString()
+        }
+        return value
     }
 
     public Object getRoot() {

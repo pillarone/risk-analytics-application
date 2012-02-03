@@ -27,7 +27,6 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
     }
 
     protected void setUp() {
-        new DBCleanUpService().cleanUp()
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
@@ -40,7 +39,6 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     protected void tearDown() {
         super.tearDown();
-        new DBCleanUpService().cleanUp()
         removeTags()
         LocaleResources.clearTestMode()
         BatchUIItem

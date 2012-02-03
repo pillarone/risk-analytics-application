@@ -10,7 +10,7 @@ class SigmaFunction extends AbstractResultFunction {
     public static final String SIGMA = "Sigma"
 
     @Override
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getStdDev(simulationRun, periodIndex, node.path, node.collector, node.field)
 
     }

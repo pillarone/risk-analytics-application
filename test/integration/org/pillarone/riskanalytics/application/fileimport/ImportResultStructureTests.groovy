@@ -13,14 +13,6 @@ class ImportResultStructureTests extends GroovyTestCase {
 
     ResultStructureImportService service = new ResultStructureImportService()
 
-    @Override
-    protected void setUp() {
-        super.setUp()
-        new DBCleanUpService().cleanUp()
-    }
-
-
-
     void testImport() {
 
         File paramFile = new File(getModelFolder(), "application/ApplicationDefaultResultTree.groovy")

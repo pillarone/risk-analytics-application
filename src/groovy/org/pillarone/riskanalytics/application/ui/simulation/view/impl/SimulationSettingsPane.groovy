@@ -146,7 +146,7 @@ class SimulationSettingsPane {
             beginOfFirstPeriod.setEditor(new ULCDateEditor(beginOfFirstPeriod, FastDateFormat.getDateInstance(FastDateFormat.SHORT, LocaleResources.getLocale()).pattern))
         }
 
-        runtimeParameterPane = new RuntimeParameterPane(model.parameterPaneModel)
+        runtimeParameterPane = new RuntimeParameterPane(model)
 
     }
 
@@ -197,6 +197,7 @@ class SimulationSettingsPane {
         userDefinedRandomSeed.setSelected(Boolean.parseBoolean(userPreferences.getDefaultValue(UserPreferences.RANDOM_SEED_USE_USER_DEFINED, "" + Boolean.FALSE)))
         userDefinedRandomSeed.addValueChangedListener([valueChanged: { ValueChangedEvent e ->
             userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USE_USER_DEFINED, "" + userDefinedRandomSeed.isSelected())
+            model.notifyConfigurationChanged()
         }] as IValueChangedListener)
 
         randomSeed = new ULCTextField()

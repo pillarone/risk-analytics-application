@@ -29,7 +29,6 @@ class SimulationUIItemTests extends AbstractUIItemTest {
 
     @Override
     AbstractUIItem createUIItem() {
-        new DBCleanUpService().cleanUp()
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
 

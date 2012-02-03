@@ -4,11 +4,24 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.*
+import models.core.CoreModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
 
 class QueryPanelModelTests extends GroovyTestCase {
 
+    PathMapping path
+    FieldMapping field
+    CollectorMapping aggregatedSingleCollector
+    ResultWriter resultWriter
+
     void setUp() {
         LocaleResources.setTestMode()
+        FileImportService.importModelsIfNeeded(['Core'])
+
     }
 
     void tearDown() {
@@ -26,28 +39,52 @@ class QueryPanelModelTests extends GroovyTestCase {
         assertEquals "sum(s.value) > 123.12", model.createCriteriaSubQuerry(createQPM(model, "TESTPATH", 1, CriteriaComparator.GREATER_THAN, 123.12))
     }
 
-    //todo runs alone but not during cruise
-    /*void testClearCriteriaList() {
+    void testPMO1914() {
+        final SimulationRun run = prepareDB()
+
+        final ResultTableTreeNode node = new ResultTableTreeNode("name", CoreModel)
+        node.collector = aggregatedSingleCollector.collectorName
+        node.resultPath = path.pathName + ":" + field.fieldName
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(run, [node], false)
+        model.criterias[0][0].valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
+        model.query()
+
+        assertTrue(model.results.contains(1))
+        assertEquals(2000, model.resultTableModel.tableValues[0][1])
+
+        println()
+    }
+
+    protected SimulationRun prepareDB() {
+        path = new PathMapping(pathName: "PATH1").save()
+        CollectorMapping aggregatedCollector = CollectorMapping.findByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER)
+        CollectorMapping singleCollector = CollectorMapping.findByCollectorName(SingleValueCollectingModeStrategy.IDENTIFIER)
+        aggregatedSingleCollector = CollectorMapping.findByCollectorName(AggregatedWithSingleAvailableCollectingModeStrategy.IDENTIFIER)
+        field = new FieldMapping(fieldName: "field").save()
+
+        SimulationRun run = createSimulationRun()
+        writeResult new SingleValueResult(simulationRun: run, path: path, collector: singleCollector, field: field, period: 0, iteration: 1, value: 1000)
+        writeResult new SingleValueResult(simulationRun: run, path: path, collector: singleCollector, field: field, period: 0, iteration: 1, value: 1000)
+
+        writeResult new SingleValueResult(simulationRun: run, path: path, collector: aggregatedSingleCollector, field: field, period: 0, iteration: 1, value: 2000)
+
+        return run
+    }
+
+    protected SimulationRun createSimulationRun() {
         SimulationRun run = new SimulationRun()
-        run.periodCount = 2
-        QueryPaneModel model = new QueryPaneModel(run, [], false, false, false)
+        run.name = "testRun"
+        run.parameterization = ParameterizationDAO.findByName("CoreParameters")
+        run.resultConfiguration = ResultConfigurationDAO.findByName("CoreResultConfiguration")
+        run.model = CoreModel.name
+        run.periodCount = 1
+        run.iterations = 2
+        assertNotNull run.save()
+        resultWriter = new ResultWriter(run.id)
+        return run
+    }
 
-        List unfilteredList = [
-                [createQPM(model, "TESTPATH", 1, Comparator.EQUALS, 1), createQPM(model, "TESTPATH", 2, Comparator.EQUALS, 1)],
-                [createQPM(model, "TESTPATH2", 2, Comparator.EQUALS, 1), createQPM(model, "TESTPATH", 2, Comparator.EQUALS, 1)]
-        ]
-
-        List expectedList = [[unfilteredList[0][0]]]
-        List expectedList2 = [[unfilteredList[0][1]], [unfilteredList[1][1]]]
-
-        model.criterias = unfilteredList
-        assertEquals expectedList, model.clearCriteriaList("TESTPATH", 1)
-        assertEquals([], model.clearCriteriaList("TESTPATH2", 1))
-        assertEquals(expectedList2, model.clearCriteriaList("TESTPATH", 2))
-    }*/
-
-
-    protected CriteriaViewModel createQPM(QueryPaneModel model, String path, int period, CriteriaComparator comparator, double value) {
+     protected CriteriaViewModel createQPM(QueryPaneModel model, String path, int period, CriteriaComparator comparator, double value) {
         CriteriaViewModel criteriaViewModel = new TestCriteriaViewModel(model)
         criteriaViewModel.selectedPath = path
         criteriaViewModel.setSelectedComparator(comparator)
@@ -57,32 +94,15 @@ class QueryPanelModelTests extends GroovyTestCase {
         return criteriaViewModel
     }
 
-    protected SimulationRun prepareDBForQueryResultsHQL() {
-        PathMapping path = new PathMapping(pathName: "PATH1").save()
-        CollectorMapping collector = new CollectorMapping(collectorName: "collector").save()
-        FieldMapping field = new FieldMapping(fieldName: "field").save()
-        SimulationRun run = createSR()
-        new SingleValueResult(simulationRun: run, path: path, collector: collector, field: field, period: 1, iteration: 1, value: 1000).save()
-        new SingleValueResult(simulationRun: run, path: path, collector: collector, field: field, period: 1, iteration: 1, value: 1000).save()
+    private void writeResult(SingleValueResult result) {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(bos);
+        dos.writeInt(result.iteration);
+        dos.writeInt(1);
+        dos.writeDouble(result.value);
+        dos.writeLong(0);
 
-        new SingleValueResult(simulationRun: run, path: path, collector: collector, field: field, period: 1, iteration: 2, value: 500).save()
-        new SingleValueResult(simulationRun: run, path: path, collector: collector, field: field, period: 1, iteration: 3, value: 1).save()
-
-        return run
-    }
-
-    protected SimulationRun createSR() {
-        FileImportService.importModelsIfNeeded(['CapitalEagle'])
-        SimulationRun run = new SimulationRun(periodCount: 2, name: "testRun")
-        run.name = "SR"
-        run.parameterization = ParameterizationDAO.list()[0]
-        run.resultConfiguration = ResultConfigurationDAO.list()[0]
-        run.model = "MODEL"
-        run.periodCount = 2
-        run.iterations = 10
-        run.modelVersionNumber = "VERSION_NUMBER"
-        run.save()
-        return run
+        resultWriter.writeResult(new ResultTransferObject(new ResultDescriptor(result.field.id, result.path.id, result.collector.id, result.period), null, bos.toByteArray(), 0));
     }
 
 }

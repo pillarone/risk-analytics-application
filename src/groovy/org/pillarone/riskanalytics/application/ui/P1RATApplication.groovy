@@ -16,8 +16,12 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import com.ulcjava.base.server.ULCSession
 import com.ulcjava.applicationframework.application.Application
 
+//used for standalone
 class P1RATApplication extends Application {
 
     private static Log LOG = LogFactory.getLog(P1RATApplication)
@@ -25,6 +29,8 @@ class P1RATApplication extends Application {
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
     RiskAnalyticsMainModel mainModel
     public static boolean CLOSE_WINDOW = false
+
+    ModellingItemSearchService searchService
 
     protected void startup() {
         ClientContext.sendMessage("hideSplash");
@@ -36,8 +42,9 @@ class P1RATApplication extends Application {
                 UserContext.setUserTimeZone(TimeZone.getTimeZone("UTC"))
             }
         }
-
+        searchService = ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
         initMainView()
+        searchService.registerSession(ULCSession.currentSession())
     }
 
     public void initMainView() {
@@ -64,6 +71,7 @@ class P1RATApplication extends Application {
     }
 
     private void handleEvent(WindowEvent e) {
+        searchService.unregisterSession(ULCSession.currentSession())
         ModelRegistry.instance.removeListener(mainModel)
         ExitAction.terminate()
     }

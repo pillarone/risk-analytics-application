@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.packets.Packet
 
 class ResultConfigurationTableTreeNodeTests extends GroovyTestCase {
 
@@ -70,7 +71,7 @@ class ResultConfigurationTableTreeNodeTests extends GroovyTestCase {
         collector = new PacketCollector(path: "root:component:outValue", mode: CollectingModeFactory.getStrategy(SingleValueCollectingModeStrategy.IDENTIFIER))
         configuration.collectors << collector
 
-        ResultConfigurationTableTreeNode node = new ResultConfigurationTableTreeNode("outValue", configuration)
+        ResultConfigurationTableTreeNode node = new ResultConfigurationTableTreeNode("outValue", configuration, Packet)
         component.add(node)
 
         node.findCollector()

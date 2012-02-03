@@ -301,7 +301,7 @@ class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private void setDataType(def value) {
-
+        super.setDataType(null)
     }
 
 

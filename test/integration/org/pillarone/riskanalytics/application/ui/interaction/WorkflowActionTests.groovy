@@ -23,7 +23,6 @@ class WorkflowActionTests extends AbstractStandaloneTestCase {
 
     protected void tearDown() {
         super.tearDown();
-        new DBCleanUpService().cleanUp()
         LocaleResources.clearTestMode()
     }
 

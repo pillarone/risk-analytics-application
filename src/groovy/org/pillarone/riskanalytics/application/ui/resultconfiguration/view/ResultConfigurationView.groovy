@@ -34,7 +34,7 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
         int treeWidth = UIUtils.calculateTreeWidth(model.treeModel.root)
         int fixColumnCount = 1
 
-        tree = new ULCFixedColumnTableTree(model.treeModel, fixColumnCount, ([treeWidth] + [100] * model.periodCount) as int[])
+        tree = new ULCFixedColumnTableTree(model.treeModel, fixColumnCount, ([treeWidth] + [300] * model.periodCount) as int[])
         tree.viewPortTableTree.name = "resultConfigurationTreeContent"
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
             it.headerValue = UIUtils.getText(ResultConfigurationView.class, "CollectionMode")

@@ -16,6 +16,7 @@ grails.project.dependency.resolution = {
     String absolutePluginDir = grailsSettings.projectPluginsDir.absolutePath
 
     ulcClientJarResolver.addArtifactPattern "${absolutePluginDir}/ulc-[revision]/web-app/lib/[artifact].[ext]"
+    ulcClientJarResolver.addArtifactPattern "${basedir}/web-app/lib/[artifact]-[revision].[ext]"
     ulcClientJarResolver.name = "ulc"
 
     resolver ulcClientJarResolver
@@ -39,7 +40,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.4-RC-2-kti"
+            runtime "org.pillarone:risk-analytics-core:1.5-ALPHA-2-kti"
         }
 
     }
@@ -51,6 +52,8 @@ grails.project.dependency.resolution = {
         compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
         compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
         compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
+        compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
+        compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
     }
 
 }

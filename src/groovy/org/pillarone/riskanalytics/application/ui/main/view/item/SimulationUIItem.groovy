@@ -39,6 +39,7 @@ class SimulationUIItem extends ModellingUIItem {
         model.settingsPaneModel.selectedResultConfiguration = item.template
         model.actionsPaneModel.addSimulationListener(mainModel)
         mainModel.addModelChangedListener(model.settingsPaneModel)
+        mainModel.addModelChangedListener(model.actionsPaneModel)
         mainModel.registerModel(this, model)
         return model
     }

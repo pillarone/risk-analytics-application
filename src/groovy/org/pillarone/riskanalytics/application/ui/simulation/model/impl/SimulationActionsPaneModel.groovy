@@ -25,13 +25,21 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguratio
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import com.ulcjava.base.application.event.WindowEvent
+import com.ulcjava.base.application.event.serializable.IWindowListener
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
  * and provides information about the current simulation state.
  */
-class SimulationActionsPaneModel {
+class SimulationActionsPaneModel implements IModelChangedListener {
 
     protected Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
 
@@ -86,7 +94,7 @@ class SimulationActionsPaneModel {
             int iterationThreshold = ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector
 
             if (simulation.numberOfIterations > iterationThreshold &&
-                simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
+                    simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
                 I18NAlert alert = new I18NAlert("WarnPotentiallyLargeResultSet")
                 alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert)}] as IWindowListener)
                 alert.show()
@@ -102,7 +110,7 @@ class SimulationActionsPaneModel {
     void handleEvent(I18NAlert alert) {
         if (alert.value.equals(alert.firstButtonLabel)) {
             startSimulation()
-        } else if (! alert.value.equals(alert.secondButtonLabel)) {
+        } else if (!alert.value.equals(alert.secondButtonLabel)) {
             throw new RuntimeException("Unknown button pressed: " + alert.value)
         }
     }
@@ -225,5 +233,20 @@ class SimulationActionsPaneModel {
     void newBatchAdded(BatchRun batchRun) {
         batchRunComboBoxModel.addItem(batchRun)
     }
+
+    void modelChanged() {
+
+        final BatchRun selected = batchRunComboBoxModel.getSelectedObject()
+        batchRunComboBoxModel.removeAllElements()
+
+        for (BatchRun run in BatchRun.list()) {
+            batchRunComboBoxModel.addItem(run)
+        }
+
+        if (selected != null) {
+            batchRunComboBoxModel.setSelectedItem(selected.name)
+        }
+    }
+
 
 }

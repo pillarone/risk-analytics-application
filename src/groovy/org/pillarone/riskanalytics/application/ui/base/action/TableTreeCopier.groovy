@@ -35,7 +35,7 @@ class TableTreeCopier extends ExceptionSafeAction {
 
     private int[] getSelectedColumns() {
         List list = table.selectedColumns?.collect { table.convertColumnIndexToModel(it) } as List
-        return list?.sort() as int[]
+        return list as int[]
     }
 
     private int[] getSelectedRows() {

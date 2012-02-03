@@ -16,11 +16,17 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import com.ulcjava.base.server.ULCSession
 import com.ulcjava.applicationframework.application.ApplicationContext
 
+//used for Applet & JNLP (but not standalone)
 abstract class P1RATViewFactory implements UlcViewFactory {
 
     private Log LOG = LogFactory.getLog(P1RATViewFactory)
+
+    ModellingItemSearchService searchService
 
     public ULCRootPane create(ApplicationContext context) {
         LOG.info "Started session for user '${UserManagement.currentUser?.username}'"
@@ -29,6 +35,9 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         } catch (Exception ex) {
             // put a user in MDC causes an exception in integration Test
         }
+
+        searchService = ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
+
         UserContext.setUserTimeZone(ClientContext.timeZone)
         ULCClientTimeZoneSetter.setDefaultTimeZone(TimeZone.getTimeZone("UTC"))
 
@@ -37,6 +46,9 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
         RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel(applicationContext: context))
         mainView.init()
+
+        searchService.registerSession(ULCSession.currentSession())
+
         frame.setMenuBar(mainView.getMenuBar())
         frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.content, ULCBoxPane.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
         UIUtils.setRootPane(frame)
@@ -46,6 +58,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     abstract protected ULCRootPane createRootPane()
 
     void stop() {
+        searchService.unregisterSession(ULCSession.currentSession())
     }
 
 }

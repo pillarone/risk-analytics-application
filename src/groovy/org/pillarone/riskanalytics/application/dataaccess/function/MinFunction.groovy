@@ -11,7 +11,7 @@ class MinFunction extends AbstractResultFunction {
     public static final String MIN = "Min"
 
     @Override
-    double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
+    Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
         return ResultAccessor.getMin(simulationRun, periodIndex, node.path, node.collector, node.field)
 
     }

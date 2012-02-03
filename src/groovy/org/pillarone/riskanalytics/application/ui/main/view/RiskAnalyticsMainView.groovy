@@ -21,12 +21,13 @@ import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
+import org.pillarone.riskanalytics.application.ui.base.model.NavigationTreeFactory
 
 class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
     public static final String DEFAULT_CARD_NAME = "Main"
-    
-    ULCCardPane content
+
+    private ULCCardPane content
     private ULCBoxPane treePane
     private ULCCardPane modelPane
 
@@ -39,6 +40,8 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     private RiskAnalyticsMainModel mainModel
 
+    private NavigationTreeFactory treeFactory
+
     Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
     RiskAnalyticsMainView(RiskAnalyticsMainModel mainModel) {
@@ -46,6 +49,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void initComponents() {
+        treeFactory = new NavigationTreeFactory()
         content = new ULCCardPane()
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
