@@ -42,7 +42,7 @@ serverSessionPrefix = ";jsessionid="
 
 environments {
     development {
-        models = ["CoreModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
+        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
 
         ExceptionSafeOut = System.out
         log4j = {

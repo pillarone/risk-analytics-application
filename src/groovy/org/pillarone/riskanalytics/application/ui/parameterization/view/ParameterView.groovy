@@ -106,6 +106,8 @@ class ParameterView extends AbstractModellingTreeView implements NavigationListe
                 comboBoxEditor);
         editors.put(ParameterizationClassifierTableTreeNode.class,
                 comboBoxEditor);
+        editors.put(ResourceParameterizationTableTreeNode.class,
+                comboBoxEditor);
         editors.put(ConstrainedStringParameterizationTableTreeNode.class,
                 comboBoxEditor);
 
@@ -169,6 +171,8 @@ class ParameterView extends AbstractModellingTreeView implements NavigationListe
         renderers.put(ParameterizationClassifierTableTreeNode.class,
                 comboBoxRenderer);
         renderers.put(ConstrainedStringParameterizationTableTreeNode.class,
+                comboBoxRenderer);
+        renderers.put(ResourceParameterizationTableTreeNode.class,
                 comboBoxRenderer);
         renderers.put(MultiDimensionalParameterizationTableTreeNode.class,
                 mdpRenderer);
