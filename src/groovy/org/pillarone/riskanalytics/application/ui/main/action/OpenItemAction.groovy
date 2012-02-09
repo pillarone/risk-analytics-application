@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.Parameterizatio
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,40 +26,56 @@ class OpenItemAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        Model selectedModel = getSelectedModel()
         AbstractUIItem item = getSelectedUIItem()
-        if (selectedModel != null && item != null) {
-            item.load()
-            openItem(selectedModel, item)
+        if (item != null) {
+            openItem(item)
         }
     }
 
-    private void openItem(Model selectedModel, ParameterizationUIItem parameterizationUIItem) {
-        selectedModel = selectedModel.class.newInstance()
-        selectedModel.init()
-        ModellingItem item = parameterizationUIItem.item
-        item.dao.modelClassName = selectedModel.class.name
-        synchronized (parameterizationUIItem) {
-            item.daoClass.withTransaction {status ->
-                boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
-                if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
-                    this.model.openItem(selectedModel, parameterizationUIItem)
-                } else {
-                    showOpenItemDialog(selectedModel, parameterizationUIItem)
+    private void openItem(ParameterizationUIItem parameterizationUIItem) {
+        Model selectedModel = getSelectedModel()
+        if (selectedModel != null) {
+            parameterizationUIItem.load()
+            selectedModel = selectedModel.class.newInstance()
+            selectedModel.init()
+            ModellingItem item = parameterizationUIItem.item
+            item.dao.modelClassName = selectedModel.class.name
+            synchronized (parameterizationUIItem) {
+                item.daoClass.withTransaction {status ->
+                    boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
+                    if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
+                        this.model.openItem(selectedModel, parameterizationUIItem)
+                    } else {
+                        showOpenItemDialog(selectedModel, parameterizationUIItem)
+                    }
                 }
             }
         }
     }
 
-    private void openItem(Model selectedModel, AbstractUIItem item) {
-        boolean usedInSimulation = false
-        if (item instanceof ModellingUIItem) {
-            usedInSimulation = item.isUsedInSimulation()
-        }
+    private void openItem(ResourceUIItem item) {
+        boolean usedInSimulation = item.isUsedInSimulation()
         if (!usedInSimulation) {
-            this.model.openItem(selectedModel, item)
+            item.load()
+            this.model.openItem(null, item)
         } else {
-            showOpenItemDialog(selectedModel, item)
+            showOpenItemDialog(null, item)
+        }
+    }
+
+    private void openItem(AbstractUIItem item) {
+        Model selectedModel = getSelectedModel()
+        if (selectedModel != null) {
+            item.load()
+            boolean usedInSimulation = false
+            if (item instanceof ModellingUIItem) {
+                usedInSimulation = item.isUsedInSimulation()
+            }
+            if (!usedInSimulation) {
+                this.model.openItem(selectedModel, item)
+            } else {
+                showOpenItemDialog(selectedModel, item)
+            }
         }
     }
 

@@ -23,6 +23,10 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
+import org.springframework.core.type.filter.AssignableTypeFilter
+import org.pillarone.riskanalytics.core.components.IResource
+import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -82,11 +86,21 @@ class ModellingInformationTableTreeBuilder {
             }
             root.add(modelNode)
         }
+        DefaultMutableTableTreeNode resourcesNode = new DefaultMutableTableTreeNode("Resources")
+        getAllResourceClasses().each { Class resourceClass ->
+            ItemGroupNode resourceNode = new ItemGroupNode(resourceClass.simpleName, Resource)
+            getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
+                resourceNode.add(createItemNodes(it))
+            }
+            resourcesNode.add(resourceNode)
+        }
+        root.add(resourcesNode)
         root.add(createBatchNode())
     }
 
     public List getItemsForModel(Class modelClass, Class clazz) {
         switch (clazz) {
+            case Resource: return ModellingItemFactory.getResources(modelClass)
             case Parameterization: return ModellingItemFactory.getParameterizationsForModel(modelClass)
             case ResultConfiguration: return ModellingItemFactory.getResultConfigurationsForModel(modelClass)
             case Simulation: return ModellingItemFactory.getActiveSimulationsForModel(modelClass)
@@ -96,6 +110,14 @@ class ModellingInformationTableTreeBuilder {
 
     public List getAllModelClasses() {
         return ModelStructure.findAllModelClasses()
+    }
+
+    public List<Class> getAllResourceClasses() {
+        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true)
+        provider.addIncludeFilter(new AssignableTypeFilter(IResource))
+
+        return provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
+
     }
 
     private ITableTreeNode getModelNode(Model model) {
@@ -380,6 +402,16 @@ class ModellingInformationTableTreeBuilder {
 
     private ITableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
         ResultConfigurationNode node = new ResultConfigurationNode(resultConfigurationUIItem)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
+        return node
+    }
+
+    private ITableTreeNode createNode(Resource item) {
+        return createNode(new ResourceUIItem(mainModel, null, item))
+    }
+
+    private ITableTreeNode createNode(ResourceUIItem item) {
+        ResourceNode node = new ResourceNode(item)
         ((ModellingInformationTableTreeModel) model).putValues(node)
         return node
     }
