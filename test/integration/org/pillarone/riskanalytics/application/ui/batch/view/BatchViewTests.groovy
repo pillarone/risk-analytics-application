@@ -28,9 +28,9 @@ class BatchViewTests extends AbstractFunctionalTestCase {
         TreePath batchPath = tableTree.findPath(["Batches"] as String[])
         assertNotNull "path not found", batchPath
 
-        tableTree.selectCell(1, 0)
+        tableTree.selectCell(2, 0)
 
-        ULCPopupMenuOperator popupMenuOperator = tableTree.callPopupOnCell(1, 0)
+        ULCPopupMenuOperator popupMenuOperator = tableTree.callPopupOnCell(2, 0)
 
         assertNotNull popupMenuOperator
         ULCMenuItemOperator newBatch = new ULCMenuItemOperator(popupMenuOperator, "New")

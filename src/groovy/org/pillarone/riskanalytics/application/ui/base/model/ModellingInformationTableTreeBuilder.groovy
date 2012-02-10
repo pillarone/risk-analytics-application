@@ -86,9 +86,9 @@ class ModellingInformationTableTreeBuilder {
             }
             root.add(modelNode)
         }
-        DefaultMutableTableTreeNode resourcesNode = new DefaultMutableTableTreeNode("Resources")
+        ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
         getAllResourceClasses().each { Class resourceClass ->
-            ItemGroupNode resourceNode = new ItemGroupNode(resourceClass.simpleName, Resource)
+            ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
             getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
                 resourceNode.add(createItemNodes(it))
             }
@@ -243,6 +243,14 @@ class ModellingInformationTableTreeBuilder {
         return groupNode
     }
 
+    public def addNodeForItem(ResourceUIItem modellingUIItem) {
+        ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
+
+        createAndInsertItemNode(itemGroupNode, modellingUIItem)
+        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemGroupNode) as Object[]))
+        return itemGroupNode
+    }
+
     public def addNodeForItem(ModellingItem modellingItem) {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
         return addNodeForItem(modellingUIItem)
@@ -255,6 +263,12 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(ModellingItem item) {
         ITableTreeNode itemGroupNode = findGroupNode(item, findModelNode(root, item))
+        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, item)
+        model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+    }
+
+    public void itemChanged(Resource item) {
+        ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), item.modelClass)
         ITableTreeNode itemNode = findNodeForItem(itemGroupNode, item)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }

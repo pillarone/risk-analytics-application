@@ -1,10 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.resource.model
 
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedTableTreeModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedViewModel
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 
-class ResourceViewModel extends AbstractCommentableItemModel {
+class ResourceViewModel extends AbstractParametrizedViewModel {
 
 
     ResourceTableTreeModel treeModel
@@ -15,8 +15,14 @@ class ResourceViewModel extends AbstractCommentableItemModel {
     }
 
     @Override
-    protected ITableTreeModel buildTree() {
-        treeModel = new ResourceTableTreeModel(new ResourceTreeBuilder(item))
-        return treeModel
+    protected AbstractParametrizedTableTreeModel createTableTreeModel(Object builder) {
+        return new ResourceTableTreeModel(builder)
     }
+
+    @Override
+    protected createTreeBuilder() {
+        return new ResourceTreeBuilder(item)
+    }
+
+
 }

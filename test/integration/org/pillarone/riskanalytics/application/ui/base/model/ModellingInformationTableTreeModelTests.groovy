@@ -500,6 +500,9 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         modelStructureMock.demand.findAllModelClasses(0..100) { return [CoreModel] }
 
         factoryMock = new StubFor(ModellingItemFactory)
+        factoryMock.demand.getResources(0..100) {modelClass ->
+            []
+        }
         factoryMock.demand.getParameterizationsForModel(0..100) {modelClass ->
             params
         }

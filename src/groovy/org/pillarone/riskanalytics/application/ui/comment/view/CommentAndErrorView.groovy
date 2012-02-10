@@ -81,7 +81,7 @@ class CommentAndErrorView implements CommentListener {
         ((ULCPopupMenu) tabbedPane.getComponentPopupMenu())?.addPopupMenuListener(new UndockedPaneListener(closeSplitPane: closeSplitPane))
     }
 
-    protected void updateErrorVisualization(Parameterization item) {
+    void updateErrorVisualization(Parameterization item) {
         item.validate()
         errorPane.clear()
         errorPane.addErrors item.validationErrors

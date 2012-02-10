@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
+import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,6 +26,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     RiskAnalyticsMainModel mainModel
     Map<Class, ULCPopupMenu> popupMenus = [:]
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
+    Map<Status, ULCPopupMenu> resourceWorkflowMenus = new HashMap<Status, ULCPopupMenu>()
 
     public MainSelectionTableTreeCellRenderer(ULCTableTree tree, RiskAnalyticsMainModel mainModel) {
         this.tree = tree
@@ -84,6 +86,13 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         if (workflowMenus.containsKey(node.status)) return workflowMenus.get(node.status)
         ULCPopupMenu popupMenu = node.getPopupMenu(tree)
         workflowMenus.put(node.status, popupMenu)
+        return popupMenu
+    }
+
+    private ULCPopupMenu getPopupMenu(ResourceNode node) {
+        if (resourceWorkflowMenus.containsKey(node.status)) return resourceWorkflowMenus.get(node.status)
+        ULCPopupMenu popupMenu = node.getPopupMenu(tree)
+        resourceWorkflowMenus.put(node.status, popupMenu)
         return popupMenu
     }
 

@@ -15,6 +15,20 @@ import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCMenu
 import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
 import org.pillarone.riskanalytics.application.ui.main.view.CreateReportMenuItem
+import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
+import org.pillarone.riskanalytics.application.ui.main.action.SimulationAction
+import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
+import org.pillarone.riskanalytics.application.ui.main.action.CompareParameterizationsAction
+import org.pillarone.riskanalytics.application.ui.main.action.TagsAction
+import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
+import org.pillarone.riskanalytics.application.ui.main.action.SaveAsAction
+import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
+import org.pillarone.riskanalytics.application.ui.main.action.ExportItemAction
+import org.pillarone.riskanalytics.application.UserContext
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.pillarone.riskanalytics.application.ui.main.action.ChooseDealAction
+import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
+import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
 
 class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
