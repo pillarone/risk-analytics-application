@@ -159,6 +159,9 @@ class RuntimeParameterPane {
         def propertyName = getUserPrefsPropertyName(descriptor)
         String userPrefValueAsString = userPreferences.getPropertyValue(propertyName)
         def value = userPrefValueAsString != null ? stringToPrefsValue.call(userPrefValueAsString) : defaultValue
+        if (value != defaultValue) {
+            descriptor.value = value
+        }
         return value
     }
 
