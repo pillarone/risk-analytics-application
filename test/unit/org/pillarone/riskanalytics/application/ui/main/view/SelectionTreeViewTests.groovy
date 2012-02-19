@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.workflow.Status
+import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -131,41 +132,15 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
 
     public void testOpenBatch() {
-        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        componentTree.doExpandRow 2
-        componentTree.selectCell(3, 0)
-
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
-
-        assertNotNull popupMenuOperator
+        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
 
         ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Open")
         assertNotNull openBatch
 
     }
 
-    public void testNewBatch() {
-        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        componentTree.doExpandRow 2
-        componentTree.selectCell(3, 0)
-
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
-
-        assertNotNull popupMenuOperator
-
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
-        assertNotNull openBatch
-
-    }
-
     public void testRunBatch() {
-        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        componentTree.doExpandRow 2
-        componentTree.selectCell(3, 0)
-
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
-
-        assertNotNull popupMenuOperator
+        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
 
         ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Run now")
         assertNotNull openBatch
@@ -173,17 +148,36 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     }
 
     public void testDeleteBatch() {
-        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        componentTree.doExpandRow 2
-        componentTree.selectCell(3, 0)
-
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(3, 0)
-
-        assertNotNull popupMenuOperator
+        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
 
         ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Delete")
         assertNotNull openBatch
 
+    }
+
+    private ULCPopupMenuOperator getTestBatchPopupMenu() {
+        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
+        TreePath batchPath = componentTree.findPath(["Batches"] as String[])
+        componentTree.doExpandPath(batchPath)
+        TreePath testBatchPath = componentTree.findPath(["Batches", "test"] as String[])
+        componentTree.selectPath(testBatchPath)
+
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(componentTree.getRowForPath(testBatchPath), 0)
+
+        assertNotNull popupMenuOperator
+        return popupMenuOperator
+    }
+
+    public void testNewBatch() {
+        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
+        TreePath batchPath = componentTree.findPath(["Batches"] as String[])
+
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(componentTree.getRowForPath(batchPath), 0)
+
+        assertNotNull popupMenuOperator
+
+        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
+        assertNotNull openBatch
     }
 
 

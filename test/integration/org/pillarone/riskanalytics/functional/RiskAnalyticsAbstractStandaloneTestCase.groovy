@@ -12,16 +12,24 @@ import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractStandaloneTestCase {
 
+    private static Log LOG = LogFactory.getLog(RiskAnalyticsAbstractStandaloneTestCase)
 
     protected void setUp() throws Exception {
         handleConfiguration()
-        super.setUp()
+        try {
+            super.setUp()
+        } catch (Exception e) {
+            LOG.error("Setup failed", e)
+            throw e;
+        }
     }
 
     protected void tearDown() {

@@ -107,6 +107,45 @@ environments {
                 'varProfitFunction': [99, 99.5],
                 'tvarProfitFunction': [99, 99.5]
         ]
+        log4j = {
+            appenders {
+
+                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
+
+                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
+
+                LoggingAppender loggingAppender = LoggingAppender.getInstance()
+                loggingAppender.setName('application')
+                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
+                appender loggingAppender
+
+            }
+            root {
+                error()
+                additivity = false
+            }
+
+            def infoPackages = [
+                    'org.pillarone.riskanalytics',
+            ]
+
+            def debugPackages = [
+                    'org.pillarone.riskanalytics.core.fileimport'
+            ]
+
+            info(
+                    application: infoPackages,
+                    stdout: infoPackages,
+                    additivity: false
+            )
+
+            debug(
+                    application: debugPackages,
+                    stdout: debugPackages,
+                    additivity: false
+            )
+
+        }
     }
     sqlserver {
         models = ["CoreModel", 'ApplicationModel']

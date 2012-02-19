@@ -7,11 +7,15 @@ import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.testframework.operator.*
 import com.ulcjava.base.application.ULCCheckBox
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
+
+    private static Log LOG = LogFactory.getLog(AbstractP1RATTestCase)
 
     ULCFrame frame
     ULCFrameOperator mainFrameOperator
@@ -27,6 +31,18 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, createContentPane())
         frame.setVisible true
     }
+
+    @Override
+    protected void setUp() {
+        try {
+            super.setUp()
+        } catch (Exception e) {
+            LOG.error("Setup failed", e)
+            throw e;
+        }
+    }
+
+
 
     ULCFrameOperator getMainFrameOperator() {
         if (mainFrameOperator == null) {
