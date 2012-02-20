@@ -1,12 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.resource.model
 
-import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterObjectParameterTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedTableTreeModel
+import org.pillarone.riskanalytics.core.model.Model
 
 
 class ResourceTableTreeModel extends AbstractParametrizedTableTreeModel {
@@ -25,6 +20,11 @@ class ResourceTableTreeModel extends AbstractParametrizedTableTreeModel {
     @Override
     protected List<String> getAllEditablePaths() {
         return builder.item.allEditablePaths
+    }
+
+    @Override
+    protected Model getSimulationModel() {
+        return null
     }
 
 

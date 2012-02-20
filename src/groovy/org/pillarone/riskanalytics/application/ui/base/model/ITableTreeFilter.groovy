@@ -18,7 +18,7 @@ class NodeNameFilter implements ITableTreeFilter {
     }
 
     public boolean acceptNode(ITableTreeNode node) {
-        node ? internalAcceptNode(node) : false
+        node ? (nodeName != null ? internalAcceptNode(node) : true) : false
     }
 
     boolean internalAcceptNode(ITableTreeNode node) {
@@ -26,15 +26,15 @@ class NodeNameFilter implements ITableTreeFilter {
     }
 
     boolean internalAcceptNode(ComponentTableTreeNode node) {
-        return nodeName ? nodeName == node.displayName || acceptNode(node.parent) : true
+        return nodeName == node.displayName || acceptNode(node.parent)
     }
 
     boolean internalAcceptNode(DynamicComposedComponentTableTreeNode node) {
-        return nodeName ? nodeName == node.displayName || acceptNode(node.parent) : true
+        return nodeName == node.displayName || acceptNode(node.parent)
     }
 
     boolean internalAcceptNode(ResultStructureTableTreeNode node) {
-        return nodeName ? nodeName == node.displayName || acceptNode(node.parent) : true
+        return nodeName == node.displayName || acceptNode(node.parent)
     }
 
 }

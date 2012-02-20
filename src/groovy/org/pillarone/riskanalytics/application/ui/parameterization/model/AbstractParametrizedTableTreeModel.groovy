@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.core.model.Model
 
 
 abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableItemTableTreeModel {
@@ -121,9 +122,11 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
         return true
     }
 
+    protected abstract Model getSimulationModel()
+
     private boolean adjustTreeStructure(ParameterizationClassifierTableTreeNode node, int column, Object value) {
         ParameterObjectParameterTableTreeNode parent = node.parent
-        ParameterObjectParameterTableTreeNode newNode = ParameterizationNodeFactory.getNode(node.parameter, simulationModel)
+        ParameterObjectParameterTableTreeNode newNode = ParameterizationNodeFactory.getNode(node.parameter, getSimulationModel())
 
         List nodesToRemove = []
         parent.children.each {

@@ -7,8 +7,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Resource
 class ResourceViewModel extends AbstractParametrizedViewModel {
 
 
-    ResourceTableTreeModel treeModel
-
     ResourceViewModel(Resource resource) {
         super(null, resource, null)
         periodCount = 1

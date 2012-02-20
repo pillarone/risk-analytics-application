@@ -87,16 +87,15 @@ class ModellingInformationTableTreeBuilder {
             root.add(modelNode)
         }
 
-        // bzetterstrom: commented out for this release since at this stage a proof of concept only
-//        ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
-//        getAllResourceClasses().each { Class resourceClass ->
-//            ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
-//            getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
-//                resourceNode.add(createItemNodes(it))
-//            }
-//            resourcesNode.add(resourceNode)
-//        }
-//        root.add(resourcesNode)
+        ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
+        getAllResourceClasses().each { Class resourceClass ->
+            ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
+            getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
+                resourceNode.add(createItemNodes(it))
+            }
+            resourcesNode.add(resourceNode)
+        }
+        root.add(resourcesNode)
 
         root.add(createBatchNode())
     }
