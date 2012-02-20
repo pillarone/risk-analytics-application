@@ -20,7 +20,9 @@ class ResourceUIItem extends ModellingUIItem {
 
     @Override
     Object getViewModel() {
-        return new ResourceViewModel(item)
+        ResourceViewModel model = new ResourceViewModel(item)
+        model.mainModel = mainModel
+        return model
     }
 
     @Override
