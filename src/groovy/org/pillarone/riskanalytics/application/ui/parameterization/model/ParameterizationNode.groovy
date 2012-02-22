@@ -32,7 +32,7 @@ class ParameterizationNode extends VersionedItemNode {
         tree.addTreeSelectionListener(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(compareParameterizationMenuItem)
         parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
-        if (ApplicationHolder.application.config?.useSetFilterToSelectionPopupMenu) {
+        if (ApplicationHolder.application?.config?.useSetFilterToSelectionPopupMenu) {
             parameterNodePopUpMenu.add(new ULCMenuItem(new SetFilterToSelection(tree, abstractUIItem.mainModel)))
         }
 
