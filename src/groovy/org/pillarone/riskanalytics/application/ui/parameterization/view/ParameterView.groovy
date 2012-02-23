@@ -41,6 +41,13 @@ class ParameterView extends AbstractParameterizationTreeView implements Navigati
     }
 
     @Override
+    protected void initComponents() {
+        super.initComponents()    //To change body of overridden methods use File | Settings | File Templates.
+        def parameterization = model.getItem() as Parameterization
+        updateErrorVisualization(parameterization)
+    }
+
+    @Override
     protected void internalAttachListeners() {
         def rowHeaderTree = tree.getRowHeaderTableTree()
         rowHeaderTree.registerKeyboardAction(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)

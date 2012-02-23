@@ -95,7 +95,6 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
 
         super.initComponents();
         attachListeners()
-//        updateErrorVisualization(model.item) TODO
     }
 
     protected void attachListeners() {
@@ -112,6 +111,7 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
             }
         }
         commentAndErrorView.addPopupMenuListener(closeSplitPane)
+        internalAttachListeners()
     }
 
     protected void internalAttachListeners() {}
