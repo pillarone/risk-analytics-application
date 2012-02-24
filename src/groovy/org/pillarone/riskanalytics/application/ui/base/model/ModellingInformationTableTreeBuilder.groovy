@@ -120,7 +120,7 @@ class ModellingInformationTableTreeBuilder {
         provider.addIncludeFilter(new AssignableTypeFilter(IResource))
 
         List<String> acceptedResources = []
-        if (ConfigurationHolder.config.resources instanceof List) {
+        if (ConfigurationHolder.config?.resources instanceof List) {
             acceptedResources = ConfigurationHolder.config.resources
         }
 
