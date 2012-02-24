@@ -33,7 +33,7 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
         ResourceClassNode node = tree.selectedPath.lastPathComponent
 
         DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree), true)
-        dialog.title = dialog.getText("title")
+        dialog.title = "New ${node.resourceClass.simpleName}"
         dialog.okAction = {
             if (!validate(dialog.nameInput.text)) {
                 I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "NotValidName")
