@@ -3,6 +3,7 @@ import org.pillarone.riskanalytics.core.output.batch.results.SQLServerBulkInsert
 import org.pillarone.riskanalytics.core.output.batch.calculations.MysqlCalculationsBulkInsert
 import grails.plugins.springsecurity.SecurityConfigType
 import org.pillarone.riskanalytics.application.logging.model.LoggingAppender
+import org.pillarone.riskanalytics.core.example.component.ExampleResource
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
@@ -43,7 +44,7 @@ serverSessionPrefix = ";jsessionid="
 environments {
     development {
         models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
-
+        resources = [ExampleResource.simpleName]
         ExceptionSafeOut = System.out
         log4j = {
             appenders {
@@ -97,6 +98,7 @@ environments {
     }
     test {
         ExceptionSafeOut = System.out
+        resources = [ExampleResource.simpleName]
         keyFiguresToCalculate = [
                 'stdev': true,
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],

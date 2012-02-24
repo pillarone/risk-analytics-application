@@ -27,6 +27,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -118,7 +119,13 @@ class ModellingInformationTableTreeBuilder {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true)
         provider.addIncludeFilter(new AssignableTypeFilter(IResource))
 
-        return provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
+        List<String> acceptedResources = []
+        if (ConfigurationHolder.config.resources instanceof List) {
+            acceptedResources = ConfigurationHolder.config.resources
+        }
+
+        List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
+        return classes.findAll { acceptedResources.contains(it.simpleName) }
 
     }
 
