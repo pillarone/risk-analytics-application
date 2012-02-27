@@ -30,21 +30,22 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
  */
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
-    List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Quarter", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification", "AssignedTo", "Visibility"]
+    List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Comments", "ReviewComment", "Owner", "LastUpdateBy", "Created", "LastModification"
+    //        , "AssignedTo", "Visibility"
+    ]
 
     public static int NAME = 0
     public static int STATE = 1
     public static int TAGS = 2
     public static int TRANSACTION_NAME = 3
-    public static int QUARTER = 4
-    public static int COMMENTS = 5
-    public static int REVIEW_COMMENT = 6
-    public static int OWNER = 7
-    public static int LAST_UPDATER = 8
-    public static int CREATION_DATE = 9
-    public static int LAST_MODIFICATION_DATE = 10
-    public static int ASSIGNED_TO = 11
-    public static int VISIBILITY = 12
+    public static int COMMENTS = 4
+    public static int REVIEW_COMMENT = 5
+    public static int OWNER = 6
+    public static int LAST_UPDATER = 7
+    public static int CREATION_DATE = 8
+    public static int LAST_MODIFICATION_DATE = 9
+//    public static int ASSIGNED_TO = 10
+//    public static int VISIBILITY = 11
 
     def columnValues = [:]
     int orderByColumn = -1

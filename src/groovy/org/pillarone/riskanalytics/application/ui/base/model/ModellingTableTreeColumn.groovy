@@ -57,23 +57,13 @@ public class ModellingTableTreeColumn {
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             if ((modellingItem instanceof Parameterization) && modellingItem.dealId) {
                 return getTransactionName(modellingItem.dealId)
+                // "<html><a href=\"http://zh-vs-portal-1.art-allianz.com:7070/forward_V2/forward?dt=DealWithDeletes&did=" + modellingItem.dealId + "\">" + getTransactionName(modellingItem.dealId) + "</a></html>"
             }
             return null
         }
 
     }
 
-    class QuarterColumn extends ModellingTableTreeColumn {
-
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            if ((modellingItem instanceof Parameterization) && modellingItem.dealId && modellingItem.valuationDate) {
-                return DateFormatUtils.formatDetailed(modellingItem.valuationDate)
-            };
-            return ""
-        }
-
-    }
 
     class CommentsColumn extends ModellingTableTreeColumn {
 
@@ -184,15 +174,14 @@ public class ModellingTableTreeColumn {
             instances[ModellingInformationTableTreeModel.STATE] = new StateColumn()
             instances[ModellingInformationTableTreeModel.TAGS] = new TagsColumn()
             instances[ModellingInformationTableTreeModel.TRANSACTION_NAME] = new TransactionColumn()
-            instances[ModellingInformationTableTreeModel.QUARTER] = new QuarterColumn()
             instances[ModellingInformationTableTreeModel.COMMENTS] = new CommentsColumn()
             instances[ModellingInformationTableTreeModel.REVIEW_COMMENT] = new ReviewCommentsColumn()
             instances[ModellingInformationTableTreeModel.OWNER] = new OwnerColumn()
             instances[ModellingInformationTableTreeModel.LAST_UPDATER] = new LastUpdateColumn()
             instances[ModellingInformationTableTreeModel.CREATION_DATE] = new CreationDateColumn()
             instances[ModellingInformationTableTreeModel.LAST_MODIFICATION_DATE] = new LastModificationDateColumn()
-            instances[ModellingInformationTableTreeModel.ASSIGNED_TO] = new AssignedToColumn()
-            instances[ModellingInformationTableTreeModel.VISIBILITY] = new VisibilityColumn()
+//            instances[ModellingInformationTableTreeModel.ASSIGNED_TO] = new AssignedToColumn()
+//            instances[ModellingInformationTableTreeModel.VISIBILITY] = new VisibilityColumn()
             instances[-1] = new UknownColumn()
 
         }

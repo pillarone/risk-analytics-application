@@ -453,6 +453,7 @@ class ModellingItemFactory {
             simulation.periodCount = run.periodCount
             simulation.numberOfIterations = run.iterations
             simulation.comment = run.comment
+            simulation.creator = run.creator
             try {
                 simulation.tags = run.tags*.tag
             } catch (Exception ex) {}

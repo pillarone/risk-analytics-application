@@ -88,15 +88,18 @@ class ModellingInformationTableTreeBuilder {
             root.add(modelNode)
         }
 
-        ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
-        getAllResourceClasses().each { Class resourceClass ->
-            ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
-            getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
-                resourceNode.add(createItemNodes(it))
+        def resourceClasses = getAllResourceClasses()
+        if (! resourceClasses.isEmpty()) {
+            ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
+            resourceClasses.each { Class resourceClass ->
+                ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
+                getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
+                    resourceNode.add(createItemNodes(it))
+                }
+                resourcesNode.add(resourceNode)
             }
-            resourcesNode.add(resourceNode)
+            root.add(resourcesNode)
         }
-        root.add(resourcesNode)
 
         root.add(createBatchNode())
     }
@@ -116,17 +119,17 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public List<Class> getAllResourceClasses() {
+
+        if (! (ConfigurationHolder.config?.resources instanceof List)) {
+            LOG.info("Please note that there are no resource classes defined in the config.groovy file")
+            return []
+        }
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true)
         provider.addIncludeFilter(new AssignableTypeFilter(IResource))
-
-        List<String> acceptedResources = []
-        if (ConfigurationHolder.config?.resources instanceof List) {
-            acceptedResources = ConfigurationHolder.config.resources
-        }
+        List<String> acceptedResources = ConfigurationHolder.config.resources
 
         List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
         return classes.findAll { acceptedResources.contains(it.simpleName) }
-
     }
 
     private ITableTreeNode getModelNode(Model model) {
