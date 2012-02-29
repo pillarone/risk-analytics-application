@@ -23,11 +23,11 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.core.type.filter.AssignableTypeFilter
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.pillarone.riskanalytics.core.util.ClassPathScanner
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -120,13 +120,13 @@ class ModellingInformationTableTreeBuilder {
 
     public List<Class> getAllResourceClasses() {
 
-        if (! (ConfigurationHolder.config?.resources instanceof List)) {
+        if (! (ConfigurationHolder.config?.includedResources instanceof List)) {
             LOG.info("Please note that there are no resource classes defined in the config.groovy file")
             return []
         }
-        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true)
+        ClassPathScanner provider = new ClassPathScanner()
         provider.addIncludeFilter(new AssignableTypeFilter(IResource))
-        List<String> acceptedResources = ConfigurationHolder.config.resources
+        List<String> acceptedResources = ConfigurationHolder.config.includedResources
 
         List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
         return classes.findAll { acceptedResources.contains(it.simpleName) }

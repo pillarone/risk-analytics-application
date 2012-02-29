@@ -8,9 +8,9 @@ import org.pillarone.riskanalytics.application.output.structure.ResultStructureD
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
-import org.springframework.core.type.filter.AssignableTypeFilter
+import org.pillarone.riskanalytics.core.util.ClassPathScanner
 import org.pillarone.riskanalytics.core.util.GroovyUtils
+import org.springframework.core.type.filter.AssignableTypeFilter
 
 class ResultStructureImportService extends FileImportService {
 
@@ -37,7 +37,7 @@ class ResultStructureImportService extends FileImportService {
     }
 
     private static List<Class> findAllModelClasses() {
-        ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true)
+        ClassPathScanner provider = new ClassPathScanner(true)
         provider.addIncludeFilter(new AssignableTypeFilter(Model))
 
         return provider.findCandidateComponents("models")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }

@@ -44,7 +44,7 @@ serverSessionPrefix = ";jsessionid="
 environments {
     development {
         models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
-        resources = [ExampleResource.simpleName]
+        includedResources = [ExampleResource.simpleName]
         ExceptionSafeOut = System.out
         log4j = {
             appenders {
@@ -98,7 +98,7 @@ environments {
     }
     test {
         ExceptionSafeOut = System.out
-        resources = [ExampleResource.simpleName]
+        includedResources = [ExampleResource.simpleName]
         keyFiguresToCalculate = [
                 'stdev': true,
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
