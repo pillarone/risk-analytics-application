@@ -19,6 +19,7 @@ class ResourceTreeBuilderTests extends GroovyTestCase {
     void testTree() {
 
         Resource resource = new Resource("testTree", ExampleResource)
+        resource.load()
         ResourceTreeBuilder builder = new ResourceTreeBuilder(resource)
 
 

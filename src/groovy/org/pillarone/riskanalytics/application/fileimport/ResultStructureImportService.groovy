@@ -37,7 +37,7 @@ class ResultStructureImportService extends FileImportService {
     }
 
     private static List<Class> findAllModelClasses() {
-        ClassPathScanner provider = new ClassPathScanner(true)
+        ClassPathScanner provider = new ClassPathScanner()
         provider.addIncludeFilter(new AssignableTypeFilter(Model))
 
         return provider.findCandidateComponents("models")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
