@@ -44,6 +44,8 @@ class ModellingInformationTableTreeBuilder {
     static final int RESULT_CONFIGURATION_NODE_INDEX = 1
     static final int SIMULATION_NODE_INDEX = 2
 
+    private boolean resourceNodeVisible = false
+
     public ModellingInformationTableTreeBuilder(AbstractTableTreeModel model) {
         this.model = model;
         root = new DefaultMutableTableTreeNode("root")
@@ -67,6 +69,7 @@ class ModellingInformationTableTreeBuilder {
                 resourcesNode.add(resourceNode)
             }
             root.add(resourcesNode)
+            resourceNodeVisible = true
         }
         root.add(createBatchNode())
         getAllModelClasses().each {Class modelClass ->
@@ -105,7 +108,7 @@ class ModellingInformationTableTreeBuilder {
                 LOG.error "Could not create node for ${toString()}", t
             }
         }
-        root.insert(modelNode, root.childCount - 2)
+        root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
     }
 
     public List getItemsForModel(Class modelClass, Class clazz) {

@@ -236,11 +236,11 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
                 def model = new ModellingInformationTableTreeModel()
                 model.buildTreeNodes()
 
-                assertEquals 2, model.root.childCount
+                assertEquals 3, model.root.childCount
 
                 model.addNodeForItem(new MigratableCoreModel())
 
-                assertEquals 3, model.root.childCount
+                assertEquals 4, model.root.childCount
 
                 DefaultMutableTableTreeNode modelNode = model.root.getChildAt(1)
                 assertEquals "MigratableCoreModel", modelNode.getItemClass().simpleName
