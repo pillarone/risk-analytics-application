@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
 
@@ -20,10 +22,16 @@ import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferenc
  */
 public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractStandaloneTestCase {
 
+    private static Log LOG = LogFactory.getLog(RiskAnalyticsAbstractStandaloneTestCase)
 
     protected void setUp() throws Exception {
         handleConfiguration()
-        super.setUp()
+        try {
+            super.setUp()
+        } catch (Exception e) {
+            LOG.error("Setup failed", e)
+            throw e;
+        }
     }
 
     protected void tearDown() {

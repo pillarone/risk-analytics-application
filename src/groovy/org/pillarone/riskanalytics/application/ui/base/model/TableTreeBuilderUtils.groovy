@@ -66,6 +66,26 @@ class TableTreeBuilderUtils {
         groupNode
     }
 
+    public static ResourceGroupNode findResourceGroupNode(ITableTreeNode root) {
+        for (int i = 0; i < root.childCount; i++) {
+            ITableTreeNode childNode = root.getChildAt(i)
+            if (childNode instanceof ResourceGroupNode) {
+                return childNode
+            }
+        }
+        return null
+    }
+
+    public static ResourceClassNode findResourceItemGroupNode(ResourceGroupNode node, Class resourceClass) {
+        for (int i = 0; i < node.childCount; i++) {
+            ResourceClassNode childNode = node.getChildAt(i)
+            if (childNode.resourceClass == resourceClass) {
+                return childNode
+            }
+        }
+        return null
+    }
+
     public static ItemGroupNode findGroupNode(Parameterization item, ModelNode modelNode) {
         ItemGroupNode groupNode = null
         for (int i = 0; i < modelNode.childCount && groupNode == null; i++) {

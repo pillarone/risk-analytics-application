@@ -25,6 +25,9 @@ import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.application.ui.base.action.*
 import com.ulcjava.base.application.datatype.IDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -59,6 +62,59 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
         OpenComponentHelp help = new OpenComponentHelp(tree.rowHeaderTableTree)
 
+        internalAddContextMenu(tree, model, insertComment, insertIssue, showCommentsAction, validationAndComments, help)
+
+        expandTreeMenu = new ULCPopupMenu()
+        expandTreeMenu.name = "popup.expand"
+        expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
+        expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
+        expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenu.addSeparator()
+        expandTreeMenu.add(new ULCMenuItem(insertComment))
+
+        ULCMenuItem expandTreeShowCommentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
+        tree.addTreeSelectionListener(expandTreeShowCommentsMenuItem)
+        expandTreeMenu.add(expandTreeShowCommentsMenuItem)
+        expandTreeMenu.add(new ULCMenuItem(validationAndComments))
+
+        expandTreeMenuWithHelp = new ULCPopupMenu()
+        expandTreeMenuWithHelp.name = "popup.expand"
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeCollapser(tree)))
+
+        expandTreeMenuWithHelp.addSeparator()
+        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        expandTreeMenuWithHelp.addSeparator()
+        expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
+        expandTreeMenuWithHelp.add(new ULCMenuItem(insertIssue))
+
+        ULCMenuItem expandTreeMenuWithHelpShowCommentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
+        tree.addTreeSelectionListener(expandTreeMenuWithHelpShowCommentsMenuItem)
+        expandTreeMenuWithHelp.add(expandTreeMenuWithHelpShowCommentsMenuItem)
+        expandTreeMenuWithHelp.add(new ULCMenuItem(validationAndComments))
+        expandTreeMenuWithHelp.addSeparator()
+        expandTreeMenuWithHelp.add(new ULCMenuItem(help))
+
+        commentMenu = new ULCPopupMenu()
+        commentMenu.name = "popup.comment"
+        commentMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
+        commentMenu.addSeparator()
+        commentMenu.add(new ULCMenuItem(insertComment))
+        commentMenu.add(new ULCMenuItem(insertIssue))
+
+        ULCMenuItem commentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
+        tree.addTreeSelectionListener(commentsMenuItem)
+        commentMenu.add(commentsMenuItem)
+        commentMenu.add(new ULCMenuItem(validationAndComments))
+
+    }
+
+    protected internalAddContextMenu(def tree, def model, InsertCommentAction insertComment, InsertIssueAction insertIssue, ShowCommentsAction showCommentsAction, ShowValidationAndCommentsAction validationAndComments, OpenComponentHelp help) {
+
+    }
+
+    protected internalAddContextMenu(ULCFixedColumnTableTree tree, ParameterViewModel model, InsertCommentAction insertComment, InsertIssueAction insertIssue, ShowCommentsAction showCommentsAction, ShowValidationAndCommentsAction validationAndComments, OpenComponentHelp help) {
         addDynamicNodeMenu = new ULCPopupMenu()
         ULCMenuItem subComponentMenuItem = new SubComponentMenuItem(new AddDynamicSubComponent(tree.rowHeaderTableTree, model))
         tree.addTreeSelectionListener(subComponentMenuItem)
@@ -107,51 +163,6 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         LockSensitiveMenuItem removeDynamicSubComponentMenuItem = new LockSensitiveMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model))
         tree.addTreeSelectionListener removeDynamicSubComponentMenuItem
         removeDynamicNodeMenu.add(removeDynamicSubComponentMenuItem)
-
-        expandTreeMenu = new ULCPopupMenu()
-        expandTreeMenu.name = "popup.expand"
-        expandTreeMenu.add(new ULCMenuItem(new TreeExpander(tree)))
-        expandTreeMenu.add(new ULCMenuItem(new TreeCollapser(tree)))
-        expandTreeMenu.addSeparator()
-        expandTreeMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
-        expandTreeMenu.addSeparator()
-        expandTreeMenu.add(new ULCMenuItem(insertComment))
-
-        ULCMenuItem expandTreeShowCommentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
-        tree.addTreeSelectionListener(expandTreeShowCommentsMenuItem)
-        expandTreeMenu.add(expandTreeShowCommentsMenuItem)
-        expandTreeMenu.add(new ULCMenuItem(validationAndComments))
-
-        expandTreeMenuWithHelp = new ULCPopupMenu()
-        expandTreeMenuWithHelp.name = "popup.expand"
-        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeExpander(tree)))
-        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeCollapser(tree)))
-
-        expandTreeMenuWithHelp.addSeparator()
-        expandTreeMenuWithHelp.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
-        expandTreeMenuWithHelp.addSeparator()
-        expandTreeMenuWithHelp.add(new ULCMenuItem(insertComment))
-        expandTreeMenuWithHelp.add(new ULCMenuItem(insertIssue))
-
-        ULCMenuItem expandTreeMenuWithHelpShowCommentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
-        tree.addTreeSelectionListener(expandTreeMenuWithHelpShowCommentsMenuItem)
-        expandTreeMenuWithHelp.add(expandTreeMenuWithHelpShowCommentsMenuItem)
-        expandTreeMenuWithHelp.add(new ULCMenuItem(validationAndComments))
-        expandTreeMenuWithHelp.addSeparator()
-        expandTreeMenuWithHelp.add(new ULCMenuItem(help))
-
-        commentMenu = new ULCPopupMenu()
-        commentMenu.name = "popup.comment"
-        commentMenu.add(new ULCMenuItem(new TreeNodeCopier(rowHeaderTree: tree.rowHeaderTableTree, viewPortTree: tree.viewPortTableTree, model: model.treeModel)))
-        commentMenu.addSeparator()
-        commentMenu.add(new ULCMenuItem(insertComment))
-        commentMenu.add(new ULCMenuItem(insertIssue))
-
-        ULCMenuItem commentsMenuItem = new ShowCommentsMenuItem(showCommentsAction, model)
-        tree.addTreeSelectionListener(commentsMenuItem)
-        commentMenu.add(commentsMenuItem)
-        commentMenu.add(new ULCMenuItem(validationAndComments))
-
     }
 
 

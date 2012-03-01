@@ -7,6 +7,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ResultUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import org.pillarone.riskanalytics.core.ResourceDAO
 
 class NodeNameDialog {
 
@@ -84,6 +86,10 @@ class NodeNameDialog {
 
     protected boolean isUnique(ModellingUIItem modellingUIItem) {
         modellingUIItem.item.daoClass.findByNameAndModelClassName(nameInput.text, modellingUIItem.item.modelClass.name) == null
+    }
+
+    protected boolean isUnique(ResourceUIItem resource) {
+        ResourceDAO.findByNameAndResourceClassName(nameInput.text, resource.item.modelClass.name) == null
     }
 
     public void show() {

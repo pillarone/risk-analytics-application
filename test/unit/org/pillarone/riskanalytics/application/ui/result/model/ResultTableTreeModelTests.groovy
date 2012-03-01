@@ -40,7 +40,8 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         child.add(grandChild)
 
         stub.use {
-            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 1), parameterization, new MeanFunction(), new ApplicationModel())
+            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 1),
+                    parameterization, new MeanFunction(), new ApplicationModel())
             assertEquals 2, model.getColumnCount()
             assertEquals 2, model.functions.size()
             assertFalse model.isLeaf(root)

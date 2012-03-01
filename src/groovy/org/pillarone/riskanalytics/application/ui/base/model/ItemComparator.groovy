@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,6 +20,10 @@ class ItemComparator {
 
     public static boolean isEqual(def item1, DefaultMutableTableTreeNode node) {
         return false
+    }
+
+    public static boolean isEqual(Resource item1, Resource item2) {
+        return item1 != null && item2 != null && item1.name == item2.name && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
     }
 
     public static boolean isEqual(Parameterization item1, Parameterization item2) {

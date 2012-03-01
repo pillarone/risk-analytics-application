@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.model.ModelPath
 import org.pillarone.riskanalytics.core.parameterization.IParameterObject
 import org.pillarone.riskanalytics.core.util.GroovyUtils
 import org.pillarone.riskanalytics.core.components.ComponentUtils
+import org.pillarone.riskanalytics.core.components.IResource
 
 class RuntimeParameterCollector implements IModelVisitor {
 
@@ -39,6 +40,21 @@ class RuntimeParameterCollector implements IModelVisitor {
 
     void visitParameterObject(IParameterObject parameterObject, ModelPath path) {
     }
+
+    void visitResource(IResource resource, ModelPath path) {
+        for (Map.Entry<String, Object> entry in GroovyUtils.getProperties(resource)) {
+            final String propertyName = entry.key
+            if (propertyName.startsWith(RPC.RUNTIME_PARAMETER_PREFIX)) {
+                final def propertyValue = entry.value
+                if (propertyValue == null) {
+                    throw new IllegalStateException("Runtime parameter ${resource.class.name}.${propertyName} must have a default value")
+                }
+                runtimeParameters << new RuntimeParameterDescriptor(propertyName: propertyName, typeClass: propertyValue.class, value: propertyValue)
+            }
+        }
+    }
+
+
 
     public static class RuntimeParameterDescriptor {
 

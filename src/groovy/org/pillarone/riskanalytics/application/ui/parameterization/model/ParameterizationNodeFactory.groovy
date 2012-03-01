@@ -32,6 +32,8 @@ class ParameterizationNodeFactory {
                 return createDateNode(parameters)
             case BooleanParameterHolder:
                 return createBooleanNode(parameters)
+            case ResourceParameterHolder:
+                return createResourceNode(parameters)
             default:
                 throw new RuntimeException("Unknown paramter type: ${parameters[0].class}")
         }
@@ -52,6 +54,10 @@ class ParameterizationNodeFactory {
 
     private static ParameterizationTableTreeNode createStringNode(List parameters) {
         return new SimpleValueParameterizationTableTreeNode(parameters)
+    }
+
+    private static ParameterizationTableTreeNode createResourceNode(List parameters) {
+        return new ResourceParameterizationTableTreeNode(parameters)
     }
 
     private static ParameterizationTableTreeNode createStringNode(List parameters, Model model) {

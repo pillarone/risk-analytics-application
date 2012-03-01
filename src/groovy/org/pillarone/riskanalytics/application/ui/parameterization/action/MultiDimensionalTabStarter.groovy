@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.ULCComponent
+import org.pillarone.riskanalytics.application.ui.base.view.AbstractParameterizationTreeView
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,10 +26,10 @@ import com.ulcjava.base.application.ULCComponent
 
 class MultiDimensionalTabStarter implements IActionListener {
 
-    ParameterView parameterView
+    AbstractParameterizationTreeView parameterView
     Map openTabs = [:]
 
-    public MultiDimensionalTabStarter(ParameterView parameterView) {
+    public MultiDimensionalTabStarter(AbstractParameterizationTreeView parameterView) {
         this.@parameterView = parameterView
         attachListeners()
     }

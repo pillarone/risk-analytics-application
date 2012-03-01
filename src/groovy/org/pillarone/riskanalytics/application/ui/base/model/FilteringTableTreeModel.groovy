@@ -17,7 +17,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
     public FilteringTableTreeModel(ITableTreeModel model, ITableTreeFilter filter) {
         this.@model = model
         this.@filter = filter
-        filteredRoot = new FilterTableTreeNode(originalNode: (ITableTreeNode)model.root)
+        filteredRoot = new FilterTableTreeNode(originalNode: (ITableTreeNode) model.root)
         applyFilter()
         this.@model.addTableTreeModelListener this
     }
@@ -28,11 +28,11 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
     }
 
     public void applyFilter() {
-        synchronizeFilteredTree((ITableTreeNode)model.root, filteredRoot)
+        synchronizeFilteredTree((ITableTreeNode) model.root, filteredRoot)
     }
 
     protected void reapplyFilter() {
-        synchronizeFilteredTree((ITableTreeNode)model.root, filteredRoot)
+        synchronizeFilteredTree((ITableTreeNode) model.root, filteredRoot)
     }
 
     private void synchronizeTreePath(TreePath path) {
@@ -42,7 +42,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
     }
 
     private def findValidSynchronizationStart(TreePath path) {
-        ITableTreeNode node = (ITableTreeNode)path.lastPathComponent
+        ITableTreeNode node = (ITableTreeNode) path.lastPathComponent
         while (!(nodeMapping[node] && isAcceptedNode(node)) && node.parent != null) {
             node = node.parent
         }
@@ -53,28 +53,30 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
 
     protected void synchronizeFilteredTree(ITableTreeNode node, FilterTableTreeNode filteredNode) {
         nodeMapping[node] = filteredNode
-        node?.childCount?.times {childIndex ->
+        if (node != null) {
+            for (int childIndex = 0; childIndex < node.childCount; childIndex++) {
 
-            def childNode = node.getChildAt(childIndex)
-            FilterTableTreeNode filteredChildNode = filteredNode.childNodes.find {it.originalNode == childNode}
-            boolean nodeCurrentlyActive = filteredNode.activeIndices.contains(filteredNode.childNodes.indexOf(filteredChildNode))
-            if (isAcceptedNode(childNode)) {
-                if (!filteredChildNode) {
-                    filteredChildNode = new FilterTableTreeNode(parent: filteredNode, originalChildIndex: childIndex, originalNode: childNode)
+                def childNode = node.getChildAt(childIndex)
+                FilterTableTreeNode filteredChildNode = filteredNode.childNodes.find {it.originalNode == childNode}
+                boolean nodeCurrentlyActive = filteredNode.activeIndices.contains(filteredNode.childNodes.indexOf(filteredChildNode))
+                if (isAcceptedNode(childNode)) {
+                    if (!filteredChildNode) {
+                        filteredChildNode = new FilterTableTreeNode(parent: filteredNode, originalChildIndex: childIndex, originalNode: childNode)
 
-                    filteredNode.childNodes << filteredChildNode
-                    filteredNode.activeIndices << filteredNode.childNodes.indexOf(filteredChildNode)
-                    nodeMapping[childNode] = filteredChildNode
-                    nodesWereInserted(new TreePath(getPathToRoot(node) as Object[]), [getIndexOfChild(node, childNode)] as int[])
-                } else if (!nodeCurrentlyActive) {
-                    filteredNode.activeIndices << filteredNode.childNodes.indexOf(filteredChildNode)
-                    filteredNode.activeIndices = filteredNode.activeIndices.sort()
-                    nodesWereInserted(new TreePath(getPathToRoot(node) as Object[]), [getIndexOfChild(node, childNode)] as int[])
-                }
-                synchronizeFilteredTree(childNode, filteredChildNode)
-            } else {
-                if (filteredChildNode && nodeCurrentlyActive) {
-                    removeFilteredChildNodeIndex(filteredChildNode)
+                        filteredNode.childNodes << filteredChildNode
+                        filteredNode.activeIndices << filteredNode.childNodes.indexOf(filteredChildNode)
+                        nodeMapping[childNode] = filteredChildNode
+                        nodesWereInserted(new TreePath(getPathToRoot(node) as Object[]), [getIndexOfChild(node, childNode)] as int[])
+                    } else if (!nodeCurrentlyActive) {
+                        filteredNode.activeIndices << filteredNode.childNodes.indexOf(filteredChildNode)
+                        filteredNode.activeIndices = filteredNode.activeIndices.sort()
+                        nodesWereInserted(new TreePath(getPathToRoot(node) as Object[]), [getIndexOfChild(node, childNode)] as int[])
+                    }
+                    synchronizeFilteredTree(childNode, filteredChildNode)
+                } else {
+                    if (filteredChildNode && nodeCurrentlyActive) {
+                        removeFilteredChildNodeIndex(filteredChildNode)
+                    }
                 }
             }
         }

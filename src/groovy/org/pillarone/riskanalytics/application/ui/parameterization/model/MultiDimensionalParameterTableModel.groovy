@@ -8,6 +8,8 @@ import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensiona
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.components.ResourceHolder
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 class MultiDimensionalParameterTableModel extends AbstractTableModel implements IBulkChangeable {
     private boolean bulkChange = false
@@ -124,6 +126,8 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         Object value = multiDimensionalParam.getValueAt(row, column - 1)
         if (value instanceof DateTime) {
             value = value.toDate()
+        } else if(value instanceof ResourceHolder) {
+            value = value.toString()
         }
         return value
     }
@@ -145,6 +149,10 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
             if (oldValueClazz != String) {
                 return
             }
+        }
+        Object originalValue = multiDimensionalParam.getValueAt(rowIndex, columnIndex - 1)
+        if(originalValue instanceof ResourceHolder) {
+            value = new ResourceHolder(originalValue.resourceClass, value.substring(0, value.lastIndexOf(" ")), new VersionNumber(value.substring(value.lastIndexOf(" ") + 2)))
         }
 
         if (value != null && !value.equals(oldValue)) {

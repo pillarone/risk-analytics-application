@@ -26,9 +26,18 @@ class BatchViewTests extends AbstractFunctionalTestCase {
 
     public void testAddNewBatch() {
         ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
+        TreePath batchPath = tableTree.findPath(["Batches"] as String[])
+        assertNotNull "path not found", batchPath
 
-        tableTree.selectCell(tableTree.findRow("Batches"), 0)
-        tableTree.pushKey(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)
+        tableTree.selectPath(batchPath)
+
+        ULCPopupMenuOperator popupMenuOperator = tableTree.callPopupOnCell(tableTree.getRowForPath(batchPath), 0)
+
+        assertNotNull popupMenuOperator
+        ULCMenuItemOperator newBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
+        assertNotNull newBatch
+        newBatch.clickMouse()
+
         ULCTextFieldOperator textFieldOperator = getTextFieldOperator("batchNameTextField")
         textFieldOperator.clearText()
         textFieldOperator.typeText("test")

@@ -21,7 +21,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteException
 class ExceptionSafe {
     private static LOG = Logger.getLogger(ExceptionSafe)
     private static messagePatterns = [
-            Exception: "Sorry, PillarOne has hit a technical error.\n[{0}]\n\nIt tries to proceed, but it is safer to restart PillarOne.\nYou may want to save your data before restarting.",
+            Exception: "PillarOne has hit a technical error, please contact application support\n(details regarding the error have been written to the log files).",
             ParameterizationSaveError: "Invalid parameterization:\n\n {0}\n\nThe parameterization is not saved.",
             ParameterizationImportError: "Error in parameterization on line {1}:\n\n{0}\n\nParameterization import failed.",
             PasteError: "Paste Error:\n\n {0} \nThis error appears also if the tree structure changes while pasting.",

@@ -8,12 +8,23 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTa
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.util.PeriodLabelsUtil
+import org.pillarone.riskanalytics.core.model.Model
 
+/**
+ * This class process the ResultTree file replacing variables with p14n specific values. The user may define any
+ * variables. They have to be wrapped with [%varname%]. There exists one predefined variable for periods [%period%].
+ * It is especially useful for triangle like data. See also AggregateSplitByInceptionDateCollectingModeStrategy in the
+ * pc-cashflow plugin.
+ */
 class ResultStructureTreeBuilder {
 
     private static class NodeReplacement implements Comparable {
+        /** full path */
         String path
+        /** variable name */
         String wildcard
+        /** component names replacing the variable */
         Set<String> replacements
 
         int compareTo(Object o) {
@@ -23,23 +34,25 @@ class ResultStructureTreeBuilder {
 
             return wildcardIndex > otherWildcardIndex ? -1 : 1
         }
-
     }
 
-    private Class modelClass
+    private Model model
     private Simulation simulation
     private ResultStructure resultStructure
     private Map<String, ICollectingModeStrategy> allPaths
+    private static String PERIOD_VARIABLE = '[%period%]'
 
     Map<String, String> transformedPaths = [:]
 
     private ResultNode existingPathsRoot
     private List<NodeReplacement> nodeReplacements = []
+    private List<String> periodLabels = []
 
 
-    public ResultStructureTreeBuilder(Map<String, ICollectingModeStrategy> allPaths, Class modelClass, ResultStructure resultStructure, Simulation simulation) {
+    public ResultStructureTreeBuilder(Map<String, ICollectingModeStrategy> allPaths, Model model,
+                                      ResultStructure resultStructure, Simulation simulation) {
         this.allPaths = allPaths;
-        this.modelClass = modelClass;
+        this.model = model;
         this.resultStructure = resultStructure;
         this.simulation = simulation;
 
@@ -48,6 +61,7 @@ class ResultStructureTreeBuilder {
 
     private void initTree() {
         buildAllPathsTree()
+        initPeriodLabels()
         List leafs = []
         findAllLeafNodes(resultStructure.rootNode, leafs)
         obtainReplacements(leafs)
@@ -61,6 +75,10 @@ class ResultStructureTreeBuilder {
             }
             findOrCreateNode(path, existingPathsRoot)
         }
+    }
+
+    private void initPeriodLabels() {
+        periodLabels = PeriodLabelsUtil.getPeriodLabels(simulation, model)
     }
 
     private void findOrCreateNode(String path, ResultNode resultNode) {
@@ -102,26 +120,37 @@ class ResultStructureTreeBuilder {
 
         String currentNodeName = leafNodes[level]
         if (currentNodeName.startsWith("[%")) {
+            // collect all possible replacements
             List<String> replacements = []
-            for (ResultNode child in currentNode.childNodes) {
-                if (child.name.startsWith("sub")) {
-                    replacements << child.name
+            if (currentNodeName.equals(PERIOD_VARIABLE)) {
+                replacements.addAll(periodLabels)
+            }
+            else {
+                for (ResultNode child in currentNode.childNodes) {
+                    if (child.name.startsWith("sub")) {
+                        replacements << child.name
+                    }
                 }
             }
             NodeReplacement existingReplacement = nodeReplacements.find { it.path == leafPath && it.wildcard == currentNodeName}
             if (existingReplacement == null) {
+                // add leafPath and currentNodeName to nodeReplacements only if it is not yet part of the nodeReplacements list 
                 nodeReplacements << new NodeReplacement(path: leafPath, wildcard: currentNodeName, replacements: replacements)
             } else {
+                // complete the existingReplacement list if there is already an existingReplacment
                 existingReplacement.replacements.addAll(replacements)
             }
+            // step one level down of on a variable node
             level++
             for (ResultNode child in currentNode.childNodes) {
                 obtainReplacementsRecursive(child, leafNodes, level, leafPath)
             }
-        } else {
+        } 
+        else {
             if (currentNode == null) return
             currentNode = currentNode.getChildByName(currentNodeName)
             if (currentNode != null) { // path collected
+                // step one level down of on a fix node 
                 obtainReplacementsRecursive(currentNode, leafNodes, ++level, leafPath)
             }
         }
@@ -176,9 +205,9 @@ class ResultStructureTreeBuilder {
         for (ResultNode child in node.childNodes) {
             SimpleTableTreeNode newNode
             if (child.resultPath == null || allPaths.get(child.resultPath) == null) {
-                newNode = new ResultStructureTableTreeNode(child.name, modelClass)
+                newNode = new ResultStructureTableTreeNode(child.name, model.class)
             } else {
-                newNode = new ResultTableTreeNode(child.name, modelClass)
+                newNode = new ResultTableTreeNode(child.name, model.class)
                 newNode.resultPath = child.resultPath
                 newNode.collector = allPaths.get(child.resultPath).getIdentifier()
             }

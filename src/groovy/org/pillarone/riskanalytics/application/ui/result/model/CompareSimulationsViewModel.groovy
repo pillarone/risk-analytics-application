@@ -75,7 +75,7 @@ public class CompareSimulationsViewModel extends AbstractModellingModel {
             resultStructure = resultStructures[0]
 
         resultStructure.load()
-        builder = new ResultStructureTreeBuilder(ResultViewUtils.obtainsCollectors(item*.simulationRun, paths.toList()), modelClass, resultStructure, item[0])
+        builder = new ResultStructureTreeBuilder(ResultViewUtils.obtainsCollectors(item*.simulationRun, paths.toList()), model, resultStructure, item[0])
 
         def treeRoot = builder.buildTree()
 

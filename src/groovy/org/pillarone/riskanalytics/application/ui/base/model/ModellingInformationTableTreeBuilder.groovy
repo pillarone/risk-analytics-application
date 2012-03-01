@@ -23,6 +23,11 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.springframework.core.type.filter.AssignableTypeFilter
+import org.pillarone.riskanalytics.core.components.IResource
+import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.pillarone.riskanalytics.core.util.ClassPathScanner
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 /**
@@ -51,6 +56,18 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public def buildTreeNodes() {
+        def resourceClasses = getAllResourceClasses()
+        if (! resourceClasses.isEmpty()) {
+            ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
+            resourceClasses.each { Class resourceClass ->
+                ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
+                getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
+                    resourceNode.add(createItemNodes(it))
+                }
+                resourcesNode.add(resourceNode)
+            }
+            root.add(resourcesNode)
+        }
         root.add(createBatchNode())
         getAllModelClasses().each {Class modelClass ->
             createModelNode(modelClass.newInstance())
@@ -88,11 +105,12 @@ class ModellingInformationTableTreeBuilder {
                 LOG.error "Could not create node for ${toString()}", t
             }
         }
-        root.insert(modelNode, root.childCount - 1)
+        root.insert(modelNode, root.childCount - 2)
     }
 
     public List getItemsForModel(Class modelClass, Class clazz) {
         switch (clazz) {
+            case Resource: return ModellingItemFactory.getResources(modelClass)
             case Parameterization: return ModellingItemFactory.getParameterizationsForModel(modelClass)
             case ResultConfiguration: return ModellingItemFactory.getResultConfigurationsForModel(modelClass)
             case Simulation: return ModellingItemFactory.getActiveSimulationsForModel(modelClass)
@@ -102,6 +120,20 @@ class ModellingInformationTableTreeBuilder {
 
     public List getAllModelClasses() {
         return ModelRegistry.instance.allModelClasses.toList()
+    }
+
+    public List<Class> getAllResourceClasses() {
+
+        if (! (ConfigurationHolder.config?.includedResources instanceof List)) {
+            LOG.info("Please note that there are no resource classes defined in the config.groovy file")
+            return []
+        }
+        ClassPathScanner provider = new ClassPathScanner()
+        provider.addIncludeFilter(new AssignableTypeFilter(IResource))
+        List<String> acceptedResources = ConfigurationHolder.config.includedResources
+
+        List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
+        return classes.findAll { acceptedResources.contains(it.simpleName) }
     }
 
     private ITableTreeNode getModelNode(Model model) {
@@ -231,6 +263,14 @@ class ModellingInformationTableTreeBuilder {
         return groupNode
     }
 
+    public def addNodeForItem(ResourceUIItem modellingUIItem) {
+        ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
+
+        createAndInsertItemNode(itemGroupNode, modellingUIItem)
+        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemGroupNode) as Object[]))
+        return itemGroupNode
+    }
+
     public def addNodeForItem(ModellingItem modellingItem) {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
         return addNodeForItem(modellingUIItem)
@@ -243,6 +283,12 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(ModellingItem item) {
         ITableTreeNode itemGroupNode = findGroupNode(item, findModelNode(root, item))
+        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, item)
+        model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+    }
+
+    public void itemChanged(Resource item) {
+        ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), item.modelClass)
         ITableTreeNode itemNode = findNodeForItem(itemGroupNode, item)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
@@ -390,6 +436,16 @@ class ModellingInformationTableTreeBuilder {
 
     private ITableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
         ResultConfigurationNode node = new ResultConfigurationNode(resultConfigurationUIItem)
+        ((ModellingInformationTableTreeModel) model).putValues(node)
+        return node
+    }
+
+    private ITableTreeNode createNode(Resource item) {
+        return createNode(new ResourceUIItem(mainModel, null, item))
+    }
+
+    private ITableTreeNode createNode(ResourceUIItem item) {
+        ResourceNode node = new ResourceNode(item)
         ((ModellingInformationTableTreeModel) model).putValues(node)
         return node
     }

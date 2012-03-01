@@ -18,7 +18,7 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
     public String displayValue
 
     List values
-    int column
+    public int column
     boolean allSelected = false
 
     public ModellingItemNodeFilter(List values, int column) {
@@ -60,24 +60,22 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
     }
 
     private boolean contains(String value) {
-        boolean found = false
         if (column == ModellingInformationTableTreeModel.NAME) {
             if (values.size() == 0) return false
             for (String name: values) {
                 if (value != null && value == name) {
-                    found = true
-                    break
+                    return true
                 }
             }
         } else if (column == ModellingInformationTableTreeModel.TAGS) {
             for (String tag: values) {
-                found = contains(tag, value)
-                if (found) break;
+                if (contains(tag, value))
+                    return true
             }
         } else {
-            found = values?.contains(value);
+            return values?.contains(value)
         }
-        return found
+        return false
     }
 
     private boolean contains(Long value) {

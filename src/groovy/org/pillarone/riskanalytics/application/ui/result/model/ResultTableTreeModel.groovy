@@ -3,20 +3,16 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import com.ulcjava.base.application.datatype.ULCNumberDataType
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import java.text.NumberFormat
-import java.text.SimpleDateFormat
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
+import org.pillarone.riskanalytics.application.util.PeriodLabelsUtil
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.dataaccess.function.*
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.DateTimeFormat
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
 
@@ -90,33 +86,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     private void initPeriodLabels() {
-        //Whenever possible, use the saved period labels
-        if (!parameterization.periodLabels.empty) {
-            DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormatUtils.PARAMETER_DISPLAY_FORMAT)
-            DateTimeFormatter parser = DateTimeFormat.forPattern(Parameterization.PERIOD_DATE_FORMAT)
-            periodLabels = parameterization.periodLabels.collect { String it ->
-                try {
-                    return formatter.print(parser.parseDateTime(it))
-                } catch (Exception e) {
-                    return it //period label is not a date
-                }
-            }
-            return
-        }
-        //Saving period labels is not possible for certain period counters.. they have to be resolved here
-        SimpleDateFormat format = new SimpleDateFormat(DateFormatUtils.PARAMETER_DISPLAY_FORMAT)
-        IPeriodCounter periodCounter = simulationModel.createPeriodCounter(simulationRun.beginOfFirstPeriod)
-        if (periodCounter != null) {
-            periodCounter.reset()
-            simulationRun.periodCount.times {
-                periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
-                periodCounter.next()
-            }
-        } else {
-            simulationRun.periodCount.times {int i ->
-                periodLabels << "P$i"
-            }
-        }
+        periodLabels = PeriodLabelsUtil.getPeriodLabels(parameterization.periodLabels, simulationRun, simulationModel)
     }
 
     public String getColumnName(int i) {

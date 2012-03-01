@@ -65,10 +65,9 @@ class ResultViewModel extends AbstractCommentableItemModel {
             }
 
             def simulationRun = item.simulationRun
-            Class modelClass = model.class
 
             resultStructure.load()
-            builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), modelClass, resultStructure, item)
+            builder = new ResultStructureTreeBuilder(obtainsCollectors(simulationRun, paths.toList()), model, resultStructure, item)
 
             def localTreeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount

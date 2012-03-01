@@ -323,15 +323,15 @@ class TreeBuilderUtil {
         return model.sortedProperties
     }
 
-    public static List collectProperties(Component component, String key) {
+    public static List collectProperties(def component, String key) {
         return getSortedProperties(component, key)
     }
 
-    public static List collectDynamicProperties(Component component, String key) {
+    public static List collectDynamicProperties(def component, String key) {
         return getSortedProperties(component, key)
     }
 
-    private static List getSortedProperties(Component component, String key) {
+    private static List getSortedProperties(def component, String key) {
         List sortedProps = []
 
         Class currentClass = component.class

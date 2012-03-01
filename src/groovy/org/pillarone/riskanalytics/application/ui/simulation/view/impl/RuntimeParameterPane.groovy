@@ -13,6 +13,10 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.core.components.ResourceHolder
+import org.pillarone.riskanalytics.core.ResourceDAO
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ResourceParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 class RuntimeParameterPane {
 
@@ -41,7 +45,7 @@ class RuntimeParameterPane {
     protected void addParameter(RuntimeParameterDescriptor descriptor, String defaultValue) {
         addLabel(descriptor.displayName)
 
-        ULCTextField textField = new ULCTextField((String)getValueFromPrefs(defaultValue, descriptor, { String str -> str }))
+        ULCTextField textField = new ULCTextField((String) getValueFromPrefs(defaultValue, descriptor, { String str -> str }))
         textField.name = descriptor.propertyName
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.text
@@ -57,7 +61,7 @@ class RuntimeParameterPane {
         ULCTextField textField = new ULCTextField()
         textField.name = descriptor.propertyName
         textField.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
-        textField.value = (Integer)getValueFromPrefs(defaultValue, descriptor, { String str -> Integer.parseInt(str) })
+        textField.value = (Integer) getValueFromPrefs(defaultValue, descriptor, { String str -> Integer.parseInt(str) })
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.value
             putValueInPrefs(descriptor, "" + descriptor.value)
@@ -72,7 +76,7 @@ class RuntimeParameterPane {
         ULCTextField textField = new ULCTextField()
         textField.name = descriptor.propertyName
         textField.dataType = DataTypeFactory.getDoubleDataTypeForEdit()
-        textField.value = (Double)getValueFromPrefs(defaultValue, descriptor, { String str -> Double.parseDouble(str) })
+        textField.value = (Double) getValueFromPrefs(defaultValue, descriptor, { String str -> Double.parseDouble(str) })
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.value
             putValueInPrefs(descriptor, "" + descriptor.value)
@@ -86,7 +90,7 @@ class RuntimeParameterPane {
 
         ULCCheckBox checkBox = new ULCCheckBox()
         checkBox.name = descriptor.propertyName
-        checkBox.selected = (Boolean)getValueFromPrefs(defaultValue, descriptor, { String str -> Boolean.parseBoolean(str)})
+        checkBox.selected = (Boolean) getValueFromPrefs(defaultValue, descriptor, { String str -> Boolean.parseBoolean(str)})
         checkBox.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = checkBox.selected
             putValueInPrefs(descriptor, checkBox.selected.toString())
@@ -105,6 +109,20 @@ class RuntimeParameterPane {
         comboBox.addActionListener([actionPerformed: { evt ->
             descriptor.value = comboBoxModel.selectedEnum
             putValueInPrefs(descriptor, comboBoxModel.selectedEnum.name())
+            simulationSettingsPaneModel.notifyConfigurationChanged()
+        }] as IActionListener)
+        content.add(ULCBoxPane.BOX_EXPAND_CENTER, comboBox)
+    }
+
+    protected void addParameter(RuntimeParameterDescriptor descriptor, ResourceHolder defaultValue) {
+        addLabel(descriptor.displayName)
+
+        DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel(ResourceDAO.findAllByResourceClassName(defaultValue.resourceClass.name).collect { new ResourceParameterHolder.NameVersionPair(it.name, it.itemVersion).toString() })
+        ULCComboBox comboBox = new ULCComboBox(comboBoxModel)
+        comboBox.name = descriptor.propertyName
+        comboBox.addActionListener([actionPerformed: { evt ->
+            def selectedItem = comboBox.selectedItem.toString()
+            descriptor.value = new ResourceHolder(defaultValue.resourceClass, selectedItem.substring(0, selectedItem.lastIndexOf(" ")), new VersionNumber(selectedItem.substring(selectedItem.lastIndexOf(" ") + 2)))
             simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IActionListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, comboBox)
@@ -141,6 +159,9 @@ class RuntimeParameterPane {
         def propertyName = getUserPrefsPropertyName(descriptor)
         String userPrefValueAsString = userPreferences.getPropertyValue(propertyName)
         def value = userPrefValueAsString != null ? stringToPrefsValue.call(userPrefValueAsString) : defaultValue
+        if (value != defaultValue) {
+            descriptor.value = value
+        }
         return value
     }
 

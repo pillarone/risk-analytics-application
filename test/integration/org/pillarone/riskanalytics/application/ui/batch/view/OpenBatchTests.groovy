@@ -62,10 +62,12 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
 
     public void testOpenBatch() {
         ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
-        int batchRow = tableTree.findRow("Batches")
+        TreePath batchPath = tableTree.findPath(["Batches"] as String[])
+        TreePath batchTestPath = tableTree.findPath(["Batches", "test"] as String[])
+        assertNotNull "path not found", batchPath
 
-        tableTree.doExpandRow batchRow
-        tableTree.selectCell(batchRow + 1, 0)
+        tableTree.doExpandPath(batchPath)
+        tableTree.selectCell(tableTree.getRowForPath(batchTestPath), 0)
         tableTree.pushKey(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK)
         ULCTableOperator tableOperator = getTableOperator("batchesTable")
         assertEquals 1, tableOperator.rowCount
