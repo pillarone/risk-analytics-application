@@ -142,7 +142,7 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         } else {
             value = node.getValueAt(i)
         }
-        if(value != null && !(value instanceof Number)) {
+        if(value != null && !(value instanceof Number || value instanceof Date)) {
             value = value.toString()
         }
         return value

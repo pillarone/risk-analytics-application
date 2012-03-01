@@ -1,13 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.base.view
 
+import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
+
+import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.pillarone.riskanalytics.application.ui.base.action.OpenComponentHelp
+import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
+import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
+import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeCopier
+import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeDuplicator
+import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.InsertIssueAction
@@ -18,16 +28,11 @@ import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubCompo
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.view.LockSensitiveMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.SubComponentMenuItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationUtilities
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
-import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.application.ui.base.action.*
-import com.ulcjava.base.application.datatype.IDataType
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 
 class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
 
@@ -287,6 +292,7 @@ class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
 
     IDataType doubleDataType = DataTypeFactory.getDoubleDataTypeForNonEdit()
     IDataType integerDataType = DataTypeFactory.getIntegerDataTypeForNonEdit()
+    IDataType dateDataType = DataTypeFactory.getDateDataType()
 
     public CompareParameterizationRenderer() {
     }
@@ -309,6 +315,10 @@ class CompareParameterizationRenderer extends DefaultTableTreeCellRenderer {
 
     private void setDataType(Integer value) {
         super.setDataType(integerDataType)
+    }
+
+    private void setDataType(Date value) {
+        super.setDataType(dateDataType)
     }
 
     private void setDataType(def value) {
