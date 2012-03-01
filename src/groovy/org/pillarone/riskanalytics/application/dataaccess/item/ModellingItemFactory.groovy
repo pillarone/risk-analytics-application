@@ -407,7 +407,7 @@ class ModellingItemFactory {
             item.creationDate = dao.getCreationDate()
             item.modificationDate = dao.getModificationDate()
             item.tags = dao.tags*.tag
-            getItemInstances()[key(ResultStructure, dao.id)] = item
+            getItemInstances()[key(Resource, dao.id)] = item
         }
         item
     }
