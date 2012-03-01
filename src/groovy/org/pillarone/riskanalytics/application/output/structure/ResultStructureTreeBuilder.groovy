@@ -8,8 +8,8 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTa
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.util.PeriodLabelsUtil
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.util.PeriodLabelsUtil
 
 /**
  * This class process the ResultTree file replacing variables with p14n specific values. The user may define any
