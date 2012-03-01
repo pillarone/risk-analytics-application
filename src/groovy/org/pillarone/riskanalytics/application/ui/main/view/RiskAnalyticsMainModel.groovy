@@ -251,7 +251,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     public void simulationEnd(Simulation simulation, Model model) {
-        if (simulation.simulationRun?.endTime != null) {
+        if (simulation.end != null) {
             navigationTableTreeModel.addNodeForItem(simulation)
             Parameterization parameterization = simulation.parameterization
             //after simulation running, lock the used the used p14n
