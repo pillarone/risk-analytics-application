@@ -6,3 +6,5 @@ web-app/lib/RiskAnalytics*.jar
 *.log
 .idea/workspace.xml
 *.jasper
+*.iml
+.idea/*
