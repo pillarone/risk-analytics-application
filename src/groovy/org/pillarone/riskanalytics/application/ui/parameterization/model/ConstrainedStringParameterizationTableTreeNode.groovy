@@ -59,7 +59,9 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
             String normalizedName = nameToNormalized.get(holder.businessObject.stringValue)
             if (normalizedName == null || !values.contains(normalizedName)) {
                 if (values.empty) {
-                    holder.value = ""
+                    if (holder.businessObject.stringValue != "") {
+                        holder.value = ""
+                    }
                 } else {
                     setValueAt(values[0], i)
                 }

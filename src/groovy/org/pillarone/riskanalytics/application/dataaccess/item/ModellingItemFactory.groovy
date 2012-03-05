@@ -14,7 +14,6 @@ import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.transaction.TransactionStatus
-import org.pillarone.riskanalytics.core.ResourceDAO
 
 class ModellingItemFactory {
 
@@ -51,14 +50,6 @@ class ModellingItemFactory {
             }
         }
 
-    }
-
-    static List<Resource> getResources(Class resourceClass) {
-        ResourceDAO.withTransaction { status ->
-            ResourceDAO.findAllByResourceClassName(resourceClass.name, [sort: "name"]).collect {
-                getItem(it)
-            }
-        }
     }
 
     static List getNewestParameterizationsForModel(Class modelClass) {
@@ -332,6 +323,11 @@ class ModellingItemFactory {
         newItem.dealId = item.dealId
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
+        if(item.changed) { //drop unsaved changed PMO-1985
+            item.unload()
+            item.load()
+        }
+
         def newId = newItem.save()
         newItem.load()
         getItemInstances()[key(newItem.class, newId)] = newItem
@@ -391,27 +387,6 @@ class ModellingItemFactory {
         item
     }
 
-    private static ModellingItem getItem(ResourceDAO dao) {
-        Resource item = getItemInstances()[key(Resource, dao.id)]
-        if (!item) {
-            item = new Resource(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.resourceClassName))
-            item.versionNumber = new VersionNumber(dao.itemVersion)
-            item.valid = dao.valid
-            item.status = dao.status
-            item.creator = dao.creator
-            if (item.creator)
-                item.creator.username = dao.creator.username
-            item.lastUpdater = dao.lastUpdater
-            if (item.lastUpdater)
-                item.lastUpdater.username = dao.lastUpdater.username
-            item.creationDate = dao.getCreationDate()
-            item.modificationDate = dao.getModificationDate()
-            item.tags = dao.tags*.tag
-            getItemInstances()[key(Resource, dao.id)] = item
-        }
-        item
-    }
-
     private static ModellingItem getItem(ParameterizationDAO dao, Class modelClass = null) {
         Parameterization item = getItemInstances()[key(Parameterization, dao.id)]
         if (!item) {
@@ -420,7 +395,6 @@ class ModellingItemFactory {
             // PMO-645 set valid  for parameterization check
             item.valid = dao.valid
             item.status = dao.status
-            item.dealId = dao.dealId
             if (modelClass != null) {
                 item.modelClass = modelClass
                 item.creator = dao.creator
@@ -453,7 +427,6 @@ class ModellingItemFactory {
             simulation.periodCount = run.periodCount
             simulation.numberOfIterations = run.iterations
             simulation.comment = run.comment
-            simulation.creator = run.creator
             try {
                 simulation.tags = run.tags*.tag
             } catch (Exception ex) {}
