@@ -292,6 +292,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         parameterization.setModificationDate(new DateTime())
         parameterization.status = status
         parameterization.modelClass = ApplicationModel
+        parameterization.@loaded = true
         return parameterization
 
     }
