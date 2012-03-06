@@ -59,7 +59,6 @@ class ResultStructureTreeBuilder {
 
     private void initTree() {
         buildAllPathsTree()
-        initPeriodLabels()
         List leafs = []
         findAllLeafNodes(resultStructure.rootNode, leafs)
         obtainReplacements(leafs)
