@@ -22,6 +22,7 @@ grails.project.dependency.resolution = {
     resolver ulcClientJarResolver
 
     mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
+    mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
 
     String ulcVersion = "ria-suite-u2-P1-2"
 
@@ -35,12 +36,12 @@ grails.project.dependency.resolution = {
         runtime ":jetty:1.2-SNAPSHOT"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime "org.pillarone:pillar-one-ulc-extensions:0.1"
+        runtime ("org.pillarone:pillar-one-ulc-extensions:0.2")  {  transitive = false }
 
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.5-ALPHA-3.7-kti"
+            runtime "org.pillarone:risk-analytics-core:1.5-ALPHA-3.8-kti"
         }
 
     }

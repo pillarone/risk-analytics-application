@@ -8,7 +8,6 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultStructureTa
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.util.PeriodLabelsUtil
 import org.pillarone.riskanalytics.core.model.Model
 
 /**
@@ -46,7 +45,6 @@ class ResultStructureTreeBuilder {
 
     private ResultNode existingPathsRoot
     private List<NodeReplacement> nodeReplacements = []
-    private List<String> periodLabels = []
 
 
     public ResultStructureTreeBuilder(Map<String, ICollectingModeStrategy> allPaths, Model model,
@@ -75,10 +73,6 @@ class ResultStructureTreeBuilder {
             }
             findOrCreateNode(path, existingPathsRoot)
         }
-    }
-
-    private void initPeriodLabels() {
-        periodLabels = PeriodLabelsUtil.getPeriodLabels(simulation, model)
     }
 
     private void findOrCreateNode(String path, ResultNode resultNode) {
@@ -123,7 +117,11 @@ class ResultStructureTreeBuilder {
             // collect all possible replacements
             List<String> replacements = []
             if (currentNodeName.equals(PERIOD_VARIABLE)) {
-                replacements.addAll(periodLabels)
+                for (ResultNode child in currentNode.childNodes) {
+                    // The child name contains the calendar year, reading it from the period labels is not sufficient
+                    // as they don't contain reserve years.
+                    replacements << child.name
+                }
             }
             else {
                 for (ResultNode child in currentNode.childNodes) {

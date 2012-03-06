@@ -340,6 +340,11 @@ class ModellingItemFactory {
         newItem.dealId = item.dealId
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
+        if(item.changed) { //drop unsaved changed PMO-1985
+            item.unload()
+            item.load()
+        }
+
         def newId = newItem.save()
         newItem.load()
         getItemInstances()[key(newItem.class, newId)] = newItem

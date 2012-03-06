@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
 class ModellingItemFactoryTests extends GroovyTestCase {
 
@@ -179,6 +180,23 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals 1, copy.comments.size()
         assertEquals "path", copy.comments.get(0).path
         assertEquals 0, copy.comments.get(0).period
+    }
+
+    void testPMO1985() {
+        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
+        Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
+        parameterization.load()
+        parameterization.periodLabels = ['p1', 'p2']
+        parameterization.addComment(new Comment("path", 0))
+        parameterization.dealId = 3
+        parameterization.addParameter(ParameterHolderFactory.getHolder("newPath", 0, "value"))
+
+
+        Parameterization copy = ModellingItemFactory.incrementVersion(parameterization)
+
+        assertNotNull(copy.parameterHolders.find { it.path == "newPath" })
+        assertNull(parameterization.parameterHolders.find { it.path == "newPath" })
     }
 
     void testGetNewestModelStructure() {

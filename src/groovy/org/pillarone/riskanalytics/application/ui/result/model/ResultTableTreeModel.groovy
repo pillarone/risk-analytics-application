@@ -6,13 +6,13 @@ import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.ui.base.model.AsynchronTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
-import org.pillarone.riskanalytics.application.util.PeriodLabelsUtil
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.dataaccess.function.*
+import org.pillarone.riskanalytics.core.util.PeriodLabelsUtil
 
 class ResultTableTreeModel extends AsynchronTableTreeModel {
 
