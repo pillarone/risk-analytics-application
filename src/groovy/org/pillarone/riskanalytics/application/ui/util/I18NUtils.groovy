@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 
 public class I18NUtils {
 
@@ -223,8 +224,14 @@ public class I18NUtils {
         if (testMode) {
             return testResourceBundle
         }
-        String resourceBundleName = MODEL_PACKAGE + modelName[0].toLowerCase() + modelName[1..(modelName.length() - 1)] + "." + modelName + "ModelResources"
-        return LocaleResources.getBundle(resourceBundleName)
+        try {
+            Class modelClass = ModelStructure.findAllModelClasses().find { it.simpleName == modelName + "Model"}
+            String packageName = modelClass?.getPackage()?.name
+            return LocaleResources.getBundle(packageName + "." + modelName + "ModelResources")
+
+        } catch (Exception e) {
+            return LocaleResources.getBundle(MODEL_PACKAGE + modelName[0].toLowerCase() + modelName[1..(modelName.length() - 1)] + "." + modelName + "ModelResources")
+        }
     }
 
     public static String getResultStructureString(Class model, String property, String tooltip = "") {
