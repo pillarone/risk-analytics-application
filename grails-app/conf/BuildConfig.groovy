@@ -36,7 +36,7 @@ grails.project.dependency.resolution = {
         runtime ":jetty:1.2-SNAPSHOT"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime "org.pillarone:pillar-one-ulc-extensions:0.1"
+        runtime ("org.pillarone:pillar-one-ulc-extensions:0.2")  {  transitive = false }
 
         test ":code-coverage:1.2.4"
 
