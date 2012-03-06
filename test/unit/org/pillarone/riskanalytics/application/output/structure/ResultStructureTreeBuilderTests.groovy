@@ -25,7 +25,6 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         CollectingModeFactory.registerStrategy(new AggregatedCollectingModeStrategy())
         simulation = new Simulation('sim')
         simulation.parameterization = new Parameterization('p14n')
-        simulation.parameterization.periodLabels = ['2012-01-01','2013-01-01','2013-01-01']
         simulation.periodCount = 3
         simulation.start = new DateTime(2012,1,1,0,0,0,0)
         simulation.modelClass = ApplicationModel.class
