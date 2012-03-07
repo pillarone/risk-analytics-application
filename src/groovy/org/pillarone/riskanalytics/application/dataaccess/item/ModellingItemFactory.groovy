@@ -15,8 +15,12 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.transaction.TransactionStatus
 import org.pillarone.riskanalytics.core.ResourceDAO
+import org.apache.commons.logging.LogFactory
+import org.apache.commons.logging.Log
 
 class ModellingItemFactory {
+
+    private static Log LOG = LogFactory.getLog(ModellingItemFactory)
 
     static Map getSimulationInstances() {
         def map = UserContext.getAttribute("simulationInstances")
@@ -245,7 +249,10 @@ class ModellingItemFactory {
     static boolean delete(def item) {
         try {
             item.delete()
-        } catch (Exception) {return false}
+        } catch (Exception ex) {
+            LOG.error("Error deleting ${item?.class?.simpleName}: ", ex)
+            return false
+        }
         return true
     }
 
@@ -276,6 +283,22 @@ class ModellingItemFactory {
         newItem.periodCount = oldItem.periodCount
         newItem.periodLabels = oldItem.periodLabels
         newItem.modelClass = oldItem.modelClass
+        def newId = newItem.save()
+        newItem.load()
+        getItemInstances()[key(newItem.class, newId)] = newItem
+        return newItem
+    }
+
+    static ModellingItem copyItem(Resource oldItem, String newName) {
+        Resource newItem = new Resource(newName, oldItem.modelClass)
+
+        List newParameters = ParameterizationHelper.copyParameters(oldItem.parameterHolders)
+        newParameters.each {
+            newItem.addParameter(it)
+        }
+        List comments = oldItem?.comments?.collect {it.clone()}
+        comments?.each {newItem.addComment(it)}
+
         def newId = newItem.save()
         newItem.load()
         getItemInstances()[key(newItem.class, newId)] = newItem
@@ -330,6 +353,29 @@ class ModellingItemFactory {
         newItem.periodLabels = item.periodLabels
         newItem.modelClass = item.modelClass
         newItem.dealId = item.dealId
+        newItem.versionNumber = VersionNumber.incrementVersion(item)
+
+        if(item.changed) { //drop unsaved changed PMO-1985
+            item.unload()
+            item.load()
+        }
+
+        def newId = newItem.save()
+        newItem.load()
+        getItemInstances()[key(newItem.class, newId)] = newItem
+        return newItem
+    }
+
+    static ModellingItem incrementVersion(Resource item) {
+        Resource newItem = new Resource(item.name, item.modelClass)
+
+        List newParameters = ParameterizationHelper.copyParameters(item.parameterHolders)
+        newParameters.each {
+            newItem.addParameter(it)
+        }
+        List comments = item?.comments?.collect {it.clone()}
+        comments?.each {newItem.addComment(it)}
+
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
         if(item.changed) { //drop unsaved changed PMO-1985

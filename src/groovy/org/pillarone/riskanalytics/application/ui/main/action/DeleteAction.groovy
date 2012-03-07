@@ -18,11 +18,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -54,13 +49,14 @@ class DeleteAction extends SelectionTreeAction {
     }
 
     private void removeItem(ModellingUIItem selectedItem) {
-        boolean usedInSimulation = false
-        if (selectedItem instanceof ParameterizationUIItem || selectedItem instanceof ResultConfigurationUIItem) {
-            usedInSimulation = selectedItem.isUsedInSimulation()
-        }
+        boolean usedInSimulation = selectedItem.isUsedInSimulation()
         Model selectedModel = getSelectedModel()
         if (!usedInSimulation) {
-            selectedItem.remove()
+            if (!selectedItem.remove()) {
+                ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Error", "Error removing selected item. See log files for details.", "Ok")
+                alert.messageType = ULCAlert.ERROR_MESSAGE
+                alert.show()
+            }
         } else {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
             alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, selectedModel, selectedItem)}] as IWindowListener)

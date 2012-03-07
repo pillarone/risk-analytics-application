@@ -89,7 +89,7 @@ class ModellingInformationTableTreeBuilder {
         }
 
         def resourceClasses = getAllResourceClasses()
-        if (! resourceClasses.isEmpty()) {
+        if (!resourceClasses.isEmpty()) {
             ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
             resourceClasses.each { Class resourceClass ->
                 ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
@@ -120,7 +120,7 @@ class ModellingInformationTableTreeBuilder {
 
     public List<Class> getAllResourceClasses() {
 
-        if (! (ConfigurationHolder.config?.includedResources instanceof List)) {
+        if (!(ConfigurationHolder.config?.includedResources instanceof List)) {
             LOG.info("Please note that there are no resource classes defined in the config.groovy file")
             return []
         }
@@ -294,6 +294,19 @@ class ModellingInformationTableTreeBuilder {
         ITableTreeNode groupNode = findGroupNode(modellingUIItem, findModelNode(root, modellingUIItem))
         def itemNode = findNodeForItem(groupNode, modellingUIItem)
         if (!itemNode) return
+
+        removeItemNode(itemNode)
+    }
+
+    public void removeNodeForItem(ResourceUIItem modellingUIItem) {
+        ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
+        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, modellingUIItem)
+        if (!itemNode) return
+
+        removeItemNode(itemNode)
+    }
+
+    private void removeItemNode(DefaultMutableTableTreeNode itemNode) {
         if (itemNode instanceof SimulationNode) {
             itemNode.removeAllChildren()
         } else {

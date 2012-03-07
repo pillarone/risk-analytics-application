@@ -7,6 +7,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.Parameterizatio
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.UlcUtilities
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -45,12 +48,19 @@ class CreateNewMajorVersion extends SelectionTreeAction {
         item.createNewVersion(item.getModel(), commentText)
     }
 
-
     private void createNewVersion(ResultConfigurationUIItem template) {
         template.createNewVersion(template.getModel())
     }
 
-    private void createNewVersion(def node) {}
+    private void createNewVersion(ResourceUIItem resource) {
+        resource.createNewVersion(resource.getModel())
+    }
+
+    private void createNewVersion(def node) {
+        ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Not supported", "Creating a new version is currently not supported for this item type", "Ok")
+        alert.messageType = ULCAlert.INFORMATION_MESSAGE
+        alert.show()
+    }
 
     ModellingUIItem getUIItem() {
         if (modellingUIItem) return modellingUIItem

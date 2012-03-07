@@ -55,16 +55,10 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     List<AbstractUIItem> getSelectedUIItems() {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {
-            for (Object node in selectedPath.getPath()) {
-                if (node instanceof ItemGroupNode) {
-                    if (selectedPath?.lastPathComponent != null) {
-                        Object lastNode = selectedPath.lastPathComponent
-                        if (lastNode instanceof ItemNode) {
-                            selectedObjects.add(lastNode.abstractUIItem)
-                            break
-                        }
-                    }
-                }
+            DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
+            AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
+            if(abstractUIItem != null) {
+                selectedObjects << abstractUIItem
             }
         }
         return selectedObjects
