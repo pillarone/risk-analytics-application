@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.core.output.batch.calculations.MysqlCalculati
 import grails.plugins.springsecurity.SecurityConfigType
 import org.pillarone.riskanalytics.application.logging.model.LoggingAppender
 import org.pillarone.riskanalytics.core.example.component.ExampleResource
+import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
@@ -44,7 +45,7 @@ serverSessionPrefix = ";jsessionid="
 environments {
     development {
         models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
-        includedResources = [ExampleResource.simpleName]
+        includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
         ExceptionSafeOut = System.out
         log4j = {
             appenders {
