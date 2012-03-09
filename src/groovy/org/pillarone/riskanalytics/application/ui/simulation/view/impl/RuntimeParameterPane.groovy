@@ -120,9 +120,16 @@ class RuntimeParameterPane {
         DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel(ResourceDAO.findAllByResourceClassName(defaultValue.resourceClass.name).collect { new ResourceParameterHolder.NameVersionPair(it.name, it.itemVersion).toString() })
         ULCComboBox comboBox = new ULCComboBox(comboBoxModel)
         comboBox.name = descriptor.propertyName
+
+        comboBoxModel.selectedItem = getValueFromPrefs(comboBoxModel.selectedItem?.toString(),descriptor, { String it -> return it })
+        if (comboBoxModel.selectedItem != null) {
+            def pair = ResourceParameterHolder.NameVersionPair.parse(comboBoxModel.selectedItem.toString())
+            descriptor.value = new ResourceHolder(defaultValue.resourceClass, pair.name, new VersionNumber(pair.version))
+        }
         comboBox.addActionListener([actionPerformed: { evt ->
             def selectedItem = comboBox.selectedItem.toString()
             descriptor.value = new ResourceHolder(defaultValue.resourceClass, selectedItem.substring(0, selectedItem.lastIndexOf(" ")), new VersionNumber(selectedItem.substring(selectedItem.lastIndexOf(" ") + 2)))
+            putValueInPrefs(descriptor, comboBoxModel.selectedItem.toString())
             simulationSettingsPaneModel.notifyConfigurationChanged()
         }] as IActionListener)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, comboBox)
