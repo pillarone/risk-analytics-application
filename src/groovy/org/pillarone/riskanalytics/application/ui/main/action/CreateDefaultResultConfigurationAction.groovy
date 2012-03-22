@@ -43,7 +43,7 @@ class CreateDefaultResultConfigurationAction extends SelectionTreeAction {
 
                     dialog.hide()
 
-                    model.selectionTreeModel.addNodeForItem(resultConfiguration)
+                    model.navigationTableTreeModel.addNodeForItem(resultConfiguration)
                     model.fireModelChanged()
                     resultConfiguration.load()
                     model.notifyOpenDetailView(getSelectedModel(), resultConfiguration)

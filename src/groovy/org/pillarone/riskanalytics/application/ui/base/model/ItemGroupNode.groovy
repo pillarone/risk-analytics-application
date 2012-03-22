@@ -44,6 +44,7 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, false)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultResultConfigurationAction(tree, mainModel)))
         groupNodePopUpMenu.addSeparator()
         groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllResultTemplates")))
         return groupNodePopUpMenu
