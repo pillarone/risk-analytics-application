@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.examples.PodraModelOutputCategories
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
@@ -14,9 +14,10 @@ class CategoryMappingRegistry {
         if (cache.containsKey(run)) {
             return cache[run]
         }
-        if (run.getModel()) {
-            // Model model =  // TODO: instantiate the model here and get the closure from a suitable method (?)
-            def mappingClosure = new PodraModelOutputCategories().mappingClosure
+        Class modelClass = Thread.currentThread().contextClassLoader.loadClass(run.model)
+        Model model = modelClass.newInstance()
+        Closure mappingClosure = model.createResultNavigatorMapping()
+        if (mappingClosure != null) {
             Map<String, ICategoryResolver> categories = MapCategoriesBuilder.getCategories (mappingClosure)
             CategoryMapping mapping = new CategoryMapping(categories)
             cache[run] = mapping
