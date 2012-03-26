@@ -86,12 +86,12 @@ class DiscretePDFChartViewModel extends ChartViewModel {
         min = Double.MAX_VALUE
         max = 0
 
-        nodes.each { ResultTableTreeNode it ->
-            onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, 0, it.path, it.collector, it.field)
-            series << ResultAccessor.getValues(simulationRun, 0, it.path, it.collector, it.field)
-            seriesNames << it.getDisplayPath()
-            min = Math.min(min, ResultAccessor.getMin(simulationRun, 0, it.path, it.collector, it.field))
-            max = Math.max(max, ResultAccessor.getMax(simulationRun, 0, it.path, it.collector, it.field))
+        for (ResultTableTreeNode node in nodes) {
+            onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, 0, node.path, node.collector, node.field)
+            series << ResultAccessor.getValues(simulationRun, 0, node.path, node.collector, node.field)
+            seriesNames << node.getDisplayPath()
+            min = Math.min(min, ResultAccessor.getMin(simulationRun, 0, node.path, node.collector, node.field))
+            max = Math.max(max, ResultAccessor.getMax(simulationRun, 0, node.path, node.collector, node.field))
         }
 
         maxBinSize = max - min

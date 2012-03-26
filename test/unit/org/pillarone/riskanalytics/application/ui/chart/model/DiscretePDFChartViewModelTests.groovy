@@ -19,12 +19,12 @@ class DiscretePDFChartViewModelTests extends GroovyTestCase {
 
     void testGetChart() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
-        resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, String path -> true}
-        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, String path -> [1, 2, 3, 4, 5]}
-        resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, String path -> 1}
-        resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, String path -> 5}
-        resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, String path -> 3}
-        resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, String path -> 2}
+        resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> true}
+        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> [1, 2, 3, 4, 5]}
+        resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 1}
+        resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 5}
+        resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 3}
+        resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 2}
 
         resultAccessor.use {
             DiscretePDFChartViewModel model = new DiscretePDFChartViewModel("test", new SimulationRun(name: "testRun"), [new ResultTableTreeNode("outTest")])
@@ -35,12 +35,12 @@ class DiscretePDFChartViewModelTests extends GroovyTestCase {
 
     void testMaxBinSize() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
-        resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, String path -> true}
-        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, String path -> [1, 2, 3, 4, 5]}
-        resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, String path -> 100}
-        resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, String path -> 500}
-        resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, String path -> 3}
-        resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, String path -> 2}
+        resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> true}
+        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> [1, 2, 3, 4, 5]}
+        resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 100}
+        resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 500}
+        resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 3}
+        resultAccessor.demand.getStdDev(1..1) {SimulationRun simulationRun, int period, String path, String collector, String field -> 2}
 
         resultAccessor.use {
             DiscretePDFChartViewModel model = new DiscretePDFChartViewModel("test", new SimulationRun(name: "testRun"), [new ResultTableTreeNode("outTest")])
