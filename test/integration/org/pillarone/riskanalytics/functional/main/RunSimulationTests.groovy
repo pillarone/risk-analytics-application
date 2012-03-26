@@ -7,6 +7,8 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
+import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -15,6 +17,7 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
+        assertNotNull(new CollectorMapping(collectorName: SingleValueCollectingModeStrategy.IDENTIFIER).save())
         super.setUp();
     }
 
