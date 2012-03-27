@@ -76,11 +76,29 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
     public boolean isDifferent(Object node) {
         if (node instanceof CompareParameterizationTableTreeNode) {
             return internalIsDifferent(node.parameterizationTableTreeNode, node)
+        } else if(node instanceof CompareParameterizationClassifierTableTreeNode) {
+            return internalIsDifferent(node)
         }
         return false
     }
 
     protected boolean internalIsDifferent(ParameterizationTableTreeNode node, CompareParameterizationTableTreeNode compareNode) {
+        boolean different = false
+        for (int i = 1; i < getColumnCount(); i += getParameterizationsSize()) {
+            def refObject = getValueAt(compareNode, i)
+            for (int j = 1; j < 2 || j < getParameterizationsSize(); j++) {
+                def object = getValueAt(compareNode, i + j)
+                if (refObject != object) {
+                    different = true
+                    differentsNode << compareNode
+                    break;
+                }
+            }
+        }
+        return different
+    }
+
+    protected boolean internalIsDifferent(CompareParameterizationClassifierTableTreeNode compareNode) {
         boolean different = false
         for (int i = 1; i < getColumnCount(); i += getParameterizationsSize()) {
             def refObject = getValueAt(compareNode, i)
