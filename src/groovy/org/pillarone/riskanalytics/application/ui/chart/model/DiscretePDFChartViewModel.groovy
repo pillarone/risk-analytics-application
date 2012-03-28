@@ -11,6 +11,7 @@ import org.jfree.data.statistics.SimpleHistogramDataset
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 
 class DiscretePDFChartViewModel extends ChartViewModel {
     double mean
@@ -85,19 +86,19 @@ class DiscretePDFChartViewModel extends ChartViewModel {
         min = Double.MAX_VALUE
         max = 0
 
-        nodes.each {
-            onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, it.path)
-            series << ResultAccessor.getValues(simulationRun, it.path)
-            seriesNames << it.getDisplayPath()
-            min = Math.min(min, ResultAccessor.getMin(simulationRun, it.path))
-            max = Math.max(max, ResultAccessor.getMax(simulationRun, it.path))
+        for (ResultTableTreeNode node in nodes) {
+            onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, 0, node.path, node.collector, node.field)
+            series << ResultAccessor.getValues(simulationRun, 0, node.path, node.collector, node.field)
+            seriesNames << node.getDisplayPath()
+            min = Math.min(min, ResultAccessor.getMin(simulationRun, 0, node.path, node.collector, node.field))
+            max = Math.max(max, ResultAccessor.getMax(simulationRun, 0, node.path, node.collector, node.field))
         }
 
         maxBinSize = max - min
 
         if (nodes.size() == 1) {
-            mean = ResultAccessor.getMean(simulationRun, nodes[0].path)
-            stdDev = ResultAccessor.getStdDev(simulationRun, nodes[0].path)
+            mean = ResultAccessor.getMean(simulationRun, 0, nodes[0].path, nodes[0].collector, nodes[0].field)
+            stdDev = ResultAccessor.getStdDev(simulationRun, 0, nodes[0].path, nodes[0].collector, nodes[0].field)
         }
     }
 

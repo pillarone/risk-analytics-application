@@ -17,7 +17,7 @@ class TreeNodeComparator implements Comparator<ITableTreeNode> {
 
         ITableTreeNode commonParent = path1[0]
         int foundIndex = 0
-        for (int i = 1; i < path1.length && i < path2.length; i++) {
+        for (int i = 1; i < (path1.length - 1) && i < (path2.length - 1); i++) {
             if (path1[i] == path2[i]) {
                 commonParent = path1[i]
                 foundIndex = i

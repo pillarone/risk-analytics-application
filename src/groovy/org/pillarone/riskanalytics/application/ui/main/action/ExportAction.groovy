@@ -90,7 +90,7 @@ abstract class ExportAction extends SelectionTreeAction {
             String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
             item.load()
             def simulationRun = item.simulationRun
-            List rawData = ResultAccessor.getRawData(simulationRun)
+            List rawData = ResultAccessor.getAllResults(simulationRun)
             ClientContext.storeFile([prepareFile: {OutputStream stream ->
                 try {
                     exporter.exportResults rawData
