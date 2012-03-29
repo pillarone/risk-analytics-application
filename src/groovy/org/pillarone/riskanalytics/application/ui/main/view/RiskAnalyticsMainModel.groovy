@@ -28,6 +28,7 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -247,8 +248,12 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             navigationTableTreeModel.addNodeForItem(simulation)
             Parameterization parameterization = simulation.parameterization
             //after simulation running, lock the used the used p14n
-            parameterization.addRemoveLockTag()
-            navigationTableTreeModel.itemChanged(parameterization)
+            try {
+                parameterization.addRemoveLockTag()
+                navigationTableTreeModel.itemChanged(parameterization)
+            } catch (HibernateOptimisticLockingFailureException e) {
+                //most likely because multiple users start a simulation with the same parameterization at the same time
+            }
         }
     }
 

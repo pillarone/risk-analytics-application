@@ -35,19 +35,19 @@ public class LoggingManager {
 
     }
 
-    void fireAppendEvent(LoggingEvent loggingEvent) {
+    synchronized void fireAppendEvent(LoggingEvent loggingEvent) {
         for (Appender appender: appenders) {
             appender.doAppend(loggingEvent)
         }
     }
 
-    public void addAppender(Appender appender) {
+    synchronized void addAppender(Appender appender) {
         appender.addFilter(userNameFilter)
         appender.setLayout(layout)
         appenders.add(appender)
     }
 
-    public void removeAppender(Appender loggingListener) {
+    synchronized void removeAppender(Appender loggingListener) {
         appenders.remove(loggingListener)
     }
 
