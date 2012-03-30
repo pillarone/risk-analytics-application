@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCContainer
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 class ModelUIItem extends AbstractUIItem {
 
@@ -27,5 +28,12 @@ class ModelUIItem extends AbstractUIItem {
         return model
     }
 
+    void removeAllModellingItemChangeListener() {
+        // intentionally blank (probably?)
+    }
+
+    void addModellingItemChangeListener(IModellingItemChangeListener listener) {
+        // intentionally blank (probably?)
+    }
 
 }
