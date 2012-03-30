@@ -75,6 +75,10 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return modellingUIItem
     }
 
+    Object getItem() {
+        return item
+    }
+
     @Override
     public boolean remove() {
         if (ModellingItemFactory.delete(item)) {

@@ -106,18 +106,6 @@ abstract class AbstractUIItem implements IUIItem {
         return true
     }
 
-    public void removeAllModellingItemChangeListener() {
-
-    }
-
-    public void addModellingItemChangeListener(IModellingItemChangeListener listener) {
-
-    }
-
-    Object getItem() {
-        return null
-    }
-
     public AbstractTableTreeModel getNavigationTableTreeModel() {
         return mainModel.navigationTableTreeModel
     }
