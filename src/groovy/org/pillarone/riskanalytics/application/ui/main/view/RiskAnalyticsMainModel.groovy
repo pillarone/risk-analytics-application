@@ -29,6 +29,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener {
 
@@ -43,7 +45,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     @Bindable AbstractUIItem currentItem
 
     public static boolean deleteActionIsRunning = false
-    static final Logger LOG = Logger.getLogger(RiskAnalyticsMainModel)
+    static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
@@ -252,6 +254,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
                 parameterization.addRemoveLockTag()
                 navigationTableTreeModel.itemChanged(parameterization)
             } catch (HibernateOptimisticLockingFailureException e) {
+                LOG.warn("Failed to add LOCK tag to parameterization ${parameterization}. Probably because it was already added by a concurrent simulation.")
                 //most likely because multiple users start a simulation with the same parameterization at the same time
             }
         }
