@@ -94,6 +94,10 @@ class BatchUIItem extends AbstractUIItem {
         itemChangeListeners.remove(listener)
     }
 
+    public void removeAllModellingItemChangeListener() {
+        itemChangeListeners.clear()
+    }
+
     public void notifyItemSaved() {
         itemChangeListeners.each {IModellingItemChangeListener listener ->
             listener.itemSaved(null)
@@ -117,6 +121,5 @@ class BatchUIItem extends AbstractUIItem {
     String getWindowTitle() {
         return "Batches " + super.getWindowTitle()
     }
-
 
 }
