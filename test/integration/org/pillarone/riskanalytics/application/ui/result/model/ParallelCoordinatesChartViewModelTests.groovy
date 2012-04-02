@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
 
@@ -35,7 +36,7 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
     private ResultWriter resultWriter
 
     void setUp() {
-
+        ResultAccessor.clearCaches()
         LocaleResources.setTestMode()
 
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])

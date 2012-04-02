@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.output.*
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
 class ResultIterationDataViewModelTests extends GroovyTestCase {
 
@@ -26,6 +27,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     private ResultWriter resultWriter
 
     void setUp() {
+        ResultAccessor.clearCaches()
         LocaleResources.setTestMode()
 
         new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])

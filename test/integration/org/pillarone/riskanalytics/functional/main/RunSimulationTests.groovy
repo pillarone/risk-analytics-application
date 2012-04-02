@@ -17,7 +17,6 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        assertNotNull(new CollectorMapping(collectorName: SingleValueCollectingModeStrategy.IDENTIFIER).save())
         super.setUp();
     }
 
