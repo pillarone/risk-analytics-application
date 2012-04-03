@@ -37,7 +37,11 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setFont(node)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tree, value, selected, expanded, leaf, hasFocus, node)
-        renderComponent((ULCComponent) component, node)
+        try {
+            renderComponent((ULCComponent) component, node)
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to render: " + e.getMessage(), e)
+        }
         return component
 
     }

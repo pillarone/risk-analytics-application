@@ -76,7 +76,7 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         return abstractUIItem.item.name
     }
 
-    protected void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
+    public void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
         List<IReportModel> reports = ReportRegistry.getReportModel(abstractUIItem.model.modelClass)
         if (!reports.empty) {
             ULCMenu reportsMenu = new ULCMenu("Reports")
