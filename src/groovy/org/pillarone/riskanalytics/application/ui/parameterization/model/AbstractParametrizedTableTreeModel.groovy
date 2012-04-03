@@ -4,9 +4,13 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.core.model.Model
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 
 abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableItemTableTreeModel {
+
+    private static Log LOG = LogFactory.getLog(AbstractParametrizedTableTreeModel)
 
     Boolean readOnly = false
     ITableTreeNode root
@@ -106,6 +110,9 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
             if (value instanceof String && !(oldValue instanceof String)) {
                 nonValidValues[[node, column]] = value
             } else if (value != oldValue && !readOnly) {
+                if(LOG.isDebugEnabled()) {
+                    LOG.debug("Setting value ${value} at ${node.path}")
+                }
                 node.setValueAt(value, column)
                 notifyChanged = adjustTreeStructure(node, column, value)
                 notifyValueChanged = true

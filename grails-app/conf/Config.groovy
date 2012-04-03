@@ -70,7 +70,9 @@ environments {
             ]
 
             def debugPackages = [
-                    'org.pillarone.riskanalytics.core.fileimport'
+                    'org.pillarone.riskanalytics.core.fileimport',
+                    'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
+                    'org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedTableTreeModel'
             ]
 
             info(
