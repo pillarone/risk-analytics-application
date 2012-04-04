@@ -27,7 +27,7 @@ class ChartViewTests extends AbstractSimpleFunctionalTest {
 
         resultAccessorStub.demand.hasDifferentValues(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> true}
         resultAccessorStub.demand.getValues(60..60) {run, period, path, c, f ->
-            if ("TEST_NODE0".equals(path)) {return [1d, 3d, 5d, 7d]} else return [1d, 2d, 3d, 4d, 5d, 6d]
+            if ("TEST_NODE0".equals(path)) {return [1d, 3d, 5d, 7d] as double[] } else return [1d, 2d, 3d, 4d, 5d, 6d] as double[]
         }
         resultAccessorStub.demand.getMin(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> 1}
         resultAccessorStub.demand.getMax(20..20) {SimulationRun simulationRun, int periodIndex, String path, String c, String f -> 5}

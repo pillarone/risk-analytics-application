@@ -21,7 +21,7 @@ class HistogramChartViewModelTests extends GroovyTestCase {
         MockFor resultAccessor = new MockFor(ResultAccessor)
 
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
-        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> [1, 2, 3, 4, 5]}
+        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> [1, 2, 3, 4, 5] as double[] }
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 0}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 0}
 

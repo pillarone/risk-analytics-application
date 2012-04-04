@@ -27,7 +27,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
         resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
-        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d] as double[] }
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
@@ -48,7 +48,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
         resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
-        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d] as double[] }
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
@@ -69,7 +69,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
         resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2, percentile, QuantilePerspective perspective -> 2}
-        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getValues(1..1) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d] as double[] }
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> 3}
@@ -95,7 +95,7 @@ class PDFChartViewModelTests extends GroovyTestCase {
     void testCreateSeries() {
         MockFor resultAccessor = new MockFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String co, String f -> true}
-        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, period, String path, String co, String f -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, period, String path, String co, String f -> [1d, 2d, 3d, 4d, 5d] as double[] }
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String co, String f -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String co, String f -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String co, String f -> 3}
