@@ -10,6 +10,7 @@ import org.jfree.data.category.DefaultCategoryDataset
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 
 public class WaterfallChartViewModel extends ChartViewModel {
 
@@ -34,9 +35,9 @@ public class WaterfallChartViewModel extends ChartViewModel {
         (periodValues.size() - 1).times {int index ->
             double value
             if (function == VAR_FUNCTION) {
-                value = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[index].path, nodes[index].collector, nodes[index].field, percent)
+                value = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[index].path, nodes[index].collector, nodes[index].field, percent, QuantilePerspective.LOSS)
             } else {
-                value = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[index].path, nodes[index].collector, nodes[index].field, percent)
+                value = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[index].path, nodes[index].collector, nodes[index].field, percent, QuantilePerspective.LOSS)
             }
 
             dataset.addValue(value, "", seriesNames[index]);
@@ -45,9 +46,9 @@ public class WaterfallChartViewModel extends ChartViewModel {
 
         double lastValue
         if (function == VAR_FUNCTION) {
-            lastValue = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent)
+            lastValue = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent, QuantilePerspective.LOSS)
         } else {
-            lastValue = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent)
+            lastValue = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent, QuantilePerspective.LOSS)
         }
         diversification = lastValue - sum
         dataset.addValue(diversification, "", "diversification")
@@ -141,9 +142,9 @@ public class WaterfallChartViewModel extends ChartViewModel {
             m[""] << seriesName + " for " + getPeriodLabel(currentPeriod)
             double value
             if (function == VAR_FUNCTION) {
-                value = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[nameIndex].path, nodes[nameIndex].collector, nodes[nameIndex].field, percent)
+                value = ResultAccessor.getVar(simulationRun, currentPeriod, nodes[nameIndex].path, nodes[nameIndex].collector, nodes[nameIndex].field, percent, QuantilePerspective.LOSS)
             } else {
-                value = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[nameIndex].path, nodes[nameIndex].collector, nodes[nameIndex].field, percent)
+                value = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[nameIndex].path, nodes[nameIndex].collector, nodes[nameIndex].field, percent, QuantilePerspective.LOSS)
             }
             m[columnHeader] << value
         }
