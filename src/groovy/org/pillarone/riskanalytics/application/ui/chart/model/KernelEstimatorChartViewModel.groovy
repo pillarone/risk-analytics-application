@@ -79,11 +79,11 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         int seriesIndex = 0
 
         series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex {double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex] && notStochasticSeries[seriesNames[keyFigureIndex], periodIndex] == null) {
                     XYSeries currentSeries = null
 
-                    this.observations = periods
+                    this.observations = periods.toList()
                     rawNodeIndex = keyFigureIndex
                     rawPeriodIndex = periodIndex
                     min = mins[keyFigureIndex][periodIndex]
@@ -120,7 +120,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         seriesIndex = 0
         maxY = chart.getXYPlot().getRangeAxis().getRange().upperBound
         series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex {double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex]) {
                     mean = means[keyFigureIndex][periodIndex]
                     stdDev = stdDevs[keyFigureIndex][periodIndex]
@@ -159,11 +159,11 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         columns["x"] = xValues
 
         series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex { double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex]) {
                     List rowValues = []
                     String seriesName = seriesNames[keyFigureIndex]
-                    this.observations = periods
+                    this.observations = periods.toList()
                     XYSeries rowSeries = createSeries(seriesName)
                     rowSeries.itemCount.times {
                         rowValues << rowSeries.getY(it)

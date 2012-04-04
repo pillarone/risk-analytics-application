@@ -37,7 +37,11 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setFont(node)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tree, value, selected, expanded, leaf, hasFocus, node)
-        renderComponent((ULCComponent) component, node)
+        try {
+            renderComponent((ULCComponent) component, node)
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to render: " + e.getMessage(), e)
+        }
         return component
 
     }
@@ -83,9 +87,10 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private ULCPopupMenu getPopupMenu(WorkflowParameterizationNode node) {
-        if (workflowMenus.containsKey(node.status)) return workflowMenus.get(node.status)
+        Status status = node.getStatus();
+        if (workflowMenus.containsKey(status)) return workflowMenus.get(status)
         ULCPopupMenu popupMenu = node.getPopupMenu(tree)
-        workflowMenus.put(node.status, popupMenu)
+        workflowMenus.put(status, popupMenu)
         return popupMenu
     }
 

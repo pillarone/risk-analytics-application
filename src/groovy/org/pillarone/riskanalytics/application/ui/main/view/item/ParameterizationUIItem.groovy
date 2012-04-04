@@ -17,11 +17,20 @@ import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.hibernate.validator.InvalidStateException
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ParameterizationUIItem extends ModellingUIItem {
+
+    private static Log LOG = LogFactory.getLog(ParameterizationUIItem)
 
     public ParameterizationUIItem(RiskAnalyticsMainModel model, Model simulationModel, Parameterization parameterization) {
         super(model, simulationModel, parameterization)
@@ -43,18 +52,63 @@ class ParameterizationUIItem extends ModellingUIItem {
     void save() {
         ModellingUIItem modellingUIItem = mainModel.getAbstractUIItem(item)
         if (modellingUIItem) {
-            mainModel.getViewModel(modellingUIItem)?.removeInvisibleComments()
+            AbstractModellingModel viewModel = mainModel.getViewModel(modellingUIItem)
+            if (viewModel != null) {
+                viewModel.removeInvisibleComments()
+
+                //consistency check
+
+                List<ParameterHolder> parameters = item.parameters.clone()
+                List<ParameterHolder> uiParameters = []
+                collectParameters(viewModel.treeModel.root, uiParameters)
+                boolean error = false
+
+                for (ParameterHolder holder in uiParameters) {
+                    ParameterHolder parameterHolder = parameters.find { it.path == holder.path && it.periodIndex == holder.periodIndex}
+                    if (parameterHolder == null) {
+                        error = true
+                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} exists in the UI but not in the parameterization to be saved!")
+                    } else if (!(holder.is(parameterHolder))) {
+                        error = true
+                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} has different instances in the UI and parameterization to be saved!")
+                    } else {
+                        parameters.remove(parameterHolder)
+                    }
+                }
+
+                if(!parameters.empty) {
+                    for(ParameterHolder holder in parameters) {
+                        error = true
+                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} exists in the parameterization to be saved, but not in the UI!")
+                    }
+                }
+
+                if (error) {
+                    throw new RiskAnalyticsInconsistencyException("Parameters in the UI and the parameterization are different.")
+                }
+            }
         }
         super.save()
+    }
+
+    private void collectParameters(ITableTreeNode node, List<ParameterHolder> list) {
+        for (int i = 0; i < node.childCount; i++) {
+            ITableTreeNode child = node.getChildAt(i)
+            if (child instanceof ParameterizationTableTreeNode) {
+                list.addAll(child.parameter)
+            } else {
+                collectParameters(child, list)
+            }
+        }
     }
 
     @Override
     public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
         ModellingUIItem newItem = null
         Closure okAction = {String commentText ->
-            if (! this.isLoaded()) {
-                 this.load()
-             }
+            if (!this.isLoaded()) {
+                this.load()
+            }
             createNewVersion(this.model, commentText, false)
         }
 

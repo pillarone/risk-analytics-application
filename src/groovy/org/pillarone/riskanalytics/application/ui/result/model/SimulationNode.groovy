@@ -44,7 +44,7 @@ class SimulationNode extends ItemNode {
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
-        addReportMenus(simulationNodePopUpMenu, tree)
+        addReportMenus(simulationNodePopUpMenu, tree, true)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
         resultMenus[modelName] = simulationNodePopUpMenu

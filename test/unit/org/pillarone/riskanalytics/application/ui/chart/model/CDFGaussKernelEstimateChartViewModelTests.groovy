@@ -23,7 +23,7 @@ class CDFGaussKernelEstimateChartViewModelTests extends GroovyTestCase {
 
         resultAccessor.demand.hasDifferentValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> true}
         resultAccessor.demand.getPercentile(2..2) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field, percentile, QuantilePerspective perspective -> 2}
-        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> [1d, 2d, 3d, 4d, 5d]}
+        resultAccessor.demand.getValues(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> [1d, 2d, 3d, 4d, 5d] as double[] }
         resultAccessor.demand.getMin(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 1}
         resultAccessor.demand.getMax(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 5}
         resultAccessor.demand.getMean(1..1) {SimulationRun simulationRun, int periodIndex, String path, String collector, String field -> 3}

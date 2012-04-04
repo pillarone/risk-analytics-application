@@ -22,6 +22,7 @@ class ExceptionSafe {
     private static LOG = Logger.getLogger(ExceptionSafe)
     private static messagePatterns = [
             Exception: "PillarOne has hit a technical error, please contact application support\n(details regarding the error have been written to the log files).",
+            RiskAnalyticsInconsistencyException: "An internal consistency check has failed: \n{0}\nMore details available in the log files.",
             ParameterizationSaveError: "Invalid parameterization:\n\n {0}\n\nThe parameterization is not saved.",
             ParameterizationImportError: "Error in parameterization on line {1}:\n\n{0}\n\nParameterization import failed.",
             PasteError: "Paste Error:\n\n {0} \nThis error appears also if the tree structure changes while pasting.",
@@ -33,6 +34,7 @@ class ExceptionSafe {
 
     private static titles = [
             Exception: "Notification",
+            RiskAnalyticsInconsistencyException: "Internal error",
             ParameterizationSaveError: "Parameterization error",
             ParameterizationImportError: "Parameterization error",
             PasteError: "Paste error",
@@ -44,6 +46,7 @@ class ExceptionSafe {
 
     private static errorLevel = [
             Exception: ULCAlert.ERROR_MESSAGE,
+            RiskAnalyticsInconsistencyException: ULCAlert.ERROR_MESSAGE,
             ParameterizationSaveError: ULCAlert.WARNING_MESSAGE,
             ParameterizationImportError: ULCAlert.WARNING_MESSAGE,
             PasteError: ULCAlert.INFORMATION_MESSAGE,

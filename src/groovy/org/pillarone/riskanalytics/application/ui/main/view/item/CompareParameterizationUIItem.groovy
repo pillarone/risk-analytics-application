@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -73,5 +74,12 @@ class CompareParameterizationUIItem extends AbstractUIItem {
         return UIUtils.getIcon("parametrization-active.png")
     }
 
+    void removeAllModellingItemChangeListener() {
+        // intentionally blank (probably?)
+    }
+
+    void addModellingItemChangeListener(IModellingItemChangeListener listener) {
+        // intentionally blank (probably?)
+    }
 
 }

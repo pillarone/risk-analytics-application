@@ -37,9 +37,9 @@ class HistogramChartViewModel extends ChartViewModel {
         if (currentBinCount == -1)
             currentBinCount = getMinBinCount()
         series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex {double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex] && notStochasticSeries[seriesNames[keyFigureIndex], periodIndex] == null && periods.size() > 0 && currentBinCount != -1) {
-                    data.addSeries("${seriesNames[keyFigureIndex]} P${getPeriodLabel(periodIndex)}", periods as double[], currentBinCount, min, max)   // Math.floor((max-min)/binSize)
+                    data.addSeries("${seriesNames[keyFigureIndex]} P${getPeriodLabel(periodIndex)}", periods, currentBinCount, min, max)   // Math.floor((max-min)/binSize)
                 }
             }
         }
@@ -49,7 +49,7 @@ class HistogramChartViewModel extends ChartViewModel {
 
         int seriesIndex = 0
         series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex {double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex]) {
                     chart.getXYPlot().getRenderer(0).setSeriesPaint seriesIndex, seriesColor.getColor(keyFigureIndex, periodIndex)
                     seriesIndex++
@@ -80,7 +80,7 @@ class HistogramChartViewModel extends ChartViewModel {
             observations.eachWithIndex {periods, periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex]) {
                     String seriesName = "${seriesNames[keyFigureIndex]} for ${getPeriodLabel(periodIndex)}"
-                    data.addSeries(seriesName, periods as double[], currentBinCount, min, max)   // Math.floor((max-min)/binSize)
+                    data.addSeries(seriesName, periods, currentBinCount, min, max)   // Math.floor((max-min)/binSize)
                 }
             }
         }
@@ -157,7 +157,7 @@ class HistogramChartViewModel extends ChartViewModel {
     int getMinBinCount() {
         int min = -1;
         series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex {double[] periods, int periodIndex ->
                 if (min == -1 && periods.size() >= 5) {
                     min = Math.min((int) (periods.size() / 5), 50);
                 }

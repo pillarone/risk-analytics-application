@@ -28,6 +28,9 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import com.ulcjava.applicationframework.application.ApplicationContext
 
@@ -44,7 +47,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     @Bindable AbstractUIItem currentItem
 
     public static boolean deleteActionIsRunning = false
-    static final Logger LOG = Logger.getLogger(RiskAnalyticsMainModel)
+    static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
     ApplicationContext applicationContext
 
@@ -255,8 +258,13 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             navigationTableTreeModel.addNodeForItem(simulation)
             Parameterization parameterization = simulation.parameterization
             //after simulation running, lock the used the used p14n
-            parameterization.addRemoveLockTag()
-            navigationTableTreeModel.itemChanged(parameterization)
+            try {
+                parameterization.addRemoveLockTag()
+                navigationTableTreeModel.itemChanged(parameterization)
+            } catch (HibernateOptimisticLockingFailureException e) {
+                LOG.warn("Failed to add LOCK tag to parameterization ${parameterization}. Probably because it was already added by a concurrent simulation.")
+                //most likely because multiple users start a simulation with the same parameterization at the same time
+            }
         }
     }
 

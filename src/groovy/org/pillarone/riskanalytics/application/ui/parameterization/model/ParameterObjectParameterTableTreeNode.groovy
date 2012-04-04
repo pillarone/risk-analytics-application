@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.parameter.Parameter
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 
 class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNode {
 
@@ -34,9 +35,9 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
 
     private String lookUp(String value, String tooltip) {
         String displayName
-        if (!parent instanceof DynamicComposedComponent) {
-            Parameter parameter = parameter.find {it -> it != null }
-            String parameterType = parameter.type.parameterType
+        if (!(parent instanceof DynamicComposedComponent)) {
+            ParameterObjectParameterHolder parameter = parameter.find {it -> it != null }
+            String parameterType = parameter.classifier.class.name
             displayName = I18NUtils.findParameterTypeDisplayName(parameterType, tooltip)
         }
         return displayName
