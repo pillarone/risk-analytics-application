@@ -67,8 +67,12 @@ class DeleteAction extends SelectionTreeAction {
 
     private void removeItem(def selectedItem) {}
 
-    private void removeItem(List<ModellingUIItem> selectedItems) {
-        selectedItems.each {ModellingUIItem selectedItem ->
+    private void removeItem(AbstractUIItem selectedItem) {
+        selectedItem.remove()
+    }
+
+    private void removeItem(List<AbstractUIItem> selectedItems) {
+        selectedItems.each { selectedItem ->
             removeItem(selectedItem)
         }
     }
