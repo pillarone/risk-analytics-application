@@ -122,4 +122,8 @@ class BatchUIItem extends AbstractUIItem {
         return "Batches " + super.getWindowTitle()
     }
 
+    @Override
+    String getName() {
+        return batchRun ?  batchRun.name : ""
+    }
 }
