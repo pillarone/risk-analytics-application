@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalCellRenderer
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 /**
  Format a MultiDimensionalParam for the parameter view, where only an indication of the
@@ -46,7 +47,7 @@ public class Formatter {
             else if (it instanceof DateTime) {
                 return new SimpleDateFormat(DateFormatUtils.PARAMETER_DISPLAY_FORMAT).format(it.toDate())
             } else {
-                return String.valueOf(it)
+                return ComponentUtils.getNormalizedName(String.valueOf(it))
             }
         }
         String joinValue = values.join("; ")
