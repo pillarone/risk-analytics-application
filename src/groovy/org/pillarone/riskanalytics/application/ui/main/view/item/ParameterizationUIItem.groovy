@@ -59,6 +59,7 @@ class ParameterizationUIItem extends ModellingUIItem {
                 //consistency check
 
                 List<ParameterHolder> parameters = item.parameters.clone()
+                parameters = parameters.findAll { !it.removed }
                 List<ParameterHolder> uiParameters = []
                 collectParameters(viewModel.treeModel.root, uiParameters)
                 boolean error = false
