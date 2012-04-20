@@ -151,7 +151,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     String getSimulationStartTime() {
-        DateTime simulationStartTime = simulation.start
+        DateTime simulationStartTime = runner.simulation.start
         if (simulationStartTime != null) {
             return dateFormat.print(simulationStartTime)
         }
