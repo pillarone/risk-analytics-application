@@ -62,8 +62,10 @@ class ResultConfigurationTableTreeModel extends AbstractTableTreeModel {
 
     public void setValueAt(Object value, Object node, int column) {
         if (!readOnly) {
-            node.setValueAt(value, column)
-            notifyNodeValueChanged(node, column)
+            if (getValueAt(node, column) != value) {
+                node.setValueAt(value, column)
+                notifyNodeValueChanged(node, column)
+            }
         }
     }
 
