@@ -111,6 +111,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
 
         assertNotNull tableModel.root
 
@@ -150,6 +151,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
 
         assertNotNull tableModel.root
 
@@ -301,6 +303,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
 
         assertNotNull tableModel.root
 
@@ -432,6 +435,8 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
+
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
         tableModel.setValueAt("TYPE1", parameterObjectNode.getChildAt(0), 1)
         assertEquals 3, parameterObjectNode.childCount

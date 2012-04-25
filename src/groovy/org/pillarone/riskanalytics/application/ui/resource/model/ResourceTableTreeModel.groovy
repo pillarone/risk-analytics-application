@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.resource.model
 
 import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedTableTreeModel
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.components.ResourceModelAdapter
 
 
 class ResourceTableTreeModel extends AbstractParametrizedTableTreeModel {
@@ -24,7 +25,7 @@ class ResourceTableTreeModel extends AbstractParametrizedTableTreeModel {
 
     @Override
     protected Model getSimulationModel() {
-        return null
+        return new ResourceModelAdapter(builder.resource)
     }
 
 
