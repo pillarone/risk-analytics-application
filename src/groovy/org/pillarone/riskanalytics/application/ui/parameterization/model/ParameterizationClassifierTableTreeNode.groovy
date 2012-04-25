@@ -3,11 +3,16 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
-    public ParameterizationClassifierTableTreeNode(List parameter) {
+    private Model simulationModel
+
+    public ParameterizationClassifierTableTreeNode(List parameter, Model simulationModel) {
         super(parameter);
+        this.simulationModel = simulationModel
         name = "type"
     }
 
@@ -15,7 +20,8 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
         List possibleValues = []
         ParameterObjectParameterHolder parameterObjectHolder = parameter.find { it != null }
         IParameterObjectClassifier classifier = parameterObjectHolder.classifier
-        classifier.classifiers.each {
+        List<IParameterObjectClassifier> classifiers = simulationModel.configureClassifier(parameterObjectHolder.path, classifier.classifiers)
+        classifiers.each {
             String resourceBundleKey = it.typeName
             String modelKey = it.toString()
             String value = I18NUtils.findParameterDisplayName(parent, "type." + resourceBundleKey)
@@ -46,8 +52,8 @@ class CompareParameterizationClassifierTableTreeNode extends ParameterizationCla
     Map parametersMap = [:]
     int size
 
-    public CompareParameterizationClassifierTableTreeNode(Map parametersMap, int size) {
-        super(parametersMap.get(0));
+    public CompareParameterizationClassifierTableTreeNode(Map parametersMap, int size, Model model) {
+        super(parametersMap.get(0), model);
         this.parametersMap = parametersMap;
         this.size = size
     }
