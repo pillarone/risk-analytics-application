@@ -135,7 +135,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     int getIterationsDone() {
-        0//runner.currentScope.iterationsDone
+        runner.simulation.numberOfIterations
     }
 
     SimulationState getSimulationState() {
