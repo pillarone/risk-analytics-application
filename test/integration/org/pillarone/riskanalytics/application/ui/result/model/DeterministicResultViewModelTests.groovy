@@ -74,8 +74,8 @@ class DeterministicResultViewModelTests extends GroovyTestCase {
     }
 
     void testPaths() {
-        assertNotNull new SingleValueResult(simulationRun: simulationRun, period: 0, path: path1, collector: collector1, field: field, value: 0, valueIndex: 0).save()
-        assertNotNull new SingleValueResult(simulationRun: simulationRun, period: 2, path: path2, collector: collector2, field: field, value: 0, valueIndex: 0).save()
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
+        assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         Simulation simulation = new Simulation("testRun")
         simulation.load()
 
