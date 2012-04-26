@@ -13,9 +13,9 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.ContinuousPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.parameterization.ParameterApplicator
 
 public class DeterministicResultTableTreeModel extends AbstractCommentableItemTableTreeModel {
 
@@ -39,7 +39,16 @@ public class DeterministicResultTableTreeModel extends AbstractCommentableItemTa
         this.simulationRun = simulationRun
         this.parameterization = parameterization
         DeterministicModel model = (DeterministicModel) parameterization.modelClass.newInstance()
-        IPeriodCounter columnLabelGenerator = new ContinuousPeriodCounter(simulationRun.beginOfFirstPeriod, model.periodLength)
+        model.init()
+
+        if (!parameterization.isLoaded()) {
+            parameterization.load()
+        }
+        ParameterApplicator parameterApplicator = new ParameterApplicator(model: model, parameterization: parameterization)
+        parameterApplicator.init()
+        parameterApplicator.applyParameterForPeriod(0)
+
+        IPeriodCounter columnLabelGenerator = model.createPeriodCounter(simulationRun.beginOfFirstPeriod)
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forStyle("S-").withLocale(UIUtils.getClientLocale())
         getColumnCount().times {it ->
             DateTime end = columnLabelGenerator.getCurrentPeriodEnd().minusDays(1)

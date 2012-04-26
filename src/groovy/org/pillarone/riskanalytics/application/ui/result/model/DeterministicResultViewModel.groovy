@@ -20,27 +20,11 @@ class DeterministicResultViewModel extends ResultViewModel {
     }
 
     @Override
-    protected Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
-        Map<String, ICollectingModeStrategy> result = [:]
-        List<Object[]> calculations = SingleValueResult.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.SingleValueResult " +
-                " WHERE simulationRun.id = ?", [simulationRun.id])
-        for (Object[] psc in calculations) {
-            String path = "${psc[0]}:${psc[1]}"
-            String collector = psc[2]
-            if (allPaths.contains(path)) {
-                result.put(path, CollectingModeFactory.getStrategy(collector))
-            }
-        }
-
-        return result
-    }
-
-    @Override
     protected ConfigObject initPostSimulationCalculations(SimulationRun simulationRun) {
         ConfigObject results = new ConfigObject()
 
-        List<Object[]> calculations = SingleValueResult.executeQuery("SELECT period, path.pathName, field.fieldName, value FROM org.pillarone.riskanalytics.core.output.SingleValueResult " +
-                " WHERE simulationRun.id = ?", [simulationRun.id])
+        List<Object[]> calculations = PostSimulationCalculation.executeQuery("SELECT period, path.pathName, field.fieldName, result FROM org.pillarone.riskanalytics.core.output.PostSimulationCalculation " +
+                " WHERE run.id = ?", [simulationRun.id])
         for (Object[] psc in calculations) {
             Map periodMap = results[psc[0].toString()]
             Map pathMap = periodMap[psc[1]]
