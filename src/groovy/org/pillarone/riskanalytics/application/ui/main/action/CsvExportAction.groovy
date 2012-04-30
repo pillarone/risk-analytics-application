@@ -43,7 +43,7 @@ class CsvExportAction extends ExportItemAction {
                     String fileName = ResultAccessor.exportCsv(simulationRun)
                     if (fileName) {
                         FileInputStream fis = new FileInputStream(fileName)
-                        stream.write("ITERATION,PERIOD,PATH,VALUE,COLLECTOR\n".bytes)
+                        stream.write("ITERATION,PERIOD,PATH,VALUE,COLLECTOR,DATE\n".bytes)
                         stream.write fis.getBytes()
                         stream.write(UIUtils.toCSV(getSimulationSettings(simulationRun)).getBytes())
                     } else
