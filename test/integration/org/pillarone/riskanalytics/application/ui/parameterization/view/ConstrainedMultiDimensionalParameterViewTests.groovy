@@ -26,7 +26,7 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
-        def mdp = new ConstrainedMultiDimensionalParameter([['hierarchy component', 'hierarchy component', 'hierarchy component'], [new Integer(1), 2d, 3d]], ['line', 'percentage'], ConstraintsFactory.getConstraints(LinePercentage.IDENTIFIER))
+        def mdp = new ConstrainedMultiDimensionalParameter([['hierarchyComponent', 'hierarchyComponent', 'hierarchyComponent'], [new Integer(1), 2d, 3d]], ['line', 'percentage'], ConstraintsFactory.getConstraints(LinePercentage.IDENTIFIER))
         Model simulationModel = new ApplicationModel()
         simulationModel.init()
         simulationModel.injectComponentNames()

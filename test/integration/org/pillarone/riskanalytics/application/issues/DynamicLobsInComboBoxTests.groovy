@@ -25,7 +25,7 @@ class DynamicLobsInComboBoxTests extends AbstractSimpleFunctionalTest {
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
-        def mdp = new ComboBoxTableMultiDimensionalParameter(['example output component', 'hierarchy component'], ['title'], ITestComponentMarker)
+        def mdp = new ComboBoxTableMultiDimensionalParameter(['exampleOutputComponent', 'hierarchyComponent'], ['title'], ITestComponentMarker)
         def param = new MultiDimensionalParameter(path: 'path', periodIndex: 0)
         param.parameterInstance = mdp
         param.save(flush: true)
