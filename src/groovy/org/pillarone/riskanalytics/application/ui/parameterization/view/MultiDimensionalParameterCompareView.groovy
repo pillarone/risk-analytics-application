@@ -14,6 +14,8 @@ import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensiona
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.base.application.table.ITableModel
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalParameterTableCompareRenderer
+import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCFiller
 
 class MultiDimensionalParameterCompareView {
 
@@ -21,7 +23,7 @@ class MultiDimensionalParameterCompareView {
 
     ULCMigLayoutPane content
     ULCTable referenceTable
-    List<ULCTable> comparedTables = []
+    List<ULCComponent> comparedTables = []
 
     MultiDimensionalParameterCompareView(MultiDimensionalParameterCompareViewModel model) {
         this.model = model
@@ -38,10 +40,14 @@ class MultiDimensionalParameterCompareView {
 
         int i = 0
         for (AbstractMultiDimensionalParameter parameter in model.comparedParameters) {
-            tableModel = new MultiDimensionalParameterTableModel(parameter, true)
-            final ULCTable table = createComparingTable(tableModel, referenceTable.model)
-            table.name = "table${i++}"
-            comparedTables << table
+            if (parameter != null) {
+                tableModel = new MultiDimensionalParameterTableModel(parameter, true)
+                final ULCTable table = createComparingTable(tableModel, referenceTable.model)
+                table.name = "table${i++}"
+                comparedTables << table
+            } else {
+                comparedTables << new ULCFiller()
+            }
         }
     }
 

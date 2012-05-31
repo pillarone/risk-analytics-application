@@ -19,8 +19,10 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
+import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 
-class MultiDimensionalCompareTabStarter implements IActionListener {
+class MultiDimensionalCompareTabStarter extends ExceptionSafeAction {
 
     CompareParameterizationsView parameterView
     Map openTabs = [:]
@@ -30,7 +32,7 @@ class MultiDimensionalCompareTabStarter implements IActionListener {
         attachListeners()
     }
 
-    public void actionPerformed(ActionEvent event) {
+    public void doActionPerformed(ActionEvent event) {
         ULCTableTree tree = event.source
         def lastComponent = tree?.selectedPath?.lastPathComponent
         if (lastComponent instanceof CompareParameterizationTableTreeNode) {
@@ -51,7 +53,19 @@ class MultiDimensionalCompareTabStarter implements IActionListener {
 
                     int periodIndex = lastComponent.getPeriodIndex(tree.selectedColumn + 1)
 
-                    MultiDimensionalParameterCompareViewModel model = new MultiDimensionalParameterCompareViewModel(referenceParameters[periodIndex].businessObject, parametersToCompare*.get(periodIndex).businessObject, parameterizations, periodIndex)
+                    def reference = referenceParameters[periodIndex]?.businessObject
+                    if(reference == null) {
+                        return
+                    }
+                    List<AbstractMultiDimensionalParameter> toCompare = []
+                    for(List<MultiDimensionalParameterHolder> list in parametersToCompare) {
+                        if(list.size() > periodIndex) {
+                            toCompare << list.get(periodIndex)?.businessObject
+                        } else {
+                            toCompare << null
+                        }
+                    }
+                    MultiDimensionalParameterCompareViewModel model = new MultiDimensionalParameterCompareViewModel(reference, toCompare, parameterizations, periodIndex)
                     tabbedPane.addTab(lastComponent.parameterizationTableTreeNode.displayName, UIUtils.getIcon(UIUtils.getText(MultiDimensionalTabStarter, "MDP.icon")), new MultiDimensionalParameterCompareView(model).content)
                     int currentTab = tabbedPane.tabCount - 1
                     tabbedPane.selectedIndex = currentTab
