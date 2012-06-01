@@ -265,11 +265,11 @@ class QueryPaneModel extends AbstractPresentationModel {
             }
         }
 
-        iterations.eachWithIndex {int iterationNumber, int index ->
+        iterations.each {int iterationNumber ->
             List row = []
             row << iterationNumber
-            resultsPerPathAndPeriod.each {List pathResults ->
-                row << pathResults[index]
+            resultsPerPathAndPeriod.each {Map<Integer, Double> pathResults ->
+                row << pathResults[iterationNumber]
             }
             lastQueryResults << row
         }
@@ -280,10 +280,10 @@ class QueryPaneModel extends AbstractPresentationModel {
     private void addResultsPerPathAndPeriod(ResultTableTreeNode node, int period, List resultsPerPathAndPeriod, List<List<Integer>> splitUpIterations) {
         String path = node.path
         String field = node.field
-        List periodList = []
+        Map<Integer, Double> periodMap = [:]
 
         for (List<Integer> list in splitUpIterations) {
-            StringBuilder query = new StringBuilder("SELECT  sum(s.value) ")
+            StringBuilder query = new StringBuilder("SELECT s.iteration, sum(s.value) ") //TODO: cleanup, sum probably not necessary anymore
             query.append("FROM org.pillarone.riskanalytics.core.output.SingleValueResult as s ")
             query.append("WHERE s.simulationRun.id = " + simulationRun.id)
             query.append(" AND s.period = " + period)
@@ -291,9 +291,12 @@ class QueryPaneModel extends AbstractPresentationModel {
             query.append(" AND s.field.fieldName = '" + field + "'")
             query.append(" AND s.collector.collectorName = '" + node.collector + "'")
             query.append(" AND s.iteration in (:list) GROUP BY s.iteration ORDER BY s.iteration asc")
-            periodList.addAll(SingleValueResult.executeQuery(query.toString(), ["list": list]))
+            List queryResults = SingleValueResult.executeQuery(query.toString(), ["list": list])
+            for(Object[] obj in queryResults) {
+                periodMap.put(obj[0], obj[1])
+            }
         }
-        resultsPerPathAndPeriod << periodList
+        resultsPerPathAndPeriod << periodMap
     }
 
     List getSplitUpIterations(List iterations) {
