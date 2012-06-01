@@ -254,28 +254,27 @@ class QueryPaneModel extends AbstractPresentationModel {
             }
         }
 
-        iterations.eachWithIndex {int iterationNumber, int index ->
+        iterations.each {int iterationNumber ->
             List row = []
             row << iterationNumber
-            resultsPerPathAndPeriod.each {List pathResults ->
-                row << pathResults[index]
+            resultsPerPathAndPeriod.each {Map<Integer, Double> pathResults ->
+                row << pathResults[iterationNumber]
             }
             lastQueryResults << row
         }
-
         return lastQueryResults
     }
 
     private void addResultsPerPathAndPeriod(ResultTableTreeNode node, int period, List resultsPerPathAndPeriod, List<List<Integer>> splitUpIterations) {
         String path = node.path
         String field = node.field
-        List periodList = []
+        Map<Integer, Double> periodMap = [:]
 
         for (List<Integer> list in splitUpIterations) {
-            periodList.addAll(ResultAccessor.getIterationConstrainedValues(simulationRun, period, path, field, node.collector, list))
+            periodMap.putAll(ResultAccessor.getIterationConstrainedValues(simulationRun, period, path, field, node.collector, list))
 
         }
-        resultsPerPathAndPeriod << periodList
+        resultsPerPathAndPeriod << periodMap
     }
 
     List getSplitUpIterations(List iterations) {
