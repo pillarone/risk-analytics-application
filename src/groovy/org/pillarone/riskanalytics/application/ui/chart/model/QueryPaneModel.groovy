@@ -218,7 +218,8 @@ class QueryPaneModel extends AbstractPresentationModel {
     }
 
     protected List queryResultsHQL(CriteriaViewModel criteria) {
-        return ResultAccessor.getCriteriaConstrainedIterations(simulationRun, criteria.selectedPeriod, criteria.selectedPath, criteria.field, criteria.collector, criteria.selectedComparator.toString(), criteria.interpretedValue);
+        return ResultAccessor.getCriteriaConstrainedIterations(simulationRun, criteria.selectedPeriod, criteria.selectedPath,
+                criteria.field, criteria.collector, criteria.selectedComparator.toString(), criteria.interpretedValue);
     }
 
     protected String createCriteriaSubQuerry(CriteriaViewModel model) {

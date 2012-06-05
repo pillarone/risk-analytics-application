@@ -61,7 +61,7 @@ class CriteriaViewModel {
         comparatorModel.selectedEnum = comparator
     }
 
-    public double getInterpretedValue() throws Exception {
+    public Double getInterpretedValue() throws Exception {
         switch (valueInterpretationModel.selectedEnum) {
             case ValueInterpretationType.ABSOLUTE:
                 return this.@value
