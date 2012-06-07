@@ -137,7 +137,9 @@ abstract class ModellingUIItem extends AbstractUIItem {
             ModellingItem newItem = ModellingItemFactory.copyItem(modellingUIItem.item, name)
             newItem.id = null
             mainModel.fireModelChanged()
-            navigationTableTreeModel.addNodeForItem(UIItemFactory.createItem(newItem, modellingUIItem.model, mainModel))
+            Model modelInstance = newItem?.modelClass?.newInstance()
+            modelInstance?.init()
+            navigationTableTreeModel.addNodeForItem(UIItemFactory.createItem(newItem, modelInstance, mainModel))
         }
     }
 
