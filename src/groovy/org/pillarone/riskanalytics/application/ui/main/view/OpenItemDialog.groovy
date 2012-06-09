@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -68,13 +69,18 @@ class OpenItemDialog {
     }
 
     private void layoutComponents() {
-        ULCBoxPane content = new ULCBoxPane(rows: 1, columns: isWorkflowItem() ? 3 : 4)
+        int columns = 4
+        if(isWorkflowItem()) columns--
+        if(item instanceof Resource) columns--
+        ULCBoxPane content = new ULCBoxPane(rows: 1, columns: columns)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         if (!isWorkflowItem()) {
             content.add(ULCBoxPane.BOX_EXPAND_CENTER, createCopyButton)
         }
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, readOnlyButton)
-        content.add(ULCBoxPane.BOX_EXPAND_CENTER, deleteDependingResultsButton)
+        if (!(item instanceof Resource)) {
+            content.add(ULCBoxPane.BOX_EXPAND_CENTER, deleteDependingResultsButton)
+        }
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, cancelButton)
 
         dialog.add(content)

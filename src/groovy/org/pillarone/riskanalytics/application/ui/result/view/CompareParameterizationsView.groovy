@@ -15,6 +15,9 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCBoxPane
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterizationTableTreeModel
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 
 /**
  * @author fouad jaada
@@ -86,14 +89,31 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
         tree.cellSelectionEnabled = true
         // TODO (Mar 20, 2009, msh): Identified this as cause for PMO-240 (expand behaviour).
 
-         tree.viewPortTableTree.addActionListener(new MultiDimensionalCompareTabStarter(this))
+        tree.viewPortTableTree.addActionListener(new MultiDimensionalCompareTabStarter(this))
 
 
-        model.treeModel.root.childCount.times {
-            tree.expandPath new TreePath([model.treeModel.root, model.treeModel.root.getChildAt(it)] as Object[])
+        tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
+        List<ITableTreeNode> nodesWithDifference = findDifferentNodes(model.treeModel.root)
+        for(ITableTreeNode node in nodesWithDifference) {
+            tree.getRowHeaderTableTree().makeVisible(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+            tree.getViewPortTableTree().makeVisible(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }
 
         new SelectionTracker(tree)
+    }
+
+    protected List<ITableTreeNode> findDifferentNodes(ITableTreeNode root) {
+        def treeModel = model.treeModel
+        List<ITableTreeNode> result = []
+        for (int i = 0; i < root.childCount; i++) {
+            ITableTreeNode child = root.getChildAt(i)
+            if (treeModel.isDifferent(child)) {
+                result.add(child)
+            }
+            result.addAll(findDifferentNodes(child))
+        }
+
+        return result
     }
 
 }
