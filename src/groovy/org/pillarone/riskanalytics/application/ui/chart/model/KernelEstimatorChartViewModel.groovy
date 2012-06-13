@@ -222,7 +222,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
                     }
                 } else {
                     notStochasticSeries[node.getShortDisplayPath(nodes), periodIndex] = true
-                    periods << []
+                    periods << new double[0]
                     minsP << 0
                     maxsP << 0
                     meansP << 0
