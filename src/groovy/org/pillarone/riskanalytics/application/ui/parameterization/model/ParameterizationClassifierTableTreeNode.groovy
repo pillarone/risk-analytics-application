@@ -5,6 +5,8 @@ import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassif
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
@@ -38,7 +40,13 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
 
 
     public void setValueAt(Object value, int column) {
-        parameter.get(column - 1)?.value = getKeyForValue(value)
+        ParameterHolder parameterHolder = parameter.get(column - 1)
+        if (parameterHolder != null) {
+            LOG.debug("Setting value to node @ ${path} P${column - 1}")
+            parameterHolder?.value = getKeyForValue(value)
+        } else {
+            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
+        }
     }
 
     public getExpandedCellValue(int column) {

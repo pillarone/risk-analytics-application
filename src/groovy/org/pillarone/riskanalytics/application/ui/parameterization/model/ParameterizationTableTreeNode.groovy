@@ -12,8 +12,12 @@ import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
+
+    protected final Log LOG = LogFactory.getLog(getClass())
 
     List<ParameterHolder> parameter
     Set<ParameterValidation> errors

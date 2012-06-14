@@ -6,6 +6,8 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 class MultiDimensionalParameterizationTableTreeNode extends ParameterizationTableTreeNode {
 
@@ -30,7 +32,13 @@ class MultiDimensionalParameterizationTableTreeNode extends ParameterizationTabl
     }
 
     public void setValueAt(Object value, int column) {
-        parameter.get(column - 1)?.value = value
+        ParameterHolder parameterHolder = parameter.get(column - 1)
+        if (parameterHolder != null) {
+            LOG.debug("Setting value to node @ ${path} P${column - 1}")
+            parameterHolder?.value = value
+        } else {
+            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
+        }
     }
 
     public getExpandedCellValue(int column) {
