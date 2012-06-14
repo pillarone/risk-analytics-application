@@ -47,6 +47,7 @@ class ExportRawDataTable extends ResourceBasedAction {
                                 exporter.headers = view.model.columnHeader
                                 exporter.exportResults(view.model.rawData)
                                 exporter.addTab "Simulation Settings", view.model.simulationSettings
+                                exporter.addTab "Runtime parameters", view.model.runtimeParameters
                                 exporter.writeWorkBook stream
                             } catch (UnsupportedOperationException t) {
                                 new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()

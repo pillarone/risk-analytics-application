@@ -7,9 +7,10 @@ import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ResultIterationDataViewModel extends QueryPaneModel {
     int periodCount
@@ -114,26 +115,32 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     }
 
     public List<List<String>> getSimulationSettings() {
-        SimulationRun.withTransaction {status ->
-            simulationRun = SimulationRun.get(simulationRun.id)
-            Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
-            Class modelClass = parameterization.modelClass
-            Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
-            simulation.load()
+        Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
+        simulation.load()
 
-            List data = []
-            data << ["", "", "Version"]
-            data << ["Simulation Name:", "$simulation.name"]
-            data << ["Comment:", simulation.comment]
-            data << ["Model:", "${simulation.modelClass.name}", "${simulation.modelVersionNumber}"]
-            data << ["Parameterization:", "$simulation.parameterization.name", "${simulation.parameterization.versionNumber.toString()}"]
-            data << ["Template:", "$simulation.template.name", "${simulation.template.versionNumber.toString()}"]
-            data << ["Structure:", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
-            data << ["Number of Periods:", simulation.periodCount]
-            data << ["Number of Iterations:", simulation.numberOfIterations]
-            data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
-            return data
+        List data = []
+        data << ["", "", "Version"]
+        data << ["Simulation Name:", "$simulation.name"]
+        data << ["Comment:", simulation.comment]
+        data << ["Model:", "${simulation.modelClass.name}", "${simulation.modelVersionNumber}"]
+        data << ["Parameterization:", "$simulation.parameterization.name", "${simulation.parameterization.versionNumber.toString()}"]
+        data << ["Template:", "$simulation.template.name", "${simulation.template.versionNumber.toString()}"]
+        data << ["Structure:", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
+        data << ["Number of Periods:", simulation.periodCount]
+        data << ["Number of Iterations:", simulation.numberOfIterations]
+        data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
+        return data
+    }
+
+    public List<List<String>> getRuntimeParameters() {
+        Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
+        simulation.load()
+
+        List data = []
+        for (ParameterHolder runtimeParameter in simulation.runtimeParameters) {
+            data << [ComponentUtils.getNormalizedName(runtimeParameter.path), runtimeParameter.businessObject.toString()]
         }
+        return data
     }
 
     void adjust(int adjustment) {
