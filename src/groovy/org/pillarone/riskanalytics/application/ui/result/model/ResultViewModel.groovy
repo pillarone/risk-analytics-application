@@ -5,6 +5,7 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.dataaccess.function.FunctionDescriptor
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
@@ -27,6 +28,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class ResultViewModel extends AbstractCommentableItemModel {
 
     private List<IFunctionListener> listeners = new ArrayList()
+    private List<FunctionDescriptor> openFunctions = []
 
     int periodCount
 
@@ -129,18 +131,20 @@ class ResultViewModel extends AbstractCommentableItemModel {
     }
 
     void addFunction(IFunction function) {
-        if (!treeModel.functions.contains(function)) {
-            periodCount.times {
-                treeModel.functions.add(function)
-            }
-            treeModel.columnCount += periodCount
-            notifyFunctionAdded(function)
+        if (openFunctions.contains(function.createDescriptor())) {
+            return
         }
+        periodCount.times {
+            treeModel.functions.add(function)
+        }
+        treeModel.columnCount += periodCount
+        notifyFunctionAdded(function)
         ((AbstractTableTreeModel) treeModel).nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(treeModel.root) as Object[]))
+        openFunctions << function.createDescriptor()
     }
 
     void removeFunction(IFunction function) {
-        if (treeModel.functions.contains(function)) {
+        if (openFunctions.contains(function.createDescriptor())) {
             //do not change list size, because the view always increases the model index of new columns
             int index = treeModel.functions.indexOf(function)
             while (index >= 0) {
@@ -149,6 +153,7 @@ class ResultViewModel extends AbstractCommentableItemModel {
             }
             treeModel.columnCount -= periodCount
             notifyFunctionRemoved(function)
+            openFunctions.remove(function.createDescriptor())
         }
     }
 

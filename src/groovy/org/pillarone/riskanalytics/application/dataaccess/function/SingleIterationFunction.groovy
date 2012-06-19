@@ -40,5 +40,8 @@ class SingleIterationFunction extends AbstractResultFunction implements IParamet
         return iteration
     }
 
-
+    @Override
+    FunctionDescriptor createDescriptor() {
+        return new ParametrizedFunctionDescriptor(getClass(), getParameter())
+    }
 }

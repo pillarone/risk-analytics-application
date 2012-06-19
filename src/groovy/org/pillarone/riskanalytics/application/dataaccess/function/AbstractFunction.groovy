@@ -30,4 +30,8 @@ abstract class AbstractFunction implements IFunction {
     def evaluate(SimulationRun simulationRun, int periodIndex, SimpleTableTreeNode node) {
         return evaluate(new SimulationRunHolder(simulationRun), periodIndex, node)
     }
+
+    FunctionDescriptor createDescriptor() {
+        return new FunctionDescriptor(getClass())
+    }
 }
