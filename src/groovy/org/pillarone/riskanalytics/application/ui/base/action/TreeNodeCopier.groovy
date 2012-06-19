@@ -9,8 +9,9 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.KeyStroke
-import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+
+import java.text.NumberFormat
 
 class TreeNodeCopier extends ResourceBasedAction {
 
@@ -29,7 +30,9 @@ class TreeNodeCopier extends ResourceBasedAction {
 
     public TreeNodeCopier(boolean copyWithPath) {
         super(copyWithPath ? "CopyWithPath" : "Copy")
-        putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false));
+        if (!copyWithPath) {
+            putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false));
+        }
         this.copyWithPath = copyWithPath
     }
 
