@@ -81,12 +81,9 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         if (!reports.empty) {
             ULCMenu reportsMenu = new ULCMenu("Reports")
             for (IReportModel model in reports) {
-                reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, ReportFactory.ReportFormat.PDF, tree, abstractUIItem.mainModel)))
-                reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, ReportFactory.ReportFormat.PPT, tree, abstractUIItem.mainModel)))
-//                reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, ReportFactory.ReportFormat.XLS, tree, abstractUIItem.mainModel)))
-
-                // Support for export to Excel prepared, but not activated since need coordination with IC
-                // reportsMenu.add(new ULCMenuItem(new CreateXlsReportAction(model, tree, abstractUIItem.mainModel)))
+                for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
+                        reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, aReportFormat, tree, abstractUIItem.mainModel)))
+                }
             }
             if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
             simulationNodePopUpMenu.add(reportsMenu)
