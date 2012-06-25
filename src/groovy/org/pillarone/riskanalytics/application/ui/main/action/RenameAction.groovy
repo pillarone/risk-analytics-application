@@ -34,11 +34,10 @@ class RenameAction extends SelectionTreeAction {
         ModellingUIItem selectedItem = getSelectedUIItem()
         if (!(selectedItem instanceof ModellingUIItem)) return
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
-            selectedItem.item.setModelClass(getSelectedModel().class)
+            selectedItem.item.setModelClass(getSelectedModel().class) //TODO: still necessary?
             usedInSimulation = selectedItem.isUsedInSimulation()
             if (!usedInSimulation) {
-                List runs = SimulationRun.executeQuery(" from ${SimulationRun.class.name} as run where run.parameterization.name = :name ", ["name": selectedItem.name])
-                usedInSimulation = runs != null && runs.size() > 0
+                usedInSimulation = nameUsedInSimulation(selectedItem.item)
             }
         }
         if (!usedInSimulation) {
@@ -51,6 +50,16 @@ class RenameAction extends SelectionTreeAction {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "RenamingLocked")
             alert.show()
         }
+    }
+
+    protected boolean nameUsedInSimulation(ResultConfiguration item) {
+        List runs = SimulationRun.executeQuery("from ${SimulationRun.name} as run where run.resultConfiguration.name = :name ", ["name": item.name])
+        return runs != null && runs.size() > 0
+    }
+
+    protected boolean nameUsedInSimulation(Parameterization item) {
+        List runs = SimulationRun.executeQuery("from ${SimulationRun.name} as run where run.parameterization.name = :name ", ["name": item.name])
+        return runs != null && runs.size() > 0
     }
 
 }
