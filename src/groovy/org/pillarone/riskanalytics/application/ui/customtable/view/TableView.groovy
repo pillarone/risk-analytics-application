@@ -58,9 +58,13 @@ class TableView extends AbstractView {
         }] as IActionListener)
 
         loadButton.addActionListener([actionPerformed: {
-            content.remove(customTableView.content)
+            String selectedView = savedViews.selectedItem?.toString()
+            if(selectedView == null) {
+                return
+            }
 
-            CustomTable table = new CustomTable(savedViews.selectedItem.toString(), model.class)
+            content.remove(customTableView.content)
+            CustomTable table = new CustomTable(selectedView, model.class)
             table.load()
             final List<DataCellElement> outputElements = table.tableData.flatten().findAll { it instanceof DataCellElement}
             outputElements*.run = simulation.simulationRun
