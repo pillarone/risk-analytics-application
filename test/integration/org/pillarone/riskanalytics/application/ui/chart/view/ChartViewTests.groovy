@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNo
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ChartViewTests extends AbstractSimpleFunctionalTest {
     PDFGaussKernelEstimateChartViewModel model
@@ -65,8 +66,8 @@ class ChartViewTests extends AbstractSimpleFunctionalTest {
     void testSelectPeriod() {
         ULCFrameOperator frame = new ULCFrameOperator("test")
         assertNotNull frame
-        ULCCheckBoxOperator period0Box = new ULCCheckBoxOperator(frame, new ComponentByNameChooser("Seriestest_node0Period0CheckBox"))
-        ULCCheckBoxOperator period3Box = new ULCCheckBoxOperator(frame, new ComponentByNameChooser("Seriestest_node1Period3CheckBox"))
+        ULCCheckBoxOperator period0Box = new ULCCheckBoxOperator(frame, new ComponentByNameChooser("Series${ComponentUtils.getNormalizedName("test_node0")}Period0CheckBox"))
+        ULCCheckBoxOperator period3Box = new ULCCheckBoxOperator(frame, new ComponentByNameChooser("Series${ComponentUtils.getNormalizedName("test_node1")}Period3CheckBox"))
         assertNotNull period3Box
 
 

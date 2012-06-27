@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.view
 import com.ulcjava.base.application.table.ITableModel
 import com.ulcjava.testframework.operator.ULCTableOperator
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 
 class PastePartialRowTests extends MultiDimensionalParameterCopyPasteTests {
@@ -14,7 +15,7 @@ class PastePartialRowTests extends MultiDimensionalParameterCopyPasteTests {
         assertEquals new DateTime(2010, 1, 1, 0, 0, 0, 0).millis, (model.getValueAt(1, 3) as Date).time
         assertEquals true, model.getValueAt(1, 4)
         assertEquals "text", model.getValueAt(1, 5)
-        assertEquals "hierarchy component", model.getValueAt(1, 6)
+        assertEquals ComponentUtils.getNormalizedName("hierarchyComponent"), model.getValueAt(1, 6)
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjec
 import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 public class I18NUtils {
 
@@ -255,73 +256,8 @@ public class I18NUtils {
         return LocaleResources.getBundle(resourceBundleName)
     }
 
-    /**
-     * display name will be as the following formatted:
-     * HelloWorld -> Hello World
-     * helloWorld -> hello World
-     * Helloworld -> Helloworld
-     * helloworld -> helloworld
-     * HELLOWORLD -> HELLOWORLD
-     * HELLOWorld -> HELLO World
-     * @param value
-     * @return
-     */
     public static String formatDisplayName(String value) {
-        if (value == null) {
-            value = ""
-        }
-
-        if (value.startsWith("sub")) {
-            return formatSubComponentName(value.substring(3))
-        }
-        if (value.startsWith("parm")) {
-            value = value.substring(4)
-        }
-        if (value.startsWith("out")) {
-            value = value.substring(3)
-        }
-
-        return formatComponentName(value)
-    }
-
-    private static String formatComponentName(String value) {
-        StringBuffer displayNameBuffer = new StringBuffer()
-        value.eachWithIndex {String it, int index ->
-            char c = -1
-            if (index + 1 < value.length())
-                c = value.charAt(index + 1)
-            if (!it.equals(it.toLowerCase()) && c != -1 && c.equals(c.toLowerCase())) {
-                if (index > 0 && index < value.length() - 1) {
-                    displayNameBuffer << " " + it.toLowerCase()
-                } else {
-                    displayNameBuffer << ((index < value.length() - 1) ? it.toLowerCase() : it)
-                }
-            } else {
-                displayNameBuffer << it
-            }
-        }
-        return displayNameBuffer.toString()
-    }
-
-    private static String formatSubComponentName(String value) {
-        StringBuffer displayNameBuffer = new StringBuffer()
-        value = value.replaceAll("_", " ")
-        value.getChars().eachWithIndex {Character it, int index ->
-            char c = -1
-            if (index + 1 < value.length())
-                c = value.charAt(index + 1)
-            if (it.isUpperCase() && c != -1 && c.isLowerCase()) {
-                if (index > 0 && index < value.length() - 1) {
-                    displayNameBuffer << " " + it
-                } else {
-                    displayNameBuffer << it
-                }
-            } else {
-                displayNameBuffer << it
-            }
-        }
-        value = displayNameBuffer.toString()
-        return value.replaceAll("  ", " ")
+        return ComponentUtils.getNormalizedName(value)
     }
 
     public static String getPropertyDisplayName(Model model, String propertyName) {
