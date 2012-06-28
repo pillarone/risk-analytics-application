@@ -1,20 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.util
 
-import java.text.SimpleDateFormat
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.CollectorMapping
 import org.pillarone.riskanalytics.core.output.FieldMapping
 import org.pillarone.riskanalytics.core.output.PathMapping
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.engine.grid.GridHelper
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.util.PeriodLabelsUtil
 
 /**
  * Helper class for accessing the meta information on the data included in the db or the file system,
@@ -85,55 +80,12 @@ class ResultAccess {
         }
         return result
     }
-    
+
     public static List<String> getPeriodLabels(SimulationRun run) {
-        List<String> periodLabels = []
-        // Whenever possible, use the saved period labels
-        try {
-            ParameterizationDAO dao = run.parameterization
-            Parameterization parametrization = ModellingItemFactory.getParameterization(dao)
-            if (parametrization && !parametrization.periodLabels.empty) {
-                DateTimeFormatter formatter = DateTimeFormat.forPattern(DateFormatUtils.PARAMETER_DISPLAY_FORMAT)
-                DateTimeFormatter parser = DateTimeFormat.forPattern(Parameterization.PERIOD_DATE_FORMAT)
-                periodLabels = parametrization.periodLabels.collect { String it ->
-                    try {
-                        return formatter.print(parser.parseDateTime(it))
-                    } catch (Exception e) {
-                        return it //period label is not a date
-                    }
-                }
-                return periodLabels
-            }
-        } catch (Exception ex) {
-
-        }
-
-        // Saving period labels is not possible for certain period counters.. they have to be resolved here
-        try {
-            SimpleDateFormat format = new SimpleDateFormat(DateFormatUtils.PARAMETER_DISPLAY_FORMAT)
-            Class modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
-            Model simulationModel = (Model) modelClass.newInstance()
-            IPeriodCounter periodCounter = simulationModel.createPeriodCounter(run.beginOfFirstPeriod)
-            periodCounter.reset()
-            run.periodCount.times {
-                periodLabels << format.format(periodCounter.getCurrentPeriodStart().toDate())
-                periodCounter.next()
-            }
-            return periodLabels
-        } catch (Exception ex) {
-        }
-
-        // in case period labels are not found in the parametrization and not provided by the model
-        run.periodCount.times {int i ->
-            periodLabels << "P$i"
-        }
-
-        // the elements of the list need to be of type String not GString otherwise,
-        // when used in ULCComboBox, an exception is thrown
-        periodLabels.size().times { int i ->
-            periodLabels[i] = new String(periodLabels[i])
-        }
-
-        return periodLabels
+        Parameterization parameterization = ModellingItemFactory.getParameterization(run.parameterization)
+        parameterization.load(false)
+        Model model = parameterization.modelClass.newInstance()
+        model.init()
+        return PeriodLabelsUtil.getPeriodLabels(parameterization.periodLabels, run, model)
     }
 }

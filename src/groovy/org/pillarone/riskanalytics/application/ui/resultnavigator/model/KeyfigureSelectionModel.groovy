@@ -21,6 +21,7 @@ class KeyfigureSelectionModel {
     private int numOfPeriods
     private DateTime startPeriod
     private DateTime endPeriod
+    private List<String> periodLabels
 
     KeyfigureSelectionModel(SimulationRun run) {
         numOfIterations = run.iterations
@@ -30,7 +31,7 @@ class KeyfigureSelectionModel {
 
         keyfigureModel = new DefaultComboBoxModel(StatisticsKeyfigure.getNames())
         
-        List<String> periodLabels = ResultAccess.getPeriodLabels(run)
+        periodLabels = ResultAccess.getPeriodLabels(run)
         periodSelectionModel = new DefaultComboBoxModel(periodLabels)
     }
 
@@ -40,5 +41,13 @@ class KeyfigureSelectionModel {
 
     int getPeriod() {
         return (int) periodSelectionModel.getIndexOf(periodSelectionModel.getSelectedItem())
+    }
+
+    int getPeriodIndexForLabel(String label) {
+        return periodLabels.indexOf(label)
+    }
+
+    String getPeriodLabelForIndex(int periodIndex) {
+        return periodLabels[periodIndex]
     }
 }

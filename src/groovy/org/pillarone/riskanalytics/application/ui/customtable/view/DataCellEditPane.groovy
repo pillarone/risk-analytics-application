@@ -147,7 +147,7 @@ public class DataCellEditPane extends ULCBoxPane {
         ULCComboBox periodCombo = new ULCComboBox(model.getPeriodSelectionModel())
         periodCombo.setName(OutputElement.PERIOD)
         periodCombo.setEditable(true)
-        periodCombo.selectedItem = dataCellElement.categoryMap[OutputElement.PERIOD]
+        periodCombo.selectedItem = model.getPeriodLabelForIndex(Integer.parseInt(dataCellElement.categoryMap[OutputElement.PERIOD]))
         periodCombo.addActionListener(new CategoryValueChangedListener())
         periodCombo.setToolTipText("Select a value, or reference to a value in a cell (e.g. =A\$1")
 
@@ -198,6 +198,9 @@ public class DataCellEditPane extends ULCBoxPane {
                 ULCComboBox combo = (ULCComboBox)actionEvent.source
                 category = combo.getName()
                 selectedValue = combo.selectedItem
+                if (category == OutputElement.PERIOD) {
+                    selectedValue = String.valueOf(model.getPeriodIndexForLabel(selectedValue))
+                }
             }
 
             if (selectedValue == DataCellEditPane.this.dataCellElement.categoryMap[category])
