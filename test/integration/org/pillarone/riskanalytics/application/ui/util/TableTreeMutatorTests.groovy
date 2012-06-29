@@ -4,6 +4,7 @@ import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class TableTreeMutatorTests extends GroovyTestCase {
 
@@ -43,7 +44,7 @@ class TableTreeMutatorTests extends GroovyTestCase {
         assertEquals "b", root.getValueAt(1)
         assertEquals "c", root.getValueAt(2)
 
-        assertEquals "path1", child.getValueAt(0)
+        assertEquals ComponentUtils.getNormalizedName("path1"), child.getValueAt(0)
         assertEquals "path2", child.getValueAt(1)
         assertEquals "path3", child.getValueAt(2)
 

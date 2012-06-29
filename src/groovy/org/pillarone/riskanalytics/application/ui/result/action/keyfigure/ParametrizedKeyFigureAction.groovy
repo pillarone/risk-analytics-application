@@ -19,17 +19,6 @@ abstract class ParametrizedKeyFigureAction<E> extends AbstractKeyFigureAction {
     }
 
     protected void addFunction(IParametrizedFunction<? extends E> function) {
-        E parameter = function.parameter
-
-        ResultViewModel model = model as ResultViewModel
-        ITableTreeModel tableTreeModel = model.tableTreeModel
-        for (IFunction f in tableTreeModel.functions) {
-            if (f?.class == function.class) {
-                if (parameter == f.parameter) {
-                    return
-                }
-            }
-        }
         addFunction(function as IFunction)
     }
 

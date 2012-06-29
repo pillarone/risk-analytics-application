@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensiona
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
 
@@ -26,7 +27,7 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
-        def mdp = new ConstrainedMultiDimensionalParameter([['hierarchy component', 'hierarchy component', 'hierarchy component'], [new Integer(1), 2d, 3d]], ['line', 'percentage'], ConstraintsFactory.getConstraints(LinePercentage.IDENTIFIER))
+        def mdp = new ConstrainedMultiDimensionalParameter([['hierarchyComponent', 'hierarchyComponent', 'hierarchyComponent'], [new Integer(1), 2d, 3d]], ['line', 'percentage'], ConstraintsFactory.getConstraints(LinePercentage.IDENTIFIER))
         Model simulationModel = new ApplicationModel()
         simulationModel.init()
         simulationModel.injectComponentNames()
@@ -47,8 +48,8 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
         ULCTableOperator table = new ULCTableOperator(frame)
 
         def operator = table.clickForEdit(1, 1) as ULCComboBoxOperator
-        assertEquals "hierarchy component", operator.selectedItem
-        operator.selectItem 'first component'
+        assertEquals ComponentUtils.getNormalizedName("hierarchyComponent"), operator.selectedItem
+        operator.selectItem ComponentUtils.getNormalizedName("subFirstComponent")
 
         operator = table.clickForEdit(1, 2) as ULCTextFieldOperator
         assertEquals "1", operator.getText()

@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
@@ -89,7 +90,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertNotNull tableModel.root
 
         def enumNode = tableModel.root.getChildAt(1).getChildAt(1)
-        assertEquals 'enum parameter', enumNode.displayName
+        assertEquals ComponentUtils.getNormalizedName("parmEnumParameter"), enumNode.displayName
         assertEquals 'First value', tableModel.getValueAt(enumNode, 1)
 
         tableModel.setValueAt('SECOND_VALUE', enumNode, 1)
@@ -111,6 +112,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
 
         assertNotNull tableModel.root
 
@@ -150,6 +152,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
 
         assertNotNull tableModel.root
 
@@ -301,6 +304,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
 
         assertNotNull tableModel.root
 
@@ -432,6 +436,8 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def tableModel = new ParameterizationTableTreeModel(builder)
+        tableModel.simulationModel = model
+
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
         tableModel.setValueAt("TYPE1", parameterObjectNode.getChildAt(0), 1)
         assertEquals 3, parameterObjectNode.childCount

@@ -6,6 +6,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ResourceParameterHolder
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
+import org.pillarone.riskanalytics.core.components.ResourceModelAdapter
+import org.pillarone.riskanalytics.core.components.IResource
 
 class ResourceTreeBuilderClosureDelegate {
 
@@ -18,9 +20,11 @@ class ResourceTreeBuilderClosureDelegate {
     }
 
     private Resource item
+    private IResource resourceInstance
 
     ResourceTreeBuilderClosureDelegate(Resource item) {
         this.item = item
+        resourceInstance = item.createResourceInstance()
     }
 
     private Map<Node, ResourceTreeBuilderClosureDelegate> hierarchy = new LinkedHashMap()
@@ -76,7 +80,7 @@ class ResourceTreeBuilderClosureDelegate {
                 buildTree(newNode, entry.value, entry.key)
             }
         } else {
-            currentNode.insert(ParameterizationNodeFactory.getNode(item.getParameters(node.name), null), currentNode.childCount)
+            currentNode.insert(ParameterizationNodeFactory.getNode(item.getParameters(node.name), new ResourceModelAdapter(resourceInstance)), currentNode.childCount)
         }
     }
 }

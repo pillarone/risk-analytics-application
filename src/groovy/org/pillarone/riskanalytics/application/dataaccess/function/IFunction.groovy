@@ -12,4 +12,6 @@ interface IFunction extends Cloneable {
 
     boolean calculateForNonStochasticalValues()
 
+    FunctionDescriptor createDescriptor()
+
 }

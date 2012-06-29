@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterTableModel
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import com.ulcjava.base.application.ULCAlert
 
 class TablePaster extends ExceptionSafeAction {
 
@@ -33,7 +34,12 @@ class TablePaster extends ExceptionSafeAction {
         int startRow = table.getSelectedRow()
         int startColumn = table.getSelectedColumn()
         if (startRow == 0 || startColumn == 0) {
-            if (table instanceof MultiDimensionalTable) return
+            if (table instanceof MultiDimensionalTable) {
+                ULCAlert alert = new ULCAlert("Not supported", "Pasting into header rows or columns not possible.","Ok")
+                alert.messageType = ULCAlert.ERROR_MESSAGE
+                alert.show()
+                return
+            }
         }
         rowCount = table.rowCount
         columnCount = table.columnCount

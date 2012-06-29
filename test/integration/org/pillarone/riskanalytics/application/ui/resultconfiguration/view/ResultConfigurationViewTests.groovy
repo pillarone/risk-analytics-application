@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportServ
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
@@ -52,10 +53,10 @@ class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
         rowHeader.doExpandRow 1
         rowHeader.selectCell(0, 0)
         //Also tests if the correct paths are expanded
-        assertEquals "application", rowHeader.getValueAt(rowHeader.selectedRow, 0)
-        assertEquals "dynamic component", rowHeader.getValueAt(rowHeader.selectedRow + 1, 0)
-        assertEquals "value1", rowHeader.getValueAt(rowHeader.selectedRow + 2, 0)
-        assertEquals "subcomponents", rowHeader.getValueAt(rowHeader.selectedRow + 3, 0)
+        assertEquals ComponentUtils.getNormalizedName("Application"), rowHeader.getValueAt(rowHeader.selectedRow, 0)
+        assertEquals ComponentUtils.getNormalizedName("dynamicComponent"), rowHeader.getValueAt(rowHeader.selectedRow + 1, 0)
+        assertEquals ComponentUtils.getNormalizedName("outValue1"), rowHeader.getValueAt(rowHeader.selectedRow + 2, 0)
+        assertEquals ComponentUtils.getNormalizedName("subsubcomponents"), rowHeader.getValueAt(rowHeader.selectedRow + 3, 0)
 
         ULCTableTreeOperator viewPort = new ULCTableTreeOperator(frame, new ComponentByNameChooser("resultConfigurationTreeContent"))
         viewPort.selectCell(2, 0)

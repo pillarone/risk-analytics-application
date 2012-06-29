@@ -48,11 +48,11 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
         }
         tree.rowHeaderTableTree.name = "resultConfigurationTreeRowHeader"
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = "Name"
+        tree.cellSelectionEnabled = true
         model.treeModel.getLeafsWithValue().each {
             TreePath path = new TreePath(DefaultTableTreeModel.getPathToRoot(it.parent) as Object[])
             tree.expandPath(path)
         }
-
     }
 
     private Map createEditorConfiguration() {

@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class SimpleTableTreeNodeTests extends GroovyTestCase {
 
@@ -37,7 +38,7 @@ class SimpleTableTreeNodeTests extends GroovyTestCase {
         node.add(childNode1)
         node.add(childNode2)
 
-        assertEquals("test node", node.getValueAt(0))
+        assertEquals(ComponentUtils.getNormalizedName("testNode"), node.getValueAt(0))
         assertEquals("", node.getValueAt(1))
 
         node.add(ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("component:parm1", 0, "value1")], null))
@@ -61,8 +62,8 @@ class SimpleTableTreeNodeTests extends GroovyTestCase {
         SimpleTableTreeNode node = new SimpleTableTreeNode("testNode")
         SimpleTableTreeNode childNode = new SimpleTableTreeNode("childNode")
         node.add(childNode)
-        assertEquals "test node", node.getDisplayPath()
-        assertEquals "test node $SimpleTableTreeNode.PATH_SEPARATOR child node", childNode.getDisplayPath()
+        assertEquals ComponentUtils.getNormalizedName("testNode"), node.getDisplayPath()
+        assertEquals "${ComponentUtils.getNormalizedName("testNode")} $SimpleTableTreeNode.PATH_SEPARATOR ${ComponentUtils.getNormalizedName("childNode")}", childNode.getDisplayPath()
     }
 
     void testTreePath() {
@@ -83,7 +84,7 @@ class SimpleTableTreeNodeTests extends GroovyTestCase {
         SimpleTableTreeNode node1 = new SimpleTableTreeNode("node1")
         SimpleTableTreeNode node2 = new SimpleTableTreeNode("node2")
 
-        assertEquals "node1", node1.getShortDisplayPath([node0, node1, node2])
+        assertEquals ComponentUtils.getNormalizedName("node1"), node1.getShortDisplayPath([node0, node1, node2])
 
         node1.parent = node0
         node2.parent = node0
@@ -94,15 +95,15 @@ class SimpleTableTreeNodeTests extends GroovyTestCase {
         SimpleTableTreeNode node5 = new SimpleTableTreeNode("node5")
         node5.parent = node2
 
-        assertEquals "node1 $SimpleTableTreeNode.PATH_SEPARATOR node3", node3.getShortDisplayPath([node5])
-        assertEquals "node3", node3.getShortDisplayPath([node4])
-        assertEquals "node1 $SimpleTableTreeNode.PATH_SEPARATOR node3", node3.getShortDisplayPath([node2])
+        assertEquals "${ComponentUtils.getNormalizedName("node1")} $SimpleTableTreeNode.PATH_SEPARATOR ${ComponentUtils.getNormalizedName("node3")}", node3.getShortDisplayPath([node5])
+        assertEquals "${ComponentUtils.getNormalizedName("node3")}", node3.getShortDisplayPath([node4])
+        assertEquals "${ComponentUtils.getNormalizedName("node1")} $SimpleTableTreeNode.PATH_SEPARATOR ${ComponentUtils.getNormalizedName("node3")}", node3.getShortDisplayPath([node2])
         assertEquals node2.displayPath, node2.getShortDisplayPath([node5])
 
-        assertEquals "node1 $SimpleTableTreeNode.PATH_SEPARATOR node3", node3.getShortDisplayPath([node5, node4])
+        assertEquals "${ComponentUtils.getNormalizedName("node1")} $SimpleTableTreeNode.PATH_SEPARATOR ${ComponentUtils.getNormalizedName("node3")}", node3.getShortDisplayPath([node5, node4])
         //todo sca
 //        assertEquals "node1 > node3", node3.getShortDisplayPath([node4,node5])
-        assertEquals "node3", node3.getShortDisplayPath([node1])
-        assertEquals "node3", node3.getShortDisplayPath([node3])
+        assertEquals ComponentUtils.getNormalizedName("node3"), node3.getShortDisplayPath([node1])
+        assertEquals ComponentUtils.getNormalizedName("node3"), node3.getShortDisplayPath([node3])
     }
 }

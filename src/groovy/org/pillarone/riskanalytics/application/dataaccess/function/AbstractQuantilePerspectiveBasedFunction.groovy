@@ -20,5 +20,8 @@ abstract class AbstractQuantilePerspectiveBasedFunction<E> extends AbstractResul
         return "${getParameter()} $localizedName $quantilePerspective"
     }
 
-
+    @Override
+    FunctionDescriptor createDescriptor() {
+        return new QuantileBasedFunctionDescriptor(getClass(), getParameter(), getQuantilePerspective())
+    }
 }

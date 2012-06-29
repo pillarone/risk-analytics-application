@@ -3,8 +3,6 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import models.core.CoreModel
 import org.jfree.chart.JFreeChart
 import org.jfree.data.category.DefaultCategoryDataset
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.chart.model.ParallelCoordinatesChartViewModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
@@ -17,12 +15,12 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.ParallelCoordinatesChartViewModel
-import org.pillarone.riskanalytics.core.output.batch.AbstractBulkInsert
 import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
 
@@ -95,37 +93,36 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
         JFreeChart chart = model.getChart()
 
         DefaultCategoryDataset dataset = chart.plot.datasets.get(0)
-        //assertEquals 1, dataset.getValue(0, "test path1 / ultimate")
-        assertEquals 2, dataset.getValue(1, "test path1 / ultimate")
-        assertEquals 3, dataset.getValue(2, "test path1 / ultimate")
-        assertEquals 4, dataset.getValue(3, "test path1 / ultimate")
-        assertEquals 5, dataset.getValue(4, "test path1 / ultimate")
-        assertEquals 6, dataset.getValue(5, "test path1 / ultimate")
+        assertEquals 2, dataset.getValue(1, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 3, dataset.getValue(2, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 4, dataset.getValue(3, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 5, dataset.getValue(4, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 6, dataset.getValue(5, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
 
-        assertEquals 6, dataset.getValue(1, "test path2 / ultimate")
-        assertEquals 9, dataset.getValue(2, "test path2 / ultimate")
-        assertEquals 12, dataset.getValue(3, "test path2 / ultimate")
-        assertEquals 15, dataset.getValue(4, "test path2 / ultimate")
-        assertEquals 18, dataset.getValue(5, "test path2 / ultimate")
+        assertEquals 6, dataset.getValue(1, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 9, dataset.getValue(2, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 12, dataset.getValue(3, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 15, dataset.getValue(4, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 18, dataset.getValue(5, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
 
         model.setPeriodVisibility(1, true)
         chart = model.getChart()
         dataset = chart.plot.datasets.get(0)
 
-        assertEquals 4, dataset.getValue(1, "test path1 / ultimate")
-        assertEquals 6, dataset.getValue(2, "test path1 / ultimate")
-        assertEquals 8, dataset.getValue(3, "test path1 / ultimate")
-        assertEquals 10, dataset.getValue(4, "test path1 / ultimate")
-        assertEquals 12, dataset.getValue(5, "test path1 / ultimate")
-        println "4: ${dataset.getValue(4, "test path1 / ultimate")}"
-        println "5: ${dataset.getValue(5, "test path1 / ultimate")}"
+        assertEquals 4, dataset.getValue(1, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 6, dataset.getValue(2, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 8, dataset.getValue(3, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 10, dataset.getValue(4, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        assertEquals 12, dataset.getValue(5, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())
+        println "4: ${dataset.getValue(4, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())}"
+        println "5: ${dataset.getValue(5, "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString())}"
 
-//        assertEquals 6, dataset.getValue(0, "test path2 / ultimate")
-        assertEquals 12, dataset.getValue(1, "test path2 / ultimate")
-        assertEquals 18, dataset.getValue(2, "test path2 / ultimate")
-        assertEquals 24, dataset.getValue(3, "test path2 / ultimate")
-        assertEquals 30, dataset.getValue(4, "test path2 / ultimate")
-        assertEquals 36, dataset.getValue(5, "test path2 / ultimate")
+//        assertEquals 6, dataset.getValue(0, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 12, dataset.getValue(1, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 18, dataset.getValue(2, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 24, dataset.getValue(3, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 30, dataset.getValue(4, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
+        assertEquals 36, dataset.getValue(5, "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate".toString())
     }
 
     private void initResults() {

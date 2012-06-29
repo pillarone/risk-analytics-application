@@ -3,11 +3,18 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
-    public ParameterizationClassifierTableTreeNode(List parameter) {
+    private Model simulationModel
+
+    public ParameterizationClassifierTableTreeNode(List parameter, Model simulationModel) {
         super(parameter);
+        this.simulationModel = simulationModel
         name = "type"
     }
 
@@ -15,7 +22,8 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
         List possibleValues = []
         ParameterObjectParameterHolder parameterObjectHolder = parameter.find { it != null }
         IParameterObjectClassifier classifier = parameterObjectHolder.classifier
-        classifier.classifiers.each {
+        List<IParameterObjectClassifier> classifiers = simulationModel.configureClassifier(parameterObjectHolder.path, classifier.classifiers)
+        classifiers.each {
             String resourceBundleKey = it.typeName
             String modelKey = it.toString()
             String value = I18NUtils.findParameterDisplayName(parent, "type." + resourceBundleKey)
@@ -32,7 +40,13 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
 
 
     public void setValueAt(Object value, int column) {
-        parameter.get(column - 1)?.value = getKeyForValue(value)
+        ParameterHolder parameterHolder = parameter.get(column - 1)
+        if (parameterHolder != null) {
+            LOG.debug("Setting value to node @ ${path} P${column - 1}")
+            parameterHolder?.value = getKeyForValue(value)
+        } else {
+            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
+        }
     }
 
     public getExpandedCellValue(int column) {
@@ -46,8 +60,8 @@ class CompareParameterizationClassifierTableTreeNode extends ParameterizationCla
     Map parametersMap = [:]
     int size
 
-    public CompareParameterizationClassifierTableTreeNode(Map parametersMap, int size) {
-        super(parametersMap.get(0));
+    public CompareParameterizationClassifierTableTreeNode(Map parametersMap, int size, Model model) {
+        super(parametersMap.get(0), model);
         this.parametersMap = parametersMap;
         this.size = size
     }

@@ -8,11 +8,11 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBui
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ResourceParameterHolder
+import org.pillarone.riskanalytics.core.components.ResourceModelAdapter
 
 class ResourceTreeBuilder {
 
     SimpleTableTreeNode root
-    Map componentNodes = [:]
     Resource item
 
     IResource resource
@@ -47,7 +47,7 @@ class ResourceTreeBuilder {
             if (name.startsWith('parm')) {
                 List p = item.getParameters(name)
                 if (!p.empty) {
-                    root.add(ParameterizationNodeFactory.getNode(p, null))
+                    root.add(ParameterizationNodeFactory.getNode(p, new ResourceModelAdapter(resource)))
                 }
             }
         }

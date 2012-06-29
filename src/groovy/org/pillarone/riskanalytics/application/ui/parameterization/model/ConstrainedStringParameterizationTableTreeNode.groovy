@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ConstrainedStringParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
@@ -37,7 +39,13 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
     }
 
     public void setValueAt(Object value, int column) {
-        parameter.get(column - 1)?.value = normalizedToName.get(value)
+        ParameterHolder parameterHolder = parameter.get(column - 1)
+        if (parameterHolder != null) {
+            LOG.debug("Setting value to node @ ${path} P${column - 1}")
+            parameterHolder?.value = normalizedToName.get(value)
+        } else {
+            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
+        }
     }
 
     protected List initValues() {

@@ -4,6 +4,9 @@ import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.components.IComponentMarker
+import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ConstrainedMultiDimensionalParameterTableModel extends MultiDimensionalParameterTableModel {
 
@@ -26,6 +29,13 @@ class ConstrainedMultiDimensionalParameterTableModel extends MultiDimensionalPar
                 for (def enumValue in columnType.values()) {
                     final String displayName = I18NUtils.findEnumDisplayName(columnType.name, enumValue.toString())
                     values.put(enumValue.toString(), displayName != null ? displayName : enumValue.toString())
+                }
+                localizedValues.put(i, values)
+            } else if(IComponentMarker.isAssignableFrom(columnType)) {
+                List components = multiDimensionalParameter.simulationModel.getMarkedComponents(columnType)
+                BiMap<String,String> values = HashBiMap.create()
+                for (Component c in components) {
+                    values.put(c.name, ComponentUtils.getNormalizedName(c.name))
                 }
                 localizedValues.put(i, values)
             }

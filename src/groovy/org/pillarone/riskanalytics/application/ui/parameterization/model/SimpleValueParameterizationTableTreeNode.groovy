@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
+
 class SimpleValueParameterizationTableTreeNode extends ParameterizationTableTreeNode {
 
     public SimpleValueParameterizationTableTreeNode(List parameter) {
@@ -8,7 +11,13 @@ class SimpleValueParameterizationTableTreeNode extends ParameterizationTableTree
 
 
     public void setValueAt(Object value, int column) {
-        parameter.get(column - 1)?.value = value
+        ParameterHolder parameterHolder = parameter.get(column - 1)
+        if (parameterHolder != null) {
+            LOG.debug("Setting value to node @ ${path} P${column - 1}")
+            parameterHolder?.value = value
+        } else {
+            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
+        }
     }
 
     public Object getExpandedCellValue(int column) {

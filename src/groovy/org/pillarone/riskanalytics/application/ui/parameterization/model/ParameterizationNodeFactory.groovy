@@ -75,7 +75,7 @@ class ParameterizationNodeFactory {
     private static ParameterizationTableTreeNode createParamaterObjectNode(List parameters, Model simulationModel) {
         ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(parameters)
 
-        node.add(new ParameterizationClassifierTableTreeNode(parameters))
+        node.add(new ParameterizationClassifierTableTreeNode(parameters, simulationModel))
 
         List parameterOrder = []
         for (IParameterObjectClassifier type in parameters?.classifier) {
@@ -124,51 +124,47 @@ class ParameterizationNodeFactory {
 
     private static ParameterizationTableTreeNode createCompareParamaterObjectNode(Map parametersMap, Model simulationModel, int size) {
         ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(ParameterizationUtilities.getParameterList(parametersMap))
-        try {
+        node.add(new CompareParameterizationClassifierTableTreeNode(parametersMap, size, simulationModel))
 
-            node.add(new CompareParameterizationClassifierTableTreeNode(parametersMap, size))
-
-            List parameterOrder = []
-            parametersMap.each {k, parameters ->
-                for (IParameterObjectClassifier type in parameters?.classifier) {
-                    if (type != null) {
-                        parameterOrder.addAll(type.parameterNames)
-                    }
+        List parameterOrder = []
+        parametersMap.each {k, parameters ->
+            for (IParameterObjectClassifier type in parameters?.classifier) {
+                if (type != null) {
+                    parameterOrder.addAll(type.parameterNames)
                 }
             }
+        }
 
 
-            Map<StringClassKey, List<ParameterHolder>> parameterEntries = null
-            Map objectsMap = [:]
-            parametersMap.each {k, List parameters ->
-                parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
-                parameters.each {ParameterObjectParameterHolder p ->
-                    if (p != null) {
-                        p.classifierParameters.each {Map.Entry entry ->
-                            final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
-                            List params = parameterEntries.get(key)
-                            if (params == null) {
-                                params = new ArrayList()
-                                parameters.size().times { params.add(null) }
-                                parameterEntries.put(key, params)
-                            }
-                            params.set(p.periodIndex, entry.value)
-
-                            Map indexMap = objectsMap.get(key)
-                            if (indexMap == null)
-                                indexMap = [:]
-                            indexMap[k] = params
-                            objectsMap[key] = indexMap
+        Map<StringClassKey, List<ParameterHolder>> parameterEntries = null
+        Map objectsMap = [:]
+        parametersMap.each {k, List parameters ->
+            parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
+            parameters.each {ParameterObjectParameterHolder p ->
+                if (p != null) {
+                    p.classifierParameters.each {Map.Entry entry ->
+                        final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
+                        List params = parameterEntries.get(key)
+                        if (params == null) {
+                            params = new ArrayList()
+                            parameters.size().times { params.add(null) }
+                            parameterEntries.put(key, params)
                         }
+                        params.set(p.periodIndex, entry.value)
+
+                        Map indexMap = objectsMap.get(key)
+                        if (indexMap == null)
+                            indexMap = [:]
+                        indexMap[k] = params
+                        objectsMap[key] = indexMap
                     }
                 }
             }
+        }
 
-            objectsMap.each {k, v ->
-                node.add(getCompareParameterizationTableTreeNode(v, simulationModel, size))
-            }
-        } catch (Exception ex) {}
-
+        objectsMap.each {k, v ->
+            node.add(getCompareParameterizationTableTreeNode(v, simulationModel, size))
+        }
         return node
     }
 

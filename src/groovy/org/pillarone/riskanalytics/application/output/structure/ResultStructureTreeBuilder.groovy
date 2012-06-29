@@ -31,7 +31,7 @@ class ResultStructureTreeBuilder {
             int wildcardIndex = path.indexOf(wildcard)
             int otherWildcardIndex = nodeReplacement.path.indexOf(nodeReplacement.wildcard)
 
-            return wildcardIndex > otherWildcardIndex ? -1 : 1
+            return wildcardIndex == otherWildcardIndex ? 0 : wildcardIndex > otherWildcardIndex ? -1 : 1
         }
     }
 

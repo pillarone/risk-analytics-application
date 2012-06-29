@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 
 class SaveAction extends ResourceBasedAction {
 
@@ -66,9 +67,7 @@ class SaveAction extends ResourceBasedAction {
 
         synchronized (modellingUIItem) {
             if (alert.value.equals(alert.firstButtonLabel)) {
-                Model itemModel = getItemModel(modellingUIItem)
-                modellingUIItem.createNewVersion(itemModel, false)
-                model.closeItem(itemModel, modellingUIItem)
+                handleNewVersion(getItemModel(modellingUIItem), modellingUIItem) //PMO-2054
             } else if (alert.value.equals(alert.secondButtonLabel)) {
                 boolean deleted = modellingUIItem.deleteDependingResults(getItemModel(modellingUIItem))
                 if (deleted) {
@@ -79,6 +78,24 @@ class SaveAction extends ResourceBasedAction {
                 }
             }
         }
+    }
+
+    private void handleNewVersion(Model model, ModellingUIItem item) {
+        item.createNewVersion(model, false)
+        this.model.closeItem(model, item)
+    }
+
+    private void handleNewVersion(Model model, ParameterizationUIItem item) {
+        Closure okAction = {String commentText ->
+            if (!item.isLoaded()) {
+                item.load()
+            }
+            item.createNewVersion(model, commentText, false)
+            this.model.closeItem(model, item)
+        }
+
+        NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
+        versionCommentDialog.show()
     }
 
 

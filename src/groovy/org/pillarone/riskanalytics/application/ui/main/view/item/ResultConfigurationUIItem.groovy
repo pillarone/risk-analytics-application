@@ -112,7 +112,9 @@ class ResultConfigurationUIItem extends ModellingUIItem {
         for (int i = 0; i < node.childCount; i++) {
             ITableTreeNode child = node.getChildAt(i)
             if (child instanceof ResultConfigurationTableTreeNode) {
-                list.addAll(child.collector)
+                if (child.collector != null) {
+                    list.add(child.collector)
+                }
             } else {
                 collectCollectors(child, list)
             }

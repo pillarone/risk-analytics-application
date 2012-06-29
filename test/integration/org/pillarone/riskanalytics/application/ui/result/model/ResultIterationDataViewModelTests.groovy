@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTran
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ResultIterationDataViewModelTests extends GroovyTestCase {
 
@@ -99,8 +100,8 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "testPath2", model.paths.get(1)
 
         assertEquals 2, model.shortPaths.size()
-        assertEquals "test path1", model.shortPaths.get(0)
-        assertEquals "test path2", model.shortPaths.get(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)}", model.shortPaths.get(0)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)}", model.shortPaths.get(1)
 
         model = new ResultIterationDataViewModel(simulationRun, [node2, node1], false)
         assertEquals 2, model.paths.size()
@@ -108,8 +109,8 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "testPath2", model.paths.get(1)
 
         assertEquals 2, model.shortPaths.size()
-        assertEquals "test path1", model.shortPaths.get(0)
-        assertEquals "test path2", model.shortPaths.get(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)}", model.shortPaths.get(0)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)}", model.shortPaths.get(1)
     }
 
     void testSimpleQuery() {
@@ -123,7 +124,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 4
         criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
-        criteriaViewModel.selectedPath = "test path1 / ultimate"
+        criteriaViewModel.selectedPath = "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate"
 
         model.criterias.add([criteriaViewModel])
 
@@ -132,10 +133,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals 2, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(2)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P0", model.resultTableModel.getColumnName(2)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P1", model.resultTableModel.getColumnName(3)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 3, model.resultTableModel.getValueAt(0, 0)
         assertEquals 4, model.resultTableModel.getValueAt(0, 1)
@@ -161,7 +162,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 4
         criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
-        criteriaViewModel.selectedPath = "test path1 / ultimate"
+        criteriaViewModel.selectedPath = "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate".toString()
 
         model.criterias.add([criteriaViewModel])
 
@@ -170,10 +171,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals 2, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(2)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P0", model.resultTableModel.getColumnName(2)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P1", model.resultTableModel.getColumnName(3)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 3, model.resultTableModel.getValueAt(0, 0)
         assertEquals 4, model.resultTableModel.getValueAt(0, 1)
@@ -199,7 +200,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 4
         criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
-        criteriaViewModel.selectedPath = "test path1 / ultimate"
+        criteriaViewModel.selectedPath = "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate"
 
         model.criterias.add([criteriaViewModel])
 
@@ -208,7 +209,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedComparator = CriteriaComparator.LESS_EQUALS
         criteriaViewModel.value = 5
         criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
-        criteriaViewModel.selectedPath = "test path1 / ultimate"
+        criteriaViewModel.selectedPath = "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate"
 
         model.criterias.get(0).add(criteriaViewModel)
 
@@ -217,10 +218,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals 2, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(2)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P0", model.resultTableModel.getColumnName(2)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P1", model.resultTableModel.getColumnName(3)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 3, model.resultTableModel.getValueAt(0, 0)
         assertEquals 4, model.resultTableModel.getValueAt(0, 1)
@@ -247,7 +248,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedComparator = CriteriaComparator.GREATER_EQUALS
         criteriaViewModel.value = 5
         criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
-        criteriaViewModel.selectedPath = "test path1 / ultimate"
+        criteriaViewModel.selectedPath = "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate"
 
         model.criterias.add([criteriaViewModel])
 
@@ -256,7 +257,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         criteriaViewModel.selectedComparator = CriteriaComparator.LESS_EQUALS
         criteriaViewModel.value = 1
         criteriaViewModel.valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
-        criteriaViewModel.selectedPath = "test path1 / ultimate"
+        criteriaViewModel.selectedPath = "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate"
 
         model.criterias.add([criteriaViewModel])
 
@@ -265,10 +266,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals 2, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(2)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P0", model.resultTableModel.getColumnName(2)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P1", model.resultTableModel.getColumnName(3)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 0, model.resultTableModel.getValueAt(0, 0)
         assertEquals 1, model.resultTableModel.getValueAt(0, 1)
@@ -295,10 +296,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals simulationRun.iterations, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(2)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P0", model.resultTableModel.getColumnName(2)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P1", model.resultTableModel.getColumnName(3)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 1, model.resultTableModel.getValueAt(1, 0)
         assertEquals 2, model.resultTableModel.getValueAt(1, 1)
@@ -318,10 +319,10 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals simulationRun.iterations, model.resultTableModel.rowCount
         assertEquals simulationRun.periodCount * 2 + 1, model.resultTableModel.columnCount
 
-        assertEquals "test path1 / ultimate P0", model.resultTableModel.getColumnName(1)
-        assertEquals "test path1 / ultimate P1", model.resultTableModel.getColumnName(2)
-        assertEquals "test path2 / ultimate P0", model.resultTableModel.getColumnName(3)
-        assertEquals "test path2 / ultimate P1", model.resultTableModel.getColumnName(4)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P0", model.resultTableModel.getColumnName(1)
+        assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)} / ultimate P1", model.resultTableModel.getColumnName(2)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P0", model.resultTableModel.getColumnName(3)
+        assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 1, model.resultTableModel.getValueAt(1, 0)
         assertEquals 2, model.resultTableModel.getValueAt(1, 1)

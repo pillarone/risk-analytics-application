@@ -40,10 +40,10 @@ public class DeterministicResultTableTreeModel extends AbstractCommentableItemTa
         this.parameterization = parameterization
         DeterministicModel model = (DeterministicModel) parameterization.modelClass.newInstance()
         model.init()
-
         if (!parameterization.isLoaded()) {
             parameterization.load()
         }
+
         ParameterApplicator parameterApplicator = new ParameterApplicator(model: model, parameterization: parameterization)
         parameterApplicator.init()
         parameterApplicator.applyParameterForPeriod(0)

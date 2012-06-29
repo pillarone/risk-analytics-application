@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.util;
 
 import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor;
+import org.pillarone.riskanalytics.core.output.PdfFromSample;
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation;
 import org.pillarone.riskanalytics.core.output.SimulationRun;
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode;
@@ -8,10 +10,7 @@ import org.pillarone.riskanalytics.core.dataaccess.PostSimulationCalculationAcce
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Iterator;
+import java.util.*;
 
 
 public class JEstimator {
@@ -202,11 +201,18 @@ public class JEstimator {
     public static List getPDF(SimulationRun simulationRun, ResultTableTreeNode node, int periodIndex) {
         List<List<Double>> pdf = new ArrayList<List<Double>>();
         List values = PostSimulationCalculationAccessor.getPDFValues(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
-        if (values == null)
-            return new ArrayList();
-        for (Iterator iter = values.iterator(); iter.hasNext();) {
-            Map map = (Map) iter.next();
-            addXYValues(pdf, ((BigDecimal) map.get("keyFigureParameter")).doubleValue(), ((Double) map.get("result")));
+        if (values.isEmpty()) {
+            double[] results = ResultAccessor.getValuesSorted(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
+            Map pdfData = new PdfFromSample().createPdfData(results, results.length);
+            Set<Map.Entry> entries = pdfData.entrySet();
+            for (Map.Entry entry : entries) {
+                addXYValues(pdf, (Double) entry.getKey(), (Double) entry.getValue());
+            }
+        } else {
+            for (Iterator iter = values.iterator(); iter.hasNext(); ) {
+                Map map = (Map) iter.next();
+                addXYValues(pdf, ((BigDecimal) map.get("keyFigureParameter")).doubleValue(), ((Double) map.get("result")));
+            }
         }
         return pdf;
     }

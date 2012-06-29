@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -206,7 +207,7 @@ class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         expandItem.clickMouse()
         assertTrue componentTree.isExpanded(0)
 
-        assertEquals "parameter object", componentTree.getValueAt(2, 0)
+        assertEquals ComponentUtils.getNormalizedName("parmParameterObject"), componentTree.getValueAt(2, 0)
 
         componentTree.doCollapseRow 3
         assertTrue componentTree.isCollapsed(3)
