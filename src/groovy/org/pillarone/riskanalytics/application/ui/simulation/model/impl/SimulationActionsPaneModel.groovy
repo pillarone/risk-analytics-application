@@ -159,7 +159,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     String getSimulationEndTime() {
-        DateTime estimatedSimulationEnd = runner.simulation.start
+        DateTime estimatedSimulationEnd = runner.simulation.end
         if (estimatedSimulationEnd != null) {
             return dateFormat.print(estimatedSimulationEnd)
         }
