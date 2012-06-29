@@ -1,10 +1,13 @@
 import org.pillarone.riskanalytics.application.example.constraint.CopyPasteConstraint
 import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.pillarone.riskanalytics.core.listener.ModellingItemHibernateListener
+import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
+import org.pillarone.riskanalytics.application.ULCAwareHibernateListener
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.6-ALPHA-3.1-kti"
+    def version = "1.6-ALPHA-3.2-kti"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "1.3.7 > *"
     // the other plugins this plugin depends on
@@ -13,6 +16,8 @@ class RiskAnalyticsApplicationGrailsPlugin {
     def pluginExcludes = [
             "grails-app/views/error.gsp"
     ]
+
+    def loadAfter = ['riskAnalyticsCore']
 
     def author = "Intuitive Collaboration AG"
     def authorEmail = "info@pillarone.org"
@@ -30,7 +35,13 @@ ULC view
     }
 
     def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
+        modellingItemListener(ULCAwareHibernateListener)
+
+        hibernateEventListeners(HibernateEventListeners) {
+            listenerMap = ['post-insert': modellingItemListener,
+                    'post-update': modellingItemListener,
+                    'post-delete': modellingItemListener]
+        }
     }
 
     def doWithDynamicMethods = {ctx ->
