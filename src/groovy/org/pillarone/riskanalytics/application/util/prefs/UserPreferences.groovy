@@ -17,6 +17,7 @@ public interface UserPreferences {
     final static String ADD_FILE_DIR = "add_file_directory"
     final static String RANDOM_SEED_USER_VALUE = "randomseedUserValue"
     final static String RANDOM_SEED_USE_USER_DEFINED = "randomseedUseUserDefined"
+    final static String QUANTILE_PERSPECTIVE = "quantilePerspective"
 
     String getUserDirectory(String key)
     void setUserDirectory(String[] paths, String[] names)
