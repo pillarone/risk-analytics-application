@@ -189,11 +189,9 @@ public class JEstimator {
 
     public static List getCDF(SimulationRun simulationRun, ResultTableTreeNode node, int periodIndex) {
         List<List<Double>> cdf = new ArrayList<List<Double>>();
-        Map keyFigures = (Map) ApplicationHolder.getApplication().getConfig().getProperty("keyFiguresToCalculate");
-        List<BigDecimal> yValues = (List) keyFigures.get(PostSimulationCalculation.PERCENTILE);
-        List xValues = PostSimulationCalculationAccessor.getPercentiles(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
-        for (int i = 0; i < xValues.size(); i++) {
-            addXYValues(cdf, (Double)xValues.get(i), yValues.get(i).doubleValue() / 100.0);
+        Map<Double, Double> values = PostSimulationCalculationAccessor.getPercentiles(simulationRun, periodIndex, node.getPath(), node.getCollector(), node.getField());
+        for (Map.Entry<Double, Double> entry : values.entrySet()) {
+            addXYValues(cdf, entry.getValue(), entry.getKey() / 100.0);
         }
         return cdf;
     }
