@@ -30,6 +30,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterPaneModel
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.PostSimulationCalculationPaneModel
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -70,6 +71,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     Model modelInstance
 
     RuntimeParameterPaneModel parameterPaneModel
+    PostSimulationCalculationPaneModel postSimulationCalculationPaneModel
 
     private List<ISimulationValidationListener> listeners = []
 
@@ -98,6 +100,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         reloadResultConfigurationListModelAction = new ReloadResultConfigurationListModelAction(this)
 
         parameterPaneModel = new RuntimeParameterPaneModel(getModelInstance())
+        postSimulationCalculationPaneModel = new PostSimulationCalculationPaneModel()
     }
 
     /**
@@ -215,6 +218,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         for(ParameterHolder holder in parameterPaneModel.parameters) {
             simulation.addParameter(holder)
         }
+        simulation.keyFiguresToPreCalculate = postSimulationCalculationPaneModel.keyFigureMap
         return simulation
     }
 
