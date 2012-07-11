@@ -45,9 +45,8 @@ class ResourceTreeBuilder {
         props.putAll(resource.properties)
         props.each {String name, value ->
             if (name.startsWith('parm')) {
-                List p = item.getParameters(name)
-                if (!p.empty) {
-                    root.add(ParameterizationNodeFactory.getNode(p, new ResourceModelAdapter(resource)))
+                if (item.hasParameterAtPath(name)) {
+                    root.add(ParameterizationNodeFactory.getNode(name, item , new ResourceModelAdapter(resource)))
                 }
             }
         }

@@ -55,52 +55,9 @@ class ParameterizationUIItem extends ModellingUIItem {
             AbstractModellingModel viewModel = mainModel.getViewModel(modellingUIItem)
             if (viewModel != null) {
                 viewModel.removeInvisibleComments()
-
-                //consistency check
-
-                List<ParameterHolder> parameters = item.parameters.clone()
-                parameters = parameters.findAll { !it.removed }
-                List<ParameterHolder> uiParameters = []
-                collectParameters(viewModel.treeModel.root, uiParameters)
-                boolean error = false
-
-                for (ParameterHolder holder in uiParameters) {
-                    ParameterHolder parameterHolder = parameters.find { it.path == holder.path && it.periodIndex == holder.periodIndex}
-                    if (parameterHolder == null) {
-                        error = true
-                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} exists in the UI but not in the parameterization to be saved!")
-                    } else if (!(holder.is(parameterHolder))) {
-                        error = true
-                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} has different instances in the UI and parameterization to be saved!")
-                    } else {
-                        parameters.remove(parameterHolder)
-                    }
-                }
-
-                if(!parameters.empty) {
-                    for(ParameterHolder holder in parameters) {
-                        error = true
-                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} exists in the parameterization to be saved, but not in the UI!")
-                    }
-                }
-
-                if (error) {
-                    throw new RiskAnalyticsInconsistencyException("Parameters in the UI and the parameterization are different.")
-                }
             }
         }
         super.save()
-    }
-
-    private void collectParameters(ITableTreeNode node, List<ParameterHolder> list) {
-        for (int i = 0; i < node.childCount; i++) {
-            ITableTreeNode child = node.getChildAt(i)
-            if (child instanceof ParameterizationTableTreeNode) {
-                list.addAll(child.parameter)
-            } else {
-                collectParameters(child, list)
-            }
-        }
     }
 
     @Override

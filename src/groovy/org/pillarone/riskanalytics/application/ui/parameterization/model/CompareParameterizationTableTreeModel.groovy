@@ -9,6 +9,8 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Color
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 /**
  * User: Fouad Jaada
@@ -202,27 +204,12 @@ class ParameterizationUtilities {
         return minPeriod
     }
 
-    public static boolean isParameterObjectParameter(Map parametersMap) {
-        boolean isPOP = false
-        parametersMap.each {k, v ->
-            v.each {
-                if (it instanceof ParameterObjectParameterHolder) {
-                    isPOP = true
-                }
-            }
-        }
-        return isPOP
-    }
-
-
-
-    public static List getParameterList(Map parametersMap) {
-        List result
-        parametersMap.each {k, List parameters ->
-            parameters.each {
-                if (it != null) {
-                    result = parameters
-                }
+    public static boolean isParameterObjectParameter(String path, List<ParametrizedItem> items) {
+        boolean result = false
+        for(ParametrizedItem item in items) {
+            ParameterHolder parameterHolder = item.getParameterHoldersForAllPeriods(path)[0]
+            if(parameterHolder instanceof ParameterObjectParameterHolder) {
+                result = true
             }
         }
         return result

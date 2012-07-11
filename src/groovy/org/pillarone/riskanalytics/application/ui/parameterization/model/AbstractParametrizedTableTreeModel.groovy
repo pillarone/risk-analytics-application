@@ -133,7 +133,7 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
 
     private boolean adjustTreeStructure(ParameterizationClassifierTableTreeNode node, int column, Object value) {
         ParameterObjectParameterTableTreeNode parent = node.parent
-        ParameterObjectParameterTableTreeNode newNode = ParameterizationNodeFactory.getNode(node.parameter, getSimulationModel())
+        ParameterObjectParameterTableTreeNode newNode = ParameterizationNodeFactory.getNode(node.parameterPath, node.parametrizedItem, getSimulationModel())
 
         List nodesToRemove = []
         parent.children.each {

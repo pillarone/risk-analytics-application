@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TestMultiDimensionalParameterModel
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
 class MultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
@@ -24,7 +26,11 @@ class MultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
         frame.name = "test"
 
         def mdp = new SimpleMultiDimensionalParameter([[1, 2, 3], [1, 2, 3], [1, 2, 3]])
-        def node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("path", 0, mdp)], null)
+        ParameterHolder holder = ParameterHolderFactory.getHolder("path", 0, mdp)
+        Parameterization parameterization = new Parameterization("")
+        parameterization.addParameter(holder)
+
+        def node = ParameterizationNodeFactory.getNode(holder.path, parameterization, null)
         MultiDimensionalParameterModel model = new TestMultiDimensionalParameterModel(null, node, 1)
         multiDimensionalParameter = model.multiDimensionalParameterInstance
         frame.contentPane = new MultiDimensionalParameterView(model).content

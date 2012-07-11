@@ -2,21 +2,22 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import models.application.ApplicationModel
 import models.core.CoreModel
-import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.example.component.ExampleParameterComponent
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.example.component.ExampleInputOutputComponent
 import org.pillarone.riskanalytics.core.example.component.ExampleOutputComponent
 import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
 import org.pillarone.riskanalytics.core.example.parameter.ExampleEnum
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedString
 import org.pillarone.riskanalytics.core.parameterization.ParameterInjector
+import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
-import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class ParameterizationTableTreeNodeTests extends GroovyTestCase {
 
@@ -32,38 +33,38 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         Model model = new CoreModel()
 
         List parameters = new ArrayList()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, 1)
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, 2)
-        def node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, 1)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, 2)
+        def node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
-        assertEquals ComponentUtils.getNormalizedName("paramName"), node.getValueAt(0)
+        assertEquals ComponentUtils.getNormalizedName("parmName"), node.getValueAt(0)
         assertEquals 1, node.getValueAt(1)
         assertEquals 2, node.getValueAt(2)
 
         parameters.clear()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, 1.2)
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, 2.2)
-        node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, 1.2)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, 2.2)
+        node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
-        assertEquals ComponentUtils.getNormalizedName("paramName"), node.getValueAt(0)
+        assertEquals ComponentUtils.getNormalizedName("parmName"), node.getValueAt(0)
         assertEquals 1.2, node.getValueAt(1)
         assertEquals 2.2, node.getValueAt(2)
 
         parameters.clear()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, 'text1')
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, 'text2')
-        node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, 'text1')
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, 'text2')
+        node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
-        assertEquals ComponentUtils.getNormalizedName("paramName"), node.getValueAt(0)
+        assertEquals ComponentUtils.getNormalizedName("parmName"), node.getValueAt(0)
         assertEquals 'text1', node.getValueAt(1)
         assertEquals 'text2', node.getValueAt(2)
 
         parameters.clear()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, ExampleEnum.FIRST_VALUE)
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, ExampleEnum.SECOND_VALUE)
-        node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, ExampleEnum.FIRST_VALUE)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, ExampleEnum.SECOND_VALUE)
+        node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
-        assertEquals ComponentUtils.getNormalizedName("paramName"), node.getValueAt(0)
+        assertEquals ComponentUtils.getNormalizedName("parmName"), node.getValueAt(0)
         assertEquals 'FIRST_VALUE', node.getValueAt(1)
         assertEquals 'SECOND_VALUE', node.getValueAt(2)
     }
@@ -72,9 +73,9 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         Model model = new CoreModel()
 
         List parameters = new ArrayList()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, 1)
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, 2)
-        def node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, 1)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, 2)
+        def node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
         node.setValueAt(3, 1)
         node.setValueAt(4, 2)
@@ -82,9 +83,9 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals 4, parameters[1].businessObject
 
         parameters.clear()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, 1.2)
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, 2.2)
-        node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, 1.2)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, 2.2)
+        node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
         node.setValueAt(3.3, 1)
         node.setValueAt(4.4, 2)
@@ -92,9 +93,9 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals 4.4, parameters[1].businessObject
 
         parameters.clear()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, 'text1')
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, 'text2')
-        node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, 'text1')
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, 'text2')
+        node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
 
         node.setValueAt('text3', 1)
         node.setValueAt('text4', 2)
@@ -102,9 +103,9 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals 'text4', parameters[1].businessObject
 
         parameters.clear()
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 0, ExampleEnum.FIRST_VALUE)
-        parameters << ParameterHolderFactory.getHolder('path:to:paramName', 1, ExampleEnum.SECOND_VALUE)
-        node = ParameterizationNodeFactory.getNode(parameters, model)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, ExampleEnum.FIRST_VALUE)
+        parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, ExampleEnum.SECOND_VALUE)
+        node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
         node.parent = new ComponentTableTreeNode(new ExampleInputOutputComponent(), 'propName')
 
         node.setValueAt('SECOND_VALUE', 1)
@@ -116,10 +117,9 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
     void testNullValues_PMO353() {
         def mdp = new SimpleMultiDimensionalParameter([1, 2, 3])
         def parameters = []
-        parameters << null
-        parameters << ParameterHolderFactory.getHolder('testPath', 0, mdp)
+        parameters << ParameterHolderFactory.getHolder('testPath', 1, mdp)
 
-        def node = ParameterizationNodeFactory.getNode(parameters, new CoreModel())
+        def node = ParameterizationNodeFactory.getNode('testPath', createParameterization(parameters), new CoreModel())
 
         assertNull node.getValueAt(1)
         assertNotNull node.getValueAt(2)
@@ -136,7 +136,8 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
 
         new ParameterInjector(p.toConfigObject()).injectConfiguration(model)
 
-        ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))], model)
+        Parameterization parameterization = createParameterization([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))])
+        ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode("path", parameterization, model)
         node.setParent(new ComponentTableTreeNode(null, "name"))
 
         //Test PMO-555: node must be editable and the value not null if it's initialized with a component default
@@ -144,7 +145,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertNotNull node.getValueAt(1)
 
         //ART-83
-        String stringValue = node.parameter[0].businessObject.stringValue
+        String stringValue = parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
         assertTrue node.values.contains(node.nameToNormalized.get(stringValue))
 
         assertNotNull node
@@ -163,30 +164,38 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         new ParameterizationImportService().compareFilesAndWriteToDB(["ApplicationParameters"])
         Model model = new ApplicationModel()
 
-        ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))], model)
+        Parameterization parameterization = createParameterization([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))])
+        ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode("path", parameterization, model)
         node.setParent(new ComponentTableTreeNode(null, "name"))
 
-        assertEquals "", node.parameter[0].businessObject.stringValue
+        assertEquals "", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 
         ExampleOutputComponent component = new ExampleOutputComponent(name: "example1")
         node.addComponent(component)
 
-        assertEquals "example1", node.parameter[0].businessObject.stringValue
+        assertEquals "example1", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 
         ExampleOutputComponent component2 = new ExampleOutputComponent(name: "example2")
         node.addComponent(component2)
-        assertEquals "example1", node.parameter[0].businessObject.stringValue
+        assertEquals "example1", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 
         node.setValueAt(ComponentUtils.getNormalizedName("example2"), 1)
-        assertEquals "example2", node.parameter[0].businessObject.stringValue
+        assertEquals "example2", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 
         node.removeComponent(component2)
-        assertEquals "example1", node.parameter[0].businessObject.stringValue
+        assertEquals "example1", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 
         node.removeComponent(component)
-        assertEquals "", node.parameter[0].businessObject.stringValue
+        assertEquals "", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 
 
+    }
+
+    private Parameterization createParameterization(List<ParameterHolder> parameterHolders) {
+        Parameterization parameterization = new Parameterization("")
+        parameterHolders.each { parameterization.addParameter(it) }
+
+        return parameterization
     }
 
 }

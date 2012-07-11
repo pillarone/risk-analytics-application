@@ -2,9 +2,9 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ConstrainedStringParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
@@ -13,15 +13,15 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
     private Map normalizedToName = [:]
     private Map nameToNormalized = [:]
 
-    public ConstrainedStringParameterizationTableTreeNode(List parameter, Model model) {
-        super(parameter);
+    public ConstrainedStringParameterizationTableTreeNode(String path, ParametrizedItem item, Model model) {
+        super(path, item);
         this.simulationModel = model
-        ConstrainedStringParameterHolder holder = parameter.find { it != null}
+        ConstrainedStringParameterHolder holder = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)[0]
         markerClass = holder.businessObject.getMarkerClass()
     }
 
-    public Object getExpandedCellValue(int column) {
-        ConstrainedStringParameterHolder param = parameter.get(column - 1)
+    public Object doGetExpandedCellValue(int column) {
+        ConstrainedStringParameterHolder param = parametrizedItem.getParameterHolder(parameterPath, column - 1)
         def value = param?.businessObject?.stringValue
         if (value) {
             if (nameToNormalized.containsKey(value)) {
@@ -39,13 +39,9 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
     }
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parameter.get(column - 1)
-        if (parameterHolder != null) {
-            LOG.debug("Setting value to node @ ${path} P${column - 1}")
-            parameterHolder?.value = normalizedToName.get(value)
-        } else {
-            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
-        }
+        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
+        LOG.debug("Setting value to node @ ${path} P${column - 1}")
+        parameterHolder.value = normalizedToName.get(value)
     }
 
     protected List initValues() {
@@ -63,7 +59,7 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
 
     private void validateValue(List values) {
         int i = 1;
-        for (ConstrainedStringParameterHolder holder in parameter) {
+        for (ConstrainedStringParameterHolder holder in parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)) {
             String normalizedName = nameToNormalized.get(holder.businessObject.stringValue)
             if (normalizedName == null || !values.contains(normalizedName)) {
                 if (values.empty) {

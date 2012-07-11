@@ -5,6 +5,9 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 import org.pillarone.riskanalytics.core.components.ComponentUtils
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class TableTreeMutatorTests extends GroovyTestCase {
 
@@ -31,7 +34,15 @@ class TableTreeMutatorTests extends GroovyTestCase {
     void testTransactionalBulkChange() {
 
         DefaultMutableTableTreeNode root = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[], [true, true, true] as boolean[])
-        ParameterizationTableTreeNode child = new TableTreeMutatorTestNode([ParameterHolderFactory.getHolder("path1", 0, "value"), ParameterHolderFactory.getHolder("path2", 0, "value"), ParameterHolderFactory.getHolder("path3", 0, "value")], null)
+        ParameterHolder holder1 = ParameterHolderFactory.getHolder("path1", 0, "value")
+        ParameterHolder holder2 = ParameterHolderFactory.getHolder("path1", 1, "value")
+        ParameterHolder holder3 = ParameterHolderFactory.getHolder("path1", 2, "value")
+        Parameterization parameterization = new Parameterization("")
+        parameterization.addParameter(holder1)
+        parameterization.addParameter(holder2)
+        parameterization.addParameter(holder3)
+
+        ParameterizationTableTreeNode child = new TableTreeMutatorTestNode(holder1.path, parameterization, "path")
         root.add(child)
 
         DefaultTableTreeModel model = new DefaultTableTreeModel(root, ["col1", "col2", "col3"] as String[])
@@ -90,14 +101,18 @@ class TableTreeMutatorTests extends GroovyTestCase {
 
 
 class TableTreeMutatorTestNode extends ParameterizationTableTreeNode {
-    public TableTreeMutatorTestNode(List parameter, String name) {
-        super(parameter);
+
+    String name
+
+    public TableTreeMutatorTestNode(String path, ParametrizedItem item, String name) {
+        super(path, item);
+        this.name = name
     }
 
     public void setValueAt(Object o, int i) {
     }
 
-    public Object getExpandedCellValue(int column) {
-        parameter[column].path
+    public Object doGetExpandedCellValue(int column) {
+        "${name}${column + 1}"
     }
 }

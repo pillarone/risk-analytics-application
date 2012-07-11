@@ -18,6 +18,8 @@ import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensiona
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 abstract class MultiDimensionalParameterCopyPasteTests extends AbstractSimpleFunctionalTest {
 
@@ -42,7 +44,11 @@ abstract class MultiDimensionalParameterCopyPasteTests extends AbstractSimpleFun
         component.name = "subNewComponent"
         simulationModel.dynamicComponent.addSubComponent(component)
 
-        def node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("path", 0, mdp)], simulationModel)
+        ParameterHolder holder = ParameterHolderFactory.getHolder("path", 0, mdp)
+        Parameterization parameterization = new Parameterization("")
+        parameterization.addParameter(holder)
+
+        def node = ParameterizationNodeFactory.getNode(holder.path, parameterization, simulationModel)
         MultiDimensionalParameterModel model = new TestMultiDimensionalParameterModel(null, node, 1)
         multiDimensionalParameter = model.multiDimensionalParameterInstance
         frame.contentPane = new MultiDimensionalParameterView(model).content

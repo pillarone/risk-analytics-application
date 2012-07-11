@@ -1,28 +1,24 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.EnumParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 
 class EnumParameterizationTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
-    public EnumParameterizationTableTreeNode(List parameter) {
-        super(parameter);
+    public EnumParameterizationTableTreeNode(String path, ParametrizedItem item) {
+        super(path, item)
     }
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parameter.get(column - 1)
-        if (parameterHolder != null) {
-            LOG.debug("Setting value to node @ ${path} P${column - 1}")
-            parameterHolder?.value = getKeyForValue(value)
-        } else {
-            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
-        }
+        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
+        LOG.debug("Setting value to node @ ${path} P${column - 1}")
+        parameterHolder.value = getKeyForValue(value)
     }
 
-    public Object getExpandedCellValue(int column) {
-        String value = parameter.get(column - 1)?.businessObject?.toString()
+    public Object doGetExpandedCellValue(int column) {
+        String value = parametrizedItem.getParameterHolder(parameterPath, column - 1)?.businessObject?.toString()
         if (value) {
             return getValueForKey(value)
         }
@@ -32,7 +28,7 @@ class EnumParameterizationTableTreeNode extends AbstractMultiValueParameterizati
     }
 
     public List initValues() {
-        EnumParameterHolder enumParameterizationHolder = parameter.find { it != null }
+        EnumParameterHolder enumParameterizationHolder = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)[0]
         def possibleValues = enumParameterizationHolder.getBusinessObject().values()
         List allValues = []
         possibleValues.each {

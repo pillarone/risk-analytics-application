@@ -98,7 +98,7 @@ public class I18NUtils {
 
 
     public static String findParameterDisplayName(ParameterObjectParameterTableTreeNode node, String subPath, String toolTip = "") {
-        ParameterObjectParameterHolder parameter = node.parameter.find {it -> it != null }
+        ParameterObjectParameterHolder parameter = node.parametrizedItem.getParameterHoldersForAllPeriods(node.parameterPath)[0]
         String parameterType = parameter.classifier.getClass().name
         int lastIndex = parameterType.lastIndexOf('.') + 1
         parameterType = parameterType.substring(0, lastIndex) + parameterType.substring(lastIndex, lastIndex + 1).toLowerCase() + parameterType.substring(lastIndex + 1)

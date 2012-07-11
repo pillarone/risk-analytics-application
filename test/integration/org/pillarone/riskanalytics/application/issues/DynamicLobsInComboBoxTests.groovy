@@ -15,6 +15,8 @@ import org.pillarone.riskanalytics.core.parameter.MultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxTableMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 class DynamicLobsInComboBoxTests extends AbstractSimpleFunctionalTest {
 
@@ -30,11 +32,15 @@ class DynamicLobsInComboBoxTests extends AbstractSimpleFunctionalTest {
         param.parameterInstance = mdp
         param.save(flush: true)
 
+        ParameterHolder holder = ParameterHolderFactory.getHolder(param)
+        Parameterization parameterization = new Parameterization("DynamicLobsInComboBoxTests")
+        parameterization.addParameter(holder)
+
         CoreModel simulationModel = new CoreModel()
         simulationModel.init()
         simulationModel.injectComponentNames()
 
-        def node = ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder(param)], simulationModel)
+        def node = ParameterizationNodeFactory.getNode("path", parameterization, simulationModel)
         MultiDimensionalParameterModel model = new TestMultiDimensionalParameterModel(null, node, 1)
         multiDimensionalParameter = model.multiDimensionalParameterInstance
 

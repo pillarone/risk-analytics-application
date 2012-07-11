@@ -2,7 +2,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.view.IMultiValueTableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 
 abstract class AbstractMultiValueParameterizationTableTreeNode extends ParameterizationTableTreeNode implements IMultiValueTableTreeNode {
 
@@ -12,8 +12,8 @@ abstract class AbstractMultiValueParameterizationTableTreeNode extends Parameter
 
     List values
 
-    public AbstractMultiValueParameterizationTableTreeNode(List parameter) {
-        super(parameter);
+    public AbstractMultiValueParameterizationTableTreeNode(String path, ParametrizedItem item) {
+        super(path, item)
     }
 
     final void setParent(IMutableTableTreeNode parent) {
