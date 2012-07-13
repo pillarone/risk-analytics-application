@@ -15,7 +15,7 @@ class DeterministicResultViewModel extends ResultViewModel {
         super(model, structure, simulation)
     }
 
-    protected ITableTreeModel getResultTreeTableModel(Model model, ToggleKeyFigureAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
+    protected ITableTreeModel getResultTreeTableModel(Model model, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
         return new DeterministicResultTableTreeModel(treeRoot, simulationRun, parameterization, results)
     }
 

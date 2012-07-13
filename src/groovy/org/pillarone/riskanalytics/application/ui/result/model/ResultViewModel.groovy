@@ -43,6 +43,7 @@ class ResultViewModel extends AbstractCommentableItemModel {
         resultStructures = ModellingItemFactory.getResultStructuresForModel(model.class)
         selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
         buildTreeStructure(selectionViewModel.getSelectedObject())
+        addFunction(new MeanFunction())
     }
 
 
@@ -73,10 +74,8 @@ class ResultViewModel extends AbstractCommentableItemModel {
             def localTreeRoot = builder.buildTree()
             periodCount = simulationRun.periodCount
 
-            ToggleKeyFigureAction meanAction = new ToggleKeyFigureAction(new MeanFunction(), new DefaultToggleValueProvider(null), this, null)
-
             // todo (msh): This is normally done in super ctor but here the simulationRun is required for the treeModel
-            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, meanAction, parameterization, simulationRun, localTreeRoot, allResults), filter)
+            treeModel = new FilteringTableTreeModel(getResultTreeTableModel(model, parameterization, simulationRun, localTreeRoot, allResults), filter)
             nodeNames = extractNodeNames(treeModel)
         }
 
@@ -94,8 +93,8 @@ class ResultViewModel extends AbstractCommentableItemModel {
         ResultViewUtils.obtainsCollectors(simulationRun, allPaths)
     }
 
-    protected ITableTreeModel getResultTreeTableModel(Model model, ToggleKeyFigureAction meanAction, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
-        ResultTableTreeModel tableTreeModel = new ResultTableTreeModel(treeRoot, simulationRun, parameterization, meanAction.getFunction(), model)
+    protected ITableTreeModel getResultTreeTableModel(Model model, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
+        ResultTableTreeModel tableTreeModel = new ResultTableTreeModel(treeRoot, simulationRun, parameterization, model)
         tableTreeModel.simulationModel = model
         tableTreeModel.results = results
         return tableTreeModel
