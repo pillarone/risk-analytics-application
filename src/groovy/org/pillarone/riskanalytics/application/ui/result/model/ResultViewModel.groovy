@@ -43,9 +43,13 @@ class ResultViewModel extends AbstractCommentableItemModel {
         resultStructures = ModellingItemFactory.getResultStructuresForModel(model.class)
         selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
         buildTreeStructure(selectionViewModel.getSelectedObject())
-        if (tableTreeModel instanceof ResultTableTreeModel) { //does not work for DRTTM
-            addFunction(new MeanFunction())
+        for (IFunction function in initialFunctions()) {
+            addFunction(function)
         }
+    }
+
+    protected List<IFunction> initialFunctions() {
+        return [new MeanFunction()]
     }
 
 

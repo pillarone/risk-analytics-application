@@ -8,11 +8,17 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.*
+import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 
 class DeterministicResultViewModel extends ResultViewModel {
 
     DeterministicResultViewModel(Model model, ModelStructure structure, Simulation simulation) {
         super(model, structure, simulation)
+    }
+
+    @Override
+    protected List<IFunction> initialFunctions() {
+        return []
     }
 
     protected ITableTreeModel getResultTreeTableModel(Model model, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
