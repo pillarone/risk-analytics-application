@@ -35,13 +35,16 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
 
     protected ResultTableTreeModel() {}
 
-    protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, Model model) {
+    protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, IFunction mean, Model model) {
         this.simulationModel = model
         this.rootNode = rootNode
         this.simulationRun = simulationRun
         this.parameterization = parameterization
         functions << new NodeNameFunction()
-        columnCount = 1
+        simulationRun.periodCount.times {
+            functions << mean
+        }
+        columnCount = 1 + simulationRun.periodCount
         //TODO: is this still used despite of DRTTM?
 
         initPeriodLabels()
