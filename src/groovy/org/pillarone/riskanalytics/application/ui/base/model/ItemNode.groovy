@@ -29,6 +29,9 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.ui.main.action.ChooseDealAction
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
+import org.pillarone.riskanalytics.application.reports.IReportableItem
+import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
+import org.pillarone.riskanalytics.core.model.Model
 
 class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
@@ -36,13 +39,13 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
     boolean renameable
     Map values = [:]
 
-    public ItemNode(AbstractUIItem abstractUIItem, leaf = true, renameable = true) {
+    public ItemNode(AbstractUIItem abstractUIItem, boolean leaf = true, boolean renameable = true) {
         super([abstractUIItem?.item?.name] as Object[])
         this.abstractUIItem = abstractUIItem;
         this.renameable = renameable
     }
 
-    public ItemNode(AbstractUIItem abstractUIItem, name, leaf, renameable) {
+    public ItemNode(AbstractUIItem abstractUIItem, name, boolean leaf, boolean renameable) {
         super([name] as Object[])
         this.abstractUIItem = abstractUIItem;
         this.renameable = renameable
@@ -77,16 +80,25 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
     }
 
     public void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
-        List<IReportModel> reports = ReportRegistry.getReportModel(abstractUIItem.model.modelClass)
-        if (!reports.empty) {
-            ULCMenu reportsMenu = new ULCMenu("Reports")
-            for (IReportModel model in reports) {
-                for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
+
+        if (!(this instanceof IReportableItem)) {
+            throw new RiskAnalyticsInconsistencyException(this.toString() + """ has been asked to present reports for a
+                    popup menu, but is not a reportable item. Please report to development. """)
+        }
+
+        if (((IReportableItem) this).showReports()) {
+            List<Class> modelsToDisplay = ((IReportableItem) this).modelsToReportOn()
+            List<IReportModel> reports = ReportRegistry.getReportModel( modelsToDisplay )
+            if (!reports.empty) {
+                ULCMenu reportsMenu = new ULCMenu("Reports")
+                for (IReportModel model in reports) {
+                    for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
                         reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, aReportFormat, tree, abstractUIItem.mainModel)))
+                    }
                 }
+                if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
+                simulationNodePopUpMenu.add(reportsMenu)
             }
-            if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
-            simulationNodePopUpMenu.add(reportsMenu)
         }
     }
 }

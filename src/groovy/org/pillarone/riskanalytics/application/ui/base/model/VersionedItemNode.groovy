@@ -4,7 +4,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 
 class VersionedItemNode extends ItemNode {
 
-    public VersionedItemNode(AbstractUIItem abstractUIItem, leaf) {
+    public VersionedItemNode(AbstractUIItem abstractUIItem, boolean leaf) {
         super(abstractUIItem, "${abstractUIItem.item.name} v${abstractUIItem.item.versionNumber.toString()}", leaf, true)
     }
 
