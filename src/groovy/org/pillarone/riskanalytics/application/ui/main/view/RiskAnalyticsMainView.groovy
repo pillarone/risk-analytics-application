@@ -1,15 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.util.Dimension
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
+import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
-
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -17,11 +16,11 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
+
+import java.beans.PropertyChangeEvent
+import java.beans.PropertyChangeListener
+
 import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
-import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
-import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
-import org.pillarone.riskanalytics.application.ui.base.model.NavigationTreeFactory
 
 class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -40,7 +39,6 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     private RiskAnalyticsMainModel mainModel
 
-    private NavigationTreeFactory treeFactory
 
     Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
@@ -49,7 +47,6 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void initComponents() {
-        treeFactory = new NavigationTreeFactory()
         content = new ULCCardPane()
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
