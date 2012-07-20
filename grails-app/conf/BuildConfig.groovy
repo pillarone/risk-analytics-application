@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-4.2-kti"
+//            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-4.2-kti"
         }
 
     }
@@ -92,3 +92,5 @@ coverage {
 }
 
 reportFolders = [new File("./src/java/reports")]
+
+grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"

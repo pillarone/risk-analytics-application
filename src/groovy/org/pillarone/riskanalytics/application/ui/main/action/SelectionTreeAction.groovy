@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.application.reports.IReportableNode
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
 
@@ -59,6 +60,17 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
             AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
             if(abstractUIItem != null) {
                 selectedObjects << abstractUIItem
+            }
+        }
+        return selectedObjects
+    }
+
+    List<ItemNode> getReportingModellingNodes() {
+        List selectedObjects = []
+        for (TreePath selectedPath in tree.selectedPaths) {
+            DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
+            if(itemNode instanceof IReportableNode) {
+                selectedObjects << itemNode
             }
         }
         return selectedObjects

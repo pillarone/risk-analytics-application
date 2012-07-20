@@ -7,9 +7,12 @@ import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode;
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem;
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.ParameterizationPopupMenu;
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization;
-import org.pillarone.riskanalytics.core.workflow.Status;
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.application.reports.IReportableNode
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem;
 
-public class ParameterizationNode extends VersionedItemNode {
+public class ParameterizationNode extends VersionedItemNode implements IReportableNode {
 
 
     public ParameterizationNode(ParameterizationUIItem parameterizationUIItem) {
@@ -41,5 +44,13 @@ public class ParameterizationNode extends VersionedItemNode {
     @Override
     public String getToolTip() {
         return getParameterization().getStatus() == Status.NONE ? String.valueOf("") : getParameterization().getStatus().getDisplayName();
+    }
+
+    List<Class> modelsToReportOn() {
+        return [ abstractUIItem.model.getClass() ]
+    }
+
+    List<ModellingItem> modellingItemsForReport() {
+        return [((ModellingItem) ( (ModellingUIItem) abstractUIItem).item)]
     }
 }
