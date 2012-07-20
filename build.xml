@@ -152,7 +152,7 @@
 
         <!-- has to be replaced with a trusted certificate issued for the builder of the jar files -->
         <!-- this is a self signed certificate and won't work with a strict security policy -->
-        <signjar alias="${signjar.alias}" keystore="${signjar.keystore}" storepass="${signjar.storepass}"
+        <signjar alias="${signjar.alias}" storetype="PKCS12" keystore="${signjar.keystore}" storepass="${signjar.storepass}"
                  keypass="${signjar.keypass}" lazy="false">
             <fileset dir="${webapp.lib.dir}" includes="*.jar"/>
         </signjar>

@@ -24,6 +24,8 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 import com.ulcjava.base.application.event.IKeyListener
 import com.ulcjava.base.application.event.KeyEvent
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.customtable.view.TableView
 
 class StochasticResultView extends ResultView {
@@ -158,6 +160,16 @@ class StochasticResultView extends ResultView {
         ULCComboBox profitComboBox = new ULCComboBox(profitFunctionModel)
         profitComboBox.setMinimumSize(new Dimension(120, 20))
         profitComboBox.name = "profitComboBox"
+        profitComboBox.addActionListener(new IActionListener() {
+            @Override
+            void actionPerformed(ActionEvent actionEvent) {
+                userPreferences.putPropertyValue(UserPreferences.QUANTILE_PERSPECTIVE, profitComboBox.selectedItem.toString())
+            }
+        })
+        String defaultValue = userPreferences.getPropertyValue(UserPreferences.QUANTILE_PERSPECTIVE)
+        if (defaultValue != null) {
+            profitComboBox.selectedItem = defaultValue
+        }
         toolbar.add profitComboBox
         toolbar.add ULCFiller.createHorizontalStrut(3)
         toolbar.add functionValue

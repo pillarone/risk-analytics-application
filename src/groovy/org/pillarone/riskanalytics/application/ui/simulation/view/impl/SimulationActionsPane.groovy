@@ -203,10 +203,10 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
         innerPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, infoPane)
         ULCBoxPane simulationContent = new ULCBoxPane(4, 0)
-        simulationContent.add(spaceAround(run, 10, 2, 10, 2))
-        simulationContent.add(spaceAround(stop, 10, 2, 10, 2))
-        simulationContent.add(spaceAround(cancel, 10, 2, 10, 2))
-        simulationContent.add(spaceAround(openResults, 10, 2, 10, 2))
+        simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(run, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
+        simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(stop, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
+        simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(cancel, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
+        simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(openResults, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
         simulationContent.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
 
         content.addTab("Simulation", simulationContent)
@@ -248,24 +248,18 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         remainingTimeInfo = new ULCLabel()
         remainingTimeInfo.name = "remainingTime"
 
-        Dimension buttonSize = new Dimension(140, 20)
         run = new ULCButton(model.runSimulationAction)
         run.name = "${SimulationActionsPane.getSimpleName()}.run"
-        run.preferredSize = buttonSize
         stop = new ULCButton(model.stopSimulationAction)
         stop.name = "stop"
-        stop.preferredSize = buttonSize
         cancel = new ULCButton(model.cancelSimulationAction)
         cancel.name = "cancel"
-        cancel.preferredSize = buttonSize
         openResults = new ULCButton(model.openResultsAction)
         openResults.name = "${SimulationActionsPane.getSimpleName()}.openResults"
-        openResults.preferredSize = buttonSize
 
         availableBatchRuns = new ULCComboBox(model.batchRunComboBoxModel)
         availableBatchRuns.editable = true
         addToBatch = new ULCButton(model.addToBatchAction)
-        addToBatch.preferredSize = buttonSize
         batchMessage = new ULCLabel(model.batchMessage)
         batchMessage.setForeground(Color.blue)
     }
