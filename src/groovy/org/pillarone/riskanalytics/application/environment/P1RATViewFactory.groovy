@@ -41,7 +41,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         ULCClipboard.install()
         ULCRootPane frame = createRootPane()
 
-        RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel(applicationContext: context))
+        RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel(applicationContext: applicationContext))
         mainView.init()
 
 //        searchService.registerSession(ULCSession.currentSession())
