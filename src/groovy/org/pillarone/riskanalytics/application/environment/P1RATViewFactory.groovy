@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import com.ulcjava.base.server.ULCSession
+import com.ulcjava.applicationframework.application.ApplicationContext
 
 //used for Applet & JNLP (but not standalone)
 abstract class P1RATViewFactory implements UlcViewFactory {
@@ -27,7 +28,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     ModellingItemSearchService searchService
 
-    public ULCRootPane create() {
+    public ULCRootPane create(ApplicationContext applicationContext) {
         LOG.info "Started session for user '${UserContext.currentUser?.username}'"
         try {
             MDC.put("username", UserContext.currentUser?.username)

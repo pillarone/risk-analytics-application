@@ -24,7 +24,7 @@ grails.project.dependency.resolution = {
     mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
     mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
 
-    String ulcVersion = "ria-suite-u2-P1"
+    String ulcVersion = "ria-suite-u5"
 
     plugins {
         runtime ":background-thread:1.3"

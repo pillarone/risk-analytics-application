@@ -22,7 +22,7 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.event.serializable.IWindowListener
+import com.ulcjava.base.application.event.IWindowListener
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
