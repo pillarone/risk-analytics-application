@@ -25,7 +25,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     ModellingItemSearchService searchService
 
-    public ULCRootPane create(ApplicationContext context) {
+    public ULCRootPane create(ApplicationContext applicationContext) {
         LOG.info "Started session for user '${UserContext.currentUser?.username}'"
         try {
             MDC.put("username", UserContext.currentUser?.username)
