@@ -41,21 +41,21 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-//            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-4.2-kti"
+            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-5-kti"
         }
 
     }
 
-    dependencies {
-        compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-base-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-base-trusted', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
-        compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
-        compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
-    }
+//    dependencies {
+//        compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
+//        compile group: 'canoo', name: 'ulc-base-client', version: ulcVersion
+//        compile group: 'canoo', name: 'ulc-base-trusted', version: ulcVersion
+//        compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
+//        compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
+//        compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
+//        compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
+//        compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
+//    }
 
 }
 
@@ -93,4 +93,4 @@ coverage {
 
 reportFolders = [new File("./src/java/reports")]
 
-grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
+//grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
