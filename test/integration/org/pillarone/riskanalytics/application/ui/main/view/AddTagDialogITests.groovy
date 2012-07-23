@@ -97,7 +97,6 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
 
             TreePath pathForRename = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
             assertNotNull "path not found", pathForRename
-            int oldParametersCount = tableTree.getChildCount(pathForRename.lastPathComponent.parent)
             tableTree.doExpandRow 0
             tableTree.doExpandRow 1
 
