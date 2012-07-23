@@ -5,6 +5,7 @@ import grails.plugins.springsecurity.SecurityConfigType
 import org.pillarone.riskanalytics.application.logging.model.LoggingAppender
 import org.pillarone.riskanalytics.core.example.component.ExampleResource
 import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
+import org.pillarone.riskanalytics.core.simulation.engine.grid.mapping.OneNodeStrategy
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
@@ -112,6 +113,7 @@ environments {
                 'varProfitFunction': [99, 99.5],
                 'tvarProfitFunction': [99, 99.5]
         ]
+        nodeMappingStrategy = OneNodeStrategy
         log4j = {
             appenders {
 
