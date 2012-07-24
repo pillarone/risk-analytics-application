@@ -24,7 +24,7 @@ grails.project.dependency.resolution = {
     mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
     mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
 
-    String ulcVersion = "ria-suite-u5"
+    String ulcVersion = "ria-suite-u2-P1-2"
 
     plugins {
         runtime ":background-thread:1.3"
@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-4.7"
+            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-5-kti"
         }
 
     }
