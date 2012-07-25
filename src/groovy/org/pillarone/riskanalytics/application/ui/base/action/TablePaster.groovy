@@ -35,7 +35,7 @@ class TablePaster extends ExceptionSafeAction {
         int startColumn = table.getSelectedColumn()
         if (startRow == 0 || startColumn == 0) {
             if (table instanceof MultiDimensionalTable) {
-                ULCAlert alert = new ULCAlert("Not supported", "Pasting into header rows or columns not possible.","Ok")
+                ULCAlert alert = new ULCAlert("Not supported", "Pasting into header rows or columns not possible.", "Ok")
                 alert.messageType = ULCAlert.ERROR_MESSAGE
                 alert.show()
                 return
@@ -47,11 +47,14 @@ class TablePaster extends ExceptionSafeAction {
         ULCComponent parent = UlcUtilities.getWindowAncestor(table)
         parent?.cursor = Cursor.WAIT_CURSOR
 
-        ULCClipboard.appyClipboardContent([applyContent: {String clipboardContent ->
-            ExceptionSafe.protect {
-                pasteContent(clipboardContent, startRow, startColumn)
+        ULCClipboard.appyClipboardContent(new IClipboardHandler() {
+            @Override
+            void applyContent(String content) {
+                ExceptionSafe.protect {
+                    pasteContent(content, startRow, startColumn)
+                }
             }
-        }] as IClipboardHandler)
+        })
 
 
     }

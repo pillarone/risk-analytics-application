@@ -1,15 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.util.Dimension
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
+import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
-
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -17,11 +16,14 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
+
+import java.beans.PropertyChangeEvent
+import java.beans.PropertyChangeListener
+
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
-import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
-import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
-import org.pillarone.riskanalytics.application.ui.base.model.NavigationTreeFactory
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.event.KeyEvent
 
 class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
@@ -40,16 +42,17 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     private RiskAnalyticsMainModel mainModel
 
-    private NavigationTreeFactory treeFactory
 
     Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
+
+    private ToggleSplitPaneAction navigationSplitPaneAction
+    private CommentsSwitchAction validationSplitPaneAction
 
     RiskAnalyticsMainView(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
     }
 
     void initComponents() {
-        treeFactory = new NavigationTreeFactory()
         content = new ULCCardPane()
         treePane = new ULCBoxPane(1, 1)
         modelPane = new ULCCardPane()
@@ -71,11 +74,13 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         splitPane.setRightComponent(modelPane)
 
         ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)
-        ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(new ToggleSplitPaneAction(splitPane, UIUtils.getText(this.class, "Navigation")))
+        navigationSplitPaneAction = new ToggleSplitPaneAction(splitPane, UIUtils.getText(this.class, "Navigation"))
+        ULCVerticalToggleButton navigationSwitchButton = new ULCVerticalToggleButton(navigationSplitPaneAction)
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(ULCBoxPane.BOX_LEFT_TOP, navigationSwitchButton);
 
-        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(new CommentsSwitchAction(mainModel, UIUtils.getText(this.class, "ValidationsAndComments"), false))
+        validationSplitPaneAction = new CommentsSwitchAction(mainModel, UIUtils.getText(this.class, "ValidationsAndComments"), false)
+        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
         validationSwitchButton.selected = false
         validationSwitchButton.setEnabled false
         mainModel.switchActions << validationSwitchButton
@@ -98,6 +103,8 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void attachListeners() {
+        content.registerKeyboardAction(navigationSplitPaneAction, KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
+        content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         mainModel.addModelListener(this)
         mainModel.addPropertyChangeListener("currentItem", this)
     }

@@ -57,6 +57,7 @@ class SimulationSettingsPane {
     protected ULCTextField numberOfIterations
 
     protected RuntimeParameterPane runtimeParameterPane
+    protected PostSimulationCalculationPane postSimulationCalculationPane
 
     private final userPreferences = UserPreferencesFactory.getUserPreferences()
 
@@ -147,6 +148,7 @@ class SimulationSettingsPane {
         }
 
         runtimeParameterPane = new RuntimeParameterPane(model)
+        postSimulationCalculationPane = new PostSimulationCalculationPane(model.postSimulationCalculationPaneModel)
 
     }
 
@@ -292,14 +294,13 @@ class SimulationSettingsPane {
     }
 
     ULCContainer getContent() {
+        ULCTabbedPane tabbedPane = new ULCTabbedPane()
+        tabbedPane.addTab("Settings", content)
         if (runtimeParameterPane.model.hasRuntimeParameters()) {
-            ULCTabbedPane tabbedPane = new ULCTabbedPane()
-            tabbedPane.addTab("Settings", content)
             tabbedPane.addTab("Runtime parameters", runtimeParameterPane.content)
-            return tabbedPane
-        } else {
-            return content
         }
+        tabbedPane.addTab("Post simulation calculations", new ULCScrollPane(postSimulationCalculationPane.content))
+        return tabbedPane
     }
 
 }

@@ -20,9 +20,9 @@ class RefreshActionTests extends AbstractSimpleFunctionalTest {
         FileImportService.importModelsIfNeeded(["Core"])
         ModellingItemFactory.clear()
 
-        ULCFrame frame1 = new P1RATFrameViewFactory().create()
+        ULCFrame frame1 = new P1RATFrameViewFactory().create(null)
         frame1.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
-        ULCFrame frame2 = new P1RATFrameViewFactory().create()
+        ULCFrame frame2 = new P1RATFrameViewFactory().create(null)
         frame2.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame1.title = "first"
         frame2.title = "second"
