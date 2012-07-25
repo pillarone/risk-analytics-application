@@ -1,7 +1,7 @@
 import org.apache.ivy.plugins.resolver.FileSystemResolver
 
 //Use a custom plugins dir, because different branches use different plugin versions
-grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-kti"
+//grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-kti"
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies
@@ -46,16 +46,16 @@ grails.project.dependency.resolution = {
 
     }
 
-//    dependencies {
-//        compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
-//        compile group: 'canoo', name: 'ulc-base-client', version: ulcVersion
-//        compile group: 'canoo', name: 'ulc-base-trusted', version: ulcVersion
-//        compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
-//        compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
-//        compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
-//        compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
-//        compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
-//    }
+    dependencies {
+        compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-base-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-base-trusted', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
+        compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
+        compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
+        compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
+    }
 
 }
 
