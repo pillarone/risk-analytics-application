@@ -75,7 +75,7 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
 
         List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
         List<IReportModel> reports =  new ArrayList<IReportModel>()
-        for (Class modelClass in reports) {
+        for (Class modelClass in modelsToDisplay) {
             reports << ReportRegistry.getReportModel(modelClass)
         }
         if (!reports.empty) {
