@@ -55,11 +55,9 @@ class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener  {
     }
 
     void popupMenuHasBecomeInvisible(PopupMenuEvent popupMenuEvent) {
-        parent.removePopupMenuListener(this)
     }
 
     void popupMenuCanceled(PopupMenuEvent popupMenuEvent) {
-        parent.removePopupMenuListener(this)
     }
 
     void checkVisibility(){
