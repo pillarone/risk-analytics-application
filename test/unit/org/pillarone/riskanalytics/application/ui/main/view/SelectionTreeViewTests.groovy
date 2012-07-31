@@ -7,12 +7,31 @@ import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 
 import javax.swing.tree.TreePath
+import groovy.mock.interceptor.MockFor
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
+    def mockBatch = new MockFor(BatchRun)
+    def mockBatchSimRun = new MockFor(BatchRunSimulationRun)
+
+    @Override
+    protected void setUp() {
+        super.setUp()    //To change body of overridden methods use File | Settings | File Templates.
+
+        //        BatchRuns and batch simulation runs are not available in unit tests. Mock the DB calls.
+
+        mockBatch.demand.findByName(1) { String giveMeAString -> new BatchRun(name: "test")}
+        mockBatch.demand.getExecuted { false }
+
+        mockBatchSimRun.demand.findAllByBatchRun(1) { batchRun, map -> new ArrayList<BatchRunSimulationRun>()}
+
+    }
 
     ULCComponent createContentPane() {
         RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
@@ -118,26 +137,43 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
 
     public void testOpenBatch() {
-        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
 
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Open")
-        assertNotNull openBatch
+        mockBatchSimRun.use {
+            mockBatch.use {
+
+                ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
+                ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Open")
+                assertNotNull openBatch
+            }
+        }
+
 
     }
 
     public void testRunBatch() {
-        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
+        mockBatchSimRun.use {
+            mockBatch.use {
 
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Run now")
-        assertNotNull openBatch
+                ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
+
+                ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Run now")
+                assertNotNull openBatch
+            }
+        }
 
     }
 
     public void testDeleteBatch() {
-        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
+        mockBatchSimRun.use {
+            mockBatch.use {
 
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Delete")
-        assertNotNull openBatch
+                ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
+
+                ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Delete")
+                assertNotNull openBatch
+            }
+        }
+
 
     }
 
@@ -152,6 +188,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         assertNotNull popupMenuOperator
         return popupMenuOperator
+
     }
 
     public void testNewBatch() {
@@ -205,8 +242,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         renameItem.clickMouse()
 
     }
-
-
 
 
 }
