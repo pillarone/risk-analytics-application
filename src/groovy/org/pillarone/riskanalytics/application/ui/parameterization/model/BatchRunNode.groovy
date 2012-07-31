@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 
 /**
  * @author fouad jaada
@@ -50,10 +51,13 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
      */
     List<Class> modelsToReportOn() {
         List<Class> classes = new ArrayList<Class>()
-        BatchDataTableModel batchData = initBatchDataTableModel()
-        List<SimulationRun> simulations = batchData.getBatchRunSimulationRuns()*.getSimulationRun()
-        List<String> modelNames = simulations*.model.unique()
-        BatchRun batchRun = ((BatchUIItem) abstractUIItem).batchRun
+        BatchRun batchRun = BatchRun.findByName( abstractUIItem.name )
+        if(batchRun == null){
+            throw new IllegalStateException("Failed to lookup batch run in DB. Please report to development")
+        }
+        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.getSimulationRun()
+
+        List<String> modelNames = batchRunSimulationRuns*.model.unique()
         if (batchRun.executed) {
             ModelRegistry modelRegistry = ModelRegistry.getInstance()
             for (String model in modelNames) {
