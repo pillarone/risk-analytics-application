@@ -1,7 +1,7 @@
 import org.apache.ivy.plugins.resolver.FileSystemResolver
 
 //Use a custom plugins dir, because different branches use different plugin versions
-//grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-kti"
+grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-kti"
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies
