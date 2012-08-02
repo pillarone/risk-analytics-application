@@ -5,34 +5,20 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
+
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.report.IReportModel
 import org.pillarone.riskanalytics.core.report.ReportFactory
 import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import com.ulcjava.base.application.ULCMenuItem
+
 import com.ulcjava.base.application.ULCMenu
 import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
 import org.pillarone.riskanalytics.application.ui.main.view.CreateReportMenuItem
-import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
-import org.pillarone.riskanalytics.application.ui.main.action.SimulationAction
-import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
-import org.pillarone.riskanalytics.application.ui.main.action.CompareParameterizationsAction
-import org.pillarone.riskanalytics.application.ui.main.action.TagsAction
-import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
-import org.pillarone.riskanalytics.application.ui.main.action.SaveAsAction
-import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
-import org.pillarone.riskanalytics.application.ui.main.action.ExportItemAction
-import org.pillarone.riskanalytics.application.UserContext
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.pillarone.riskanalytics.application.ui.main.action.ChooseDealAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
-import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
+
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.application.reports.IReportableNode
+import org.pillarone.riskanalytics.application.ui.main.view.CreateReportsMenu
 
 class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
