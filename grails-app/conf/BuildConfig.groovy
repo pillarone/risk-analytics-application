@@ -92,5 +92,3 @@ coverage {
 }
 
 reportFolders = [new File("./src/java/reports")]
-
-//grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
