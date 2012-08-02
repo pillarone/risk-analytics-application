@@ -73,19 +73,14 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
                     popup menu, but is not a reportable item. Please report to development. """)
         }
 
-        if (((IReportableNode) this).showReports()) {
-            List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
-            List<IReportModel> reports = ReportRegistry.getReportModel( modelsToDisplay )
-            if (!reports.empty) {
-                ULCMenu reportsMenu = new ULCMenu("Reports")
-                for (IReportModel model in reports) {
-                    for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
-                        reportsMenu.add(new CreateReportMenuItem(new CreateReportAction(model, aReportFormat, tree, abstractUIItem.mainModel)))
-                    }
-                }
-                if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
-                simulationNodePopUpMenu.add(reportsMenu)
-            }
+        List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
+        List<IReportModel> reports = new ArrayList<IReportModel>()
+        reports.addAll(ReportRegistry.getReportModel(modelsToDisplay))
+        if (!reports.empty) {
+            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, abstractUIItem.mainModel, simulationNodePopUpMenu)
+            reportsMenu.visible = true
+            if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
+            simulationNodePopUpMenu.add(reportsMenu)
         }
     }
 }
