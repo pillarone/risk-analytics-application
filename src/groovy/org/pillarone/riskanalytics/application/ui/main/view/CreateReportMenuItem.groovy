@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.ULCMenuItem
-import com.ulcjava.base.application.IAction
+
 import com.ulcjava.base.application.event.ITreeSelectionListener
 import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
 import com.ulcjava.base.application.event.TreeSelectionEvent
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
@@ -14,27 +14,59 @@ import org.pillarone.riskanalytics.core.report.IReportData
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.report.impl.ReportDataCollection
 import org.pillarone.riskanalytics.core.report.impl.ModellingItemReportData
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import com.ulcjava.base.application.ULCMenu
+import com.ulcjava.base.application.event.IFocusListener
+import com.ulcjava.base.application.event.FocusEvent
+import com.ulcjava.base.application.event.IPopupMenuListener
+import com.ulcjava.base.application.event.PopupMenuEvent
+import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.event.ActionEvent
+import java.awt.event.FocusListener
+import java.awt.event.FocusEvent
+import com.ulcjava.base.application.event.FocusEvent
+import java.awt.event.FocusEvent
+import com.ulcjava.base.application.event.FocusEvent
+import java.awt.event.WindowListener
+import com.ulcjava.base.application.ULCPopupMenu
 
 /**
  * bzetterstrom
  */
-class CreateReportMenuItem extends ULCMenuItem implements ITreeSelectionListener {
+class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener  {
 
-    CreateReportMenuItem(CreateReportAction action) {
+    ULCPopupMenu parent
+
+    CreateReportMenuItem(CreateReportAction action, CreateReportsMenu menu) {
         super(action)
-        ULCTableTree tree = action.getTree()
-        tree.addTreeSelectionListener(this)
+        parent = menu.getComponentPopupMenu()
+        parent.addPopupMenuListener(this)
     }
 
-    void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+    /**
+     * When a node of this type is selected, get the reports which are valid for this node.
+     * @param treeSelectionEvent
+     */
+//    void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+//    }
+
+    void popupMenuHasBecomeVisible(PopupMenuEvent popupMenuEvent) {
+        checkVisibility()
+    }
+
+    void popupMenuHasBecomeInvisible(PopupMenuEvent popupMenuEvent) {
+        parent.removePopupMenuListener(this)
+    }
+
+    void popupMenuCanceled(PopupMenuEvent popupMenuEvent) {
+        parent.removePopupMenuListener(this)
+    }
+
+    void checkVisibility(){
+    @Override
         CreateReportAction action = (CreateReportAction) getAction()
-        List<AbstractUIItem> selectedUIItems = action.getSelectedUIItems()
-        Collection<ModellingItem> selectedModellingItems = UIItemUtils.getSelectedModellingItems(selectedUIItems)
-        Collection<IReportData> reportData = selectedModellingItems.collectAll { ModellingItem modellingItem -> new ModellingItemReportData(modellingItem) }
+        IReportData reportData = action.getReportData()
         IReportModel model = action.getReportModel()
-        setVisible(model.isValidFormatAndData(action.reportFormat, new ReportDataCollection(reportData)))
+        setVisible(model.isValidFormatAndData(action.reportFormat,reportData))
     }
-
-
-
 }

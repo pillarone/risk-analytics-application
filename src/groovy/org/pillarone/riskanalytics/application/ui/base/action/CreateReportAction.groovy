@@ -24,6 +24,8 @@ import org.pillarone.riskanalytics.core.report.UnsupportedReportParameterExcepti
 import com.ulcjava.base.application.IAction
 import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
 import net.sf.jmimemagic.Magic
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import org.pillarone.riskanalytics.application.reports.IReportableNode
 
 
 public class CreateReportAction extends SelectionTreeAction {
@@ -52,23 +54,29 @@ public class CreateReportAction extends SelectionTreeAction {
          }
      }
 
-    private IReportData getReportData() {
-        List<AbstractUIItem> selectedItems = getSelectedUIItems()
-        if (selectedItems.size() == 1) {
-            Object item = selectedItems.get(0).item
-            return getReportData(item)
-        } else {
-            return new ReportDataCollection(selectedItems.collect { uiItem -> getReportData(uiItem.item) })
+    /**
+     *
+     * @return An IReportData. If the list of reporting items is of lenth 1, return the simpler
+     * single object, otherwise use the composite pattern and return a list of IReportData's
+     *
+     */
+    public IReportData getReportData() {
+        List<ItemNode> selectedItems = getReportingModellingNodes()
+        Collection<ModellingItem> modellingItems = selectedItems.collect {
+            itemNode ->
+                    if(itemNode instanceof IReportableNode) {
+                        itemNode.modellingItemsForReport()
+                    }
+        }.flatten()
+        Collection<IReportData> reportData = new ArrayList<IReportData>()
+        for (ModellingItem aModellingItem in modellingItems) {
+            reportData << new ModellingItemReportData(aModellingItem)
         }
-    }
-
-    private IReportData getReportData(Object item) {
-        if (item instanceof ModellingItem) {
-            ModellingItem modellingItem = (ModellingItem) item;
-            return new ModellingItemReportData(modellingItem)
-        } else {
-            throw new IllegalArgumentException("Cannot create IReportData object for this selected UIItem: " + item)
+//        If there is only one entry this is a special case. Return an individual modelling item report data.
+        if(reportData.size() == 1) {
+            return reportData.get(0)
         }
+        return new ReportDataCollection( reportData )
     }
 
     private void saveReport(byte[] output, IReportData reportData) {

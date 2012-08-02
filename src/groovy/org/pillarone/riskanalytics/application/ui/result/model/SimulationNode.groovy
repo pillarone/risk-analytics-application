@@ -1,18 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
-import com.ulcjava.base.application.ULCMenu
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.CompareSimulationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.reports.IReportableNode
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
-class SimulationNode extends ItemNode {
+class SimulationNode extends ItemNode implements IReportableNode {
     //checkBox selected simulations
     boolean display = true
     // flag for hidden/display simulations
@@ -61,5 +62,11 @@ class SimulationNode extends ItemNode {
         return builder.toString()
     }
 
+    List<Class> modelsToReportOn() {
+        return [abstractUIItem.model.getClass()]
+    }
 
+    List<ModellingItem> modellingItemsForReport() {
+        return [((ModellingItem) ((ModellingUIItem) abstractUIItem).item)]
+    }
 }
