@@ -51,7 +51,6 @@ class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener  {
 //    }
 
     void popupMenuHasBecomeVisible(PopupMenuEvent popupMenuEvent) {
-        checkVisibility()
     }
 
     void popupMenuHasBecomeInvisible(PopupMenuEvent popupMenuEvent) {
@@ -65,6 +64,7 @@ class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener  {
         CreateReportAction action = (CreateReportAction) getAction()
         IReportData reportData = action.getReportData()
         IReportModel model = action.getReportModel()
-        setVisible(model.isValidFormatAndData(action.reportFormat,reportData))
+        boolean visible = model.isValidFormatAndData(action.reportFormat,reportData)
+        setVisible(visible)
     }
 }

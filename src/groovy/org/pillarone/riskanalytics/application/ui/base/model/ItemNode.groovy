@@ -74,12 +74,10 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         }
 
         List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
-        List<IReportModel> reports =  new ArrayList<IReportModel>()
-        for (Class modelClass in modelsToDisplay) {
-            reports.addAll(ReportRegistry.getReportModel(modelClass))
-        }
+        List<IReportModel> reports = new ArrayList<IReportModel>()
+        reports.addAll(ReportRegistry.getReportModel(modelsToDisplay))
         if (!reports.empty) {
-            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, abstractUIItem.mainModel, simulationNodePopUpMenu  )
+            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, abstractUIItem.mainModel, simulationNodePopUpMenu)
             reportsMenu.visible = true
             if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
             simulationNodePopUpMenu.add(reportsMenu)

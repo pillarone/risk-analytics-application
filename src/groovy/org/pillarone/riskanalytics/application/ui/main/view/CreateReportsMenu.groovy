@@ -66,7 +66,7 @@ class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
             for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
                 CreateReportAction action = new CreateReportAction(aModel, aReportFormat, ulcTableTree, raMainModel)
                 CreateReportMenuItem createReportMenuItem = new CreateReportMenuItem(action , this)
-                createReportMenuItem.visible = false
+                createReportMenuItem.checkVisibility()
                 add(createReportMenuItem)
             }
         }

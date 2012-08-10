@@ -74,21 +74,17 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
      */
     List<ModellingItem> modellingItemsForReport() {
 
-        BatchDataTableModel batchData = initBatchDataTableModel()
-        List<SimulationRun> simulations = batchData.getBatchRunSimulationRuns()*.getSimulationRun()
+        BatchRun batchRun = BatchRun.findByName( abstractUIItem.name )
+        if(batchRun == null){
+            throw new IllegalStateException("Failed to lookup batch run in DB. Please report to development")
+        }
+        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.getSimulationRun()
         ArrayList<ModellingItem> simulationList = new ArrayList<ModellingItem>()
-        for (SimulationRun run in simulations) {
+        for (SimulationRun run in batchRunSimulationRuns) {
             Simulation simulation = new Simulation(run.name)
             simulationList << simulation
         }
         return simulationList
-    }
-
-    private BatchDataTableModel initBatchDataTableModel() {
-        BatchRun batchRun = ((BatchUIItem) abstractUIItem).batchRun
-        BatchDataTableModel batchData = new BatchDataTableModel(batchRun)
-        batchData.init()
-        return batchData
     }
 }
 
