@@ -44,7 +44,12 @@
 
 
     <target name="clean" depends="init" description="--> Cleans a Grails application">
-        <grails command="clean"/>
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="clean"/>
+            <arg value="--non-interactive"/>
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+            <env key="JAVA_OPTS" value="${GRAILS_JVM_OPTS}"/>
+        </exec>
         <delete verbose="true">
             <fileset dir="." includes="*Db.script"/>
             <fileset dir="." includes="**Db.properties"/>
@@ -79,7 +84,8 @@
     <target name="test" depends="init" description="--> Run a Grails applications unit tests">
         <exec executable="${grails}" failonerror="true" resolveexecutable="true">
             <arg value="test-app"/>
-            <!--<arg value="-coverage"/>-->
+            <arg value="--non-interactive"/>
+            <arg value="--stacktrace"/>
             <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
             <env key="JAVA_OPTS" value="${GRAILS_JVM_OPTS}"/>
         </exec>

@@ -33,10 +33,10 @@ class ComponentUtils {
 
     public static List<SimpleTableTreeNode> intersection(List<List<SimpleTableTreeNode>> setAs) {
         List<SimpleTableTreeNode> tmp = []
-        for (List<SimpleTableTreeNode> setA: setAs) {
-            for (SimpleTableTreeNode x: setA) {
+        for (List<SimpleTableTreeNode> setA in setAs) {
+            for (SimpleTableTreeNode x in setA) {
                 boolean add = true;
-                for (List<SimpleTableTreeNode> setB: setAs) {
+                for (List<SimpleTableTreeNode> setB in setAs) {
                     if (!setB.contains(x) || setB.indexOf(x) != setA.indexOf(x)) {
                         add = false;
                     }
