@@ -178,7 +178,11 @@ class ResultViewModel extends AbstractCommentableItemModel {
     }
 
     public void resultStructureChanged() {
+        openFunctions.clear()
         buildTreeStructure(selectionViewModel.getSelectedObject())
+        for(IFunction function in initialFunctions()) {
+            addFunction(function)
+        }
     }
 
     protected List<String> obtainAllPaths(ConfigObject paths) {
