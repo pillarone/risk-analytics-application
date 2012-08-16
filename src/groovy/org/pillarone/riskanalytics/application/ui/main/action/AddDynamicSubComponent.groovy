@@ -48,7 +48,7 @@ class AddDynamicSubComponent extends ResourceBasedAction {
             }
             try {
                 component.name = name
-                tree.model.addComponentNode(node, component)
+                model.parametrizedItem.addComponent([ComponentUtils.removeModelFromPath(node.path, model.model), name].join(":"), component)
             } catch (IllegalArgumentException e) {
                 ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
                 alert.show()

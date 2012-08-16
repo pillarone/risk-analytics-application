@@ -10,9 +10,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
 import java.lang.reflect.Field
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 
 class ParameterizationTreeBuilder {
 
@@ -147,29 +147,14 @@ class ParameterizationTreeBuilder {
             if (name.startsWith('sub')) {
                 addParameterValueNodes(componentNodes[value])
             } else if (name.startsWith('parm')) {
-                String path = getPathValue("${componentNode.path}:$name".toString())
+                String path = ComponentUtils.removeModelFromPath("${componentNode.path}:$name".toString(), model)
                 if (item.hasParameterAtPath(path)) {
                     componentNode.add(ParameterizationNodeFactory.getNode(path, item, model))
                 } else {
-                    //new dynamic subcomponent
-                    List parameters = []
-                    String newPath = "${buildParameterPath(componentNode)}:$name"
-                    periodCount.times {int periodIndex ->
-                        if (value instanceof Cloneable) value = value.clone()
-                        ParameterHolder holder = ParameterHolderFactory.getHolder(newPath, periodIndex, value)
-                        item.addParameter(holder)
-                        parameters << holder
-                    }
-                    componentNode.add(ParameterizationNodeFactory.getNode(newPath, item, model))
+                    throw new IllegalArgumentException("No parameter found at $path")
                 }
             }
         }
-    }
-
-    String getPathValue(String path) {
-        if (path && path.startsWith(model.name))
-            return path.substring(model.name.length() + 1)
-        return path
     }
 
     private String buildParameterPath(ComponentTableTreeNode node) {
@@ -260,7 +245,7 @@ class CompareParameterizationTreeBuilder extends ParameterizationTreeBuilder {
             if (name.startsWith('sub')) {
                 addParameterValueNodes(componentNodes[value])
             } else if (name.startsWith('parm')) {
-                String path = getPathValue("${componentNode.path}:$name".toString())
+                String path = ComponentUtils.removeModelFromPath("${componentNode.path}:$name".toString(), model)
                 if (parameterizations.any {it.hasParameterAtPath(path) }) {
                     componentNode.add(ParameterizationNodeFactory.getCompareParameterizationTableTreeNode(path, parameterizations, model, parameterizations.size()))
                 }

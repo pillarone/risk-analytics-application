@@ -6,9 +6,10 @@ import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 
-class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel {
+class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel implements IParametrizedItemListener {
 
     ParameterizationTreeBuilder builder
     Model simulationModel
@@ -45,6 +46,31 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         notifyNodeValueChanged(node, -1)
         notifyComboBoxNodesComponentAdded(component)
         changedComments()
+    }
+
+    @Override
+    void componentAdded(String path, Component component) {
+        String[] pathComponents = path.substring(0, path.lastIndexOf(":")).split(":")
+        ComponentTableTreeNode parent = findComponentNode(pathComponents)
+        parent.component.addSubComponent(component)
+        ComponentTableTreeNode node = builder.createNewComponentNode(parent, component)
+        node.comments = builder.item.comments?.findAll {it.path == node.path}
+        nodesWereInserted(getPath(parent), parent.getIndex(node))
+        notifyNodeValueChanged(node, -1)
+        notifyComboBoxNodesComponentAdded(component)
+        changedComments()
+
+    }
+
+    protected ComponentTableTreeNode findComponentNode(String[] pathComponents) {
+        SimpleTableTreeNode current = getRoot() as SimpleTableTreeNode
+        for (String currentElement in pathComponents) {
+            current = current.getChildByName(currentElement)
+            if (current == null) {
+                throw new IllegalArgumentException("Node with name $currentElement not found in path ${pathComponents.join(":")}")
+            }
+        }
+        return current as ComponentTableTreeNode
     }
 
     private void notifyComboBoxNodesComponentAdded(Component newComponent) {

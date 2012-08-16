@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
+
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -12,18 +12,16 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.hibernate.validator.InvalidStateException
-import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -36,15 +34,34 @@ class ParameterizationUIItem extends ModellingUIItem {
         super(model, simulationModel, parameterization)
     }
 
+    @Override
+    void close() {
+        ParameterViewModel viewModel = mainModel.viewModelsInUse[this]
+        Parameterization parameterization = item
+        ITableTreeModel treeModel = viewModel.treeModel
+        if(treeModel instanceof FilteringTableTreeModel) {
+            treeModel = treeModel.model
+        }
+        parameterization.removeListener(treeModel)
+        super.close()    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
     ULCContainer createDetailView() {
         ParameterView view = new ParameterView(getViewModel())
         return view.content
     }
 
     AbstractModellingModel getViewModel() {
-        ParameterViewModel model = new ParameterViewModel(this.model, (Parameterization) item, ModelStructure.getStructureForModel(this.model.class))
+        Parameterization parameterization = (Parameterization) item
+        ParameterViewModel model = new ParameterViewModel(this.model, parameterization, ModelStructure.getStructureForModel(this.model.class))
         model.mainModel = mainModel
         mainModel.registerModel(this, model)
+
+        ITableTreeModel treeModel = model.treeModel
+        if(treeModel instanceof FilteringTableTreeModel) {
+            treeModel = treeModel.model
+        }
+        parameterization.addListener(treeModel)
         return model
     }
 
