@@ -18,9 +18,10 @@ class RenameActionTests extends AbstractFunctionalTestCase {
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
 
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
+        TreePath parameterizationNodePath = tree.findPath(["Core", "Parameterization"] as String[])
         assertNotNull "path not found", pathForRename
 
-        int oldParametersCount = tree.getChildCount(pathForRename.lastPathComponent.parent)
+        int oldParametersCount = tree.getChildCount(parameterizationNodePath.lastPathComponent)
 
         tree.doExpandRow(0)
         tree.doExpandRow(1)
@@ -47,7 +48,7 @@ class RenameActionTests extends AbstractFunctionalTestCase {
 
         TreePath newPath = tree.findPath(["Core", "Parameterization", "RenamedParameters v1"] as String[])
         assertNotNull "path not found", newPath
-        assertEquals "element added", oldParametersCount, tree.getChildCount(newPath.lastPathComponent.parent)
+        assertEquals "element added", oldParametersCount, tree.getChildCount(parameterizationNodePath.lastPathComponent)
 
     }
 

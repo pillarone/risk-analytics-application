@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.chart.view
 
 import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.event.serializable.IActionListener
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.chart.model.ChartViewModel

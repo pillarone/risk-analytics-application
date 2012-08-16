@@ -7,12 +7,16 @@ import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 
 import javax.swing.tree.TreePath
+import groovy.mock.interceptor.MockFor
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import groovy.mock.interceptor.StubFor
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
-
 
     ULCComponent createContentPane() {
         RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
@@ -116,31 +120,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assertNotNull newVersion
     }
 
-
-    public void testOpenBatch() {
-        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
-
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Open")
-        assertNotNull openBatch
-
-    }
-
-    public void testRunBatch() {
-        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
-
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Run now")
-        assertNotNull openBatch
-
-    }
-
-    public void testDeleteBatch() {
-        ULCPopupMenuOperator popupMenuOperator = getTestBatchPopupMenu()
-
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "Delete")
-        assertNotNull openBatch
-
-    }
-
     private ULCPopupMenuOperator getTestBatchPopupMenu() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         TreePath batchPath = componentTree.findPath(["Batches"] as String[])
@@ -152,6 +131,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
         assertNotNull popupMenuOperator
         return popupMenuOperator
+
     }
 
     public void testNewBatch() {
@@ -205,8 +185,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         renameItem.clickMouse()
 
     }
-
-
 
 
 }

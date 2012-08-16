@@ -35,16 +35,13 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
 
     protected ResultTableTreeModel() {}
 
-    protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, IFunction mean, Model model) {
+    protected ResultTableTreeModel(ITableTreeNode rootNode, SimulationRun simulationRun, Parameterization parameterization, Model model) {
         this.simulationModel = model
         this.rootNode = rootNode
         this.simulationRun = simulationRun
         this.parameterization = parameterization
         functions << new NodeNameFunction()
-        simulationRun.periodCount.times {
-            functions << mean
-        }
-        columnCount = 1 + simulationRun.periodCount
+        columnCount = 1
         //TODO: is this still used despite of DRTTM?
 
         initPeriodLabels()
@@ -107,19 +104,15 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
     protected boolean loadAsynchronous(int column, def node) {
-        try {
-            boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
-            if (isResultCell) {
-                int periodIndex = (column - 1) % simulationRun.periodCount
-                AbstractResultFunction currentFunction = functions[column]
-                def parameter = currentFunction instanceof IParametrizedFunction ? currentFunction.parameter : null
-                boolean isPreCalculated = isValuePreCalculated(periodIndex, node.path, node.field, currentFunction.keyFigureName, parameter)
-                return !isPreCalculated && !(currentFunction instanceof SingleIterationFunction)
-            } else {
-                return false
-            }
-        } catch (Exception ex) {
-            return true
+        boolean isResultCell = column > 0 && node instanceof ResultTableTreeNode
+        if (isResultCell) {
+            int periodIndex = (column - 1) % simulationRun.periodCount
+            AbstractResultFunction currentFunction = functions[column]
+            def parameter = currentFunction instanceof IParametrizedFunction ? currentFunction.parameter : null
+            boolean isPreCalculated = isValuePreCalculated(periodIndex, node.path, node.field, currentFunction.keyFigureName, parameter)
+            return !isPreCalculated && !(currentFunction instanceof SingleIterationFunction)
+        } else {
+            return false
         }
     }
 

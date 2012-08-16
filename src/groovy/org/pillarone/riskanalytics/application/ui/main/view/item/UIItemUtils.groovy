@@ -16,6 +16,9 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.transaction.TransactionStatus
 
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import org.pillarone.riskanalytics.application.reports.IReportableNode
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -90,10 +93,10 @@ class UIItemUtils {
 
     }
 
-    public static List<ModellingItem> getSelectedModellingItems(List<AbstractUIItem> selectedUIItems) {
-       selectedUIItems
-       .findAll { AbstractUIItem uiItem -> uiItem instanceof ModellingUIItem }
-       .collectAll { AbstractUIItem modellingUIItem -> ((ModellingUIItem)modellingUIItem).item }
+    public static List<ModellingItem> getSelectedModellingItemsForReporting(List<ItemNode> selectedUIItems) {
+       Collection<IReportableNode> reportingItems = (Collection<IReportableNode>) selectedUIItems.findAll { ItemNode uiItem -> uiItem instanceof IReportableNode }
+       List<ModellingItem> modellingItems = reportingItems*.modellingItemsForReport().flatten()
+        return modellingItems
     }
 
 }

@@ -1,7 +1,7 @@
 import org.apache.ivy.plugins.resolver.FileSystemResolver
 
 //Use a custom plugins dir, because different branches use different plugin versions
-grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
+//grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies
@@ -24,7 +24,7 @@ grails.project.dependency.resolution = {
     mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
     mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
 
-    String ulcVersion = "ria-suite-u2-P1"
+    String ulcVersion = "ria-suite-u5"
 
     plugins {
         runtime ":background-thread:1.3"
@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-4.3"
+            runtime "org.pillarone:risk-analytics-core:1.6-ALPHA-4.10"
         }
 
     }

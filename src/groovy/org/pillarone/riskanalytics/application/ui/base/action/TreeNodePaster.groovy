@@ -23,28 +23,31 @@ class TreeNodePaster extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
 
-        ULCClipboard.appyClipboardContent([applyContent: {String content ->
-            ExceptionSafe.protect {
+        ULCClipboard.appyClipboardContent(new IClipboardHandler() {
+            @Override
+            void applyContent(String content) {
+                ExceptionSafe.protect {
 
-                ArrayList data = new TableDataParser(columnMapping: new DefaultColumnMapping()).parseTableData(content)
+                    ArrayList data = new TableDataParser(columnMapping: new DefaultColumnMapping()).parseTableData(content)
 
-                int startColumn = tree.selectedColumn + 1
-                int startRow = tree.selectedRow
+                    int startColumn = tree.selectedColumn + 1
+                    int startRow = tree.selectedRow
 
-                List nodes = []
-                for (int row = startRow; row < (startRow + data.size()); row++) {
-                    nodes << tree.getPathForRow(row).lastPathComponent
-                }
-                TableTreeMutator mutator = new TableTreeMutator(tree.model)
-                try {
-                    mutator.applyChanges(nodes, data, startColumn)
-                } catch (IllegalArgumentException e) {
-                    if (!e.message == "Attempt to set read-only cell") {
-                        throw e
+                    List nodes = []
+                    for (int row = startRow; row < (startRow + data.size()); row++) {
+                        nodes << tree.getPathForRow(row).lastPathComponent
+                    }
+                    TableTreeMutator mutator = new TableTreeMutator(tree.model)
+                    try {
+                        mutator.applyChanges(nodes, data, startColumn)
+                    } catch (IllegalArgumentException e) {
+                        if (!e.message == "Attempt to set read-only cell") {
+                            throw e
+                        }
                     }
                 }
             }
-        }] as IClipboardHandler)
+        })
 
     }
 }
