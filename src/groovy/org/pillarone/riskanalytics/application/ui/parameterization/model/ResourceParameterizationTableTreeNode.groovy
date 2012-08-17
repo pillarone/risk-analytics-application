@@ -24,9 +24,9 @@ class ResourceParameterizationTableTreeNode extends AbstractMultiValueParameteri
 
     @Override
     void setValueAt(Object o, int i) {
-        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, i - 1)
-        LOG.debug("Setting value to node @ ${path} P${i - 1}")
-        parameterHolder.value = lookupMap[o]
+        int period = i - 1
+        LOG.debug("Setting value to node @ ${parameterPath} P${period}")
+        parametrizedItem.updateParameterValue(parameterPath, period, lookupMap[o])
     }
 
     @Override

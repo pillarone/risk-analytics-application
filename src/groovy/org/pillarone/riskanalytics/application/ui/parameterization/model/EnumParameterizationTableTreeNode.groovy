@@ -12,9 +12,9 @@ class EnumParameterizationTableTreeNode extends AbstractMultiValueParameterizati
     }
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
-        LOG.debug("Setting value to node @ ${path} P${column - 1}")
-        parameterHolder.value = getKeyForValue(value)
+        int period = column - 1
+        LOG.debug("Setting value to node @ ${parameterPath} P${period}")
+        parametrizedItem.updateParameterValue(parameterPath, period, getKeyForValue(value))
     }
 
     public Object doGetExpandedCellValue(int column) {

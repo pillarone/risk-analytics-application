@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.core.model.Model
 import org.apache.commons.logging.Log
@@ -96,7 +95,6 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
      * set a value without notify a TableTreeValueChangedListeners
      */
     public boolean updateNodeValue(Object value, Object node, int column) {
-        boolean notifyChanged = true
         boolean notifyValueChanged = false
 
         if (nonValidValues.containsKey([node, column])) {
@@ -118,61 +116,14 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
                     LOG.debug("Setting value ${value} at ${node.path}")
                 }
                 node.setValueAt(value, column)
-                notifyChanged = adjustTreeStructure(node, column, value)
                 notifyValueChanged = true
             }
 
         }
-        if (notifyChanged) {
-            nodeChanged getPath(node), column
-        }
         return notifyValueChanged
     }
 
-    private boolean adjustTreeStructure(ITableTreeNode node, int column, Object value) {
-        return true
-    }
-
     protected abstract Model getSimulationModel()
-
-    private boolean adjustTreeStructure(ParameterizationClassifierTableTreeNode node, int column, Object value) {
-        ParameterObjectParameterTableTreeNode parent = node.parent
-        ParameterObjectParameterTableTreeNode newNode = ParameterizationNodeFactory.getNode(node.parameterPath, node.parametrizedItem, getSimulationModel())
-
-        List nodesToRemove = []
-        parent.children.each {
-            nodesToRemove << it
-        }
-        //remove comments
-        nodesToRemove.each {
-            if (it.comments) {
-                commentsToBeDeleted.addAll(it.comments as List)
-            }
-        }
-
-        List removedIndices = []
-        nodesToRemove.each {
-            removedIndices << parent.remove(it)
-        }
-
-        nodesWereRemoved(getPath(parent), removedIndices as int[], removedIndices as Object[])
-
-        List addedIndices = []
-        newNode.children.each {
-            addedIndices << parent.add(it)
-            def comments = builder?.item?.comments?.findAll {Comment c ->
-                c.path == it.path
-            }
-            comments.each {Comment c ->
-                if (commentsToBeDeleted.contains(c))
-                    commentsToBeDeleted.remove(c)
-            }
-            it.comments = comments
-        }
-        nodesWereInserted(getPath(parent), addedIndices as int[])
-        changedComments()
-        return false
-    }
 
     private TreePath getPath(ITableTreeNode node) {
         def path = []
@@ -201,6 +152,31 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
         for (SimpleTableTreeNode node in paths.collect { findNode(it.split(":")) }) {
             nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }
+    }
+
+    void classifierChanged(String path) {
+        ParameterObjectParameterTableTreeNode parameterObjectNode = findNode(path.split(":"))
+
+        ParameterObjectParameterTableTreeNode newParameterObjectNode = ParameterizationNodeFactory.getNode(parameterObjectNode.parameterPath, parameterObjectNode.parametrizedItem, getSimulationModel())
+
+        int[] removedIndices = new int[parameterObjectNode.childCount]
+        Object[] removedChildren = new Object[parameterObjectNode.childCount]
+        int children = parameterObjectNode.childCount
+        for (int i = 0; i < children; i++) {
+            removedIndices[i] = i
+            removedChildren[i] = parameterObjectNode.getChildAt(i)
+        }
+        for (ITableTreeNode node in removedChildren) {
+            parameterObjectNode.remove(node)
+        }
+        nodesWereRemoved(getPath(parameterObjectNode), removedIndices, removedChildren)
+
+        int[] addedIndices = new int[newParameterObjectNode.childCount]
+        for (int i = 0; i < newParameterObjectNode.childCount; i++) {
+            parameterObjectNode.add(newParameterObjectNode.getChildAt(i))
+            addedIndices[i] = i
+        }
+        nodesWereInserted(getPath(parameterObjectNode), addedIndices)
     }
 
     protected ComponentTableTreeNode findComponentNode(String[] pathComponents) {

@@ -12,9 +12,9 @@ class DateParameterizationTableTreeNode extends ParameterizationTableTreeNode {
 
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
-        LOG.debug("Setting value to node @ ${path} P${column - 1}")
-        parameterHolder.value = new DateTime(value)
+        int period = column - 1
+        LOG.debug("Setting value to node @ ${parameterPath} P${period}")
+        parametrizedItem.updateParameterValue(parameterPath, period, new DateTime(value))
     }
 
     public Object doGetExpandedCellValue(int column) {

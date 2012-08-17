@@ -39,9 +39,9 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
     }
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
-        LOG.debug("Setting value to node @ ${path} P${column - 1}")
-        parameterHolder.value = normalizedToName.get(value)
+        int period = column - 1
+        LOG.debug("Setting value to node @ ${path} P${period}")
+        parametrizedItem.updateParameterValue(parameterPath, period, normalizedToName.get(value))
     }
 
     protected List initValues() {
@@ -64,7 +64,7 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
             if (normalizedName == null || !values.contains(normalizedName)) {
                 if (values.empty) {
                     if (holder.businessObject.stringValue != "") {
-                        holder.value = ""
+                        parametrizedItem.updateParameterValue(holder.path, holder.periodIndex, "")
                     }
                 } else {
                     setValueAt(values[0], i)

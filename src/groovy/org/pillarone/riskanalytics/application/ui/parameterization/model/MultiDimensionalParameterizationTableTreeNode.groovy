@@ -30,9 +30,9 @@ class MultiDimensionalParameterizationTableTreeNode extends ParameterizationTabl
     }
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
-        LOG.debug("Setting value to node @ ${path} P${column - 1}")
-        parameterHolder.value = value
+        int period = column - 1
+        LOG.debug("Setting value to node @ ${parameterPath} P${period}")
+        parametrizedItem.updateParameterValue(parameterPath, period, value)
     }
 
     public doGetExpandedCellValue(int column) {

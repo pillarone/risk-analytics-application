@@ -125,6 +125,12 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
         changedCommentListeners*.updateCommentVisualization()
     }
 
+    @Override
+    void classifierChanged(String path) {
+        getActualTableTreeModel().classifierChanged(path)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
     protected AbstractParametrizedTableTreeModel getActualTableTreeModel() {
         ITableTreeModel model = treeModel
         if (model instanceof FilteringTableTreeModel) {
