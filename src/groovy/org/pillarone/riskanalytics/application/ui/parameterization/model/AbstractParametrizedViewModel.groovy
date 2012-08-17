@@ -17,9 +17,12 @@ import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 
 
-abstract class AbstractParametrizedViewModel extends AbstractCommentableItemModel {
+abstract class AbstractParametrizedViewModel extends AbstractCommentableItemModel implements IParametrizedItemListener {
 
     AbstractParametrizedTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
@@ -102,5 +105,35 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
 
     ITableTreeModel getTableTreeModel() {
         return paramterTableTreeModel
+    }
+
+    @Override
+    void componentAdded(String path, Component component) {
+        getActualTableTreeModel().componentAdded(path, component)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    @Override
+    void componentRemoved(String path) {
+        getActualTableTreeModel().componentRemoved(path)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    @Override
+    void parameterValuesChanged(List<String> paths) {
+        getActualTableTreeModel().parameterValuesChanged(paths)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    protected AbstractParametrizedTableTreeModel getActualTableTreeModel() {
+        ITableTreeModel model = treeModel
+        if (model instanceof FilteringTableTreeModel) {
+            model = model.model
+        }
+        if (model instanceof AbstractParametrizedTableTreeModel) {
+            return model
+        }
+
+        throw new IllegalStateException("Table model not found.")
     }
 }

@@ -6,6 +6,10 @@ import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.core.model.Model
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import org.pillarone.riskanalytics.core.components.Component
 
 
 abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableItemTableTreeModel {
@@ -83,9 +87,9 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
 
     public void setValueAt(Object value, Object node, int column) {
         boolean notifyValueChanged = updateNodeValue(value, node, column)
-        if (notifyValueChanged)
+        if (notifyValueChanged) {
             notifyNodeValueChanged(node.parent, column)
-
+        }
     }
 
     /**
@@ -110,7 +114,7 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
             if (value instanceof String && !(oldValue instanceof String)) {
                 nonValidValues[[node, column]] = value
             } else if (value != oldValue && !readOnly) {
-                if(LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("Setting value ${value} at ${node.path}")
                 }
                 node.setValueAt(value, column)
@@ -183,6 +187,39 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
     public void expansionChanged(TreePath path, boolean expanded) {
         path.lastPathComponent.expanded = expanded
         nodeChanged(path)
+    }
+
+    void componentAdded(String path, Component component) {
+        //dynamic components supported in parameterization only
+    }
+
+    void componentRemoved(String path) {
+        //dynamic components supported in parameterization only
+    }
+
+    void parameterValuesChanged(List<String> paths) {
+        for (SimpleTableTreeNode node in paths.collect { findNode(it.split(":")) }) {
+            nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+        }
+    }
+
+    protected ComponentTableTreeNode findComponentNode(String[] pathComponents) {
+        SimpleTableTreeNode node = findNode(pathComponents)
+        if (node instanceof ComponentTableTreeNode) {
+            return node
+        }
+        throw new IllegalArgumentException("No component found at ${pathComponents.join(":")}")
+    }
+
+    protected SimpleTableTreeNode findNode(String[] pathComponents) {
+        SimpleTableTreeNode current = getRoot() as SimpleTableTreeNode
+        for (String currentElement in pathComponents) {
+            current = current.getChildByName(currentElement)
+            if (current == null) {
+                throw new IllegalArgumentException("Node with name $currentElement not found in path ${pathComponents.join(":")}")
+            }
+        }
+        return current
     }
 
 }

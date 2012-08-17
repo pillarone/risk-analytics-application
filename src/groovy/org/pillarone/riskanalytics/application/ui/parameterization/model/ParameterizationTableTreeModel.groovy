@@ -38,16 +38,6 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         return node.getKeyForValue(value)
     }
 
-    public void addComponentNode(ComponentTableTreeNode parent, Component component) {
-        parent.component.addSubComponent(component)
-        ComponentTableTreeNode node = builder.createNewComponentNode(parent, component)
-        node.comments = builder?.item?.comments?.findAll {it.path == node.path}
-        nodesWereInserted(getPath(parent), parent.getIndex(node))
-        notifyNodeValueChanged(node, -1)
-        notifyComboBoxNodesComponentAdded(component)
-        changedComments()
-    }
-
     void componentAdded(String path, Component component) {
         String[] pathComponents = path.substring(0, path.lastIndexOf(":")).split(":")
         ComponentTableTreeNode parent = findComponentNode(pathComponents)
@@ -60,24 +50,6 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         changedComments()
     }
 
-    protected ComponentTableTreeNode findComponentNode(String[] pathComponents) {
-        SimpleTableTreeNode node = findNode(pathComponents)
-        if (node instanceof ComponentTableTreeNode) {
-            return node
-        }
-        throw new IllegalArgumentException("No component found at ${pathComponents.join(":")}")
-    }
-
-    protected SimpleTableTreeNode findNode(String[] pathComponents) {
-        SimpleTableTreeNode current = getRoot() as SimpleTableTreeNode
-        for (String currentElement in pathComponents) {
-            current = current.getChildByName(currentElement)
-            if (current == null) {
-                throw new IllegalArgumentException("Node with name $currentElement not found in path ${pathComponents.join(":")}")
-            }
-        }
-        return current
-    }
 
     private void notifyComboBoxNodesComponentAdded(Component newComponent) {
         List nodes = []
@@ -107,17 +79,6 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         }
     }
 
-    public void removeComponentNode(ComponentTableTreeNode componentNode) {
-        builder.removeParameterFromNodes(componentNode)
-        int childIndex = componentNode.parent.getIndex(componentNode)
-        ComponentTableTreeNode parent = componentNode.parent
-        parent.component.removeSubComponent(componentNode.component)
-        parent.remove(componentNode)
-        nodesWereRemoved(getPath(parent), [childIndex] as int[], [componentNode] as Object[])
-        notifyNodeValueChanged(componentNode, -1)
-        notifyComboBoxNodesComponentRemoved(componentNode.component)
-    }
-
     void componentRemoved(String path) {
         ComponentTableTreeNode componentNode = findComponentNode(path.split(":"))
         ComponentTableTreeNode parent = componentNode.parent
@@ -127,12 +88,6 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         nodesWereRemoved(getPath(parent), [childIndex] as int[], [componentNode] as Object[])
         notifyNodeValueChanged(componentNode, -1)
         notifyComboBoxNodesComponentRemoved(componentNode.component)
-    }
-
-    void parameterValuesChanged(List<String> paths) {
-        for (SimpleTableTreeNode node in paths.collect { findNode(it.split(":")) }) {
-            nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
-        }
     }
 
 
