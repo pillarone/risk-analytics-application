@@ -38,12 +38,8 @@ class ParameterizationUIItem extends ModellingUIItem {
     void close() {
         ParameterViewModel viewModel = mainModel.viewModelsInUse[this]
         Parameterization parameterization = item
-        ITableTreeModel treeModel = viewModel.treeModel
-        if(treeModel instanceof FilteringTableTreeModel) {
-            treeModel = treeModel.model
-        }
-        parameterization.removeListener(treeModel)
-        super.close()    //To change body of overridden methods use File | Settings | File Templates.
+        parameterization.removeListener(viewModel)
+        super.close()
     }
 
     ULCContainer createDetailView() {
@@ -57,11 +53,7 @@ class ParameterizationUIItem extends ModellingUIItem {
         model.mainModel = mainModel
         mainModel.registerModel(this, model)
 
-        ITableTreeModel treeModel = model.treeModel
-        if(treeModel instanceof FilteringTableTreeModel) {
-            treeModel = treeModel.model
-        }
-        parameterization.addListener(treeModel)
+        parameterization.addListener(model)
         return model
     }
 

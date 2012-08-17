@@ -2,14 +2,11 @@ package org.pillarone.riskanalytics.application.ui.base.action
 
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.components.Component
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 
 /**
  * @author stefan.kunz (at) intuitive-collaboration (dot) com
@@ -23,27 +20,13 @@ public class TreeNodeRename extends TreeNodeAction {
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments) {
         if (model.paramterTableTreeModel.readOnly || node.component.name == newName) return
-        String oldPath = getPathName(node.parent, "${node.name}")
-        String newPath = getPathName(node.parent, "$newName")
+        String oldPath = ComponentUtils.removeModelFromPath(node.path, model.model)
+        String newPath = ComponentUtils.removeModelFromPath(node.parent.path, model.model) + ":$newName"
 
-        def oldComments = model?.item?.comments?.findAll {it.path.startsWith(model.model.name + ":" + oldPath)}
-        oldComments.each {Comment comment ->
-            Comment newComment = comment.clone()
-            newComment.path = comment.path.replace(oldPath, newPath)
-            model.item.removeComment(comment)
-            model.item.addComment(newComment)
-        }
-
-        List<String> modifiedReferencePaths = ParameterHolderFactory.renamePathOfParameter(model.builder.item, oldPath, newPath, node.component)
         Component component = node.parent.component.createDefaultSubComponent()
         component.name = newName
-        tree.model.addComponentNode(node.parent, component)
-        tree.model.removeComponentNode(node)
-        // notify all nodes referencing the renamed component
-        for (String path: modifiedReferencePaths) {
-            TreePath treePath = new TreePath(DefaultTableTreeModel.getPathToRoot(model.findNodeForPath(path)) as Object[])
-            model.paramterTableTreeModel.nodeChanged(treePath)
-        }
+        model.parametrizedItem.renameComponent(oldPath, newPath, component)
+
     }
 
     public boolean isEnabled() {

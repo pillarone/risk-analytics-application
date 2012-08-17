@@ -4,8 +4,11 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 
-class ParameterViewModel extends AbstractParametrizedViewModel {
+class ParameterViewModel extends AbstractParametrizedViewModel implements IParametrizedItemListener {
 
     public ParameterViewModel(Model model, Parameterization parameterization, ModelStructure structure) {
         super(model, parameterization, structure);
@@ -29,7 +32,34 @@ class ParameterViewModel extends AbstractParametrizedViewModel {
         return builder
     }
 
+    @Override
+    void componentAdded(String path, Component component) {
+        getActualTableTreeModel().componentAdded(path, component)
+        changedCommentListeners*.updateCommentVisualization()
+    }
 
+    @Override
+    void componentRemoved(String path) {
+        getActualTableTreeModel().componentRemoved(path)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    @Override
+    void parameterValuesChanged(List<String> paths) {
+        getActualTableTreeModel().parameterValuesChanged(paths)
+    }
+
+    protected ParameterizationTableTreeModel getActualTableTreeModel() {
+        ITableTreeModel model = treeModel
+        if (model instanceof FilteringTableTreeModel) {
+            model = model.model
+        }
+        if (model instanceof ParameterizationTableTreeModel) {
+            return model
+        }
+
+        throw new IllegalStateException("Table model not found.")
+    }
 }
 
 
