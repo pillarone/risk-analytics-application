@@ -27,6 +27,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.customtable.view.TableView
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class StochasticResultView extends ResultView {
 
@@ -80,7 +81,15 @@ class StochasticResultView extends ResultView {
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, content)
 
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), contentPane)
-        tabbedPane.addTab("Table", UIUtils.getIcon(getText("Settings.icon")), tableView.content)
+
+        boolean tableViewEnabled = false
+        if (ConfigurationHolder.config.containsKey("tableViewEnabled")) {
+            tableViewEnabled = ConfigurationHolder.config.tableViewEnabled
+        }
+
+        if (tableViewEnabled) {
+            tabbedPane.addTab("Table", UIUtils.getIcon(getText("Settings.icon")), tableView.content)
+        }
         tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), getResultSettingView())
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
