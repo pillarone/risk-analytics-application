@@ -29,7 +29,7 @@ class SingleCollectorView {
     ULCTextField toTextField
     Dimension dimension = new Dimension(50, 20)
     Integer from = 1
-    Integer to = 100
+    Integer to = 1
 
     public SingleCollectorView(SingleValueCollectorTableTreeModel singleValueCollectorTableTreeModel) {
         this.singleValueCollectorTableTreeModel = singleValueCollectorTableTreeModel
@@ -139,7 +139,7 @@ class SingleCollectorView {
 
     private def initTextFields(ULCTextField fromTextField, ULCTextField toTextField) {
         from = 1
-        to = 100
+        to = 1
         fromTextField.setText(String.valueOf(from))
         toTextField.setText(String.valueOf(to))
         enable(from, to)
