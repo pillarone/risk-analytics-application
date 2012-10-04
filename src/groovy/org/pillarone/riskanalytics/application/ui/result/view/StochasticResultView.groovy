@@ -26,6 +26,7 @@ import com.ulcjava.base.application.event.KeyEvent
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 class StochasticResultView extends ResultView {
 
@@ -35,19 +36,21 @@ class StochasticResultView extends ResultView {
     private ULCToggleButton maxButton
     private ULCToggleButton sigmaButton
     EnumI18NComboBoxModel profitFunctionModel
-    UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
-    private int nextModelIndex = 0
+    private UserPreferences userPreferences
+    private int nextModelIndex = 1
     final static String FUNCTION_VALUE = "functionValue_"
 
     @Lazy MeanFunction meanFunction
 
-    public StochasticResultView(ResultViewModel model) {
-        super(model)
+    public StochasticResultView(ResultViewModel model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
     }
 
-    void setModel(AbstractModellingModel model) {
-        nextModelIndex = model.periodCount + 1
-        super.setModel(model)
+    @Override
+    protected void preViewCreationInitialization() {
+        super.preViewCreationInitialization()
+        userPreferences = UserPreferencesFactory.getUserPreferences()
+        nextModelIndex = 1
     }
 
     protected void initComponents() {
@@ -208,16 +211,6 @@ class StochasticResultView extends ResultView {
         }
         menu.remove(item)
     }
-
-    protected void addColumns() {
-        for (int i = 1; i < model.treeModel.columnCount; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree, commentAndErrorView)
-            column.setMinWidth(110)
-            column.setHeaderRenderer(new CenteredHeaderRenderer())
-            tree.viewPortTableTree.addColumn column
-        }
-    }
-
 
     private ULCToggleButton getToggleButton(IFunction function) {
         null

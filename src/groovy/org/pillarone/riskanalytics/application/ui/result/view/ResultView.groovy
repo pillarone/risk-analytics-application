@@ -10,7 +10,6 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
@@ -18,11 +17,10 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
-import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
 
 class ResultView extends AbstractModellingFunctionView implements NavigationListener {
 
@@ -33,10 +31,14 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
 
-    public static int space = 3
-
-    public ResultView(ResultViewModel model) {
+    public ResultView(AbstractResultViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model)
+        this.mainModel = mainModel
+    }
+
+    @Override
+    protected void preViewCreationInitialization() {
+        super.preViewCreationInitialization()
         tabbedPane = new ULCDetachableTabbedPane()
         tabbedPane.addTabListener([tabClosing: {TabEvent event -> event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())}] as ITabListener)
     }
@@ -57,12 +59,6 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
         }
 
         tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
-        model.periodCount.times {int index ->
-            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new MeanFunction())
-            column.setMinWidth(110)
-            column.setHeaderRenderer(new CenteredHeaderRenderer())
-            tree.viewPortTableTree.addColumn column
-        }
         tree.rowHeaderView.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK))
         tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_FOCUSED)
         commentAndErrorView.tableTree = tree

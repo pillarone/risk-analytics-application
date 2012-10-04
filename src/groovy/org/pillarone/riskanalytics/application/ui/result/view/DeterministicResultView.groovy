@@ -8,13 +8,26 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
-import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 
 class DeterministicResultView extends ResultView {
 
-    public DeterministicResultView(ResultViewModel model) {
-        super(model)
+    public DeterministicResultView(AbstractResultViewModel model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
+    }
+
+    @Override
+    protected void initTree() {
+        super.initTree()
+        model.periodCount.times {int index ->
+            ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new MeanFunction())
+            column.setMinWidth(110)
+            column.setHeaderRenderer(new CenteredHeaderRenderer())
+            tree.viewPortTableTree.addColumn column
+        }
     }
 
     protected ULCContainer layoutContent(ULCContainer content) {
@@ -41,17 +54,6 @@ class DeterministicResultView extends ResultView {
     protected void addToolBarElements(ULCToolBar toolbar) {
         toolbar.addSeparator()
         addPrecisionFunctions(toolbar)
-    }
-
-
-
-    protected void addColumns() {
-        for (int i = 1; i < model.treeModel.columnCount + 1; i++) {
-            ULCTableTreeColumn column = new ResultTableTreeColumn(i, tree.viewPortTableTree, commentAndErrorView)
-            column.setMinWidth(110)
-            column.setHeaderRenderer(new CenteredHeaderRenderer())
-            tree.viewPortTableTree.addColumn column
-        }
     }
 
 }
