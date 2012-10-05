@@ -83,4 +83,12 @@ abstract class AbstractResultViewModel extends AbstractCommentableItemModel {
     public void resultStructureChanged() {
         buildTreeStructure(selectionViewModel.getSelectedObject())
     }
+
+    void adjust(int adjustment) {
+        treeModel.numberDataType.maxFractionDigits = treeModel.numberDataType.maxFractionDigits + adjustment
+        treeModel.numberDataType.minFractionDigits = treeModel.numberDataType.minFractionDigits + adjustment
+        recreateAllColumns() //TODO: is necessary because the data type of the renderer is not updated on a nodeChanged
+    }
+
+    abstract protected void recreateAllColumns()
 }

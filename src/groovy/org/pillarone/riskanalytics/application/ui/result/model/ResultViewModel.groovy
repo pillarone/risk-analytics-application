@@ -97,12 +97,6 @@ class ResultViewModel extends AbstractResultViewModel {
         }
     }
 
-    void adjust(int adjustment) {
-        getResultTableTreeModel().numberDataType.maxFractionDigits = getResultTableTreeModel().numberDataType.maxFractionDigits + adjustment
-        getResultTableTreeModel().numberDataType.minFractionDigits = getResultTableTreeModel().numberDataType.minFractionDigits + adjustment
-        refreshNodes()
-    }
-
     public void resultStructureChanged() {
         openFunctions.clear()
         super.resultStructureChanged()
@@ -120,4 +114,16 @@ class ResultViewModel extends AbstractResultViewModel {
         }
     }
 
+    @Override
+    protected void recreateAllColumns() {
+        List<IFunction> allFunctions = new ArrayList<IFunction>(getResultTableTreeModel().functions).unique()
+        allFunctions = allFunctions.subList(1, allFunctions.size()) // remove node name function
+        allFunctions = allFunctions.findAll { it != null }
+        for (IFunction function in allFunctions) {
+            removeFunction(function)
+        }
+        for (IFunction function in allFunctions) {
+            addFunction(function)
+        }
+    }
 }

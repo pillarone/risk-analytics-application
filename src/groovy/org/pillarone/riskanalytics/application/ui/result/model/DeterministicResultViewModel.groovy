@@ -50,5 +50,8 @@ class DeterministicResultViewModel extends AbstractResultViewModel {
         return results
     }
 
-
+    @Override
+    protected void recreateAllColumns() {
+        //TODO
+    }
 }

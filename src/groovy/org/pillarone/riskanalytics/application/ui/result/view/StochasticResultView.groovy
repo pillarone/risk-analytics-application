@@ -58,8 +58,6 @@ class StochasticResultView extends ResultView {
 
         menu = new ULCPopupMenu()
         tree.viewPortTableTree.tableTreeHeader.componentPopupMenu = menu
-        // add default function to menu
-        menu.add(new ULCMenuItem(new RemoveFunctionAction(model, meanFunction, meanButton)))
     }
 
 

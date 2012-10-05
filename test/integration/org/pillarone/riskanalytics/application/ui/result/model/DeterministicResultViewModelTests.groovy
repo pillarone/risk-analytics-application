@@ -81,7 +81,7 @@ class DeterministicResultViewModelTests extends GroovyTestCase {
 
         Model model = new DeterministicApplicationModel()
 
-        ResultViewModel resultViewModel = new DeterministicResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
+        AbstractResultViewModel resultViewModel = new DeterministicResultViewModel(model, ModelStructure.getStructureForModel(model.class), simulation)
         assertEquals 2, resultViewModel.builder.allPaths.size()
         assertTrue resultViewModel.builder.allPaths.keySet().contains(path1.pathName + ":" + field.fieldName)
         assertTrue resultViewModel.builder.allPaths.keySet().contains(path2.pathName + ":" + field.fieldName)
