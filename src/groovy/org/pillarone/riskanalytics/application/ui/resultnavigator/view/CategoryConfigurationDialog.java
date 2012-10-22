@@ -123,8 +123,10 @@ public class CategoryConfigurationDialog extends ULCDialog {
         });
 
         // prepare the initial view - selected category in the list and associated resolver tree
-        String selectedCategory = categoryMapping.getCategories().get(0);
-        showCategoryResolverTree(selectedCategory);
+        if (!categoryMapping.getCategories().isEmpty()) {
+            String selectedCategory = categoryMapping.getCategories().get(0);
+            showCategoryResolverTree(selectedCategory);
+        }
     }
 
     /**

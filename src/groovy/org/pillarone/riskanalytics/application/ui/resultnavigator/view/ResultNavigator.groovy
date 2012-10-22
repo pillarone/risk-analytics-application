@@ -121,7 +121,7 @@ class ResultNavigator extends AbstractBean {
             public void actionPerformed(ActionEvent event) {
                 ULCComboBox source = (ULCComboBox)event.getSource()
                 String modelShortName = source.getSelectedItem()
-                simulationRunsModel.setSelectedModelShortName(modelShortName);
+                simulationRunsModel.setSelectedModel(modelShortName);
                 IComboBoxModel cbModel = simulationRunsModel.getSimulationRunsComboBoxModel()
                 simulationRunSelector.setModel(cbModel);
             }
