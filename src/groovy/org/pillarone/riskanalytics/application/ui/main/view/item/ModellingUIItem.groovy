@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedLis
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import com.ulcjava.base.application.ULCWindow
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -137,8 +138,11 @@ abstract class ModellingUIItem extends AbstractUIItem {
             ModellingItem newItem = ModellingItemFactory.copyItem(modellingUIItem.item, name)
             newItem.id = null
             mainModel.fireModelChanged()
-            Model modelInstance = newItem?.modelClass?.newInstance()
-            modelInstance?.init()
+            Model modelInstance = modellingUIItem.model
+            if (!(newItem instanceof Resource)) { //re-create model (PMO-1961) - do nothing if it's a resource
+                modelInstance = newItem?.modelClass?.newInstance()
+                modelInstance?.init()
+            }
             navigationTableTreeModel.addNodeForItem(UIItemFactory.createItem(newItem, modelInstance, mainModel))
         }
     }
