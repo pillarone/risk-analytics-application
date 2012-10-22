@@ -275,6 +275,8 @@ public class I18NUtils {
         if (!text) {
             text = toLines(exception, 70)
         }
+        text = text.replaceAll("<","&lt;")
+        text = text.replaceAll(">","&gt;")
         return HTMLUtilities.convertToHtml(text)
     }
 
