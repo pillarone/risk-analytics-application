@@ -192,18 +192,20 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * If no user defined seed is set, a random one will be calculated and used.
      */
     Simulation getSimulation() {
-        String name = simulationName
-        if (name == null || name.trim().length() == 0) {
-            name = DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime())
-        }
-        Simulation simulation = new Simulation(name)
-        simulation.modelClass = modelClass //does also set model version number
-        simulation.comment = comment
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
         //do not always load, because params could be open and modified ("save and run")
         if (!parameterization.isLoaded()) {
             parameterization.load()
         }
+
+        String name = simulationName
+        if (name == null || name.trim().length() == 0) {
+            name = parameterization.name + " " + DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime())
+        }
+        Simulation simulation = new Simulation(name)
+        simulation.modelClass = modelClass //does also set model version number
+        simulation.comment = comment
+
         simulation.parameterization = parameterization
         ResultConfiguration configuration = resultConfigurationVersions.selectedObject as ResultConfiguration
         if (!configuration.isLoaded()) {
