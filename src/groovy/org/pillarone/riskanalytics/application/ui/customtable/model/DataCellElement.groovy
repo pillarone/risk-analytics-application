@@ -126,10 +126,14 @@ class DataCellElement extends OutputElement {
             changed = true
         }
 
+        //TODO: what's this? does not work by default, appears to be dependent on
+        // keyfigure { synonymousTo(category: "Field") } in mapping
         String new_field = categoryMapCopy["keyfigure"]
-        if (this.field != new_field) {
-            this.field = new_field
-            changed = true
+        if (new_field != null) {
+            if (this.field != new_field) {
+                this.field = new_field
+                changed = true
+            }
         }
 
         int new_period = (int)Double.parseDouble(categoryMapCopy[OutputElement.PERIOD])
