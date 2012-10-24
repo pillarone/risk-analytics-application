@@ -90,9 +90,7 @@ class DataCellElement extends OutputElement {
                     value = ResultAccessor.getMax(run, period, path, collector, field)
                     break;
                 case StatisticsKeyfigure.ITERATION:
-                    // TODO: doesn't work yet - collector as parameter?
-                    value = ResultAccessor.getSingleIterationValue(run, period, path, field, parameter.intValue())
-                    value = "#Iteration not implemented"
+                    value = ResultAccessor.getSingleIterationValue(run, period, path, field, collector, parameter.intValue())
                     break;
             }
         } catch (Exception e) {
