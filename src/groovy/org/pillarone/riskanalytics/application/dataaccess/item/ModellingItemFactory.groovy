@@ -116,31 +116,6 @@ class ModellingItemFactory {
         result.collect {getItem(it)}
     }
 
-    static List getNewestModulStructureForModel(Class modelClass) {
-        def result = []
-        def criteria = ModelStructureDAO.createCriteria()
-        def modelStructureNames = criteria.list {
-            eq('modelClassName', modelClass.name)
-            projections {
-                distinct('name')
-            }
-        }
-
-        modelStructureNames.each {
-            String name = it
-            criteria = ModelStructureDAO.createCriteria()
-            def highestVesion = criteria.list {
-                eq('modelClassName', modelClass.name)
-                eq('name', name)
-                projections {
-                    max('itemVersion')
-                }
-            }
-            result << ModelStructureDAO.findByNameAndItemVersion(name, highestVesion[0])
-        }
-        result.collect {getItem(it)}
-    }
-
     static ModellingItem createItem(String name, ConfigObject data, Class itemClass, boolean forceImport) {
 
         def item
@@ -165,18 +140,12 @@ class ModellingItemFactory {
             }
         }
 
-        def criteria = item.daoClass.createCriteria()
-        def highestVesion = criteria.get {
-            eq('modelClassName', data.model.name)
-            eq('name', name)
-            projections {
-                max('itemVersion')
-            }
-        }
-        if (highestVesion != null) {
+        String highestVersion = VersionNumber.getHighestNonWorkflowVersion(item)?.toString()
+
+        if (highestVersion != null) {
             boolean equals = false
             item.daoClass.withTransaction {status ->
-                def existingDao = item.daoClass.findByNameAndItemVersion(name, highestVesion)
+                def existingDao = item.daoClass.findByNameAndItemVersion(name, highestVersion)
                 ModellingItem existingItem = getItem(existingDao)
                 if (!existingItem.isLoaded()) {
                     existingItem.load()

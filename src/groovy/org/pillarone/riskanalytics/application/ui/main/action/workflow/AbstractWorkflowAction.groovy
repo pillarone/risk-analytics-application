@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDia
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
@@ -36,14 +37,16 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
         if (toStatus == Status.DATA_ENTRY) {
             Closure changeStatusAction = {String commentText ->
-                AbstractUIItem uiItem = getSelectedUIItem()
-                if (!uiItem.isLoaded()) {
-                    uiItem.load()
+                ExceptionSafe.protect {
+                    AbstractUIItem uiItem = getSelectedUIItem()
+                    if (!uiItem.isLoaded()) {
+                        uiItem.load()
+                    }
+                    Parameterization parameterization = changeStatus(item, toStatus)
+                    Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
+                    parameterization.addTaggedComment("v${parameterization.versionNumber}: ${commentText}", versionTag)
+                    parameterization.save()
                 }
-                Parameterization parameterization = changeStatus(item, toStatus)
-                Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
-                parameterization.addTaggedComment("v${parameterization.versionNumber}: ${commentText}", versionTag)
-                parameterization.save()
             }
             NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(changeStatusAction)
             versionCommentDialog.show()
