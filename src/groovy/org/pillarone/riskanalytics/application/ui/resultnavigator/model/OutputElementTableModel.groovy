@@ -43,6 +43,9 @@ class OutputElementTableModel extends AbstractTableModel implements ICategoryCha
         this.categoryMapping = categoryMapping
         addCategory(OutputElement.PATH)
         addCategory(OutputElement.FIELD)
+        if (elements*.collector.unique().size() > 1) {
+            addCategory(OutputElement.COLLECTOR)
+        }
         for (String category : categoryMapping.categories) {
             addCategory(category)
         }
@@ -79,7 +82,7 @@ class OutputElementTableModel extends AbstractTableModel implements ICategoryCha
     Class getColumnClass(int col) {
         return String.class
     }
-    
+
     Object getValueAt(int rowIndex, int columnIndex) {
         OutputElement element = allElements.get(rowIndex)
         String columnName = getColumnName(columnIndex)
