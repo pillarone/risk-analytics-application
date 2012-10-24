@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.hibernate.validator.InvalidStateException
 import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -123,7 +124,8 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     public ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
         ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false)
-        addComment(selectedModel, newItem, commentText, openNewVersion)
+        VersionNumber newVersion = newItem.item.versionNumber
+        addComment(selectedModel, newItem, "v${newVersion}: ${commentText}", openNewVersion)
         return newItem
     }
 

@@ -42,7 +42,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
                 }
                 Parameterization parameterization = changeStatus(item, toStatus)
                 Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
-                parameterization.addTaggedComment(commentText, versionTag)
+                parameterization.addTaggedComment("v${parameterization.versionNumber}: ${commentText}", versionTag)
                 parameterization.save()
             }
             NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(changeStatusAction)
