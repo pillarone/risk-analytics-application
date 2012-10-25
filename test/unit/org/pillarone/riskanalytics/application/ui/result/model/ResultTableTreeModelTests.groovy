@@ -70,6 +70,28 @@ class ResultTableTreeModelTests extends GroovyTestCase {
         Parameterization parameterization = new Parameterization("name")
         parameterization.modelClass = ExtendedCoreModel
         parameterization.periodCount = 3
+        parameterization.periodLabels = ["2009-01-02", "2010-01-02", "2011-01-02"]
+
+        SimpleTableTreeNode root = new SimpleTableTreeNode("root")
+        SimpleTableTreeNode child = new SimpleTableTreeNode("child")
+        SimpleTableTreeNode grandChild = new SimpleTableTreeNode("grandChild")
+        root.add(child)
+        child.add(grandChild)
+        stub.use {
+            ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new ExtendedCoreModel())
+            addMeanFunction(model)
+            assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
+            assertEquals "Wrong columnName for col 1", "Mean Jan 02, 2009", model.getColumnName(1)
+            assertEquals "Wrong columnName for col 2", "Mean Jan 02, 2010", model.getColumnName(2)
+            assertEquals "Wrong columnName for col 3", "Mean Jan 02, 2011", model.getColumnName(3)
+        }
+
+    }
+
+    void testPeriodCounterLabelsFirstOfJanuary() {
+        Parameterization parameterization = new Parameterization("name")
+        parameterization.modelClass = ExtendedCoreModel
+        parameterization.periodCount = 3
         parameterization.periodLabels = ["2009-01-01", "2010-01-01", "2011-01-01"]
 
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
@@ -81,9 +103,9 @@ class ResultTableTreeModelTests extends GroovyTestCase {
             ResultTableTreeModel model = new ResultTableTreeModel(root, new SimulationRun(name: "testRun", periodCount: 3), parameterization, new ExtendedCoreModel())
             addMeanFunction(model)
             assertEquals "Wrong columnName for col 0", "Name", model.getColumnName(0)
-            assertEquals "Wrong columnName for col 1", "Mean Jan 01, 2009", model.getColumnName(1)
-            assertEquals "Wrong columnName for col 2", "Mean Jan 01, 2010", model.getColumnName(2)
-            assertEquals "Wrong columnName for col 3", "Mean Jan 01, 2011", model.getColumnName(3)
+            assertEquals "Wrong columnName for col 1", "Mean 2009", model.getColumnName(1)
+            assertEquals "Wrong columnName for col 2", "Mean 2010", model.getColumnName(2)
+            assertEquals "Wrong columnName for col 3", "Mean 2011", model.getColumnName(3)
         }
 
     }

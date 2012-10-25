@@ -199,19 +199,4 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNull(parameterization.parameterHolders.find { it.path == "newPath" })
     }
 
-    void testGetNewestModelStructure() {
-        ModelStructureDAO dao = ModelStructureDAO.list()[0]
-        ModelStructure modelStructure = ModellingItemFactory.getModelStructure(dao)
-        assertNotNull modelStructure
-        modelStructure.load()
-
-        ModelStructure newVersion = ModellingItemFactory.incrementVersion(modelStructure)
-        newVersion.load()
-
-        List newParams = ModellingItemFactory.getNewestModulStructureForModel(modelStructure.modelClass)
-        assertEquals 1, newParams.size()
-        newParams.each {it.load()}
-        assertTrue newParams.contains(newVersion)
-        assertFalse newParams.contains(modelStructure)
-    }
 }
