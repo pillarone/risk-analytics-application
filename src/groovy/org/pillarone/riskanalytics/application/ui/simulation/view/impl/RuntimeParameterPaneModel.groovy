@@ -22,7 +22,7 @@ class RuntimeParameterPaneModel {
         RuntimeParameterCollector parameterCollector = new RuntimeParameterCollector()
         model.accept(parameterCollector)
 
-        runtimeParameters = parameterCollector.runtimeParameters.toList()
+        runtimeParameters = parameterCollector.runtimeParameters.sort { it.propertyName }.toList()
     }
 
     boolean hasRuntimeParameters() {

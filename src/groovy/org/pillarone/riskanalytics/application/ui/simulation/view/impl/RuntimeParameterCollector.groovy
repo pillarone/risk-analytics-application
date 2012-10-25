@@ -12,12 +12,16 @@ import org.pillarone.riskanalytics.core.parameterization.IParameterObject
 import org.pillarone.riskanalytics.core.util.GroovyUtils
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.components.IResource
+import org.pillarone.riskanalytics.core.output.PacketCollector
 
 class RuntimeParameterCollector implements IModelVisitor {
 
     Set<RuntimeParameterDescriptor> runtimeParameters = new HashSet<RuntimeParameterDescriptor>()
 
     void visitModel(Model model) {
+        //this visitor is used when no collectors are attached, but we need to catch runtime params in PacketCollector
+        //we make the call here because visitModel is called only once.
+        visitComponent(new PacketCollector(), null)
     }
 
     void visitComponent(Component component, ModelPath path) {
@@ -28,7 +32,7 @@ class RuntimeParameterCollector implements IModelVisitor {
                 if (propertyValue == null) {
                     throw new IllegalStateException("Runtime parameter ${component.class.name}.${propertyName} must have a default value")
                 }
-                runtimeParameters << new RuntimeParameterDescriptor(propertyName: propertyName, typeClass: propertyValue.class, value: propertyValue)
+                addDescriptor(new RuntimeParameterDescriptor(propertyName: propertyName, typeClass: propertyValue.class, value: propertyValue))
             }
         }
         if (component instanceof DynamicComposedComponent) {
@@ -49,8 +53,18 @@ class RuntimeParameterCollector implements IModelVisitor {
                 if (propertyValue == null) {
                     throw new IllegalStateException("Runtime parameter ${resource.class.name}.${propertyName} must have a default value")
                 }
-                runtimeParameters << new RuntimeParameterDescriptor(propertyName: propertyName, typeClass: propertyValue.class, value: propertyValue)
+                addDescriptor(new RuntimeParameterDescriptor(propertyName: propertyName, typeClass: propertyValue.class, value: propertyValue))
             }
+        }
+    }
+
+    private void addDescriptor(RuntimeParameterDescriptor descriptor) {
+        if (!runtimeParameters.contains(descriptor)) {
+            RuntimeParameterDescriptor existing = runtimeParameters.find { it.propertyName == descriptor.propertyName}
+            if (existing != null) {
+                throw new IllegalStateException("Ambiguous runtime parameter ${descriptor.propertyName}: ${descriptor.typeClass.simpleName} and ${existing.typeClass.simpleName}")
+            }
+            runtimeParameters << descriptor
         }
     }
 
