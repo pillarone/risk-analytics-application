@@ -16,9 +16,13 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 
 
-abstract class AbstractParametrizedViewModel extends AbstractCommentableItemModel {
+abstract class AbstractParametrizedViewModel extends AbstractCommentableItemModel implements IParametrizedItemListener {
 
     AbstractParametrizedTableTreeModel paramterTableTreeModel
     PropertiesViewModel propertiesViewModel
@@ -26,7 +30,7 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
     List<ParameterValidation> validationErrors = []
     RiskAnalyticsMainModel mainModel
 
-    AbstractParametrizedViewModel(Model model, ModellingItem item, ModelStructure modelStructure) {
+    AbstractParametrizedViewModel(Model model, ParametrizedItem item, ModelStructure modelStructure) {
         super(model, item, modelStructure)
         propertiesViewModel = new PropertiesViewModel(item)
 
@@ -49,6 +53,10 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
         return new SaveAction(parent, mainModel, mainModel?.getAbstractUIItem(item))
+    }
+
+    ParametrizedItem getParametrizedItem() {
+        return item as ParametrizedItem
     }
 
     SimpleTableTreeNode findNodeForPath(String path) {
@@ -97,5 +105,41 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
 
     ITableTreeModel getTableTreeModel() {
         return paramterTableTreeModel
+    }
+
+    @Override
+    void componentAdded(String path, Component component) {
+        getActualTableTreeModel().componentAdded(path, component)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    @Override
+    void componentRemoved(String path) {
+        getActualTableTreeModel().componentRemoved(path)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    @Override
+    void parameterValuesChanged(List<String> paths) {
+        getActualTableTreeModel().parameterValuesChanged(paths)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    @Override
+    void classifierChanged(String path) {
+        getActualTableTreeModel().classifierChanged(path)
+        changedCommentListeners*.updateCommentVisualization()
+    }
+
+    protected AbstractParametrizedTableTreeModel getActualTableTreeModel() {
+        ITableTreeModel model = treeModel
+        if (model instanceof FilteringTableTreeModel) {
+            model = model.model
+        }
+        if (model instanceof AbstractParametrizedTableTreeModel) {
+            return model
+        }
+
+        throw new IllegalStateException("Table model not found.")
     }
 }

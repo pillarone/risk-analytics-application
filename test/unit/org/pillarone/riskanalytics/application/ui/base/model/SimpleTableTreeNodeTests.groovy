@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 import org.pillarone.riskanalytics.core.components.ComponentUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
 class SimpleTableTreeNodeTests extends GroovyTestCase {
 
@@ -41,8 +43,14 @@ class SimpleTableTreeNodeTests extends GroovyTestCase {
         assertEquals(ComponentUtils.getNormalizedName("testNode"), node.getValueAt(0))
         assertEquals("", node.getValueAt(1))
 
-        node.add(ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("component:parm1", 0, "value1")], null))
-        node.add(ParameterizationNodeFactory.getNode([ParameterHolderFactory.getHolder("component:parm2", 0, "value2")], null))
+        ParameterHolder holder1 = ParameterHolderFactory.getHolder("component:parm1", 0, "value1")
+        ParameterHolder holder2 = ParameterHolderFactory.getHolder("component:parm2", 0, "value2")
+        Parameterization parameterization = new Parameterization("")
+        parameterization.addParameter(holder1)
+        parameterization.addParameter(holder2)
+
+        node.add(ParameterizationNodeFactory.getNode(holder1.path, parameterization, null))
+        node.add(ParameterizationNodeFactory.getNode(holder2.path, parameterization, null))
 
         assertEquals("value1 value2", node.getValueAt(1))
 

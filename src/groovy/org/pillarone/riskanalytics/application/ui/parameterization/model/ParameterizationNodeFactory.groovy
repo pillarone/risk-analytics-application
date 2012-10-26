@@ -1,170 +1,156 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.apache.commons.lang.builder.EqualsBuilder
+import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.*
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.apache.commons.lang.builder.EqualsBuilder
 
 class ParameterizationNodeFactory {
     static final Logger LOG = Logger.getLogger(ParameterizationNodeFactory)
 
-    public static ParameterizationTableTreeNode getNode(List parameters, Model simulationModel) {
-        ParameterHolder param = parameters.find {it != null}
+    public static ParameterizationTableTreeNode getNode(String path, ParametrizedItem item, Model simulationModel) {
+        ParameterHolder param = item.getParameterHoldersForAllPeriods(path)[0]
         switch (param.getClass()) {
             case IntegerParameterHolder:
-                return createIntegerNode(parameters)
+                return createIntegerNode(path, item)
             case DoubleParameterHolder:
-                return createDoubleNode(parameters)
+                return createDoubleNode(path, item)
             case StringParameterHolder:
-                return createStringNode(parameters)
+                return createStringNode(path, item)
             case ConstrainedStringParameterHolder:
-                return createStringNode(parameters, simulationModel)
+                return createStringNode(path, item, simulationModel)
             case EnumParameterHolder:
-                return createEnumNode(parameters)
+                return createEnumNode(path, item)
             case ParameterObjectParameterHolder:
-                return createParamaterObjectNode(parameters, simulationModel)
+                return createParamaterObjectNode(path, item, simulationModel)
             case MultiDimensionalParameterHolder:
-                return createMultiDimensionalParameterNode(parameters, simulationModel)
+                return createMultiDimensionalParameterNode(path, item, simulationModel)
             case DateParameterHolder:
-                return createDateNode(parameters)
+                return createDateNode(path, item)
             case BooleanParameterHolder:
-                return createBooleanNode(parameters)
+                return createBooleanNode(path, item)
             case ResourceParameterHolder:
-                return createResourceNode(parameters)
+                return createResourceNode(path, item)
             default:
-                throw new RuntimeException("Unknown paramter type: ${parameters[0].class}")
+                throw new RuntimeException("Unknown paramter type: ${param?.class}")
         }
     }
 
 
-    private static ParameterizationTableTreeNode createIntegerNode(List parameters) {
-        return new IntegerTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createIntegerNode(String path, ParametrizedItem item) {
+        return new IntegerTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createDoubleNode(List parameters) {
-        return new DoubleTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createDoubleNode(String path, ParametrizedItem item) {
+        return new DoubleTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createBooleanNode(List parameters) {
-        return new BooleanTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createBooleanNode(String path, ParametrizedItem item) {
+        return new BooleanTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createStringNode(List parameters) {
-        return new SimpleValueParameterizationTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createStringNode(String path, ParametrizedItem item) {
+        return new SimpleValueParameterizationTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createResourceNode(List parameters) {
-        return new ResourceParameterizationTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createResourceNode(String path, ParametrizedItem item) {
+        return new ResourceParameterizationTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createStringNode(List parameters, Model model) {
-        return new ConstrainedStringParameterizationTableTreeNode(parameters, model)
+    private static ParameterizationTableTreeNode createStringNode(String path, ParametrizedItem item, Model model) {
+        return new ConstrainedStringParameterizationTableTreeNode(path, item, model)
     }
 
-    private static ParameterizationTableTreeNode createDateNode(List parameters) {
-        return new DateParameterizationTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createDateNode(String path, ParametrizedItem item) {
+        return new DateParameterizationTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createEnumNode(List parameters) {
-        return new EnumParameterizationTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createEnumNode(String path, ParametrizedItem item) {
+        return new EnumParameterizationTableTreeNode(path, item)
     }
 
-    private static ParameterizationTableTreeNode createParamaterObjectNode(List parameters, Model simulationModel) {
-        ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(parameters)
+    private static ParameterizationTableTreeNode createParamaterObjectNode(String path, ParametrizedItem item, Model simulationModel) {
+        ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(path, item)
 
-        node.add(new ParameterizationClassifierTableTreeNode(parameters, simulationModel))
+        node.add(new ParameterizationClassifierTableTreeNode(path, item, simulationModel))
 
         List parameterOrder = []
-        for (IParameterObjectClassifier type in parameters?.classifier) {
+        List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
+        for (IParameterObjectClassifier type in parameterHolders*.classifier) {
             if (type != null) {
                 parameterOrder.addAll(type.parameterNames)
             }
         }
 
-        Map<StringClassKey, List<ParameterHolder>> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
+        Map<StringClassKey, String> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
 
-        parameters.each {ParameterObjectParameterHolder p ->
+        parameterHolders.each {ParameterObjectParameterHolder p ->
             if (p != null) {
-                p.classifierParameters.each {Map.Entry entry ->
+                p.classifierParameters.each {Map.Entry<String, ParameterHolder> entry ->
                     final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
-                    List params = parameterEntries.get(key)
-                    if (params == null) {
-                        params = new ArrayList()
-                        parameters.size().times { params.add(null) }
-                        parameterEntries.put(key, params)
+                    if (!parameterEntries.containsKey(key)) {
+                        parameterEntries.put(key, entry.key)
                     }
-                    params.set(p.periodIndex, entry.value)
                 }
             }
         }
 
-        parameterEntries.values().each {List entry ->
-            node.add(getNode(entry, simulationModel))
+        parameterEntries.values().each {String entry ->
+            node.add(getNode("${path}:${entry}", item, simulationModel)) //TODO: same name / different tyoe doesn't work anymore
         }
         return node
     }
 
-    private static ParameterizationTableTreeNode createMultiDimensionalParameterNode(List parameters, Model simulationModel) {
-        return new MultiDimensionalParameterizationTableTreeNode(parameters, simulationModel)
+    private static ParameterizationTableTreeNode createMultiDimensionalParameterNode(String path, ParametrizedItem item, Model simulationModel) {
+        return new MultiDimensionalParameterizationTableTreeNode(path, item, simulationModel)
     }
 
-    public static ITableTreeNode getCompareParameterizationTableTreeNode(Map parametersMap, Model model, int size) {
-        if (ParameterizationUtilities.isParameterObjectParameter(parametersMap)) {
-            return createCompareParamaterObjectNode(parametersMap, model, size)
+    public static ITableTreeNode getCompareParameterizationTableTreeNode(String path, List<ParametrizedItem> items, Model model, int size) {
+        if (ParameterizationUtilities.isParameterObjectParameter(path, items)) {
+            return createCompareParamaterObjectNode(path, items, size, model)
         } else {
-            List parameters = ParameterizationUtilities.getParameterList(parametersMap)
-            ParameterizationTableTreeNode pTTN = getNode(parameters, model)
-            CompareParameterizationTableTreeNode cPTTN = new CompareParameterizationTableTreeNode(pTTN, parametersMap, size)
-            return cPTTN
+            return new CompareParameterizationTableTreeNode(path, items, size)
         }
     }
 
-    private static ParameterizationTableTreeNode createCompareParamaterObjectNode(Map parametersMap, Model simulationModel, int size) {
-        ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(ParameterizationUtilities.getParameterList(parametersMap))
-        node.add(new CompareParameterizationClassifierTableTreeNode(parametersMap, size, simulationModel))
+    private static ParameterizationTableTreeNode createCompareParamaterObjectNode(String path, List<ParametrizedItem> items, int size, Model model) {
+        ParameterizationTableTreeNode node = new ParameterObjectParameterTableTreeNode(path, items[0])
+        node.add(new CompareParameterizationClassifierTableTreeNode(path, items, size, model))
 
         List parameterOrder = []
-        parametersMap.each {k, parameters ->
-            for (IParameterObjectClassifier type in parameters?.classifier) {
+        for (ParametrizedItem item in items) {
+            List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
+            for (IParameterObjectClassifier type in parameterHolders*.classifier) {
                 if (type != null) {
                     parameterOrder.addAll(type.parameterNames)
                 }
             }
         }
 
+        Map<StringClassKey, String> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
 
-        Map<StringClassKey, List<ParameterHolder>> parameterEntries = null
-        Map objectsMap = [:]
-        parametersMap.each {k, List parameters ->
-            parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
-            parameters.each {ParameterObjectParameterHolder p ->
+        for (ParametrizedItem item in items) {
+            List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
+            parameterHolders.each {ParameterObjectParameterHolder p ->
                 if (p != null) {
-                    p.classifierParameters.each {Map.Entry entry ->
+                    p.classifierParameters.each {Map.Entry<String, ParameterHolder> entry ->
                         final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
-                        List params = parameterEntries.get(key)
-                        if (params == null) {
-                            params = new ArrayList()
-                            parameters.size().times { params.add(null) }
-                            parameterEntries.put(key, params)
+                        if (!parameterEntries.containsKey(key)) {
+                            parameterEntries.put(key, entry.key)
                         }
-                        params.set(p.periodIndex, entry.value)
-
-                        Map indexMap = objectsMap.get(key)
-                        if (indexMap == null)
-                            indexMap = [:]
-                        indexMap[k] = params
-                        objectsMap[key] = indexMap
                     }
                 }
             }
         }
 
-        objectsMap.each {k, v ->
-            node.add(getCompareParameterizationTableTreeNode(v, simulationModel, size))
+        parameterEntries.values().each {String entry ->
+            node.add(getCompareParameterizationTableTreeNode("${path}:${entry}", items, model, size)) //TODO: same name / different tyoe doesn't work anymore
         }
+
         return node
     }
 

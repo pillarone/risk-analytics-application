@@ -1,18 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import java.lang.reflect.Field
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.core.components.DynamicMultiPhaseComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+
+import java.lang.reflect.Field
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 
 class ParameterizationTreeBuilder {
 
@@ -147,29 +147,14 @@ class ParameterizationTreeBuilder {
             if (name.startsWith('sub')) {
                 addParameterValueNodes(componentNodes[value])
             } else if (name.startsWith('parm')) {
-                def cNodePath = getPathValue("${componentNode.path}:$name".toString())
-                List p = item.getParameters(cNodePath)
-                if (!p.empty) {
-                    componentNode.add(ParameterizationNodeFactory.getNode(p, model))
+                String path = ComponentUtils.removeModelFromPath("${componentNode.path}:$name".toString(), model)
+                if (item.hasParameterAtPath(path)) {
+                    componentNode.add(ParameterizationNodeFactory.getNode(path, item, model))
                 } else {
-                    //new dynamic subcomponent
-                    List parameters = []
-                    periodCount.times {int periodIndex ->
-                        if (value instanceof Cloneable) value = value.clone()
-                        ParameterHolder holder = ParameterHolderFactory.getHolder("${buildParameterPath(componentNode)}:$name", periodIndex, value)
-                        item.addParameter(holder)
-                        parameters << holder
-                    }
-                    componentNode.add(ParameterizationNodeFactory.getNode(parameters, model))
+                    throw new IllegalArgumentException("No parameter found at $path")
                 }
             }
         }
-    }
-
-    String getPathValue(String path) {
-        if (path && path.startsWith(model.name))
-            return path.substring(model.name.length() + 1)
-        return path
     }
 
     private String buildParameterPath(ComponentTableTreeNode node) {
@@ -188,7 +173,7 @@ class ParameterizationTreeBuilder {
         node.childCount.times {
             def subNode = node.getChildAt(it)
             if (subNode instanceof ParameterizationTableTreeNode) {
-                subNode.parameter.each {
+                subNode.parametrizedItem.getParameterHoldersForAllPeriods(subNode.parameterPath).each {
                     item.removeParameter(it)
                 }
                 return
@@ -258,33 +243,14 @@ class CompareParameterizationTreeBuilder extends ParameterizationTreeBuilder {
         props.putAll(componentNode.component.properties)
         props.each {name, value ->
             if (name.startsWith('sub')) {
-                def nodevalue = componentNodes[value]
-                addParameterValueNodes(nodevalue)
+                addParameterValueNodes(componentNodes[value])
             } else if (name.startsWith('parm')) {
-                Map parametersMap;
-                def node
-                try {
-                    parametersMap = getParametersList(componentNode, name)
-                    node = getNode(parametersMap)
-                    componentNode.add(node)
-                } catch (Exception ex) {}
+                String path = ComponentUtils.removeModelFromPath("${componentNode.path}:$name".toString(), model)
+                if (parameterizations.any {it.hasParameterAtPath(path) }) {
+                    componentNode.add(ParameterizationNodeFactory.getCompareParameterizationTableTreeNode(path, parameterizations, model, parameterizations.size()))
+                }
             }
         }
-    }
-
-
-
-    private Map getParametersList(componentNode, name) {
-        Map parametersMap = [:]
-        parameterizations.eachWithIndex {it, int index ->
-            List list = it.getParameters("${componentNode.path}:$name".toString())
-            parametersMap.put(index, list)
-        }
-        return parametersMap
-    }
-
-    private ITableTreeNode getNode(Map parametersMap) {
-        return ParameterizationNodeFactory.getCompareParameterizationTableTreeNode(parametersMap, model, parameterizations.size())
     }
 
     protected List getItemsParameters(String componentPath) {

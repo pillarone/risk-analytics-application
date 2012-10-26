@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeN
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.apache.commons.lang.StringUtils
+import org.pillarone.riskanalytics.core.model.Model
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -31,12 +32,19 @@ class ComponentUtils {
         return name
     }
 
+    public static String removeModelFromPath(String path, Model model) {
+        if (path != null && path.startsWith(model.name)) {
+            return path.substring(model.name.length() + 1)
+        }
+        return path
+    }
+
     public static List<SimpleTableTreeNode> intersection(List<List<SimpleTableTreeNode>> setAs) {
         List<SimpleTableTreeNode> tmp = []
-        for (List<SimpleTableTreeNode> setA: setAs) {
-            for (SimpleTableTreeNode x: setA) {
+        for (List<SimpleTableTreeNode> setA : setAs) {
+            for (SimpleTableTreeNode x : setA) {
                 boolean add = true;
-                for (List<SimpleTableTreeNode> setB: setAs) {
+                for (List<SimpleTableTreeNode> setB : setAs) {
                     if (!setB.contains(x) || setB.indexOf(x) != setA.indexOf(x)) {
                         add = false;
                     }

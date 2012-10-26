@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 /**
@@ -9,18 +10,14 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
 
     ParameterizationTableTreeNode parameterizationTableTreeNode
 
-    Map<Integer, List<ParameterHolder>> parametersMap = [:]
-    int columnsCount
+    List<ParametrizedItem> itemsToCompare = []
+    private int columnCount
 
-    public CompareParameterizationTableTreeNode(parameter) {
-        super(parameter);
-    }
-
-    public CompareParameterizationTableTreeNode(parameterizationTableTreeNode, Map parametersMap, int columnsCount) {
-        super(parameterizationTableTreeNode.parameter)
-        this.parameterizationTableTreeNode = parameterizationTableTreeNode;
-        this.parametersMap = parametersMap
-        this.columnsCount = columnsCount
+    public CompareParameterizationTableTreeNode(String path, List<ParametrizedItem> items, int columnCount) {
+        super(path, items[0])
+        this.itemsToCompare = items
+        this.parameterizationTableTreeNode = ParameterizationNodeFactory.getNode(path, items.find { !it.getParameterHoldersForAllPeriods(path).empty }, null)
+        this.columnCount = columnCount
     }
 
     boolean isCellEditable(int i) {
@@ -28,43 +25,39 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
     }
 
     public void setValueAt(Object o, int i) {
-        parameterizationTableTreeNode.setValueAt(o, i)
     }
 
+    @Override
     Object getExpandedCellValue(int column) {
-        try {
-            parameterizationTableTreeNode.parameter = (List) this.parametersMap.get(getParameterizationIndex(column))
-
-            return parameterizationTableTreeNode.getExpandedCellValue(getPeriodIndex(column) + 1)
-        } catch (Exception ex) {
-            return ""
+        if (itemsToCompare[getParameterizationIndex(column)].hasParameterAtPath(parameterPath, getPeriodIndex(column))) {
+            return doGetExpandedCellValue(column)
         }
+        return null
+    }
 
+    Object doGetExpandedCellValue(int column) {
+        parameterizationTableTreeNode.parametrizedItem = itemsToCompare[getParameterizationIndex(column)]
+        return parameterizationTableTreeNode.getExpandedCellValue(getPeriodIndex(column) + 1)
     }
 
     int getParameterizationIndex(int column) {
         if (column == 0)
             return 0
-        return (column - 1) % columnsCount
+        return (column - 1) % columnCount
     }
 
     int getPeriodIndex(int column) {
         if (column == 0)
             return 0
-        return (column - 1) / columnsCount
+        return (column - 1) / columnCount
     }
 
     ParameterHolder getParameterHolder(int column) {
-        final List<ParameterHolder> periodList = parametersMap[getParameterizationIndex(column)]
-        if(periodList == null) {
+        final List<ParameterHolder> periodList = itemsToCompare[getParameterizationIndex(column)].getParameterHoldersForAllPeriods(parameterPath)
+        if (periodList == null) {
             return null
         }
         return periodList[getPeriodIndex(column)]
-    }
-
-
-    public static String getNodeName(List parameter) {
-        return ParameterizationTableTreeNode.getNodeName(parameter)
     }
 
     public String getDisplayName() {

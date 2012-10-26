@@ -16,6 +16,7 @@ import com.ulcjava.base.application.table.ITableModel
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalParameterTableCompareRenderer
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFiller
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 
 class MultiDimensionalParameterCompareView {
 
@@ -111,8 +112,12 @@ class MultiDimensionalParameterCompareView {
 
     protected void layoutComponents() {
 
-        for (Parameterization parameterization in model.parameterizations) {
-            content.add(new ULCLabel(parameterization.toString() + " " + parameterization.getPeriodLabel(model.periodIndex)))
+        for (ParametrizedItem parametrizedItem in model.parametrizedItems) {
+            if (parametrizedItem instanceof Parameterization) {
+                content.add(new ULCLabel(parametrizedItem.toString() + " " + parametrizedItem.getPeriodLabel(model.periodIndex)))
+            } else {
+                content.add(new ULCLabel(parametrizedItem.toString()))
+            }
         }
 
         final ULCScrollPane scrollPane = new ULCScrollPane(referenceTable)

@@ -49,5 +49,4 @@ abstract class AbstractCommentAction extends ResourceBasedAction {
 
     abstract void executeAction(String path, int periodIndex, String displayPath)
 
-    ;
 }

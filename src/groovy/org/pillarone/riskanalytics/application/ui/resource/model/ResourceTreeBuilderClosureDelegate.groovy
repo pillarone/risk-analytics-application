@@ -80,7 +80,7 @@ class ResourceTreeBuilderClosureDelegate {
                 buildTree(newNode, entry.value, entry.key)
             }
         } else {
-            currentNode.insert(ParameterizationNodeFactory.getNode(item.getParameters(node.name), new ResourceModelAdapter(resourceInstance)), currentNode.childCount)
+            currentNode.insert(ParameterizationNodeFactory.getNode(node.name, item, new ResourceModelAdapter(resourceInstance)), currentNode.childCount)
         }
     }
 }

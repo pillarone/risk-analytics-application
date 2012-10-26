@@ -1,30 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.util.ULCIcon
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.hibernate.validator.InvalidStateException
-import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.core.workflow.Status
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -37,15 +30,26 @@ class ParameterizationUIItem extends ModellingUIItem {
         super(model, simulationModel, parameterization)
     }
 
+    @Override
+    void close() {
+        ParameterViewModel viewModel = mainModel.viewModelsInUse[this]
+        Parameterization parameterization = item
+        parameterization.removeListener(viewModel)
+        super.close()
+    }
+
     ULCContainer createDetailView() {
         ParameterView view = new ParameterView(getViewModel())
         return view.content
     }
 
     AbstractModellingModel getViewModel() {
-        ParameterViewModel model = new ParameterViewModel(this.model, (Parameterization) item, ModelStructure.getStructureForModel(this.model.class))
+        Parameterization parameterization = (Parameterization) item
+        ParameterViewModel model = new ParameterViewModel(this.model, parameterization, ModelStructure.getStructureForModel(this.model.class))
         model.mainModel = mainModel
         mainModel.registerModel(this, model)
+
+        parameterization.addListener(model)
         return model
     }
 
@@ -56,52 +60,9 @@ class ParameterizationUIItem extends ModellingUIItem {
             AbstractModellingModel viewModel = mainModel.getViewModel(modellingUIItem)
             if (viewModel != null) {
                 viewModel.removeInvisibleComments()
-
-                //consistency check
-
-                List<ParameterHolder> parameters = item.parameters.clone()
-                parameters = parameters.findAll { !it.removed }
-                List<ParameterHolder> uiParameters = []
-                collectParameters(viewModel.treeModel.root, uiParameters)
-                boolean error = false
-
-                for (ParameterHolder holder in uiParameters) {
-                    ParameterHolder parameterHolder = parameters.find { it.path == holder.path && it.periodIndex == holder.periodIndex}
-                    if (parameterHolder == null) {
-                        error = true
-                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} exists in the UI but not in the parameterization to be saved!")
-                    } else if (!(holder.is(parameterHolder))) {
-                        error = true
-                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} has different instances in the UI and parameterization to be saved!")
-                    } else {
-                        parameters.remove(parameterHolder)
-                    }
-                }
-
-                if(!parameters.empty) {
-                    for(ParameterHolder holder in parameters) {
-                        error = true
-                        LOG.error("Parameter ${holder.path} P${holder.periodIndex} exists in the parameterization to be saved, but not in the UI!")
-                    }
-                }
-
-                if (error) {
-                    throw new RiskAnalyticsInconsistencyException("Parameters in the UI and the parameterization are different.")
-                }
             }
         }
         super.save()
-    }
-
-    private void collectParameters(ITableTreeNode node, List<ParameterHolder> list) {
-        for (int i = 0; i < node.childCount; i++) {
-            ITableTreeNode child = node.getChildAt(i)
-            if (child instanceof ParameterizationTableTreeNode) {
-                list.addAll(child.parameter)
-            } else {
-                collectParameters(child, list)
-            }
-        }
     }
 
     @Override

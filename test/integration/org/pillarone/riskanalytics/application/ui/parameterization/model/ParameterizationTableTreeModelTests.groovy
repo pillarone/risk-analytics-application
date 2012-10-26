@@ -117,7 +117,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
-        def oldParameter = parameterObjectNode.parameter.get(0)
+        def oldParameter = parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 5, parameterObjectNode.childCount
         def classifierNode = parameterObjectNode.getChildAt(0)
         assertEquals 'type', classifierNode.displayName
@@ -127,7 +127,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         tableModel.setValueAt('TYPE1', classifierNode, 1)
 
         assertEquals 3, parameterObjectNode.childCount
-        assertTrue parameterObjectNode.parameter.contains(oldParameter)
+        assertTrue parameterization.parameterHolders.contains(oldParameter)
 
         assertNull classifierNode.parent
 
@@ -157,7 +157,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
-        def oldParameter = parameterObjectNode.parameter.get(0)
+        def oldParameter =  parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 5, parameterObjectNode.childCount
         def classifierNode = parameterObjectNode.getChildAt(0)
         assertEquals 'type', classifierNode.displayName
@@ -169,7 +169,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         tableModel.setValueAt('TYPE2', parameterObjectNode.getChildAt(0), 1)
 
         assertEquals 4, parameterObjectNode.childCount
-        assertTrue parameterObjectNode.parameter.contains(oldParameter)
+        assertTrue parameterization.parameterHolders.contains(oldParameter)
 
         assertNull classifierNode.parent
 
@@ -198,14 +198,14 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         def mdpNode = tableModel.root.getChildAt(1).getChildAt(0)
         assertTrue "Wrong type:${mdpNode.class.name}", mdpNode instanceof MultiDimensionalParameterizationTableTreeNode
-        def oldParameter = mdpNode.parameter.get(0)
+        def oldParameter =  parameterization.getParameterHolder(mdpNode.parameterPath, 0)
         AbstractMultiDimensionalParameter parameterInstance = oldParameter.businessObject
         assertEquals 0, parameterInstance.getValueAt(0, 0)
         parameterInstance.setValueAt(10, 0, 0)
 
         tableModel.setValueAt(parameterInstance, mdpNode, 1)
 
-        assertTrue "old parameter does not exist anymore", mdpNode.parameter.contains(oldParameter)
+        assertTrue "old parameter does not exist anymore",  parameterization.parameterHolders.contains(oldParameter)
 
         parameterization.save()
         MultiDimensionalParameterHolder multiDimensionalParameter = parameterization.getParameters('parameterComponent:parmMultiDimensionalParameter').get(0)
@@ -234,7 +234,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         def mdpNode = tableModel.root.getChildAt(1).getChildAt(0)
         assertTrue mdpNode instanceof MultiDimensionalParameterizationTableTreeNode
-        def oldParameter = mdpNode.parameter.get(0)
+        def oldParameter =  parameterization.getParameterHolder(mdpNode.parameterPath, 0)
         AbstractMultiDimensionalParameter parameterInstance = oldParameter.businessObject
         assertEquals 0, parameterInstance.getValueAt(0, 0)
         parameterInstance.setDimension(new MultiDimensionalParameterDimension(3, 2))
@@ -247,7 +247,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         tableModel.setValueAt(parameterInstance, mdpNode, 1)
 
-        assertTrue mdpNode.parameter.contains(oldParameter)
+        assertTrue parameterization.parameterHolders.contains(oldParameter)
 
         parameterization.save()
         multiDimensionalParameter = parameterization.getParameters('parameterComponent:parmMultiDimensionalParameter').get(0)
@@ -272,17 +272,17 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(1).getChildAt(2)
-        def oldParameter = parameterObjectNode.parameter.get(0)
+        def oldParameter =  parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 2, parameterObjectNode.childCount
         def mdpNode = parameterObjectNode.getChildAt(1)
         assertEquals 'mdp', mdpNode.displayName
-        AbstractMultiDimensionalParameter parameterInstance = mdpNode.parameter.get(0).businessObject
+        AbstractMultiDimensionalParameter parameterInstance = parameterization.getParameterHolder(mdpNode.parameterPath, 0).businessObject
         parameterInstance.setValueAt(10, 0, 0)
 
         tableModel.setValueAt(parameterInstance, mdpNode, 1)
 
         assertEquals 2, parameterObjectNode.childCount
-        assertTrue parameterObjectNode.parameter.contains(oldParameter)
+        assertTrue parameterization.parameterHolders.contains(oldParameter)
 
         parameterization.save()
         parameterObjectParameter = parameterization.getParameters('parameterComponent:parmNestedMdp').get(0)
@@ -309,7 +309,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
-        def oldParameter = parameterObjectNode.parameter.get(0)
+        def oldParameter =  parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 3, parameterObjectNode.childCount
         def classifierNode = parameterObjectNode.getChildAt(0)
         assertEquals 'type', classifierNode.displayName
@@ -320,7 +320,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         tableModel.setValueAt('NESTED_PARAMETER_OBJECT', parameterObjectNode.getChildAt(0), 1)
 
         assertEquals 2, parameterObjectNode.childCount
-        assertTrue parameterObjectNode.parameter.contains(oldParameter)
+        assertTrue parameterization.parameterHolders.contains(oldParameter)
 
         assertNull classifierNode.parent
         def nestedDistributionNode = parameterObjectNode.getChildAt(1)

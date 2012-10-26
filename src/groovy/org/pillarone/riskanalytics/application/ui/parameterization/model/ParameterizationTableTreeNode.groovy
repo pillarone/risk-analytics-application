@@ -1,30 +1,33 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
-import org.pillarone.riskanalytics.core.parameter.Parameter
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.util.Color
-import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.util.HTMLUtilities
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
+import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     protected final Log LOG = LogFactory.getLog(getClass())
 
-    List<ParameterHolder> parameter
     Set<ParameterValidation> errors
 
-    public ParameterizationTableTreeNode(List parameter) {
-        super(getNodeName(parameter))
-        this.parameter = parameter
+    ParametrizedItem parametrizedItem
+    String parameterPath
+
+    public ParameterizationTableTreeNode(String path, ParametrizedItem item) {
+        super(getNodeName(path))
+        this.parameterPath = path
+        this.parametrizedItem = item
     }
 
 
@@ -34,11 +37,17 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     abstract public void setValueAt(Object o, int i)
 
-    abstract Object getExpandedCellValue(int column)
+    Object getExpandedCellValue(int column) {
+        if (parametrizedItem.hasParameterAtPath(parameterPath, column - 1)) {
+            return doGetExpandedCellValue(column)
+        }
+        return null
+    }
 
-    protected static String getNodeName(List parameter) {
-        ParameterHolder param = parameter.find {ParameterHolder it -> it != null}
-        param.path.substring(param.path.lastIndexOf(':') + 1)
+    abstract Object doGetExpandedCellValue(int column)
+
+    protected static String getNodeName(String path) {
+        path.substring(path.lastIndexOf(':') + 1)
     }
 
     public String getDisplayName() {
@@ -63,7 +72,7 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
     public String getErrorMessage() {
         if (!errors) return null
         StringBuilder sb = new StringBuilder("")
-        for (ParameterValidation error: errors) {
+        for (ParameterValidation error : errors) {
             sb.append(error.getLocalizedMessage(LocaleResources.getLocale()) + "<br> ")
         }
         return HTMLUtilities.convertToHtml(sb.toString())

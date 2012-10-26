@@ -4,6 +4,9 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 
 class ParameterViewModel extends AbstractParametrizedViewModel {
 
@@ -28,7 +31,6 @@ class ParameterViewModel extends AbstractParametrizedViewModel {
         periodCount = builder.periodCount
         return builder
     }
-
 
 }
 

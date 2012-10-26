@@ -2,14 +2,14 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 
 class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNode {
 
 
-    public ParameterObjectParameterTableTreeNode(List parameter) {
-        super(parameter);
+    public ParameterObjectParameterTableTreeNode(String path, ParametrizedItem item) {
+        super(path, item);
     }
 
     public boolean isCellEditable(int column) {
@@ -20,7 +20,7 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
 
     }
 
-    public Object getExpandedCellValue(int column) {
+    public Object doGetExpandedCellValue(int column) {
         ""
     }
 
@@ -36,7 +36,7 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
     private String lookUp(String value, String tooltip) {
         String displayName
         if (!(parent instanceof DynamicComposedComponent)) {
-            ParameterObjectParameterHolder parameter = parameter.find {it -> it != null }
+            ParameterObjectParameterHolder parameter = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath).find {it -> it != null }
             String parameterType = parameter.classifier.class.name
             displayName = I18NUtils.findParameterTypeDisplayName(parameterType, tooltip)
         }

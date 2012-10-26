@@ -69,7 +69,7 @@ class TabbedPaneManager {
             alert.show()
         } else {
             removeTab(abstractUIItem)
-            abstractUIItem.mainModel.closeItem(abstractUIItem.model, abstractUIItem)
+            abstractUIItem.close()
         }
     }
 

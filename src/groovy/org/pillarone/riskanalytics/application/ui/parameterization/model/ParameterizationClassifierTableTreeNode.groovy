@@ -1,26 +1,25 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
-import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
     private Model simulationModel
 
-    public ParameterizationClassifierTableTreeNode(List parameter, Model simulationModel) {
-        super(parameter);
+    public ParameterizationClassifierTableTreeNode(String path, ParametrizedItem item, Model simulationModel) {
+        super(path, item);
         this.simulationModel = simulationModel
         name = "type"
     }
 
     public List initValues() {
         List possibleValues = []
-        ParameterObjectParameterHolder parameterObjectHolder = parameter.find { it != null }
+        ParameterObjectParameterHolder parameterObjectHolder = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)[0]
         IParameterObjectClassifier classifier = parameterObjectHolder.classifier
         List<IParameterObjectClassifier> classifiers = simulationModel.configureClassifier(parameterObjectHolder.path, classifier.classifiers)
         classifiers.each {
@@ -40,54 +39,42 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
 
 
     public void setValueAt(Object value, int column) {
-        ParameterHolder parameterHolder = parameter.get(column - 1)
-        if (parameterHolder != null) {
-            LOG.debug("Setting value to node @ ${path} P${column - 1}")
-            parameterHolder?.value = getKeyForValue(value)
-        } else {
-            throw new RiskAnalyticsInconsistencyException("Trying to set value to ${path} P${column - 1}, but parameter holder is null. ${parameter}")
-        }
+        int period = column - 1
+        LOG.debug("Setting value to node @ ${parameterPath} P${period}")
+        parametrizedItem.updateParameterValue(parameterPath, period, getKeyForValue(value))
     }
 
-    public getExpandedCellValue(int column) {
-        ParameterObjectParameterHolder parameterObjectHolder = parameter.get(column - 1)
+    public doGetExpandedCellValue(int column) {
+        ParameterObjectParameterHolder parameterObjectHolder = parametrizedItem.getParameterHolder(parameterPath, column - 1)
         getValueForKey(parameterObjectHolder?.classifier?.toString())
     }
 }
 
 class CompareParameterizationClassifierTableTreeNode extends ParameterizationClassifierTableTreeNode {
 
-    Map parametersMap = [:]
+    List<ParametrizedItem> itemsToCompare = []
     int size
 
-    public CompareParameterizationClassifierTableTreeNode(Map parametersMap, int size, Model model) {
-        super(parametersMap.get(0), model);
-        this.parametersMap = parametersMap;
+    public CompareParameterizationClassifierTableTreeNode(String path, List<ParametrizedItem> items, int size, Model model) {
+        super(path, items[0], model);
+        this.itemsToCompare = items
         this.size = size
     }
 
     public void setValueAt(Object value, int column) {
-        parameter = parametersMap.get(getParameterizationIndex(column))
-        parameter.get(getPeriodIndex(column)).value = getKeyForValue(value)
     }
 
-    public getExpandedCellValue(int column) {
-        String value = ""
-        try {
-            parameter = parametersMap.get(getParameterizationIndex(column))
-            value = getValueForKey(parameter.get(getPeriodIndex(column))?.value)
-        } catch (Exception ex) {
-            value = getClassifier(parameter)
+    @Override
+    Object getExpandedCellValue(int column) {
+        if (itemsToCompare[getParameterizationIndex(column)].hasParameterAtPath(parameterPath, getPeriodIndex(column))) {
+            return doGetExpandedCellValue(column)
         }
-        return value == "[]" ? "" : value
+        return null
     }
 
-    private String getClassifier(def parameter) {
-        try {
-            return parameter.classifier.displayName
-        } catch (Exception ex) {
-            return ""
-        }
+    public doGetExpandedCellValue(int column) {
+        ParameterObjectParameterHolder parameterObjectHolder = itemsToCompare[getParameterizationIndex(column)].getParameterHolder(parameterPath, getPeriodIndex(column))
+        return getValueForKey(parameterObjectHolder?.classifier?.toString())
     }
 
     protected int getParameterizationIndex(int column) {
@@ -101,6 +88,4 @@ class CompareParameterizationClassifierTableTreeNode extends ParameterizationCla
             return 0
         return (column - 1).intdiv(size)
     }
-
-
 }

@@ -6,7 +6,8 @@ import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 
 class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel {
 
@@ -37,15 +38,18 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         return node.getKeyForValue(value)
     }
 
-    public void addComponentNode(ComponentTableTreeNode parent, Component component) {
+    void componentAdded(String path, Component component) {
+        String[] pathComponents = path.substring(0, path.lastIndexOf(":")).split(":")
+        ComponentTableTreeNode parent = findComponentNode(pathComponents)
         parent.component.addSubComponent(component)
         ComponentTableTreeNode node = builder.createNewComponentNode(parent, component)
-        node.comments = builder?.item?.comments?.findAll {it.path == node.path}
+        node.comments = builder.item.comments?.findAll {it.path == node.path}
         nodesWereInserted(getPath(parent), parent.getIndex(node))
         notifyNodeValueChanged(node, -1)
         notifyComboBoxNodesComponentAdded(component)
         changedComments()
     }
+
 
     private void notifyComboBoxNodesComponentAdded(Component newComponent) {
         List nodes = []
@@ -75,10 +79,10 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         }
     }
 
-    public void removeComponentNode(ComponentTableTreeNode componentNode) {
-        builder.removeParameterFromNodes(componentNode)
-        int childIndex = componentNode.parent.getIndex(componentNode)
+    void componentRemoved(String path) {
+        ComponentTableTreeNode componentNode = findComponentNode(path.split(":"))
         ComponentTableTreeNode parent = componentNode.parent
+        int childIndex = componentNode.parent.getIndex(componentNode)
         parent.component.removeSubComponent(componentNode.component)
         parent.remove(componentNode)
         nodesWereRemoved(getPath(parent), [childIndex] as int[], [componentNode] as Object[])
