@@ -23,18 +23,21 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.components.ComponentUtils
+import org.pillarone.riskanalytics.application.ui.resource.model.ResourceViewModel
 
 class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
     Parameterization parameterization
     ModelStructure structure
     Model model
+    ParameterViewModel viewModel
 
     void setUp() {
         LocaleResources.setTestMode()
     }
 
     void tearDown() {
+        parameterization.removeListener(viewModel)
         LocaleResources.clearTestMode()
     }
 
@@ -49,6 +52,9 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('CoreStructure'))
         parameterization.load()
         structure.load()
+
+        viewModel = new TestParameterViewModel(model, parameterization, structure)
+        parameterization.addListener(viewModel)
     }
 
     void prepareMultiPeriodCoreModel() {
@@ -62,6 +68,9 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('CoreStructure'))
         parameterization.load()
         structure.load()
+
+        viewModel = new TestParameterViewModel(model, parameterization, structure)
+        parameterization.addListener(viewModel)
     }
 
     void prepareApplicationModel() {
@@ -75,6 +84,9 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         parameterization.load()
         structure.load()
+
+        viewModel = new TestParameterViewModel(model, parameterization, structure)
+        parameterization.addListener(viewModel)
     }
 
     void testSimpleSetValueAt() {
@@ -84,8 +96,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals ExampleEnum.FIRST_VALUE, parameterization.getParameters('parameterComponent:parmEnumParameter').get(0).businessObject
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
@@ -110,9 +121,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
-        tableModel.simulationModel = model
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
@@ -150,14 +159,12 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
-        tableModel.simulationModel = model
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
-        def oldParameter =  parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
+        def oldParameter = parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 5, parameterObjectNode.childCount
         def classifierNode = parameterObjectNode.getChildAt(0)
         assertEquals 'type', classifierNode.displayName
@@ -191,21 +198,20 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         int initialParameterCount = Parameter.count()
         int mdpValueCount = MultiDimensionalParameterValue.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull "no root", tableModel.root
 
         def mdpNode = tableModel.root.getChildAt(1).getChildAt(0)
         assertTrue "Wrong type:${mdpNode.class.name}", mdpNode instanceof MultiDimensionalParameterizationTableTreeNode
-        def oldParameter =  parameterization.getParameterHolder(mdpNode.parameterPath, 0)
+        def oldParameter = parameterization.getParameterHolder(mdpNode.parameterPath, 0)
         AbstractMultiDimensionalParameter parameterInstance = oldParameter.businessObject
         assertEquals 0, parameterInstance.getValueAt(0, 0)
         parameterInstance.setValueAt(10, 0, 0)
 
         tableModel.setValueAt(parameterInstance, mdpNode, 1)
 
-        assertTrue "old parameter does not exist anymore",  parameterization.parameterHolders.contains(oldParameter)
+        assertTrue "old parameter does not exist anymore", parameterization.parameterHolders.contains(oldParameter)
 
         parameterization.save()
         MultiDimensionalParameterHolder multiDimensionalParameter = parameterization.getParameters('parameterComponent:parmMultiDimensionalParameter').get(0)
@@ -227,14 +233,13 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         int initialParameterCount = Parameter.count()
         int multidimensionalValueCount = MultiDimensionalParameterValue.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
         def mdpNode = tableModel.root.getChildAt(1).getChildAt(0)
         assertTrue mdpNode instanceof MultiDimensionalParameterizationTableTreeNode
-        def oldParameter =  parameterization.getParameterHolder(mdpNode.parameterPath, 0)
+        def oldParameter = parameterization.getParameterHolder(mdpNode.parameterPath, 0)
         AbstractMultiDimensionalParameter parameterInstance = oldParameter.businessObject
         assertEquals 0, parameterInstance.getValueAt(0, 0)
         parameterInstance.setDimension(new MultiDimensionalParameterDimension(3, 2))
@@ -266,13 +271,12 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(1).getChildAt(2)
-        def oldParameter =  parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
+        def oldParameter = parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 2, parameterObjectNode.childCount
         def mdpNode = parameterObjectNode.getChildAt(1)
         assertEquals 'mdp', mdpNode.displayName
@@ -302,14 +306,12 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
-        tableModel.simulationModel = model
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
-        def oldParameter =  parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
+        def oldParameter = parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 3, parameterObjectNode.childCount
         def classifierNode = parameterObjectNode.getChildAt(0)
         assertEquals 'type', classifierNode.displayName
@@ -345,8 +347,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
@@ -356,7 +357,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         def newComponent = dynamicNode.component.createDefaultSubComponent()
         newComponent.name = "subComponent0"
-        tableModel.addComponentNode(dynamicNode, newComponent)
+        parameterization.addComponent("dynamicComponent:" + newComponent.name, newComponent)
 
         assertEquals 2, dynamicNode.childCount
         parameterization.save()
@@ -379,8 +380,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
 
@@ -390,7 +390,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         def newComponent = dynamicNode.component.createDefaultSubComponent()
         newComponent.name = "subTestComponent"
-        tableModel.addComponentNode(dynamicNode, newComponent)
+        parameterization.addComponent("dynamicComponent:" + newComponent.name, newComponent)
 
         assertEquals 2, dynamicNode.childCount
         parameterization.save()
@@ -409,22 +409,20 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         int initialParameterCount = Parameter.count()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
+        def tableModel = viewModel.getActualTableTreeModel()
 
         assertNotNull tableModel.root
         def dynamicNode = tableModel.root.getChildAt(1)
 
         def newComponent = dynamicNode.component.createDefaultSubComponent()
         newComponent.name = "subComponent0"
-        tableModel.addComponentNode(dynamicNode, newComponent)
+        parameterization.addComponent("dynamicComponent:" + newComponent.name, newComponent)
 
         def contractNode = dynamicNode.getChildAt(0)
         assertTrue contractNode instanceof ComponentTableTreeNode
         assertEquals 2, dynamicNode.childCount
 
-        tableModel.removeComponentNode(contractNode)
-
+        parameterization.removeComponent("dynamicComponent:" + newComponent.name)
         assertEquals 1, dynamicNode.childCount
         parameterization.save()
 
@@ -434,9 +432,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
     void testKeepOldParameterValues() {
         prepareCoreModel()
 
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def tableModel = new ParameterizationTableTreeModel(builder)
-        tableModel.simulationModel = model
+        def tableModel = viewModel.getActualTableTreeModel()
 
         def parameterObjectNode = tableModel.root.getChildAt(0).getChildAt(0)
         tableModel.setValueAt("TYPE1", parameterObjectNode.getChildAt(0), 1)

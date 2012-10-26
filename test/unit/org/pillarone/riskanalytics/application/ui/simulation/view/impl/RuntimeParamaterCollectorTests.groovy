@@ -15,7 +15,7 @@ class RuntimeParamaterCollectorTests extends GroovyTestCase {
 
 
         final Set<RuntimeParameterDescriptor> runtimeParameters = collector.runtimeParameters
-        assertEquals 6, runtimeParameters.size()
+        assertEquals 7, runtimeParameters.size()
 
         final RuntimeParameterDescriptor dateParameter = runtimeParameters.find { it.typeClass == DateTime }
         assertEquals "runtimeDateParameter", dateParameter.propertyName

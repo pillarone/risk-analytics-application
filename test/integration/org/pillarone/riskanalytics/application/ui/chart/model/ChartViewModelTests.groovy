@@ -31,6 +31,7 @@ class ChartViewModelTests extends GroovyTestCase {
 
         ChartViewModel model
         SimulationRun simulationRun = new SimulationRun()
+        simulationRun.periodCount = 0
         simulationRun.model = "testModel"
         simulationRun.parameterization = new ParameterizationDAO()
 
@@ -88,6 +89,7 @@ class TestSimulation extends Simulation {
         super("testSimulation")
         template.versionNumber = new VersionNumber("1.2")
         structure.versionNumber = new VersionNumber("1.4")
+        periodCount = 0
     }
 
     public void load() {

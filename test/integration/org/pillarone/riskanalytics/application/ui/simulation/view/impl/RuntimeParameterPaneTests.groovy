@@ -91,7 +91,7 @@ class RuntimeParameterPaneTests extends AbstractSimpleFunctionalTest {
             protected void proceedOnServer() {
                 final Simulation simulation = pane.model.simulation
                 final List<ParameterHolder> parameters = simulation.runtimeParameters
-                assertEquals(6, parameters.size())
+                assertEquals(7, parameters.size())
 
                 ParameterHolder param = parameters.find { it.path == "runtimeStringParameter"}
                 assertEquals("new value", param.businessObject)
