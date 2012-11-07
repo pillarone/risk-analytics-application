@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.customtable.model
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.StatisticsKeyfigure
+import com.ulcjava.base.application.ULCAlert
 
 /**
  *
@@ -146,10 +147,15 @@ class DataCellElement extends OutputElement {
             changed = true
         }
 
-        Number new_parameter = Double.parseDouble(categoryMapCopy[OutputElement.STATISTICS_PARAMETER])
-        if (this.parameter != new_parameter) {
-            this.parameter = new_parameter
-            changed = true
+        try {
+            Number new_parameter = Double.parseDouble(categoryMapCopy[OutputElement.STATISTICS_PARAMETER])
+            if (this.parameter != new_parameter) {
+                this.parameter = new_parameter
+                changed = true
+            }
+        } catch (NumberFormatException e) {
+            ULCAlert alert = new ULCAlert("Wrong input", "Value '${categoryMapCopy[OutputElement.STATISTICS_PARAMETER]}' is not a valid iteration number.", "Ok")
+            alert.show()
         }
 
         // update the values, if the DataCellElement has changed

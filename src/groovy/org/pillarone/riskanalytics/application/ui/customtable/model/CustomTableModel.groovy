@@ -269,8 +269,8 @@ public class CustomTableModel extends AbstractTableModel {
         variable = variable.replace ('$', '')
 
         try {
-            int row = CustomTableHelper.getRow (variable)
-            int col = CustomTableHelper.getCol (variable)
+            int row = CustomTableHelper.getRow (variable.toUpperCase())
+            int col = CustomTableHelper.getCol (variable.toUpperCase())
             return getValueAt(row, col)
         } catch (Exception e) {
             return "#ERROR"
