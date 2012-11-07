@@ -214,6 +214,7 @@ public class CustomTable extends ULCTable {
         this.registerKeyboardAction(new CustomTableCopyPasteListener(CustomTableCopyPasteListener.Mode.COPY), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         this.registerKeyboardAction(new CustomTableCopyPasteListener(CustomTableCopyPasteListener.Mode.CUT), KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
         this.registerKeyboardAction(new CustomTableCopyPasteListener(CustomTableCopyPasteListener.Mode.PASTE), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
+        this.registerKeyboardAction([actionPerformed: { customTableView.cellEditTextField.requestFocus() }] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, false), ULCComponent.WHEN_FOCUSED)
 
          // Delete Listener
         this.registerKeyboardAction(new IActionListener() {
