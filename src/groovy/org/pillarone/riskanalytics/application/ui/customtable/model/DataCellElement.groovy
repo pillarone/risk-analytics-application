@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputEl
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.StatisticsKeyfigure
 import com.ulcjava.base.application.ULCAlert
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 
 /**
  *
@@ -70,13 +71,13 @@ class DataCellElement extends OutputElement {
         try {
             switch (statistics) {
                 case StatisticsKeyfigure.VAR:
-                    value = ResultAccessor.getVar(run, period, path, collector, field, parameter)
+                    value = ResultAccessor.getVar(run, period, path, collector, field, parameter, QuantilePerspective.LOSS)
                     break;
                 case StatisticsKeyfigure.TVAR:
-                    value = ResultAccessor.getTvar(run, period, path, collector, field, parameter)
+                    value = ResultAccessor.getTvar(run, period, path, collector, field, parameter, QuantilePerspective.LOSS)
                     break;
                 case StatisticsKeyfigure.PERCENTILE:
-                    value = ResultAccessor.getPercentile(run, period, path, collector, field, parameter)
+                    value = ResultAccessor.getPercentile(run, period, path, collector, field, parameter, QuantilePerspective.LOSS)
                     break;
                 case StatisticsKeyfigure.STDEV:
                     value = ResultAccessor.getStdDev(run, period, path, collector, field)
