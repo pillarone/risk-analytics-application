@@ -35,7 +35,7 @@ class ResourceTreeBuilder {
 
     protected void init(Resource resource) {
         this.item = resource
-        this.resource = resource.resourceInstance.resource
+        this.resource = resource.modelClass.newInstance()
         structure = GrailsClassUtils.getStaticPropertyValue(resource.modelClass, "structure") as Closure
     }
 

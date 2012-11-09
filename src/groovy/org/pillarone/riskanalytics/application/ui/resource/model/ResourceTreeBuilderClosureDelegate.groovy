@@ -24,7 +24,7 @@ class ResourceTreeBuilderClosureDelegate {
 
     ResourceTreeBuilderClosureDelegate(Resource item) {
         this.item = item
-        resourceInstance = item.createResourceInstance()
+        resourceInstance = item.modelClass.newInstance()
     }
 
     private Map<Node, ResourceTreeBuilderClosureDelegate> hierarchy = new LinkedHashMap()
