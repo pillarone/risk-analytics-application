@@ -14,6 +14,8 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.model.Keyfigur
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.StatisticsKeyfigure
 import com.ulcjava.base.application.ULCComponent
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import com.ulcjava.base.application.border.ULCTitledBorder
+import com.ulcjava.base.application.BorderFactory
 
 /**
  *
@@ -42,7 +44,6 @@ public class DataCellEditPane extends ULCBoxPane {
      */
     public DataCellEditPane (CustomTableView customTableView) {
         super (true)
-
         this.customTableView = customTableView
         this.customTableModel = (CustomTableModel)customTableView.customTable.getModel()
     }
@@ -58,6 +59,8 @@ public class DataCellEditPane extends ULCBoxPane {
         this.col = col
 
         dataCellElement = (DataCellElement)customTableModel.getDataAt (row, col)
+        //Put simulation run name on the border ART-992
+        setBorder(BorderFactory.createTitledBorder(dataCellElement.run.name))
         model = new KeyfigureSelectionModel(dataCellElement.run)
 
         // remove all elements from the pane
