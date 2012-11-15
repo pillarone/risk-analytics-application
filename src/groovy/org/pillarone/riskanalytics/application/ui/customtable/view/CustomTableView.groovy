@@ -134,4 +134,12 @@ public class CustomTableView {
             }
         }
     }
+
+    /**
+     * Returns the simulation run name for this table view
+     * @return
+     */
+    String getSimulationRunName(){
+        simulationRun?.name
+    }
 }
