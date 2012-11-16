@@ -61,7 +61,7 @@ class TabbedPaneManager {
                 }
                 if (closeTab) {
                     removeTab(abstractUIItem)
-                    abstractUIItem.mainModel.closeItem(abstractUIItem.model, abstractUIItem)
+                    abstractUIItem.close()
                 } else {
                     selectTab(abstractUIItem)
                 }

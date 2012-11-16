@@ -102,7 +102,7 @@ class ParameterizationTreeBuilder {
     }
 
 
-    protected ITableTreeNode buildComponentNode(String propertyName, Component component) {
+     ITableTreeNode buildComponentNode(String propertyName, Component component) {
         if (!component.hasParameters()) {
             if (!(component instanceof DynamicComposedComponent)) {
                 return null
@@ -183,11 +183,9 @@ class ParameterizationTreeBuilder {
 
     }
 
-    ComponentTableTreeNode createNewComponentNode(SimpleTableTreeNode parent, Component newComponent) {
-        ComponentTableTreeNode newComponentNode = buildComponentNode(newComponent.name, newComponent)
+    void createNewComponentNode(SimpleTableTreeNode parent, ComponentTableTreeNode newComponentNode) {
         parent.add(newComponentNode)
         addParameterValueNodes(newComponentNode)
-        return newComponentNode
     }
 
     public int getPeriodCount() {

@@ -42,9 +42,15 @@ class ParameterizationTableTreeModel extends AbstractParametrizedTableTreeModel 
         String[] pathComponents = path.substring(0, path.lastIndexOf(":")).split(":")
         ComponentTableTreeNode parent = findComponentNode(pathComponents)
         parent.component.addSubComponent(component)
-        ComponentTableTreeNode node = builder.createNewComponentNode(parent, component)
-        node.comments = builder.item.comments?.findAll {it.path == node.path}
-        nodesWereInserted(getPath(parent), parent.getIndex(node))
+        ComponentTableTreeNode node = builder.buildComponentNode(component.name, component)
+        toBeInserted.add(node)
+        try {
+            builder.createNewComponentNode(parent, node)
+            node.comments = builder.item.comments?.findAll {it.path == node.path}
+            nodesWereInserted(getPath(parent), parent.getIndex(node))
+        } finally {
+            toBeInserted.remove(node)
+        }
         notifyNodeValueChanged(node, -1)
         notifyComboBoxNodesComponentAdded(component)
         changedComments()

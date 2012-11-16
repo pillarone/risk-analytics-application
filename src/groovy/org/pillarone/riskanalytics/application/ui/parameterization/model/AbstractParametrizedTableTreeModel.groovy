@@ -20,6 +20,7 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
 
     private List<TableTreeValueChangedListener> valueChangedListeners = []
     private Map nonValidValues = [:]
+    protected HashSet<ITableTreeNode> toBeInserted = new HashSet<ITableTreeNode>()
 
 
     AbstractParametrizedTableTreeModel(ITableTreeNode root) {
@@ -150,8 +151,23 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
 
     void parameterValuesChanged(List<String> paths) {
         for (SimpleTableTreeNode node in paths.collect { findNode(it.split(":")) }) {
-            nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+            if (!isBeingInserted(node)) {
+                nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+            }
+
         }
+    }
+
+
+    protected isBeingInserted(SimpleTableTreeNode node) {
+        SimpleTableTreeNode current = node
+        while (current != null) {
+            if (toBeInserted.contains(current)) {
+                return true
+            }
+            current = current.parent
+        }
+        return false
     }
 
     void classifierChanged(String path) {
