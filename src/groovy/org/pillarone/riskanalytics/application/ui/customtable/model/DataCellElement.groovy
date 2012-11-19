@@ -157,6 +157,10 @@ class DataCellElement extends OutputElement {
         } catch (NumberFormatException e) {
             ULCAlert alert = new ULCAlert("Invalid input", "Value '${categoryMapCopy[OutputElement.STATISTICS_PARAMETER]}' is not a valid ${categoryMapCopy[OutputElement.STATISTICS]} number.", "Ok")
             alert.show()
+            //Duff input - set current parameter to null and display #VALUE! as Excel would
+            parameter = null
+            value = "#VALUE!"
+            return true
         }
 
         // update the values, if the DataCellElement has changed

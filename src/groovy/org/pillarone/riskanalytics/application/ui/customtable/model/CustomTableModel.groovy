@@ -402,7 +402,7 @@ public class CustomTableModel extends AbstractTableModel {
         if (targetCell == variableCell)
             return false
 
-        targetCell = targetCell.replace('$', '')
+        targetCell = targetCell.replace('$', '').toUpperCase()
         variableCell = variableCell.replace('$', '')
         if (references[targetCell] == null)
             references[targetCell] = new LinkedList<String>()
@@ -496,6 +496,7 @@ public class CustomTableModel extends AbstractTableModel {
                         // set the new formula in the cell
                         setValueAt (new_formula.toString(), referencingCell)
                     } catch (Exception e) {
+                        int apa = 12;
                     }
                 }
             }

@@ -4,9 +4,9 @@ import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
 static class CustomTableHelper {
-    public static Pattern variable_pattern = ~/[A-Z]+[0-9]+/
-    public static Pattern range_pattern = ~/[A-Z]*[0-9]*:[A-Z]*[0-9]*/
-    public static Pattern col_pattern = ~/[A-Z]+/
+    public static Pattern variable_pattern = ~/[A-Za-z]+[0-9]+/
+    public static Pattern range_pattern = ~/[A-Za-z]*[0-9]*:[A-Za-z]*[0-9]*/
+    public static Pattern col_pattern = ~/[A-Za-z]+/
     public static Pattern row_pattern = ~/[0-9]+/
 
     public static String replaceVariables (CustomTableModel model, String formula, int cellRow, int cellCol) {
