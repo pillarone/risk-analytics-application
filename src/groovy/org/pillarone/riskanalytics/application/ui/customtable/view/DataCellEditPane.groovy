@@ -16,6 +16,7 @@ import com.ulcjava.base.application.ULCComponent
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.BorderFactory
+import com.ulcjava.base.application.ULCFiller
 
 /**
  *
@@ -35,6 +36,8 @@ public class DataCellEditPane extends ULCBoxPane {
 
     public Map<String, ULCComboBox> categoryComboBoxes = new HashMap<String, ULCComboBox>()
     private ULCTextField parameterTextField
+    private ULCLabel fieldLabel = new ULCLabel()
+    private ULCLabel collectorLabel = new ULCLabel()
 
     private KeyfigureSelectionModel model
 
@@ -61,6 +64,8 @@ public class DataCellEditPane extends ULCBoxPane {
         dataCellElement = (DataCellElement)customTableModel.getDataAt (row, col)
         //Put simulation run name on the border ART-992
         setBorder(BorderFactory.createTitledBorder(dataCellElement.run.name))
+        fieldLabel.setText("Field :" +dataCellElement.getField())
+        collectorLabel.setText("Collector : " + dataCellElement.getCollector())
         model = new KeyfigureSelectionModel(dataCellElement.run)
 
         // remove all elements from the pane
@@ -126,6 +131,10 @@ public class DataCellEditPane extends ULCBoxPane {
         parameterTextField.addActionListener(new CategoryValueChangedListener())
         parameterTextField.setToolTipText("Enter a parameter value, or reference to a value in a cell (e.g. =A\$1")
 
+        //Add field and collector
+        this.add(BOX_EXPAND_TOP, fieldLabel)
+        this.add(BOX_EXPAND_TOP, collectorLabel)
+        this.add(ULCFiller.createVerticalStrut(5))
         // add statistics components to pane and list
         this.add (BOX_EXPAND_TOP, statisticsLabel)
         ULCBoxPane statisticsPane = new ULCBoxPane(false)

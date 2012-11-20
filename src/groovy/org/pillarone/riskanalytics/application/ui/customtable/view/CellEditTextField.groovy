@@ -94,7 +94,8 @@ public class CellEditTextField extends ULCTextField {
     public void setText(int row, int col) {
         Object data = customTableModel.getDataAt(row, col)
         if (data instanceof DataCellElement) {
-            this.text = data.path
+            //Add field and collector to text displayed ART-1012
+            this.text = data.getPath() + " : " + data.getField() + " : " + data.getCollector()
             //grab simulation run info and set as tooltip
             setToolTipText(getToolTipTextForDataElement(data))
         } else {
@@ -120,7 +121,8 @@ public class CellEditTextField extends ULCTextField {
     }
 
     private String getToolTipTextForDataElement(DataCellElement dce) {
-        return "<HTML><B>Simulation run</B> : " + dce.run.name + "<BR> <B>Path</B> : " +
-        dce.path + "</HTML>"
+        String tooltip =  "<HTML><B>Simulation run</B> : " + dce.run.name + "<BR> <B>Path</B> : " +
+        dce.path + "<BR> <B>Field</B> : "+ dce.field + "<BR> <B>Collector</B> : " + dce.getCollector() + "</HTML>"
+        return tooltip
     }
 }
