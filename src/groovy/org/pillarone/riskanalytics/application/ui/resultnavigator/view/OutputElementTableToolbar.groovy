@@ -16,6 +16,8 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.util.FilterFac
 import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ITableRowFilterListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
+import com.ulcjava.base.application.event.IValueChangedListener
+import com.ulcjava.base.application.event.ValueChangedEvent
 
 /**
  * Toolbar-like panel for
@@ -112,7 +114,7 @@ class OutputElementTableToolbar extends ULCBoxPane {
         keyfigureSelector.addActionListener(
                 new IActionListener() {
                     public void actionPerformed(ActionEvent actionEvent) {
-                        StatisticsKeyfigure enumValue = StatisticsKeyfigure.getEnumValue( (String) keyfigureSelector.selectedItem)
+                        StatisticsKeyfigure enumValue = StatisticsKeyfigure.getEnumValue((String) keyfigureSelector.selectedItem)
                         if (enumValue.needsParameters()) {
                             keyfigureParameterSelector.setEditable(true)
                             keyfigureParameterSelector.setBackground(Color.white)
@@ -123,16 +125,30 @@ class OutputElementTableToolbar extends ULCBoxPane {
                     }
                 }
         )
-        keyfigureParameterSelector.addKeyListener(new IKeyListener() {
-            void keyTyped(KeyEvent keyEvent) {
-                String value = keyfigureParameterSelector.text
-                StatisticsKeyfigure enumValue = StatisticsKeyfigure.getEnumValue( (String) keyfigureSelector.selectedItem)
-                if (enumValue.equals(StatisticsKeyfigure.ITERATION)) {
-                    model.keyfigureParameter = Integer.parseInt(value)
-                } else {
-                    model.keyfigureParameter = Double.parseDouble(value)
-                }
+        //Changed this to a ValueChangedListener and added some error handling to avoid app to crash and die..
+        //ART-1013
+        keyfigureParameterSelector.addValueChangedListener(new IValueChangedListener() {
 
+            void valueChanged(ValueChangedEvent valueChangedEvent) {
+                String value = ((ULCTextField) valueChangedEvent.getSource()).getText()
+                if (value == null || value.isEmpty()) {
+                    model.keyfigureParameter = null
+                    return
+                }
+                StatisticsKeyfigure enumValue = StatisticsKeyfigure.getEnumValue((String) keyfigureSelector.selectedItem)
+                try {
+                    if (enumValue.equals(StatisticsKeyfigure.ITERATION)) {
+                        model.keyfigureParameter = Integer.parseInt(value)
+                    } else {
+                        model.keyfigureParameter = Double.parseDouble(value)
+                    }
+                } catch (Exception e) {
+                    ULCAlert alert = new ULCAlert("Invalid parameter", value + " is not a valid parameter", "Ok")
+                    alert.show()
+                    model.keyfigureParameter = null
+                    ((ULCTextField) valueChangedEvent.getSource()).setText("")
+                    return
+                }
             }
         })
     }
@@ -197,12 +213,20 @@ class OutputElementTableToolbar extends ULCBoxPane {
                 updateFilter((String) filterType.getSelectedItem(), (String) categoryToFilter.getSelectedItem(), filterValue.getText())
             }
         });
-        IActionListener action = new IActionListener() {
-            public void actionPerformed(ActionEvent event) {
+        //Comment out the on-Enter-ActionListener and do search-as-you-type through a KeyListener instead
+        //Experimental stuff, needs to be tested on server to see if it performs - if not, revert but change
+        //to use a ValueChangedListener instead.
+        /* IActionListener action = new IActionListener() {
+          public void actionPerformed(ActionEvent event) {
+              updateFilter((String) filterType.getSelectedItem(), (String) categoryToFilter.getSelectedItem(), filterValue.getText())
+          }
+      };
+      KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
+      filterValue.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);*/
+        filterValue.addKeyListener(new IKeyListener() {
+            void keyTyped(KeyEvent keyEvent) {
                 updateFilter((String) filterType.getSelectedItem(), (String) categoryToFilter.getSelectedItem(), filterValue.getText())
             }
-        };
-        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
-        filterValue.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
+        })
     }
 }
