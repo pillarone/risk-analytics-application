@@ -151,7 +151,7 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
 
     void parameterValuesChanged(List<String> paths) {
         for (SimpleTableTreeNode node in paths.collect { findNode(it.split(":")) }) {
-            if (!isBeingInserted(node)) {
+            if (node != null && !isBeingInserted(node)) {
                 nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
             }
 
@@ -173,26 +173,32 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
     void classifierChanged(String path) {
         ParameterObjectParameterTableTreeNode parameterObjectNode = findNode(path.split(":"))
 
-        ParameterObjectParameterTableTreeNode newParameterObjectNode = ParameterizationNodeFactory.getNode(parameterObjectNode.parameterPath, parameterObjectNode.parametrizedItem, getSimulationModel())
+        ITableTreeNode parent = parameterObjectNode.parent
+        toBeInserted.add(parent)
+        try {
+            ParameterObjectParameterTableTreeNode newParameterObjectNode = ParameterizationNodeFactory.getNode(parameterObjectNode.parameterPath, parameterObjectNode.parametrizedItem, getSimulationModel())
 
-        int[] removedIndices = new int[parameterObjectNode.childCount]
-        Object[] removedChildren = new Object[parameterObjectNode.childCount]
-        int children = parameterObjectNode.childCount
-        for (int i = 0; i < children; i++) {
-            removedIndices[i] = i
-            removedChildren[i] = parameterObjectNode.getChildAt(i)
-        }
-        for (ITableTreeNode node in removedChildren) {
-            parameterObjectNode.remove(node)
-        }
-        nodesWereRemoved(getPath(parameterObjectNode), removedIndices, removedChildren)
+            int[] removedIndices = new int[parameterObjectNode.childCount]
+            Object[] removedChildren = new Object[parameterObjectNode.childCount]
+            int children = parameterObjectNode.childCount
+            for (int i = 0; i < children; i++) {
+                removedIndices[i] = i
+                removedChildren[i] = parameterObjectNode.getChildAt(i)
+            }
+            for (ITableTreeNode node in removedChildren) {
+                parameterObjectNode.remove(node)
+            }
+            nodesWereRemoved(getPath(parameterObjectNode), removedIndices, removedChildren)
 
-        int[] addedIndices = new int[newParameterObjectNode.childCount]
-        for (int i = 0; i < newParameterObjectNode.childCount; i++) {
-            parameterObjectNode.add(newParameterObjectNode.getChildAt(i))
-            addedIndices[i] = i
+            int[] addedIndices = new int[newParameterObjectNode.childCount]
+            for (int i = 0; i < newParameterObjectNode.childCount; i++) {
+                parameterObjectNode.add(newParameterObjectNode.getChildAt(i))
+                addedIndices[i] = i
+            }
+            nodesWereInserted(getPath(parameterObjectNode), addedIndices)
+        } finally {
+            toBeInserted.remove(parent)
         }
-        nodesWereInserted(getPath(parameterObjectNode), addedIndices)
     }
 
     protected ComponentTableTreeNode findComponentNode(String[] pathComponents) {
@@ -206,6 +212,9 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
     protected SimpleTableTreeNode findNode(String[] pathComponents) {
         SimpleTableTreeNode current = getRoot() as SimpleTableTreeNode
         for (String currentElement in pathComponents) {
+            if(isBeingInserted(current)) {
+                return null
+            }
             current = current.getChildByName(currentElement)
             if (current == null) {
                 throw new IllegalArgumentException("Node with name $currentElement not found in path ${pathComponents.join(":")}")
