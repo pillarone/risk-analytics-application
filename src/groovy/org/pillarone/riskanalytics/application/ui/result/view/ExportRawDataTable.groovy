@@ -16,7 +16,6 @@ import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
  */
 class ExportRawDataTable extends ResourceBasedAction {
     ResultIterationDataView view
-    final static int MAX_OF_ROWS = 65535
 
 
     public ExportRawDataTable(ResultIterationDataView view) {
