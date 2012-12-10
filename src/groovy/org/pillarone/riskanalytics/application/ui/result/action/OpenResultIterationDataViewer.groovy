@@ -34,7 +34,7 @@ class OpenResultIterationDataViewer extends ResourceBasedAction {
     public void doActionPerformed(ActionEvent event) {
         def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
         List nodes = paths.findAll {it instanceof ResultTableTreeNode}
-        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(simulationRun, nodes, true, resultView)
+        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(simulationRun, nodes, true, true, true, resultView)
         ULCBoxPane tabContent = new ResultIterationDataView(rawDataViewModel).content
         if (tabContent) {
             tabbedPane.addTab(title, getValue(IAction.SMALL_ICON), tabContent)

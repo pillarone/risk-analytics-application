@@ -17,14 +17,14 @@ class CriteriaViewModelTests extends GroovyTestCase {
     }
 
     void testSelectedComperator() {
-        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false)
+        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false, null)
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(rawDataViewModel)
         criteriaViewModel.comparatorModel.setSelectedItem CriteriaComparator.LESS_THAN.toString()
         assertEquals CriteriaComparator.LESS_THAN, criteriaViewModel.selectedComparator
     }
 
     void testSelectedPeriod() {
-        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false)
+        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false, null)
         rawDataViewModel.periodLabels = ["periodLabel1", "periodLabel2", "periodLabel3", "periodLabel4"]
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(rawDataViewModel)
         criteriaViewModel.periodModel.selectedItem = "periodLabel2"
@@ -39,7 +39,7 @@ class CriteriaViewModelTests extends GroovyTestCase {
 
     void testKeyFigureModelSize() {
         List nodeList = [new ResultTableTreeNode("testNode"), new ResultTableTreeNode("testNode2"), new ResultTableTreeNode("testNode3")]
-        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), nodeList, false, true, false)
+        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), nodeList, false, true, false, null)
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(rawDataViewModel)
         assertEquals nodeList.size(), criteriaViewModel.keyFigureTypeModel.size
     }
@@ -47,7 +47,7 @@ class CriteriaViewModelTests extends GroovyTestCase {
     void testPeriodModelSize() {
         SimulationRun run = new SimulationRun()
         run.periodCount = 50
-        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(run, [new ResultTableTreeNode("testNode")], false, true, false)
+        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(run, [new ResultTableTreeNode("testNode")], false, true, false, null)
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(rawDataViewModel)
         assertEquals run.periodCount + 1, criteriaViewModel.periodModel.size
     }

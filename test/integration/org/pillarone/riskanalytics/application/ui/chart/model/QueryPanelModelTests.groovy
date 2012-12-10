@@ -45,7 +45,7 @@ class QueryPanelModelTests extends GroovyTestCase {
         final ResultTableTreeNode node = new ResultTableTreeNode("name", CoreModel)
         node.collector = aggregatedSingleCollector.collectorName
         node.resultPath = path.pathName + ":" + field.fieldName
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(run, [node], false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(run, [node], false, true, true, null)
         model.criterias[0][0].valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
         model.query()
 

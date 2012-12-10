@@ -22,7 +22,7 @@ class ResultIterationDataViewTests extends AbstractSimpleFunctionalTest {
     protected void doStart() {
         SimulationRun run = new SimulationRun()
         run.periodCount = 3
-        model = new ResultIterationDataViewModel(run, [new ResultTableTreeNode("testNode testNode testNode testNode testNode testNode testNode ")], false, true, false)
+        model = new ResultIterationDataViewModel(run, [new ResultTableTreeNode("testNode testNode testNode testNode testNode testNode testNode ")], false, true, false, null)
         model.addCriteria 0
         model.addCriteria 0
         model.addCriteria 0

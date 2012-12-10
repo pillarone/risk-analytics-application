@@ -18,21 +18,16 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     ResultView resultView
     Boolean isSingleValue
 
-    public ResultIterationDataViewModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate, boolean enablePeriodComboBox = true, boolean showPeriodLabels = true, ResultView resultView) {
+    private boolean initialQuery = true
+
+    public ResultIterationDataViewModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate, boolean enablePeriodComboBox, boolean showPeriodLabels, ResultView resultView) {
         super(simulationRun, nodes, false, enablePeriodComboBox, showPeriodLabels)
         resultTableModel = new ResultIterationDataTableModel()
+        criterias.clear() //PMO-2226
         if (autoQueryOnCreate) {
             query()
         }
         this.@resultView = resultView
-    }
-
-    public ResultIterationDataViewModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate, boolean enablePeriodComboBox = true, boolean showPeriodLabels = true) {
-        super(simulationRun, nodes, false, enablePeriodComboBox, showPeriodLabels)
-        resultTableModel = new ResultIterationDataTableModel()
-        if (autoQueryOnCreate) {
-            query()
-        }
     }
 
     public List getRawData() {
@@ -75,7 +70,18 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     }
 
     public void query() {
-        super.query()
+        if (!initialQuery) {
+            super.query()
+        } else {
+            results = new HashSet()
+
+            if (criterias.empty) {
+                Math.min(1000, simulationRun.iterations).times {
+                    results << it + 1
+                }
+                initialQuery = false
+            }
+        }
         List lastQueryResults = orderByFirstKeyFigure(createResultList())
         resultTableModel.tableValues = lastQueryResults
         resultTableModel.columnHeaders = columnHeader

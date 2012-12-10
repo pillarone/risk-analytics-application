@@ -22,7 +22,7 @@ class CriteriaViewModel {
         this.@queryModel = queryModel
         this.@enablePeriodComboBox = enablePeriodComboBox
         keyFigureTypeModel = new DefaultComboBoxModel(queryModel.shortPaths)
-        comparatorModel = new EnumComboBoxModel(CriteriaComparator.values() as Object[], CriteriaComparator.GREATER_THAN, false)
+        comparatorModel = new EnumComboBoxModel(CriteriaComparator.values() as Object[], CriteriaComparator.LESS_EQUALS, false)
         valueInterpretationModel = new EnumComboBoxModel(ValueInterpretationType.values() as Object[], ValueInterpretationType.ORDER_STATISTIC, true)
         createPeriodModel()
         selectedPeriod = queryModel.defaultPeriod

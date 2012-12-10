@@ -78,7 +78,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     }
 
     void testCriteriaList() {
-        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false)
+        ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false, null)
         assertEquals 1, rawDataViewModel.getCriteriaGroupCount()
         assertEquals 1, rawDataViewModel.getCriteriaGroup(0).size()
 
@@ -94,7 +94,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         node1.resultPath = "testPath1:ultimate"
         ResultTableTreeNode node2 = new ResultTableTreeNode("testPath2")
         node2.resultPath = "testPath2:ultimate"
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, [node1, node2], false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, [node1, node2], false, true, true, null)
         assertEquals 2, model.paths.size()
         assertEquals "testPath1", model.paths.get(0)
         assertEquals "testPath2", model.paths.get(1)
@@ -103,7 +103,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path1.pathName)}", model.shortPaths.get(0)
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)}", model.shortPaths.get(1)
 
-        model = new ResultIterationDataViewModel(simulationRun, [node2, node1], false)
+        model = new ResultIterationDataViewModel(simulationRun, [node2, node1], false, true, true, null)
         assertEquals 2, model.paths.size()
         assertEquals "testPath1", model.paths.get(0)
         assertEquals "testPath2", model.paths.get(1)
@@ -117,7 +117,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertNotNull simulationRun
         initResults()
 
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false, true, true, null)
         model.criterias.clear()
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(model)
         criteriaViewModel.selectedPeriod = 0
@@ -155,7 +155,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertNotNull simulationRun
         initResultsWithDifferentFields()
 
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false, true, true, null)
         model.criterias.clear()
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(model)
         criteriaViewModel.selectedPeriod = 0
@@ -193,7 +193,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertNotNull simulationRun
         initResults()
 
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false, true, true, null)
         model.criterias.clear()
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(model)
         criteriaViewModel.selectedPeriod = 0
@@ -240,7 +240,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertNotNull simulationRun
         initResults()
 
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false, true, true, null)
         model.criterias.clear()
 
         CriteriaViewModel criteriaViewModel = new CriteriaViewModel(model)
@@ -288,7 +288,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertNotNull simulationRun
         initResults()
 
-        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false)
+        ResultIterationDataViewModel model = new ResultIterationDataViewModel(simulationRun, createResultNodes(), false, true, true, null)
         model.criterias.clear()
 
         model.query()
