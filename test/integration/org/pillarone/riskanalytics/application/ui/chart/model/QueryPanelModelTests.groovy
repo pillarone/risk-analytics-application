@@ -46,7 +46,9 @@ class QueryPanelModelTests extends GroovyTestCase {
         node.collector = aggregatedSingleCollector.collectorName
         node.resultPath = path.pathName + ":" + field.fieldName
         ResultIterationDataViewModel model = new ResultIterationDataViewModel(run, [node], false, true, true, null)
+        model.addCriteriaGroup()
         model.criterias[0][0].valueInterpretationModel.selectedEnum = ValueInterpretationType.ABSOLUTE
+        model.criterias[0][0].comparatorModel.selectedEnum = CriteriaComparator.GREATER_THAN
         model.query()
 
         assertTrue(model.results.contains(1))

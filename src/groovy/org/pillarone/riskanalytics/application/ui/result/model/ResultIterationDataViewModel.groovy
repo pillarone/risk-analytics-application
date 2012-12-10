@@ -18,14 +18,16 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     ResultView resultView
     Boolean isSingleValue
 
-    private boolean initialQuery = true
+    private boolean initialQuery
 
     public ResultIterationDataViewModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate, boolean enablePeriodComboBox, boolean showPeriodLabels, ResultView resultView) {
         super(simulationRun, nodes, false, enablePeriodComboBox, showPeriodLabels)
         resultTableModel = new ResultIterationDataTableModel()
         criterias.clear() //PMO-2226
         if (autoQueryOnCreate) {
+            initialQuery = true
             query()
+            initialQuery = false
         }
         this.@resultView = resultView
     }

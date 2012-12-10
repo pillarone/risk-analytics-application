@@ -79,6 +79,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
 
     void testCriteriaList() {
         ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false, null)
+        rawDataViewModel.addCriteriaGroup()
         assertEquals 1, rawDataViewModel.getCriteriaGroupCount()
         assertEquals 1, rawDataViewModel.getCriteriaGroup(0).size()
 
