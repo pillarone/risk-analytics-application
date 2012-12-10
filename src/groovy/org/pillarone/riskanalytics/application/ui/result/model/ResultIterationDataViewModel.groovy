@@ -35,10 +35,13 @@ class ResultIterationDataViewModel extends QueryPaneModel {
     public List getRawData() {
         List lines = []
         List rawData = createResultList()
+
+        List headers = getColumnHeader()
+
         rawData.each {List rawDataLine ->
             Map excelLine = [:]
             rawDataLine.eachWithIndex {it, index ->
-                excelLine[columnHeader[index]] = it
+                excelLine[headers[index]] = it
             }
             lines << excelLine
         }
