@@ -24,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.application.ui.result.action.ExportResultIterationDataAction
 
 class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     ULCCloseableTabbedPane tabbedPane
@@ -42,6 +43,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
     ShowCommentsAction showCommentsAction
     OpenComponentHelp help
     OpenResultIterationDataViewer openResultIterationDataViewer
+    ExportResultIterationDataAction exportResultIterationDataAction
     ShowSingleValueCollectorAction showSingleValueCollectorAction
     TreeNodeCopier treeNodeCopierWithPath
     TreeNodeCopier treeNodeCopierWithoutPath
@@ -74,16 +76,16 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         initActions(resultView)
 
         ULCMenu defaultResultChartMenu = createChartsMenu(defaultResultNodePopup, tree, tabbedPane, simulationRun)
-        addActionsMenu(defaultResultNodePopup, [defaultResultChartMenu, openResultIterationDataViewer, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+        addActionsMenu(defaultResultNodePopup, [defaultResultChartMenu, openResultIterationDataViewer, exportResultIterationDataAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
 
         ULCMenu defaultSingleResultChartMenu = createChartsMenu(defaultSingleResultNodePopup, tree, tabbedPane, simulationRun)
-        addActionsMenu(defaultSingleResultNodePopup, [defaultSingleResultChartMenu, openResultIterationDataViewer, showSingleValueCollectorAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+        addActionsMenu(defaultSingleResultNodePopup, [defaultSingleResultChartMenu, openResultIterationDataViewer, exportResultIterationDataAction, showSingleValueCollectorAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
 
         ULCMenu resultChartMenu = createChartsMenu(resultNodePopup, tree, tabbedPane, simulationRun)
-        addActionsMenu(resultNodePopup, [treeExpander, treeCollapser, null, resultChartMenu, openResultIterationDataViewer, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+        addActionsMenu(resultNodePopup, [treeExpander, treeCollapser, null, resultChartMenu, openResultIterationDataViewer, exportResultIterationDataAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
 
         ULCMenu singleResultChartMenu = createChartsMenu(singleResultNodePopup, tree, tabbedPane, simulationRun)
-        addActionsMenu(singleResultNodePopup, [treeExpander, treeCollapser, null, singleResultChartMenu, openResultIterationDataViewer, showSingleValueCollectorAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
+        addActionsMenu(singleResultNodePopup, [treeExpander, treeCollapser, null, singleResultChartMenu, openResultIterationDataViewer, exportResultIterationDataAction, showSingleValueCollectorAction, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
 
         addActionsMenu(nodePopup, [treeExpander, treeCollapser, null, treeNodeCopierWithoutPath, treeNodeCopierWithPath, null, insertComment, createShowCommentsMenuItem()])
 
@@ -99,6 +101,7 @@ class ResultViewTableTreeNodeCellRenderer extends DefaultTableTreeCellRenderer {
         showCommentsAction.addCommentListener commentAndErrorView
 
         openResultIterationDataViewer = new OpenResultIterationDataViewer(tabbedPane, simulationRun, tree, resultView)
+        exportResultIterationDataAction = new ExportResultIterationDataAction(tree.rowHeaderTableTree, simulationRun)
         showSingleValueCollectorAction = new ShowSingleValueCollectorAction(tabbedPane, tree, simulationRun)
 
         help = new OpenComponentHelp(this.tree.rowHeaderTableTree)

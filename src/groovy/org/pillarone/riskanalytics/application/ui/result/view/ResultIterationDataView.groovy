@@ -58,7 +58,7 @@ class ResultIterationDataView implements IModelChangedListener {
         increasePrecisionButton = new ULCButton(new PrecisionAction(model, +1, "increasePrecision"))
 
         queryButton = new ULCButton(getText("search"))
-        exportButton = new ULCButton(new ExportRawDataTable(this))
+        exportButton = new ULCButton(new ExportRawDataTable(model, content))
 
         resultTable = new ULCTable(model.resultTableModel)
         resultTable.setAutoResizeMode(ULCTable.AUTO_RESIZE_OFF)

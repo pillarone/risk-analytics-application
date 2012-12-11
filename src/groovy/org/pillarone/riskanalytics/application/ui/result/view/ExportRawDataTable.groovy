@@ -10,17 +10,22 @@ import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
+import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
+import com.ulcjava.base.application.ULCComponent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ExportRawDataTable extends ResourceBasedAction {
-    ResultIterationDataView view
+
+    ResultIterationDataViewModel model
+    ULCComponent dialogRoot
 
 
-    public ExportRawDataTable(ResultIterationDataView view) {
+    public ExportRawDataTable(ResultIterationDataViewModel model, ULCComponent dialogRoot) {
         super("ExportRawDataTable")
-        this.view = view
+        this.model = model
+        this.dialogRoot = dialogRoot
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -30,7 +35,7 @@ class ExportRawDataTable extends ResourceBasedAction {
         config.FILES_ONLY
         config.selectedFile = "ResultIterationData.xlsx"
 
-        ULCWindow ancestor = UlcUtilities.getWindowAncestor(view.content)
+        ULCWindow ancestor = UlcUtilities.getWindowAncestor(dialogRoot)
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
                     String selectedFile = filePaths[0]
@@ -38,10 +43,10 @@ class ExportRawDataTable extends ResourceBasedAction {
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {
                             ExcelExporter exporter = new ExcelExporter()
-                            exporter.headers = view.model.columnHeader
-                            exporter.exportResults(view.model.rawData)
-                            exporter.addTab "Simulation Settings", view.model.simulationSettings
-                            exporter.addTab "Runtime parameters", view.model.runtimeParameters
+                            exporter.headers = model.columnHeader
+                            exporter.exportResults(model.rawData)
+                            exporter.addTab "Simulation Settings", model.simulationSettings
+                            exporter.addTab "Runtime parameters", model.runtimeParameters
                             exporter.writeWorkBook stream
                         } catch (UnsupportedOperationException t) {
                             new ULCAlert(ancestor, "Export failed", t.message, "Ok").show()
