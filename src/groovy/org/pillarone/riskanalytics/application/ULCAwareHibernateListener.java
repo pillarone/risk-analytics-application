@@ -7,7 +7,7 @@ import org.hibernate.event.PostDeleteEvent;
 import com.ulcjava.base.application.UlcUtilities;
 
 
-class ULCAwareHibernateListener extends ModellingItemHibernateListener {
+public class ULCAwareHibernateListener extends ModellingItemHibernateListener {
 
     @Override
     public void onPostInsert(final PostInsertEvent postInsertEvent) {

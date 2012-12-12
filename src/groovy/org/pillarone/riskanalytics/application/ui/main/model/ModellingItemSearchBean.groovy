@@ -13,6 +13,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.hibernate.SQLQuery
 import org.hibernate.SessionFactory
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.util.DatabaseUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,7 +22,6 @@ import org.pillarone.riskanalytics.core.ParameterizationDAO
 class ModellingItemSearchBean implements ChangeIndexerListener {
 
     ModellingItemIndexer indexer = null
-    private QueryParser parser = null;
     boolean reInitIndexer = false
 
     private static Log LOG = LogFactory.getLog(ModellingItemSearchBean)
@@ -45,7 +45,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         try {
             q = parser.parse(escapedQuery);
         }
-        catch (ParseException) {
+        catch (ParseException e) {
             // remove everything except letters, numbers, spaces and underscores
             q = parser.parse(queryString.replaceAll("[^\\w\\s]",""))
         }
@@ -89,51 +89,68 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
     }
 
     private List getParameterizationNames(SessionFactory sessionFactory) {
-        StringBuilder sb = new StringBuilder("SELECT concat_ws( " + SQL_SEPARATOR)
-        sb.append(" ,CONCAT(dao.name, ' v', dao.item_version), (select GROUP_CONCAT(t.name SEPARATOR " + SQL_SEPARATOR + ")  from parameterization_tag ptag JOIN tag t ON t.id = ptag.tag_id")
-        sb.append(" where ptag.parameterizationdao_id = dao.id) ")
-        sb.append(" ,(select GROUP_CONCAT(run.name SEPARATOR " + SQL_SEPARATOR + ") from simulation_run run where run.parameterization_id = dao.id)")
-        sb.append(" ,(SELECT GROUP_CONCAT(DISTINCT(CONCAT(rc.name, ' v', rc.item_version)) SEPARATOR " + SQL_SEPARATOR + ") FROM result_configurationdao rc JOIN simulation_run r2 ON r2.result_configuration_id = rc.id WHERE r2.parameterization_id = dao.id)")
-        sb.append(" ) FROM parameterizationdao dao ")
-        String whereClause = clauseByModel("model_class_name")
-        if (whereClause) {
-            sb.append(" where " + whereClause)
+        if (DatabaseUtils.isMsSqlDatabase()) {
+            String whereClause = clauseByModel("model_class_name")
+            return getNames(sessionFactory,
+                    "SELECT names FROM v_ModellingItemSearchBean_getParameterizationNames dao"
+                            + (whereClause ? " where (${whereClause})" : ""))
+        } else /* Assume MySQL database */ {
+            StringBuilder sb = new StringBuilder("SELECT concat_ws( " + SQL_SEPARATOR)
+            sb.append(" ,CONCAT(dao.name, ' v', dao.item_version), (select GROUP_CONCAT(t.name SEPARATOR " + SQL_SEPARATOR + ")  from parameterization_tag ptag JOIN tag t ON t.id = ptag.tag_id")
+            sb.append(" where ptag.parameterizationdao_id = dao.id) ")
+            sb.append(" ,(select GROUP_CONCAT(run.name SEPARATOR " + SQL_SEPARATOR + ") from simulation_run run where run.parameterization_id = dao.id)")
+            sb.append(" ,(SELECT GROUP_CONCAT(DISTINCT(CONCAT(rc.name, ' v', rc.item_version)) SEPARATOR " + SQL_SEPARATOR + ") FROM result_configurationdao rc JOIN simulation_run r2 ON r2.result_configuration_id = rc.id WHERE r2.parameterization_id = dao.id)")
+            sb.append(" ) FROM parameterizationdao dao ")
+            String whereClause = clauseByModel("model_class_name")
+            if (whereClause) {
+                sb.append(" where " + whereClause)
+            }
+            return getNames(sessionFactory, sb.toString())
         }
-        return getNames(sessionFactory, sb)
     }
 
     private List getRunNames(SessionFactory sessionFactory, String modelClass) {
-        //, (select GROUP_CONCAT(t.name)  from parameterization_tag ptag, tag t
-        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
-        sb.append(", dao.name, (select GROUP_CONCAT(t.name SEPARATOR " + SQL_SEPARATOR + ")  from simulation_tag stag JOIN tag t ON t.id = stag.tag_id")
-        sb.append(" where stag.simulation_run_id = dao.id) ")
-        sb.append(" , CONCAT(p.name, ' v', p.item_version), r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
-        sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
+        if (DatabaseUtils.isMsSqlDatabase()) {
+            String whereClause = clauseByModel(modelClass)
+        return getNames(sessionFactory,
+                "SELECT names FROM v_ModellingItemSearchBean_getRunNames dao"
+                        + (whereClause ? " where (${whereClause})": ""))
+        } else /* Assume MySQL database */ {
+            StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
+            sb.append(", dao.name, (select GROUP_CONCAT(t.name SEPARATOR " + SQL_SEPARATOR + ")  from simulation_tag stag JOIN tag t ON t.id = stag.tag_id")
+            sb.append(" where stag.simulation_run_id = dao.id) ")
+            sb.append(" , CONCAT(p.name, ' v', p.item_version), r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
+            sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
 //        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR)
-        //        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
-        //        sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
-        String whereClause = clauseByModel(modelClass)
-        if (whereClause) {
-            sb.append(" and (" + whereClause + ")")
+            //        sb.append(",dao.name, p.name, r.name ) FROM simulation_run as dao, parameterizationdao as p, result_configurationdao r ")
+            //        sb.append(" where dao.parameterization_id = p.id and dao.result_configuration_id = r.id ")
+            String whereClause = clauseByModel(modelClass)
+            if (whereClause) {
+                sb.append(" and (" + whereClause + ")")
+            }
+            List<String> names = getNames(sessionFactory, sb.toString())
+            return names
         }
-        List<String> names = getNames(sessionFactory, sb)
-        return names
     }
 
     private List getResultConfigurationNames(SessionFactory sessionFactory, String modelClass) {
-        //SELECT concat_ws(' /// ', r.name, (select group_concat(run.name) from simulation_run run
-        // where run.result_configuration_id = r.id)) FROM result_configurationdao r;
-        StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR + ", CONCAT(dao.name, ' v', dao.item_version)")
-        sb.append(" ,(SELECT GROUP_CONCAT(run.name SEPARATOR " + SQL_SEPARATOR + ") from simulation_run run where run.result_configuration_id = dao.id)")
-        sb.append(" ,(SELECT GROUP_CONCAT(CONCAT(p.name, ' v', p.item_version) SEPARATOR " + SQL_SEPARATOR + ") FROM parameterizationdao p JOIN simulation_run run ON run.parameterization_id = p.id WHERE run.result_configuration_id = dao.id) ")
-        sb.append(" ) FROM result_configurationdao as dao ")
-        String whereClause = clauseByModel(modelClass)
-        if (whereClause) {
-            sb.append(" where (" + whereClause + ")")
+        if (DatabaseUtils.isMsSqlDatabase()) {
+            String whereClause = clauseByModel(modelClass)
+        return getNames(sessionFactory,
+                "SELECT names FROM v_ModellingItemSearchBean_getResultConfigurationNames dao"
+                        + (whereClause ? " where (${whereClause})": ""))
+        } else /* Assume MySQL database */ {
+            StringBuilder sb = new StringBuilder("SELECT concat_ws(" + SQL_SEPARATOR + ", CONCAT(dao.name, ' v', dao.item_version)")
+            sb.append(" ,(SELECT GROUP_CONCAT(run.name SEPARATOR " + SQL_SEPARATOR + ") from simulation_run run where run.result_configuration_id = dao.id)")
+            sb.append(" ,(SELECT GROUP_CONCAT(CONCAT(p.name, ' v', p.item_version) SEPARATOR " + SQL_SEPARATOR + ") FROM parameterizationdao p JOIN simulation_run run ON run.parameterization_id = p.id WHERE run.result_configuration_id = dao.id) ")
+            sb.append(" ) FROM result_configurationdao as dao ")
+            String whereClause = clauseByModel(modelClass)
+            if (whereClause) {
+                sb.append(" where (" + whereClause + ")")
+            }
+            return getNames(sessionFactory, sb.toString())
         }
-        return getNames(sessionFactory, sb)
     }
-
 
 
     private String clauseByModel(String modelClass) {
@@ -149,8 +166,8 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         return sb.toString()
     }
 
-    private List getNames(SessionFactory sessionFactory, StringBuilder sb) {
-        SQLQuery query = sessionFactory.currentSession.createSQLQuery(sb.toString())
+    private List getNames(SessionFactory sessionFactory, String sql) {
+        SQLQuery query = sessionFactory.currentSession.createSQLQuery(sql)
         List<String> names = query.list()
         return names
     }
