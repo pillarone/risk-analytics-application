@@ -44,14 +44,26 @@ class CriteriaView {
             else {
                 new I18NAlert(UlcUtilities.getWindowAncestor(content), getErrorMessage(valueIntepretationComboBox.model.selectedEnum)).show()
             }
-
-
         }] as IActionListener)
+
         periodComboBox.addActionListener([actionPerformed: {
             if (model.selectedPeriod == null) {
                 valueIntepretationComboBox.model.selectedEnum = ValueInterpretationType.ABSOLUTE
             }
             valueIntepretationComboBox.enabled = (model.selectedPeriod != null)
+            model.notifyCriteriaChanged()
+        }] as IActionListener)
+
+        keyFigureTypeComboBox.addActionListener([actionPerformed: {
+            model.notifyCriteriaChanged()
+        }] as IActionListener)
+
+        comparatorComboBox.addActionListener([actionPerformed: {
+            model.notifyCriteriaChanged()
+        }] as IActionListener)
+
+        valueIntepretationComboBox.addActionListener([actionPerformed: {
+            model.notifyCriteriaChanged()
         }] as IActionListener)
     }
 

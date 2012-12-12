@@ -11,7 +11,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 
-class QueryPaneModel extends AbstractPresentationModel {
+class QueryPaneModel extends AbstractPresentationModel implements ICriteriaModelChangeListener {
 
     static Log LOG = LogFactory.getLog(QueryPaneModel.class);
 
@@ -34,7 +34,8 @@ class QueryPaneModel extends AbstractPresentationModel {
         this.@simulationRun = simulationRun
         this.@nodes = nodes.sort {SimpleTableTreeNode node -> node.path }
         periodLabels = loadPeriodLabels(simulationRun, showPeriodLabels)
-        criterias = [[new CriteriaViewModel(this, enablePeriodComboBox)]]
+        criterias = []
+        addCriteriaGroup()
         if (autoQueryOnCreate) {
             query()
         }
@@ -72,21 +73,32 @@ class QueryPaneModel extends AbstractPresentationModel {
     }
 
     public addCriteriaGroup() {
-        criterias << [new CriteriaViewModel(this, enablePeriodComboBox)]
+        CriteriaViewModel criteriaViewModel = new CriteriaViewModel(this, enablePeriodComboBox)
+        criteriaViewModel.addListener(this)
+        criterias << [criteriaViewModel]
+        criteriaChanged()
         fireModelChanged()
     }
 
     public removeCriteriaGroup(int index) {
-        criterias.remove(index)
+        List<CriteriaViewModel> modelsToRemove = criterias.remove(index)
+        for(CriteriaViewModel model in modelsToRemove) {
+            model.removeListener(this)
+        }
+        criteriaChanged()
         fireModelChanged()
     }
 
     public addCriteria(int groupIndex) {
-        criterias[groupIndex] << new CriteriaViewModel(this, enablePeriodComboBox)
+        CriteriaViewModel criteriaViewModel = new CriteriaViewModel(this, enablePeriodComboBox)
+        criteriaViewModel.addListener(this)
+        criterias[groupIndex] << criteriaViewModel
+        criteriaChanged()
         fireModelChanged()
     }
 
     public void removeCriteria(CriteriaViewModel criteria) {
+        criteria.removeListener(this)
         Integer groupIndexToRemove = null
         criterias.eachWithIndex {List<CriteriaViewModel> criteriaGroup, int index ->
             criteriaGroup.remove(criteria)
@@ -97,6 +109,7 @@ class QueryPaneModel extends AbstractPresentationModel {
         if (groupIndexToRemove != null) {
             removeCriteriaGroup(groupIndexToRemove)
         }
+        criteriaChanged()
         fireModelChanged()
     }
 
@@ -295,5 +308,6 @@ class QueryPaneModel extends AbstractPresentationModel {
         return splitUpIterations
     }
 
-
+    void criteriaChanged() {
+    }
 }
