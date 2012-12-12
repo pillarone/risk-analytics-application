@@ -6,8 +6,9 @@ import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import org.pillarone.riskanalytics.application.ui.chart.view.CriteriaView
 import org.pillarone.riskanalytics.core.dataaccess.CompareOperator
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
-import org.pillarone.riskanalytics.core.output.CollectorMapping
 import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.output.QuantilePerspective
 
 class CriteriaViewModel {
     QueryPaneModel queryModel
@@ -17,6 +18,8 @@ class CriteriaViewModel {
     IComboBoxModel valueInterpretationModel = new DefaultComboBoxModel()
     DefaultComboBoxModel periodModel
     boolean enablePeriodComboBox
+
+    private List<ICriteriaModelChangeListener> listeners = []
 
     public CriteriaViewModel(QueryPaneModel queryModel, boolean enablePeriodComboBox = true) {
         this.@queryModel = queryModel
@@ -51,6 +54,7 @@ class CriteriaViewModel {
 
     public void setSelectedPath(String path) {
         keyFigureTypeModel.setSelectedItem(path)
+        notifyCriteriaChanged()
     }
 
     public CriteriaComparator getSelectedComparator() {
@@ -59,6 +63,7 @@ class CriteriaViewModel {
 
     public void setSelectedComparator(CriteriaComparator comparator) {
         comparatorModel.selectedEnum = comparator
+        notifyCriteriaChanged()
     }
 
     public Double getInterpretedValue() throws Exception {
@@ -66,7 +71,7 @@ class CriteriaViewModel {
             case ValueInterpretationType.ABSOLUTE:
                 return this.@value
             case ValueInterpretationType.PERCENTILE:
-                return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value)
+                return ResultAccessor.getPercentile(queryModel.simulationRun, selectedPeriod, selectedPath, collector, field, this.@value, QuantilePerspective.LOSS)
             case ValueInterpretationType.ORDER_STATISTIC:
                 return ResultAccessor.getNthOrderStatistic(queryModel.simulationRun, selectedPeriod, selectedPath, collector,
                         field, this.@value, CriteriaComparator.getCompareOperator((String) comparatorModel.selectedItem))
@@ -103,10 +108,12 @@ class CriteriaViewModel {
 
     public void setValue(String s) {
         value = Double.parseDouble(s)
+        notifyCriteriaChanged()
     }
 
     public void setValue(double d) {
         value = d
+        notifyCriteriaChanged()
     }
 
     public def getSelectedPeriod() {
@@ -117,6 +124,7 @@ class CriteriaViewModel {
 
     public void setSelectedPeriod(int period) {
         periodModel.selectedItem = queryModel.getPeriodLabel(period)
+        notifyCriteriaChanged()
     }
 
     private void createPeriodModel() {
@@ -125,6 +133,18 @@ class CriteriaViewModel {
             periodModel.addElement queryModel.getPeriodLabel(it)
         }
         periodModel.addElement "in all periods"
+    }
+
+    void addListener(ICriteriaModelChangeListener listener) {
+        listeners << listener
+    }
+
+    void removeListener(ICriteriaModelChangeListener listener) {
+        listeners.remove(listener)
+    }
+
+    void notifyCriteriaChanged() {
+        listeners*.criteriaChanged()
     }
 }
 

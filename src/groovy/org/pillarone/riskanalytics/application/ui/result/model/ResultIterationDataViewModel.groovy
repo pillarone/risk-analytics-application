@@ -20,6 +20,8 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     private boolean initialQuery
 
+    private List temporaryResults
+
     public ResultIterationDataViewModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate, boolean enablePeriodComboBox, boolean showPeriodLabels, ResultView resultView) {
         super(simulationRun, nodes, false, enablePeriodComboBox, showPeriodLabels)
         resultTableModel = new ResultIterationDataTableModel()
@@ -34,14 +36,20 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     public List getRawData() {
         List lines = []
-        List rawData = createResultList()
+        List rawData = temporaryResults
+        if(rawData == null) { //criteria has been changed since last query
+            query()
+            rawData = temporaryResults
+        }
 
         List headers = getColumnHeader()
 
-        rawData.each {List rawDataLine ->
+        for (List rawDataLine in rawData) {
             Map excelLine = [:]
-            rawDataLine.eachWithIndex {it, index ->
-                excelLine[headers[index]] = it
+            int index = 0
+            for (value in rawDataLine) {
+                excelLine[headers[index]] = value
+                index++
             }
             lines << excelLine
         }
@@ -87,7 +95,8 @@ class ResultIterationDataViewModel extends QueryPaneModel {
                 initialQuery = false
             }
         }
-        List lastQueryResults = orderByFirstKeyFigure(createResultList())
+        temporaryResults = createResultList()
+        List lastQueryResults = orderByFirstKeyFigure(temporaryResults)
         resultTableModel.tableValues = lastQueryResults
         resultTableModel.columnHeaders = columnHeader
         if (resultTableModel.tableValues.size() == 0) {
@@ -98,6 +107,12 @@ class ResultIterationDataViewModel extends QueryPaneModel {
         }
         resultTableModel.fireModelChanged()
         fireModelChanged()
+    }
+
+    @Override
+    void criteriaChanged() {
+        super.criteriaChanged()
+        temporaryResults = null
     }
 
     public void setOrderByPath(boolean value) {
