@@ -14,6 +14,7 @@ import org.hibernate.SQLQuery
 import org.hibernate.SessionFactory
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.util.DatabaseUtils
+import org.hibernate.Hibernate
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -168,6 +169,9 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
     private List getNames(SessionFactory sessionFactory, String sql) {
         SQLQuery query = sessionFactory.currentSession.createSQLQuery(sql)
+        if (DatabaseUtils.isMsSqlDatabase()) {
+            query.addScalar("names", Hibernate.STRING)
+        }
         List<String> names = query.list()
         return names
     }
