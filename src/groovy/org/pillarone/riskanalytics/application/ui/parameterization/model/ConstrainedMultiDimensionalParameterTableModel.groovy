@@ -50,7 +50,7 @@ class ConstrainedMultiDimensionalParameterTableModel extends MultiDimensionalPar
         if (localizedValues.keySet().contains(column)) {
             BiMap<String, String> valueToLocalized = localizedValues.get(column)
             String localizedValue = valueToLocalized.get(value)
-            value = localizedValue != null ? localizedValue : value
+            value = (localizedValue ?: value)
         }
         return value
     }
@@ -65,7 +65,7 @@ class ConstrainedMultiDimensionalParameterTableModel extends MultiDimensionalPar
             List newList = []
             for (def value in values) {
                 String localizedValue = valueToLocalized.get(value)
-                newList << localizedValue != null ? localizedValue : value
+                newList << (localizedValue ?: value)
             }
             values = newList
         }

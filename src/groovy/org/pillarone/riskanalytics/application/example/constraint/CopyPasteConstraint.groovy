@@ -25,5 +25,7 @@ class CopyPasteConstraint implements IMultiDimensionalConstraints {
         [Integer, Double, DateTime, Boolean, String, ITestComponentMarker][column]
     }
 
-
+    boolean emptyComponentSelectionAllowed(int column) {
+        return false
+    }
 }
