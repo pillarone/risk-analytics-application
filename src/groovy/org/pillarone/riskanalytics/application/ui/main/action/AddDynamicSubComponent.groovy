@@ -11,9 +11,11 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.view.DynamicComponentNameDialog
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.core.components.NonUniqueComponentNameException
 
 class AddDynamicSubComponent extends ResourceBasedAction {
 
@@ -37,21 +39,23 @@ class AddDynamicSubComponent extends ResourceBasedAction {
         DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = UIUtils.getText(this.class, "newDynamicSubComponent") + ": " + (node ? node.getDisplayName() : "dynamic component")
         dialog.okAction = {
-            Component component = node.component.createDefaultSubComponent()
-            String name = dialog.nameInput.text.trim()
-            name = ComponentUtils.getSubComponentName(name)
+            ExceptionSafe.protect {
+                Component component = node.component.createDefaultSubComponent()
+                String name = dialog.nameInput.text.trim()
+                name = ComponentUtils.getSubComponentName(name)
 
-            if (name.length() == 0 || !StringUtils.isAlphanumericSpace(name)) {
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "IllegalSubComponentName")
-                alert.show()
-                return
-            }
-            try {
-                component.name = name
-                model.parametrizedItem.addComponent([ComponentUtils.removeModelFromPath(node.path, model.model), name].join(":"), component)
-            } catch (IllegalArgumentException e) {
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
-                alert.show()
+                if (name.length() == 0 || !StringUtils.isAlphanumericSpace(name)) {
+                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "IllegalSubComponentName")
+                    alert.show()
+                    return
+                }
+                try {
+                    component.name = name
+                    model.parametrizedItem.addComponent([ComponentUtils.removeModelFromPath(node.path, model.model), name].join(":"), component)
+                } catch (NonUniqueComponentNameException e) {
+                    ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
+                    alert.show()
+                }
             }
         }
         dialog.show()
