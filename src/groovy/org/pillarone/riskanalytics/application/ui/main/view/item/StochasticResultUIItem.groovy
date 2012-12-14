@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
-import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
@@ -10,6 +8,9 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.application.ui.result.view.ResultView
+import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,14 +22,14 @@ class StochasticResultUIItem extends ResultUIItem {
         super(model, simulationModel, simulation)
     }
 
-    ULCContainer createDetailView() {
-        ResultViewModel resultViewModel = (ResultViewModel) getViewModel()
-        StochasticResultView view = new StochasticResultView(null)
-        view.mainModel = mainModel
-        view.model = resultViewModel
+    @Override
+    protected ResultView createView(AbstractResultViewModel model) {
+        model = model as ResultViewModel
 
-        resultViewModel.addFunctionListener(view)
-        return view.content
+        StochasticResultView view = new StochasticResultView(model, mainModel)
+        model.addFunctionListener(view)
+        model.addFunction(new MeanFunction())
+        return view
     }
 
     AbstractModellingModel getViewModel() {

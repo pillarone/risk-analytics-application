@@ -2,23 +2,16 @@ package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.ToggleKeyFigureAction
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.output.*
-import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 
-class DeterministicResultViewModel extends ResultViewModel {
+class DeterministicResultViewModel extends AbstractResultViewModel {
 
     DeterministicResultViewModel(Model model, ModelStructure structure, Simulation simulation) {
-        super(model, structure, simulation)
-    }
-
-    @Override
-    protected List<IFunction> initialFunctions() {
-        return []
+        super(model, simulation, structure)
     }
 
     protected ITableTreeModel getResultTreeTableModel(Model model, Parameterization parameterization, simulationRun, ITableTreeNode treeRoot, ConfigObject results) {
@@ -41,5 +34,8 @@ class DeterministicResultViewModel extends ResultViewModel {
         return results
     }
 
-
+    @Override
+    protected void recreateAllColumns() {
+        //TODO
+    }
 }

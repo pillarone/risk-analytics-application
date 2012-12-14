@@ -42,7 +42,6 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
         this.parameterization = parameterization
         functions << new NodeNameFunction()
         columnCount = 1
-        //TODO: is this still used despite of DRTTM?
 
         initPeriodLabels()
     }
@@ -200,8 +199,7 @@ class ResultTableTreeModel extends AsynchronTableTreeModel {
     }
 
 
-
-    private ULCNumberDataType getNumberDataType() {
+    ULCNumberDataType getNumberDataType() {
         if (!numberDataType) {
             numberDataType = DataTypeFactory.numberDataType
             numberDataType.setGroupingUsed true

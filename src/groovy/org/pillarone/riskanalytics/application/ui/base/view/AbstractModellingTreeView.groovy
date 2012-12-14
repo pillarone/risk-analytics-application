@@ -45,10 +45,15 @@ abstract class AbstractModellingTreeView {
 
     private def initView(def model) {
         if (model != null) {
+            preViewCreationInitialization()
             initComponents()
             layoutComponents()
             attachListeners()
         }
+    }
+
+    protected void preViewCreationInitialization() {
+        //can be overridden in subclasses for initialization before initComponents is called
     }
 
     void setModel(def model) {

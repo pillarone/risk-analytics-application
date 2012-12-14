@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.core.output.*
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 
 class ResultViewModelTests extends GroovyTestCase {
 
@@ -138,6 +139,7 @@ class ResultViewModelTests extends GroovyTestCase {
         MinFunction min = new MinFunction()
 
         def treeModel = resultViewModel.treeModel
+        resultViewModel.addFunction(new MeanFunction())
         assertEquals 3, treeModel.functions.size() //node name + 2 * mean
 
         resultViewModel.addFunction(max)
