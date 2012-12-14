@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 
 abstract class AbstractResultViewModel extends AbstractCommentableItemModel {
@@ -22,12 +23,13 @@ abstract class AbstractResultViewModel extends AbstractCommentableItemModel {
     ItemsComboBoxModel selectionViewModel
     ConfigObject allResults = null
 
-    AbstractResultViewModel(Model model, Object item, ModelStructure modelStructure) {
+    AbstractResultViewModel(Model model, Simulation item, ModelStructure modelStructure) {
         super(model, item, modelStructure)
 
         model.init()
         resultStructures = ModellingItemFactory.getResultStructuresForModel(model.class)
         selectionViewModel = new ItemsComboBoxModel(resultStructures, "DEFAULT_VIEW" + model.name)
+        item.load()
         buildTreeStructure(selectionViewModel.getSelectedObject())
     }
 
