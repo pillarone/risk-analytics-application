@@ -20,18 +20,7 @@ class DeterministicResultViewModel extends AbstractResultViewModel {
 
     @Override
     protected Map<String, ICollectingModeStrategy> obtainsCollectors(SimulationRun simulationRun, List allPaths) {
-        Map<String, ICollectingModeStrategy> result = [:]
-        List<Object[]> calculations = SingleValueResult.executeQuery("SELECT path.pathName, field.fieldName, collector.collectorName FROM org.pillarone.riskanalytics.core.output.SingleValueResult " +
-                " WHERE simulationRun.id = ?", [simulationRun.id])
-        for (Object[] psc in calculations) {
-            String path = "${psc[0]}:${psc[1]}"
-            String collector = psc[2]
-            if (allPaths.contains(path)) {
-                result.put(path, CollectingModeFactory.getStrategy(collector))
-            }
-        }
-
-        return result
+        return ResultViewUtils.obtainsCollectors(simulationRun, allPaths)
     }
 
     @Override
