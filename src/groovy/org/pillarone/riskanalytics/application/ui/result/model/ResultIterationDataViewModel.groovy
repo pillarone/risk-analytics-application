@@ -156,6 +156,7 @@ class ResultIterationDataViewModel extends QueryPaneModel {
         data << ["Number of Periods:", simulation.periodCount]
         data << ["Number of Iterations:", simulation.numberOfIterations]
         data << ["Simulation end Date:", DateFormatUtils.formatDetailed(simulation.end)]
+        data << ["Random seed", simulation.randomSeed]
         return data
     }
 
@@ -164,7 +165,7 @@ class ResultIterationDataViewModel extends QueryPaneModel {
         simulation.load()
 
         List data = []
-        for (ParameterHolder runtimeParameter in simulation.runtimeParameters) {
+        for (ParameterHolder runtimeParameter in simulation.runtimeParameters.sort { it.path }) {
             data << [ComponentUtils.getNormalizedName(runtimeParameter.path), runtimeParameter.businessObject.toString()]
         }
         return data
