@@ -12,11 +12,15 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
 import com.ulcjava.base.application.ULCComponent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ExportRawDataTable extends ResourceBasedAction {
+
+    private static Log LOG = LogFactory.getLog(ExportRawDataTable)
 
     ResultIterationDataViewModel model
     ULCComponent dialogRoot
@@ -58,9 +62,10 @@ class ExportRawDataTable extends ResourceBasedAction {
                         } finally {
                             stream.close()
                         }
-                    }, onSuccess: {path, name ->
-                    }, onFailure: {reason, description ->
-                        new ULCAlert(ancestor, "Export failed", description, "Ok").show()
+                    }, onSuccess: {String path, String name ->
+                    }, onFailure: { int reason, String description ->
+                        LOG.error("Excel export failed: ${description}")
+                        new ULCAlert(ancestor, "Export failed", "Failed to write to file, maybe it is already open?", "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 
                 },
