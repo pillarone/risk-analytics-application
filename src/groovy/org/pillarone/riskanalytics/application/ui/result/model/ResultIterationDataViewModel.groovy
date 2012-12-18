@@ -117,7 +117,8 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     public void setOrderByPath(boolean value) {
         this.@orderByPath = value
-        resultTableModel.tableValues = orderByFirstKeyFigure(createResultList())
+        temporaryResults = createResultList()
+        resultTableModel.tableValues = orderByFirstKeyFigure(temporaryResults)
         resultTableModel.columnHeaders = columnHeader
         resultTableModel.fireModelChanged()
         fireModelChanged()
