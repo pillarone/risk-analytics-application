@@ -110,7 +110,10 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     void handleEvent(I18NAlert alert) {
         if (alert.value.equals(alert.firstButtonLabel)) {
             startSimulation()
-        } else if (!alert.value.equals(alert.secondButtonLabel)) {
+        } else if (alert.value.equals(alert.secondButtonLabel) || alert.value.equals("windowClosing")) {
+            //User has clicked "Cancel" or simply closed the alert window... either way, just return
+            return
+        } else {
             throw new RuntimeException("Unknown button pressed: " + alert.value)
         }
     }
