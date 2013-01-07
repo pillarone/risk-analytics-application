@@ -9,16 +9,15 @@ class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
 
     static int NAME = 0
     static int TAGS = 1
-    static int COMMENTS = 2
-    static int CREATION_DATE = 3
-    static int LAST_MODIFICATION_DATE = 4
+    static int CREATION_DATE = 2
+    static int LAST_MODIFICATION_DATE = 3
 
     public StandaloneTableTreeModel(RiskAnalyticsMainModel mainModel) {
         super(mainModel)
     }
 
     int getColumnCount() {
-        5
+        4
     }
 
 
@@ -27,7 +26,6 @@ class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
         switch (column) {
             case this.NAME: return NAME;
             case this.TAGS: return super.TAGS;
-            case this.COMMENTS: return super.COMMENTS;
             case this.CREATION_DATE: return super.CREATION_DATE;
             case this.LAST_MODIFICATION_DATE: return super.LAST_MODIFICATION_DATE;
         }
