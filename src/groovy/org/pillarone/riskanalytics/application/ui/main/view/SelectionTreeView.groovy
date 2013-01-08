@@ -102,15 +102,11 @@ class SelectionTreeView {
         tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
             ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
             int columnIndex = navigationTableTreeModel.getColumnIndex(column.getModelIndex())
-   // if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
+            // if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
             if (ActionEvent.META_MASK == event.getModifiers()) {
                 SelectionTreeHeaderDialog dialog
-                if (columnIndex == COMMENTS || columnIndex == REVIEW_COMMENT) {
-                    dialog = new RadioButtonDialog(tree.viewPortTableTree, columnIndex)
-                } else {
-                    dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
-                }
-                dialog.init()
+                dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
+//                dialog.init()
                 dialog.dialog.setLocationRelativeTo(tree)
                 dialog.dialog.setAlignment(ULCBoxPane.BOX_CENTER_CENTER)
                 dialog.dialog.setVisible true

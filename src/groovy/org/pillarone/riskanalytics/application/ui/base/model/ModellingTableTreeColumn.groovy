@@ -6,10 +6,6 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.remoting.TransactionInfo
 import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.core.parameter.comment.ParameterizationCommentDAO
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.parameter.comment.workflow.WorkflowCommentDAO
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 
@@ -64,27 +60,26 @@ public class ModellingTableTreeColumn {
 
     }
 
-
-    class CommentsColumn extends ModellingTableTreeColumn {
-
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            int count = 0
-            if (modellingItem instanceof Parameterization) count = modellingItem.getSize(ParameterizationCommentDAO)
-            if (modellingItem instanceof Simulation) count = modellingItem.getSize(SimulationRun)
-            return count
-        }
-    }
-
-    class ReviewCommentsColumn extends ModellingTableTreeColumn {
-
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            if (modellingItem instanceof Parameterization)
-                return modellingItem.getSize(WorkflowCommentDAO)
-            return 0
-        }
-    }
+//    class CommentsColumn extends ModellingTableTreeColumn {
+//
+//        @Override
+//        Object getValue(ModellingItem modellingItem, ItemNode node) {
+//            int count = 0
+//            if (modellingItem instanceof Parameterization) count = modellingItem.getSize(ParameterizationCommentDAO)
+//            if (modellingItem instanceof Simulation) count = modellingItem.getSize(SimulationRun)
+//            return count
+//        }
+//    }
+//
+//    class ReviewCommentsColumn extends ModellingTableTreeColumn {
+//
+//        @Override
+//        Object getValue(ModellingItem modellingItem, ItemNode node) {
+//            if (modellingItem instanceof Parameterization)
+//                return modellingItem.getSize(WorkflowCommentDAO)
+//            return 0
+//        }
+//    }
 
     class OwnerColumn extends ModellingTableTreeColumn {
 
@@ -136,7 +131,7 @@ public class ModellingTableTreeColumn {
     }
 
     class UknownColumn extends ModellingTableTreeColumn {
-        
+
         @Override
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             return ""
@@ -174,8 +169,6 @@ public class ModellingTableTreeColumn {
             instances[ModellingInformationTableTreeModel.STATE] = new StateColumn()
             instances[ModellingInformationTableTreeModel.TAGS] = new TagsColumn()
             instances[ModellingInformationTableTreeModel.TRANSACTION_NAME] = new TransactionColumn()
-            instances[ModellingInformationTableTreeModel.COMMENTS] = new CommentsColumn()
-            instances[ModellingInformationTableTreeModel.REVIEW_COMMENT] = new ReviewCommentsColumn()
             instances[ModellingInformationTableTreeModel.OWNER] = new OwnerColumn()
             instances[ModellingInformationTableTreeModel.LAST_UPDATER] = new LastUpdateColumn()
             instances[ModellingInformationTableTreeModel.CREATION_DATE] = new CreationDateColumn()

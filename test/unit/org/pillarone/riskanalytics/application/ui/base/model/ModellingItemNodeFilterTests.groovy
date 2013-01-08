@@ -95,27 +95,28 @@ class ModellingItemNodeFilterTests extends GroovyTestCase {
     }
 
     public void testIsAcceptedByCount() {
-        ModellingItemNodeFilter allCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.ALL], ModellingInformationTableTreeModel.COMMENTS)
-        ModellingItemNodeFilter withoutCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.WITHOUT_COMMENTS], ModellingInformationTableTreeModel.COMMENTS)
-        ModellingItemNodeFilter withCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.WITH_COMMENTS], ModellingInformationTableTreeModel.COMMENTS)
+        //Dummy column index, since ModellingInformationTableTreeModel.COMMENTS has been removed as of ART-1060
+        int COMMENT_COL_INDEX = 4
+        ModellingItemNodeFilter allCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.ALL], COMMENT_COL_INDEX)
+        ModellingItemNodeFilter withoutCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.WITHOUT_COMMENTS], COMMENT_COL_INDEX)
+        ModellingItemNodeFilter withCommentFilter = new ModellingItemNodeFilter([ModellingItemNodeFilter.WITH_COMMENTS], COMMENT_COL_INDEX)
         Parameterization parameterization = new Parameterization("test")
         ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(),parameterization)
         ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
 
-        node.values[ModellingInformationTableTreeModel.COMMENTS] = 1
+        node.values[COMMENT_COL_INDEX] = 1
         assertTrue allCommentFilter.internalAcceptNode(node)
         assertTrue withCommentFilter.internalAcceptNode(node)
         assertFalse withoutCommentFilter.internalAcceptNode(node)
 
-        node.values[ModellingInformationTableTreeModel.COMMENTS] = 0
+        node.values[COMMENT_COL_INDEX] = 0
         assertTrue allCommentFilter.internalAcceptNode(node)
         assertFalse withCommentFilter.internalAcceptNode(node)
         assertTrue withoutCommentFilter.internalAcceptNode(node)
 
-        node.values[ModellingInformationTableTreeModel.COMMENTS] = 2
+        node.values[COMMENT_COL_INDEX] = 2
         assertTrue allCommentFilter.internalAcceptNode(node)
         assertTrue withCommentFilter.internalAcceptNode(node)
         assertFalse withoutCommentFilter.internalAcceptNode(node)
-
     }
 }

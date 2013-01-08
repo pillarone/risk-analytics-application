@@ -152,10 +152,10 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
             return [new BatchRun(name: "test")]
         }
 
-        treeModel.metaClass.getValue = {Parameterization p, ParameterizationNode node, int columnIndex ->
-            treeModel.addColumnValue(p, node, columnIndex, p.name + " " + columnIndex)
-            return p.name + " " + columnIndex
-        }
+//        treeModel.metaClass.getValue = {Parameterization p, ParameterizationNode node, int columnIndex ->
+//            treeModel.addColumnValue(p, node, columnIndex, p.name + " " + columnIndex)
+//            return p.name + " " + columnIndex
+//        }
 //        treeModel.builder = builder
         treeModel.buildTreeNodes()
         return treeModel
