@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ParameterNotFoundException
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
@@ -207,9 +208,13 @@ class ParameterizationUtilities {
     public static boolean isParameterObjectParameter(String path, List<ParametrizedItem> items) {
         boolean result = false
         for(ParametrizedItem item in items) {
-            ParameterHolder parameterHolder = item.getParameterHoldersForAllPeriods(path)[0]
-            if(parameterHolder instanceof ParameterObjectParameterHolder) {
-                result = true
+            try {
+                ParameterHolder parameterHolder = item.getParameterHoldersForAllPeriods(path)[0]
+                if(parameterHolder instanceof ParameterObjectParameterHolder) {
+                    result = true
+                }
+            } catch (ParameterNotFoundException e) {
+                //this parameter does not exist in all the compared parameterizations
             }
         }
         return result

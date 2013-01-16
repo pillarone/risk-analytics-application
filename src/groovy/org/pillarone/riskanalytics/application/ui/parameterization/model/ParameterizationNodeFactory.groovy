@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
+import org.pillarone.riskanalytics.core.simulation.item.ParameterNotFoundException
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.*
 
@@ -123,27 +124,35 @@ class ParameterizationNodeFactory {
 
         List parameterOrder = []
         for (ParametrizedItem item in items) {
-            List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
-            for (IParameterObjectClassifier type in parameterHolders*.classifier) {
-                if (type != null) {
-                    parameterOrder.addAll(type.parameterNames)
+            try {
+                List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
+                for (IParameterObjectClassifier type in parameterHolders*.classifier) {
+                    if (type != null) {
+                        parameterOrder.addAll(type.parameterNames)
+                    }
                 }
+            } catch (ParameterNotFoundException e) {
+                //this parameter does not exist in all the compared parameterizations
             }
         }
 
         Map<StringClassKey, String> parameterEntries = new TreeMap(new ClassifierComparator(parameterOrder))
 
         for (ParametrizedItem item in items) {
-            List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
-            parameterHolders.each {ParameterObjectParameterHolder p ->
-                if (p != null) {
-                    p.classifierParameters.each {Map.Entry<String, ParameterHolder> entry ->
-                        final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
-                        if (!parameterEntries.containsKey(key)) {
-                            parameterEntries.put(key, entry.key)
+            try {
+                List<ParameterHolder> parameterHolders = item.getParameterHoldersForAllPeriods(path)
+                parameterHolders.each {ParameterObjectParameterHolder p ->
+                    if (p != null) {
+                        p.classifierParameters.each {Map.Entry<String, ParameterHolder> entry ->
+                            final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
+                            if (!parameterEntries.containsKey(key)) {
+                                parameterEntries.put(key, entry.key)
+                            }
                         }
                     }
                 }
+            } catch (ParameterNotFoundException e) {
+                //this parameter does not exist in all the compared parameterizations
             }
         }
 

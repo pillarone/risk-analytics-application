@@ -9,8 +9,8 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 /**
-* @author fouad.jaada@intuitive-collaboration.com
-*/
+ * @author fouad.jaada@intuitive-collaboration.com
+ */
 class CompareParameterizationsAction extends SelectionTreeAction {
 
     public CompareParameterizationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
@@ -19,17 +19,13 @@ class CompareParameterizationsAction extends SelectionTreeAction {
 
     public void doActionPerformed(ActionEvent event) {
         List<ParameterizationNode> elements = getSelectedObjects(Parameterization.class)
-        try {
-            validate(elements)
-            Model simulationModel = getSelectedModel(elements[0])
-            simulationModel.init()
-            if (simulationModel != null && elements[0] != null) {
-                List items = elements*.abstractUIItem.item
-                CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, simulationModel, items)
-                model.openItem(simulationModel, uiItem)
-            }
-        } catch (IllegalArgumentException ex) {
-            println "$ex"
+        validate(elements)
+        Model simulationModel = getSelectedModel(elements[0])
+        simulationModel.init()
+        if (simulationModel != null && elements[0] != null) {
+            List items = elements*.abstractUIItem.item
+            CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, simulationModel, items)
+            model.openItem(simulationModel, uiItem)
         }
     }
 

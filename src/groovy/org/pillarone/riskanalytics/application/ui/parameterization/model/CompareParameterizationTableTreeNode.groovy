@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import org.pillarone.riskanalytics.core.simulation.item.ParameterNotFoundException
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
@@ -53,11 +54,16 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
     }
 
     ParameterHolder getParameterHolder(int column) {
-        final List<ParameterHolder> periodList = itemsToCompare[getParameterizationIndex(column)].getParameterHoldersForAllPeriods(parameterPath)
-        if (periodList == null) {
+        try {
+            final List<ParameterHolder> periodList = itemsToCompare[getParameterizationIndex(column)].getParameterHoldersForAllPeriods(parameterPath)
+            if (periodList == null) {
+                return null
+            }
+            return periodList[getPeriodIndex(column)]
+        } catch (ParameterNotFoundException e) {
+            //this parameter does not exist in all the compared parameterizations
             return null
         }
-        return periodList[getPeriodIndex(column)]
     }
 
     public String getDisplayName() {
