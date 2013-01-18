@@ -1,15 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class QueryPaneModel extends AbstractPresentationModel implements ICriteriaModelChangeListener {
 
@@ -245,33 +242,31 @@ class QueryPaneModel extends AbstractPresentationModel implements ICriteriaModel
 
     public List createResultList() {
         List lastQueryResults = []
-        List resultsPerPathAndPeriod = []
-        List iterations = new ArrayList(results)
+        List<Map<Integer, Double>> resultsPerPathAndPeriod = []
+        List<Integer> iterations = new ArrayList(results)
         if (iterations.size() == 0) {
             return []
         }
         iterations = iterations.sort()
 
-        List<List<Integer>> splitUpIterations = getSplitUpIterations(iterations)
-
         if (orderByPath) {
-            nodes.each {ResultTableTreeNode node ->
-                simulationRun.periodCount.times {int period ->
-                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, splitUpIterations)
+            for (ResultTableTreeNode node in nodes) {
+                for (int period = 0; period < simulationRun.periodCount; period++) {
+                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, iterations)
                 }
             }
         } else {
-            simulationRun.periodCount.times {int period ->
-                nodes.each {ResultTableTreeNode node ->
-                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, splitUpIterations)
+            for (int period = 0; period < simulationRun.periodCount; period++) {
+                for (ResultTableTreeNode node in nodes) {
+                    addResultsPerPathAndPeriod(node, period, resultsPerPathAndPeriod, iterations)
                 }
             }
         }
 
-        iterations.each {int iterationNumber ->
+        for (Integer iterationNumber in iterations) {
             List row = []
             row << iterationNumber
-            resultsPerPathAndPeriod.each {Map<Integer, Double> pathResults ->
+            for (Map<Integer, Double> pathResults in resultsPerPathAndPeriod) {
                 row << pathResults[iterationNumber]
             }
             lastQueryResults << row
@@ -279,33 +274,10 @@ class QueryPaneModel extends AbstractPresentationModel implements ICriteriaModel
         return lastQueryResults
     }
 
-    private void addResultsPerPathAndPeriod(ResultTableTreeNode node, int period, List resultsPerPathAndPeriod, List<List<Integer>> splitUpIterations) {
+    private void addResultsPerPathAndPeriod(ResultTableTreeNode node, int period, List resultsPerPathAndPeriod, List<Integer> iterations) {
         String path = node.path
         String field = node.field
-        Map<Integer, Double> periodMap = [:]
-
-        for (List<Integer> list in splitUpIterations) {
-            periodMap.putAll(ResultAccessor.getIterationConstrainedValues(simulationRun, period, path, field, node.collector, list))
-
-        }
-        resultsPerPathAndPeriod << periodMap
-    }
-
-    List getSplitUpIterations(List iterations) {
-        //do not use more than 1000 ids in the in clause
-        List<List<Integer>> splitUpIterations = []
-        if (iterations.size() > 1000) {
-            int i = 0
-            while (i < iterations.size()) {
-                int lowerBound = i
-                i += 1000
-                int upperBound = Math.min(i - 1, iterations.size() - 1)
-                splitUpIterations << iterations[lowerBound..upperBound]
-            }
-        } else {
-            splitUpIterations << iterations
-        }
-        return splitUpIterations
+        resultsPerPathAndPeriod << ResultAccessor.getIterationConstrainedValues(simulationRun, period, path, field, node.collector, iterations)
     }
 
     void criteriaChanged() {
