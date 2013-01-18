@@ -51,7 +51,6 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     ICollectorOutputStrategy outputStrategy
 
     RunSimulationAction runSimulationAction
-    StopSimulationAction stopSimulationAction
     CancelSimulationAction cancelSimulationAction
     OpenResultsAction openResultsAction
 
@@ -67,7 +66,6 @@ class SimulationActionsPaneModel implements IModelChangedListener {
         this.mainModel = mainModel
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)
-        stopSimulationAction = new StopSimulationAction(this)
         cancelSimulationAction = new CancelSimulationAction(this)
         openResultsAction = new OpenResultsAction(this)
 
@@ -123,10 +121,6 @@ class SimulationActionsPaneModel implements IModelChangedListener {
                 new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy),
                 simulation.template)
         notifySimulationStart()
-    }
-
-    void stopSimulation() {
-        runner.stop()
     }
 
     void cancelSimulation() {

@@ -36,7 +36,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
     private ULCLabel estimatedEndTimeInfo
     private ULCLabel remainingTimeLabel
     private ULCLabel remainingTimeInfo
-    private ULCButton run, stop, openResults, cancel
+    private ULCButton run, openResults, cancel
 
     private ULCComboBox availableBatchRuns
     private ULCButton addToBatch
@@ -65,7 +65,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = model.getText("SimulationNotRunningMessage")
             run.enabled = configurationValid
             addToBatch.enabled = configurationValid
-            stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
         })
@@ -78,7 +77,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = model.getText("StartSimulationMessage")
             run.enabled = false
             addToBatch.enabled = false
-            stop.enabled = false
             cancel.enabled = true
             openResults.enabled = false
         })
@@ -92,7 +90,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = UIUtils.getText(SimulationActionsPane.class, "SimulationComplete", ["${model.progress}"])
             run.enabled = false
             addToBatch.enabled = false
-            stop.enabled = true
             cancel.enabled = true
             openResults.enabled = false
         })
@@ -106,7 +103,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = UIUtils.getText(SimulationActionsPane.class, "CalculatingStatistics", ["${model.progress}"])
             run.enabled = false
             addToBatch.enabled = false
-            stop.enabled = false
             cancel.enabled = true
             openResults.enabled = false
         })
@@ -119,7 +115,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = model.getText("SavingResultsMessage")
             run.enabled = false
             addToBatch.enabled = false
-            stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
         })
@@ -134,7 +129,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = model.getText("Done")
             run.enabled = configurationValid
             addToBatch.enabled = configurationValid
-            stop.enabled = false
             cancel.enabled = false
             openResults.enabled = true
         })
@@ -149,24 +143,8 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = model.getText("Canceled")
             run.enabled = configurationValid
             addToBatch.enabled = configurationValid
-            stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
-        })
-
-        uiStates.put(SimulationState.STOPPED, {
-            timer.stop()
-            startTimeInfo.text = model.simulationStartTime
-            remainingTimeInfo.text = "-"
-            estimatedEndTimeInfo.text = model.simulationEndTime
-            progressBar.indeterminate = false
-            progressBar.value = model.progress
-            progressBar.string = "Stopped, ${model.iterationsDone} iterations completed"
-            run.enabled = configurationValid
-            addToBatch.enabled = configurationValid
-            stop.enabled = false
-            cancel.enabled = false
-            openResults.enabled = true
         })
 
         uiStates.put(SimulationState.ERROR, {
@@ -178,7 +156,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             progressBar.string = model.getText("Error")
             run.enabled = configurationValid
             addToBatch.enabled = configurationValid
-            stop.enabled = false
             cancel.enabled = false
             openResults.enabled = false
         })
@@ -202,9 +179,8 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         infoPane.add(ULCFiller.createHorizontalGlue())
 
         innerPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, infoPane)
-        ULCBoxPane simulationContent = new ULCBoxPane(4, 0)
+        ULCBoxPane simulationContent = new ULCBoxPane(3, 0)
         simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(run, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
-        simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(stop, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
         simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(cancel, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
         simulationContent.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(openResults, 10, 2, 10, 2, ULCBoxPane.BOX_EXPAND_CENTER))
         simulationContent.add(4, ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
@@ -250,8 +226,6 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
         run = new ULCButton(model.runSimulationAction)
         run.name = "${SimulationActionsPane.getSimpleName()}.run"
-        stop = new ULCButton(model.stopSimulationAction)
-        stop.name = "stop"
         cancel = new ULCButton(model.cancelSimulationAction)
         cancel.name = "cancel"
         openResults = new ULCButton(model.openResultsAction)
@@ -270,7 +244,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
     void actionPerformed(ActionEvent actionEvent) {
         SimulationState simulationState = model.getSimulationState()
         updateUIState(simulationState)
-        if (simulationState == SimulationState.FINISHED || simulationState == SimulationState.STOPPED || simulationState == SimulationState.CANCELED || simulationState == SimulationState.ERROR) {
+        if (simulationState == SimulationState.FINISHED || simulationState == SimulationState.CANCELED || simulationState == SimulationState.ERROR) {
             model.notifySimulationStop()
         }
     }

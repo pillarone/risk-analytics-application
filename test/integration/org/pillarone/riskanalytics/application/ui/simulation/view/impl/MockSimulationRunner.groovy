@@ -13,7 +13,6 @@ class MockSimulationRunner extends SimulationRunner {
 
     int count = 0
     boolean cancelled = false
-    boolean stopped = false
 
     private List states = [INITIALIZING, RUNNING, RUNNING, RUNNING, SAVING_RESULTS, POST_SIMULATION_CALCULATIONS, FINISHED]
     private List progress = [0, 33, 66, 99, 0, 50, 100]
@@ -29,7 +28,6 @@ class MockSimulationRunner extends SimulationRunner {
 
     SimulationState getSimulationState() {
         if (cancelled) return CANCELED
-        if (stopped) return STOPPED
         return states[count]
     }
 
@@ -43,10 +41,6 @@ class MockSimulationRunner extends SimulationRunner {
 
     void cancel() {
         cancelled = true
-    }
-
-    void stop() {
-        stopped = true
     }
 
     public static SimulationRunner createRunner() {
