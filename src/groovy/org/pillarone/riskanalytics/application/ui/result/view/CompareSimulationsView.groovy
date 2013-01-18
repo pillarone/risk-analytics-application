@@ -34,16 +34,14 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
 
     ULCCloseableTabbedPane tabbedPane
     CompareSimulationsCriteriaView criteriaView
-    RiskAnalyticsMainModel mainModel
     ULCComboBox selectView
     EnumI18NComboBoxModel profitFunctionModel
 
     public static int space = 3
 
     public CompareSimulationsView(CompareSimulationsViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model)
+        super(model, mainModel)
         model.addFunctionListener(this)
-        this.mainModel = mainModel
 
     }
 

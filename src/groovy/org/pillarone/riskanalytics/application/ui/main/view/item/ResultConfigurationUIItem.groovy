@@ -30,7 +30,7 @@ class ResultConfigurationUIItem extends ModellingUIItem {
     }
 
     ULCContainer createDetailView() {
-        ResultConfigurationView view = new ResultConfigurationView(getViewModel())
+        ResultConfigurationView view = new ResultConfigurationView(getViewModel(), mainModel)
         mainModel.addModelItemChangedListener(view)
         return view.content
     }

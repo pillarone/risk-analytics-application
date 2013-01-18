@@ -13,6 +13,7 @@ import com.ulcjava.base.application.util.HTMLUtilities
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -23,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.*
 abstract class AbstractModellingTreeView {
 
     AbstractModellingModel model
+    RiskAnalyticsMainModel mainModel
 
     ULCBoxPane content
     ULCFixedColumnTableTree tree
@@ -37,8 +39,9 @@ abstract class AbstractModellingTreeView {
     IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 
-    public AbstractModellingTreeView(def model) {
+    public AbstractModellingTreeView(def model, RiskAnalyticsMainModel mainModel) {
         this.model = model
+        this.mainModel = mainModel
         content = new ULCBoxPane(1, 0)
         initView(model)
     }

@@ -9,6 +9,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeCellEditor
 import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ComboBoxCellComponent
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationTableTreeNode
@@ -24,8 +25,8 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
     ULCDetachableTabbedPane tabbedPane
     PropertiesView propertiesView
 
-    public ResultConfigurationView(ResultConfigurationViewModel model) {
-        super(model)
+    public ResultConfigurationView(ResultConfigurationViewModel model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
     }
 
     protected void initTree() {

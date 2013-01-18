@@ -25,15 +25,13 @@ import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultVie
 class ResultView extends AbstractModellingFunctionView implements NavigationListener {
 
     ULCCloseableTabbedPane tabbedPane
-    RiskAnalyticsMainModel mainModel
     //view selection for simulation/calculation
     ULCComboBox selectView
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
 
     public ResultView(AbstractResultViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model)
-        this.mainModel = mainModel
+        super(model, mainModel)
     }
 
     @Override

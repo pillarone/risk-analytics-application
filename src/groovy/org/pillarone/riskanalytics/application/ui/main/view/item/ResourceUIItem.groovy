@@ -25,7 +25,7 @@ class ResourceUIItem extends ModellingUIItem {
 
     @Override
     ULCContainer createDetailView() {
-        return new ResourceView(getViewModel()).content
+        return new ResourceView(getViewModel(), mainModel).content
     }
 
     @Override

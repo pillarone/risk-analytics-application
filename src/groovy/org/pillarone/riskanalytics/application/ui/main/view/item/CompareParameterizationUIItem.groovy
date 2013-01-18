@@ -30,7 +30,7 @@ class CompareParameterizationUIItem extends AbstractUIItem {
     }
 
     ULCContainer createDetailView() {
-        CompareParameterizationsView view = new CompareParameterizationsView(getViewModel())
+        CompareParameterizationsView view = new CompareParameterizationsView(getViewModel(), mainModel)
         return view.content
     }
 

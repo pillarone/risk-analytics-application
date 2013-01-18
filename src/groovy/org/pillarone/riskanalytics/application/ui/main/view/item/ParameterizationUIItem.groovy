@@ -39,7 +39,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     }
 
     ULCContainer createDetailView() {
-        ParameterView view = new ParameterView(getViewModel())
+        ParameterView view = new ParameterView(getViewModel(), mainModel)
         return view.content
     }
 

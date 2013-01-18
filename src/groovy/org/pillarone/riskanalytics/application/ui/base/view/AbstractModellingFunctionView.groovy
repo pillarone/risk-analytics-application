@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.view
 
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
 
 /**
@@ -14,8 +15,8 @@ import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
 
 abstract public class AbstractModellingFunctionView extends AbstractModellingTreeView implements IFunctionListener {
 
-    public AbstractModellingFunctionView(model) {
-        super(model);
+    public AbstractModellingFunctionView(model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
     }
 
     public void refreshNodes() {

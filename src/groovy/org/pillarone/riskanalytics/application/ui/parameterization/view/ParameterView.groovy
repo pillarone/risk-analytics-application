@@ -23,6 +23,7 @@ import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorVi
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -35,8 +36,8 @@ import org.pillarone.riskanalytics.application.ui.base.view.AbstractParameteriza
 
 class ParameterView extends AbstractParameterizationTreeView implements NavigationListener {
 
-    ParameterView(ParameterViewModel model) {
-        super(model)
+    ParameterView(ParameterViewModel model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
         model.addNavigationListener this
     }
 

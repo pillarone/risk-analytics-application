@@ -2,6 +2,8 @@ package org.pillarone.riskanalytics.application.issues
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+
 import java.awt.event.KeyEvent
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
@@ -40,7 +42,7 @@ public class KeepOldParameterValuesTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        frame.setContentPane(new ParameterView(parameterViewModel).content)
+        frame.setContentPane(new ParameterView(parameterViewModel, new RiskAnalyticsMainModel()).content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)
         frame.visible = true

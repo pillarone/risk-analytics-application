@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.comment
 
 import models.core.CoreModel
-
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -52,7 +52,7 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
         parameterization.save()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         parameterViewModel.setReadOnly(readOnly)
-        ParameterView parameterView = new ParameterView(parameterViewModel)
+        ParameterView parameterView = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.view
 
 import com.ulcjava.base.application.DefaultCellEditor
 import com.ulcjava.base.application.ULCTextField
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.BasicCellEditor
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ComboBoxCellComponent
@@ -70,8 +71,8 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
     def commentFilters
 
 
-    AbstractParameterizationTreeView(AbstractParametrizedViewModel model) {
-        super(model)
+    AbstractParameterizationTreeView(AbstractParametrizedViewModel model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
         commentFilters = [:]
     }
 
