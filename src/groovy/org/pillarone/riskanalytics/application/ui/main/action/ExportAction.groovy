@@ -86,7 +86,7 @@ abstract class ExportAction extends SelectionTreeAction {
     protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
         ExcelExporter exporter = new ExcelExporter()
         SingleValueResult.withTransaction {trx ->
-            def simulationFileName = "${item.name}.xls".replaceAll(':', '-')
+            def simulationFileName = "${item.name}.xlsx".replaceAll(':', '-')
             String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
             item.load()
             def simulationRun = item.simulationRun
