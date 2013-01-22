@@ -43,7 +43,7 @@ class ChangeChartColorView {
         seriesPane = new ULCBoxPane(1, 0)
 
         chartView?.model?.series?.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {List<Double> periods, int periodIndex ->
+            observations.eachWithIndex { double[] periods, int periodIndex ->
                 ULCBoxPane panel = new ULCBoxPane(3, 0)
                 Color ulccolor = UIUtils.toULCColor(chartView.model.seriesColor.getColor(keyFigureIndex, periodIndex))
                 GString text = "${chartView?.model?.seriesNames[keyFigureIndex]}: ${chartView.model.getPeriodLabel(periodIndex, true)}"
