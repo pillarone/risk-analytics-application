@@ -5,7 +5,9 @@ import com.ulcjava.base.application.ULCTableTree;
 import com.ulcjava.base.application.util.HTMLUtilities;
 import org.joda.time.DateTime;
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode;
+import org.pillarone.riskanalytics.core.components.ComponentUtils;
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter;
+import org.pillarone.riskanalytics.core.parameterization.IMarkerBasedMultiDimensionalParameter;
 
 import java.text.SimpleDateFormat;
 
@@ -47,7 +49,13 @@ public class MultiDimensionalCellRenderer extends BasicCellRenderer {
                         if (col == DISPLAY_MAX_COLUMN_COUNT) {
                             text.append("" + (columnCount - DISPLAY_MAX_COLUMN_COUNT) + " more...");
                         } else {
-                            text.append(value.getValueAt(row, col));
+                            Object val = value.getValueAt(row, col);
+                            if (value instanceof IMarkerBasedMultiDimensionalParameter) {
+                                if (((IMarkerBasedMultiDimensionalParameter) value).isMarkerCell(row, col)) {
+                                    val = ComponentUtils.getNormalizedName(val.toString());
+                                }
+                            }
+                            text.append(val);
                         }
                         text.append("</b>");
                     } else {
@@ -58,6 +66,11 @@ public class MultiDimensionalCellRenderer extends BasicCellRenderer {
                             if (item instanceof DateTime) {
                                 text.append(new SimpleDateFormat("MMM dd, yyyy").format(((DateTime) item).toDate()));
                             } else {
+                                if (value instanceof IMarkerBasedMultiDimensionalParameter) {
+                                    if (((IMarkerBasedMultiDimensionalParameter) value).isMarkerCell(row, col)) {
+                                        item = ComponentUtils.getNormalizedName(item.toString());
+                                    }
+                                }
                                 text.append(item);
                             }
                         }

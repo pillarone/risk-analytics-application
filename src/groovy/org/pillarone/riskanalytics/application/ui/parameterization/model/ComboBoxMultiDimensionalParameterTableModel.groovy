@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDime
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxTableMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
 
 
 class ComboBoxMultiDimensionalParameterTableModel extends MultiDimensionalParameterTableModel {
@@ -21,9 +22,8 @@ class ComboBoxMultiDimensionalParameterTableModel extends MultiDimensionalParame
     @Override
     Object getValueAt(int row, int column) {
         Object value = super.getValueAt(row, column)
-        column--
 
-        if (isMarkerCell(multiDimensionalParam, row, column)) {
+        if (multiDimensionalParam.isMarkerCell(row, column - 1)) {
             String localizedValue = localizedValues.get(value)
             value = localizedValue != null ? localizedValue : value
         }
@@ -32,7 +32,7 @@ class ComboBoxMultiDimensionalParameterTableModel extends MultiDimensionalParame
 
     @Override
     void setValueAt(Object value, int rowIndex, int columnIndex) {
-        if (isMarkerCell(multiDimensionalParam, rowIndex, columnIndex)) {
+        if (multiDimensionalParam.isMarkerCell(rowIndex, columnIndex - 1)) {
             BiMap<String, String> localizedToValue = localizedValues.inverse()
             String enumValue = localizedToValue.get(value)
             value = enumValue != null ? enumValue : value
@@ -43,8 +43,7 @@ class ComboBoxMultiDimensionalParameterTableModel extends MultiDimensionalParame
     @Override
     def getPossibleValues(int row, int col) {
         Object values = super.getPossibleValues(row, col)
-        col--
-        if (isMarkerCell(multiDimensionalParam, row, col)) {
+        if (multiDimensionalParam.isMarkerCell(row, col - 1)) {
             List newList = []
             for (def value in values) {
                 String localizedValue = localizedValues.get(value)
@@ -64,18 +63,5 @@ class ComboBoxMultiDimensionalParameterTableModel extends MultiDimensionalParame
             }
         }
     }
-
-    private boolean isMarkerCell(AbstractMultiDimensionalParameter parameter, int row, int column) {
-        return false
-    }
-
-    private boolean isMarkerCell(ComboBoxTableMultiDimensionalParameter parameter, int row, int column) {
-        return row > 0 && column >= 0
-    }
-
-    private boolean isMarkerCell(ComboBoxMultiDimensionalParameterTableModel parameter, int row, int column) {
-        return (row == 0 && column == 0) ? false : row == 0 || column == 0
-    }
-
 
 }

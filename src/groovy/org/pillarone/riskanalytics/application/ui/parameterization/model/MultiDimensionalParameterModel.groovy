@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensi
 import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.TableMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.MatrixMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.IMarkerBasedMultiDimensionalParameter
 
 class MultiDimensionalParameterModel implements IModelChangedListener {
     private ITableTreeModel model
@@ -27,7 +28,7 @@ class MultiDimensionalParameterModel implements IModelChangedListener {
         tableModel = MultiDimensionalParameterTableModel.getInstance(multiDimensionalParameter)
         tableModel.addListener this
         ClientContext.setModelUpdateMode(tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
-        if (multiDimensionalParameter instanceof IComboBoxBasedMultiDimensionalParameter || multiDimensionalParameter instanceof ConstrainedMultiDimensionalParameter) {
+        if (multiDimensionalParameter instanceof IMarkerBasedMultiDimensionalParameter) {
             multiDimensionalParameter.validateValues()
             //may be null in tests
             model?.updateNodeValue(multiDimensionalParameter, node, columnIndex)
