@@ -129,7 +129,7 @@ class HistogramChartViewModel extends ChartViewModel {
                     maxsP << ResultAccessor.getMax(simulationRun, periodIndex, node.path, node.collector, node.field)
                 } else {
                     notStochasticSeries[path, periodIndex] = true
-                    periods << []
+                    periods << new double[0]
                     minsP << 0
                     maxsP << 0
                 }
