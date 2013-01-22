@@ -62,7 +62,7 @@ abstract class ExportAction extends SelectionTreeAction {
             config.fileSelectionMode = itemCount > 1 ? FileChooserConfig.DIRECTORIES_ONLY : FileChooserConfig.FILES_ONLY
             config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.EXPORT_DIR_KEY))
             if (items.size() == 1) {
-                config.selectedFile = "${items[0].name}.xls".replaceAll(':', '-')
+                config.selectedFile = "${items[0].name}.xlsx".replaceAll(':', '-')
             }
 
 
