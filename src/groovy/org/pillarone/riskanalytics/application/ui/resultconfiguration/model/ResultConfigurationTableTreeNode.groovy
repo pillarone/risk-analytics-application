@@ -101,7 +101,7 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
 
 
     public List getValues() {
-        valueToKey.keySet().toList()
+        valueToKey.keySet().toList().sort()
     }
 
     private String getText(String key) {
