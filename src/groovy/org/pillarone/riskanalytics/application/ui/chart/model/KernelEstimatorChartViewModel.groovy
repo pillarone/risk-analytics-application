@@ -78,8 +78,8 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         double lowerBound = Double.MAX_VALUE
         int seriesIndex = 0
 
-        series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {double[] periods, int periodIndex ->
+        series.eachWithIndex { List observations, int keyFigureIndex ->
+            observations.eachWithIndex { double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex] && notStochasticSeries[seriesNames[keyFigureIndex], periodIndex] == null) {
                     XYSeries currentSeries = null
 
@@ -114,13 +114,13 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
 
         if (seriesIndex == 1) {
             addHistogram(chart, "", lowerBound, upperBound)
-            chartInsetWriter.addInset(chart, {ChartInsetWriter w -> writeInsetContent w})
+            chartInsetWriter.addInset(chart, { ChartInsetWriter w -> writeInsetContent w })
         }
 
         seriesIndex = 0
         maxY = chart.getXYPlot().getRangeAxis().getRange().upperBound
-        series.eachWithIndex {List observations, int keyFigureIndex ->
-            observations.eachWithIndex {double[] periods, int periodIndex ->
+        series.eachWithIndex { List observations, int keyFigureIndex ->
+            observations.eachWithIndex { double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex]) {
                     mean = means[keyFigureIndex][periodIndex]
                     stdDev = stdDevs[keyFigureIndex][periodIndex]
@@ -137,8 +137,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
             legend.setPosition(RectangleEdge.BOTTOM);
             legend.setHorizontalAlignment(HorizontalAlignment.LEFT);
             legend.setMargin 5, 50, 5, 5
-        }
-        else {
+        } else {
             chart.removeLegend()
         }
 
@@ -158,7 +157,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         }
         columns["x"] = xValues
 
-        series.eachWithIndex {List observations, int keyFigureIndex ->
+        series.eachWithIndex { List observations, int keyFigureIndex ->
             observations.eachWithIndex { double[] periods, int periodIndex ->
                 if (showLine[keyFigureIndex, periodIndex]) {
                     List rowValues = []
@@ -180,8 +179,8 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         dataExportMode = true
         List<ReportChartDataBean> list = []
 
-        series.eachWithIndex {List values, int SeriesIndex ->
-            values[currentPeriod].eachWithIndex {double y, int x ->
+        series.eachWithIndex { List values, int SeriesIndex ->
+            values[currentPeriod].eachWithIndex { double y, int x ->
                 list << new ReportChartDataBean(x: x, y: y, period: currentPeriod, line: seriesNames[SeriesIndex])
             }
         }
@@ -197,14 +196,14 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
         stdDevs = []
         IQRs = []
 
-        nodes.each {def node ->
+        nodes.each { def node ->
             List periods = []
             List minsP = []
             List maxsP = []
             List meansP = []
             List stdDevsP = []
             List IQRsP = []
-            periodCount.times {int periodIndex ->
+            periodCount.times { int periodIndex ->
                 onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
                 PercentileFunction percentile = new PercentileFunction(75, QuantilePerspective.LOSS)
                 Double per75 = percentile.evaluate(simulationRun, periodIndex, node)
@@ -219,6 +218,8 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
 
                     if (per75 != null && per25 != null) {
                         IQRsP << per75 - per25
+                    } else {
+                        IQRsP << 0
                     }
                 } else {
                     notStochasticSeries[node.getShortDisplayPath(nodes), periodIndex] = true
@@ -227,9 +228,7 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
                     maxsP << 0
                     meansP << 0
                     stdDevsP << 0
-                    if (per75 != null && per25 != null) {
-                        IQRsP << 0
-                    }
+                    IQRsP << 0
                 }
                 onlyStochasticSeries = true
             }

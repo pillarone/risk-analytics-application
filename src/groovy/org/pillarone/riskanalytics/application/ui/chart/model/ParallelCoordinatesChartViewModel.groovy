@@ -62,7 +62,7 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
     public DefaultCategoryDataset getDataset() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         List resultValues = queryPaneModel.createResultList()
-        resultValues.each {List<Integer> row ->
+        resultValues.each { List<Integer> row ->
             int iterationNumber = row[0]
             int numberOfPaths = series.size()
             int start = 1 + (currentPeriod * numberOfPaths)
@@ -76,7 +76,7 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
     }
 
     public void addAnnotations(CategoryPlot plot) {
-        seriesNames.each {String name ->
+        seriesNames.each { String name ->
             plot.addAnnotation(new CategoryLineAnnotation(name, 0, name, max * 1.1, Color.gray, new BasicStroke(1.0f)))
         }
     }
@@ -84,7 +84,7 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
     protected void calculateRainbowColors(AbstractRenderer renderer, DefaultCategoryDataset dataset) {
         List rowKeys = dataset.getRowKeys()
         int i = 0;
-        rowKeys.each {int rowIndex ->
+        rowKeys.each { int rowIndex ->
             Color color
             Double value = dataset.getValue(rowIndex, seriesNames[-1])
             int g = 255.0
@@ -107,12 +107,12 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
         DefaultCategoryDataset dataset = getDataset()
 
         List period = []
-        dataset.rowCount.times { period << currentPeriod}
+        dataset.rowCount.times { period << currentPeriod }
         columns["period"] = period
 
-        dataset.columnKeys.each {String columnKey ->
+        dataset.columnKeys.each { String columnKey ->
             columns[columnKey] = []
-            dataset.rowKeys.each {int rowKey ->
+            dataset.rowKeys.each { int rowKey ->
                 columns[columnKey] << dataset.getValue(rowKey, columnKey)
             }
         }
@@ -120,7 +120,9 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
     }
 
     public moveSeriesUp(int seriesIndex) {
-        if (seriesIndex < 1) { return }
+        if (seriesIndex < 1) {
+            return
+        }
         def oSeries = series[seriesIndex - 1]
         String oSeriesName = seriesNames[seriesIndex - 1]
         def oMax = maxs[seriesIndex - 1]
@@ -147,7 +149,9 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
     }
 
     public moveSeriesDown(int seriesIndex) {
-        if (seriesIndex >= (series.size() - 1)) { return }
+        if (seriesIndex >= (series.size() - 1)) {
+            return
+        }
         def oSeries = series[seriesIndex + 1]
         String oSeriesName = seriesNames[seriesIndex + 1]
         def oMax = maxs[seriesIndex + 1]
@@ -184,11 +188,11 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
         mins = []
         maxs = []
 
-        nodes.each {ResultTableTreeNode node ->
+        nodes.each { ResultTableTreeNode node ->
             List periods = []
             List minsP = []
             List maxsP = []
-            periodCount.times {int periodIndex ->
+            periodCount.times { int periodIndex ->
                 onlyStochasticSeries = onlyStochasticSeries && ResultAccessor.hasDifferentValues(simulationRun, periodIndex, node.path, node.collector, node.field)
                 periods << ResultAccessor.getValues(simulationRun, periodIndex, node.path, node.collector, node.field)
                 minsP << ResultAccessor.getMin(simulationRun, periodIndex, node.path, node.collector, node.field)
@@ -204,10 +208,15 @@ public class ParallelCoordinatesChartViewModel extends ChartViewModel implements
         max = 0
         min = Double.MAX_VALUE
 
-        maxs.eachWithIndex {m, index ->
-            m.eachWithIndex {m2, index2 ->
-                max = Math.max(max, m2)
-                min = Math.min(min, mins[index][index2])
+        maxs.eachWithIndex { List maxList, index ->
+            List minList = mins[index]
+            maxList.eachWithIndex { m2, index2 ->
+                if (m2 != null) {
+                    max = Math.max(max, m2)
+                }
+                if (minList[index2] != null) {
+                    min = Math.min(min, minList[index2])
+                }
             }
         }
     }

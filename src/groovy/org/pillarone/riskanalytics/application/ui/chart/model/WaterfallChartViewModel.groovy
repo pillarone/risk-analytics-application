@@ -41,7 +41,9 @@ public class WaterfallChartViewModel extends ChartViewModel {
             }
 
             dataset.addValue(value, "", seriesNames[index]);
-            sum += value
+            if (value != null) {
+                sum += value
+            }
         }
 
         double lastValue
@@ -50,6 +52,7 @@ public class WaterfallChartViewModel extends ChartViewModel {
         } else {
             lastValue = ResultAccessor.getTvar(simulationRun, currentPeriod, nodes[-1].path, nodes[-1].collector, nodes[-1].field, percent, QuantilePerspective.LOSS)
         }
+        lastValue = lastValue ?: 0
         diversification = lastValue - sum
         dataset.addValue(diversification, "", "diversification")
         dataset.addValue(lastValue, "", seriesNames[-1])
