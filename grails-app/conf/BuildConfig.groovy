@@ -36,12 +36,12 @@ grails.project.dependency.resolution = {
         runtime ":jetty:1.2-SNAPSHOT"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime ("org.pillarone:pillar-one-ulc-extensions:0.2")  {  transitive = false }
+        runtime ("org.pillarone:pillar-one-ulc-extensions:0.3")  {  transitive = false }
 
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.6-BETA-2.1-kti"
+            runtime "org.pillarone:risk-analytics-core:1.6-BETA-2.3-kti"
         }
 
     }
