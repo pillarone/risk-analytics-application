@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensi
 import org.pillarone.riskanalytics.core.components.ResourceHolder
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.PeriodMatrixMultiDimensionalParameter
 
 class MultiDimensionalParameterTableModel extends AbstractTableModel implements IBulkChangeable {
     private boolean bulkChange = false
@@ -127,7 +128,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         Object value = multiDimensionalParam.getValueAt(row, column - 1)
         if (value instanceof DateTime) {
             value = value.toDate()
-        } else if(value instanceof ResourceHolder) {
+        } else if (value instanceof ResourceHolder) {
             value = value.toString()
         }
         return value
@@ -152,7 +153,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
             }
         }
         Object originalValue = multiDimensionalParam.getValueAt(rowIndex, columnIndex - 1)
-        if(originalValue instanceof ResourceHolder) {
+        if (originalValue instanceof ResourceHolder) {
             value = new ResourceHolder(originalValue.resourceClass, value.substring(0, value.lastIndexOf(" ")), new VersionNumber(value.substring(value.lastIndexOf(" ") + 2)))
         }
 
@@ -164,6 +165,8 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
                 fireTableCellUpdated 0, rowIndex + 1
                 if (columnIndex > rowIndex)
                     fireTableCellUpdated columnIndex - 1, rowIndex + 1
+            } else if (multiDimensionalParam instanceof PeriodMatrixMultiDimensionalParameter) {
+                fireTableCellUpdated(columnIndex - 1, rowIndex + 1)
             }
             notifyModelChanged()
         }
@@ -246,9 +249,12 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
     }
 
     public static MultiDimensionalParameterTableModel getInstance(AbstractMultiDimensionalParameter parameter) {
-        if(parameter instanceof ConstrainedMultiDimensionalParameter) {
+        if (parameter instanceof ConstrainedMultiDimensionalParameter) {
             return new ConstrainedMultiDimensionalParameterTableModel(parameter, true)
-        } else if(parameter instanceof IComboBoxBasedMultiDimensionalParameter) {
+        } else if (parameter instanceof PeriodMatrixMultiDimensionalParameter) {
+            return new MultiDimensionalParameterTableModel(parameter, true)
+        }
+        else if (parameter instanceof IComboBoxBasedMultiDimensionalParameter) {
             return new ComboBoxMultiDimensionalParameterTableModel(parameter, true)
         }
         return new MultiDimensionalParameterTableModel(parameter, true)

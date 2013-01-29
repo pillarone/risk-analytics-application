@@ -12,13 +12,15 @@ import org.pillarone.riskanalytics.application.ui.comment.model.CommentPathFilte
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterView
-import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.TabIdentifier
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.ULCComponent
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractParameterizationTreeView
+import org.pillarone.riskanalytics.application.ui.parameterization.view.AbstractMultiDimensionalParameterView
+import org.pillarone.riskanalytics.core.parameterization.PeriodMatrixMultiDimensionalParameter
+import org.pillarone.riskanalytics.application.ui.parameterization.view.PeriodMultiDimensionalParameterView
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -49,7 +51,13 @@ class MultiDimensionalTabStarter implements IActionListener {
                 MultiDimensionalParameterModel model = new MultiDimensionalParameterModel(tree.model, lastComponent, tree.selectedColumn + 1)
                 model.tableModel.readOnly = parameterView.model.treeModel.readOnly
                 ClientContext.setModelUpdateMode(model.tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
-                tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), new MultiDimensionalParameterView(model).content)
+                AbstractMultiDimensionalParameterView view
+                if(model.multiDimensionalParameter instanceof PeriodMatrixMultiDimensionalParameter){
+                    view = new PeriodMultiDimensionalParameterView(model)
+                }else{
+                    view = new MultiDimensionalParameterView(model)
+                }
+                tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), view.content)
                 int currentTab = tabbedPane.tabCount - 1
                 tabbedPane.selectedIndex = currentTab
                 tabbedPane.setToolTipTextAt(currentTab, model.getPathAsString())

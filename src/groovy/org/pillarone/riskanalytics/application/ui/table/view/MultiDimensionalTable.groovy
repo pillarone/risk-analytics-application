@@ -4,7 +4,7 @@ import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.event.ListSelectionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterTableModel
-import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterView
+import org.pillarone.riskanalytics.application.ui.parameterization.view.AbstractMultiDimensionalParameterView
 import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.table.action.*
@@ -40,9 +40,9 @@ class MultiDimensionalTable extends ULCTable {
     private MoveRowAction moveTopRowAction
     private MoveRowAction moveBottomRowAction
 
-    MultiDimensionalParameterView multiDimensionalParameterView
+    AbstractMultiDimensionalParameterView multiDimensionalParameterView
 
-    public MultiDimensionalTable(MultiDimensionalParameterView multiDimensionalParameterView, MultiDimensionalParameterTableModel model) {
+    public MultiDimensionalTable(AbstractMultiDimensionalParameterView multiDimensionalParameterView, MultiDimensionalParameterTableModel model) {
         super.setModel(model)
         this.multiDimensionalParameterView = multiDimensionalParameterView
         initPopupMenu()
