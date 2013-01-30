@@ -17,6 +17,8 @@ import org.pillarone.riskanalytics.application.ui.main.action.ExportItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
+import org.pillarone.riskanalytics.application.ui.main.action.OpenTransactionLinkAction
 
 /**
  * Allianz Risk Transfer  ATOM
@@ -29,6 +31,10 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         setName("parameterNodePopUpMenu");
         add(new ULCMenuItem(new OpenItemAction(tree, uIItem.mainModel)));
         add(new ULCMenuItem(new SimulationAction(tree, uIItem.mainModel)));
+        //Add external link
+        OpenExternalMenuItem openTransactionMenuItem = new OpenExternalMenuItem(new OpenTransactionLinkAction(tree, uIItem.mainModel))
+        tree.addTreeSelectionListener(openTransactionMenuItem)
+        add(openTransactionMenuItem)
         addSeparator();
         CompareParameterizationMenuItem compareParameterizationMenuItem = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, node.getAbstractUIItem().mainModel));
         tree.addTreeSelectionListener(compareParameterizationMenuItem);
