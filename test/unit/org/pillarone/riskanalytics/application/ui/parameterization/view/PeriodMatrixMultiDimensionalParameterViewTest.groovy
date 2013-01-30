@@ -10,7 +10,6 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
-import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
@@ -19,21 +18,15 @@ import com.ulcjava.testframework.operator.AWTComponentOperator
 import com.ulcjava.testframework.operator.ULCCheckBoxMenuItemOperator
 import org.pillarone.riskanalytics.core.components.Component
 import com.ulcjava.testframework.operator.ULCTableOperator
-import com.ulcjava.base.application.ULCTabbedPane
-import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
-import com.ulcjava.base.application.ULCBoxPane
+import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 
-/**
- * User: oandersson
- * Date: 1/23/13
- * Time: 8:46 AM
- */
 class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCase {
     PeriodMatrixMultiDimensionalParameter multiDimensionalParameter
     MultiDimensionalParameterModel multiDimensionalParameterModel
 
     @Override
     ULCComponent createContentPane() {
+        ULCClipboard.install()
         CoreModel coreModel = new CoreModel()
         coreModel.init()
         coreModel.injectComponentNames()
@@ -54,69 +47,34 @@ class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCas
 
 
     void testSetNumberOfPeriods() {
-        //Get operators
-        ULCFrameOperator frameOp = getMainFrameOperator()
-        ULCButtonOperator applyOp = new ULCButtonOperator(frameOp, new ComponentByNameChooser("applyButton"))
-        ULCTextFieldOperator periodOp = new ULCTextFieldOperator(frameOp, new ComponentByNameChooser("periodTextField"))
-
+        selectAllComponents(true)
         //Set number of periods and ensure parameter updates correctly
-        periodOp.getFocus()
-        periodOp.enterText("5")
-        applyOp.clickMouse()
+        setPeriodNumber(5)
+        apply()
         assert multiDimensionalParameter.getMaxPeriod() == 5
 
-        periodOp.getFocus()
-        periodOp.enterText("10")
-        applyOp.clickMouse()
+        setPeriodNumber(10)
+        apply()
         assert multiDimensionalParameter.getMaxPeriod() == 10
 
-        periodOp.getFocus()
-        periodOp.enterText("1")
-        applyOp.clickMouse()
+        setPeriodNumber(1)
+        apply()
         assertTrue(multiDimensionalParameter.getMaxPeriod() == 1)
-        assertTrue(multiDimensionalParameter.getValueRowCount() == 1)
     }
 
     void testComponentSelection() {
-        ULCFrameOperator frameOp = getMainFrameOperator()
-        ULCButtonOperator applyOp = new ULCButtonOperator(frameOp, new ComponentByNameChooser("applyButton"))
-        ULCTextFieldOperator periodOp = new ULCTextFieldOperator(frameOp, new ComponentByNameChooser("periodTextField"))
-        ULCButtonOperator compSelectOp = new ULCButtonOperator(frameOp, new ComponentByNameChooser("selectComponents"))
-        //Select components and ensure that param updates correctly..
-        compSelectOp.clickForPopup()
-        ULCPopupMenuOperator popOp = new ULCPopupMenuOperator(frameOp, new ComponentByNameChooser("componentPopupMenu"))
-        //Deselect all comps, ensure table is empty..
-        popOp.getComponents().each {AWTComponentOperator op ->
-            assertTrue(op instanceof ULCCheckBoxMenuItemOperator)
-            ULCCheckBoxMenuItemOperator checkBoxMenuItemOperator = (ULCCheckBoxMenuItemOperator) op
-            if (checkBoxMenuItemOperator.isSelected()) {
-                println(checkBoxMenuItemOperator.getText() + " is selected, deselect it...")
-                checkBoxMenuItemOperator.clickMouse()
-            }
-        }
-        //Apply..
-        applyOp.clickMouse()
+        selectAllComponents(false)
+        apply()
 
-        ULCTableOperator multiDimTableOp = new ULCTableOperator(frameOp, new ComponentByNameChooser("multiDimTable"))
+        ULCTableOperator multiDimTableOp = new ULCTableOperator(getMainFrameOperator(), new ComponentByNameChooser("multiDimTable"))
         assertEquals(multiDimTableOp.getRowCount(), multiDimensionalParameter.getTitleRowCount())
         //table has got 1 extra column for indices..
         assertEquals(multiDimTableOp.getColumnCount(), multiDimensionalParameter.getTitleColumnCount() + 1)
 
         //Now select all components..
-        popOp.getComponents().each {AWTComponentOperator op ->
-            assertTrue(op instanceof ULCCheckBoxMenuItemOperator)
-            ULCCheckBoxMenuItemOperator checkBoxMenuItemOperator = (ULCCheckBoxMenuItemOperator) op
-            if (!checkBoxMenuItemOperator.isSelected()) {
-                //click to select...
-                checkBoxMenuItemOperator.clickMouse()
-            }
-        }
-
-        //Set number of periods to 1
-        periodOp.getFocus()
-        periodOp.enterText("1")
-        //Apply to set on param
-        applyOp.clickMouse()
+       selectAllComponents(true)
+        setPeriodNumber(1)
+        apply()
         //Get all available components from the param's sim model
         List possibleComps = []
         multiDimensionalParameter.getSimulationModel().getMarkedComponents(multiDimensionalParameter.getMarkerClass()).each {Component comp ->
@@ -132,26 +90,10 @@ class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCas
     }
 
     void testDiagonal() {
-        ULCFrameOperator frameOp = getMainFrameOperator()
-        ULCButtonOperator applyOp = new ULCButtonOperator(frameOp, new ComponentByNameChooser("applyButton"))
-        ULCTextFieldOperator periodOp = new ULCTextFieldOperator(frameOp, new ComponentByNameChooser("periodTextField"))
-        ULCButtonOperator compSelectOp = new ULCButtonOperator(frameOp, new ComponentByNameChooser("selectComponents"))
-        //Select all available components, set num periods to 10, loop through data and ensure diagonal is always == 1
-        compSelectOp.clickForPopup()
-        ULCPopupMenuOperator popOp = new ULCPopupMenuOperator(frameOp, new ComponentByNameChooser("componentPopupMenu"))
-        //Deselect all comps, ensure table is empty..
-        popOp.getComponents().each {AWTComponentOperator op ->
-            assertTrue(op instanceof ULCCheckBoxMenuItemOperator)
-            ULCCheckBoxMenuItemOperator checkBoxMenuItemOperator = (ULCCheckBoxMenuItemOperator) op
-            if (!checkBoxMenuItemOperator.isSelected()) {
-                println(checkBoxMenuItemOperator.getText() + " is selected, deselect it...")
-                checkBoxMenuItemOperator.clickMouse()
-            }
-        }
-        periodOp.getFocus()
-        periodOp.enterText("10")
+        selectAllComponents(true)
+        setPeriodNumber(10)
         //Apply to update param
-        applyOp.clickMouse()
+        apply()
         //Check row & column count
         assertTrue(multiDimensionalParameter.getColumnCount() == multiDimensionalParameter.getTitleColumnCount() + (2 * 10))
         assertTrue(multiDimensionalParameter.getRowCount() == multiDimensionalParameter.getTitleRowCount() + (2 * 10))
@@ -161,6 +103,37 @@ class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCas
         }
     }
 
+    private void selectAllComponents(boolean select) {
+        ULCButtonOperator compSelectOp = new ULCButtonOperator(getMainFrameOperator(), new ComponentByNameChooser("selectComponents"))
+        //Select components and ensure that param updates correctly..
+        compSelectOp.clickForPopup()
+        ULCPopupMenuOperator popOp = new ULCPopupMenuOperator(getMainFrameOperator(), new ComponentByNameChooser("componentPopupMenu"))
+        //Deselect all comps, ensure table is empty..
+        popOp.getComponents().each {AWTComponentOperator op ->
+            assertTrue(op instanceof ULCCheckBoxMenuItemOperator)
+            ULCCheckBoxMenuItemOperator checkBoxMenuItemOperator = (ULCCheckBoxMenuItemOperator) op
+            if (select) {
+                if (!checkBoxMenuItemOperator.isSelected()) {
+                    checkBoxMenuItemOperator.clickMouse()
+                }
+            } else {
+                if (checkBoxMenuItemOperator.isSelected()) {
+                    checkBoxMenuItemOperator.clickMouse()
+                }
+
+            }
+        }
+    }
+
+    private void setPeriodNumber(int periods) {
+        ULCTextFieldOperator periodOp = new ULCTextFieldOperator(getMainFrameOperator(), new ComponentByNameChooser("periodTextField"))
+        periodOp.getFocus()
+        periodOp.enterText(Integer.toString(periods))
+    }
+
+    private void apply() {
+        new ULCButtonOperator(getMainFrameOperator(), new ComponentByNameChooser("applyButton")).clickMouse()
+    }
 
 //    void testView() {
 //        sleep 5000000

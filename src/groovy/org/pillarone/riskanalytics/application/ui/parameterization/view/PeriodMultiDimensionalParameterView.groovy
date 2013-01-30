@@ -24,6 +24,11 @@ import com.ulcjava.base.application.event.TableModelEvent
 import com.ulcjava.base.application.event.ITableModelListener
 import com.ulcjava.base.application.table.ULCTableColumn
 import org.pillarone.riskanalytics.application.ui.table.view.MultiDimensionalParameterTableCellRenderer
+import org.pillarone.riskanalytics.application.ui.base.action.TableCopier
+import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.application.event.KeyEvent
+import org.pillarone.riskanalytics.application.ui.base.action.TablePaster
+import org.pillarone.riskanalytics.application.ui.base.action.TableSelectionFiller
 
 class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParameterView {
     static Log LOG = LogFactory.getLog(PeriodMultiDimensionalParameterView)
@@ -44,6 +49,9 @@ class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParame
             }
         }
         ] as ITableModelListener)
+        table.registerKeyboardAction(new TableCopier(table: table), KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK, false), 0)
+        table.registerKeyboardAction(new TablePaster(table: table, model: table.model), KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK, false), 0)
+        table.registerKeyboardAction(new TableSelectionFiller(table: table, model: table.model), KeyStroke.getKeyStroke(KeyEvent.VK_R, KeyEvent.CTRL_DOWN_MASK, false), 0)
     }
 
     @Override
