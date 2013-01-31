@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.ULCWindow
+import org.pillarone.riskanalytics.core.components.NonUniqueComponentNameException
 
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
@@ -49,7 +50,7 @@ abstract class TreeNodeAction extends ResourceBasedAction {
                 if (validate(newName)) {
                     doAction(newName, model, node, tree, dialog.withComments.isSelected())
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (NonUniqueComponentNameException e) {
                 ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniqueSubComponent")
                 alert.show()
             }
