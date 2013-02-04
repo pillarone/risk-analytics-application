@@ -41,7 +41,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.6-BETA-2.7-kti"
+            runtime "org.pillarone:risk-analytics-core:1.6-RC-1-kti"
         }
 
     }
