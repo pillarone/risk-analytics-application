@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCAlert
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 
 class OpenTransactionLinkAction extends SelectionTreeAction {
@@ -17,23 +18,22 @@ class OpenTransactionLinkAction extends SelectionTreeAction {
     static Log LOG = LogFactory.getLog(OpenTransactionLinkAction)
 
     /**
-     * Action is only enabled if
+     * Action is only enabled on single selection on a Parameterization
      * @return
      */
-    public boolean isEnabled() {
-        //Only enable on single select
-        if (getSelectedObjects(Parameterization.class).size() != 1) {
+    boolean isEnabled() {
+        if (getSelectedUIItems().size() != 1) {
             return false
         }
-        try {
-            Parameterization param = getSelectedItem()
-            //Enable only if dealId exists..
-            return param.getDealId() != null
-        } catch (Exception e) {
-            LOG.error("OpenTransactionLinkAction error, could not set enabled", e)
+        Object selectedItem = getSelectedItem()
+        if(selectedItem instanceof Parameterization){
+            Long dealId = selectedItem.getDealId()
+            return dealId && dealId > 0
+        }else{
             return false
         }
     }
+
 
     @Override
     void doActionPerformed(ActionEvent event) {
