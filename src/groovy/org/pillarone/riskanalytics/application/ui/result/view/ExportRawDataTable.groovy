@@ -43,6 +43,7 @@ class ExportRawDataTable extends ResourceBasedAction {
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
                     String selectedFile = filePaths[0]
+                    selectedFile = selectedFile.endsWith('.xlsx') ?selectedFile:"${selectedFile}.xlsx"
 
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {

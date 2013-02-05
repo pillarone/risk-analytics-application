@@ -88,6 +88,8 @@ abstract class ExportAction extends SelectionTreeAction {
         SingleValueResult.withTransaction {trx ->
             def simulationFileName = "${item.name}.xlsx".replaceAll(':', '-')
             String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
+            selectedFile = selectedFile.endsWith('.xlsx') ?selectedFile:"${selectedFile}.xlsx"
+
             item.load()
             def simulationRun = item.simulationRun
             List rawData = ResultAccessor.getAllResults(simulationRun)
