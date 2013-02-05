@@ -3,8 +3,13 @@ package org.pillarone.riskanalytics.application.ui.base.action
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTable
+import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IWindowListener
+import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.table.ITableModel
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataTableModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -13,6 +18,8 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 class TableCopier extends ExceptionSafeAction {
+
+    private static final int ONE_MILLION = 1000000
 
     ULCTable table
     ITableModel model
@@ -27,6 +34,22 @@ class TableCopier extends ExceptionSafeAction {
         model = table.model
         int[] selectedRows = getSelectedRows()
         int[] selectedColumns = getSelectedColumns()
+        if (selectedColumns.size() * selectedRows.size() < ONE_MILLION) {
+            doCopyContent()
+        } else {
+            I18NAlert hugeAmountOfDataSelected = new I18NAlert(UlcUtilities.getWindowAncestor(table), "HugeAmountOfDataSelected")
+            hugeAmountOfDataSelected.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(hugeAmountOfDataSelected) }] as IWindowListener)
+            hugeAmountOfDataSelected.show()
+        }
+    }
+
+    private void handleEvent(I18NAlert alert) {
+        if (alert.value == alert.firstButtonLabel) {
+            doCopyContent()
+        }
+    }
+
+    private void doCopyContent() {
         String content = copyContent(selectedRows, selectedColumns)
         ULCClipboard.getClipboard().content = content
     }
