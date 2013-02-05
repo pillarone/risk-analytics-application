@@ -9,6 +9,8 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
+import org.pillarone.riskanalytics.application.util.LocaleResources
+
 import java.text.NumberFormat
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
@@ -57,7 +59,7 @@ class TableTreeCopier extends ExceptionSafeAction {
     }
 
     protected getCopyFormat() {
-        NumberFormat format = NumberFormat.getInstance(ClientContext.getLocale())
+        NumberFormat format = NumberFormat.getInstance(LocaleResources.locale)
         format.setMaximumFractionDigits(10)
         format.groupingUsed = false
         return format

@@ -10,6 +10,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 
 import java.text.NumberFormat
 
@@ -112,7 +113,7 @@ class TreeNodeCopier extends ResourceBasedAction {
     }
 
     protected getCopyFormat() {
-        NumberFormat format = NumberFormat.getInstance(ClientContext.getLocale())
+        NumberFormat format = NumberFormat.getInstance(LocaleResources.locale)
         format.setMaximumFractionDigits(10)
         format.groupingUsed = false
         return format
