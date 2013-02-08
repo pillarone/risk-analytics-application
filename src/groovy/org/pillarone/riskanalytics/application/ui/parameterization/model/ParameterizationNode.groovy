@@ -23,15 +23,8 @@ public class ParameterizationNode extends VersionedItemNode implements IReportab
 
     @Override
     public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
-        //Cache popupmenus
-        ULCPopupMenu menu = popupMenuMap.get(this.getParameterization().getModelClass())
-        if(menu == null){
-            menu = new ParameterizationPopupMenu(tree, this);
-            popupMenuMap.put(this.getParameterization().getModelClass(), menu)
-        }
-        return menu
+        return new ParameterizationPopupMenu(tree, this);
     }
-
 
 
     public boolean isValid() {

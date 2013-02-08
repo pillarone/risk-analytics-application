@@ -11,9 +11,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
@@ -26,6 +24,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     ULCTableTree tree
     RiskAnalyticsMainModel mainModel
     Map<Class, ULCPopupMenu> popupMenus = [:]
+    Map<Class, ULCPopupMenu> paramNodePopupMenus = [:]
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> resourceWorkflowMenus = new HashMap<Status, ULCPopupMenu>()
 
@@ -106,9 +105,13 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         return popupMenu
     }
 
-    //Leave caching of the popup to ParameterizationNode, need different menus for different model versions
     private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
-        return node.getPopupMenu(tree)
+        ULCPopupMenu menu = paramNodePopupMenus.get(node.getParameterization().getModelClass())
+        if (!menu){
+            menu = node.getPopupMenu(tree)
+            paramNodePopupMenus.put(node.getParameterization().getModelClass(), menu)
+        }
+        return menu
     }
 
 
