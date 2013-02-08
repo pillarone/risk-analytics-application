@@ -106,5 +106,11 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         return popupMenu
     }
 
+    //Leave caching of the popup to ParameterizationNode, need different menus for different model versions
+    private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
+        return node.getPopupMenu(tree)
+    }
+
+
 
 }

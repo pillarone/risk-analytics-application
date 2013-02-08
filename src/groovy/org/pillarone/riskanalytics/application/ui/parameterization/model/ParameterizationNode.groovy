@@ -13,6 +13,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem;
 
 public class ParameterizationNode extends VersionedItemNode implements IReportableNode {
+    //Cache component popup menus based on model, as reports will differ.
+    private static Map<Class, ULCPopupMenu> popupMenuMap = new HashMap<Class, ULCPopupMenu>()
 
 
     public ParameterizationNode(ParameterizationUIItem parameterizationUIItem) {
@@ -21,8 +23,16 @@ public class ParameterizationNode extends VersionedItemNode implements IReportab
 
     @Override
     public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
-        return new ParameterizationPopupMenu(tree, this);
+        //Cache popupmenus
+        ULCPopupMenu menu = popupMenuMap.get(this.getParameterization().getModelClass())
+        if(menu == null){
+            menu = new ParameterizationPopupMenu(tree, this);
+            popupMenuMap.put(this.getParameterization().getModelClass(), menu)
+        }
+        return menu
     }
+
+
 
     public boolean isValid() {
         return getParameterization().isValid();
@@ -33,7 +43,7 @@ public class ParameterizationNode extends VersionedItemNode implements IReportab
     }
 
     private Parameterization getParameterization() {
-        return ((Parameterization)getAbstractUIItem().getItem());
+        return ((Parameterization) getAbstractUIItem().getItem());
     }
 
     @Override
@@ -47,10 +57,10 @@ public class ParameterizationNode extends VersionedItemNode implements IReportab
     }
 
     List<Class> modelsToReportOn() {
-        return [ abstractUIItem.model.getClass() ]
+        return [abstractUIItem.model.getClass()]
     }
 
     List<ModellingItem> modellingItemsForReport() {
-        return [((ModellingItem) ( (ModellingUIItem) abstractUIItem).item)]
+        return [((ModellingItem) ((ModellingUIItem) abstractUIItem).item)]
     }
 }
