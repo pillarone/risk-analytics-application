@@ -25,6 +25,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     RiskAnalyticsMainModel mainModel
     Map<Class, ULCPopupMenu> popupMenus = [:]
     Map<Class, ULCPopupMenu> paramNodePopupMenus = [:]
+    Map<Class, ULCPopupMenu> simulationPopupMenus = new HashMap<Class, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> resourceWorkflowMenus = new HashMap<Status, ULCPopupMenu>()
 
@@ -76,7 +77,13 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private ULCPopupMenu getPopupMenu(SimulationNode node) {
-        return ((INavigationTreeNode) node).getPopupMenu(tree)
+        ULCPopupMenu simulationPopupMenu = simulationPopupMenus.get(node.abstractUIItem.model.modelClass)
+        if (simulationPopupMenu == null){
+            //Not in cache, create and add it..
+            simulationPopupMenu = node.getPopupMenu(tree)
+            simulationPopupMenus.put(node.abstractUIItem.model.modelClass, simulationPopupMenu)
+        }
+        return simulationPopupMenu
     }
 
     private ULCPopupMenu getPopupMenu(ItemGroupNode node) {
@@ -113,7 +120,4 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         }
         return menu
     }
-
-
-
 }

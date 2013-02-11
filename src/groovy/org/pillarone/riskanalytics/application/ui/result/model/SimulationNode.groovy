@@ -18,7 +18,6 @@ class SimulationNode extends ItemNode implements IReportableNode {
     boolean display = true
     // flag for hidden/display simulations
     boolean hidden = false
-    Map<String, ULCPopupMenu> resultMenus = [:]
 
     public SimulationNode(AbstractUIItem simulationUIItem) {
         super(simulationUIItem, false, true)
@@ -32,11 +31,8 @@ class SimulationNode extends ItemNode implements IReportableNode {
     }
 
     public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
-        String modelName = abstractUIItem.model.modelClass.simpleName
-        if (resultMenus.containsKey(modelName)) return resultMenus[modelName]
         ULCPopupMenu simulationNodePopUpMenu = new ULCPopupMenu()
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
-
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree, abstractUIItem.mainModel)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, abstractUIItem.mainModel)))
@@ -48,8 +44,6 @@ class SimulationNode extends ItemNode implements IReportableNode {
         addReportMenus(simulationNodePopUpMenu, tree, true)
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
-        resultMenus[modelName] = simulationNodePopUpMenu
-
         return simulationNodePopUpMenu
     }
 
