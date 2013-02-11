@@ -120,8 +120,8 @@ class TreeNodeCopier extends ResourceBasedAction {
     }
 
     String getNodeName(def node, List valueStrings) {
-        if (!valueStrings || valueStrings.size() < 2 || "".equals(valueStrings.get(1)) || !node.properties.keySet().contains("name"))
+        if (!valueStrings || valueStrings.size() < 2 || "".equals(valueStrings.get(1)) || !node.properties.keySet().contains("field"))
             return ""
-        return ":" + node.name
+        return ":" + node.field
     }
 }
