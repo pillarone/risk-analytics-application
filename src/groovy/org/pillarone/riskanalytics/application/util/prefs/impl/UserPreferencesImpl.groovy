@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.util.prefs.impl
 
+import org.pillarone.riskanalytics.core.user.UserManagement
+
 import java.util.prefs.Preferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 
@@ -11,7 +13,8 @@ public class UserPreferencesImpl extends AbstractUserPreferencesImpl {
     private Preferences userPrefs
 
     public UserPreferencesImpl() {
-        userPrefs = Preferences.userNodeForPackage(UserPreferencesImpl.class);
+        String user = UserManagement.currentUser ?: "standalone"
+        userPrefs = Preferences.userNodeForPackage(UserPreferencesImpl.class).node(user);
     }
 
     String getUserDirectory(String key) {
@@ -27,9 +30,9 @@ public class UserPreferencesImpl extends AbstractUserPreferencesImpl {
         userPrefs.put(key, value)
     }
 
-   public void putPropertyValue(String property, String value) {
-       if (value)
-           userPrefs.put(property, value)
+    public void putPropertyValue(String property, String value) {
+        if (value)
+            userPrefs.put(property, value)
     }
 
     public String getPropertyValue(String property) {
