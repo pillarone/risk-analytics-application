@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.packets.PacketList
 import org.pillarone.riskanalytics.core.packets.SingleValuePacket
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.util.GroovyUtils
 
 class ResultConfigurationTreeBuilder extends TreeBuilder {
 
@@ -50,7 +51,7 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
         componentProperties.addAll(TreeBuilderUtil.collectProperties(componentNode.component, 'out'))
         def treeSet = new TreeSet(new ParmComparator(componentProperties))
         treeSet.addAll(component.properties.keySet())
-        treeSet.each {String k ->
+        treeSet.each { String k ->
             if (k.startsWith("sub")) {
                 ComponentTableTreeNode node = buildComponentNode(component[k], k)
                 if (node != null) {
@@ -85,8 +86,11 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
 
     private boolean hasCollectableOutput(Component component) {
         boolean result = false
+        if (component instanceof DynamicComposedComponent) {
+            result = hasCollectableOutput(component.createDefaultSubComponent())
+        }
 
-        component.properties.each {String name, value ->
+        GroovyUtils.getProperties(component).each { String name, value ->
             if (name.startsWith("out")) {
                 if (value instanceof PacketList) {
                     if (isSingleOrMultiValuePacket(value)) {
