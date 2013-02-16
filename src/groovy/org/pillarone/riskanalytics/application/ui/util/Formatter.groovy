@@ -22,7 +22,7 @@ public class Formatter {
         if (!values) return ''
         def cols = mdp.columnCount - mdp.titleColumnCount
         def rows = mdp.rowCount - mdp.titleRowCount
-        if (rows > MAX_DISPLAY_ROWS || cols > MAX_DISPLAY_COLS) return "<$cols/$rows>"
+        if (rows == 0 || rows > MAX_DISPLAY_ROWS || cols > MAX_DISPLAY_COLS) return "<$cols/$rows>"
         StringBuilder result = new StringBuilder()
         result << format(values, locale)
         return result.toString()
