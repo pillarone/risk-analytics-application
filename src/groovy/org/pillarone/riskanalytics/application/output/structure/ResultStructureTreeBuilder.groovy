@@ -12,8 +12,9 @@ import org.pillarone.riskanalytics.core.model.Model
 
 /**
  * This class process the ResultTree file replacing variables with p14n specific values. The user may define any
- * variables. They have to be wrapped with [%varname%]. There exists one predefined variable for periods [%period%].
- * It is especially useful for triangle like data. See also AggregateSplitByInceptionDateCollectingModeStrategy in the
+ * variables in a sub component context. They have to be wrapped with [%varname%]. For other contexts there exists two
+ * predefined variables: one for periods [%period%] and another for [%split%].
+ * Period is especially useful for triangle like data. See also AggregateSplitByInceptionDateCollectingModeStrategy in the
  * pc-cashflow plugin.
  */
 class ResultStructureTreeBuilder {
@@ -40,6 +41,7 @@ class ResultStructureTreeBuilder {
     private ResultStructure resultStructure
     private Map<String, ICollectingModeStrategy> allPaths
     private static String PERIOD_VARIABLE = '[%period%]'
+    private static String SPLIT_VARIABLE = '[%split%]'
 
     Map<String, String> transformedPaths = [:]
 
@@ -122,6 +124,11 @@ class ResultStructureTreeBuilder {
                     replacements << child.name
                 }
             }
+            else if (currentNodeName.equals(SPLIT_VARIABLE)) {
+                for (ResultNode child in currentNode.childNodes) {
+                    replacements << child.name
+                }
+            }
             else {
                 for (ResultNode child in currentNode.childNodes) {
                     if (child.name.startsWith("sub")) {
@@ -134,7 +141,7 @@ class ResultStructureTreeBuilder {
                 // add leafPath and currentNodeName to nodeReplacements only if it is not yet part of the nodeReplacements list 
                 nodeReplacements << new NodeReplacement(path: leafPath, wildcard: currentNodeName, replacements: replacements)
             } else {
-                // complete the existingReplacement list if there is already an existingReplacment
+                // complete the existingReplacement list if there is already an existingReplacement
                 existingReplacement.replacements.addAll(replacements)
             }
             // step one level down of on a variable node
