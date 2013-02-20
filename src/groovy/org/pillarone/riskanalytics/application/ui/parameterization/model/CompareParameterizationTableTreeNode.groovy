@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ParameterNotFoundException
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
@@ -14,10 +15,10 @@ class CompareParameterizationTableTreeNode extends ParameterizationTableTreeNode
     List<ParametrizedItem> itemsToCompare = []
     private int columnCount
 
-    public CompareParameterizationTableTreeNode(String path, List<ParametrizedItem> items, int columnCount) {
+    public CompareParameterizationTableTreeNode(String path, List<ParametrizedItem> items, int columnCount, Model model) {
         super(path, items[0])
         this.itemsToCompare = items
-        this.parameterizationTableTreeNode = ParameterizationNodeFactory.getNode(path, items.find { !it.getParameterHoldersForAllPeriods(path).empty }, null)
+        this.parameterizationTableTreeNode = ParameterizationNodeFactory.getNode(path, items.find { !it.getParameterHoldersForAllPeriods(path).empty }, model)
         this.columnCount = columnCount
     }
 

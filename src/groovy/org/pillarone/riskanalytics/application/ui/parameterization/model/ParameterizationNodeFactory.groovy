@@ -114,7 +114,7 @@ class ParameterizationNodeFactory {
         if (ParameterizationUtilities.isParameterObjectParameter(path, items)) {
             return createCompareParamaterObjectNode(path, items, size, model)
         } else {
-            return new CompareParameterizationTableTreeNode(path, items, size)
+            return new CompareParameterizationTableTreeNode(path, items, size, model)
         }
     }
 
