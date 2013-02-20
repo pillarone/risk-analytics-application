@@ -160,14 +160,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void putValues(ItemNode node) {
-        for (int column = 0; column < columnNames.size() - 2; column++) {
+        for (int column = 0; column < columnNames.size(); column++) {
             addColumnValue(node.abstractUIItem.item, node, column, getValue(node.abstractUIItem.item, node, column))
         }
     }
 
     public void addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
         if (columnValues[parameterization] == null)
-            columnValues[parameterization] = new Object[columnNames.size() - 1]
+            columnValues[parameterization] = new Object[columnNames.size()]
         columnValues[parameterization][column] = value
         node.values[column] = value
     }

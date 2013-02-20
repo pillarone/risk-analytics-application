@@ -106,7 +106,7 @@ class SelectionTreeView {
             if (ActionEvent.META_MASK == event.getModifiers()) {
                 SelectionTreeHeaderDialog dialog
                 dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
-//                dialog.init()
+                dialog.init()
                 dialog.dialog.setLocationRelativeTo(tree)
                 dialog.dialog.setAlignment(ULCBoxPane.BOX_CENTER_CENTER)
                 dialog.dialog.setVisible true
