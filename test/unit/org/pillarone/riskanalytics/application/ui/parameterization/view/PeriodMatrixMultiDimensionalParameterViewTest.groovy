@@ -19,6 +19,7 @@ import com.ulcjava.testframework.operator.ULCCheckBoxMenuItemOperator
 import org.pillarone.riskanalytics.core.components.Component
 import com.ulcjava.testframework.operator.ULCTableOperator
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCase {
     PeriodMatrixMultiDimensionalParameter multiDimensionalParameter
@@ -86,7 +87,10 @@ class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCas
             inTable.add((String) multiDimTableOp.getValueAt(rowIndex, 1))
         }
         //Ensure we've selected all...
-        assertTrue(inTable.size() == possibleComps.size() && possibleComps.containsAll(inTable))
+        assertTrue(inTable.size() == possibleComps.size())
+        possibleComps.each {String comp ->
+            assertTrue(inTable.contains(ComponentUtils.getNormalizedName(comp)))
+        }
     }
 
     void testDiagonal() {

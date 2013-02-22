@@ -252,7 +252,7 @@ class MultiDimensionalParameterTableModel extends AbstractTableModel implements 
         if (parameter instanceof ConstrainedMultiDimensionalParameter) {
             return new ConstrainedMultiDimensionalParameterTableModel(parameter, true)
         } else if (parameter instanceof PeriodMatrixMultiDimensionalParameter) {
-            return new MultiDimensionalParameterTableModel(parameter, true)
+            return new PeriodMultiDimensionalParameterTableModel(parameter, true)
         }
         else if (parameter instanceof IComboBoxBasedMultiDimensionalParameter) {
             return new ComboBoxMultiDimensionalParameterTableModel(parameter, true)

@@ -29,6 +29,7 @@ import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.event.KeyEvent
 import org.pillarone.riskanalytics.application.ui.base.action.TablePaster
 import org.pillarone.riskanalytics.application.ui.base.action.TableSelectionFiller
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParameterView {
     static Log LOG = LogFactory.getLog(PeriodMultiDimensionalParameterView)
@@ -36,6 +37,7 @@ class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParame
     ULCTextField periodTextField
     ULCLabel path
     ULCPopupMenu componentPopupMenu
+    private Map<String, String> components
 
     PeriodMultiDimensionalParameterView(MultiDimensionalParameterModel model) {
         super(model)
@@ -79,9 +81,10 @@ class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParame
         componentPopupMenu.setName("componentPopupMenu")
         //get the selected components from the model
         Set<String> selectedFromModel = getSelectedComponentsFromModel()
-        getPossibleComponents(model.multiDimensionalParameter).each {String it ->
-            boolean isSelected = selectedFromModel.contains(it)
-            ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(it, isSelected)
+        components = getPossibleComponents(model.multiDimensionalParameter)
+        components.each {String key, String value ->
+            boolean isSelected = selectedFromModel.contains(key)
+            ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(key, isSelected)
             item.addValueChangedListener(new IValueChangedListener() {
                 @Override
                 void valueChanged(ValueChangedEvent valueChangedEvent) {
@@ -135,7 +138,7 @@ class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParame
         List<String> selected = []
         componentPopupMenu.getComponents().each {ULCCheckBoxMenuItem item ->
             if (item.isSelected()) {
-                selected << item.getText()
+                selected << components.get(item.getText())
             }
         }
         return selected
@@ -192,10 +195,12 @@ class PeriodMultiDimensionalParameterView extends AbstractMultiDimensionalParame
         model.tableModel.fireTableStructureChanged()
     }
 
-    private List<String> getPossibleComponents(PeriodMatrixMultiDimensionalParameter param) {
-        List<String> res = []
+
+    private Map<String, String> getPossibleComponents(PeriodMatrixMultiDimensionalParameter param) {
+        Map<String, String> res = new TreeMap<String, String>()
         param.getSimulationModel().getMarkedComponents(param.getMarkerClass()).sort().each {Component c ->
-            res << c.getName()
+//            res << c.getName()
+            res.put(ComponentUtils.getNormalizedName(c.name), c.name);
         }
         return res
     }
