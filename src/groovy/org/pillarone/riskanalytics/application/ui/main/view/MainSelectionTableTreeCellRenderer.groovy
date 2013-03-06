@@ -26,6 +26,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     Map<Class, ULCPopupMenu> popupMenus = [:]
     Map<Class, ULCPopupMenu> paramNodePopupMenus = [:]
     Map<Class, ULCPopupMenu> simulationPopupMenus = new HashMap<Class, ULCPopupMenu>()
+    Map<Class, ULCPopupMenu> batchRunPopupMenus = new HashMap<Class, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> resourceWorkflowMenus = new HashMap<Status, ULCPopupMenu>()
 
@@ -78,7 +79,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     private ULCPopupMenu getPopupMenu(SimulationNode node) {
         ULCPopupMenu simulationPopupMenu = simulationPopupMenus.get(node.abstractUIItem.model.modelClass)
-        if (simulationPopupMenu == null){
+        if (simulationPopupMenu == null) {
             //Not in cache, create and add it..
             simulationPopupMenu = node.getPopupMenu(tree)
             simulationPopupMenus.put(node.abstractUIItem.model.modelClass, simulationPopupMenu)
@@ -94,7 +95,12 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private ULCPopupMenu getPopupMenu(BatchRunNode node) {
-        return node.getPopupMenu(tree)
+        ULCPopupMenu batchPopUp = batchRunPopupMenus.get(node.getClass())
+        if (!batchPopUp) {
+            batchPopUp = node.getPopupMenu(tree)
+            batchRunPopupMenus.put(node.getClass(), batchPopUp)
+        }
+        return batchPopUp
     }
 
     private ULCPopupMenu getPopupMenu(WorkflowParameterizationNode node) {
@@ -114,7 +120,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
         ULCPopupMenu menu = paramNodePopupMenus.get(node.getParameterization().getModelClass())
-        if (!menu){
+        if (!menu) {
             menu = node.getPopupMenu(tree)
             paramNodePopupMenus.put(node.getParameterization().getModelClass(), menu)
         }
