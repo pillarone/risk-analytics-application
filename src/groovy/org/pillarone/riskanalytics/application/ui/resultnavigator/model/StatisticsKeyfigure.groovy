@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
  *
  * @author martin.melchior
  */
+@Deprecated
 public enum StatisticsKeyfigure {
     MEAN(PostSimulationCalculation.MEAN),
     STDEV(PostSimulationCalculation.STDEV),

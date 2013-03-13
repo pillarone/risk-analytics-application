@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.core.output.QuantilePerspective
  *
  * @author ivo.nussbaumer
  */
+@Deprecated
 class DataCellElement extends OutputElement {
     Object value
     int period

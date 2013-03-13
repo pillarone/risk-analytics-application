@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
  *
  * @author martin.melchior
  */
+@Deprecated
 class OutputElement {
     static final String PATH = "Path"
     static final String FIELD = "Field"

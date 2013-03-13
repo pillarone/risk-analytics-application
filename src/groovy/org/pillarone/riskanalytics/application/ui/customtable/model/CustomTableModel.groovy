@@ -5,6 +5,8 @@ import com.ulcjava.base.application.AbstractListModel
 import org.nfunk.jep.ParseException
 import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.customtable.view.CellRendererInformation
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * TableModel for the CustomTable
@@ -12,6 +14,9 @@ import org.pillarone.riskanalytics.application.ui.customtable.view.CellRendererI
  * @author ivo.nussbaumer
  */
 public class CustomTableModel extends AbstractTableModel {
+
+    static Log LOG = LogFactory.getLog(CustomTableModel.class);
+
     List<List<Object>> data
     private RowHeaderListModel rowHeaderModel
 
@@ -302,9 +307,8 @@ public class CustomTableModel extends AbstractTableModel {
 
         // if cellData is a formula, resolve the formula
         if (cellData instanceof String) {
-            if (cellData.startsWith("=")) {
+            if (cellData.startsWith("=") && cellData.length() > 1) {
 //
-
 
                 String formula = CustomTableHelper.replaceVariables (this, cellData.substring(1), row, col)
 
@@ -314,10 +318,6 @@ public class CustomTableModel extends AbstractTableModel {
 
                 try {
                     mathParser.parseExpression(formula)
-
-                    if (mathParser.hasError())
-                        return "#" + mathParser.getErrorInfo()
-
                     return mathParser.getValue()
                 } catch (ParseException e) {
                     return "#" + e.getMessage()
