@@ -40,6 +40,7 @@ public class MathParser implements IMathParser {
         jep.addFunction("pOneMin", new P1MinFunction());
         jep.addFunction("pOneStdDev", new P1StdDev());
         jep.addFunction("pOneSingleIteration", new P1IterationData());
+        jep.addFunction("pOneProbExceedance", new P1ProbExceedanceFunction());
 //        jep.addFunction("median", new Median());
 //        jep.addFunction("stddev", new StdDev());
     }
@@ -147,6 +148,32 @@ public class MathParser implements IMathParser {
             JavaHelperMethods.checkModelContextInfo(period, stringBuilder, simulationRun, pathName, fieldName, collectorName);
 
             double result = ResultAccessor.getPercentile(simulationRun, period.intValue() - 1, pathName, collectorName, fieldName, percentile.doubleValue(), QuantilePerspective.LOSS);
+            stack.push(result);
+        }
+    }
+
+    private class P1ProbExceedanceFunction extends PostfixMathCommand {
+        public P1ProbExceedanceFunction () {
+            numberOfParameters = 6;
+        }
+        public void run(Stack stack) throws ParseException {
+            checkStack(stack);
+            Number threshold = (Number) stack.pop();
+            String collectorName = (String) stack.pop();
+            Number period = (Number) stack.pop();
+            String fieldName = (String) stack.pop();
+            String pathName = (String) stack.pop();
+            String simRunName = (String) stack.pop();
+
+            StringBuilder stringBuilder = new StringBuilder();
+            SimulationRun simulationRun = GroovyHelperMethods.findSimulationRun(simRunName);
+            JavaHelperMethods.checkSimulationRun(stringBuilder, simulationRun, simRunName);
+            JavaHelperMethods.checkPeriod(period, stringBuilder);
+            JavaHelperMethods.checkModelContextInfo(period, stringBuilder, simulationRun, pathName, fieldName, collectorName);
+
+            double valuesAboveThreshold = GroovyHelperMethods.valuesAboveThreshold(simulationRun, period.intValue(), pathName, collectorName, fieldName, threshold.doubleValue());
+            double numberSimulations = (double) simulationRun.getIterations();
+            double result = valuesAboveThreshold / numberSimulations;
             stack.push(result);
         }
     }
