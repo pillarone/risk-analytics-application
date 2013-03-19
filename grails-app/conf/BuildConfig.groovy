@@ -1,7 +1,7 @@
 import org.apache.ivy.plugins.resolver.FileSystemResolver
 
 //Use a custom plugins dir, because different branches use different plugin versions
-//grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
+grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies
@@ -30,7 +30,9 @@ grails.project.dependency.resolution = {
         runtime ":background-thread:1.3"
         runtime ":hibernate:2.2.1"
         runtime ":joda-time:0.5"
-        runtime ":maven-publisher:0.7.5"
+        runtime ":maven-publisher:0.7.5", {
+            excludes "groovy"
+        }
         runtime ":quartz:0.4.2"
         runtime ":spring-security-core:1.2.7.3"
 
