@@ -4,7 +4,7 @@ web-app/plugins/*
 web-app/lib/RiskAnalytics*.jar
 *.zip
 *.log
-.idea/workspace.xml
 *.jasper
 *.iml
 .idea/*
+out/*
