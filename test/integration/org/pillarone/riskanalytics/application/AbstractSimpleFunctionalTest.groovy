@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application
 
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
+import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -43,6 +44,8 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
         Thread cleanUpThread = new Thread(
                 [run: {
                     SimulationRun.withTransaction {
+                        ParameterizationTag.list()*.delete()
+                        Tag.list()*.delete()
                         BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
                         PostSimulationCalculation.list()*.delete()
@@ -53,7 +56,6 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
                         ParameterizationDAO.list()*.delete()
                         ModelStructureDAO.list()*.delete()
                         ModelDAO.list()*.delete()
-                        Tag.list()*.delete()
                     }
                 }] as Runnable
         )
