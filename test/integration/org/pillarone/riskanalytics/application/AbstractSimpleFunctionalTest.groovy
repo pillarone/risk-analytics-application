@@ -44,8 +44,6 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
         Thread cleanUpThread = new Thread(
                 [run: {
                     SimulationRun.withTransaction {
-                        ParameterizationTag.list()*.delete()
-                        Tag.list()*.delete()
                         BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
                         PostSimulationCalculation.list()*.delete()
