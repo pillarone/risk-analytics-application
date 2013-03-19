@@ -17,15 +17,15 @@ import org.pillarone.riskanalytics.core.FileConstants
  */
 class CommentReportAction extends AbstractReportAction {
 
-    AbstractCommentableItemModel model
+    private AbstractCommentableItemModel itemModel
     List<Comment> filteredComments
 
 
     Log LOG = LogFactory.getLog(CommentReportAction)
 
-    public CommentReportAction(AbstractCommentableItemModel model) {
+    public CommentReportAction(AbstractCommentableItemModel itemModel) {
         super("CommentReportAction")
-        this.model = model
+        this.itemModel = itemModel
 
     }
 
@@ -39,7 +39,7 @@ class CommentReportAction extends AbstractReportAction {
     }
 
     public def getReport() {
-        return ReportFactory.getReport(getCollectionDataSource(), model?.item)
+        return ReportFactory.getReport(getCollectionDataSource(), itemModel?.item)
     }
 
     public JRBeanCollectionDataSource getCollectionDataSource() {
@@ -53,18 +53,18 @@ class CommentReportAction extends AbstractReportAction {
     }
 
     public void addCommentData(Comment comment, Collection currentValues) {
-        String boxTitle = CommentUtils.getCommentTitle(comment, model)
+        String boxTitle = CommentUtils.getCommentTitle(comment, itemModel)
         String tags = CommentUtils.getTagsValue(comment).replaceAll("<br>", ", ")
         String addedFiles = UIUtils.getText(CommentReportAction.class, "attachments") + ": " + (comment.getFiles() as List).join(", ")
         currentValues << ["boxTitle": boxTitle, "tags": tags, "addedFiles": addedFiles, "text": comment.getText()]
     }
 
     List<Comment> getComments() {
-        filteredComments ? filteredComments : model.item.comments
+        filteredComments ? filteredComments : itemModel.item.comments
     }
 
     String getFileName() {
-        return validateFileName(model.item.name) + System.currentTimeMillis() + ".pdf"
+        return validateFileName(itemModel.item.name) + System.currentTimeMillis() + ".pdf"
     }
 
     @Override

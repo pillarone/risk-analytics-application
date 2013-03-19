@@ -56,7 +56,7 @@ class TagsListView extends AbstractView {
                 ULCCheckBox box = (ULCCheckBox) valueChangedEvent.source
                 Tag newTag = allTags.find {it.name == box.getText() }
                 if (box.isSelected() && newTag) {
-                    addTag(newTag)
+                    addTagToItem(newTag)
                 } else {
                     removeTag(newTag)
                 }
@@ -96,7 +96,7 @@ class TagsListView extends AbstractView {
         return Color.black
     }
 
-    private void addTag(Tag tag) {
+    private void addTagToItem(Tag tag) {
         if (!itemTages.contains(tag)) itemTages << tag
         for (ModellingItem modellingItem: modellingItems) {
             if (!modellingItem.getTags().contains(tag)) {

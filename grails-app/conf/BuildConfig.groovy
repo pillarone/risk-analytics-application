@@ -10,38 +10,37 @@ grails.project.dependency.resolution = {
     repositories {
         grailsHome()
         grailsCentral()
+
+        def ulcClientJarResolver = new FileSystemResolver()
+        String absolutePluginDir = grailsSettings.projectPluginsDir.absolutePath
+
+        ulcClientJarResolver.addArtifactPattern "${absolutePluginDir}/ulc-[revision]/web-app/lib/[artifact].[ext]"
+        ulcClientJarResolver.addArtifactPattern "${basedir}/web-app/lib/[artifact]-[revision].[ext]"
+        ulcClientJarResolver.name = "ulc"
+
+        resolver ulcClientJarResolver
+
+        mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
+        mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
-
-    def ulcClientJarResolver = new FileSystemResolver()
-    String absolutePluginDir = grailsSettings.projectPluginsDir.absolutePath
-
-    ulcClientJarResolver.addArtifactPattern "${absolutePluginDir}/ulc-[revision]/web-app/lib/[artifact].[ext]"
-    ulcClientJarResolver.addArtifactPattern "${basedir}/web-app/lib/[artifact]-[revision].[ext]"
-    ulcClientJarResolver.name = "ulc"
-
-    resolver ulcClientJarResolver
-
-    mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
-    mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
 
     String ulcVersion = "ria-suite-u5"
 
     plugins {
         runtime ":background-thread:1.3"
-        runtime ":hibernate:1.3.7"
+        runtime ":hibernate:2.2.1"
         runtime ":joda-time:0.5"
         runtime ":maven-publisher:0.7.5"
         runtime ":quartz:0.4.2"
-        runtime ":spring-security-core:1.1.2"
-        runtime ":jetty:1.2-SNAPSHOT"
+        runtime ":spring-security-core:1.2.7.3"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime ("org.pillarone:pillar-one-ulc-extensions:0.3")  {  transitive = false }
+        runtime("org.pillarone:pillar-one-ulc-extensions:0.3") { transitive = false }
 
         test ":code-coverage:1.2.4"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.7-a1"
+            runtime "org.pillarone:risk-analytics-core:1.7-a2"
         }
 
     }
@@ -55,6 +54,14 @@ grails.project.dependency.resolution = {
         compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
         compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
         compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
+
+        //required for ulc tests
+        test 'org.mortbay.jetty:jetty:6.1.21', 'org.mortbay.jetty:jetty-plus:6.1.21'
+        test 'org.mortbay.jetty:jetty-util:6.1.21', 'org.mortbay.jetty:jetty-naming:6.1.21'
+        test('org.mortbay.jetty:jsp-2.0:6.1.21') {
+            excludes 'commons-el', 'ant', 'slf4j-api', 'slf4j-simple', 'jcl104-over-slf4j', 'xercesImpl', 'xmlParserAPIs'
+        }
+        test 'hsqldb:hsqldb:1.8.0.10'
     }
 
 }

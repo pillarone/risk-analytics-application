@@ -122,7 +122,7 @@ class MapCategoriesBuilder extends BuilderSupport {
 }
 
 
-private class MappingEntry {
+class MappingEntry {
     String name
     Object value
     MappingEntry parent

@@ -112,7 +112,7 @@ abstract class ExportAction extends SelectionTreeAction {
         }
     }
 
-    private void exportItem(ModellingItem item, int itemCount, filePaths, ULCWindow ancestor) {
+    protected void exportItem(ModellingItem item, int itemCount, filePaths, ULCWindow ancestor) {
         if (!item.isLoaded()) {
             item.load()
         }

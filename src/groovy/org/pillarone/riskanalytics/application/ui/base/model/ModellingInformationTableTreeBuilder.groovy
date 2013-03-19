@@ -409,7 +409,7 @@ class ModellingInformationTableTreeBuilder {
         return currentItem.name == itemToAdd.name
     }
 
-    private def createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchUIItem batchUIItem) {
+    protected void createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchUIItem batchUIItem) {
         DefaultMutableTableTreeNode newNode = createNode(batchUIItem)
         node.add(newNode)
     }

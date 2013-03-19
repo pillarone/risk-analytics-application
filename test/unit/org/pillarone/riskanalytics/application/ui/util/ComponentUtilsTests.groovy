@@ -60,9 +60,6 @@ class ComponentUtilsTests extends GroovyTestCase {
         assertEquals ComponentUtils.intersection([[node0, node1, node2], [node0, node1, node2], [node0, node1, node2, node3]]), [node0, node1, node2]
         assertEquals ComponentUtils.intersection([[node0, node1, node2], [node0, node1, node2], [node0, node1, node2]]), [node0, node1, node2]
         assertEquals ComponentUtils.intersection([[node0, node2], [node0, node1, node2], [node0, node1, node2]]), [node0]
-        println("${ComponentUtils.intersection([[[node0, node1, node2]]])}")
-
-
     }
 
 }

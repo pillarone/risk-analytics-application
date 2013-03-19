@@ -20,7 +20,7 @@ class CompareParameterViewModel extends AbstractModellingModel {
 
     protected ITableTreeModel buildTree() {
         Parameterization aggregatedParameterization = getAggregatedParameterization()
-        this.items = getItems(aggregatedParameterization)
+        this.items = collectItems(aggregatedParameterization)
         builder = new CompareParameterizationTreeBuilder(model, structure, aggregatedParameterization, items)
         periodCount = builder.minPeriod
         paramterTableTreeModel = new CompareParameterizationTableTreeModel(builder, items)
@@ -35,7 +35,7 @@ class CompareParameterViewModel extends AbstractModellingModel {
         return paramterTableTreeModel.getColumnCount()
     }
 
-    private List getItems(Parameterization aggregatedParameterization) {
+    private List collectItems(Parameterization aggregatedParameterization) {
         List items = [aggregatedParameterization]
         def list = (item.get(0) instanceof Parameterization) ? item : item*.item
         items.addAll(list)

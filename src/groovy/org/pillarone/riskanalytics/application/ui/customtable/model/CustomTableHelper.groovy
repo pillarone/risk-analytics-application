@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.customtable.model
 import java.util.regex.Pattern
 import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
 
-static class CustomTableHelper {
+abstract class CustomTableHelper {
     public static Pattern variable_pattern = ~/[A-Za-z]+[0-9]+/
     public static Pattern range_pattern = ~/[A-Za-z]*[0-9]*:[A-Za-z]*[0-9]*/
     public static Pattern col_pattern = ~/[A-Za-z]+/

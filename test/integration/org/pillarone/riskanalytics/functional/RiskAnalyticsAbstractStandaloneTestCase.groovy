@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -50,6 +51,7 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
                         ParameterizationDAO.list()*.delete()
                         ModelStructureDAO.list()*.delete()
                         ModelDAO.list()*.delete()
+                        Tag.list()*.delete()
                     }
                 }] as Runnable
         )

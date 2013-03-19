@@ -32,7 +32,7 @@ class UIUtils {
     public static final String ROOT_PANE = "rootPane"
 
     static int calculateTreeWidth(node) {
-        return calculateTreeWidth(node, 0)
+        return internalCalculateTreeWidth(node, 0)
     }
 
     static int calculateColumnWidth(node, int columnIndex) {
@@ -61,7 +61,7 @@ class UIUtils {
         return font
     }
 
-    private static int calculateTreeWidth(node, int columnIndex) {
+    private static int internalCalculateTreeWidth(node, int columnIndex) {
         return calculateColumnWidth(node, 25, 25, columnIndex)
     }
 
