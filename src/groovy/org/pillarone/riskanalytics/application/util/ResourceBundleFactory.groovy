@@ -15,12 +15,13 @@ class ResourceBundleFactory {
     }
 
     public static ResourceBundle getBundle(String bundle, Locale locale) {
+        ClassLoader loader = Thread.currentThread().contextClassLoader
         List<String> replacementList = replacements.get(bundle)
         if (replacementList == null) {
-            return ResourceBundle.getBundle(bundle, locale)
+            return ResourceBundle.getBundle(bundle, locale, loader)
         } else {
-            List<ResourceBundle> bundles = replacementList.collect { ResourceBundle.getBundle(it, locale) }
-            return new ResourceBundleDecorator(ResourceBundle.getBundle(bundle, locale), bundles)
+            List<ResourceBundle> bundles = replacementList.collect { ResourceBundle.getBundle(it, locale, loader) }
+            return new ResourceBundleDecorator(ResourceBundle.getBundle(bundle, locale, loader), bundles)
         }
     }
 

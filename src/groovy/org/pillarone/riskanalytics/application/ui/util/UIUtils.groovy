@@ -153,16 +153,18 @@ class UIUtils {
     }
 
     public static final String getText(Class objClass, String key, List argsValue = null) {
-        String str = null
+        String str = key
         try {
             str = LocaleResources.getString(objClass.simpleName + "." + key)
-            if (argsValue) {
-                argsValue.eachWithIndex {String value, int index ->
-                    str = str.replace("[${index}]", value)
-                }
+        } catch (MissingResourceException e) {
+            LOG.warn("I18n property not found: ${objClass.simpleName + "." + key}")
+        }
+        if (argsValue) {
+            argsValue.eachWithIndex { String value, int index ->
+                str = str.replace("[${index}]", value)
             }
-        } catch (Exception ex) {}
-        return str ? str : key;
+        }
+        return str
     }
 
     public static com.ulcjava.base.application.util.Color toULCColor(java.awt.Color color) {
@@ -209,10 +211,10 @@ class UIUtils {
             if (UserManagement.isLoggedIn()) {
                 Person loggedUser = null
                 String userAuthorities = ""
-                Person.withTransaction {def status ->
+                Person.withTransaction { def status ->
                     loggedUser = UserContext.getCurrentUser()
                     List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
-                    List i18nAuthorities = authorities.collect {UIUtils.getText(PersonAuthority.class, it)}
+                    List i18nAuthorities = authorities.collect { UIUtils.getText(PersonAuthority.class, it) }
                     userAuthorities = i18nAuthorities.join(", ")
                 }
                 return loggedUser.username + " (" + userAuthorities + ")"
@@ -237,7 +239,7 @@ class UIUtils {
         StringBuilder result = new StringBuilder()
         StringBuilder temp = new StringBuilder()
         List strings = origin.split(separator)
-        strings.eachWithIndex {String str, int index ->
+        strings.eachWithIndex { String str, int index ->
             if (temp.length() + str.length() > maxLength) {
                 result.append(temp + "\n")
                 temp = new StringBuilder()
@@ -252,7 +254,7 @@ class UIUtils {
 
     public static String toCSV(List<List<String>> values) {
         StringBuilder sb = new StringBuilder("\n\n")
-        for (List<String> list: values) {
+        for (List<String> list : values) {
             sb.append(list.join(""))
             sb.append("\n")
         }
