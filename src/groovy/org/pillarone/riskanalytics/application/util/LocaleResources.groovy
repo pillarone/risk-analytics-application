@@ -39,7 +39,7 @@ class LocaleResources {
         def resourceBundle = []
         def resources = ResourceBundleRegistry.getBundles(key)
         for (String bundleName in resources) {
-            resourceBundle << ResourceBundle.getBundle(bundleName, getLocale())
+            resourceBundle << ResourceBundle.getBundle(bundleName, getLocale(), Thread.currentThread().contextClassLoader)
         }
         return resourceBundle
     }
