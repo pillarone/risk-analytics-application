@@ -5,6 +5,8 @@
 
     <property file="application.properties"/>
     <property file="${user.home}/cert.properties"/>
+    <property name="resources.prod.dir" value="src/java"/>
+    <property name="webapp.lib.dir" value="web-app/lib"/>
 
     <property name="GRAILS_JVM_OPTS" value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
 
