@@ -14,6 +14,22 @@
         <fileset dir="../local-plugins/${app.name}-master" includes="risk-analytics-core*/scripts/build.xml" />
     </import>
 
+    <target name="clean" depends="init" description="--> Cleans a Grails application">
+        <exec executable="${grails}" failonerror="true" resolveexecutable="true">
+            <arg value="clean"/>
+            <arg value="--non-interactive"/>
+            <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
+            <env key="JAVA_OPTS" value="${GRAILS_JVM_OPTS}"/>
+        </exec>
+        <delete verbose="true">
+            <fileset dir="." includes="*Db.script"/>
+            <fileset dir="." includes="**Db.properties"/>
+            <fileset dir="." includes="*.tsl"/>
+            <fileset dir="." includes="*.log"/>
+        </delete>
+    </target>
+
+
 
     <target name="standalone-output" depends="init" description="--> Run a Grails applications unit tests">
         <exec executable="${grails}" failonerror="true" resolveexecutable="true">
