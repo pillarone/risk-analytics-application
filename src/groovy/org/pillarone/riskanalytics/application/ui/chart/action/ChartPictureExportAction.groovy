@@ -4,8 +4,8 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCWindow
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.util.serializable.IFileChooseHandler
-import com.ulcjava.base.application.util.serializable.IFileStoreHandler
+import com.ulcjava.base.application.util.IFileChooseHandler
+import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory

@@ -15,15 +15,15 @@ import java.io.InputStream;
 public class AllPermissionsFileExtendedService extends AllPermissionsFileService {
 
     @Override
-    public com.ulcjava.base.client.FileContents storeFile(String filePath, InputStream in) throws ServiceException {
+    public FileContents storeFile(String filePath, boolean confirmBeforeOverwrite, boolean allowChoosingNewFileInOverwritePrompt, FileChooserConfig fileChooserConfig, InputStream in) throws ServiceException {
         createDirectory(filePath);
-        return super.storeFile(filePath, in);
+        return super.storeFile(filePath, confirmBeforeOverwrite, allowChoosingNewFileInOverwritePrompt, fileChooserConfig, in);
     }
 
     @Override
-    public FileContents storeFile(FileChooserConfig fileChooserConfig, UIComponent parent, InputStream in) throws ServiceException {
+    public FileContents storeFile(FileChooserConfig fileChooserConfig, UIComponent parent, boolean confirmBeforeOverwrite, boolean allowChoosingNewFileInOverwritePrompt, InputStream in) throws ServiceException {
         createDirectory(fileChooserConfig.getSelectedFile());
-        return super.storeFile(fileChooserConfig, parent, in);
+        return super.storeFile(fileChooserConfig, parent, confirmBeforeOverwrite, allowChoosingNewFileInOverwritePrompt, in);
     }
 
     private void createDirectory(String filePath) {

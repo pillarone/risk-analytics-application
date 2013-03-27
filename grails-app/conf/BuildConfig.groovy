@@ -2,6 +2,8 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver
 
 //Use a custom plugins dir, because different branches use different plugin versions
 grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
+grails.project.target.level = 1.6
+grails.project.source.level = 1.6
 
 grails.project.dependency.resolution = {
     inherits "global" // inherit Grails' default dependencies
@@ -13,8 +15,6 @@ grails.project.dependency.resolution = {
 
         def ulcClientJarResolver = new FileSystemResolver()
         String absolutePluginDir = grailsSettings.projectPluginsDir.absolutePath
-
-        ulcClientJarResolver.addArtifactPattern "${absolutePluginDir}/ulc-[revision]/web-app/lib/[artifact].[ext]"
         ulcClientJarResolver.addArtifactPattern "${basedir}/web-app/lib/[artifact]-[revision].[ext]"
         ulcClientJarResolver.name = "ulc"
 
@@ -24,7 +24,7 @@ grails.project.dependency.resolution = {
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
 
-    String ulcVersion = "ria-suite-u5"
+    String ulcVersion = "ria-suite-2012-u1"
 
     plugins {
         runtime ":background-thread:1.3"
@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:1.2.7.3"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime("org.pillarone:pillar-one-ulc-extensions:0.4") { transitive = false }
+        runtime("org.pillarone:pillar-one-ulc-extensions:0.5") { transitive = false }
 
         test ":code-coverage:1.2.4"
 
@@ -48,12 +48,6 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        compile group: 'canoo', name: 'ulc-applet-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-base-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-base-trusted', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-jnlp-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-servlet-client', version: ulcVersion
-        compile group: 'canoo', name: 'ulc-standalone-client', version: ulcVersion
         compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
         compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
 

@@ -27,10 +27,3 @@ public class ComponentHelp {
         return url
     }
 }
-
-class MissingHelpException extends Exception {
-
-    public MissingHelpException(String message) {
-        super(message)
-    }
-}
