@@ -1,5 +1,4 @@
 <project name="RiskAnalyticsApplication" default="cruise">
-
     <property environment="env"/>
     <property name="GRAILS_HOME" value="${env.GRAILS_HOME}"/>
 
