@@ -10,9 +10,10 @@
 
     <property name="GRAILS_JVM_OPTS" value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
 
-    <import>
+    <copy tofile="_build.xml" overwrite="true">
         <fileset dir="../local-plugins/${app.name}-master" includes="risk-analytics-core*/scripts/build.xml" />
-    </import>
+    </copy>
+    <import file="_build.xml"/>
 
     <target name="clean" depends="init" description="--> Cleans a Grails application">
         <exec executable="${grails}" failonerror="true" resolveexecutable="true">
