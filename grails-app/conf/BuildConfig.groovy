@@ -12,9 +12,9 @@ grails.project.dependency.resolution = {
     repositories {
         grailsHome()
         grailsCentral()
+        mavenCentral()
 
         def ulcClientJarResolver = new FileSystemResolver()
-        String absolutePluginDir = grailsSettings.projectPluginsDir.absolutePath
         ulcClientJarResolver.addArtifactPattern "${basedir}/web-app/lib/[artifact]-[revision].[ext]"
         ulcClientJarResolver.name = "ulc"
 
