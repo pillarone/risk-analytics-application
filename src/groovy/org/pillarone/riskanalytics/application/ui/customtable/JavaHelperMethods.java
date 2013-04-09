@@ -1,9 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.customtable;
 
 import org.nfunk.jep.ParseException;
+import org.pillarone.riskanalytics.core.RiskAnalyticsReportingException;
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor;
 import org.pillarone.riskanalytics.core.dataaccess.ResultPathDescriptor;
+import org.pillarone.riskanalytics.core.model.Model;
 import org.pillarone.riskanalytics.core.output.SimulationRun;
+import org.pillarone.riskanalytics.core.parameterization.ParameterApplicator;
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization;
 
 import java.util.List;
 
@@ -82,6 +86,23 @@ public class JavaHelperMethods {
                 }
             }
         }
+    }
 
+    public static Model initModelForReporting(Parameterization parameterization) throws ParseException {
+        try {
+            Class modelClass = parameterization.getModelClass();
+
+            Model model = (Model) modelClass.newInstance() ;
+            model.init();
+            ParameterApplicator applicator = new ParameterApplicator();
+            applicator.setModel(model);
+            parameterization.load(true);
+            applicator.setParameterization(parameterization);
+            applicator.init();
+            applicator.applyParameterForPeriod(0);
+            return model;
+        } catch (Exception ex) {
+            throw new ParseException("Failed to inject parameters for reporting in parameterisation :" + parameterization.getName() + " version :" + parameterization.getVersionNumber());
+        }
     }
 }

@@ -1,28 +1,38 @@
 package org.pillarone.riskanalytics.application.ui.customtable.model;
 
 
-import com.ulcjava.base.client.UIList;
-import org.apache.poi.ss.util.NumberComparer;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.nfunk.jep.Node;
 import org.nfunk.jep.function.PostfixMathCommand;
 import org.nfunk.jep.ParseException;
 import org.nfunk.jep.JEP;
 import org.pillarone.riskanalytics.application.ui.customtable.GroovyHelperMethods;
 import org.pillarone.riskanalytics.application.ui.customtable.JavaHelperMethods;
-import org.pillarone.riskanalytics.application.ui.resultnavigator.util.ResultAccess;
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor;
-import org.pillarone.riskanalytics.core.dataaccess.ResultPathDescriptor;
+import org.pillarone.riskanalytics.core.model.Model;
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry;
 import org.pillarone.riskanalytics.core.output.*;
+import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter;
+import org.pillarone.riskanalytics.core.parameterization.IParameterObject;
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization;
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber;
+import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder;
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder;
+import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder;
 
 import java.util.*;
 
 /**
  *
- * @author ivo.nussbaumer
+ * @author simon . parten @ art - allianz . com
  */
 public class MathParser implements IMathParser {
 
     private final JEP jep;
+
+    public static final DateTimeFormatter formatDate = DateTimeFormat.forPattern("dd-MMMM-yyyy");
 
     /**
      * Constructor
@@ -41,6 +51,10 @@ public class MathParser implements IMathParser {
         jep.addFunction("pOneStdDev", new P1StdDev());
         jep.addFunction("pOneSingleIteration", new P1IterationData());
         jep.addFunction("pOneProbExceedance", new P1ProbExceedanceFunction());
+        jep.addFunction("pOneParameter", new P1ParameterFunction());
+        jep.addFunction("pOneParameterStrategy", new P1ParameterStrategyFunction());
+        jep.addFunction("pOneParameterStrategyType", new P1ParameterStrategyTypeFunction());
+        jep.addFunction("pOneParameterTableValue", new P1ParameterTableFunction());
 //        jep.addFunction("median", new Median());
 //        jep.addFunction("stddev", new StdDev());
     }
@@ -49,15 +63,16 @@ public class MathParser implements IMathParser {
         return jep.parseExpression(formula);
     }
 
-    public double getValue() throws ParseException {
-        Double value = jep.getValue();
+    public Object getValue() throws ParseException {
+        Object value = jep.getValueAsObject();
         if(jep.hasError()) {
             throw new ParseException(jep.getErrorInfo());
         }
-        if(((Double) jep.getValue()).isInfinite() || ((Double) jep.getValue()).isNaN() ) {
-            throw new ParseException("NaN");
+        if(value instanceof Double) {
+            if(((Double) jep.getValue()).isInfinite() || ((Double) jep.getValue()).isNaN() ) {
+                throw new ParseException("NaN");
+            }
         }
-
         return value;
     }
 
@@ -317,79 +332,169 @@ public class MathParser implements IMathParser {
         }
     }
 
-/*    private class Median extends PostfixMathCommand {
-        public Median () {
-            numberOfParameters = -1;
+    private class P1ParameterFunction extends PostfixMathCommand {
+        public P1ParameterFunction() {
+            numberOfParameters = 4;
         }
         public void run(Stack stack) throws ParseException {
-            checkStack(stack); // check the stack
+            checkStack(stack);
+            String modelPath = (String) stack.pop();
+            String versionNumber = (String) stack.pop();
+            String paramName = (String) stack.pop();
+            String modelName = (String) stack.pop();
 
-            if (curNumberOfParameters < 1) throw new ParseException("No arguments for Median");
-
-            List<Number> params = new LinkedList<Number>();
-            Object value;
-
-            while (!stack.empty()) {
-                value = stack.pop();
-                if (value instanceof Number) {
-                    params.add(((Number) value));
-                }
+            Object parameterValue = getModelParameterObject(modelPath, versionNumber, paramName, modelName);
+            if(parameterCanBeDisplayed(parameterValue)){
+                stack.push(parameterValue.toString());
+                return;
             }
-
-            Collections.sort(params, new Comparator<Number>() {
-                public int compare(Number o1, Number o2) {
-                    Double d1= (o1 == null) ? Double.POSITIVE_INFINITY : o1.doubleValue();
-                    Double d2= (o2 == null) ? Double.POSITIVE_INFINITY : o2.doubleValue();
-                    return  d1.compareTo(d2);
-                }
-            });
-            double median;
-            Number[] numbers = Number[] params.toArray();
-            if (params.size() % 2 == 0) {
-                median = ((params.toArray()[(int) (params.size() / 2 - 1)]) + params.toArray()[(int) (params.size() / 2)]) / 2;
-
-            } else {
-                median = params.toArray()[(int) (params.size() / 2)];
-            }
-            stack.push(median);
+            throw new ParseException("Parameter at path " + modelPath +" is of type: " + parameterValue.toString() + ". Not compatible with this function. Do you want the pOneStrategyParameter function?");
         }
-    }*/
+    }
 
-/*    private class StdDev extends PostfixMathCommand {
-        public StdDev () {
-            numberOfParameters = -1
+
+    private Object getModelParameterObject(String modelPath, String versionNumber, String paramName, String modelName) throws ParseException {
+        Class modelClass = null;
+        try {
+            modelClass = ModelRegistry.getInstance().getModelClass(modelName);
+        } catch (ClassNotFoundException ex) {
+            throw new ParseException("Failed to find model class for " + modelName  + ". Have you included the namespace? Example; models.gira.GIRAModel");
+        }
+
+        Parameterization parameterization = new Parameterization(paramName, modelClass);
+        parameterization.setVersionNumber(new VersionNumber(versionNumber));
+        parameterization.load();
+        List<ParameterHolder> parameterHolders = parameterization.getParameterHolders();
+        ParameterHolder selectedHolder = new StringParameterHolder("", 0, "");
+        boolean foundParameter = false;
+        for (ParameterHolder parameterHolder : parameterHolders) {
+            if(parameterHolder.getPath().equals(modelPath)) {
+                selectedHolder = parameterHolder;
+                foundParameter = true;
+                break;
+            }
+        }
+        if(!foundParameter) {
+            throw new ParseException("Failed to find parameter at path : " + modelPath);
+        }
+//        if(selectedHolder  instanceof MultiDimensionalParameterHolder){
+//            throw new ParseException("Cannot parse : " + modelPath);
+//        }
+        return selectedHolder.getBusinessObject();
+    }
+
+    private class P1ParameterStrategyFunction extends PostfixMathCommand {
+        public P1ParameterStrategyFunction() {
+            numberOfParameters = 5;
         }
         public void run(Stack stack) throws ParseException {
-            checkStack(stack) // check the stack
+            checkStack(stack);
+            String fieldValue = (String) stack.pop();
+            String modelPath = (String) stack.pop();
+            String versionNumber = (String) stack.pop();
+            String paramName = (String) stack.pop();
+            String modelName = (String) stack.pop();
 
-            if (curNumberOfParameters < 1) throw new ParseException("No arguments for StdDev")
-
-            // get parameters
-            List params = new LinkedList<Number>()
-            Object value
-            while (!stack.empty()) {
-                value = stack.pop()
-                if (value instanceof Number) {
-                    params.add(value)
+            Object parameterValue = getModelParameterObject(modelPath, versionNumber, paramName, modelName);
+            if( !(parameterValue instanceof IParameterObject)){
+                throw new ParseException("Parameter at path " + modelPath +" is of type: " + parameterValue.getClass() + ". Not compatible with this function. Do you want the pOneParameter function?");
+            }
+            Map<String, Object> someParameters = ((Map<String, Object>) ((IParameterObject) parameterValue).getParameters());
+            Object aParameter = someParameters.get(fieldValue);
+            if( aParameter == null  ) {
+                StringBuilder stringBuilder = new StringBuilder();
+                for (Map.Entry<String, Object> anEntry : someParameters.entrySet()) {
+                    stringBuilder.append(anEntry.getKey());
+                    stringBuilder.append(" ,");
                 }
+                throw new ParseException("Path found. Field : " + fieldValue + " not found at path. Possible values;" + stringBuilder.toString());
             }
-
-            // calc mean
-            double sum = 0.0
-            for (Number n : params)
-                sum += n
-            double mean = sum / params.size()
-
-            // calc sum of variances
-            sum = 0.0
-            for (Number n : params) {
-                double v = n - mean;
-                sum += v * v;
+            if(parameterCanBeDisplayed(aParameter)){
+                stack.push(guiFormat(aParameter));
+                return;
             }
+            throw new ParseException("Parameter " + aParameter.toString() + " cannot be displayed. Did you want a different parameter reporting function?");
 
-            // calc standard deviation
-            double stdDev = Math.sqrt (sum / params.size())
-            stack.push(stdDev)
         }
-    }*/
+    }
+
+    private class P1ParameterStrategyTypeFunction extends PostfixMathCommand {
+        public P1ParameterStrategyTypeFunction() {
+            numberOfParameters = 4;
+        }
+        public void run(Stack stack) throws ParseException {
+            checkStack(stack);
+            String modelPath = (String) stack.pop();
+            String versionNumber = (String) stack.pop();
+            String paramName = (String) stack.pop();
+            String modelName = (String) stack.pop();
+
+            Object parameterValue = getModelParameterObject(modelPath, versionNumber, paramName, modelName);
+            if( (! (parameterValue instanceof IParameterObject))){
+                throw new ParseException("Parameter at path " + modelPath +" is of type: " + parameterValue.getClass() + ". Not compatible with this function.");
+            }
+            IParameterObject someParameters = (IParameterObject) parameterValue;
+            if(parameterCanBeDisplayed(someParameters) ){
+                stack.push(guiFormat(someParameters));
+                return;
+            }
+            throw new ParseException("Parameter " + someParameters.toString() + " cannot be displayed. Did you want a different parameter reporting function?");
+        }
+    }
+
+    private class P1ParameterTableFunction extends PostfixMathCommand {
+        public P1ParameterTableFunction() {
+            numberOfParameters = 6;
+        }
+        public void run(Stack stack) throws ParseException {
+            checkStack(stack);
+            Number row = (Number) stack.pop();
+            Number column = (Number) stack.pop();
+            String modelPath = (String) stack.pop();
+            String versionNumber = (String) stack.pop();
+            String paramName = (String) stack.pop();
+            String modelName = (String) stack.pop();
+
+            Object parameterValue = getModelParameterObject(modelPath, versionNumber, paramName, modelName);
+            if( (! (parameterValue instanceof AbstractMultiDimensionalParameter))){
+                throw new ParseException("Parameter at path " + modelPath +" is of type: " + parameterValue.getClass() + ". Not compatible with this function.");
+            }
+            Object aValue = ((AbstractMultiDimensionalParameter) parameterValue).getValueAt(row.intValue(), column.intValue());
+            if(parameterCanBeDisplayed(aValue) ){
+                stack.push(guiFormat(aValue));
+                return;
+            }
+            throw new ParseException("Parameter " + aValue.toString() + " cannot be displayed. Did you want a different parameter reporting function?");
+        }
+    }
+
+    private String guiFormat(Object object) throws ParseException {
+        if(     object instanceof Integer ||
+                object instanceof Double ||
+                object instanceof String ||
+                object instanceof Enum
+        ) {
+            return object.toString();
+        }
+        if(object instanceof DateTime) {
+            return formatDate.print((DateTime) object);
+        }
+        if(object instanceof IParameterObject) {
+            return ((IParameterObject) object).getType().toString() ;
+        }
+        throw new ParseException("Unknown parameter type : " + object.toString());
+    }
+
+    private boolean parameterCanBeDisplayed(Object parameterValue) {
+        return
+                parameterValue instanceof Integer ||
+                        parameterValue instanceof Double ||
+                        parameterValue instanceof String ||
+                        parameterValue instanceof Enum ||
+                        parameterValue instanceof DateTime ||
+                        parameterValue instanceof IParameterObject
+                ;
+    }
+
+
 }

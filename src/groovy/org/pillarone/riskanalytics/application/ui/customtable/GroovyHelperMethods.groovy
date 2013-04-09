@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.customtable
 
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 /**
 *   author simon.parten @ art-allianz . com
@@ -11,8 +13,6 @@ public class GroovyHelperMethods {
     public static SimulationRun findSimulationRun(String simName) {
         return SimulationRun.findByName(simName)
     }
-
-
 
     static double valuesAboveThreshold(SimulationRun simulationRun, int periodIndex = 0, String pathName, String collectorName, String fieldName, Double threshold) {
         List<Integer> iterations = 1 .. simulationRun.getIterations()

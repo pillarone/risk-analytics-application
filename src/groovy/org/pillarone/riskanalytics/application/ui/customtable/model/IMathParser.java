@@ -9,5 +9,5 @@ public interface IMathParser {
 
     public org.nfunk.jep.Node parseExpression(String formula);
 
-    public double getValue() throws ParseException;
+    public Object getValue() throws ParseException;
 }
