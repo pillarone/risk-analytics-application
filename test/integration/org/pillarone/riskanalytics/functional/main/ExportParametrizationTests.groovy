@@ -22,6 +22,7 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
 
     public void testExportParametrization() {
         File testExportFile = File.createTempFile("testParameter", ".groovy")
+        testExportFile.delete()
         String parameterizationName = "CoreAlternativeParameters"
         String fileName = testExportFile.getAbsolutePath()
 
@@ -40,6 +41,7 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
+        pathField.clearText()
         pathField.typeText(fileName)
         ULCButtonOperator button = fileChooserOperator.getApproveButton()
         assertNotNull(button)
