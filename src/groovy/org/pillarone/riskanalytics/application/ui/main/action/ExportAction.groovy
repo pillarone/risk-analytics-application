@@ -106,9 +106,11 @@ abstract class ExportAction extends SelectionTreeAction {
                 }
             }, onSuccess: {path, name ->
             }, onFailure: {reason, description ->
-                LOG.error description
-                showAlert("exportError")
-            }] as IFileStoreHandler, selectedFile)
+                if (reason == IFileStoreHandler.FAILED){
+                    LOG.error description
+                    showAlert("exportError")
+                }
+            }] as IFileStoreHandler, selectedFile,Long.MAX_VALUE,true,false)
         }
     }
 
@@ -132,9 +134,11 @@ abstract class ExportAction extends SelectionTreeAction {
         }, onSuccess: {path, name ->
             LOG.info " $selectedFile exported"
         }, onFailure: {reason, description ->
-            LOG.error description
-            showAlert("exportError")
-        }] as IFileStoreHandler, selectedFile)
+            if (reason == IFileStoreHandler.FAILED){
+                LOG.error description
+                showAlert("exportError")
+            }
+        }] as IFileStoreHandler, selectedFile,Long.MAX_VALUE,true,false)
     }
 
 
