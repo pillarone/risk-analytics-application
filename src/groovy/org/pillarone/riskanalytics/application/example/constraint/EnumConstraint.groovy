@@ -1,18 +1,16 @@
 package org.pillarone.riskanalytics.application.example.constraint
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.example.parameter.ExampleEnum
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
 
+@CompileStatic
 class EnumConstraint implements IMultiDimensionalConstraints {
 
-    public static final String IDENTIFIER = "enumConstraint"
+    final String name = 'enumConstraint'
 
     boolean matches(int row, int column, Object value) {
         return true
-    }
-
-    String getName() {
-        IDENTIFIER
     }
 
     Class getColumnType(int column) {

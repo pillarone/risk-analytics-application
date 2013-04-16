@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.EqualsBuilder
 import org.apache.commons.lang.builder.HashCodeBuilder
 
+@CompileStatic
 class ParametrizedFunctionDescriptor extends FunctionDescriptor {
 
     def parameter
@@ -20,7 +22,7 @@ class ParametrizedFunctionDescriptor extends FunctionDescriptor {
     @Override
     boolean equals(Object obj) {
         if (obj instanceof ParametrizedFunctionDescriptor) {
-            return new EqualsBuilder().append(functionClass, obj.functionClass).append(parameter, obj.parameter).equals
+            return new EqualsBuilder().append(functionClass, obj.getFunctionClass()).append(parameter, obj.getParameter()).equals
         }
         return false
     }

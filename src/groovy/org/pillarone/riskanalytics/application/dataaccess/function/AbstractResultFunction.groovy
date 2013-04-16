@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+@CompileStatic
 abstract class AbstractResultFunction extends AbstractFunction {
 
     final def evaluate(SimulationRunHolder simulationRunHolder, int periodIndex, SimpleTableTreeNode node) {

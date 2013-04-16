@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.logging.model
 
+import groovy.transform.CompileStatic
 import org.apache.log4j.Appender
 import org.apache.log4j.Layout
 import org.apache.log4j.PatternLayout
@@ -12,6 +13,7 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 public class LoggingManager {
 
     public static final String USER_PROPERTY = "user"
@@ -20,7 +22,7 @@ public class LoggingManager {
     private List<Appender> appenders = []
     private UserNameFilter userNameFilter
 
-    Layout layout
+    PatternLayout layout
 
     public void appendLog(LoggingEvent event) {
         Person user = null

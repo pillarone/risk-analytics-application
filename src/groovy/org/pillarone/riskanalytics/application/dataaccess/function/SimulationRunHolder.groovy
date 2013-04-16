@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+@CompileStatic
 class SimulationRunHolder {
 
     private final List<SimulationRun> simulationRuns = []

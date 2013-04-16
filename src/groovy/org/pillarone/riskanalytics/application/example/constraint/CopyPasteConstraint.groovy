@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.example.constraint
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
 
 
+@CompileStatic
 class CopyPasteConstraint implements IMultiDimensionalConstraints {
 
     public static final String IDENTIFIER = 'copypaste'
@@ -22,7 +24,7 @@ class CopyPasteConstraint implements IMultiDimensionalConstraints {
     }
 
     Class getColumnType(int column) {
-        [Integer, Double, DateTime, Boolean, String, ITestComponentMarker][column]
+        [Integer, Double, DateTime, Boolean, String, ITestComponentMarker].getAt(column)
     }
 
     boolean emptyComponentSelectionAllowed(int column) {

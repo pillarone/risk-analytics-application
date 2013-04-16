@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.logging.model
 
+import groovy.transform.CompileStatic
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class LoggingAppender extends AppenderSkeleton {
 
     private LoggingManager loggingManager = new LoggingManager()
