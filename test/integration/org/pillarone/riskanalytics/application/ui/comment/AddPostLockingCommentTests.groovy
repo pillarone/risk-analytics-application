@@ -8,7 +8,7 @@ import com.ulcjava.testframework.operator.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class AddPostLockingCommentTests extends AddNewComentTests {
+class AddPostLockingCommentTests extends AddNewCommentTests {
 
 
     void testAddPostLockComment() {

@@ -27,7 +27,7 @@ import com.ulcjava.testframework.operator.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class AddNewComentTests extends AbstractSimpleFunctionalTest {
+class AddNewCommentTests extends AbstractSimpleFunctionalTest {
 
     Parameterization parameterization
 
