@@ -4,24 +4,25 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.event.HyperlinkEvent
-import com.ulcjava.base.application.event.IHyperlinkListener
+import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
+import groovy.transform.CompileStatic
+import net.sf.jmimemagic.Magic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
 import org.pillarone.riskanalytics.application.ui.comment.action.FileStoreHandler
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
-import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
-import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
-import net.sf.jmimemagic.Magic
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class DownloadFileAction extends ResourceBasedAction {
 
     String fileURL
@@ -51,7 +52,7 @@ class DownloadFileAction extends ResourceBasedAction {
             config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.ADD_FILE_DIR))
             config.selectedFile = file.name
             ClientContext.chooseFile([
-                    onSuccess: {filePaths, fileNames ->
+                    onSuccess: {String[] filePaths, fileNames ->
                         userPreferences.setUserDirectory(UserPreferences.ADD_FILE_DIR, filePaths[0])
                         File srcFile = new File(fileURL)
                         File newFile = new File(filePaths[0])

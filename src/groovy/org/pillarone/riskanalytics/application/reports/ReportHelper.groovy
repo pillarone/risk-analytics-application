@@ -13,7 +13,7 @@ class ReportHelper {
         return ReportHelper.class.getResource("/reports")
     }
 
-    public static OutputStream getReportOutputStream(Map parameters, JRBeanCollectionDataSource collectionDataSource) {
+    public static ByteArrayOutputStream getReportOutputStream(Map parameters, JRBeanCollectionDataSource collectionDataSource) {
         String reportName = parameters["_file"] + ".jrxml"
 
         URL reportsDir = getReportFolder()

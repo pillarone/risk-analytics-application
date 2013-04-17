@@ -27,7 +27,7 @@ abstract class AbstractReportAction extends SelectionTreeAction {
         super(title);
     }
 
-    public void saveReport(def output, String fileName, ULCComponent component) {
+    public void saveReport(byte[] output, String fileName, ULCComponent component) {
         ShowDocumentStrategyFactory.getInstance().showDocument(fileName, output, "application/pdf")
     }
 

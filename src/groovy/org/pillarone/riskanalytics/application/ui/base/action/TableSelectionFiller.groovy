@@ -4,8 +4,10 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.ITableModel
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
+@CompileStatic
 class TableSelectionFiller implements IActionListener {
 
     ULCTable table

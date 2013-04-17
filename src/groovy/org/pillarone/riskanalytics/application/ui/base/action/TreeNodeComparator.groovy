@@ -2,7 +2,9 @@ package org.pillarone.riskanalytics.application.ui.base.action
 
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class TreeNodeComparator implements Comparator<ITableTreeNode> {
 
     private ITableTreeNode root

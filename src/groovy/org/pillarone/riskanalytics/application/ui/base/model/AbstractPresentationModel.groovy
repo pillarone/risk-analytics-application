@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
+@CompileStatic
 class AbstractPresentationModel {
 
     Set listeners = new HashSet()

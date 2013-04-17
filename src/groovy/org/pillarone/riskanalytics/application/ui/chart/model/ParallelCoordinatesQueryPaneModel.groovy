@@ -1,14 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
+import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+@CompileStatic
 public class ParallelCoordinatesQueryPaneModel extends QueryPaneModel {
     public static int N_MAX = 200
     public static double ROUND_PRECISION = 10
 
-    public ParallelCoordinatesQueryPaneModel(SimulationRun simulationRun, List nodes, boolean autoQueryOnCreate = true, boolean showPeriodLabels = true) {
+    public ParallelCoordinatesQueryPaneModel(SimulationRun simulationRun, List<SimpleTableTreeNode> nodes, boolean autoQueryOnCreate = true, boolean showPeriodLabels = true) {
         super(simulationRun, nodes, false, false, showPeriodLabels)
-        criterias = [][]
+        criterias = [[]]
         int iterationCount = simulationRun.iterations
         if (N_MAX < iterationCount) {
             int k = nodes.size()

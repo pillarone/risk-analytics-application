@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.reports
 
+import groovy.transform.CompileStatic
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
@@ -16,17 +17,16 @@ public class ReportFactory {
     public static boolean testMode = false
     public static boolean generationSuccessful = false
 
-
-    static def getReport(JRBeanCollectionDataSource collectionDataSource, ModellingItem modellingItem) {
-
+    @CompileStatic
+    static byte[] getReport(JRBeanCollectionDataSource collectionDataSource, ModellingItem modellingItem) {
         Map params = new HashMap()
         params["comments"] = collectionDataSource
-        params["title"] = UIUtils.getText(ReportFactory.class, "title", [ReportUtils.getItemName(modellingItem)] as List)
+        params["title"] = UIUtils.getText(ReportFactory.class, "title", [getItemName(modellingItem)] as List)
         Person currentUser = UserContext.getCurrentUser()
         String footerValue = currentUser ? UIUtils.getText(ReportFactory.class, "footerByUser", [currentUser.username]) : UIUtils.getText(ReportFactory.class, "footer")
         footerValue += " " + DateFormatUtils.formatDetailed(new DateTime())
         params["footer"] = footerValue
-        params["infos"] = ReportUtils.getItemInfo(modellingItem)
+        params["infos"] = getItemInfo(modellingItem)
         params["currentUser"] = currentUser ? currentUser.username : ""
         params["itemInfo"] = UIUtils.getText(ReportFactory.class, modellingItem.class.simpleName + "Info")
         params["_file"] = "CommentReport"
@@ -35,6 +35,14 @@ public class ReportFactory {
         params["p1Icon"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "application.png")
         params["p1Logo"] = new UIUtils().class.getResource(UIUtils.ICON_DIRECTORY + "pdf-reports-header.png")
         return ReportHelper.getReportOutputStream(params, collectionDataSource).toByteArray()
+    }
+
+    private static JRBeanCollectionDataSource getItemInfo(def modellingItem) {
+        ReportUtils.getItemInfo(modellingItem)
+    }
+
+    private static String getItemName(def modellingItem) {
+        ReportUtils.getItemName(modellingItem)
     }
 
 }

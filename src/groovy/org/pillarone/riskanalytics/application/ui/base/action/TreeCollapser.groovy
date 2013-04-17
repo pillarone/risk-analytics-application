@@ -7,10 +7,12 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.IAction
+import groovy.transform.CompileStatic
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class TreeCollapser extends ResourceBasedAction {
 
     ULCFixedColumnTableTree tree
@@ -51,6 +53,7 @@ class TreeCollapser extends ResourceBasedAction {
 
 }
 
+@CompileStatic
 class Collapser extends TreeCollapser {
 
     public Collapser(ULCFixedColumnTableTree tree) {

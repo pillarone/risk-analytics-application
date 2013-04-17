@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
-import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
@@ -36,7 +35,7 @@ class TableTreeCopier extends ExceptionSafeAction {
     }
 
     private int[] getSelectedColumns() {
-        List list = table.selectedColumns?.collect { table.convertColumnIndexToModel(it) } as List
+        List list = table.selectedColumns?.collect {int column-> table.convertColumnIndexToModel(column) } as List
         return list as int[]
     }
 
