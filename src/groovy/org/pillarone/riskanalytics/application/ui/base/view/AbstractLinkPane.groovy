@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.base.view
 
 import com.ulcjava.base.application.ULCHtmlPane
+import groovy.transform.CompileStatic
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 abstract class AbstractLinkPane extends ULCHtmlPane {
 
     public AbstractLinkPane() {

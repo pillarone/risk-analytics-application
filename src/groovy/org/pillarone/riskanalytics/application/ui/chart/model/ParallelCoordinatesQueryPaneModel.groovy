@@ -11,7 +11,7 @@ public class ParallelCoordinatesQueryPaneModel extends QueryPaneModel {
 
     public ParallelCoordinatesQueryPaneModel(SimulationRun simulationRun, List<SimpleTableTreeNode> nodes, boolean autoQueryOnCreate = true, boolean showPeriodLabels = true) {
         super(simulationRun, nodes, false, false, showPeriodLabels)
-        criterias = [[]]
+        criterias = []
         int iterationCount = simulationRun.iterations
         if (N_MAX < iterationCount) {
             int k = nodes.size()
@@ -22,7 +22,7 @@ public class ParallelCoordinatesQueryPaneModel extends QueryPaneModel {
             } else if (p > 0.9) {
                 pRounded = 0.95
             } else {
-                pRounded = Math.round((p + 0.049999999999) * ROUND_PRECISION) / ROUND_PRECISION
+                pRounded = Math.round(((p + 0.049999999999) * ROUND_PRECISION).toDouble()) / ROUND_PRECISION
             }
             if (nodes && nodes.size() > 0) {
                 CriteriaViewModel model = new CriteriaViewModel(this, false)

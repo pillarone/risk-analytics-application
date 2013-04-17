@@ -30,7 +30,7 @@ class TreeNodePaster extends ExceptionSafeAction {
             void applyContent(String content) {
                 ExceptionSafe.protect {
 
-                    ArrayList data = new TableDataParser(columnMapping: new DefaultColumnMapping()).parseTableData(content)
+                    List data = new TableDataParser(columnMapping: new DefaultColumnMapping()).parseTableData(content)
 
                     int startColumn = tree.selectedColumn + 1
                     int startRow = tree.selectedRow

@@ -6,9 +6,11 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.action.CreateDefaultResourceAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
+@CompileStatic
 class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
     String name

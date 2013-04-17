@@ -75,7 +75,6 @@ abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeM
     }
 }
 
-@CompileStatic
 class PollingAction implements IActionListener {
     AsynchronTableTreeModel model
     List requestedNodes = []

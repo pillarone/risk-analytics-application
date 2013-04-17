@@ -5,8 +5,10 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.util.ULCIcon
+import groovy.transform.CompileStatic
 
 
+@CompileStatic
 class ResourceGroupNode extends DefaultMutableTableTreeNode implements  INavigationTreeNode {
 
     ResourceGroupNode(String name) {

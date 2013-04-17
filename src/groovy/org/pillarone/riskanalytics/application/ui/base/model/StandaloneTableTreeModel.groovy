@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
 
     static int NAME = 0
@@ -24,10 +26,10 @@ class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
     @Override
     public int getColumnIndex(int column) {
         switch (column) {
-            case this.NAME: return NAME;
-            case this.TAGS: return super.TAGS;
-            case this.CREATION_DATE: return super.CREATION_DATE;
-            case this.LAST_MODIFICATION_DATE: return super.LAST_MODIFICATION_DATE;
+            case NAME: return NAME;
+            case TAGS: return super.TAGS;
+            case CREATION_DATE: return super.CREATION_DATE;
+            case LAST_MODIFICATION_DATE: return super.LAST_MODIFICATION_DATE;
         }
         return column
     }
