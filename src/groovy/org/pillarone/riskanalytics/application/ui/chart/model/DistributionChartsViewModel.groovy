@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 
 import com.ulcjava.base.application.ULCRootPane
 import org.jfree.chart.JFreeChart
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.base.model.EnumComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
@@ -21,7 +22,7 @@ public class DistributionChartsViewModel extends ChartViewModel implements IMode
     EnumComboBoxModel methodComboBoxModel = new EnumComboBoxModel(DistributionMethod.values() as Object[], DistributionMethod.NONE, false)
 
 
-    public DistributionChartsViewModel(String title, SimulationRun simulationRun, List<ResultTableTreeNode> nodes) {
+    public DistributionChartsViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
         super(title, simulationRun, nodes, 0.8)
         strategyModel = new PDFRawChartViewModel("Probability Density", simulationRun, nodes)
         strategyModel.addListener(this)

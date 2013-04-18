@@ -1,12 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 public class ChangeBatchSimulationPriorityAction extends BatchSimulationSelectionAction {
 
     int step

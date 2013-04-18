@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.comment.action
 
 import com.ulcjava.base.application.ULCTableTree
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentListener
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class ShowCommentsAction extends AbstractCommentAction {
     boolean all
 

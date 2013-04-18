@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.comment.model
 
+import groovy.transform.CompileStatic
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
@@ -12,13 +13,14 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class Indexer {
     List<Comment> comments
     StandardAnalyzer analyzer
     IndexWriter indexWriter = null;
     Directory index
     final static String SEARCH_TEXT_TITLE = "title"
-    def commentsMap
+    Map commentsMap
 
     /** Creates a new instance of Indexer                 */
     public Indexer(List<Comment> comments) {

@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Rectangle
@@ -16,7 +18,7 @@ class ScatterChartViewModel extends ChartViewModel {
     protected List<Double> means
     protected List<Double> stdDevs
 
-    public ScatterChartViewModel(String title, SimulationRun simulationRun, List nodes) {
+    public ScatterChartViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
         super(title, simulationRun, nodes, 0.0)
         chartProperties = new ChartProperties(title: title, xAxisTitle: null, yAxisTitle: null, showLegend: true)
     }

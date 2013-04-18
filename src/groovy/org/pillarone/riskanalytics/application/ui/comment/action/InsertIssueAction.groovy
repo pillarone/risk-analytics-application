@@ -1,12 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.comment.action
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentListener
 import com.ulcjava.base.application.ULCTableTree
+import org.pillarone.riskanalytics.core.user.Authority
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.application.UserContext
 
 
+@CompileStatic
 class InsertIssueAction extends AbstractCommentAction {
 
     public InsertIssueAction(ULCTableTree tree, int periodIndex) {
@@ -21,7 +24,7 @@ class InsertIssueAction extends AbstractCommentAction {
 
     boolean isEnabled() {
         Person user = UserContext.getCurrentUser()
-        return user != null && user.getAuthorities()*.authority.contains(UserManagement.REVIEWER_ROLE)
+        return user  && user.getAuthorities().any {Authority auth -> auth.authority == UserManagement.REVIEWER_ROLE}
     }
 
 

@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.comment.model
 
 import com.ulcjava.base.application.DefaultComboBoxModel
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class MapComboBoxModel extends DefaultComboBoxModel {
 
     private Map<String, String> content = new LinkedHashMap<String, String>()

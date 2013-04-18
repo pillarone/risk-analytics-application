@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
@@ -12,6 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.SimulationState
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class PollingBatchRunAction implements IActionListener {
 
     BatchRunInfoService batchRunInfoService

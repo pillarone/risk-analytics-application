@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.comment.action
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.util.IFileLoadHandler
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.FileConstants;
@@ -15,6 +16,7 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class FileLoadHandler implements IFileLoadHandler {
     NewCommentView newCommentView
     Log LOG = LogFactory.getLog(AddFileToCommentAction)

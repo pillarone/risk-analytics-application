@@ -4,10 +4,12 @@ import com.ulcjava.base.application.ULCTextField
 import com.ulcjava.base.application.event.FocusEvent
 import com.ulcjava.base.application.event.IFocusListener
 import com.ulcjava.base.application.util.Color
+import groovy.transform.CompileStatic
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class TextFieldFocusListener implements IFocusListener {
     ULCTextField searchText
     String initialText

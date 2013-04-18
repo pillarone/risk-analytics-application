@@ -7,6 +7,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
@@ -14,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.chart.view.ChartView
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
+@CompileStatic
 class ChartPictureExportAction extends ResourceBasedAction {
     ChartView view
     Log LOG = LogFactory.getLog(ChartPictureExportAction)
@@ -32,7 +34,7 @@ class ChartPictureExportAction extends ResourceBasedAction {
 
         ULCWindow ancestor = UlcUtilities.getWindowAncestor(view.content)
         ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
+                onSuccess: {String[] filePaths, fileNames ->
                     String selectedFile = filePaths[0]
 
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->

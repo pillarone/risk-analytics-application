@@ -6,6 +6,7 @@ import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.data.category.DefaultCategoryDataset
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import java.awt.Color
@@ -13,7 +14,7 @@ import java.awt.Color
 public class LineChartViewModel extends ChartViewModel {
     List means
 
-    public LineChartViewModel(String title, SimulationRun simulationRun, List nodes) {
+    public LineChartViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
         super(title, simulationRun, nodes, 0.0)
         chartProperties = new ChartProperties(title: title, xAxisTitle: '', yAxisTitle: '', showLegend: true)
         selectAll(true)

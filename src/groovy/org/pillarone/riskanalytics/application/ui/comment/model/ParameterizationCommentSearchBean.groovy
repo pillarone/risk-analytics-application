@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.comment.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class ParameterizationCommentSearchBean extends CommentSearchBean {
 
     Parameterization parameterization

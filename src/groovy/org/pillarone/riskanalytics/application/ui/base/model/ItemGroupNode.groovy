@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -15,9 +16,13 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.main.action.*
 
+@CompileStatic
 class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
     Class itemClass
     RiskAnalyticsMainModel mainModel
+
+    final String toolTip = ''
+    final String name = ''
 
     public ItemGroupNode(String name, Class itemClass) {
         super([name] as Object[])
@@ -88,14 +93,4 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
     public Font getFont(String fontName, int fontSize) {
         return new Font(fontName, Font.PLAIN, fontSize)
     }
-
-    public String getToolTip() {
-        return ""
-    }
-
-    public String getName() {
-        return ""
-    }
-
-
 }

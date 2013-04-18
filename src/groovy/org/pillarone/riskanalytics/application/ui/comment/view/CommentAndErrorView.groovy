@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
+import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -28,7 +29,7 @@ class CommentAndErrorView implements CommentListener {
     ULCBoxPane content
     AbstractCommentableItemModel model;
     Map openItems
-    def tableTree
+    ULCFixedColumnTableTree tableTree
 
     public CommentAndErrorView(AbstractCommentableItemModel model) {
         this.model = model;
