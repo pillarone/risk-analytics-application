@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.extension
 
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
+@CompileStatic
 class WindowRegistry {
 
     private static Log LOG = LogFactory.getLog(WindowRegistry)

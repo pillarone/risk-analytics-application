@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
+import groovy.transform.CompileStatic
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.document.Document
 import org.apache.lucene.document.Field
@@ -11,6 +12,7 @@ import org.apache.lucene.util.Version
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class ModellingItemIndexer {
     StandardAnalyzer analyzer
     IndexWriter indexWriter = null;

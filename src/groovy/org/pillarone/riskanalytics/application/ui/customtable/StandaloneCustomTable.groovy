@@ -3,9 +3,10 @@ package org.pillarone.riskanalytics.application.ui.customtable
 import com.ulcjava.applicationframework.application.SingleFrameApplication
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFrame
-
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.customtable.view.CustomTableView
 
+@CompileStatic
 class StandaloneCustomTable extends SingleFrameApplication {
 
     CustomTableView customTableView
