@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.NumberParser
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteColumnMapping
 import org.pillarone.riskanalytics.application.ui.base.action.TablePasterHelper
 import org.pillarone.riskanalytics.application.util.LocaleResources
 
+@CompileStatic
 public class TableDataParser {
 
     Locale locale

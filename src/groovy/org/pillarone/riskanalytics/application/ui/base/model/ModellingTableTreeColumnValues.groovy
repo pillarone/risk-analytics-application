@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.joda.time.DateTime
@@ -8,7 +7,6 @@ import org.joda.time.DateTime
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-@CompileStatic
 class ModellingTableTreeColumnValues {
 
     public static List getValues(Map columnValues, int columnIndex) {

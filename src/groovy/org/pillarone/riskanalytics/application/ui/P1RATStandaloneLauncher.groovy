@@ -4,8 +4,10 @@ import com.canoo.common.logging.LogManager
 import com.canoo.common.logging.SimpleLogManager
 import com.ulcjava.base.client.ISessionStateListener
 import com.ulcjava.base.client.UISession
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.environment.shared.UIManagerHelper
 
+@CompileStatic
 class P1RATStandaloneLauncher {
 
     static void main(String[] args) {
@@ -43,6 +45,7 @@ class P1RATStandaloneLauncher {
     }
 }
 
+@CompileStatic
 class StandaloneSessionStateListener implements ISessionStateListener {
 
     void sessionEnded(UISession session) throws Exception {

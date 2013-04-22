@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import groovy.transform.CompileStatic
+
 import java.text.NumberFormat
 import org.springframework.util.NumberUtils
 import java.text.DecimalFormatSymbols
@@ -14,6 +16,7 @@ import java.text.DecimalFormatSymbols
  *
  */
 
+@CompileStatic
 public class NumberParser {
 
     private Locale locale

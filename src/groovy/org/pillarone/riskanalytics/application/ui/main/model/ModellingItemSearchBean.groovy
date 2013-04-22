@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.model
 
-import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.lucene.document.Document
@@ -21,7 +20,6 @@ import org.hibernate.Hibernate
  * @author fouad.jaada@intuitive-collaboration.com
  */
 
-@CompileStatic
 class ModellingItemSearchBean implements ChangeIndexerListener {
 
     ModellingItemIndexer indexer = null

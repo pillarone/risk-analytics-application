@@ -1,12 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.util;
 
 import com.ulcjava.base.client.IMessageService;
+import groovy.transform.CompileStatic;
 
 import javax.swing.*;
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 public class SplashScreenHandler implements IMessageService {
     private SplashScreen fSplashScreen;
 
