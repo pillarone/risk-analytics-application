@@ -74,8 +74,6 @@ class ResultConfigurationTableTreeNodeTests extends GroovyTestCase {
         ResultConfigurationTableTreeNode node = new ResultConfigurationTableTreeNode("outValue", configuration, Packet)
         component.add(node)
 
-        node.findCollector()
-
         return node
     }
 

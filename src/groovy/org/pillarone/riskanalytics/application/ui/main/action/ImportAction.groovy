@@ -50,7 +50,9 @@ class ImportAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        doAction(tree.selectedPath.lastPathComponent)
+        if (tree?.selectedPath?.lastPathComponent){
+            doAction(tree.selectedPath.lastPathComponent)
+        }
     }
 
     protected doAction(ITableTreeNode node) {

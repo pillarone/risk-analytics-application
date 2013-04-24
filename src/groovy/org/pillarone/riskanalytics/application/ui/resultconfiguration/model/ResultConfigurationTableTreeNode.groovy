@@ -20,7 +20,6 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     private static final String NO_COLLECTOR = "NONE"
 
     ResultConfiguration configuration
-    PacketCollector collector
 
     Class packetClass
 
@@ -38,12 +37,6 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
         }
     }
 
-    //must be called when the tree is complete, not in the constructor or setParent of this class!
-
-    public void findCollector() {
-        collector = configuration.collectors.find {PacketCollector coll -> coll.path == path}
-    }
-
     public Object getExpandedCellValue(int i) {
         String identifier
         if (collector?.mode == null) {
@@ -57,21 +50,11 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     public void setValueAt(Object value, int i) {
         value = valueToKey[value]
         ICollectingModeStrategy newValue = CollectingModeFactory.getStrategy(value)
-        if (newValue == null) {
-            if (collector) {
-                configuration.collectors.remove(collector)
-                collector = null
-            }
-            return
-        }
+        configuration.setCollector(path,newValue)
+    }
 
-        if (!collector) {
-            collector = new PacketCollector()
-            collector.path = getPath()
-
-            configuration.collectors << collector
-        }
-        collector.mode = newValue
+    public PacketCollector getCollector(){
+        configuration.getCollector(path)
     }
 
     public String getDisplayName() {
@@ -107,5 +90,4 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     private String getText(String key) {
         LocaleResources.getString('ICollectingModeStrategy.' + key)
     }
-
 }
