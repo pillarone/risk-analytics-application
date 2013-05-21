@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
-import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
@@ -38,8 +37,7 @@ class TreeNodeCopier extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        ArrayList nodes = new ArrayList(rowHeaderTree.selectedPaths*.lastPathComponent)
-        Collections.sort(nodes, new TreeNodeComparator(model.root))
+        List nodes = new ArrayList(rowHeaderTree.selectedPaths*.lastPathComponent)
 
         StringBuffer content = new StringBuffer()
         int columnCount = model.columnCount
@@ -47,10 +45,40 @@ class TreeNodeCopier extends ResourceBasedAction {
         columnOrder = [0]
 
         content.append(writeHeader())
-        nodes?.each {def node ->
+        writeData(content, nodes, columnCount)
+    }
+
+    void writeData(StringBuffer content, List nodes, int columnCount) {
+        List distinctNodes = filterNodes(nodes)
+        Collections.sort(distinctNodes, new TreeNodeComparator(model.root))
+        distinctNodes?.each { ITableTreeNode node ->
             content.append(writeNode(node, columnCount))
         }
-        ULCClipboard.getClipboard().content = content.toString()
+        writeToClipboard(content.toString())
+    }
+
+    protected void writeToClipboard(String content) {
+        ULCClipboard.getClipboard().content = content
+    }
+
+    protected List filterNodes(final List selectedNodes) {
+        List result = []
+        selectedNodes.each {ITableTreeNode node ->
+            if (!containsParentNode(node, selectedNodes)){
+                result << node
+            }
+        }
+        return result
+    }
+
+    protected boolean containsParentNode(ITableTreeNode node, List selectedNodes) {
+        if (!node){
+            return false
+        }
+        if (selectedNodes.contains(node.parent)) {
+            return true
+        }
+        return containsParentNode(node.parent, selectedNodes)
     }
 
     protected String writeHeader() {

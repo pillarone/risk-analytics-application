@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
+import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
@@ -17,7 +18,6 @@ class TreeNodeCopierTests extends GroovyTestCase {
         ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
         TestTreeNodeCopier copier = new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2])
         String result = copier.writeNode(rootNode, 3)
-        println result
         assertEquals "a\tb\tc\n${TreeNodeCopier.space}a1\tb1\tc1\n", result
         LocaleResources.clearTestMode()
     }
@@ -65,6 +65,21 @@ class TreeNodeCopierTests extends GroovyTestCase {
         assertEquals "a\tc\tb\n", result
         LocaleResources.clearTestMode()
     }
+
+    void testLeafWithParent() {
+
+        LocaleResources.setTestMode()
+        ITableTreeNode rootNode = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[])
+        DefaultMutableTableTreeNode child = new DefaultMutableTableTreeNode(["a1", "b1", "c1"] as Object[])
+        rootNode.add(child)
+
+        ITableTreeModel model = new DefaultTableTreeModel(rootNode, ['a', 'b', 'c'] as String[])
+
+        StringBuffer sb = new StringBuffer()
+        new TestTreeNodeCopier(model: model, columnOrder: [0, 1, 2]).writeData(sb,[rootNode,child],3)
+        assertEquals "a\tb\tc\n${TreeNodeCopier.space}a1\tb1\tc1\n", sb.toString()
+
+    }
 }
 
 class TestTreeNodeCopier extends TreeNodeCopier {
@@ -73,5 +88,9 @@ class TestTreeNodeCopier extends TreeNodeCopier {
         format.groupingUsed = false
         format.minimumFractionDigits = 1
         return format
+    }
+
+    @Override
+    void writeToClipboard(String content) {
     }
 }
