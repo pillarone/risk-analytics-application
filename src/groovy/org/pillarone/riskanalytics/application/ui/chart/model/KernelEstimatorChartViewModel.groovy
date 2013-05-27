@@ -98,14 +98,16 @@ abstract class KernelEstimatorChartViewModel extends ChartViewModel {
                         currentSeries = createSeries("${seriesNames[keyFigureIndex]} for ${getPeriodLabel(periodIndex)}")
                         storeInCache(keyFigureIndex, periodIndex, currentSeries)
                     }
+                    if (currentSeries.itemCount > 0) {
+                        upperBound = Math.max(upperBound, (Double) currentSeries.getX(currentSeries.getItemCount() - 1))
+                        lowerBound = Math.min(lowerBound, (Double) currentSeries.getX(0))
+                        dataset.addSeries currentSeries
 
-                    upperBound = Math.max(upperBound, (Double) currentSeries.getX(currentSeries.getItemCount() - 1))
-                    lowerBound = Math.min(lowerBound, (Double) currentSeries.getX(0))
-                    dataset.addSeries currentSeries
+                        BasicStroke thickLine = new BasicStroke(chartLineThickness)
+                        chart.getPlot().getRenderer(0).setSeriesStroke(seriesIndex, thickLine)
+                        seriesIndex++
+                    }
 
-                    BasicStroke thickLine = new BasicStroke(chartLineThickness)
-                    chart.getPlot().getRenderer(0).setSeriesStroke(seriesIndex, thickLine)
-                    seriesIndex++
                 }
             }
         }
