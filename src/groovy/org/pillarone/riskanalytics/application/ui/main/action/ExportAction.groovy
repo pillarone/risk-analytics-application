@@ -108,7 +108,7 @@ abstract class ExportAction extends SelectionTreeAction {
             }, onFailure: {reason, description ->
                 if (reason == IFileStoreHandler.FAILED){
                     LOG.error description
-                    showAlert("exportError")ExportParametr
+                    showAlert("exportError")
                 }
             }] as IFileStoreHandler, selectedFile,Long.MAX_VALUE,true,false)
         }

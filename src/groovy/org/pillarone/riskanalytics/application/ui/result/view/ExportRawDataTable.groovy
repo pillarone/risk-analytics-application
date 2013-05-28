@@ -49,7 +49,7 @@ class ExportRawDataTable extends ResourceBasedAction {
                         try {
                             ExcelExporter exporter = new ExcelExporter()
                             exporter.headers = model.columnHeader
-                            exporter.exportResults(model.rawData)
+                            exporter.exportResults(model.rawData, model.displayPaths)
                             exporter.addTab "Simulation Settings", model.simulationSettings
                             exporter.addTab "Runtime parameters", model.runtimeParameters
                             exporter.writeWorkBook stream
@@ -67,7 +67,7 @@ class ExportRawDataTable extends ResourceBasedAction {
                     }, onFailure: { int reason, String description ->
                         LOG.error("Excel export failed: ${description}")
                         new ULCAlert(ancestor, "Export failed", "Failed to write to file, maybe it is already open?", "Ok").show()
-                    }] as IFileStoreHandler, selectedFile)
+                    }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE,true,false)
 
                 },
                 onFailure: {reason, description ->
