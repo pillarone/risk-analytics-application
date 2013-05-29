@@ -29,11 +29,13 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
  */
 abstract class ExportAction extends SelectionTreeAction {
     UserPreferences userPreferences
+    private String fileExtension
     Log LOG = LogFactory.getLog(ExportAction)
 
-    public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title) {
+    public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title, String fileExtension='xlsx') {
         super(title, tree, model)
         userPreferences = UserPreferencesFactory.getUserPreferences()
+        this.fileExtension = fileExtension
     }
 
     public ExportAction(String title) {
@@ -62,18 +64,18 @@ abstract class ExportAction extends SelectionTreeAction {
             config.fileSelectionMode = itemCount > 1 ? FileChooserConfig.DIRECTORIES_ONLY : FileChooserConfig.FILES_ONLY
             config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.EXPORT_DIR_KEY))
             if (items.size() == 1) {
-                config.selectedFile = "${items[0].name}.xlsx".replaceAll(':', '-')
+                config.selectedFile = getFileName(items[0])
             }
 
 
             ClientContext.chooseFile([
-                    onSuccess: {filePaths, fileNames ->
+                    onSuccess: { filePaths, fileNames ->
                         userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
-                        items.each {def item ->
+                        items.each { def item ->
                             exportItem(item, itemCount, filePaths, ancestor)
                         }
                     },
-                    onFailure: {reason, description ->
+                    onFailure: { reason, description ->
                         if (reason != IFileChooseHandler.CANCELLED) {
                             LOG.error description
                             showAlert("exportError")
@@ -83,17 +85,21 @@ abstract class ExportAction extends SelectionTreeAction {
 
     }
 
+    protected String getFileName(def item) {
+        validateFileName("${getName(item)}.$fileExtension".replaceAll(':', '-'))
+    }
+
+
     protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
         ExcelExporter exporter = new ExcelExporter()
-        SingleValueResult.withTransaction {trx ->
-            def simulationFileName = "${item.name}.xlsx".replaceAll(':', '-')
-            String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
-            selectedFile = selectedFile.endsWith('.xlsx') ?selectedFile:"${selectedFile}.xlsx"
+        SingleValueResult.withTransaction { trx ->
+            String selectedFile = itemCount > 1 ? "${filePaths[0]}/${getFileName(item)}" : filePaths[0]
+            selectedFile = selectedFile.endsWith(".$fileExtension") ? selectedFile : "${selectedFile}.$fileExtension"
 
             item.load()
             def simulationRun = item.simulationRun
             List rawData = ResultAccessor.getAllResults(simulationRun)
-            ClientContext.storeFile([prepareFile: {OutputStream stream ->
+            ClientContext.storeFile([prepareFile: { OutputStream stream ->
                 try {
                     exporter.exportResults rawData
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
@@ -104,13 +110,13 @@ abstract class ExportAction extends SelectionTreeAction {
                 } finally {
                     stream.close()
                 }
-            }, onSuccess: {path, name ->
-            }, onFailure: {reason, description ->
-                if (reason == IFileStoreHandler.FAILED){
+            }, onSuccess: { path, name ->
+            }, onFailure: { reason, description ->
+                if (reason == IFileStoreHandler.FAILED) {
                     LOG.error description
                     showAlert("exportError")
                 }
-            }] as IFileStoreHandler, selectedFile,Long.MAX_VALUE,true,false)
+            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
         }
     }
 
@@ -121,7 +127,7 @@ abstract class ExportAction extends SelectionTreeAction {
         IConfigObjectWriter writer = item.getWriter()
         String selectedFile = getFileName(itemCount, filePaths, item)
         LOG.info " selectedFile : $selectedFile "
-        ClientContext.storeFile([prepareFile: {OutputStream stream ->
+        ClientContext.storeFile([prepareFile: { OutputStream stream ->
             try {
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
                 writer.write(getConfigObject(item), bw)
@@ -131,14 +137,14 @@ abstract class ExportAction extends SelectionTreeAction {
             } finally {
                 stream.close()
             }
-        }, onSuccess: {path, name ->
+        }, onSuccess: { path, name ->
             LOG.info " $selectedFile exported"
-        }, onFailure: {reason, description ->
-            if (reason == IFileStoreHandler.FAILED){
+        }, onFailure: { reason, description ->
+            if (reason == IFileStoreHandler.FAILED) {
                 LOG.error description
                 showAlert("exportError")
             }
-        }] as IFileStoreHandler, selectedFile,Long.MAX_VALUE,true,false)
+        }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
     }
 
 
@@ -148,7 +154,7 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     protected List<List<String>> getSimulationSettings(SimulationRun simulationRun) {
-        SimulationRun.withTransaction {status ->
+        SimulationRun.withTransaction { status ->
             simulationRun = SimulationRun.get(simulationRun.id)
             Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
             Class modelClass = parameterization.modelClass
@@ -179,18 +185,18 @@ abstract class ExportAction extends SelectionTreeAction {
         config.fileSelectionMode = itemCount > 1 ? FileChooserConfig.DIRECTORIES_ONLY : FileChooserConfig.FILES_ONLY
         config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.EXPORT_DIR_KEY))
         if (items.size() == 1) {
-            config.selectedFile = "${items[0].name}.groovy"
+            config.selectedFile = "${getName(items[0])}.groovy"
         }
 
         ULCWindow ancestor = getAncestor()
         ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
+                onSuccess: { filePaths, fileNames ->
                     userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, getFolderName(itemCount, filePaths))
-                    items.each {def item ->
+                    items.each { def item ->
                         exportItem(item, itemCount, filePaths, ancestor)
                     }
                 },
-                onFailure: {reason, description ->
+                onFailure: { reason, description ->
                     if (reason != IFileChooseHandler.CANCELLED) {
                         LOG.error description
                         showAlert("exportError")
@@ -206,8 +212,12 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     String getFileName(int itemCount, filePaths, ModellingItem item) {
-        String selectedFile = itemCount > 1 ? "${filePaths[0]}${getFileSeparator()}${item.name}.groovy" : filePaths[0]
+        String selectedFile = itemCount > 1 ? "${filePaths[0]}${getFileSeparator()}${getName(item)}.groovy" : filePaths[0]
         return validateFileName(selectedFile)
+    }
+
+    protected String getName(def item){
+        return item.name.replaceAll(getFileSeparator(),'_')
     }
 
     String getFolderName(int itemCount, filePaths) {
@@ -217,7 +227,7 @@ abstract class ExportAction extends SelectionTreeAction {
 
     private ConfigObject getConfigObject(Parameterization parameterization) {
         ConfigObject result
-        ParameterizationDAO.withTransaction {TransactionStatus status ->
+        ParameterizationDAO.withTransaction { TransactionStatus status ->
             if (!parameterization.isLoaded())
                 parameterization.load()
             parameterization.orderByPath = true
@@ -232,7 +242,7 @@ abstract class ExportAction extends SelectionTreeAction {
 
     private ConfigObject getConfigObject(ResultConfiguration resultConfiguration) {
         ConfigObject result
-        ResultConfigurationDAO.withTransaction {TransactionStatus status ->
+        ResultConfigurationDAO.withTransaction { TransactionStatus status ->
             result = resultConfiguration.toConfigObject()
         }
         return result
@@ -240,9 +250,9 @@ abstract class ExportAction extends SelectionTreeAction {
 
     protected boolean validate(List items) {
         boolean status = true
-        items.each {def item ->
+        items.each { def item ->
             if (item instanceof Simulation) {
-                SingleValueResult.withTransaction {trx ->
+                SingleValueResult.withTransaction { trx ->
                     item.load()
                     def simulationRun = item.simulationRun
                     def count = SingleValueResult.countBySimulationRun(simulationRun)
@@ -262,7 +272,7 @@ abstract class ExportAction extends SelectionTreeAction {
         arr[arr.size() - 1] = pattern.matcher(arr[arr.size() - 1]).replaceAll("")
 
         filename = ""
-        arr.eachWithIndex {String p, int index ->
+        arr.eachWithIndex { String p, int index ->
             filename += p
             if (index != arr.size() - 1)
                 filename += separator

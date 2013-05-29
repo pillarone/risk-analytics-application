@@ -33,7 +33,7 @@ class ExportAllAction extends ExportAction {
     }
 
     String getFileName(int itemCount, Object filePaths, ModellingItem item) {
-        String paramName = "${item.name}_v${item.versionNumber}"
+        String paramName = "${getName(item)}_v${item.versionNumber}"
         paramName = paramName.replaceAll(" ", "")
         File file = new File("${filePaths[0]}/${item.modelClass.name}/")
         if (!file.exists())

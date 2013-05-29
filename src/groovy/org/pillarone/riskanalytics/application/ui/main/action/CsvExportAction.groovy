@@ -16,13 +16,12 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class CsvExportAction extends ExportItemAction {
 
     public CsvExportAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super(tree, model, "CsvExportAction")
+        super(tree, model, "CsvExportAction",'csv')
     }
 
     protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
         SingleValueResult.withTransaction {trx ->
-            def simulationFileName = "${item.name}.csv".replaceAll(':', '-')
-            String selectedFile = itemCount > 1 ? "${filePaths[0]}/$simulationFileName" : filePaths[0]
+            String selectedFile = itemCount > 1 ? "${filePaths[0]}/${getFileName(item)}" : filePaths[0]
             ClientContext.storeFile([prepareFile: {OutputStream stream ->
                 try {
                     item.load()
@@ -45,7 +44,7 @@ class CsvExportAction extends ExportItemAction {
             }, onFailure: {reason, description ->
                 LOG.error description
                 showAlert("exportError")
-            }] as IFileStoreHandler, selectedFile)
+            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
         }
 
     }

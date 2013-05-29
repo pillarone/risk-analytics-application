@@ -24,7 +24,7 @@ class ExcelExporter {
         Row header = sheet.createRow(0)
         headers.eachWithIndex { String text, int i ->
             Cell headerCell = addCell(header, i, text)
-            if (i > 0) {
+            if (i > 0 && displayPaths.size() > 0) {
                 addComment(i, headerCell, displayPaths, sheet)
             }
         }

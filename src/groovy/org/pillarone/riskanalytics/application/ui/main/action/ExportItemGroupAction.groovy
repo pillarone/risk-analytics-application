@@ -46,7 +46,7 @@ class ExportItemGroupAction extends ExportAction {
 
     String getFileName(int itemCount, Object filePaths, ModellingItem item) {
         String sep = getFileSeparator()
-        String paramName = (item.properties.keySet().contains("versionNumber")) ? "${item.name}_v${item.versionNumber}" : "${item.name}"
+        String paramName = (item.properties.keySet().contains("versionNumber")) ? "${getName(item)}_v${item.versionNumber}" : "${getName(item)}"
         paramName = paramName.replaceAll(" ", "")
         def index = filePaths[0].indexOf("${item.name}.groovy")
         String dirName = (index != -1) ? new File(filePaths[0]).parent : filePaths[0]
