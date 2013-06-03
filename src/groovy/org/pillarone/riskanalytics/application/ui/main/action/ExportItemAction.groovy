@@ -14,11 +14,11 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class ExportItemAction extends ExportAction {
 
     public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super(tree, model, "Export")
+        this(tree, model, "Export",'xlsx')
     }
 
-    public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
-        super(tree, model, actionName)
+    public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName, String fileExtension) {
+        super(tree, model, actionName, fileExtension)
     }
 
 

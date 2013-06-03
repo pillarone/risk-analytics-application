@@ -30,10 +30,6 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
     }
 
     private void notifyTreeComplete(ITableTreeNode node) {
-        if (node instanceof ResultConfigurationTableTreeNode) {
-            node.findCollector()
-            return
-        }
         for (int i = 0; i < node.childCount; i++) {
             notifyTreeComplete(node.getChildAt(i))
         }

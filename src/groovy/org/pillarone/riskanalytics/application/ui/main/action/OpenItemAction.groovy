@@ -66,7 +66,7 @@ class OpenItemAction extends SelectionTreeAction {
     private void openItem(AbstractUIItem item) {
         Model selectedModel = getSelectedModel()
         if (selectedModel != null) {
-            item.load()
+            loadIfNotInUse(item)
             boolean usedInSimulation = false
             if (item instanceof ModellingUIItem) {
                 usedInSimulation = item.isUsedInSimulation()
@@ -76,6 +76,13 @@ class OpenItemAction extends SelectionTreeAction {
             } else {
                 showOpenItemDialog(selectedModel, item)
             }
+        }
+    }
+
+    // Do not load item in case it is already open. Otherwise the persistent state of this item gets loaded again. PMO-2383
+    private void loadIfNotInUse(AbstractUIItem item) {
+        if (item.mainModel.viewModelsInUse){
+            item.load()
         }
     }
 

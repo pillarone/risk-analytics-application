@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import com.ulcjava.base.application.BorderFactory
+import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.shared.ErrorCodes
-import java.text.SimpleDateFormat
+import org.pillarone.ulc.server.ULCLocaleUnawareNumberDataType
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.parameter.DateParameter
 import org.pillarone.riskanalytics.core.parameter.DoubleParameter
@@ -96,7 +98,7 @@ public class DataTypeFactory {
     static IDataType getDoubleDataTypeForEdit() {
         IDataType floatingPointDataTypeForEdit = UserContext.getAttribute("floatingPointDataTypeForEdit")
         if (floatingPointDataTypeForEdit == null) {
-            floatingPointDataTypeForEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
+            floatingPointDataTypeForEdit = new ULCLocaleUnawareNumberDataType(getErrorManager(),UIUtils.clientLocale)
             floatingPointDataTypeForEdit.classType = Double
             floatingPointDataTypeForEdit.minFractionDigits = 0
             floatingPointDataTypeForEdit.maxFractionDigits = 20

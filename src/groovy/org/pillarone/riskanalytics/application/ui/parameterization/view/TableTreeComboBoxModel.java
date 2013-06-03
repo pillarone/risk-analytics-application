@@ -23,7 +23,9 @@ public class TableTreeComboBoxModel extends DefaultComboBoxModel {
             if (model.getSize() != getSize())
                 return false;
             for (int i = 0; i < getSize(); i++) {
-                if (!getElementAt(i).equals(model.getElementAt(i))) return false;
+                if (getElementAt(i) == null) {
+                    if (model.getElementAt(i) != null) return false;
+                } else if (!getElementAt(i).equals(model.getElementAt(i))) return false;
             }
             if (editMode != model.editMode) return false;
         } else {
