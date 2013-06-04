@@ -36,4 +36,12 @@ class TableDataParserTests extends GroovyTestCase {
         assertEquals 0.000994753919160041, tableData[0][1]
         assertEquals 0.00093910825660648, tableData[1][1]
     }
+
+    void testNumbersWithBlanks() {
+        String stringData = " 85.41 "
+        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH, columnMapping: new DefaultColumnMapping())
+        List tableData = parser.parseTableData(stringData)
+        assertEquals 85.41, tableData[0][0]
+
+    }
 }

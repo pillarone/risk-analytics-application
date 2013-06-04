@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.util
 
-import org.pillarone.riskanalytics.application.ui.util.NumberParser
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteColumnMapping
 import org.pillarone.riskanalytics.application.ui.base.action.TablePasterHelper
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -27,7 +25,7 @@ public class TableDataParser {
             String[] entries = lineString.split(columnSeparator)
             List line = []
             entries.eachWithIndex { String value, int index ->
-                line << pasterHelper.fromString(value, columnMapping.getColumnType(index))
+                line << pasterHelper.fromString(value.trim(), columnMapping.getColumnType(index))
             }
             lines << line
         }
