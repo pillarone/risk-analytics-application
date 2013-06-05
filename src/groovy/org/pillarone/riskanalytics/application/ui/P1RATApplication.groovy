@@ -24,7 +24,6 @@ import com.ulcjava.base.server.ULCSession
 import com.ulcjava.applicationframework.application.Application
 
 //used for standalone
-@CompileStatic
 class P1RATApplication extends Application {
 
     private static Log LOG = LogFactory.getLog(P1RATApplication)
