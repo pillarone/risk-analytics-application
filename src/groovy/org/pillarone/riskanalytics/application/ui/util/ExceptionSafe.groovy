@@ -83,16 +83,14 @@ class ExceptionSafe {
     static void handleException(Exception e) {
         try {
             showErrorAlert(e)
-        } catch (ignore) { /* if the alert cannot be shown, there is nothing we can do... */}
+        } catch (ignore) { /* if the alert cannot be shown, there is nothing we can do... */ }
     }
 
     public static def logException(Exception e, def context) {
-        printStackTrace e
         Throwable sanitized = StackTraceUtils.deepSanitize(e)
-        sanitized.printStackTrace()
         def logMessage = "${context.class.name} caused ${sanitized.class.name}: ${sanitized.message}"
         LOG.error(logMessage)
-        LOG.debug(context, sanitized)
+        LOG.error(niceStackTrace(e))
     }
 
 
@@ -117,15 +115,8 @@ class ExceptionSafe {
     }
 
 
-    private static void printStackTrace(Exception e) {
-        if (null != out) {
-            def stackTraceElements = e.stackTrace.findAll {frame -> !IGNORE.any {frame.className =~ it}}
-            synchronized (out) {
-                out << e.message
-                out << "\n"
-                out << stackTraceElements.join("\n")
-                out << "\n"
-            }
-        }
+    private static String niceStackTrace(Exception e) {
+        def stackTraceElements = e.stackTrace.findAll { frame -> !IGNORE.any { frame.className =~ it } }
+        return stackTraceElements.join("\n")
     }
 }
