@@ -45,7 +45,10 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     AbstractModellingModel getViewModel() {
         Parameterization parameterization = (Parameterization) item
-        ParameterViewModel model = new ParameterViewModel(this.model, parameterization, ModelStructure.getStructureForModel(this.model.class))
+        Model simulationModel = this.model.class.newInstance() //PMO-2471
+        simulationModel.init()
+        simulationModel.injectComponentNames()
+        ParameterViewModel model = new ParameterViewModel(simulationModel, parameterization, ModelStructure.getStructureForModel(this.model.class))
         model.mainModel = mainModel
         mainModel.registerModel(this, model)
 
