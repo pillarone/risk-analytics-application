@@ -148,7 +148,7 @@ class ResultIterationDataView implements IModelChangedListener {
         int columns = resultTable.getColumnCount()
         columns.times {int columnIndex ->
             resultTable.columnModel.getColumn(columnIndex).setHeaderValue(model.resultTableModel.getColumnName(columnIndex))
-            resultTable.columnModel.getColumn(columnIndex).setHeaderRenderer(new IterationResultTableHeaderRenderer(model: model))
+            resultTable.columnModel.getColumn(columnIndex).setHeaderRenderer(new IterationResultTableHeaderRenderer(model: model, columnIndex: columnIndex))
         }
         if (resultTable.columnModel.columnCount > 0) {
             resultTable.columnModel.getColumn(0).setCellRenderer(new IterationResultTableRenderer(model: model))
