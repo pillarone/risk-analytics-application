@@ -14,6 +14,8 @@ class GoToParentNodeAction extends ExceptionSafeAction {
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        tree.getSelectionModel().setSelectionPath(tree.selectedPath.parentPath)
+        if (tree.selectedPath != null) {
+            tree.getSelectionModel().setSelectionPath(tree.selectedPath.parentPath)
+        }
     }
 }
