@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+
 import java.awt.BasicStroke
 import java.awt.Color
 import org.jfree.chart.ChartFactory
@@ -22,7 +24,7 @@ class DiscretePDFChartViewModel extends ChartViewModel {
     int currentBinSize = 1
     int maxBinSize
 
-    public DiscretePDFChartViewModel(String title, SimulationRun simulationRun, List nodes) {
+    public DiscretePDFChartViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
         super(title, simulationRun, nodes, 0.8)
         chartProperties = new ChartProperties(title: title, xAxisTitle: 'value', yAxisTitle: 'probability', showLegend: true)
     }

@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 
+
+@CompileStatic
 class FractionPercentageFunction extends AbstractComparisonFunction {
 
     public static final String FRACTION_PERCENTAGE = "FrPercentage"

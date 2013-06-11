@@ -4,8 +4,10 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tree.TreePath
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
+@CompileStatic
 class TreeNodeExpander implements IActionListener {
 
     ULCTableTree tree

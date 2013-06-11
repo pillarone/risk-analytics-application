@@ -29,7 +29,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
 
     public static final String DEFAULT_CARD_NAME = "Main"
 
-    private ULCCardPane content
+    ULCCardPane content
     private ULCBoxPane treePane
     private ULCCardPane modelPane
 

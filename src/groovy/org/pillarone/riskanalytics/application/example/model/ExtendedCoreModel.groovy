@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.example.model
 
+import groovy.transform.CompileStatic
 import models.core.CoreModel
 import org.pillarone.riskanalytics.core.simulation.IPeriodCounter
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.simulation.VariableLengthPeriodCounter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
+@CompileStatic
 class ExtendedCoreModel extends CoreModel {
 
     IPeriodCounter createPeriodCounter(DateTime beginOfFirstPeriod) {

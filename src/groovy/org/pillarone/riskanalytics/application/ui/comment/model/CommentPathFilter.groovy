@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.comment.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class CommentPathFilter implements CommentFilter {
     //comment path
     String path

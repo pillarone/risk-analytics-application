@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
+@CompileStatic
 public class RunBatchSimulationAction extends BatchSimulationSelectionAction {
 
     public RunBatchSimulationAction() {

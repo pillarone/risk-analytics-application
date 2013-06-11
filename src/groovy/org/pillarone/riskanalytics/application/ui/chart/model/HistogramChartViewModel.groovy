@@ -8,6 +8,7 @@ import org.jfree.chart.title.LegendTitle
 import org.jfree.data.statistics.HistogramDataset
 import org.jfree.ui.HorizontalAlignment
 import org.jfree.ui.RectangleEdge
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -26,7 +27,7 @@ class HistogramChartViewModel extends ChartViewModel {
 
     public HistogramChartViewModel() {}
 
-    public HistogramChartViewModel(String title, SimulationRun simulationRun, List nodes) {
+    public HistogramChartViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
         super(title, simulationRun, nodes, 0.0)
         chartProperties = new ChartProperties(title: title, xAxisTitle: 'value', yAxisTitle: 'count', showLegend: true)
     }

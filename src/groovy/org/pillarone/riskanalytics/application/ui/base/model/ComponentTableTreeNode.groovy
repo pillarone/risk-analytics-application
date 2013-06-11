@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 
+@CompileStatic
 class ComponentTableTreeNode extends SimpleTableTreeNode {
 
     Component component

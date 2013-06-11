@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.util.IFileStoreHandler
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -11,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class FileStoreHandler implements IFileStoreHandler {
     String fileName
     ULCComponent source

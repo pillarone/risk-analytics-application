@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import groovy.transform.TypeChecked
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -12,6 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Resource
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@TypeChecked
 class ItemComparator {
 
     public static boolean isEqual(def item1, ItemNode node) {

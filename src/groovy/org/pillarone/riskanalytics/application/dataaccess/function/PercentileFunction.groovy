@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
@@ -8,7 +9,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 
 class PercentileFunction extends AbstractQuantilePerspectiveBasedFunction<Double> {
 
-    public static final String PERCENTILE = "Percentile"
+    final String name = 'Percentile'
 
     private double percentile
 
@@ -19,10 +20,6 @@ class PercentileFunction extends AbstractQuantilePerspectiveBasedFunction<Double
 
     Double getParameter() {
         return percentile
-    }
-
-    String getName() {
-        return PERCENTILE
     }
 
     Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {

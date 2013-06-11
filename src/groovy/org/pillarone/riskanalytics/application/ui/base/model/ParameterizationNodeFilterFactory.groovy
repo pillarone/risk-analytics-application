@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class ParameterizationNodeFilterFactory {
 
     /**
@@ -22,7 +24,7 @@ class ParameterizationNodeFilterFactory {
     }
 
     static String getModellingItemName(String luceneString) {
-        String modellingItem = null
+        String modellingItem
         int index = luceneString.indexOf(ModellingItemSearchBean.SEPARATOR)
         if (luceneString && index != -1) {
             //parameterization contains at least one tag

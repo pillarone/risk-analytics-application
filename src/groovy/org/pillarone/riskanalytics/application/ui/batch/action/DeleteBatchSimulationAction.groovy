@@ -1,12 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 public class DeleteBatchSimulationAction extends BatchSimulationSelectionAction {
 
     public DeleteBatchSimulationAction() {

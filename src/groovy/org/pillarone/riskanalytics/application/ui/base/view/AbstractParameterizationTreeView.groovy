@@ -68,7 +68,7 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
     ULCCloseableTabbedPane tabbedPane
     ULCSplitPane splitPane
     CommentAndErrorView commentAndErrorView
-    def commentFilters
+    Map commentFilters
 
 
     AbstractParameterizationTreeView(AbstractParametrizedViewModel model, RiskAnalyticsMainModel mainModel) {

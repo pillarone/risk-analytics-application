@@ -5,6 +5,7 @@ import be.devijver.wikipedia.Visitor;
 import be.devijver.wikipedia.html.HtmlEncoder;
 import be.devijver.wikipedia.parser.ast.Attribute;
 import be.devijver.wikipedia.parser.ast.AttributeList;
+import groovy.transform.CompileStatic;
 import org.apache.commons.lang.StringEscapeUtils;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.io.Writer;
  * by converting the bold notation.
  */
 
+@CompileStatic
 public class HtmlVisitor implements Visitor {
 
     private class Output {

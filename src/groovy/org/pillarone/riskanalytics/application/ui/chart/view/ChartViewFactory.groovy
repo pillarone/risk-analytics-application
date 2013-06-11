@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.chart.view
 
 import com.ulcjava.base.application.util.ULCIcon
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.result.view.ChartType
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -9,7 +11,7 @@ import org.pillarone.riskanalytics.application.ui.chart.view.*
 
 abstract class ChartViewFactory {
 
-    static ChartView getChart(ChartType chartType, String chartTitle, SimulationRun simulationRun, List selectedNodes) {
+    static ChartView getChart(ChartType chartType, String chartTitle, SimulationRun simulationRun, List<SimpleTableTreeNode> selectedNodes) {
         switch (chartType) {
             case ChartType.HISTOGRAM:
                 return new HistogramChartView(new HistogramChartViewModel(chartTitle, simulationRun, selectedNodes))

@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 
+@CompileStatic
 interface IFunction extends Cloneable {
 
     String getName()

@@ -2,10 +2,12 @@ package org.pillarone.riskanalytics.application.document;
 
 import com.canoo.common.FileUtilities;
 import com.ulcjava.base.application.ClientContext;
+import groovy.transform.CompileStatic;
 import org.pillarone.riskanalytics.core.FileConstants;
 
 import java.io.File;
 
+@CompileStatic
 public class FileSystemStrategy implements IShowDocumentStrategy {
 
     FileSystemStrategy() {

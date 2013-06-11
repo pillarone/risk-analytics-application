@@ -1,14 +1,16 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
 
+@CompileStatic
 class MinFunction extends AbstractResultFunction {
 
-    public static final String MIN = "Min"
+    final String name = 'Min'
 
     @Override
     Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
@@ -16,13 +18,9 @@ class MinFunction extends AbstractResultFunction {
 
     }
 
-    String getName() {
-        return MIN
-    }
-
     @Override
     String getKeyFigureName() {
-        return 'min'
+        return PostSimulationCalculation.MIN
     }
 
 

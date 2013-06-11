@@ -1,13 +1,15 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+@CompileStatic
 class SingleIterationFunction extends AbstractResultFunction implements IParametrizedFunction<Integer> {
 
     public static final String KEY_FIGURE_NAME = 'singleIteration'
-    public static final String ITERATION = "Iteration"
+    final String name = 'Iteration'
 
     protected int iteration
 
@@ -18,10 +20,6 @@ class SingleIterationFunction extends AbstractResultFunction implements IParamet
     @Override
     String getDisplayName() {
         return "$iteration. ${super.getDisplayName()}"
-    }
-
-    String getName() {
-        return ITERATION
     }
 
     Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {

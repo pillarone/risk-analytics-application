@@ -1,10 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.comment.model
 
 import com.ulcjava.base.application.DefaultListModel
+import groovy.transform.CompileStatic
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class ItemListModel<T> extends DefaultListModel {
     List values
 

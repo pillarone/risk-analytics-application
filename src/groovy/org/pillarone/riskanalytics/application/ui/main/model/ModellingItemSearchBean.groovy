@@ -79,7 +79,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
         List<String> names = []
         long currentTime = System.currentTimeMillis()
         ParameterizationDAO.withTransaction {status ->
-            SessionFactory sessionFactory = ApplicationHolder.getApplication().getMainContext().getBean('sessionFactory')
+            SessionFactory sessionFactory = ApplicationHolder.getApplication().getMainContext().getBean('sessionFactory') as SessionFactory
             names.addAll(getParameterizationNames(sessionFactory))
             names.addAll(getResultConfigurationNames(sessionFactory, "model_class_name"))
             names.addAll(getRunNames(sessionFactory, "model"))
@@ -156,7 +156,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
 
     private String clauseByModel(String modelClass) {
         StringBuilder sb = new StringBuilder("")
-        List models = ApplicationHolder.application.getConfig()?.models
+        List models = ApplicationHolder.application.getConfig()?.models as List
         if (models && models.size() > 0) {
             models.eachWithIndex {String modelName, int index ->
                 sb.append(" dao." + modelClass + " like '%." + modelName + "'")
@@ -187,7 +187,7 @@ class ModellingItemSearchBean implements ChangeIndexerListener {
      */
     public static String escapeQuery(String query) {
         query = query.replaceAll(ESCAPE_CHARS, " ")
-        List queries = query.split()
+        List queries = query.split() as List
         String escapedQuery = ""
 
         boolean openingQuotes = false

@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.apache.commons.lang.builder.EqualsBuilder
 
 
+@CompileStatic
 class FunctionDescriptor {
 
     Class functionClass
@@ -20,7 +22,7 @@ class FunctionDescriptor {
     @Override
     boolean equals(Object obj) {
         if(obj instanceof FunctionDescriptor) {
-            return new EqualsBuilder().append(functionClass, obj.functionClass).equals
+            return new EqualsBuilder().append(functionClass, ((FunctionDescriptor)obj).getFunctionClass()).equals
         }
         return false
     }

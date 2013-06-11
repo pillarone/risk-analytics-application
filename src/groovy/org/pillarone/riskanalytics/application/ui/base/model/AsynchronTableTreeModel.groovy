@@ -6,6 +6,8 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import groovy.transform.CompileStatic
+
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
@@ -13,6 +15,7 @@ import java.util.concurrent.TimeUnit
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 
+@CompileStatic
 abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeModel {
     ULCPollingTimer timer
     Map cellValues = [:]
@@ -37,7 +40,7 @@ abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeM
     }
 
     public final Object getValueAt(Object node, int column) {
-        NodeIdentifier identifier = new NodeIdentifier(node: node, columnName: getColumnName(column), columnIndex: column)
+        NodeIdentifier identifier = new NodeIdentifier(node: node as ITableTreeNode, columnName: getColumnName(column), columnIndex: column)
         if (!cellValues.containsKey(identifier)) {
             if (loadAsynchronous(column, node)) {
                 Runnable callback = {
@@ -101,6 +104,7 @@ class PollingAction implements IActionListener {
     }
 }
 
+@CompileStatic
 class NodeIdentifier {
     ITableTreeNode node
     String columnName
@@ -109,7 +113,7 @@ class NodeIdentifier {
 
     public boolean equals(Object obj) {
         if (!obj instanceof NodeIdentifier) {return false}
-        return obj.node == node && obj.columnName == columnName
+        return ((NodeIdentifier)obj).node == node && ((NodeIdentifier)obj).columnName == columnName
     }
 
     public int hashCode() {

@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.document;
 
 import com.ulcjava.base.application.ClientContext;
+import groovy.transform.CompileStatic;
 import org.apache.commons.lang.RandomStringUtils;
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest;
 import org.codehaus.groovy.grails.web.util.WebUtils;
@@ -8,6 +9,7 @@ import org.pillarone.riskanalytics.application.UserContext;
 
 import javax.servlet.http.HttpServletRequest;
 
+@CompileStatic
 public class BrowserStrategy implements IShowDocumentStrategy {
 
     BrowserStrategy() {

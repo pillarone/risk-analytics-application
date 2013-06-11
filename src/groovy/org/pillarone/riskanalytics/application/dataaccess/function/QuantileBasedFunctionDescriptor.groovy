@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.EqualsBuilder
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 
+@CompileStatic
 class QuantileBasedFunctionDescriptor extends FunctionDescriptor {
 
     def parameter
@@ -23,7 +25,7 @@ class QuantileBasedFunctionDescriptor extends FunctionDescriptor {
     @Override
     boolean equals(Object obj) {
         if (obj instanceof QuantileBasedFunctionDescriptor) {
-            return new EqualsBuilder().append(functionClass, obj.functionClass).append(parameter, obj.parameter).append(quantilePerspective, obj.quantilePerspective).equals
+            return new EqualsBuilder().append(functionClass, obj.getFunctionClass()).append(parameter, obj.getParameter()).append(quantilePerspective, obj.getQuantilePerspective()).equals
         }
         return false
     }

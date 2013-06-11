@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.model;
 
 import com.ulcjava.base.application.AbstractListModel;
 import com.ulcjava.base.application.IComboBoxModel;
+import groovy.transform.CompileStatic;
 import org.pillarone.riskanalytics.application.util.LocaleResources;
 
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.TreeMap;
  *
  * @author stefan.kunz@intuitive-collaboration.com
  */
+@CompileStatic
 public class EnumI18NComboBoxModel extends AbstractListModel implements IComboBoxModel {
 
     /**

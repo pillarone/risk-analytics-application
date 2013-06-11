@@ -1,5 +1,6 @@
 package org.pillarone.modelling.reports
 
+import groovy.transform.CompileStatic
 import net.sf.jasperreports.engine.JRChartCustomizer
 import org.jfree.chart.JFreeChart
 import net.sf.jasperreports.engine.JRChart
@@ -10,10 +11,11 @@ import org.jfree.data.general.PieDataset
 import java.text.AttributedString
 
 
-public class PieChartCusttomizer implements JRChartCustomizer {
+@CompileStatic
+public class PieChartCustomizer implements JRChartCustomizer {
 
     public void customize(JFreeChart jFreeChart, JRChart jrChart) {
-        PiePlot plot = jFreeChart.plot
+        PiePlot plot = jFreeChart.getPlot() as PiePlot
         plot.labelOutlinePaint = null
         plot.labelShadowPaint = null
         plot.labelBackgroundPaint = null
@@ -25,12 +27,13 @@ public class PieChartCusttomizer implements JRChartCustomizer {
 
 }
 
+@CompileStatic
 class PieChartLabelGenerator implements PieSectionLabelGenerator {
 
     public String generateSectionLabel(PieDataset pieDataset, Comparable comparable) {
         double sum = 0
-        pieDataset.keys.each {
-            sum += pieDataset.getValue(it)
+        pieDataset.keys.each { int key ->
+            sum += pieDataset.getValue(key)
         }
         double percent = pieDataset.getValue(comparable) * 100 / sum
         return "" + Math.round(percent) + " %"

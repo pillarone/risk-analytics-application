@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 
+
+@CompileStatic
 class DeviationPercentageFunction extends AbstractComparisonFunction {
 
     public static final String DEVIATION_PERCENTAGE = "DevPercentage"

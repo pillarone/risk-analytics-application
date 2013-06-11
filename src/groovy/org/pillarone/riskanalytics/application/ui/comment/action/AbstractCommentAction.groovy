@@ -2,13 +2,16 @@ package org.pillarone.riskanalytics.application.ui.comment.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 abstract class AbstractCommentAction extends ResourceBasedAction {
     ULCTableTree tree
     List<CommentListener> commentListeners
@@ -28,7 +31,7 @@ abstract class AbstractCommentAction extends ResourceBasedAction {
 
     void doActionPerformed(ActionEvent event) {
         String path = getPath()
-        String displayPath = tree?.selectedPath?.lastPathComponent?.getDisplayPath()
+        String displayPath = ((SimpleTableTreeNode) tree?.selectedPath?.lastPathComponent)?.getDisplayPath()
         if (path) {
             executeAction(path, periodIndex, displayPath)
         }
@@ -38,7 +41,7 @@ abstract class AbstractCommentAction extends ResourceBasedAction {
         def node = tree?.selectedPath?.lastPathComponent
         if (node instanceof ResultTableTreeNode)
             return node.getResultPath()
-        return tree?.selectedPath?.lastPathComponent?.path
+        return ((SimpleTableTreeNode) tree?.selectedPath?.lastPathComponent)?.path
     }
 
 

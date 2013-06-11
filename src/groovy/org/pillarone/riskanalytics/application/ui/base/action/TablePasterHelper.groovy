@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
+import groovy.transform.CompileStatic
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
@@ -8,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.util.NumberParser
 import org.springframework.util.NumberUtils
 import java.text.NumberFormat
 
+@CompileStatic
 class TablePasterHelper {
 
     private NumberParser numberParser

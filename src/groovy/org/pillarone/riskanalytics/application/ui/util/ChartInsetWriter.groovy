@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.ULCAlert
+import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+
 import java.awt.geom.Rectangle2D
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -13,6 +16,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+@CompileStatic
 class ChartInsetWriter {
     protected double insetYPosition
     protected double insetHeight
@@ -69,11 +73,11 @@ class ChartInsetWriter {
         insetLineCount++
     }
 
-    public void writePercentiles(List list, SimulationRun simulationRun, int period, def node) {
-        list.each {
-            PercentileFunction percentile = new PercentileFunction(it, QuantilePerspective.LOSS)
-            double value = percentile.evaluate(simulationRun, 0, node)
-            writeInset("$it% percentile", value)
+    public void writePercentiles(List list, SimulationRun simulationRun, int period, SimpleTableTreeNode node) {
+        list.each {double p->
+            PercentileFunction percentile = new PercentileFunction(p, QuantilePerspective.LOSS)
+            double value = percentile.evaluate(simulationRun, 0, node) as double
+            writeInset("$p% percentile", value)
         }
     }
 

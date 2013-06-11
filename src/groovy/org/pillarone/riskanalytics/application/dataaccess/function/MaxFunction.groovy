@@ -1,13 +1,15 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 
+@CompileStatic
 class MaxFunction extends AbstractResultFunction {
 
-    public static final String MAX = "Max"
+    final String name = 'Max'
 
     @Override
     Double evaluateResult(SimulationRun simulationRun, int periodIndex, ResultTableTreeNode node) {
@@ -15,13 +17,9 @@ class MaxFunction extends AbstractResultFunction {
 
     }
 
-    String getName() {
-        return MAX
-    }
-
     @Override
     String getKeyFigureName() {
-        return "max" //TODO: reference constant in PSC
+        PostSimulationCalculation.MAX
     }
 
 

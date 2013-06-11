@@ -33,7 +33,7 @@ class OpenChartTab extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         def paths = rowHeaderTableTree.selectedPaths.lastPathComponent
-        List nodes = paths.findAll {it instanceof ResultTableTreeNode}
+        List<ResultTableTreeNode> nodes = paths.findAll {it instanceof ResultTableTreeNode}
         ChartView view = ChartViewFactory.getChart(chartType, title, simulationRun, nodes)
         ULCBoxPane tabContent = view.content
         if (tabContent) {

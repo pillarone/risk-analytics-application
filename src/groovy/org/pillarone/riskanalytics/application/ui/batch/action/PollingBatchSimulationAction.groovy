@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.core.batch.BatchRunInfoService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -9,6 +10,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class PollingBatchSimulationAction implements IActionListener {
 
     BatchRunInfoService batchRunInfoService

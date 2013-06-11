@@ -2,11 +2,13 @@ package org.pillarone.riskanalytics.application.document;
 
 import com.ulcjava.base.application.ClientContext;
 import com.ulcjava.base.application.util.IFileStoreHandler;
+import groovy.transform.CompileStatic;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import java.io.OutputStream;
 
+@CompileStatic
 public class StoreFileStrategy implements IShowDocumentStrategy {
 
     private static Log LOG = LogFactory.getLog(StoreFileStrategy.class);

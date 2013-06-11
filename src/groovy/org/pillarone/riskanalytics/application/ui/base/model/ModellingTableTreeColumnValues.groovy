@@ -11,7 +11,7 @@ class ModellingTableTreeColumnValues {
 
     public static List getValues(Map columnValues, int columnIndex) {
         Set values = new TreeSet()
-        columnValues?.each {Parameterization parameterization, def value ->
+        columnValues?.each {Parameterization parameterization, List value ->
             if (value[columnIndex]) {
                 addValue(values, value[columnIndex]);
             }
@@ -23,8 +23,8 @@ class ModellingTableTreeColumnValues {
         Set values = new TreeSet()
         ParameterizationTag.withTransaction {status ->
             Collection all = ParameterizationTag.findAll()
-            all.each {
-                String tagName = it.tag.name
+            all.each {ParameterizationTag parametrizationTag ->
+                String tagName = parametrizationTag.tag.name
                 values.add(tagName)
             }
         }

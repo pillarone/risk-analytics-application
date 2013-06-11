@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.example.constraint
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
 import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class LinePercentage implements IMultiDimensionalConstraints {
 
     public static final String IDENTIFIER = "LINE_PERCENTAGE"

@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 
+@CompileStatic
 abstract class AbstractQuantilePerspectiveBasedFunction<E> extends AbstractResultFunction implements IParametrizedFunction<E> {
 
     protected QuantilePerspective quantilePerspective

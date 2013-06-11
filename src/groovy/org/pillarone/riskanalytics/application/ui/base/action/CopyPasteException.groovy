@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
+import groovy.transform.CompileStatic
 
+@CompileStatic
 class CopyPasteException extends Exception {
 
     CopyPasteException(String s, Class targetType) {

@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.SplashScreen
 import java.awt.*
 import javax.swing.*
@@ -7,6 +8,7 @@ import javax.swing.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class SplashScreen {
     private static final String BUNDLE_FILENAME = "org.pillarone.riskanalytics.application.clientResources";
     private static final String WAIT_ICON_FILENAME = "/org/pillarone/riskanalytics/application/icons/pillarone-splashscreen.png";
@@ -52,12 +54,12 @@ class SplashScreen {
         JPanel msgPanel = new JPanel(new BorderLayout());
         msgPanel.setBackground(new Color(212, 209, 202));// Color(0xdb, 0xdb, 0xdb));
         msgPanel.setPreferredSize new Dimension(500, 40)
-        fWaitLabel.setHorizontalAlignment(JLabel.CENTER);
+        fWaitLabel.setHorizontalAlignment(SwingConstants.CENTER);
         fWaitLabel.setForeground(Color.black);
         msgPanel.add(BorderLayout.CENTER, fWaitLabel);
 
-        fIconLabel.setHorizontalAlignment(JLabel.CENTER);
-        fIconLabel.setVerticalAlignment(JLabel.BOTTOM);
+        fIconLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        fIconLabel.setVerticalAlignment(SwingConstants.BOTTOM);
 
         contentPane.add(BorderLayout.CENTER, fIconLabel);
         contentPane.add(BorderLayout.SOUTH, msgPanel);//fWaitLabel);

@@ -2,12 +2,14 @@ package org.pillarone.riskanalytics.application.initialization;
 
 import com.ulcjava.base.client.ISessionStateListener;
 import com.ulcjava.base.client.UISession;
+import groovy.transform.CompileStatic;
 import org.pillarone.riskanalytics.core.initialization.IExternalDatabaseSupport;
 
 /**
  * An ULC session listener which shuts down external databases when the application is
  * terminated.
  */
+@CompileStatic
 public class DatabaseManagingSessionStateListener implements ISessionStateListener {
 
     private IExternalDatabaseSupport databaseSupport;

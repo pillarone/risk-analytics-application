@@ -7,6 +7,8 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.shared.IWindowConstants
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
@@ -50,7 +52,7 @@ class P1RATApplication extends Application {
     public void initMainView() {
         //init RiskAnalyticsMainModel after login
         mainModel = new RiskAnalyticsMainModel(applicationContext: getContext())
-        mainFrame.defaultCloseOperation = ULCFrame.DO_NOTHING_ON_CLOSE
+        mainFrame.defaultCloseOperation = IWindowConstants.DO_NOTHING_ON_CLOSE
         mainFrame.size = new Dimension(1000, 750)
         mainFrame.minimumSize = new Dimension(800, 600)
 

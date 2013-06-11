@@ -24,7 +24,7 @@ class AbstractPresentationModel {
         List periodLabels = []
         if (showPeriodLabels) {
             SimulationRun.withTransaction {status ->
-                SimulationRun run = SimulationRun.get(simulationRun.id)
+                SimulationRun run = SimulationRun.get(simulationRun.id) as SimulationRun
                 Parameterization parameterization = ModellingItemFactory.getParameterization(run?.parameterization)
                 parameterization.load(false)
                 simulationRun.periodCount.times {int index ->

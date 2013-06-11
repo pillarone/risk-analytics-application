@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.event.IActionListener
@@ -8,6 +9,7 @@ import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import com.ulcjava.base.server.ULCSession
 
 
+@CompileStatic
 class NavigationTreeFactory {
 
     ModellingItemSearchService searchService
@@ -24,7 +26,6 @@ class NavigationTreeFactory {
             }
 
         })
-//        pollingTimer.start()
     }
 }
 

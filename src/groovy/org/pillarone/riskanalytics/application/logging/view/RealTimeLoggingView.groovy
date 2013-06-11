@@ -1,7 +1,10 @@
 package org.pillarone.riskanalytics.application.logging.view
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.shared.IDefaults
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.logging.model.RealTimeLoggingModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
@@ -9,6 +12,7 @@ import com.ulcjava.base.application.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class RealTimeLoggingView {
 
     RealTimeLoggingModel model
@@ -25,22 +29,22 @@ class RealTimeLoggingView {
     }
 
     void attachListeners() {
-        clearButton.actionPerformed = {
+        clearButton.addActionListener([actionPerformed: {
             model.clear()
-        }
+        }] as IActionListener)
 
-        copyContentButton.actionPerformed = {
+        copyContentButton.addActionListener([actionPerformed: {
             ULCClipboard.getClipboard().content = model.getContent()
-        }
+        }] as IActionListener)
     }
 
     void layoutComponents() {
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(loggingList))
+        content.add(IDefaults.BOX_EXPAND_EXPAND, new ULCScrollPane(loggingList))
         ULCBoxPane pane = new ULCBoxPane(1, 3)
-        pane.add(ULCBoxPane.BOX_EXPAND_TOP, copyContentButton)
-        pane.add(ULCBoxPane.BOX_CENTER_EXPAND, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_EXPAND_BOTTOM, clearButton)
-        content.add(ULCBoxPane.BOX_RIGHT_EXPAND, pane)
+        pane.add(IDefaults.BOX_EXPAND_TOP, copyContentButton)
+        pane.add(IDefaults.BOX_CENTER_EXPAND, new ULCFiller())
+        pane.add(IDefaults.BOX_EXPAND_BOTTOM, clearButton)
+        content.add(IDefaults.BOX_RIGHT_EXPAND, pane)
     }
 
     void initComponents() {

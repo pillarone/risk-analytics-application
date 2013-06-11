@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 
 import groovy.mock.interceptor.MockFor
 import org.jfree.chart.JFreeChart
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -62,7 +63,7 @@ class ChartViewModelTests extends GroovyTestCase {
 }
 
 class TestChartViewModel extends ChartViewModel {
-    public TestChartViewModel(String title, SimulationRun simulationRun, List nodes) {
+    public TestChartViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes) {
         super(title, simulationRun, nodes, 0.0)
     }
 

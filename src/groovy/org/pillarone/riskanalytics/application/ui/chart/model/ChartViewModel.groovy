@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 import org.jfree.chart.JFreeChart
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ChartInsetWriter
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
@@ -24,7 +25,7 @@ abstract class ChartViewModel {
     String title
     SimulationRun simulationRun
     List listeners
-    List nodes
+    List<SimpleTableTreeNode> nodes
     boolean dataExportMode
     boolean fireEvents = true
 
@@ -44,9 +45,7 @@ abstract class ChartViewModel {
 
     public ChartViewModel() {}
 
-    public ChartViewModel(String title, SimulationRun simulationRun, List nodes, double insetHeight) {
-
-
+    public ChartViewModel(String title, SimulationRun simulationRun, List<SimpleTableTreeNode> nodes, double insetHeight) {
         this.title = title
         this.simulationRun = simulationRun
         this.nodes = nodes

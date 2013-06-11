@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import groovy.transform.CompileStatic
+
+@CompileStatic
 class PasteError extends Exception {
     List acceptedValues
     def pastedValue

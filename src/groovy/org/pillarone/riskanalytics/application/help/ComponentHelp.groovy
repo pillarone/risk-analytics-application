@@ -1,12 +1,13 @@
 package org.pillarone.riskanalytics.application.help
 
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.components.Component
 
-import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
+@CompileStatic
 public class ComponentHelp {
 
     public static final String DEFAULT_HELP_URL_CONFIG_KEY = "defaultHelpURL"
