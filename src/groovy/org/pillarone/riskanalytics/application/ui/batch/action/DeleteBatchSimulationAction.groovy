@@ -8,7 +8,6 @@ import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-@CompileStatic
 public class DeleteBatchSimulationAction extends BatchSimulationSelectionAction {
 
     public DeleteBatchSimulationAction() {

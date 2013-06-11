@@ -58,8 +58,6 @@ class ExceptionSafe {
 
     static ULCRootPane rootPane = null
 
-    static out = ApplicationHolder.getApplication()?.config?.ExceptionSafeOut instanceof OutputStream ? ApplicationHolder.getApplication().config.ExceptionSafeOut : System.out
-
     static final List IGNORE = [
             /^sun\./,
             /^com\.intellij\./,

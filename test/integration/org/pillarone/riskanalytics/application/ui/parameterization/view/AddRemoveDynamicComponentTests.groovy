@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
 
 import com.ulcjava.base.application.ULCFrame
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+
 import java.awt.event.InputEvent
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
@@ -34,7 +37,11 @@ class AddRemoveDynamicComponentTests extends AbstractSimpleFunctionalTest {
         parameterization.load()
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        frame.setContentPane(new ParameterizationUIItem(mainModel, model, parameterization).createDetailView())
+        ParameterViewModel viewModel = new ParameterViewModel(model, parameterization, ModelStructure.getStructureForModel(ApplicationModel))
+        ParameterView view = new ParameterView(viewModel, mainModel)
+
+        parameterization.addListener(viewModel)
+        frame.setContentPane(view.content)
 
         UIUtils.setRootPane(frame)
         frame.visible = true

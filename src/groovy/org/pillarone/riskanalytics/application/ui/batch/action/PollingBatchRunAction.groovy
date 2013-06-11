@@ -13,7 +13,6 @@ import org.pillarone.riskanalytics.core.simulation.SimulationState
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-@CompileStatic
 class PollingBatchRunAction implements IActionListener {
 
     BatchRunInfoService batchRunInfoService
