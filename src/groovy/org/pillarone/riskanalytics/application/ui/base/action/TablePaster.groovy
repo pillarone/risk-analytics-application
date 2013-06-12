@@ -22,7 +22,7 @@ import com.ulcjava.base.application.ULCAlert
 class TablePaster extends ExceptionSafeAction {
 
     ULCTable table
-    ITableModel model
+    MultiDimensionalParameterTableModel model
     int rowCount
     int columnCount
 
@@ -62,13 +62,13 @@ class TablePaster extends ExceptionSafeAction {
     void pasteContent(String content, int startRow, int startColumn) {
         if (content) {
             withBulkChange(model) {
-                List data = new TableDataParser(columnMapping: getColumnMapping()).parseTableData(content)
+                List data = new TableDataParser(columnMapping: getColumnMapping(startColumn)).parseTableData(content)
                 if (!validate(data, startColumn)) {
                     showAlert(table)
                     return
                 }
-                data.eachWithIndex {line, lineIndex ->
-                    line.eachWithIndex {cellValue, cellIndex ->
+                data.eachWithIndex { line, lineIndex ->
+                    line.eachWithIndex { cellValue, cellIndex ->
                         int colIndex = startColumn + cellIndex
                         int rowIndex = startRow + lineIndex
                         updateTableCount(rowIndex, colIndex)
@@ -82,13 +82,16 @@ class TablePaster extends ExceptionSafeAction {
         }
     }
 
-    private CopyPasteColumnMapping getColumnMapping() {
-        if (model instanceof MultiDimensionalParameterTableModel) {
-            if (model.multiDimensionalParam instanceof ConstrainedMultiDimensionalParameter) {
-                return new ConstraintColumnMapping(constraints: model.multiDimensionalParam.constraints, startColumn: table.selectedColumn - 1)
+    private CopyPasteColumnMapping getColumnMapping(int startColumn) {
+        if (model.multiDimensionalParam instanceof ConstrainedMultiDimensionalParameter) {
+            return new ConstraintColumnMapping(constraints: model.multiDimensionalParam.constraints, startColumn: table.selectedColumn - 1)
+        } else {
+            Map<Integer, Class> mappings = [:]
+            for (int i = 0; i < model.multiDimensionalParam.valueColumnCount; i++) {
+                mappings[i] = model.multiDimensionalParam.getValueAt(model.multiDimensionalParam.titleRowCount, i).class
             }
+            return new ColumnMapping(mappings, startColumn - model.multiDimensionalParam.titleColumnCount - 1)
         }
-        return new DefaultColumnMapping()
     }
 
     private void showAlert(ULCTable table) {
@@ -134,8 +137,8 @@ class TablePaster extends ExceptionSafeAction {
 
     private boolean validate(List data, int startColumn) {
         boolean status = true
-        data.eachWithIndex {line, lineIndex ->
-            line.eachWithIndex {cellValue, cellIndex ->
+        data.eachWithIndex { line, lineIndex ->
+            line.eachWithIndex { cellValue, cellIndex ->
                 int colIndex = startColumn + cellIndex
                 if (colIndex >= columnCount) {
                     status = false

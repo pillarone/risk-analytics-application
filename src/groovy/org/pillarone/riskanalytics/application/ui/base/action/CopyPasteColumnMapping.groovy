@@ -23,5 +23,18 @@ class DefaultColumnMapping implements CopyPasteColumnMapping {
     Class getColumnType(int col) {
         return Object
     }
+}
+class ColumnMapping implements CopyPasteColumnMapping {
+    private Map<Integer, Class> mappings
+    private int offset
 
+    ColumnMapping(Map<Integer,Class> mappings, int offset=0) {
+        this.mappings = mappings
+        this.offset = offset
+    }
+
+    @Override
+    Class getColumnType(int col) {
+        mappings[col]
+    }
 }

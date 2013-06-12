@@ -50,7 +50,7 @@ class TablePasterHelper {
     private Double toDouble(String s) {
         try {
             return NumberUtils.parseNumber(s, Double, NumberFormat.getInstance(locale))
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new CopyPasteException(s, Double)
         }
     }

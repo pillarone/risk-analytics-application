@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import org.pillarone.riskanalytics.application.ui.base.action.ColumnMapping
+import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteException
 import org.pillarone.riskanalytics.application.ui.util.TableDataParser
 import org.pillarone.riskanalytics.application.ui.base.action.DefaultColumnMapping;
 
@@ -39,9 +41,22 @@ class TableDataParserTests extends GroovyTestCase {
 
     void testNumbersWithBlanks() {
         String stringData = " 85.41 "
-        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH, columnMapping: new DefaultColumnMapping())
+        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH, columnMapping: new ColumnMapping([(0): Double]))
         List tableData = parser.parseTableData(stringData)
         assertEquals 85.41, tableData[0][0]
+    }
 
+
+    void testParseNumber() {
+        String stringData = "this is a string but expecting a Double"
+        TableDataParser parser = new TableDataParser(locale: Locale.ENGLISH, columnMapping: new ColumnMapping([(0): Double]))
+        try {
+            List<Double> data = parser.parseTableData("10")
+            assertEquals(10.0d, data[0][0])
+            parser.parseTableData(stringData)
+            fail()
+        } catch (CopyPasteException e) {
+            assertTrue(e.message.contains('expecting Double'))
+        }
     }
 }
