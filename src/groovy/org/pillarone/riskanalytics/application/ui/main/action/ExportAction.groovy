@@ -32,7 +32,7 @@ abstract class ExportAction extends SelectionTreeAction {
     private String fileExtension
     Log LOG = LogFactory.getLog(ExportAction)
 
-    public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title, String fileExtension='xlsx') {
+    public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title, String fileExtension = 'xlsx') {
         super(title, tree, model)
         userPreferences = UserPreferencesFactory.getUserPreferences()
         this.fileExtension = fileExtension
@@ -216,8 +216,12 @@ abstract class ExportAction extends SelectionTreeAction {
         return validateFileName(selectedFile)
     }
 
-    protected String getName(def item){
-        return item.name.replaceAll(getFileSeparator(),'_')
+    protected String getName(def item) {
+        return item.name.replaceAll(escapeIfNeeded(getFileSeparator()), '_')
+    }
+
+    private String escapeIfNeeded(String string) {
+        '\\'.equals(string) ? "\\$string" : string
     }
 
     String getFolderName(int itemCount, filePaths) {
