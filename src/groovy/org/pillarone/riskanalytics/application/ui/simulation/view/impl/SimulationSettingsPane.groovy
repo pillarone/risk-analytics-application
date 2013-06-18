@@ -206,11 +206,11 @@ class SimulationSettingsPane {
         randomSeed.setPreferredSize(dimension)
         randomSeed.enabler = userDefinedRandomSeed
         randomSeed.name = "randomSeed"
-        randomSeed.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
+        randomSeed.dataType = DataTypeFactory.getIntegerDataType()
 
         numberOfIterations = new ULCTextField()
         numberOfIterations.name = "iterations"
-        numberOfIterations.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
+        numberOfIterations.dataType = DataTypeFactory.getIntegerDataType()
 
         model.randomSeedAction.randomSeed = randomSeed
         randomSeed.addValueChangedListener(model.randomSeedAction)

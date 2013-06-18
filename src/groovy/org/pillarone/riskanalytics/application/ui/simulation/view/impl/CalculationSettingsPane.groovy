@@ -29,7 +29,7 @@ class CalculationSettingsPane extends SimulationSettingsPane {
     protected initConfigProperties(ULCBoxPane innerPane) {
         periodCount = new ULCTextField(name: "periodCount")
         periodCount.name = "CalculationSettingsPane.periodCount"
-        periodCount.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
+        periodCount.dataType = DataTypeFactory.getIntegerDataType()
 
         periodCount.addKeyListener([keyTyped: {e ->
             def value = periodCount.value

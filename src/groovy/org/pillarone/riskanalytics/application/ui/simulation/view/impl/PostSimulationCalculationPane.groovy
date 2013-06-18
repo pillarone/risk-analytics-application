@@ -121,7 +121,7 @@ class PostSimulationCalculationPane {
             })
             valueField = new ULCTextField()
             valueField.name = name + "-value"
-            valueField.dataType = DataTypeFactory.getDoubleDataTypeForEdit()
+            valueField.dataType = DataTypeFactory.getDoubleDataType()
             valueField.preferredSize = new Dimension(60, 25)
             removeButton = new ULCButton("Remove")
             removeButton.name = name + "-remove"

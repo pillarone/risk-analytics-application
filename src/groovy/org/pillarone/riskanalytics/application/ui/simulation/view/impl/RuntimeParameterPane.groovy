@@ -60,7 +60,7 @@ class RuntimeParameterPane {
 
         ULCTextField textField = new ULCTextField()
         textField.name = descriptor.propertyName
-        textField.dataType = DataTypeFactory.getIntegerDataTypeForEdit()
+        textField.dataType = DataTypeFactory.getIntegerDataType()
         textField.value = (Integer) getValueFromPrefs(defaultValue, descriptor, { String str -> Integer.parseInt(str) })
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.value
@@ -75,7 +75,7 @@ class RuntimeParameterPane {
 
         ULCTextField textField = new ULCTextField()
         textField.name = descriptor.propertyName
-        textField.dataType = DataTypeFactory.getDoubleDataTypeForEdit()
+        textField.dataType = DataTypeFactory.getDoubleDataType()
         textField.value = (Double) getValueFromPrefs(defaultValue, descriptor, { String str -> Double.parseDouble(str) })
         textField.addValueChangedListener([valueChanged: { evt ->
             descriptor.value = textField.value
