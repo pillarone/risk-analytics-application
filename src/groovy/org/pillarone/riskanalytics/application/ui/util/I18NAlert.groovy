@@ -35,7 +35,7 @@ public class I18NAlert extends ULCAlert {
     protected readValues() {
         title = bundle.getString(key + "." + "title")
         message = bundle.getString(key + "." + "message")
-        message = MessageFormat.format(message as String, args.toArray())
+        message = MessageFormat.format(message as String, args?.toArray())
         firstButtonLabel = bundle.getString(key + "." + "button1Message")
         String secondLabel = bundle.getString(key + "." + "button2Message")
         String thirdLabel = bundle.getString(key + "." + "button3Message")
