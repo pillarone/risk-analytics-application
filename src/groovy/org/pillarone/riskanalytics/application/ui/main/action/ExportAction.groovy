@@ -29,7 +29,7 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
  */
 abstract class ExportAction extends SelectionTreeAction {
     UserPreferences userPreferences
-    private String fileExtension
+    protected String fileExtension = 'xlsx'
     Log LOG = LogFactory.getLog(ExportAction)
 
     public ExportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String title, String fileExtension = 'xlsx') {
