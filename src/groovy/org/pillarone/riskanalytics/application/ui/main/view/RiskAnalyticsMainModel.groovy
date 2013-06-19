@@ -280,4 +280,8 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         }
     }
 
+    boolean isItemOpen(AbstractUIItem item){
+        viewModelsInUse.containsKey(item)
+    }
+
 }
