@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import java.text.MessageFormat
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -13,7 +14,6 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 
 public class I18NUtils {
@@ -226,7 +226,7 @@ public class I18NUtils {
             return testResourceBundle
         }
         try {
-            Class modelClass = ModelStructure.findAllModelClasses().find { it.simpleName == modelName + "Model"}
+            Class modelClass = ModelRegistry.instance.getModelClass(modelName + "Model")
             String packageName = modelClass?.getPackage()?.name
             return LocaleResources.getBundle(packageName + "." + modelName + "ModelResources")
 
