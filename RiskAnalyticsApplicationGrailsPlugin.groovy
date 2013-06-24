@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.application.ULCAwareHibernateListener
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.7-a12"
+    def version = "1.7-b1"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
     // the other plugins this plugin depends on
