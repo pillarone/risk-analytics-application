@@ -1,13 +1,12 @@
+import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
+import org.pillarone.riskanalytics.application.ULCAwareHibernateListener
 import org.pillarone.riskanalytics.application.example.constraint.CopyPasteConstraint
 import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
-import org.pillarone.riskanalytics.core.listener.ModellingItemHibernateListener
-import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
-import org.pillarone.riskanalytics.application.ULCAwareHibernateListener
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.7-b1"
+    def version = "1.7-b2"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
     // the other plugins this plugin depends on

@@ -42,6 +42,7 @@ resultServiceRegistryPort = 1099
 transactionsEnabled = true
 
 serverSessionPrefix = ";jsessionid="
+grails.serverURL = "http://localhost:${System.getProperty("server.port", "8080")}/${appName}"
 
 environments {
     development {
