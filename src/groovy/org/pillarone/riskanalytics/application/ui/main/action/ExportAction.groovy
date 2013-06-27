@@ -104,6 +104,9 @@ abstract class ExportAction extends SelectionTreeAction {
                     exporter.exportResults rawData
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
                     exporter.writeWorkBook stream
+                } catch (IllegalArgumentException iae) {
+                    LOG.error("Export failed: " + iae.message, iae)
+                    showAlert("tooManyRowsError")
                 } catch (Throwable t) {
                     LOG.error("Export failed: " + t.message, t)
                     showAlert("exportError")

@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import org.apache.poi.ss.SpreadsheetVersion
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.ClientAnchor
 import org.apache.poi.ss.usermodel.Comment
@@ -33,7 +34,7 @@ class ExcelExporter {
             Row row = sheet.createRow(i + 1)
             headers.eachWithIndex { String propName, int colNum ->
                 def value = result[propName]
-                if (value != null) addCell(row, colNum, value)
+                if (value != null) addCell(row, colNum, value, result)
             }
         }
     }
@@ -94,7 +95,7 @@ class ExcelExporter {
         workbook.write out
     }
 
-    private Cell addCell(Row row, int col, value) {
+    private Cell addCell(Row row, int col, value, result = [:]) {
         Cell cell = row.createCell(col)
         if (value.getClass() in [double, Double, int, Integer, float, Float]) {
             cell.setCellType Cell.CELL_TYPE_NUMERIC
@@ -105,9 +106,9 @@ class ExcelExporter {
         return cell
     }
 
-    private Cell addCell(Row row, int col, PathMapping value) {
+    private Cell addCell(Row row, int col, PathMapping value, result = [:]) {
         Cell cell = row.createCell(col, Cell.CELL_TYPE_STRING)
-        cell.setCellValue(value.pathName)
+        cell.setCellValue("${value.pathName}:${result['field']}")
         return cell
     }
 }
