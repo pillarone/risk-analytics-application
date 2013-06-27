@@ -99,27 +99,25 @@ abstract class ExportAction extends SelectionTreeAction {
             item.load()
             def simulationRun = item.simulationRun
             List rawData = ResultAccessor.getAllResults(simulationRun)
-            ClientContext.storeFile([prepareFile: { OutputStream stream ->
-                try {
+            try {
+                ClientContext.storeFile([prepareFile: { OutputStream stream ->
                     exporter.exportResults rawData
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
                     exporter.writeWorkBook stream
-                } catch (IllegalArgumentException iae) {
-                    LOG.error("Export failed: " + iae.message, iae)
-                    showAlert("tooManyRowsError")
-                } catch (Throwable t) {
-                    LOG.error("Export failed: " + t.message, t)
-                    showAlert("exportError")
-                } finally {
-                    stream.close()
-                }
-            }, onSuccess: { path, name ->
-            }, onFailure: { reason, description ->
-                if (reason == IFileStoreHandler.FAILED) {
-                    LOG.error description
-                    showAlert("exportError")
-                }
-            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+                }, onSuccess: { path, name ->
+                }, onFailure: { reason, description ->
+                    if (reason == IFileStoreHandler.FAILED) {
+                        LOG.error description
+                        showAlert("exportError")
+                    }
+                }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+            } catch (IllegalArgumentException iae) {
+                LOG.error("Export failed: " + iae.message, iae)
+                showAlert("tooManyRowsError")
+            } catch (Throwable t) {
+                LOG.error("Export failed: " + t.message, t)
+                showAlert("exportError")
+            }
         }
     }
 
@@ -130,24 +128,22 @@ abstract class ExportAction extends SelectionTreeAction {
         IConfigObjectWriter writer = item.getWriter()
         String selectedFile = getFileName(itemCount, filePaths, item)
         LOG.info " selectedFile : $selectedFile "
-        ClientContext.storeFile([prepareFile: { OutputStream stream ->
-            try {
+        try {
+            ClientContext.storeFile([prepareFile: { OutputStream stream ->
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
                 writer.write(getConfigObject(item), bw)
-            } catch (Throwable t) {
-                LOG.error("Export failed: " + t.message, t)
-                showAlert("exportError")
-            } finally {
-                stream.close()
-            }
-        }, onSuccess: { path, name ->
-            LOG.info " $selectedFile exported"
-        }, onFailure: { reason, description ->
-            if (reason == IFileStoreHandler.FAILED) {
-                LOG.error description
-                showAlert("exportError")
-            }
-        }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+            }, onSuccess: { path, name ->
+                LOG.info " $selectedFile exported"
+            }, onFailure: { reason, description ->
+                if (reason == IFileStoreHandler.FAILED) {
+                    LOG.error description
+                    showAlert("exportError")
+                }
+            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+        } catch (Throwable t) {
+            LOG.error("Export failed: " + t.message, t)
+            showAlert("exportError")
+        }
     }
 
 
