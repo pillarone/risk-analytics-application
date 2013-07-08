@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -28,17 +29,10 @@ class FileLoadHandler implements IFileLoadHandler {
     void onSuccess(InputStream[] inputStreams, String[] paths, String[] names) {
         ExceptionSafe.protect {
             UserPreferencesFactory.getUserPreferences().setUserDirectory(UserPreferences.ADD_FILE_DIR, paths[0])
-            String dir = FileConstants.COMMENT_FILE_DIRECTORY
-            names.eachWithIndex {String fileName, int index ->
-                File file = new File(dir + File.separator + fileName)
-                if (file.exists()) {
-                    fileName = getNewFileName(dir, fileName)
-                    file = new File(dir + File.separator + fileName)
-                }
-
-                FileOutputStream outputStream = new FileOutputStream(file)
-                outputStream.write(inputStreams[index].getBytes())
-                newCommentView.fileAdded(fileName)
+            names.eachWithIndex { String fileName, int index ->
+                File file = File.createTempFile(fileName, '',new File(FileConstants.TEMP_FILE_DIRECTORY))
+                file.bytes = inputStreams[index].bytes
+                newCommentView.fileAdded(new CommentFile(fileName,file))
             }
         }
 

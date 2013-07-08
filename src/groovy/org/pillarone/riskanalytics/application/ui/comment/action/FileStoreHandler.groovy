@@ -14,18 +14,17 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
  */
 @CompileStatic
 class FileStoreHandler implements IFileStoreHandler {
-    String fileName
+    byte[] content
     ULCComponent source
     Log LOG = LogFactory.getLog(FileStoreHandler)
 
-    public FileStoreHandler(String fileName, ULCComponent source) {
-        this.fileName = fileName
+    public FileStoreHandler(byte[] content, ULCComponent source) {
+        this.content = content
         this.source = source
     }
 
     void prepareFile(OutputStream outputStream) {
-        FileInputStream fis = new FileInputStream(fileName)
-        outputStream.write fis.getBytes()
+        outputStream.write content
     }
 
     void onSuccess(String filePath, String fileName) {

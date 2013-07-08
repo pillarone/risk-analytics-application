@@ -55,6 +55,7 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
     }
 
     void commentChanged(Comment comment) {
+        item.changed = true
         item.notifyItemChanged()
         changedCommentListeners.each {ChangedCommentListener listener ->
             listener.updateCommentVisualization()

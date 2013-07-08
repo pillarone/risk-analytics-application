@@ -18,6 +18,8 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -25,52 +27,42 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 @CompileStatic
 class DownloadFileAction extends ResourceBasedAction {
 
-    String fileURL
     UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
     ULCComponent source
     boolean open
+    CommentFile commentFile
     Log LOG = LogFactory.getLog(DownloadFileAction)
 
-    public DownloadFileAction(String fileURL, ULCComponent source, boolean open) {
+    public DownloadFileAction(CommentFile commentFile, ULCComponent source, boolean open) {
         super(open ? "DownloadFileAndOpenAction" : "DownloadFileAction")
-        this.fileURL = fileURL
+        this.commentFile = commentFile
         this.source = source
         this.open = open
     }
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        File file = new File(fileURL)
-        if (fileURL != null && file.exists()) {
-            if (open) {
-                ShowDocumentStrategyFactory.getInstance().showDocument(file.name, file.bytes, Magic.getMagicMatch(file, true).getMimeType())
-                return
-            }
-            FileChooserConfig config = new FileChooserConfig()
-            config.dialogTitle = UIUtils.getText(DownloadFileAction, "saveAs")
-            config.dialogType = FileChooserConfig.SAVE_DIALOG
-            config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.ADD_FILE_DIR))
-            config.selectedFile = file.name
-            ClientContext.chooseFile([
-                    onSuccess: {String[] filePaths, fileNames ->
-                        userPreferences.setUserDirectory(UserPreferences.ADD_FILE_DIR, filePaths[0])
-                        File srcFile = new File(fileURL)
-                        File newFile = new File(filePaths[0])
-                        if (!newFile.exists() || newFile.size() != srcFile.size())
-                            ClientContext.storeFile(new FileStoreHandler(fileURL, source), filePaths[0])
-                    },
-                    onFailure: {reason, description ->
-                        if (IFileStoreHandler.CANCELLED != reason) {
-                            LOG.error description
-                            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(source), "importError")
-                            alert.show()
-                        }
-                    }] as IFileChooseHandler, config, null)
-
-        } else {
-            new I18NAlert(UlcUtilities.getWindowAncestor(source), "FileNotExist", [file.name] as List).show()
+        byte[] content = commentFile.content
+        if (open) {
+            ShowDocumentStrategyFactory.getInstance().showDocument(commentFile.filename, content, Magic.getMagicMatch(content, true).getMimeType())
+            return
         }
+        FileChooserConfig config = new FileChooserConfig()
+        config.dialogTitle = UIUtils.getText(DownloadFileAction, "saveAs")
+        config.dialogType = FileChooserConfig.SAVE_DIALOG
+        config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.ADD_FILE_DIR))
+        config.selectedFile = commentFile.filename
+        ClientContext.chooseFile([
+                onSuccess: { String[] filePaths, fileNames ->
+                    userPreferences.setUserDirectory(UserPreferences.ADD_FILE_DIR, filePaths[0])
+                    ClientContext.storeFile(new FileStoreHandler(content, source), filePaths[0], Long.MAX_VALUE, true, false)
+                },
+                onFailure: { reason, description ->
+                    if (IFileStoreHandler.CANCELLED != reason) {
+                        LOG.error description
+                        ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(source), "importError")
+                        alert.show()
+                    }
+                }] as IFileChooseHandler, config, null)
     }
-
-
 }
