@@ -2,6 +2,9 @@ package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCRootPane
+import grails.util.Holders
+import org.pillarone.riskanalytics.core.log.TraceLogManager
+
 import java.text.MessageFormat
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
@@ -85,10 +88,15 @@ class ExceptionSafe {
     }
 
     public static def logException(Exception e, def context) {
+        TraceLogManager traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
+        String userTrace = traceLogManager.trace.join("")
+
         Throwable sanitized = StackTraceUtils.deepSanitize(e)
         def logMessage = "${context.class.name} caused ${sanitized.class.name}: ${sanitized.message}"
         LOG.error(logMessage)
-        LOG.error(niceStackTrace(e))
+        LOG.error("\n" + niceStackTrace(e))
+        LOG.error("**** User log:\n" + userTrace + "****")
+        traceLogManager.clear()
     }
 
 
