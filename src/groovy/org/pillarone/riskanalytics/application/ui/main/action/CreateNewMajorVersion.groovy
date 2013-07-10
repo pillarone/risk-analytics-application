@@ -10,11 +10,15 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CreateNewMajorVersion extends SelectionTreeAction {
+
+    private static Log LOG = LogFactory.getLog(CreateNewMajorVersion)
 
     ModellingUIItem modellingUIItem
 
@@ -36,6 +40,7 @@ class CreateNewMajorVersion extends SelectionTreeAction {
                 if (!uiItem.isLoaded()) {
                     uiItem.load()
                 }
+                LOG.info("Creating new version of ${uiItem.nameAndVersion}")
                 createNewVersion(uiItem, commentText)
             }
             NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)

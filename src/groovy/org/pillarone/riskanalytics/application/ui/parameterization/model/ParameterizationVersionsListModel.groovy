@@ -69,7 +69,6 @@ public class ParameterizationVersionsListModel extends DefaultComboBoxModel {
 
     boolean isValid(String parameterizationName) {
         Parameterization parameterization = parameterizationObjects[parameterizationName]
-        LOG.debug "Name: $parameterizationName All: ${parameterizationObjects.keySet()}"
         return parameterization?.valid
     }
 

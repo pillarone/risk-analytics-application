@@ -58,7 +58,7 @@ class UIItemUtils {
 
             }
         } catch (Exception ex) {
-            LOG.error "$ex"
+            LOG.error("Error deleting depending results: ${ex.message}", ex)
             return false
         }
         return true

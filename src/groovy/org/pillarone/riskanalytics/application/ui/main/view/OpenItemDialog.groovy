@@ -3,23 +3,26 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
-import org.pillarone.riskanalytics.core.simulation.item.Resource
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class OpenItemDialog {
+
+    private static final Log LOG = LogFactory.getLog(OpenItemDialog)
+
     private ULCWindow parent
     ULCTableTree tree
     Model model
@@ -99,11 +102,13 @@ class OpenItemDialog {
             closeAction.call()
             if (!modellingUIItem.isLoaded())
                 modellingUIItem.load()
+            LOG.info("Opening ${modellingUIItem.nameAndVersion} read-only.")
             mainModel.notifyOpenDetailView(model, modellingUIItem)
         }] as IActionListener)
 
         deleteDependingResultsButton.addActionListener([actionPerformed: {ActionEvent event ->
             closeAction.call()
+            LOG.info("Deleting depending results of ${modellingUIItem.nameAndVersion}")
             if (modellingUIItem.deleteDependingResults(model)) {
                 mainModel.openItem(model, modellingUIItem)
             } else {
@@ -112,6 +117,7 @@ class OpenItemDialog {
         }] as IActionListener)
 
         cancelButton.addActionListener([actionPerformed: {ActionEvent event ->
+            LOG.info("Open item action cancelled")
             closeAction.call()
         }] as IActionListener)
     }
