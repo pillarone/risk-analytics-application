@@ -87,7 +87,7 @@ class ModellingItemSearchService {
             for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
                 indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResultConfiguration(dao)))
             }
-            for (SimulationRun dao in SimulationRun.list().findAll { ! it.toBeDeleted }) {
+            for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
                 indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
             }
         } finally {
@@ -138,6 +138,10 @@ class ModellingItemSearchService {
 
     protected IndexWriter createIndexWriter(boolean create) {
         return new IndexWriter(directory, analyzer, create, MaxFieldLength.UNLIMITED)
+    }
+
+    List<ModellingItem> getAllItems(){
+        search("*")
     }
 
     synchronized List<ModellingItem> search(String queryString) {
