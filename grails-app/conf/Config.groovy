@@ -6,6 +6,8 @@ import org.pillarone.riskanalytics.application.logging.model.LoggingAppender
 import org.pillarone.riskanalytics.core.example.component.ExampleResource
 import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
 import org.pillarone.riskanalytics.core.simulation.engine.grid.mapping.OneNodeStrategy
+import org.apache.log4j.PatternLayout
+import org.pillarone.riskanalytics.core.log.TraceAppender
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
@@ -61,6 +63,10 @@ environments {
                 loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
                 appender loggingAppender
 
+                TraceAppender traceAppender = new TraceAppender(name: "traceAppender")
+                traceAppender.layout = new PatternLayout("[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %-5p %c{1} %m%n")
+                appender traceAppender
+
             }
             root {
                 error()
@@ -72,18 +78,18 @@ environments {
             ]
 
             def debugPackages = [
-                    'org.pillarone.riskanalytics.core.fileimport',
-                    'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
-                    'org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedTableTreeModel'
+                    'org.pillarone.riskanalytics.core.fileimport'
             ]
 
             info(
+                    traceAppender: infoPackages,
                     application: infoPackages,
                     stdout: infoPackages,
                     additivity: false
             )
 
             debug(
+                    traceAppender: ['org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem', 'org.pillarone.riskanalytics.application.ui.parameterization.model'],
                     application: debugPackages,
                     stdout: debugPackages,
                     additivity: false
