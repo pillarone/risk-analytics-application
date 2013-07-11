@@ -128,6 +128,7 @@ public class I18NUtils {
     public static String findComponentDisplayNameInModelBundle(String componentPath, String toolTip = "") {
         String name = null
         String modelName = componentPath[0..(componentPath.indexOf(":") - 1)]
+        modelName = "models.${modelName.toLowerCase()}.$modelName"
         String componentSubPath = componentPath[(componentPath.indexOf(":") + 1)..(componentPath.length() - 1)]
         componentSubPath = componentSubPath.replaceAll(":", ".")
         try {
@@ -221,14 +222,15 @@ public class I18NUtils {
         return bundle
     }
 
-    protected static ResourceBundle getModelResourceBundle(String modelName) {
+    private static ResourceBundle getModelResourceBundle(String modelName) {
         if (testMode) {
             return testResourceBundle
         }
         try {
             Class modelClass = ModelRegistry.instance.getModelClass(modelName + "Model")
-            String packageName = modelClass?.getPackage()?.name
-            return LocaleResources.getBundle(packageName + "." + modelName + "ModelResources")
+            String packageName = modelClass?.package?.name
+            String simpleName = modelClass?.simpleName
+            return LocaleResources.getBundle(packageName + "." + simpleName + "Resources")
 
         } catch (Exception e) {
             return LocaleResources.getBundle(MODEL_PACKAGE + modelName[0].toLowerCase() + modelName[1..(modelName.length() - 1)] + "." + modelName + "ModelResources")
@@ -237,7 +239,7 @@ public class I18NUtils {
 
     public static String getResultStructureString(Class model, String property, String tooltip = "") {
         try {
-            ResourceBundle bundle = getModelResourceBundle(model.simpleName - "Model")
+            ResourceBundle bundle = getModelResourceBundle(model.name - "Model")
             return bundle.getString(property + tooltip)
         } catch (MissingResourceException e) {
             return formatDisplayName(property)
