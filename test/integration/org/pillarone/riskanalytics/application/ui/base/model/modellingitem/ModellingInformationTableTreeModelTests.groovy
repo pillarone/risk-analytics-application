@@ -106,7 +106,7 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 
         assertEquals '12', v12Node.abstractUIItem.item.versionNumber.toString()
 
-        dao.name = "Parametrization Y"
+        dao.status = Status.IN_REVIEW
         dao.save(flush: true)
         model.updateTreeStructure(session)
 
