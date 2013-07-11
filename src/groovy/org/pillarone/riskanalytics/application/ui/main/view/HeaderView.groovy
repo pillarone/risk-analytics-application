@@ -55,6 +55,7 @@ class HeaderView extends AbstractView {
     ULCMenuItem exitItem
     ULCMenu helpMenu
     ULCMenuItem aboutItem
+    ULCMenuItem traceLogItem
     ULCMenuItem settingsMenu
     ULCButtonGroup windowMenuItemGroup
     ULCButtonGroup extensionMenuItemGroup
@@ -129,6 +130,9 @@ class HeaderView extends AbstractView {
         aboutItem = new ULCMenuItem(UIUtils.getText(HeaderView, "About"))
         aboutItem.mnemonic = 'A'
 
+        traceLogItem = new ULCMenuItem(UIUtils.getText(HeaderView, "Log"))
+        traceLogItem.mnemonic = 'L'
+
         settingsMenu = new ULCMenuItem(UIUtils.getText(HeaderView, "Settings"))
 
         windowMenu = new ULCMenu(UIUtils.getText(HeaderView, "Window"))
@@ -181,6 +185,9 @@ class HeaderView extends AbstractView {
 
         aboutItem.addActionListener([actionPerformed: {event ->  new AboutDialog(UlcUtilities.getWindowAncestor(content)).visible = true}] as IActionListener)
         helpMenu.add(aboutItem)
+
+        traceLogItem.addActionListener([actionPerformed: {event ->  new UserTraceDialog(UlcUtilities.getWindowAncestor(content)).dialog.visible = true}] as IActionListener)
+        helpMenu.add(traceLogItem)
 
         settingsMenu.addActionListener([actionPerformed: {event ->
             new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content)).visible = true

@@ -2,6 +2,9 @@ package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCRootPane
+import grails.util.Holders
+import org.pillarone.riskanalytics.core.log.TraceLogManager
+
 import java.text.MessageFormat
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.ApplicationHolder
@@ -9,6 +12,9 @@ import org.codehaus.groovy.runtime.StackTraceUtils
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationError
 import org.pillarone.riskanalytics.core.workflow.WorkflowException
 import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteException
+import org.pillarone.riskanalytics.core.user.UserManagement
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.core.FileConstants
 
 /**
  * Convenience class to allow easy use of protect  {}  for centralized Exception handling.
@@ -85,10 +91,28 @@ class ExceptionSafe {
     }
 
     public static def logException(Exception e, def context) {
+        saveError(e)
+
         Throwable sanitized = StackTraceUtils.deepSanitize(e)
         def logMessage = "${context.class.name} caused ${sanitized.class.name}: ${sanitized.message}"
         LOG.error(logMessage)
-        LOG.error(niceStackTrace(e))
+        LOG.error("\n" + niceStackTrace(e))
+    }
+
+    public static void saveError(Exception e) {
+        String user = UserManagement.currentUser?.username ?: "local"
+
+        String filename = "error-" + user + "-${System.currentTimeMillis()}.log"
+
+        StringBuilder text = new StringBuilder("Stack trace:\n\n")
+        text.append(niceStackTrace(e)).append("\n\n\nLog:\n\n")
+
+        TraceLogManager traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
+        text.append(traceLogManager.trace.join(""))
+        traceLogManager.clear()
+
+        File file = new File(FileConstants.LOG_DIRECTORY + "/" + filename)
+        file.text = text.toString()
     }
 
 

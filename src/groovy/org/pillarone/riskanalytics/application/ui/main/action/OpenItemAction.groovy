@@ -44,8 +44,10 @@ class OpenItemAction extends SelectionTreeAction {
                 item.daoClass.withTransaction {status ->
                     boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
                     if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
+                        LOG.info("Opening parameterization ${parameterizationUIItem.nameAndVersion}")
                         this.model.openItem(selectedModel, parameterizationUIItem)
                     } else {
+                        LOG.info("Parameterization ${parameterizationUIItem.nameAndVersion} cannot be edited.")
                         showOpenItemDialog(selectedModel, parameterizationUIItem)
                     }
                 }

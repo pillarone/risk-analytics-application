@@ -39,14 +39,15 @@ class SaveAction extends ResourceBasedAction {
 
 
     public void doActionPerformed(ActionEvent event) {
-        LOG.info("Saving. current item: ${currentItem}. model.currentItem: ${model.currentItem}")
         save(currentItem ? currentItem : model.currentItem)
     }
 
     void save(AbstractUIItem abstractUIItem) {
         if (isChangedAndNotUsed(abstractUIItem)) {
+            LOG.info("Saving ${abstractUIItem.nameAndVersion}.")
             saveItem(abstractUIItem)
         } else {
+            LOG.info("Cannot save ${abstractUIItem.nameAndVersion} because it already used in a simulation.")
             I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(parent), "SaveItemAlreadyUsed")
             alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert, abstractUIItem)}] as IWindowListener)
             alert.show()
@@ -67,15 +68,19 @@ class SaveAction extends ResourceBasedAction {
 
         synchronized (modellingUIItem) {
             if (alert.value.equals(alert.firstButtonLabel)) {
+                LOG.info("Saving changes of ${modellingUIItem.nameAndVersion} into a new version.")
                 handleNewVersion(getItemModel(modellingUIItem), modellingUIItem) //PMO-2054
             } else if (alert.value.equals(alert.secondButtonLabel)) {
                 boolean deleted = modellingUIItem.deleteDependingResults(getItemModel(modellingUIItem))
                 if (deleted) {
+                    LOG.info("Deleting depending results of ${modellingUIItem.nameAndVersion} before saving.")
                     saveItem(modellingUIItem)
                 } else {
                     String errorKey = UIItemUtils.isUsedInRunningSimulation(modellingUIItem.item) ? "DeleteAllDependentRunningsError" : "DeleteAllDependentRunsError"
                     new I18NAlert(UlcUtilities.getWindowAncestor(parent), errorKey).show()
                 }
+            } else {
+                LOG.info("Save aborted.")
             }
         }
     }

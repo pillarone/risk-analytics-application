@@ -8,11 +8,13 @@ import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.shared.IWindowConstants
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.log.TraceLogManager
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
@@ -33,6 +35,7 @@ class P1RATApplication extends Application {
     public static boolean CLOSE_WINDOW = false
 
     ModellingItemSearchService searchService
+    TraceLogManager traceLogManager
 
     protected void startup() {
         ClientContext.sendMessage("hideSplash");
@@ -44,9 +47,11 @@ class P1RATApplication extends Application {
                 UserContext.setUserTimeZone(TimeZone.getTimeZone("UTC"))
             }
         }
-        searchService = ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
+        searchService = Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService)
+        traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
         initMainView()
         searchService.registerSession(ULCSession.currentSession())
+        traceLogManager.activateLogging()
     }
 
     public void initMainView() {
@@ -75,8 +80,11 @@ class P1RATApplication extends Application {
     private void handleEvent(WindowEvent e) {
         searchService.unregisterSession(ULCSession.currentSession())
         ModelRegistry.instance.removeListener(mainModel)
+        traceLogManager.deactivateLogging()
         ExitAction.terminate()
     }
+
+
 
 
 }

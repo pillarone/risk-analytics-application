@@ -4,14 +4,11 @@ import com.canoo.ulc.community.locale.server.ULCClientTimeZoneSetter
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCCardPane
-import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCRootPane
-import com.ulcjava.base.application.border.ULCAbstractBorder
 import com.ulcjava.base.application.util.BorderedComponentUtilities
 import com.ulcjava.base.shared.IDefaults
 import com.ulcjava.container.grails.UlcViewFactory
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -22,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainVie
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import com.ulcjava.applicationframework.application.ApplicationContext
+import org.pillarone.riskanalytics.core.log.TraceLogManager
 
 //used for Applet & JNLP (but not standalone)
 @CompileStatic
@@ -30,6 +28,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     private Log LOG = LogFactory.getLog(P1RATViewFactory)
 
     ModellingItemSearchService searchService
+    TraceLogManager traceLogManager
 
     public ULCRootPane create(ApplicationContext applicationContext) {
         LOG.info "Started session for user '${UserContext.currentUser?.username}'"
@@ -40,6 +39,8 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         }
         //TODO: re-enable when it's actually used, otherwise it will initialize here and delay the first startup after re-deploymemt
 //        searchService = ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
+        traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
+        traceLogManager.activateLogging()
 
         UserContext.setUserTimeZone(ClientContext.timeZone)
         ULCClientTimeZoneSetter.setDefaultTimeZone(TimeZone.getTimeZone("UTC"))
@@ -62,6 +63,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     void stop() {
 //        searchService.unregisterSession(ULCSession.currentSession())
+        traceLogManager.deactivateLogging()
     }
 
 }
