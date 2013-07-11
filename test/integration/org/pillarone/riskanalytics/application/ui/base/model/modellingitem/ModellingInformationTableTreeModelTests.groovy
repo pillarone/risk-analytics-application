@@ -109,7 +109,6 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         dao.status = Status.IN_REVIEW
         dao.save(flush: true)
         model.updateTreeStructure(session)
-
-        printTree()
+        assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
     }
 }
