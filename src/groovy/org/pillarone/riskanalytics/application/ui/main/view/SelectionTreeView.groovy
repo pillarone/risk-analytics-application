@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -13,6 +14,7 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.server.ULCSession
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
@@ -28,6 +30,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
+    ULCPollingTimer treeSyncTimer
     RiskAnalyticsMainModel mainModel
     AbstractTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
@@ -40,12 +43,17 @@ class SelectionTreeView {
         initComponents()
         layoutComponents()
         attachListeners()
+        treeSyncTimer.start()
     }
 
 
     protected void initComponents() {
         content = new ULCBoxPane()
         content.name = "treeViewContent"
+        treeSyncTimer = new ULCPollingTimer(2000, [
+                actionPerformed: { evt ->
+                    navigationTableTreeModel.updateTreeStructure(ULCSession.currentSession())
+                }] as IActionListener)
     }
 
     private void layoutComponents() {
@@ -78,7 +86,7 @@ class SelectionTreeView {
         tree.viewPortTableTree.setRootVisible(false);
         tree.viewPortTableTree.showsRootHandles = true
 
-        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
+        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex { ULCTableTreeColumn it, int index ->
             it.setHeaderRenderer(new CenteredHeaderRenderer())
             //todo ART-206 add filter dialog
             //            it.setHeaderRenderer(new FilteredCenteredHeaderRenderer())
@@ -86,7 +94,7 @@ class SelectionTreeView {
 
         MainSelectionTableTreeCellRenderer renderer = getPopUpRenderer(tree)
 
-        tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
+        tree.rowHeaderTableTree.columnModel.getColumns().each { ULCTableTreeColumn it ->
             it.setCellRenderer(renderer)
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
@@ -99,7 +107,7 @@ class SelectionTreeView {
         tree.rowHeaderTableTree.getSelectionModel().setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([navigationTableTreeModel.root] as Object[])] as TreePath[], false);
-        tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
+        tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: { ActionEvent event ->
             ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
             int columnIndex = navigationTableTreeModel.getColumnIndex(column.getModelIndex())
             // if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
