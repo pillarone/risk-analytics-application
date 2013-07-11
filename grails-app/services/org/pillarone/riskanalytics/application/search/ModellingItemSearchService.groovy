@@ -114,7 +114,6 @@ class ModellingItemSearchService {
     private Parameterization toParameterization(ParameterizationDAO dao) {
         Parameterization parameterization = new Parameterization(dao.name, getClass().getClassLoader().loadClass(dao.modelClassName))
         parameterization.versionNumber = new VersionNumber(dao.itemVersion)
-        parameterization.status = dao.status
         parameterization.load(false)
 
         return parameterization
