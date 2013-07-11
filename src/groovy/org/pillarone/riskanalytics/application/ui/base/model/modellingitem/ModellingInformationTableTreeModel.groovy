@@ -4,14 +4,17 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.server.ULCSession
-import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
@@ -21,15 +24,25 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     ModellingItemSearchService service = ModellingItemSearchService.getInstance()
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
+    RiskAnalyticsMainModel mainModel
     Map columnValues = [:]
 
+    public static int NAME = 0
+    public static int STATE = 1
+    public static int TAGS = 2
+    public static int TRANSACTION_NAME = 3
+    public static int OWNER = 4
+    public static int LAST_UPDATER = 5
+    public static int CREATION_DATE = 6
+    public static int LAST_MODIFICATION_DATE = 7
 
-    final int columnCount = columnNames.size()
+    int columnCount = columnNames.size()
 
-    ModellingInformationTableTreeModel() {
+    ModellingInformationTableTreeModel(RiskAnalyticsMainModel mainModel) {
+        this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         List<ModellingItem> modellingItems = service.getAllItems()
-        builder = new ModellingInformationTableTreeBuilder(this)
+        builder = new ModellingInformationTableTreeBuilder(this,mainModel)
         builder.buildTreeNodes(modellingItems)
         root = builder.root
     }
@@ -42,6 +55,36 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
         return ""
     }
+
+    public def addNodeForItem(Model model) {
+        builder.addNodeForItem model
+    }
+
+    public void addNodeForItem(Object item) {
+        builder.addNodeForItem(item)
+    }
+
+    public static ModellingInformationTableTreeModel getInstance(RiskAnalyticsMainModel mainModel) {
+        if (UserContext.hasCurrentUser()) {
+            return new ModellingInformationTableTreeModel(mainModel)
+        } else {
+            return new StandaloneTableTreeModel(mainModel)
+        }
+    }
+
+    public String getColumnName(int i) {
+        return UIUtils.getText(ModellingInformationTableTreeModel.class, this.columnNames[getColumnIndex(i)])
+    }
+
+    public String getColumnFilterName(int i) {
+        return UIUtils.getText(ModellingInformationTableTreeModel.class, this.columnNames[i])
+    }
+
+    protected int getColumnIndex(int column) {
+        return column
+    }
+
+
 
     public Object getChild(Object parent, int index) {
         return parent.getChildAt(index)

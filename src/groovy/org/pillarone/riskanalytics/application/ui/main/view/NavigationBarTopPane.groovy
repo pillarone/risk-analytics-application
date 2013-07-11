@@ -10,6 +10,7 @@ import com.ulcjava.base.application.util.KeyStroke
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilterFactory
@@ -17,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusL
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -29,6 +31,7 @@ class NavigationBarTopPane {
     ULCButton clearButton
     ULCLabel noResults
     ModellingItemSearchBean searchBean
+    ModellingItemSearchService modellingItemSearchService = ModellingItemSearchService.getInstance()
     AbstractTableTreeModel tableTreeModel
     Log LOG = LogFactory.getLog(NavigationBarTopPane)
 
@@ -36,7 +39,8 @@ class NavigationBarTopPane {
         this.toolBar = toolBar
         this.searchBean = new ModellingItemSearchBean()
         this.tableTreeModel = tableTreeModel
-        this.tableTreeModel?.addChangeIndexerListener(this.searchBean)
+        //TODO (PMO-2534) this is not required at the end.
+//        this.tableTreeModel?.addChangeIndexerListener(this.searchBean)
     }
 
     public void init() {
@@ -100,7 +104,8 @@ class NavigationBarTopPane {
             if (text) {
                 List<String> results = []
                 try {
-                    results = searchBean.performSearch(text)
+                    List<ModellingItem> search = modellingItemSearchService.search("*$text*")
+//                    results = searchBean.performSearch(text)
                 } catch (Exception ex) {
                     LOG.error "${ex}"
                     results = []
@@ -110,7 +115,7 @@ class NavigationBarTopPane {
                     results = ["no_result_found"]
                     isNoResult = true
                 }
-                ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter(results)
+                ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter(sea)
                 tableTreeModel.applyFilter(filter)
                 noResults.setText(isNoResult ? UIUtils.getText(this.class, "noResults") : "")
             }
