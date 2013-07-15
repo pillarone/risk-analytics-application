@@ -319,6 +319,7 @@ class ModellingInformationTableTreeBuilder {
 
     public def addNodeForItem(ModellingItem modellingItem) {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
+        modellingUIItem.load(false)
         return addNodeForItem(modellingUIItem)
     }
 
@@ -329,6 +330,10 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(ModellingItem item) {
         ITableTreeNode itemGroupNode = findGroupNode(item, findModelNode(root, item))
+        itemNodeChanged(itemGroupNode,item)
+    }
+
+    private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item){
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
         itemNode.abstractUIItem.load(false)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
@@ -336,8 +341,7 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(Resource item) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), item.modelClass)
-        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, item)
-        model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+        itemNodeChanged(itemGroupNode, item)
     }
 
     public void removeAllGroupNodeChildren(ItemGroupNode groupNode) {
