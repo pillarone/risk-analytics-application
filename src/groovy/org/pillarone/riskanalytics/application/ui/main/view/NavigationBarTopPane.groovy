@@ -1,28 +1,29 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilterFactory
+import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class NavigationBarTopPane {
     ULCToolBar toolBar
     ULCToggleButton myStuffButton
@@ -32,15 +33,13 @@ class NavigationBarTopPane {
     ULCLabel noResults
     ModellingItemSearchBean searchBean
     ModellingItemSearchService modellingItemSearchService = ModellingItemSearchService.getInstance()
-    AbstractTableTreeModel tableTreeModel
+    MultiFilteringTableTreeModel tableTreeModel
     Log LOG = LogFactory.getLog(NavigationBarTopPane)
 
-    public NavigationBarTopPane(ULCToolBar toolBar, AbstractTableTreeModel tableTreeModel) {
+    public NavigationBarTopPane(ULCToolBar toolBar, MultiFilteringTableTreeModel tableTreeModel) {
         this.toolBar = toolBar
         this.searchBean = new ModellingItemSearchBean()
         this.tableTreeModel = tableTreeModel
-        //TODO (PMO-2534) this is not required at the end.
-//        this.tableTreeModel?.addChangeIndexerListener(this.searchBean)
     }
 
     public void init() {
@@ -89,8 +88,7 @@ class NavigationBarTopPane {
 
     protected void attachListeners() {
         myStuffButton.addActionListener([actionPerformed: {ActionEvent event ->
-            ModellingItemNodeFilter filter = null
-            String loggedUser = getLoggedUser()
+            ModellingItemNodeFilter filter
             if (loggedUser && myStuffButton.isSelected()) {
                 filter = new ModellingItemNodeFilter([loggedUser], ModellingInformationTableTreeModel.OWNER)
             } else {
@@ -99,13 +97,12 @@ class NavigationBarTopPane {
             tableTreeModel?.applyFilter(filter)
         }] as IActionListener)
         searchTextField.addFocusListener(new TextFieldFocusListener(searchTextField))
-        Closure searchClosure = {ActionEvent event ->
+        Closure searchClosure = {
             String text = searchTextField.getText()
             if (text) {
-                List<String> results = []
+                List results
                 try {
-                    List<ModellingItem> search = modellingItemSearchService.search("*$text*")
-//                    results = searchBean.performSearch(text)
+                    results  = modellingItemSearchService.search("*$text*").collect{ModellingItem item -> item.nameAndVersion}
                 } catch (Exception ex) {
                     LOG.error "${ex}"
                     results = []
@@ -115,18 +112,19 @@ class NavigationBarTopPane {
                     results = ["no_result_found"]
                     isNoResult = true
                 }
-                ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter(sea)
+                ModellingItemNodeFilter filter = new ModellingItemNodeFilter(results, ModellingInformationTableTreeModel.NAME)
+
                 tableTreeModel.applyFilter(filter)
                 noResults.setText(isNoResult ? UIUtils.getText(this.class, "noResults") : "")
             }
         }
-        IActionListener action = [actionPerformed: {e -> searchClosure.call()}] as IActionListener
+        IActionListener action = [actionPerformed: {ActionEvent e -> searchClosure.call()}] as IActionListener
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
         searchTextField.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
         clearButton.addActionListener([actionPerformed: {ActionEvent event ->
             searchTextField.setText(UIUtils.getText(this.class, "searchText"))
             searchTextField.setForeground Color.gray
-            ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter([])
+            ModellingItemNodeFilter filter = new ModellingItemNodeFilter([], ModellingInformationTableTreeModel.NAME)
             tableTreeModel?.applyFilter(filter)
             noResults.setText("")
             myStuffButton.setSelected false
@@ -134,7 +132,7 @@ class NavigationBarTopPane {
         }] as IActionListener)
     }
 
-    protected String getLoggedUser() {
+    private static String getLoggedUser() {
         return UserContext.getCurrentUser()?.getUsername()
     }
 
