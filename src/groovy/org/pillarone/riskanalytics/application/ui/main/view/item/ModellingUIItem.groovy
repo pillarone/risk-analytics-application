@@ -126,7 +126,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         mainModel.fireModelChanged()
         mainModel.fireModelItemChanged()
-        navigationTableTreeModel.itemChanged(item)
     }
 
 
@@ -175,7 +174,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     @Override
     String getNameAndVersion() {
-        return getName() + (versionable ? " v" + item.versionNumber.toString() : "")
+        return item.nameAndVersion
     }
 
 
