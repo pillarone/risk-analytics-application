@@ -74,20 +74,24 @@ abstract class DocumentFactory {
         String name = document.getField(NAME_FIELD).stringValue()
         Class modelClass = DocumentFactory.getClassLoader().loadClass(document.getField(MODEL_CLASS_FIELD).stringValue())
         switch (itemType) {
+            //TODO (PMO-2441) put all fields for table tree into index to avoid item loading.
             case ItemType.PARAMETERIZATION:
                 VersionNumber versionNumber = new VersionNumber(document.getField(VERSION_FIELD).stringValue())
                 Parameterization parameterization = new Parameterization(name, modelClass)
                 parameterization.versionNumber = versionNumber
+                parameterization.load(false)
                 return parameterization
             case ItemType.RESULT_CONFIGURATION:
                 VersionNumber versionNumber = new VersionNumber(document.getField(VERSION_FIELD).stringValue())
                 ResultConfiguration resultConfiguration = new ResultConfiguration(name)
                 resultConfiguration.modelClass = modelClass
                 resultConfiguration.versionNumber = versionNumber
+                resultConfiguration.load(false)
                 return resultConfiguration
             case ItemType.RESULT:
                 Simulation simulation = new Simulation(name)
                 simulation.modelClass = modelClass
+                simulation.load(false)
                 return simulation
 
         }
