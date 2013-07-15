@@ -189,6 +189,12 @@ class ModellingItemSearchService {
         indexSearcher = new IndexSearcher(directory, true)
     }
 
+    private void updateModellingItemInIndex(ModellingItem item) {
+        //TODO (PMO-2441) e.g. needed in case of changing tags.
+
+    }
+
+
     public static ModellingItemSearchService getInstance() {
         return ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
     }
@@ -210,6 +216,7 @@ class ModellingItemSearchService {
         }
 
         void modellingItemChanged(ModellingItem item) {
+            updateModellingItemInIndex(item)
             for (List<ModellingItemEventType> list in queue.values()) {
                 list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
             }
