@@ -28,7 +28,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
 
     Map<AbstractUIItem, Object> viewModelsInUse
-    AbstractTableTreeModel navigationTableTreeModel
+    MultiFilteringTableTreeModel navigationTableTreeModel
     def switchActions = []
     private List<IRiskAnalyticsModelListener> modelListeners = []
     private List<BatchTableListener> batchTableListeners = []
