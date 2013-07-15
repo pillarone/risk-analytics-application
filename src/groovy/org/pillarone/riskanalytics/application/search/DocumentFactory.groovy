@@ -6,6 +6,7 @@ import org.apache.lucene.document.Field.Index
 import org.apache.lucene.document.Field.Store
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
@@ -36,6 +37,17 @@ abstract class DocumentFactory {
 
     private static Document doCreateDocument(ModellingItem item) {
         throw new IllegalArgumentException("Modelling item type ${item.class} not supported in search index.")
+    }
+
+    private static Document doCreateDocument(Resource item) {
+        Document document = new Document()
+        document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
+        document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
+        document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
+        document.add(new Field(ITEM_TYPE_FIELD, ItemType.RESOURCE.toString(), Store.YES, Index.ANALYZED))
+        document.add(new Field(TAGS_FIELD, item.tags*.name.join(" "), Store.NO, Index.ANALYZED))
+
+        return document
     }
 
     private static Document doCreateDocument(Parameterization parameterization) {
@@ -93,11 +105,16 @@ abstract class DocumentFactory {
                 simulation.modelClass = modelClass
                 simulation.load(false)
                 return simulation
+            case ItemType.RESOURCE:
+                Resource resource = new Resource(name, modelClass)
+                resource.versionNumber = new VersionNumber(document.getField(VERSION_FIELD).stringValue())
+                resource.load(false)
+                return resource
 
         }
     }
 
     public static enum ItemType {
-        PARAMETERIZATION, RESULT_CONFIGURATION, RESULT
+        PARAMETERIZATION, RESULT_CONFIGURATION, RESULT, RESOURCE
     }
 }

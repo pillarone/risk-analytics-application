@@ -52,7 +52,6 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
                     dialog.hide()
 
                     ResourceUIItem resourceUIItem = new ResourceUIItem(model, null, resource)
-                    model.navigationTableTreeModel.addNodeForItem(resourceUIItem)
                     model.fireModelChanged()
                     resourceUIItem.load(true)
                     model.notifyOpenDetailView(null, resourceUIItem)

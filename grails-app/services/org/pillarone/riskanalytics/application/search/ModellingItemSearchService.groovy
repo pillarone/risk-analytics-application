@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.search
 
 import com.ulcjava.base.server.ULCSession
+import org.pillarone.riskanalytics.core.ResourceDAO
+
 import java.util.concurrent.ConcurrentHashMap
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -90,6 +92,9 @@ class ModellingItemSearchService {
             for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
                 indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
             }
+            for (ResourceDAO dao in ResourceDAO.list()) {
+                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResource(dao)))
+            }
         } finally {
             indexWriter.close()
         }
@@ -117,6 +122,14 @@ class ModellingItemSearchService {
         parameterization.load(false)
 
         return parameterization
+    }
+
+    private Resource toResource(ResourceDAO dao) {
+        Resource resource = new Resource(dao.name, getClass().getClassLoader().loadClass(dao.resourceClassName))
+        resource.versionNumber = new VersionNumber(dao.itemVersion)
+        resource.load(false)
+
+        return resource
     }
 
     private ResultConfiguration toResultConfiguration(ResultConfigurationDAO dao) {

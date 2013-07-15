@@ -86,7 +86,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
             ModellingUIItem openedItem = mainModel.getAbstractUIItem(item)
             if (openedItem)
                 mainModel.closeItem(model, openedItem)
-            navigationTableTreeModel.removeNodeForItem(this)
             ModellingItemFactory.remove(item)
             mainModel.fireModelChanged()
             if (item instanceof Simulation) mainModel.fireRowDeleted(item)
