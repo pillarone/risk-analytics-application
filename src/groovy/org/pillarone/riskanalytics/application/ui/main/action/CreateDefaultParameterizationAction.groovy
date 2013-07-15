@@ -51,7 +51,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     dialog.hide()
 
                     ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(model, null, param)
-                    //TODO (PMO-2534) use polling timer
+                    //TODO (PMO-2441) use polling timer
                     model.navigationTableTreeModel.addNodeForItem(parameterizationUIItem)
                     model.fireModelChanged()
                     parameterizationUIItem.load(true)
