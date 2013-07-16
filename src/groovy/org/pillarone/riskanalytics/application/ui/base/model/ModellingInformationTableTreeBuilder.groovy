@@ -7,28 +7,29 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
+import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
-import org.pillarone.riskanalytics.core.workflow.Status
-import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
-import org.pillarone.riskanalytics.application.ui.main.view.item.*
-import org.pillarone.riskanalytics.core.simulation.item.*
-import org.springframework.core.type.filter.AssignableTypeFilter
 import org.pillarone.riskanalytics.core.components.IResource
-import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.pillarone.riskanalytics.core.util.ClassPathScanner
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.core.util.ClassPathScanner
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.springframework.core.type.filter.AssignableTypeFilter
+
+import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -73,16 +74,30 @@ class ModellingInformationTableTreeBuilder {
             DefaultMutableTableTreeNode parametrisationsNode = modelNode.getChildAt(PARAMETERIZATION_NODE_INDEX)
             DefaultMutableTableTreeNode resultConfigurationsNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
             DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
-            addToNode(parametrisationsNode,groupedItems[Parameterization.name])
-            addToNode(resultConfigurationsNode,groupedItems[ResultConfiguration.name])
-            addToNode(simulationsNode,groupedItems[Simulation.name])
+            addToNode(parametrisationsNode, groupedItems[Parameterization.name])
+            addToNode(resultConfigurationsNode, groupedItems[ResultConfiguration.name])
+            addSimulationsToNode(modelClass, simulationsNode)
             root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
         }
 
     }
 
+    private void addSimulationsToNode(Class<Model> modelClass, DefaultMutableTableTreeNode simulationsNode) {
+        List simulationsForModel = getItemsForModel(modelClass, Simulation)
+        if (simulationsForModel.size() == 0) {
+            simulationsNode.leaf = true
+        }
+        simulationsForModel.each {
+            try {
+                simulationsNode.add(createNode(it))
+            } catch (Throwable t) {
+                LOG.error "Could not create node for ${toString()}", t
+            }
+        }
+    }
+
     private addToNode(DefaultMutableTableTreeNode node, List items) {
-        if (items){
+        if (items) {
             getItemMap(items, false).values().each {
                 node.add(createItemNodes(it))
             }
@@ -140,17 +155,7 @@ class ModellingInformationTableTreeBuilder {
             resultConfigurationsNode.add(createItemNodes(it))
         }
 
-        List simulationsForModel = getItemsForModel(modelClass, Simulation)
-        if (simulationsForModel.size() == 0) {
-            simulationsNode.leaf = true
-        }
-        simulationsForModel.each {
-            try {
-                simulationsNode.add(createNode(it))
-            } catch (Throwable t) {
-                LOG.error "Could not create node for ${toString()}", t
-            }
-        }
+        addSimulationsToNode(modelClass,simulationsNode)
         root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
     }
 
@@ -207,11 +212,7 @@ class ModellingInformationTableTreeBuilder {
 
     private Map getItemMap(items, boolean workflow) {
         Map map = [:]
-        if (workflow) {
-            items = items.findAll { it.versionNumber.toString().startsWith("R") }
-        } else {
-            items = items.findAll { !it.versionNumber.toString().startsWith("R") }
-        }
+        items = items.findAll { workflow ? it.versionNumber.toString().startsWith("R") : !it.versionNumber.toString().startsWith("R") }
         items.each {
             def list = map.get(it.name)
             if (!list) {
@@ -330,10 +331,10 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(ModellingItem item) {
         ITableTreeNode itemGroupNode = findGroupNode(item, findModelNode(root, item))
-        itemNodeChanged(itemGroupNode,item)
+        itemNodeChanged(itemGroupNode, item)
     }
 
-    private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item){
+    private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
         itemNode.abstractUIItem.load(false)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
@@ -483,58 +484,59 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
-    private ITableTreeNode createNode(String name) {
+    private DefaultMutableTableTreeNode createNode(String name) {
         new DefaultMutableTableTreeNode(name)
     }
 
-    private ITableTreeNode createNode(Parameterization item) {
+    private DefaultMutableTableTreeNode createNode(Parameterization item) {
         Model selectedModelInstance = getModelInstance(item)
         return createNode(new ParameterizationUIItem(mainModel, selectedModelInstance, item))
     }
 
-    private ITableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
+    private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
         ParameterizationNode node = parameterizationUIItem.item.status == Status.NONE ? new ParameterizationNode(parameterizationUIItem) : new WorkflowParameterizationNode(parameterizationUIItem)
         model.putValues(node)
         return node
     }
 
-    private ITableTreeNode createNode(ResultConfiguration item) {
+    private DefaultMutableTableTreeNode createNode(ResultConfiguration item) {
         Model selectedModelInstance = getModelInstance(item)
         return createNode(new ResultConfigurationUIItem(mainModel, selectedModelInstance, item))
     }
 
-    private ITableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
+    private DefaultMutableTableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
         ResultConfigurationNode node = new ResultConfigurationNode(resultConfigurationUIItem)
         model.putValues(node)
         return node
     }
 
-    private ITableTreeNode createNode(Resource item) {
+    private DefaultMutableTableTreeNode createNode(Resource item) {
         return createNode(new ResourceUIItem(mainModel, null, item))
     }
 
-    private ITableTreeNode createNode(ResourceUIItem item) {
+    private DefaultMutableTableTreeNode createNode(ResourceUIItem item) {
         ResourceNode node = new ResourceNode(item)
         model.putValues(node)
         return node
     }
 
-    private ITableTreeNode createNode(BatchUIItem batchUIItem) {
+    private DefaultMutableTableTreeNode createNode(BatchUIItem batchUIItem) {
         return new BatchRunNode(batchUIItem)
     }
 
-    private ITableTreeNode createNode(BatchRun batchRun) {
+    private DefaultMutableTableTreeNode createNode(BatchRun batchRun) {
         return new BatchRunNode(new BatchUIItem(mainModel, batchRun))
     }
 
-    private ITableTreeNode createNode(Simulation item) {
+    private DefaultMutableTableTreeNode createNode(Simulation item) {
+        item.load(false)
         SimulationNode node = null
         Model selectedModelInstance = getModelInstance(item)
         try {
             node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
-            def paramsNode = createNode(item.parameterization)
+            DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
             paramsNode.leaf = true
-            def templateNode = createNode(item.template)
+            DefaultMutableTableTreeNode templateNode = createNode(item.template)
             templateNode.leaf = true
 
             node.add(paramsNode)
@@ -546,7 +548,7 @@ class ModellingInformationTableTreeBuilder {
         return node
     }
 
-    protected ITableTreeNode createBatchNode() {
+    protected DefaultMutableTableTreeNode createBatchNode() {
         BatchRootNode batchesNode = new BatchRootNode("Batches", mainModel)
         List<BatchRun> batchRuns = getAllBatchRuns()
         batchRuns?.each { BatchRun batchRun ->
