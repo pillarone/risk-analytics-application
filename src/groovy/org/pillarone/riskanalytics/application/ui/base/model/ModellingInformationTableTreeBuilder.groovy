@@ -337,6 +337,7 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
+        model.putValues(itemNode)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
 
@@ -550,7 +551,7 @@ class ModellingInformationTableTreeBuilder {
 
             node.add(paramsNode)
             node.add(templateNode)
-            model.putValues(node)
+            //model.putValues(node)
         } catch (Exception ex) {
             println "create simulation exception : ${ex}"
         }
