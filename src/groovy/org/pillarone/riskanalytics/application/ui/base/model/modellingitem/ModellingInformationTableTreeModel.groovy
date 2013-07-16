@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
@@ -143,16 +144,35 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         items.each {ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType){
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    builder.addNodeForItem(itemEvent.item)
+                    notifyBuilderForAdd(itemEvent.item)
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.REMOVED:
                     builder.removeNodeForItem(itemEvent.item)
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.UPDATED:
-                    builder.itemChanged(itemEvent.item)
+                    notifyBuilderForUpdate(itemEvent.item)
             }
         }
 
     }
 
+    private notifyBuilderForAdd(ModellingItem modellingItem) {
+        builder.addNodeForItem(modellingItem)
+    }
+
+    private notifyBuilderForAdd(Simulation modellingItem) {
+    }
+
+    private notifyBuilderForUpdate(ModellingItem modellingItem) {
+        builder.itemChanged(modellingItem)
+    }
+
+    private notifyBuilderForUpdate(Simulation modellingItem) {
+        builder.addNodeForItem(modellingItem)
+    }
+
+
+    public void refreshBatchNode() {
+        builder.refreshBatchNode()
+    }
 }
