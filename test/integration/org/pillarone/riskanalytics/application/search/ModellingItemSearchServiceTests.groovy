@@ -40,6 +40,19 @@ class ModellingItemSearchServiceTests extends GroovyTestCase {
 
         assertEquals(4, modellingItemSearchService.search("* itemType:" + ItemType.PARAMETERIZATION.toString()).size())
         assertEquals(3, modellingItemSearchService.search("Core* itemType:" + ItemType.PARAMETERIZATION.toString()).size())
+    }
 
+    void testRenameParametrization() {
+
+        Parameterization parameterization = new Parameterization("MyParameters", CoreModel)
+        parameterization.save()
+        List<ModellingItem> results = modellingItemSearchService.search("MyParameters")
+        assertEquals(1, results.size())
+
+        parameterization.rename("RenamedParameters")
+        results = modellingItemSearchService.search("MyParameters")
+        assertEquals(0, results.size())
+        results = modellingItemSearchService.search("RenamedParameters")
+        assertEquals(1, results.size())
     }
 }
