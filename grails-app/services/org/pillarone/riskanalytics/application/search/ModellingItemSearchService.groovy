@@ -84,17 +84,20 @@ class ModellingItemSearchService {
         IndexWriter indexWriter = createIndexWriter(true)
 
         try {
-            for (ParameterizationDAO dao in ParameterizationDAO.list()) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toParameterization(dao)))
-            }
-            for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResultConfiguration(dao)))
-            }
-            for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
-            }
-            for (ResourceDAO dao in ResourceDAO.list()) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResource(dao)))
+            ParameterizationDAO.withNewSession {
+                for (ParameterizationDAO dao in ParameterizationDAO.list()) {
+                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toParameterization(dao)))
+                }
+                for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
+                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResultConfiguration(dao)))
+                }
+
+                for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
+                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
+                }
+                for (ResourceDAO dao in ResourceDAO.list()) {
+                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResource(dao)))
+                }
             }
         } finally {
             indexWriter.close()
@@ -121,7 +124,9 @@ class ModellingItemSearchService {
         Parameterization parameterization = new Parameterization(dao.name, getClass().getClassLoader().loadClass(dao.modelClassName))
         parameterization.versionNumber = new VersionNumber(dao.itemVersion)
         parameterization.load(false)
-
+        if (dao.tags*.tag) {
+            parameterization.tags = dao.tags*.tag
+        }
         return parameterization
     }
 
@@ -129,6 +134,9 @@ class ModellingItemSearchService {
         Resource resource = new Resource(dao.name, getClass().getClassLoader().loadClass(dao.resourceClassName))
         resource.versionNumber = new VersionNumber(dao.itemVersion)
         resource.load(false)
+        if (dao.tags*.tag) {
+            resource.tags = dao.tags*.tag
+        }
 
         return resource
     }
@@ -146,6 +154,9 @@ class ModellingItemSearchService {
         Simulation simulation = new Simulation(dao.name)
         simulation.modelClass = getClass().getClassLoader().loadClass(dao.model)
         simulation.load(false)
+        if (dao.tags*.tag) {
+            simulation.tags = dao.tags*.tag
+        }
 
         return simulation
     }
@@ -154,7 +165,7 @@ class ModellingItemSearchService {
         return new IndexWriter(directory, analyzer, create, MaxFieldLength.UNLIMITED)
     }
 
-    List<ModellingItem> getAllItems(){
+    List<ModellingItem> getAllItems() {
         search("*")
     }
 
@@ -207,7 +218,7 @@ class ModellingItemSearchService {
         indexSearcher.close()
         IndexWriter indexWriter = createIndexWriter(false)
         try {
-            indexWriter.updateDocument(new Term(DocumentFactory.ID_FIELD,DocumentFactory.id(item)), DocumentFactory.createDocument(item))
+            indexWriter.updateDocument(new Term(DocumentFactory.ID_FIELD, DocumentFactory.id(item)), DocumentFactory.createDocument(item))
         } finally {
             indexWriter.close()
         }
