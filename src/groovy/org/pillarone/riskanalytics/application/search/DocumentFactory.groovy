@@ -60,7 +60,7 @@ abstract class DocumentFactory {
         document.add(new Field(ITEM_TYPE_FIELD, ItemType.RESOURCE.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(STATE_FIELD, item.status.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(TAGS_FIELD, item.tags*.name.join(" "), Store.YES, Index.ANALYZED))
-        document.add(new Field(VALID_FIELD, item.valid.toString(), Store.YES, Index.NOT_ANALYZED))
+        document.add(new Field(VALID_FIELD, item.valid.toString(), Store.YES, Index.ANALYZED))
         addFieldIfNotNull(document, OWNER_FIELD, item.creator?.username?.toString())
         addFieldIfNotNull(document, LASTUPDATED_BY, item.lastUpdater?.username?.toString())
         addFieldIfNotNull(document, CREATION_TIME, item.creationDate?.millis?.toString())
@@ -79,7 +79,7 @@ abstract class DocumentFactory {
         document.add(new Field(ITEM_TYPE_FIELD, ItemType.PARAMETERIZATION.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(TAGS_FIELD, item.tags*.name.join(" "), Store.YES, Index.ANALYZED))
         document.add(new Field(STATE_FIELD, item.status.toString(), Store.YES, Index.ANALYZED))
-        document.add(new Field(VALID_FIELD, item.valid.toString(), Store.YES, Index.NOT_ANALYZED))
+        document.add(new Field(VALID_FIELD, item.valid.toString(), Store.YES, Index.ANALYZED))
         addFieldIfNotNull(document, DEALID_FIELD, item.dealId?.toString())
         addFieldIfNotNull(document, OWNER_FIELD, item.creator?.username?.toString())
         addFieldIfNotNull(document, LASTUPDATED_BY, item.lastUpdater?.username?.toString())
@@ -92,7 +92,7 @@ abstract class DocumentFactory {
 
     private static void addFieldIfNotNull(Document document, String fieldName, String fieldValue) {
         if (fieldValue) {
-            document.add(new Field(fieldName, fieldValue, Store.YES, Index.NOT_ANALYZED))
+            document.add(new Field(fieldName, fieldValue, Store.YES, Index.ANALYZED))
         }
 
     }
