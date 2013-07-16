@@ -337,6 +337,7 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
+        itemNode.abstractUIItem.item = item
         model.putValues(itemNode)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
