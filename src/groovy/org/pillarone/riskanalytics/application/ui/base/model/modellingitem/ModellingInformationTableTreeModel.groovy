@@ -144,33 +144,17 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         items.each {ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType){
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    notifyBuilderForAdd(itemEvent.item)
+                    builder.addNodeForItem(itemEvent.item)
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.REMOVED:
                     builder.removeNodeForItem(itemEvent.item)
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.UPDATED:
-                    notifyBuilderForUpdate(itemEvent.item)
+                    builder.itemChanged(itemEvent.item)
             }
         }
 
     }
-
-    private notifyBuilderForAdd(ModellingItem modellingItem) {
-        builder.addNodeForItem(modellingItem)
-    }
-
-    private notifyBuilderForAdd(Simulation modellingItem) {
-    }
-
-    private notifyBuilderForUpdate(ModellingItem modellingItem) {
-        builder.itemChanged(modellingItem)
-    }
-
-    private notifyBuilderForUpdate(Simulation modellingItem) {
-        builder.addNodeForItem(modellingItem)
-    }
-
 
     public void refreshBatchNode() {
         builder.refreshBatchNode()
