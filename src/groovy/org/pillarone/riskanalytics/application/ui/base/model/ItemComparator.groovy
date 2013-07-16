@@ -37,7 +37,7 @@ class ItemComparator {
     }
 
     public static boolean isEqual(Simulation item1, Simulation item2) {
-        return item1 != null && item2 != null && item1.name == item2.name && item1.modelClass == item2.modelClass
+        return item1 != null && item2 != null && item1.id == item2.id && item1.modelClass == item2.modelClass
     }
 
     public static boolean isEqual(BatchRun item1, BatchRun item2) {
