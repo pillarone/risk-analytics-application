@@ -245,12 +245,10 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public void simulationEnd(Simulation simulation, Model model) {
         if (simulation.end != null) {
-            navigationTableTreeModel.addNodeForItem(simulation)
             Parameterization parameterization = simulation.parameterization
             //after simulation running, lock the used the used p14n
             try {
                 parameterization.addRemoveLockTag()
-                navigationTableTreeModel.itemChanged(parameterization)
             } catch (HibernateOptimisticLockingFailureException e) {
                 LOG.warn("Failed to add LOCK tag to parameterization ${parameterization}. Probably because it was already added by a concurrent simulation.")
                 //most likely because multiple users start a simulation with the same parameterization at the same time
