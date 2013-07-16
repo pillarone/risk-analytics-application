@@ -155,7 +155,7 @@ class ModellingInformationTableTreeBuilder {
             resultConfigurationsNode.add(createItemNodes(it))
         }
 
-        addSimulationsToNode(modelClass,simulationsNode)
+        addSimulationsToNode(modelClass, simulationsNode)
         root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
     }
 
@@ -298,9 +298,11 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public void addNodeForItem(Simulation item) {
-        DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
-        groupNode.leaf = false
-        insertNodeInto(createNode(item), groupNode)
+        if (item.end){
+            DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
+            groupNode.leaf = false
+            insertNodeInto(createNode(item), groupNode)
+        }
     }
 
     public def addNodeForItem(ModellingUIItem modellingUIItem) {
@@ -320,7 +322,6 @@ class ModellingInformationTableTreeBuilder {
 
     public def addNodeForItem(ModellingItem modellingItem) {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
-        modellingUIItem.load(false)
         return addNodeForItem(modellingUIItem)
     }
 
@@ -336,8 +337,16 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
-        itemNode.abstractUIItem.load(false)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+    }
+
+    private void itemNodeChanged(ITableTreeNode itemGroupNode, Simulation item) {
+        ItemNode itemNode = findNodeForItem(itemGroupNode, item)
+        if (!itemNode){
+            addNodeForItem(item)
+        }else {
+            model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+        }
     }
 
     public void itemChanged(Resource item) {
@@ -563,7 +572,12 @@ class ModellingInformationTableTreeBuilder {
 
     private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent) {
         parent.insert(newNode, parent.childCount)
-        model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [parent.childCount - 1] as int[])
+        if (parent.childCount == 1) {
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+            model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+        } else {
+            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [parent.childCount - 1] as int[])
+        }
     }
 
     protected void removeNodeFromParent(DefaultMutableTableTreeNode itemNode) {
