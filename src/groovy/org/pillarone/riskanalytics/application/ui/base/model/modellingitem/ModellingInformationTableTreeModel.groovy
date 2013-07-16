@@ -153,7 +153,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     builder.itemChanged(itemEvent.item)
             }
         }
-
     }
 
     public void refreshBatchNode() {
