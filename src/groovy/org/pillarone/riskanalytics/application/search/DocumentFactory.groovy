@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 
 abstract class DocumentFactory {
 
+    public static final String ID_FIELD = "id"
     public static final String NAME_FIELD = "name"
     public static final String VERSION_FIELD = "version"
     public static final String STATE_FIELD = "state"
@@ -52,6 +53,7 @@ abstract class DocumentFactory {
 
     private static Document doCreateDocument(Resource item) {
         Document document = new Document()
+        document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
@@ -70,6 +72,7 @@ abstract class DocumentFactory {
 
     private static Document doCreateDocument(Parameterization item) {
         Document document = new Document()
+        document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
@@ -96,6 +99,7 @@ abstract class DocumentFactory {
 
     private static Document doCreateDocument(ResultConfiguration item) {
         Document document = new Document()
+        document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
@@ -110,6 +114,7 @@ abstract class DocumentFactory {
 
     private static Document doCreateDocument(Simulation item) {
         Document document = new Document()
+        document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
         document.add(new Field(ITEM_TYPE_FIELD, ItemType.RESULT.toString(), Store.YES, Index.ANALYZED))
@@ -170,7 +175,7 @@ abstract class DocumentFactory {
         if (field) {
             List<String> tags = field.stringValue().split(' ').toList()
             tags.each {
-                item.tags << new Tag(name:it)
+                item.tags << new Tag(name: it)
             }
         }
     }
@@ -189,6 +194,10 @@ abstract class DocumentFactory {
         if (field) {
             item.lastUpdater = new Person(username: field.stringValue())
         }
+    }
+
+    static String id(ModellingItem item) {
+        "${item.class.name}_${item.id}"
     }
 
     public static enum ItemType {

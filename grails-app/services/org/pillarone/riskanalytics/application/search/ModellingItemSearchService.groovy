@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.search
 
 import com.ulcjava.base.server.ULCSession
+import org.apache.lucene.index.Term
 import org.pillarone.riskanalytics.core.ResourceDAO
 
 import java.util.concurrent.ConcurrentHashMap
@@ -203,8 +204,14 @@ class ModellingItemSearchService {
     }
 
     private void updateModellingItemInIndex(ModellingItem item) {
-        //TODO (PMO-2441) e.g. needed in case of changing tags.
-
+        indexSearcher.close()
+        IndexWriter indexWriter = createIndexWriter(false)
+        try {
+            indexWriter.updateDocument(new Term(DocumentFactory.ID_FIELD,DocumentFactory.id(item)), DocumentFactory.createDocument(item))
+        } finally {
+            indexWriter.close()
+        }
+        indexSearcher = new IndexSearcher(directory, true)
     }
 
 
