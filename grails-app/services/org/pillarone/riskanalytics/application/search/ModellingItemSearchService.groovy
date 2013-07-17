@@ -43,7 +43,7 @@ class ModellingItemSearchService {
     protected Analyzer analyzer
     private ModellingItemListener listener = new SearchModellingItemListener()
 
-    private Map<Integer, List<ModellingItemEvent>> queue = new ConcurrentHashMap<Integer, List<ModellingItemEvent>>()
+    private Map<ULCSession, List<ModellingItemEvent>> queue = new ConcurrentHashMap<ULCSession, List<ModellingItemEvent>>()
 
     @PostConstruct
     void init() {
@@ -61,11 +61,10 @@ class ModellingItemSearchService {
     }
 
     void registerSession(ULCSession session) {
-        final int sessionId = session.id
-        if (queue.containsKey(sessionId)) {
-            LOG.warn("Session already registered $sessionId")
+        if (queue.containsKey(session)) {
+            LOG.warn("Session already registered $session")
         }
-        queue.put(sessionId, new ArrayList<ModellingItemEvent>())
+        queue.put(session, new ArrayList<ModellingItemEvent>())
     }
 
     void unregisterSession(ULCSession session) {
@@ -73,8 +72,8 @@ class ModellingItemSearchService {
     }
 
     List<ModellingItemEvent> getPendingEvents(ULCSession session) {
-        List<ModellingItemEvent> result = queue.get(session.id)
-        queue.put(session.id, new ArrayList<ModellingItemEvent>())
+        List<ModellingItemEvent> result = queue.get(session)
+        queue.put(session, new ArrayList<ModellingItemEvent>())
         return result
     }
 
