@@ -4,12 +4,15 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.server.ULCSession
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
@@ -17,9 +20,10 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
+    protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
+
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     final IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
     ModellingItemSearchService service = ModellingItemSearchService.getInstance()
@@ -58,10 +62,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public def addNodeForItem(Model model) {
-        builder.addNodeForItem model
+        builder.addNodeForItem(model)
     }
 
-    public void addNodeForItem(Object item) {
+    public void addNodeForItem(BatchUIItem item) {
         builder.addNodeForItem(item)
     }
 
