@@ -67,13 +67,12 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         mainModel.fireModelChanged()
         AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, selectedModel, mainModel)
-        navigationTableTreeModel.addNodeForItem(modellingUIItem)
         if (openNewVersion)
             mainModel.openItem(selectedModel, modellingUIItem)
         return modellingUIItem
     }
 
-    Object getItem() {
+    ModellingItem getItem() {
         return item
     }
 
@@ -137,7 +136,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
                 modelInstance = newItem?.modelClass?.newInstance() as Model
                 modelInstance?.init()
             }
-            navigationTableTreeModel.addNodeForItem(UIItemFactory.createItem(newItem, modelInstance, mainModel))
         }
     }
 
@@ -145,7 +143,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     public void importItem() {
         mainModel.fireModelChanged()
-        navigationTableTreeModel.addNodeForItem(this)
     }
 
     @Override
@@ -185,7 +182,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     boolean equals(Object obj) {
         if (!(obj instanceof ModellingUIItem)) return false
-        return item.modelClass == obj.item.modelClass && item.name == obj.item.name && item.versionNumber.toString() == obj.item.versionNumber.toString()
+        return item.modelClass == obj.item.modelClass && item.name == obj.item.name
     }
 
     @Override
@@ -193,7 +190,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         HashCodeBuilder hcb = new HashCodeBuilder()
         hcb.append(item.modelClass.toString())
         hcb.append(item.modelClass.name)
-        hcb.append(item.versionNumber.toString())
         return hcb.toHashCode()
     }
 
