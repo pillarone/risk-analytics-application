@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.output.structure.ResultStructureD
 class ApplicationBootStrap {
 
     def quartzScheduler
+    def modellingItemSearchService
 
     def init = {servletContext ->
 
