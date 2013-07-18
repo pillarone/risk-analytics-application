@@ -540,7 +540,6 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
-        item.load(false)
         SimulationNode node = null
         Model selectedModelInstance = getModelInstance(item)
         try {
@@ -552,7 +551,7 @@ class ModellingInformationTableTreeBuilder {
 
             node.add(paramsNode)
             node.add(templateNode)
-            //model.putValues(node)
+            model.putValues(node)
         } catch (Exception ex) {
             println "create simulation exception : ${ex}"
         }
