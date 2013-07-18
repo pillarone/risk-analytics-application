@@ -18,7 +18,6 @@ class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
 
     protected int getColumnIndex(int column) {
         switch (column) {
-            case NAME: return NAME;
             case TAGS: return super.TAGS;
             case CREATION_DATE: return super.CREATION_DATE;
             case LAST_MODIFICATION_DATE: return super.LAST_MODIFICATION_DATE;

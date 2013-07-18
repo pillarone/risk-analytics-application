@@ -593,4 +593,7 @@ class ModellingInformationTableTreeBuilder {
         return null
     }
 
+    void removeAll() {
+        root.removeAllChildren()
+    }
 }

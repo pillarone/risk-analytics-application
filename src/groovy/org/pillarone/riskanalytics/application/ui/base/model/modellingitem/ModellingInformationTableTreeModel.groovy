@@ -2,7 +2,9 @@ package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
 
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
+import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.server.ULCSession
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -12,10 +14,12 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -27,7 +31,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     final IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
     ModellingItemSearchService service = ModellingItemSearchService.getInstance()
-    ModellingInformationTableTreeBuilder builder
+    final ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
     Map columnValues = [:]
@@ -46,10 +50,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     ModellingInformationTableTreeModel(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
-        List<ModellingItem> modellingItems = service.getAllItems()
-        builder = new ModellingInformationTableTreeBuilder(this,mainModel)
-        builder.buildTreeNodes(modellingItems)
+        builder = new ModellingInformationTableTreeBuilder(this, mainModel)
         root = builder.root
+        buildTreeNodes()
+    }
+
+    private void buildTreeNodes() {
+        List<ModellingItem> modellingItems = service.getAllItems()
+        builder.buildTreeNodes(modellingItems)
     }
 
     Object getValueAt(Object node, int i) {
@@ -162,4 +170,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public void refreshBatchNode() {
         builder.refreshBatchNode()
     }
+
+    public void refresh() {
+        ExceptionSafe.protect {
+            service.refresh()
+            builder.removeAll()
+            buildTreeNodes()
+            nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
+        }
+    }
+
 }

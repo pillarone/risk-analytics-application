@@ -102,7 +102,7 @@ class NavigationBarTopPane {
             if (text) {
                 List results
                 try {
-                    results  = modellingItemSearchService.search("* $text *").collect{ModellingItem item -> item.nameAndVersion}
+                    results  = modellingItemSearchService.search("* $text*").collect{ModellingItem item -> item.nameAndVersion}
                 } catch (Exception ex) {
                     LOG.error "${ex}"
                     results = []
