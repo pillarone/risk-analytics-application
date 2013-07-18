@@ -196,7 +196,7 @@ abstract class DocumentFactory {
         }
     }
 
-    static String id(ModellingItem item) {
+    private static String id(ModellingItem item) {
         "${item.class.name}_${item.id}"
     }
 
