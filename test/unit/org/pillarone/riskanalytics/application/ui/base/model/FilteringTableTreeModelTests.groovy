@@ -655,7 +655,7 @@ class FilteringTableTreeModelTests extends GroovyTestCase {
         ModellingInformationTableTreeModel model = new ModellingInformationTableTreeModel(null)
         FilteringTableTreeModel filter = new MultiFilteringTableTreeModel(model)
 
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(model)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(filter)
         Model itemModel = new ApplicationModel()
         ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(mainModel, itemModel, parameterization1)
         ParameterizationNode parameterizationNode1 = new ParameterizationNode(parameterizationUIItem)

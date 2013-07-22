@@ -32,7 +32,7 @@ class NavigationBarTopPane {
     ULCButton clearButton
     ULCLabel noResults
     ModellingItemSearchBean searchBean
-    ModellingItemSearchService modellingItemSearchService = ModellingItemSearchService.getInstance()
+    ModellingItemSearchService modellingItemSearchService
     MultiFilteringTableTreeModel tableTreeModel
     Log LOG = LogFactory.getLog(NavigationBarTopPane)
 
@@ -46,6 +46,13 @@ class NavigationBarTopPane {
         initComponents()
         layoutComponents()
         attachListeners()
+    }
+
+    private ModellingItemSearchService getModellingItemSearchService() {
+        if (!modellingItemSearchService){
+            modellingItemSearchService = ModellingItemSearchService.getInstance()
+        }
+        return modellingItemSearchService
     }
 
 
@@ -102,7 +109,7 @@ class NavigationBarTopPane {
             if (text) {
                 List results
                 try {
-                    results  = modellingItemSearchService.search("* $text*").collect{ModellingItem item -> item.nameAndVersion}
+                    results  = getModellingItemSearchService().search("* $text*").collect{ModellingItem item -> item.nameAndVersion}
                 } catch (Exception ex) {
                     LOG.error "${ex}"
                     results = []

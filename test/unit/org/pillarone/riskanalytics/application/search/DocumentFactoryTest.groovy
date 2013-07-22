@@ -17,7 +17,7 @@ class DocumentFactoryTest extends GroovyTestCase {
     void testDocumentCreation_Parameterization() {
         Parameterization parameterization = createParameterization()
         Document document = DocumentFactory.createDocument(parameterization)
-        assertEquals(11, document.fields.size())
+        assertEquals(12, document.fields.size())
         assertCommonFields(document, parameterization, DocumentFactory.ItemType.PARAMETERIZATION)
         assertNotNull(document.getField(DocumentFactory.VERSION_FIELD))
         assertEquals(parameterization.versionNumber.toString(), document.getField(DocumentFactory.VERSION_FIELD).stringValue())
@@ -31,6 +31,8 @@ class DocumentFactoryTest extends GroovyTestCase {
         assertEquals(parameterization.creator.username, document.getField(DocumentFactory.OWNER_FIELD).stringValue())
         assertNotNull(document.getField(DocumentFactory.LASTUPDATED_BY))
         assertEquals(parameterization.lastUpdater.username, document.getField(DocumentFactory.LASTUPDATED_BY).stringValue())
+        assertNotNull(document.getField(DocumentFactory.CREATION_TIME))
+        assertEquals(parameterization.creationDate.millis.toString(), document.getField(DocumentFactory.CREATION_TIME).stringValue())
     }
 
     void testBothWays_Parameterization() {

@@ -14,7 +14,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
@@ -30,7 +29,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     final IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
-    ModellingItemSearchService service = ModellingItemSearchService.getInstance()
+    ModellingItemSearchService service
     final ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
@@ -52,11 +51,17 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
         root = builder.root
-        buildTreeNodes()
     }
 
-    private void buildTreeNodes() {
-        List<ModellingItem> modellingItems = service.getAllItems()
+    ModellingItemSearchService getService() {
+        if (!service) {
+            service =  ModellingItemSearchService.getInstance()
+        }
+        return service
+    }
+
+    public void buildTreeNodes() {
+        List<ModellingItem> modellingItems = getService().getAllItems()
         builder.buildTreeNodes(modellingItems)
     }
 
@@ -152,7 +157,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void updateTreeStructure(ULCSession session){
 
-        List<ModellingItemSearchService.ModellingItemEvent> items = service.getPendingEvents(session)
+        List<ModellingItemSearchService.ModellingItemEvent> items = getService().getPendingEvents(session)
         items.each {ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType){
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
@@ -173,7 +178,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void refresh() {
         ExceptionSafe.protect {
-            service.refresh()
+            getService().refresh()
             builder.removeAll()
             buildTreeNodes()
             nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))

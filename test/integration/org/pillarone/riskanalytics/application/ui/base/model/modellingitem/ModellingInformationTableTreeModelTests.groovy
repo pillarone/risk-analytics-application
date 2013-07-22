@@ -4,6 +4,8 @@ import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.server.SimpleContainerServices
 import com.ulcjava.base.server.ULCSession
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
@@ -17,23 +19,30 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
     void setUp() {
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Application'])
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '1', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '1.2', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '1.3', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '1.4', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '1.4.1', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '2', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '3', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '4', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '5', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '6', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '7', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '8', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '9', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '10', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        new ParameterizationDAO(name: 'Paramertization X', itemVersion: '11', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE).save(flush: true)
-        model = new ModellingInformationTableTreeModel()
+        newParameterization('Parametrization X', '1')
+        newParameterization('Parametrization X', '1.2')
+        newParameterization('Parametrization X', '1.3')
+        newParameterization('Parametrization X', '1.4')
+        newParameterization('Parametrization X', '1.4.1')
+        newParameterization('Parametrization X', '2')
+        newParameterization('Parametrization X', '3')
+        newParameterization('Parametrization X', '4')
+        newParameterization('Parametrization X', '5')
+        newParameterization('Parametrization X', '6')
+        newParameterization('Parametrization X', '7')
+        newParameterization('Parametrization X', '8')
+        newParameterization('Parametrization X', '9')
+        newParameterization('Parametrization X', '10')
+        newParameterization('Parametrization X', '11')
+        model = new ModellingInformationTableTreeModel(new RiskAnalyticsMainModel())
         model.service.registerSession(session)
+    }
+
+    private void newParameterization(String name, String version) {
+        new ParameterizationDAO(name: name, itemVersion: version,
+                modelClassName: 'models.application.ApplicationModel', periodCount: 1,
+                status: Status.NONE, creationDate: new DateTime(), modificationDate: new DateTime()).save(flush: true)
+
     }
 
     protected void tearDown() {
@@ -50,7 +59,6 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
 
     void testColumnCount() {
         assert 8 == model.columnCount
-        printTree()
     }
 
     void testTreeStructure() {
@@ -77,7 +85,7 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         assertEquals 2, paramsNode.childCount
         def v11Node = paramsNode.getChildAt(1)
-        assertEquals 'Paramertization X', v11Node.name
+        assertEquals 'Parametrization X', v11Node.name
 
         assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
         assertEquals 10, v11Node.childCount
@@ -95,14 +103,14 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
     }
 
     void testCheckForUpdates() {
-        ParameterizationDAO dao = new ParameterizationDAO(name: 'Paramertization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
+        ParameterizationDAO dao = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
         dao.save(flush: true)
         model.updateTreeStructure(session)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         assertEquals 2, paramsNode.childCount
         def v12Node = paramsNode.getChildAt(1)
-        assertEquals 'Paramertization X', v12Node.name
+        assertEquals 'Parametrization X', v12Node.name
 
         assertEquals '12', v12Node.abstractUIItem.item.versionNumber.toString()
 
