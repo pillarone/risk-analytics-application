@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.ULCPollingTimer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -28,7 +27,7 @@ import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureExcep
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
 
     Map<AbstractUIItem, Object> viewModelsInUse
-    MultiFilteringTableTreeModel navigationTableTreeModel
+    ModellingInformationTableTreeModel navigationTableTreeModel
     def switchActions = []
     private List<IRiskAnalyticsModelListener> modelListeners = []
     private List<BatchTableListener> batchTableListeners = []
@@ -44,12 +43,11 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
-        ModellingInformationTableTreeModel modellingInformationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
-        modellingInformationTableTreeModel.buildTreeNodes()
-        navigationTableTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
+        navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
+        navigationTableTreeModel.init()
     }
 
-    public RiskAnalyticsMainModel(MultiFilteringTableTreeModel navigationTableTreeModel) {
+    public RiskAnalyticsMainModel(ModellingInformationTableTreeModel navigationTableTreeModel) {
         viewModelsInUse = [:]
         this.navigationTableTreeModel = navigationTableTreeModel
     }

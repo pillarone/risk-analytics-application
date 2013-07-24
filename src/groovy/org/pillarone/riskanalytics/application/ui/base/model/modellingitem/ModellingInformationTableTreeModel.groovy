@@ -28,9 +28,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
-    final IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
-    ModellingItemSearchService service
-    final ModellingInformationTableTreeBuilder builder
+    IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
+    ModellingItemSearchService service = ModellingItemSearchService.getInstance()
+    ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
     Map columnValues = [:]
@@ -50,18 +50,16 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
+    }
+
+    public void init() {
+        List<ModellingItem> modellingItems = service.getAllItems()
+        builder.buildTreeNodes(modellingItems)
         root = builder.root
     }
 
-    ModellingItemSearchService getService() {
-        if (!service) {
-            service =  ModellingItemSearchService.getInstance()
-        }
-        return service
-    }
-
     public void buildTreeNodes() {
-        List<ModellingItem> modellingItems = getService().getAllItems()
+        List<ModellingItem> modellingItems = service.getAllItems()
         builder.buildTreeNodes(modellingItems)
     }
 
@@ -121,12 +119,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public synchronized Object getValue(def item, ItemNode node, int columnIndex) {
-        if (!(item instanceof ModellingItem)) return ""
-        try {
+        if (!(item instanceof ModellingItem)) {
+            return ""
+        } else {
             return enumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(item, node)
-        } catch (Exception ex) {
         }
-        return null
     }
 
     public void putValues(ItemNode node) {
@@ -157,7 +154,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void updateTreeStructure(ULCSession session){
 
-        List<ModellingItemSearchService.ModellingItemEvent> items = getService().getPendingEvents(session)
+        List<ModellingItemSearchService.ModellingItemEvent> items = service.getPendingEvents(session)
         items.each {ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType){
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:

@@ -107,6 +107,9 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         mainModel.addModelListener(this)
         mainModel.addPropertyChangeListener("currentItem", this)
+        headerView.navigationBarTopPane.addFilterChangedListener([filterChanged: { String filter ->
+            navigationView.filterTree(filter)
+        }] as IFilterChangedListener)
     }
 
     void openDetailView(Model model, AbstractUIItem item) {

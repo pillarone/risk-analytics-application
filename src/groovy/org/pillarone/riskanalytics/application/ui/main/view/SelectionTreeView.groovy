@@ -15,9 +15,14 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.server.ULCSession
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+
 import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
@@ -32,9 +37,11 @@ class SelectionTreeView {
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
     RiskAnalyticsMainModel mainModel
-    AbstractTableTreeModel navigationTableTreeModel
+    ModellingInformationTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
+
+    private ModellingItemSearchService searchService = ModellingItemSearchService.getInstance()
 
     public SelectionTreeView(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
@@ -57,6 +64,16 @@ class SelectionTreeView {
     }
 
     private void layoutComponents() {
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
+    }
+
+    public void filterTree(String filter) {
+        navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(mainModel)
+        navigationTableTreeModel.builder.buildTreeNodes(searchService.search(filter))
+        navigationTableTreeModel.root = navigationTableTreeModel.builder.root
+
+        content.remove(tree)
+        initTree()
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
     }
 
