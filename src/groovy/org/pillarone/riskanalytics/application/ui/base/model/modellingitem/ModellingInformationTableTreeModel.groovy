@@ -52,15 +52,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
     }
 
-    public void init() {
-        List<ModellingItem> modellingItems = service.getAllItems()
-        builder.buildTreeNodes(modellingItems)
-        root = builder.root
-    }
-
     public void buildTreeNodes() {
         List<ModellingItem> modellingItems = service.getAllItems()
         builder.buildTreeNodes(modellingItems)
+        root = builder.root
     }
 
     Object getValueAt(Object node, int i) {

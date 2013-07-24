@@ -44,7 +44,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
         navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
-        navigationTableTreeModel.init()
+        navigationTableTreeModel.buildTreeNodes()
     }
 
     public RiskAnalyticsMainModel(ModellingInformationTableTreeModel navigationTableTreeModel) {
