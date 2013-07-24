@@ -33,7 +33,7 @@ abstract class SelectionTreeHeaderDialog {
 
     public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex) {
         this.tableTree = tree
-        model = (ModellingInformationTableTreeModel.getInstance()) tableTree.model
+        this.model = (ModellingInformationTableTreeModel) tableTree.model
         this.parent = UlcUtilities.getWindowAncestor(tableTree)
         this.columnIndex = columnIndex
         this.filterValues = []
