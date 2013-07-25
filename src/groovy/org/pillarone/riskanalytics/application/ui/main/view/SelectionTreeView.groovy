@@ -8,26 +8,23 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.server.ULCSession
+import com.ulcjava.base.shared.IDefaults
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
+import org.pillarone.riskanalytics.application.ui.base.action.Collapser
+import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
-import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-
-import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
-import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
-import org.pillarone.riskanalytics.application.ui.base.action.Collapser
+import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -40,8 +37,6 @@ class SelectionTreeView {
     ModellingInformationTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
-
-    private ModellingItemSearchService searchService = ModellingItemSearchService.getInstance()
 
     public SelectionTreeView(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
@@ -64,17 +59,17 @@ class SelectionTreeView {
     }
 
     private void layoutComponents() {
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
+        content.add(IDefaults.BOX_EXPAND_EXPAND, tree)
     }
 
     public void filterTree(String filter) {
         navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(mainModel)
-        navigationTableTreeModel.builder.buildTreeNodes(searchService.search(filter))
+        navigationTableTreeModel.builder.buildTreeNodes(ModellingItemSearchService.instance.search(filter))
         navigationTableTreeModel.root = navigationTableTreeModel.builder.root
 
         content.remove(tree)
         initTree()
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
+        content.add(IDefaults.BOX_EXPAND_EXPAND, tree)
     }
 
     private void attachListeners() {
@@ -133,7 +128,7 @@ class SelectionTreeView {
                 dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
                 dialog.init()
                 dialog.dialog.setLocationRelativeTo(tree)
-                dialog.dialog.setAlignment(ULCBoxPane.BOX_CENTER_CENTER)
+                dialog.dialog.setAlignment(IDefaults.BOX_CENTER_CENTER)
                 dialog.dialog.setVisible true
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
                 navigationTableTreeModel.order(columnIndex, ascOrder)
@@ -152,7 +147,7 @@ class SelectionTreeView {
     }
 
     ITableTreeNode getRoot() {
-        return navigationTableTreeModel.root
+        return navigationTableTreeModel.getRoot()
     }
 
 

@@ -30,11 +30,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
-    ModellingItemSearchService service = ModellingItemSearchService.getInstance()
+    ModellingItemSearchService service
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
     Map columnValues = [:]
+    int orderByColumn = -1
+    boolean ascOrder
 
     public static int NAME = 0
     public static int STATE = 1
@@ -62,7 +64,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void buildTreeNodes() {
-        List<ModellingItem> modellingItems = service.getAllItems()
+        List<ModellingItem> modellingItems = getService().getAllItems()
         builder.buildTreeNodes(modellingItems)
         root = builder.root
     }
@@ -189,4 +191,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
+    public void order(int column, boolean asc) {
+        orderByColumn = column
+        ascOrder = asc
+        builder.order(getComparator(column, asc))
+    }
+
+    private Comparator getComparator(int column, boolean ascOrder) {
+        return { x, y -> ascOrder ? x.values[column] <=> y.values[column] : y.values[column] <=> x.values[column] } as Comparator
+    }
 }
