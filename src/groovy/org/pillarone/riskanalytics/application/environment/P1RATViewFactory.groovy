@@ -36,7 +36,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         } catch (Exception ex) {
             // put a user in MDC causes an exception in integration Test
         }
-        searchService = Holders.getApplicationContext().getBean(ModellingItemSearchService)
+        searchService = ModellingItemSearchService.instance
 
         UserContext.setUserTimeZone(ClientContext.timeZone)
         ULCClientTimeZoneSetter.setDefaultTimeZone(TimeZone.getTimeZone("UTC"))

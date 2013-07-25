@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 abstract class DocumentFactory {
 
     public static final String ID_FIELD = "id"
+    public static final String DAO_ID_FIELD = "daoId"
     public static final String NAME_FIELD = "name"
     public static final String VERSION_FIELD = "version"
     public static final String STATE_FIELD = "state"
@@ -54,6 +55,7 @@ abstract class DocumentFactory {
     private static Document doCreateDocument(Resource item) {
         Document document = new Document()
         document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
+        addFieldIfNotNull(document, DAO_ID_FIELD, item.id, Index.NOT_ANALYZED)
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
@@ -73,6 +75,7 @@ abstract class DocumentFactory {
     private static Document doCreateDocument(Parameterization item) {
         Document document = new Document()
         document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
+        addFieldIfNotNull(document, DAO_ID_FIELD, item.id, Index.NOT_ANALYZED)
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
@@ -90,9 +93,9 @@ abstract class DocumentFactory {
         return document
     }
 
-    private static void addFieldIfNotNull(Document document, String fieldName, String fieldValue) {
+    private static void addFieldIfNotNull(Document document, String fieldName, def fieldValue, Index indexType = Index.ANALYZED) {
         if (fieldValue) {
-            document.add(new Field(fieldName, fieldValue, Store.YES, Index.ANALYZED))
+            document.add(new Field(fieldName, fieldValue.toString(), Store.YES, indexType))
         }
 
     }
@@ -100,6 +103,7 @@ abstract class DocumentFactory {
     private static Document doCreateDocument(ResultConfiguration item) {
         Document document = new Document()
         document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
+        addFieldIfNotNull(document, DAO_ID_FIELD, item.id, Index.NOT_ANALYZED)
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(VERSION_FIELD, item.versionNumber.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
@@ -115,6 +119,7 @@ abstract class DocumentFactory {
     private static Document doCreateDocument(Simulation item) {
         Document document = new Document()
         document.add(new Field(ID_FIELD, id(item), Store.YES, Index.NOT_ANALYZED))
+        addFieldIfNotNull(document, DAO_ID_FIELD, item.id, Index.NOT_ANALYZED)
         document.add(new Field(NAME_FIELD, item.name, Store.YES, Index.ANALYZED))
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
         document.add(new Field(ITEM_TYPE_FIELD, ItemType.RESULT.toString(), Store.YES, Index.ANALYZED))
@@ -135,6 +140,7 @@ abstract class DocumentFactory {
             case ItemType.PARAMETERIZATION:
                 VersionNumber versionNumber = new VersionNumber(document.getField(VERSION_FIELD).stringValue())
                 Parameterization parameterization = new Parameterization(name, modelClass)
+                parameterization.id = getId(document)
                 parameterization.versionNumber = versionNumber
                 parameterization.valid = document.getField(VALID_FIELD).stringValue().toBoolean()
                 parameterization.status = Status.valueOf(document.getField(STATE_FIELD).stringValue())
@@ -145,6 +151,7 @@ abstract class DocumentFactory {
             case ItemType.RESULT_CONFIGURATION:
                 VersionNumber versionNumber = new VersionNumber(document.getField(VERSION_FIELD).stringValue())
                 ResultConfiguration resultConfiguration = new ResultConfiguration(name)
+                resultConfiguration.id = getId(document)
                 resultConfiguration.modelClass = modelClass
                 resultConfiguration.versionNumber = versionNumber
                 mapOwner(resultConfiguration, document)
@@ -152,6 +159,7 @@ abstract class DocumentFactory {
                 return resultConfiguration
             case ItemType.RESULT:
                 Simulation simulation = new Simulation(name)
+                simulation.id = document.getField(DAO_ID_FIELD)?.stringValue()?.toLong()
                 simulation.modelClass = modelClass
                 mapOwner(simulation, document)
                 mapModificator(simulation, document)
@@ -159,6 +167,7 @@ abstract class DocumentFactory {
                 return simulation
             case ItemType.RESOURCE:
                 Resource resource = new Resource(name, modelClass)
+                resource.id = getId(document)
                 resource.versionNumber = new VersionNumber(document.getField(VERSION_FIELD).stringValue())
                 resource.valid = document.getField(VALID_FIELD).stringValue().toBoolean()
                 resource.status = Status.valueOf(document.getField(STATE_FIELD).stringValue())
@@ -168,6 +177,17 @@ abstract class DocumentFactory {
                 return resource
 
         }
+    }
+
+    static Long getId(Document document) {
+        Field idField = document.getField(DAO_ID_FIELD)
+        if (idField) {
+            String fieldValue = idField.stringValue()
+            if (fieldValue) {
+                return fieldValue.toLong()
+            }
+        }
+        return null
     }
 
     private static void mapTags(ModellingItem item, Document document) {
@@ -181,18 +201,24 @@ abstract class DocumentFactory {
     }
 
     private static void mapOwner(ModellingItem item, Document document) {
-        item.creationDate = new DateTime(document.getField(CREATION_TIME).stringValue().toLong())
-        Field field = document.getField(OWNER_FIELD)
-        if (field) {
-            item.creator = new Person(username: field.stringValue())
+        Field creationDateField = document.getField(CREATION_TIME)
+        if (creationDateField) {
+            item.creationDate = new DateTime(creationDateField.stringValue().toLong())
+        }
+        Field ownerField = document.getField(OWNER_FIELD)
+        if (ownerField) {
+            item.creator = new Person(username: ownerField.stringValue())
         }
     }
 
     private static void mapModificator(ModellingItem item, Document document) {
-        item.modificationDate = new DateTime(document.getField(LASTUPDATED_TIME).stringValue().toLong())
-        Field field = document.getField(LASTUPDATED_BY)
-        if (field) {
-            item.lastUpdater = new Person(username: field.stringValue())
+        Field modificationDateField = document.getField(LASTUPDATED_TIME)
+        if (modificationDateField) {
+            item.modificationDate = new DateTime(modificationDateField.stringValue().toLong())
+        }
+        Field modificatorField = document.getField(LASTUPDATED_BY)
+        if (modificatorField) {
+            item.lastUpdater = new Person(username: modificatorField.stringValue())
         }
     }
 

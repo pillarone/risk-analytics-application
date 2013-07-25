@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformatio
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
@@ -55,7 +56,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     ModellingItemSearchService getService() {
         if (!service) {
-            service =  ModellingItemSearchService.getInstance()
+            service = ModellingItemSearchService.getInstance()
         }
         return service
     }
@@ -66,12 +67,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     Object getValueAt(Object node, int i) {
-        if (i == 0) {
-            return "${node.getValueAt(0)}".toString()
-        } else if (node instanceof ItemNode) {
-            return getValue(node.abstractUIItem.item, node, i)
-        }
-        return ""
+        return getValue(node, i)
     }
 
     public def addNodeForItem(Model model) {
@@ -120,18 +116,25 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         return parent.getIndex(child)
     }
 
-    public synchronized Object getValue(def item, ItemNode node, int columnIndex) {
-        if (!(item instanceof ModellingItem)) return ""
-        try {
-            return enumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(item, node)
-        } catch (Exception ex) {
-        }
-        return null
+    private Object getValue(ItemNode node, int columnIndex) {
+        return enumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(node.abstractUIItem.item)
+    }
+
+    private Object getValue(def node, int columnIndex) {
+        getColumnValue(node, columnIndex)
+    }
+
+    String getColumnValue(def node, int columnIndex) {
+        return columnIndex == 0 ? node.getValueAt(columnIndex) : null
+    }
+
+    private Object getValue(BatchRunNode node, int columnIndex) {
+        getColumnValue(node, columnIndex)
     }
 
     public void putValues(ItemNode node) {
         for (int column = 0; column < columnNames.size(); column++) {
-            addColumnValue(node.abstractUIItem.item, node, column, getValue(node.abstractUIItem.item, node, column))
+            addColumnValue(node.abstractUIItem.item, node, column, getValue(node, column))
         }
     }
 
@@ -155,11 +158,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             node.values[column] = value
     }
 
-    public void updateTreeStructure(ULCSession session){
+    public void updateTreeStructure(ULCSession session) {
 
         List<ModellingItemSearchService.ModellingItemEvent> items = getService().getPendingEvents(session)
-        items.each {ModellingItemSearchService.ModellingItemEvent itemEvent ->
-            switch (itemEvent.eventType){
+        items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
+            switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
                     builder.addNodeForItem(itemEvent.item)
                     break;

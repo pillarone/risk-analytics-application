@@ -40,6 +40,15 @@ class ModellingInformationTableTreeBuilder {
     AbstractTableTreeModel model
     RiskAnalyticsMainModel mainModel
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeBuilder)
+    @Lazy
+    private static List<Class> resources = {
+        ClassPathScanner provider = new ClassPathScanner()
+        provider.addIncludeFilter(new AssignableTypeFilter(IResource))
+        List<String> acceptedResources = ConfigurationHolder.config.includedResources
+
+        List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
+        return classes.findAll { acceptedResources.contains(it.simpleName) }
+    }()
 
     static final int PARAMETERIZATION_NODE_INDEX = 0
     static final int RESULT_CONFIGURATION_NODE_INDEX = 1
@@ -179,12 +188,7 @@ class ModellingInformationTableTreeBuilder {
             LOG.info("Please note that there are no resource classes defined in the config.groovy file")
             return []
         }
-        ClassPathScanner provider = new ClassPathScanner()
-        provider.addIncludeFilter(new AssignableTypeFilter(IResource))
-        List<String> acceptedResources = ConfigurationHolder.config.includedResources
-
-        List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
-        return classes.findAll { acceptedResources.contains(it.simpleName) }
+        return resources
     }
 
     private ITableTreeNode getModelNode(Model model) {
@@ -298,7 +302,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public void addNodeForItem(Simulation item) {
-        if (item.end){
+        if (item.end) {
             DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
             groupNode.leaf = false
             insertNodeInto(createNode(item), groupNode)
@@ -344,9 +348,9 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, Simulation item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
-        if (!itemNode){
+        if (!itemNode) {
             addNodeForItem(item)
-        }else {
+        } else {
             model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
         }
     }

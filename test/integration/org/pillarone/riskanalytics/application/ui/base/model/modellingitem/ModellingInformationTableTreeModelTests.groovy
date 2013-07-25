@@ -4,14 +4,17 @@ import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.server.SimpleContainerServices
 import com.ulcjava.base.server.ULCSession
+import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
-class ModellingInformationTableTreeModelTests extends GroovyTestCase {
+class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     ModellingInformationTableTreeModel model
     ULCSession session = new ULCSession('Test', new SimpleContainerServices())
@@ -19,6 +22,8 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
     void setUp() {
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Application'])
+        ModelRegistry.instance.clear()
+        ModelRegistry.instance.addModel(ApplicationModel)
         newParameterization('Parametrization X', '1')
         newParameterization('Parametrization X', '1.2')
         newParameterization('Parametrization X', '1.3')
@@ -35,6 +40,7 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
         model = new ModellingInformationTableTreeModel(new RiskAnalyticsMainModel())
+        model.buildTreeNodes()
         model.service.registerSession(session)
     }
 
@@ -118,5 +124,13 @@ class ModellingInformationTableTreeModelTests extends GroovyTestCase {
         dao.save(flush: true)
         model.updateTreeStructure(session)
         assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
+    }
+
+    void testGetValueAt() {
+        ITableTreeNode applicationNode = model.root.getChildAt(0)
+        IMutableTableTreeNode paramsNode = applicationNode.getChildAt(0) as IMutableTableTreeNode
+        assertEquals('Application',model.getValueAt(applicationNode, 0))
+        assertEquals('Parameterization',model.getValueAt(paramsNode, 0))
+        assertEquals('ApplicationParameters v1',model.getValueAt(paramsNode.getChildAt(0), 0))
     }
 }
