@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
@@ -64,11 +66,11 @@ class ModellingItemNodeFilterTests extends GroovyTestCase {
         ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, new CoreModel(),parameterization)
         ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
 
-        DateTime date = ModellingInformationTableTreeModel.simpleDateFormat.parseDateTime("01.01.2001")
+        DateTime date = DateFormatUtils.simpleDateFormat.parseDateTime("01.01.2001")
         node.values[ModellingInformationTableTreeModel.CREATION_DATE] = date
         assertTrue tagFilter.internalAcceptNode(node)
 
-        date = ModellingInformationTableTreeModel.simpleDateFormat.parseDateTime("02.01.2001")
+        date = DateFormatUtils.simpleDateFormat.parseDateTime("02.01.2001")
         node.values[ModellingInformationTableTreeModel.CREATION_DATE] = date
         assertFalse tagFilter.internalAcceptNode(node)
 

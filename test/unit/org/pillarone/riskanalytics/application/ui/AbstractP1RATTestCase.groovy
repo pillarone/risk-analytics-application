@@ -123,7 +123,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         return mainModel
     }
 
-    private MultiFilteringTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
+    private ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
         treeModel.builder.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
@@ -164,7 +164,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
 //        }
 //        treeModel.builder = builder
         treeModel.buildTreeNodes()
-        return new MultiFilteringTableTreeModel(treeModel)
+        return treeModel
     }
 
 
