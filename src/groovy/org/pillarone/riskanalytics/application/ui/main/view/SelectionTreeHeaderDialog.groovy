@@ -8,6 +8,7 @@ import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
@@ -27,12 +28,12 @@ abstract class SelectionTreeHeaderDialog {
     protected ULCTableTree tableTree
     int columnIndex
     protected List filterValues
-    MultiFilteringTableTreeModel model
+    ModellingInformationTableTreeModel model
     ModellingItemNodeFilter filter
 
     public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex) {
         this.tableTree = tree
-        model = tableTree.model
+        this.model = (ModellingInformationTableTreeModel) tableTree.model
         this.parent = UlcUtilities.getWindowAncestor(tableTree)
         this.columnIndex = columnIndex
         this.filterValues = []

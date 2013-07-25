@@ -14,6 +14,7 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
@@ -73,7 +74,7 @@ class HeaderView extends AbstractView {
     ULCTableTree navigationTableTree
 
     RiskAnalyticsMainModel model
-    MultiFilteringTableTreeModel navigationTableTreeModel
+    ModellingInformationTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
 
     Log LOG = LogFactory.getLog(HeaderView.class)

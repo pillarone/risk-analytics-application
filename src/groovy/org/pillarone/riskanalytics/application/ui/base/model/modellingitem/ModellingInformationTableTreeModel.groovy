@@ -29,9 +29,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
-    final IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
-    ModellingItemSearchService service
-    final ModellingInformationTableTreeBuilder builder
+    IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
+    ModellingItemSearchService service = ModellingItemSearchService.getInstance()
+    ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
     Map columnValues = [:]
@@ -62,8 +62,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void buildTreeNodes() {
-        List<ModellingItem> modellingItems = getService().getAllItems()
+        List<ModellingItem> modellingItems = service.getAllItems()
         builder.buildTreeNodes(modellingItems)
+        root = builder.root
     }
 
     Object getValueAt(Object node, int i) {
