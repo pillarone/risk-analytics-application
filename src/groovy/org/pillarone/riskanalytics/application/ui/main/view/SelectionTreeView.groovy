@@ -19,6 +19,7 @@ import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
@@ -62,9 +63,10 @@ class SelectionTreeView {
         content.add(IDefaults.BOX_EXPAND_EXPAND, tree)
     }
 
-    public void filterTree(String filter) {
+    public void filterTree(FilterDefinition filterDefinition) {
         navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(mainModel)
-        navigationTableTreeModel.builder.buildTreeNodes(ModellingItemSearchService.instance.search(filter))
+        navigationTableTreeModel.currentFilter = filterDefinition
+        navigationTableTreeModel.builder.buildTreeNodes(navigationTableTreeModel.getFilteredItems())
         navigationTableTreeModel.root = navigationTableTreeModel.builder.root
 
         content.remove(tree)
@@ -122,14 +124,20 @@ class SelectionTreeView {
         tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: { ActionEvent event ->
             ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
             int columnIndex = navigationTableTreeModel.getColumnIndex(column.getModelIndex())
-            // if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
+
             if (ActionEvent.META_MASK == event.getModifiers()) {
-                SelectionTreeHeaderDialog dialog
-                dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
-                dialog.init()
-                dialog.dialog.setLocationRelativeTo(tree)
-                dialog.dialog.setAlignment(IDefaults.BOX_CENTER_CENTER)
-                dialog.dialog.setVisible true
+                IColumnDescriptor descriptor = getDescriptor(columnIndex)
+                if (descriptor != null) {
+                    SelectionTreeHeaderDialog dialog =
+                        new CheckBoxDialog(tree.viewPortTableTree, columnIndex, descriptor)
+                    dialog.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
+                        filterTree(filter)
+                    }] as IFilterChangedListener)
+                    dialog.init()
+                    dialog.dialog.setLocationRelativeTo(tree)
+                    dialog.dialog.setAlignment(IDefaults.BOX_CENTER_CENTER)
+                    dialog.dialog.setVisible true
+                }
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
                 navigationTableTreeModel.order(columnIndex, ascOrder)
                 ascOrder = !ascOrder
@@ -148,6 +156,17 @@ class SelectionTreeView {
 
     ITableTreeNode getRoot() {
         return navigationTableTreeModel.getRoot()
+    }
+
+    private IColumnDescriptor getDescriptor(int columnIndex) {
+        switch (columnIndex) {
+            case ModellingInformationTableTreeModel.TAGS:
+                return new IColumnDescriptor.TagColumnDescriptor()
+            case ModellingInformationTableTreeModel.STATE:
+                return new IColumnDescriptor.StateColumnDescriptor()
+        }
+
+        return null
     }
 
 

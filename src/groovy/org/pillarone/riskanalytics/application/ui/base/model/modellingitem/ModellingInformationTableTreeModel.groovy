@@ -30,7 +30,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
-    ModellingItemSearchService service
+    @Lazy ModellingItemSearchService service = { ModellingItemSearchService.getInstance() }()
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
@@ -49,6 +49,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     int columnCount = columnNames.size()
 
+    FilterDefinition currentFilter = new FilterDefinition()
+
     ModellingInformationTableTreeModel(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
@@ -56,17 +58,15 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         root = builder.root
     }
 
-    ModellingItemSearchService getService() {
-        if (!service) {
-            service = ModellingItemSearchService.getInstance()
-        }
-        return service
-    }
-
     public void buildTreeNodes() {
-        List<ModellingItem> modellingItems = getService().getAllItems()
+        currentFilter.setText("*")
+        List<ModellingItem> modellingItems = getFilteredItems()
         builder.buildTreeNodes(modellingItems)
         root = builder.root
+    }
+
+    public List<ModellingItem> getFilteredItems() {
+        return service.search(currentFilter.toQuery())
     }
 
     Object getValueAt(Object node, int i) {

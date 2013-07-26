@@ -12,14 +12,11 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.search.DocumentFactory
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.user.UserManagement
 
 /**
@@ -52,7 +49,7 @@ class NavigationBarTopPane {
         filterChangedListeners.remove(listener)
     }
 
-    void fireFilterChanged(String newFilter) {
+    void fireFilterChanged(FilterDefinition newFilter) {
         filterChangedListeners*.filterChanged(newFilter)
     }
 
@@ -98,13 +95,17 @@ class NavigationBarTopPane {
 
     protected void attachListeners() {
         myStuffButton.addActionListener([actionPerformed: { ActionEvent event ->
-            fireFilterChanged("${DocumentFactory.OWNER_FIELD}:${UserManagement.currentUser.username}")
+            FilterDefinition filter = tableTreeModel.currentFilter
+            filter.putQueryPart(DocumentFactory.OWNER_FIELD, UserManagement.currentUser.username)
+            fireFilterChanged(filter)
         }] as IActionListener)
         searchTextField.addFocusListener(new TextFieldFocusListener(searchTextField))
         Closure searchClosure = {
             String text = searchTextField.getText()
             if (text) {
-                fireFilterChanged("*$text*")
+                FilterDefinition filter = tableTreeModel.currentFilter
+                filter.setText("*$text*")
+                fireFilterChanged(filter)
             }
         }
         IActionListener action = [actionPerformed: { ActionEvent e -> searchClosure.call() }] as IActionListener
@@ -113,7 +114,9 @@ class NavigationBarTopPane {
         clearButton.addActionListener([actionPerformed: { ActionEvent event ->
             searchTextField.setText(UIUtils.getText(this.class, "searchText"))
             searchTextField.setForeground Color.gray
-            fireFilterChanged("*")
+            FilterDefinition filter = tableTreeModel.currentFilter
+            filter.setText("*")
+            fireFilterChanged(filter)
             myStuffButton.setSelected false
             assignedToMeButton.setSelected false
         }] as IActionListener)

@@ -3,7 +3,9 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
+import org.pillarone.riskanalytics.application.search.DocumentFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
 
@@ -12,19 +14,21 @@ import com.ulcjava.base.application.*
  */
 class CheckBoxDialog extends SelectionTreeHeaderDialog {
 
+    protected List<String> filterValues
+
     private List<ULCCheckBox> filterCheckBoxes
     boolean allSelected = false
 
-    public CheckBoxDialog(ULCTableTree tree, int columnIndex) {
-        super(tree, columnIndex)
-        filter = model.getFilter(columnIndex)
+    public CheckBoxDialog(ULCTableTree tree, int columnIndex, IColumnDescriptor columnDescriptor) {
+        super(tree, columnIndex, columnDescriptor)
+        filterValues = []
     }
 
     @Override
     ULCBoxPane addChoiceButton() {
         ULCBoxPane filterPane = new ULCBoxPane(2, 0)
         filterPane.setBorder BorderFactory.createTitledBorder(UIUtils.getText(SelectionTreeHeaderDialog.class, "filteredby") + ": " + getColumnName(columnIndex));
-        filterCheckBoxes.each {ULCCheckBox checkBox ->
+        filterCheckBoxes.each { ULCCheckBox checkBox ->
             filterPane.add(ULCBoxPane.BOX_LEFT_TOP, checkBox)
             filterPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         }
@@ -36,14 +40,13 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
     protected void attachListeners() {
         super.attachListeners()
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
-            if (!filter) {
-                filter = new ModellingItemNodeFilter(filterValues, columnIndex, allSelected)
-                model.addFilter(filter)
-            } else {
-                filter.allSelected = allSelected
-                filter.values = filterValues
+            FilterDefinition filter = model.currentFilter
+            filter.clearField(columnDescriptor.searchPropertyName)
+            for(String val in filterValues) {
+                filter.putQueryPart(columnDescriptor.searchPropertyName, val)
             }
-            model.applyFilter()
+            fireFilterChanged(filter)
+
             dialog.dispose()
         }] as IActionListener)
     }
@@ -56,16 +59,21 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
         allCheckBox.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             this.@allSelected = allCheckBox.selected
             if (allCheckBox.selected) filterValues.clear()
-            filterCheckBoxes.each {ULCCheckBox checkBox ->
+            filterCheckBoxes.each { ULCCheckBox checkBox ->
                 checkBox.setSelected(allCheckBox.selected)
             }
 
         }] as IValueChangedListener)
 
         filterCheckBoxes << allCheckBox
-        List values = tableTree.model.getValues(columnIndex)
-        values.each {
-            ULCCheckBox box = new ULCCheckBox(String.valueOf(it))
+        List<String> values = columnDescriptor.getValues()
+        List<String> activeValues = model.currentFilter.getActiveValues(columnDescriptor.searchPropertyName)
+        for (String value in values) {
+            ULCCheckBox box = new ULCCheckBox(String.valueOf(value))
+            if(activeValues.contains(value)) {
+                box.selected = true
+                filterValues << value
+            }
             box.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
                 if (box.selected)
                     filterValues << box.getText()
@@ -74,19 +82,6 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
             }] as IValueChangedListener)
             filterCheckBoxes << box
         }
-        selectValues()
     }
-
-    protected void selectValues() {
-        if (filter) {
-            filterCheckBoxes.each {ULCCheckBox checkBox ->
-                def value = filter.values.find { it == checkBox.getText() }
-                checkBox.setSelected(filter.allSelected || value != null)
-            }
-            this.@allSelected = filter.allSelected
-            filterValues = filter.values
-        }
-    }
-
 
 }
