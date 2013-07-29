@@ -6,6 +6,7 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
@@ -68,6 +69,25 @@ class ModellingInformationTableTreeBuilder {
         buildBatchNodes()
         buildModelNodes(modellingItems)
 
+    }
+
+    public List<ModellingItem> getModellingItems() {
+        List<ModellingItem> result = []
+        internalGetModellingItems(root, result)
+        return result
+    }
+
+    protected void internalGetModellingItems(ITableTreeNode currentNode, List<ModellingItem> list) {
+        if(currentNode instanceof ItemNode) {
+            Object item = currentNode.abstractUIItem.item
+            if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration)) {
+                list << item
+            }
+        }
+
+        for(int i = 0; i < currentNode.childCount; i++) {
+            internalGetModellingItems(currentNode.getChildAt(i), list)
+        }
     }
 
     private buildModelNodes(List<ModellingItem> items) {

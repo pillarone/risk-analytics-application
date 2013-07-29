@@ -15,8 +15,6 @@ import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.server.ULCSession
 import com.ulcjava.base.shared.IDefaults
-import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
@@ -26,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -64,14 +63,21 @@ class SelectionTreeView {
     }
 
     public void filterTree(FilterDefinition filterDefinition) {
-        navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(mainModel)
-        navigationTableTreeModel.currentFilter = filterDefinition
-        navigationTableTreeModel.builder.buildTreeNodes(navigationTableTreeModel.getFilteredItems())
-        navigationTableTreeModel.root = navigationTableTreeModel.builder.root
+        List<ModellingItem> currentItems = navigationTableTreeModel.builder.modellingItems
 
-        content.remove(tree)
-        initTree()
-        content.add(IDefaults.BOX_EXPAND_EXPAND, tree)
+        navigationTableTreeModel.currentFilter = filterDefinition
+        List<ModellingItem> filteredItems = navigationTableTreeModel.getFilteredItems()
+
+        for (ModellingItem item in filteredItems) {
+            if (!currentItems.contains(item)) {
+                navigationTableTreeModel.builder.addNodeForItem(item)
+            }
+        }
+
+        currentItems.removeAll(filteredItems)
+        for(ModellingItem item in currentItems) {
+            navigationTableTreeModel.builder.removeNodeForItem(item)
+        }
     }
 
     private void attachListeners() {
