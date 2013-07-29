@@ -178,8 +178,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
-    public void refreshBatchNode() {
-        builder.refreshBatchNode()
+    public void removeNodeForItem(BatchUIItem batchUIItem) {
+        builder.removeNodeForItem batchUIItem
     }
 
     public void refresh() {
