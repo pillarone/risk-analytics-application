@@ -126,8 +126,8 @@ abstract class DocumentFactory {
         document.add(new Field(MODEL_CLASS_FIELD, item.modelClass.name, Store.YES, Index.ANALYZED))
         document.add(new Field(ITEM_TYPE_FIELD, ItemType.RESULT.toString(), Store.YES, Index.ANALYZED))
         document.add(new Field(TAGS_FIELD, item.tags*.name.join(" "), Store.YES, Index.ANALYZED))
-        document.add(new Field(START_FIELD, item.start.millis.toString(), Store.YES, Index.NOT_ANALYZED))
-        document.add(new Field(END_FIELD, item.end.millis.toString(), Store.YES, Index.NOT_ANALYZED))
+        addFieldIfNotNull(document,START_FIELD,item.start?.millis,Index.NOT_ANALYZED)
+        addFieldIfNotNull(document,END_FIELD,item.end?.millis,Index.NOT_ANALYZED)
         addFieldIfNotNull(document, OWNER_FIELD, item.creator?.username?.toString())
         addFieldIfNotNull(document, LASTUPDATED_BY, item.lastUpdater?.username?.toString())
         addFieldIfNotNull(document, CREATION_TIME, item.creationDate?.millis?.toString())
@@ -165,8 +165,14 @@ abstract class DocumentFactory {
                 Simulation simulation = new Simulation(name)
                 simulation.id = document.getField(DAO_ID_FIELD)?.stringValue()?.toLong()
                 simulation.modelClass = modelClass
-                simulation.start = new DateTime(Long.parseLong(document.getField(START_FIELD).stringValue()))
-                simulation.end = new DateTime(Long.parseLong(document.getField(END_FIELD).stringValue()))
+                Field startField = document.getField(START_FIELD)
+                if (startField){
+                    simulation.start = new DateTime(startField.stringValue())
+                }
+                Field endField = document.getField(END_FIELD)
+                if (endField){
+                    simulation.end = new DateTime(endField.stringValue())
+                }
                 mapOwner(simulation, document)
                 mapModificator(simulation, document)
                 mapTags(simulation, document)
