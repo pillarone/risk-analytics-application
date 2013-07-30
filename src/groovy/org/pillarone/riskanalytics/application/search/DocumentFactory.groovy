@@ -167,11 +167,11 @@ abstract class DocumentFactory {
                 simulation.modelClass = modelClass
                 Field startField = document.getField(START_FIELD)
                 if (startField){
-                    simulation.start = new DateTime(startField.stringValue())
+                    simulation.start = new DateTime(startField.stringValue().toLong())
                 }
                 Field endField = document.getField(END_FIELD)
                 if (endField){
-                    simulation.end = new DateTime(endField.stringValue())
+                    simulation.end = new DateTime(endField.stringValue().toLong())
                 }
                 mapOwner(simulation, document)
                 mapModificator(simulation, document)

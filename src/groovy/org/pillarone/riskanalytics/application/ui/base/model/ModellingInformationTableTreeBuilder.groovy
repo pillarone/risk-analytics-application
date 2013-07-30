@@ -405,15 +405,6 @@ class ModellingInformationTableTreeBuilder {
         removeNodeFromParent(itemNode)
     }
 
-//    public void refreshBatchNode() {
-//        ITableTreeNode batchNode = findBatchRootNode(root)
-//
-//        removeNodeFromParent(batchNode)
-//        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
-//        root.add(createBatchNode())
-//        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
-//    }
-
     private createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem) {
         boolean parameterNameFound = false
         for (int i = 0; i < node.childCount; i++) {

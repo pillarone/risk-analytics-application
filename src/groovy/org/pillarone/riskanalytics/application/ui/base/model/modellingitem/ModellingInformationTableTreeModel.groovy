@@ -4,6 +4,7 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.server.ULCSession
 import org.apache.commons.logging.Log
@@ -29,7 +30,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
-    IMutableTableTreeNode root = new DefaultMutableTableTreeNode("root")
     @Lazy ModellingItemSearchService service = { ModellingItemSearchService.getInstance() }()
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
@@ -51,18 +51,21 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     FilterDefinition currentFilter = new FilterDefinition()
 
+    @Override
+    ITableTreeNode getRoot() {
+        builder.root
+    }
+
     ModellingInformationTableTreeModel(RiskAnalyticsMainModel mainModel) {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
-        root = builder.root
     }
 
     public void buildTreeNodes() {
         currentFilter.setText("*")
         List<ModellingItem> modellingItems = getFilteredItems()
         builder.buildTreeNodes(modellingItems)
-        root = builder.root
     }
 
     public List<ModellingItem> getFilteredItems() {
@@ -141,24 +144,22 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
-    public void addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
+    private addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
         if (columnValues[parameterization] == null)
             columnValues[parameterization] = new Object[columnNames.size()]
         columnValues[parameterization][column] = value
         node.values[column] = value
     }
 
-    public void addColumnValue(def item, SimulationNode node, int column, Object value) {
+    private addColumnValue(def item, SimulationNode node, int column, Object value) {
         node.values[column] = value
     }
 
-    public void addColumnValue(def item, ResultConfigurationNode node, int column, Object value) {
+    private addColumnValue(def item, ResultConfigurationNode node, int column, Object value) {
         node.values[column] = value
     }
 
-    public void addColumnValue(def item, def node, int column, Object value) {
-        if (node instanceof SimulationNode)
-            node.values[column] = value
+    private addColumnValue(def item, def node, int column, Object value) {
     }
 
     public void updateTreeStructure(ULCSession session) {
@@ -174,6 +175,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.UPDATED:
                     builder.itemChanged(itemEvent.item)
+                    break;
             }
         }
     }
@@ -188,11 +190,15 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void refresh() {
         ExceptionSafe.protect {
-            getService().refresh()
+            refreshService()
             builder.removeAll()
             buildTreeNodes()
             nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
         }
+    }
+
+    private void refreshService() {
+        service.refresh()
     }
 
     public void order(int column, boolean asc) {

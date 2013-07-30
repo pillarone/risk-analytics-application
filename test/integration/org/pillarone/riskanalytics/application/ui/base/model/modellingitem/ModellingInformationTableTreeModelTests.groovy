@@ -5,18 +5,26 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.server.SimpleContainerServices
 import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
+import models.core.CoreModel
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.example.model.EmptyModel
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
 class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     ModellingInformationTableTreeModel model
+    RiskAnalyticsMainModel mainModel
     ULCSession session = new ULCSession('Test', new SimpleContainerServices())
 
     void setUp() {
@@ -39,7 +47,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         newParameterization('Parametrization X', '9')
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
-        model = new ModellingInformationTableTreeModel(new RiskAnalyticsMainModel())
+        mainModel = new RiskAnalyticsMainModel()
+        model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
         model.service.registerSession(session)
     }
@@ -53,10 +62,9 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     protected void tearDown() {
         LocaleResources.clearTestMode()
-        ParameterizationDAO.list().each {
-            it.delete(flush: true)
-        }
         model.service.unregisterSession(session)
+        SimulationRun.list()*.delete(flush: true)
+        ParameterizationDAO.list()*.delete(flush: true)
     }
 
     private void printTree() {
@@ -108,29 +116,91 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assertEquals '1.4.1', v141Node.abstractUIItem.item.versionNumber.toString()
     }
 
-    void testCheckForUpdates() {
-        ParameterizationDAO dao = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
-        dao.save(flush: true)
+    void testUpdateTreeStructure() {
+        ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
+        parameterizationDAO.save(flush: true)
         model.updateTreeStructure(session)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
+        IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
         assertEquals 2, paramsNode.childCount
         def v12Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v12Node.name
 
         assertEquals '12', v12Node.abstractUIItem.item.versionNumber.toString()
 
-        dao.status = Status.IN_REVIEW
-        dao.save(flush: true)
+        parameterizationDAO.status = Status.IN_REVIEW
+        parameterizationDAO.save(flush: true)
         model.updateTreeStructure(session)
         assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
+        parameterizationDAO.delete(flush: true)
+        model.updateTreeStructure(session)
+        assertEquals(2, paramsNode.childCount)
+        def v11Node = paramsNode.getChildAt(1)
+        assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
+        SimulationRun run = new SimulationRun()
+        run.parameterization = ParameterizationDAO.list()[0]
+        run.resultConfiguration = ResultConfigurationDAO.list()[0]
+        run.name = 'TestRun'
+        run.startTime = new DateTime()
+        run.endTime = new DateTime()
+        run.model = 'models.application.ApplicationModel'
+        run.save(flush: true)
+        model.updateTreeStructure(session)
+        assertEquals(1, resultsNode.childCount)
+
     }
 
     void testGetValueAt() {
         ITableTreeNode applicationNode = model.root.getChildAt(0)
         IMutableTableTreeNode paramsNode = applicationNode.getChildAt(0) as IMutableTableTreeNode
-        assertEquals('Application',model.getValueAt(applicationNode, 0))
-        assertEquals('Parameterization',model.getValueAt(paramsNode, 0))
-        assertEquals('ApplicationParameters v1',model.getValueAt(paramsNode.getChildAt(0), 0))
+        assertEquals('Application', model.getValueAt(applicationNode, 0))
+        assertEquals('Parameterization', model.getValueAt(paramsNode, 0))
+        assertEquals('ApplicationParameters v1', model.getValueAt(paramsNode.getChildAt(0), 0))
+    }
+
+    void testBatch() {
+        BatchRun run = new BatchRun()
+        run.name = 'testBatch'
+        BatchUIItem batchUIItem = new BatchUIItem(mainModel, run)
+        model.addNodeForItem(batchUIItem)
+        IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
+        assertEquals(1, batchNode.childCount)
+        assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0),0))
+        model.removeNodeForItem(new BatchUIItem(mainModel,run))
+        assertEquals(0, batchNode.childCount)
+    }
+
+    void testModel() {
+        model.addNodeForItem(new EmptyModel())
+        IMutableTableTreeNode modelNode = model.root.getChildAt(1) as IMutableTableTreeNode
+        assertEquals('Empty', model.getValueAt(modelNode,0))
+    }
+
+    void testRefresh() {
+        IMutableTableTreeNode oldModelNode = model.root.getChildAt(0) as IMutableTableTreeNode
+        IMutableTableTreeNode oldParamsNode = oldModelNode.getChildAt(0) as IMutableTableTreeNode
+        model.refresh()
+        IMutableTableTreeNode newModelNode = model.root.getChildAt(0) as IMutableTableTreeNode
+        IMutableTableTreeNode newParamsNode = newModelNode.getChildAt(0) as IMutableTableTreeNode
+
+        assertNotSame(oldModelNode, newModelNode)
+        assertNotSame(oldParamsNode, newParamsNode)
+    }
+
+    void testReturnedInstance() {
+        UserContext.metaClass.static.hasCurrentUser = {->
+            true
+        }
+        ModellingInformationTableTreeModel model = ModellingInformationTableTreeModel.getInstance(mainModel)
+        assertTrue(model instanceof ModellingInformationTableTreeModel)
+        assertFalse(model instanceof StandaloneTableTreeModel)
+        UserContext.metaClass.static.hasCurrentUser = {->
+            false
+        }
+        assertEquals(8, model.columnCount)
+        model = ModellingInformationTableTreeModel.getInstance(mainModel)
+        assertTrue(model instanceof StandaloneTableTreeModel)
+        assertEquals(4, model.columnCount)
     }
 }
