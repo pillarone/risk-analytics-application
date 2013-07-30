@@ -163,7 +163,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void updateTreeStructure(ULCSession session) {
 
-        List<ModellingItemSearchService.ModellingItemEvent> items = getService().getPendingEvents(session)
+        List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(session)
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
@@ -176,6 +176,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     builder.itemChanged(itemEvent.item)
             }
         }
+    }
+
+    public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(ULCSession session) {
+        service.getPendingEvents(session)
     }
 
     public void removeNodeForItem(BatchUIItem batchUIItem) {

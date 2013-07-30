@@ -492,7 +492,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createNode(Parameterization item) {
-        return createNode(new ParameterizationUIItem(mainModel, item.modelClass.newInstance(), item))
+        return createNode(new ParameterizationUIItem(mainModel, item.modelClass?.newInstance(), item))
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
@@ -502,7 +502,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfiguration item) {
-        return createNode(new ResultConfigurationUIItem(mainModel, item.modelClass.newInstance(), item))
+        return createNode(new ResultConfigurationUIItem(mainModel, item.modelClass?.newInstance(), item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
@@ -531,7 +531,7 @@ class ModellingInformationTableTreeBuilder {
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
         SimulationNode node = null
-        Model selectedModelInstance = item.modelClass.newInstance()
+        Model selectedModelInstance = item.modelClass?.newInstance()
         try {
             node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
             DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
