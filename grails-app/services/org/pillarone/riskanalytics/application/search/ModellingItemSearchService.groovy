@@ -85,17 +85,17 @@ class ModellingItemSearchService {
         try {
             ParameterizationDAO.withNewSession {
                 for (ParameterizationDAO dao in ParameterizationDAO.list()) {
-                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toParameterization(dao)))
+                    indexWriter.addDocument(DocumentFactory.createDocument(toParameterization(dao)))
                 }
                 for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
-                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResultConfiguration(dao)))
+                    indexWriter.addDocument(DocumentFactory.createDocument(toResultConfiguration(dao)))
                 }
 
                 for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
-                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
+                    indexWriter.addDocument(DocumentFactory.createDocument(toSimulation(dao)))
                 }
                 for (ResourceDAO dao in ResourceDAO.list()) {
-                    indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResource(dao)))
+                    indexWriter.addDocument(DocumentFactory.createDocument(toResource(dao)))
                 }
             }
         } finally {
