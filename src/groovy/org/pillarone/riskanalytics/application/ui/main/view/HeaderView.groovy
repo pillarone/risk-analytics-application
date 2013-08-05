@@ -13,7 +13,6 @@ import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem

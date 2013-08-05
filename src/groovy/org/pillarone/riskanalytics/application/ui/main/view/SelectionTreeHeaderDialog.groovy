@@ -7,7 +7,6 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
