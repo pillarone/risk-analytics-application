@@ -96,7 +96,11 @@ class NavigationBarTopPane {
     protected void attachListeners() {
         myStuffButton.addActionListener([actionPerformed: { ActionEvent event ->
             FilterDefinition filter = tableTreeModel.currentFilter
-            filter.putQueryPart(DocumentFactory.OWNER_FIELD, UserManagement.currentUser.username)
+            if (myStuffButton.isSelected()) {
+                filter.putQueryPart(DocumentFactory.OWNER_FIELD, UserManagement.currentUser.username)
+            } else {
+                filter.clearField(DocumentFactory.OWNER_FIELD)
+            }
             fireFilterChanged(filter)
         }] as IActionListener)
         searchTextField.addFocusListener(new TextFieldFocusListener(searchTextField))
@@ -116,6 +120,7 @@ class NavigationBarTopPane {
             searchTextField.setForeground Color.gray
             FilterDefinition filter = tableTreeModel.currentFilter
             filter.setText("*")
+            filter.clearField(DocumentFactory.OWNER_FIELD)
             fireFilterChanged(filter)
             myStuffButton.setSelected false
             assignedToMeButton.setSelected false
