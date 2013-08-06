@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.util
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import org.pillarone.riskanalytics.core.user.Authority
 import java.awt.FontMetrics
 import java.awt.Graphics
 import java.awt.image.BufferedImage
@@ -207,20 +208,10 @@ class UIUtils {
     }
 
     public static String getUserInfo() {
-        try {
-            if (UserManagement.isLoggedIn()) {
-                Person loggedUser = null
-                String userAuthorities = ""
-                Person.withTransaction { def status ->
-                    loggedUser = UserContext.getCurrentUser()
-                    List authorities = (PersonAuthority.findAllByPerson(loggedUser).collect { it.authority } as Set)*.authority
-                    List i18nAuthorities = authorities.collect { UIUtils.getText(PersonAuthority.class, it) }
-                    userAuthorities = i18nAuthorities.join(", ")
-                }
-                return loggedUser.username + " (" + userAuthorities + ")"
-            }
-        } catch (Exception ex) {
-
+        Person currentUser = UserManagement.currentUser
+        if (currentUser != null) {
+            Collection<Authority> authorities = currentUser.authorities
+            return currentUser.username + " (" + authorities.collect { getText(PersonAuthority.class, it.authority) }.join(", ") + ")"
         }
         return ""
     }
