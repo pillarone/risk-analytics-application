@@ -312,9 +312,12 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private void addNodeForUIItem(ModellingUIItem modellingUIItem) {
-        ITableTreeNode groupNode = findGroupNode(modellingUIItem, findModelNode(root, modellingUIItem))
-        createAndInsertItemNode(groupNode, modellingUIItem)
-        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
+        ModelNode modelNode = findModelNode(root, modellingUIItem)
+        if (modelNode != null) { //item in db, but not enabled in Config
+            ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
+            createAndInsertItemNode(groupNode, modellingUIItem)
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
+        }
     }
 
     private void addNodeForUIItem(ResourceUIItem modellingUIItem) {

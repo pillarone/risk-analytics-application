@@ -29,8 +29,10 @@ class TableTreeBuilderUtils {
         ModelNode modelNode = null
         for (int i = 0; i < root.childCount && modelNode == null; i++) {
             def candidate = root.getChildAt(i)
-            if (candidate.abstractUIItem.item.getClass().name.equals(modelClassName)) {
-                modelNode = candidate
+            if (candidate instanceof ModelNode) { //could be batch root node
+                if (candidate.abstractUIItem.item.getClass().name.equals(modelClassName)) {
+                    modelNode = candidate
+                }
             }
         }
         return modelNode
