@@ -6,6 +6,7 @@ import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.comment.model.ItemListModel
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -61,8 +62,8 @@ class NewCommentViewTests extends AbstractP1RATTestCase {
         newCommentView.periodIndex = 0
         newCommentView.metaClass.getDisplayPath = {-> return "path"}
         newCommentView.init()
-        newCommentView.fileAdded("file1")
-        newCommentView.fileAdded("file2")
+        newCommentView.fileAdded(new CommentFile("file1", new File("file1")))
+        newCommentView.fileAdded(new CommentFile("file2", new File("file2")))
         newCommentView.content
     }
 }

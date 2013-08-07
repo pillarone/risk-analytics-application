@@ -20,6 +20,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import com.ulcjava.base.application.*
 
@@ -43,7 +44,7 @@ class NewCommentView {
     protected CommentAndErrorView commentAndErrorView
     ItemListModel<Tag> tagListModel
     AddFileToCommentAction addFileToCommentAction
-    List<String> addedFiles = []
+    List<CommentFile> addedFiles = []
     ULCBoxPane addedFilesPane
     ULCLabel addedFilesLabel
     Log LOG = LogFactory.getLog(NewCommentView)
@@ -58,7 +59,7 @@ class NewCommentView {
     public NewCommentView(CommentAndErrorView commentAndErrorView) {
         this.commentAndErrorView = commentAndErrorView
         this.model = commentAndErrorView.model
-        this.tagListModel = new ItemListModel<Tag>(allTags?.collect {it.name}.toArray(), getAllTags())
+        this.tagListModel = new ItemListModel<Tag>(allTags?.collect { it.name }.toArray(), getAllTags())
     }
 
     public NewCommentView(CommentAndErrorView commentAndErrorView, String path, int periodIndex) {
@@ -143,12 +144,12 @@ class NewCommentView {
     }
 
     protected void attachListeners() {
-        addButton.addActionListener([actionPerformed: {ActionEvent evt ->
+        addButton.addActionListener([actionPerformed: { ActionEvent evt ->
             addCommentToItem(path, periodIndex)
             commentAndErrorView.closeTab()
         }] as IActionListener)
 
-        cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
+        cancelButton.addActionListener([actionPerformed: { ActionEvent evt ->
             commentAndErrorView.closeTab()
         }] as IActionListener)
 
@@ -158,10 +159,11 @@ class NewCommentView {
         String text = commentTextArea.getText()
         if (text && text.length() > 0 && text.length() < MAX_CHARS) {
             Comment comment = createComment(path, periodIndex, function)
-            comment.files = addedFiles as Set
+            addedFiles.each { f -> comment.addFile(f) }
+
             comment.lastChange = new DateTime()
             comment.comment = commentTextArea.getText()
-            tagListModel.getSelectedValues(tags.getSelectedIndices()).each {Tag tag ->
+            tagListModel.getSelectedValues(tags.getSelectedIndices()).each { Tag tag ->
                 comment.addTag(tag)
             }
             addPostTag(comment)
@@ -202,28 +204,21 @@ class NewCommentView {
     protected void saveComments(def item) {
     }
 
-    public fileAdded(String fileName) {
-        if (addedFiles.contains(fileName)) return
-        addedFiles << fileName
-        ULCLabel label = new ULCLabel(fileName)
+    public fileAdded(CommentFile file) {
+        if (addedFiles.contains(file)) return
+        addedFiles.add(file)
+        ULCLabel label = new ULCLabel(file.filename)
         addedFilesPane.add(label)
         ULCButton removeFileButton = new ULCButton(UIUtils.getIcon("cancel.png"))
         removeFileButton.name = "removeFileButton"
         removeFileButton.setContentAreaFilled false
         removeFileButton.setBackground Color.white
         removeFileButton.setOpaque false
-        removeFileButton.setToolTipText(UIUtils.getText(NewCommentView, "removeFile", [fileName]))
-        removeFileButton.addActionListener([actionPerformed: {ActionEvent event ->
-            addedFiles.remove(fileName)
+        removeFileButton.setToolTipText(UIUtils.getText(NewCommentView, "removeFile", [file.filename]))
+        removeFileButton.addActionListener([actionPerformed: { ActionEvent event ->
+            addedFiles.remove(file)
             addedFilesPane.remove(label)
             addedFilesPane.remove(removeFileButton)
-            String dir = FileConstants.COMMENT_FILE_DIRECTORY
-            try {
-                File file = new File(dir + File.separator + fileName)
-                if (file.exists()) file.delete()
-            } catch (Exception ex) {
-                LOG.error " Error occured during delete of ${dir + File.separator + fileName} : ${ex}"
-            }
         }] as IActionListener)
         addedFilesPane.add(removeFileButton)
     }

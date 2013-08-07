@@ -1,28 +1,26 @@
 package org.pillarone.riskanalytics.application.ui.comment
 
+import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import com.ulcjava.base.application.ULCFrame
+import com.ulcjava.testframework.operator.*
 import models.core.CoreModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.output.DBCleanUpService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 
-import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
-import com.ulcjava.base.application.ULCFrame
 import java.awt.event.InputEvent
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.testframework.operator.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com

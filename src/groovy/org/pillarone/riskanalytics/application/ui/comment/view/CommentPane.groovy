@@ -1,31 +1,26 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import org.pillarone.riskanalytics.core.FileConstants;
-
-
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.FunctionComment
-
 import be.devijver.wikipedia.Parser
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.border.ULCTitledBorder
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.pillarone.riskanalytics.application.ui.base.action.DownloadFileAction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.base.view.FollowLinkPane
 import org.pillarone.riskanalytics.application.ui.comment.action.EditCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.MakeVisibleAction
 import org.pillarone.riskanalytics.application.ui.comment.action.RemoveCommentAction
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.springframework.web.util.HtmlUtils
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.base.action.DownloadFileAction
 import org.pillarone.riskanalytics.application.ui.util.CommentUtils
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.FileConstants
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
+import org.springframework.web.util.HtmlUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -79,7 +74,7 @@ class CommentPane {
         editCommentAction = new EditCommentAction(comment)
         Closure enablingClosure = {->
             if (model instanceof ResultViewModel) return true
-            if (comment.tags.any { it.name == NewCommentView.POST_LOCKING}) return true
+            if (comment.tags.any { it.name == NewCommentView.POST_LOCKING }) return true
             if (model?.isReadOnly()) return false
             if (((Parameterization) model?.item)?.isEditable()) return true
             return false
@@ -153,20 +148,18 @@ class CommentPane {
     String getCommentFiles() {
         StringBuilder sb = new StringBuilder("<br>" + UIUtils.getText(NewCommentView, "addedFiles") + ":<br>")
         String url = FileConstants.COMMENT_FILE_DIRECTORY
-        for (String file: comment.files) {
+        for (String file : comment.files) {
             sb.append("<a href='${url + File.separator + file}' >${file}</a><br>")
         }
         return sb.toString()
     }
 
-    void addCommentFiles() {
+    private void addCommentFiles() {
         downloadFilePane.add(3, ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewCommentView, "addedFiles") + ":"))
-        String url = FileConstants.COMMENT_FILE_DIRECTORY
-        for (String file: comment.files) {
-            String fileName = url + File.separator + file
-            downloadFilePane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(file))
-            DownloadFileAction downloadFileAction = new DownloadFileAction(fileName, content, false)
-            DownloadFileAction downloadFileAndOpen = new DownloadFileAction(fileName, content, true)
+        comment.files.each { CommentFile f ->
+            downloadFilePane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(f.filename))
+            DownloadFileAction downloadFileAction = new DownloadFileAction(f, content, false)
+            DownloadFileAction downloadFileAndOpen = new DownloadFileAction(f, content, true)
             ULCButton downloadButton = new ULCButton(downloadFileAction)
             ULCButton downloadAndOpenButton = new ULCButton(downloadFileAndOpen)
             render(downloadButton, "downloadButton")
@@ -179,7 +172,7 @@ class CommentPane {
     private String addHighlighting(String text, def words) {
         def found = []
         words.each {
-            (text =~ /(?i)${it}/).each {def m ->
+            (text =~ /(?i)${it}/).each { def m ->
                 found.add(m)
             }
         }
