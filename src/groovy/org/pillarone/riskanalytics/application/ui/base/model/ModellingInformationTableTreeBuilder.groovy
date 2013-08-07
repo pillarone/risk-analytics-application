@@ -65,7 +65,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public buildTreeNodes(List<ModellingItem> modellingItems) {
-        buildResourcesNodes()
+        buildResourcesNodes(modellingItems)
         buildBatchNodes()
         buildModelNodes(modellingItems)
 
@@ -102,16 +102,15 @@ class ModellingInformationTableTreeBuilder {
             DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX) as DefaultMutableTableTreeNode
             addToNode(parametrisationsNode, groupedItems[Parameterization.name])
             addToNode(resultConfigurationsNode, groupedItems[ResultConfiguration.name])
-            addSimulationsToNode(modelClass, simulationsNode)
+            addSimulationsToNode(simulationsNode,groupedItems[Simulation.name])
             root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
         }
 
     }
 
-    private addSimulationsToNode(Class<Model> modelClass, DefaultMutableTableTreeNode simulationsNode) {
-        List<Simulation> simulations = getItemsForModel(modelClass, Simulation)
-        simulationsNode.leaf = simulations.size() == 0
-        simulations.each {
+    private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode,List<ModellingItem> simulations) {
+        simulationsNode.leaf = simulations?.size() == 0
+        simulations?.each {
             try {
                 simulationsNode.add(createNode(it))
             } catch (Throwable t) {
@@ -135,14 +134,16 @@ class ModellingInformationTableTreeBuilder {
         root.add(createBatchNode())
     }
 
-    private buildResourcesNodes() {
+    private buildResourcesNodes(List<ModellingItem> items) {
         def resourceClasses = getAllResourceClasses()
         if (!resourceClasses.isEmpty()) {
             resourceNodeVisible = true
             ResourceGroupNode resourceGroupNode = new ResourceGroupNode("Resources")
             resourceClasses.each { Class resourceClass ->
+
                 ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
-                getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
+                List<ModellingItem> resourceItems = items.findAll { ModellingItem item -> item instanceof Resource && item.modelClass == resourceClass }
+                getItemMap(resourceItems, false).values().each {
                     resourceNode.add(createItemNodes(it))
                 }
                 resourceGroupNode.add(resourceNode)
@@ -151,6 +152,7 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
+    //legacy  - only used for mode node insertions.
     private createModelNode(Model model) {
         Class modelClass = model.class
 
@@ -175,6 +177,7 @@ class ModellingInformationTableTreeBuilder {
         root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
     }
 
+    //legacy  - only used for mode node insertions.
     public <T> List<T> getItemsForModel(Class modelClass, Class<T> clazz) {
         switch (clazz) {
             case Resource: return ModellingItemFactory.getResources(modelClass)
