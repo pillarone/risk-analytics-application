@@ -78,14 +78,14 @@ class ModellingInformationTableTreeBuilder {
     }
 
     protected void internalGetModellingItems(ITableTreeNode currentNode, List<ModellingItem> list) {
-        if(currentNode instanceof ItemNode) {
+        if (currentNode instanceof ItemNode) {
             Object item = currentNode.abstractUIItem.item
             if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration)) {
                 list << item
             }
         }
 
-        for(int i = 0; i < currentNode.childCount; i++) {
+        for (int i = 0; i < currentNode.childCount; i++) {
             internalGetModellingItems(currentNode.getChildAt(i), list)
         }
     }
@@ -102,13 +102,13 @@ class ModellingInformationTableTreeBuilder {
             DefaultMutableTableTreeNode simulationsNode = modelNode.getChildAt(SIMULATION_NODE_INDEX) as DefaultMutableTableTreeNode
             addToNode(parametrisationsNode, groupedItems[Parameterization.name])
             addToNode(resultConfigurationsNode, groupedItems[ResultConfiguration.name])
-            addSimulationsToNode(simulationsNode,groupedItems[Simulation.name])
+            addSimulationsToNode(simulationsNode, groupedItems[Simulation.name])
             root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
         }
 
     }
 
-    private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode,List<ModellingItem> simulations) {
+    private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode, List<ModellingItem> simulations) {
         simulationsNode.leaf = simulations?.size() == 0
         simulations?.each {
             try {
@@ -173,12 +173,12 @@ class ModellingInformationTableTreeBuilder {
             resultConfigurationsNode.add(createItemNodes(it))
         }
 
-        addSimulationsToNode(modelClass, simulationsNode)
+        addSimulationsToNode(simulationsNode, getItemsForModel(modelClass, Simulation))
         root.insert(modelNode, root.childCount - (resourceNodeVisible ? 2 : 1))
     }
 
     //legacy  - only used for mode node insertions.
-    public <T> List<T> getItemsForModel(Class modelClass, Class<T> clazz) {
+    private <T> List<T> getItemsForModel(Class modelClass, Class<T> clazz) {
         switch (clazz) {
             case Resource: return ModellingItemFactory.getResources(modelClass)
             case Parameterization: return ModellingItemFactory.getParameterizationsForModel(modelClass)
@@ -224,7 +224,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private Map getItemMap(items, boolean workflow) {
-        Map<String,List> map = [:]
+        Map<String, List> map = [:]
         items = items.findAll { workflow ? it.versionNumber.toString().startsWith("R") : !it.versionNumber.toString().startsWith("R") }
         items.each {
             List list = map.get(it.name)
@@ -331,8 +331,30 @@ class ModellingInformationTableTreeBuilder {
         itemNodeChanged(itemGroupNode, item)
     }
 
+    public void itemChanged(Parameterization item) {
+        ModelNode modelNode = findModelNode(root, item)
+        ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
+        itemNodeChanged(itemGroupNode, item)
+        ITableTreeNode simulationGroupNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
+        findAllNodesForItem(simulationGroupNode, item).each {
+            updateValues(item, it)
+        }
+    }
+
+    public void itemChanged(ResultConfiguration item) {
+        ModelNode modelNode = findModelNode(root, item)
+        ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
+        itemNodeChanged(itemGroupNode, item)
+        ITableTreeNode simulationGroupNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
+        itemNodeChanged(simulationGroupNode, item)
+    }
+
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
+        updateValues(item, itemNode)
+    }
+
+    private void updateValues(ModellingItem item, ItemNode itemNode) {
         itemNode.abstractUIItem.item = item
         model.putValues(itemNode)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
@@ -559,7 +581,6 @@ class ModellingInformationTableTreeBuilder {
         parent.insert(newNode, parent.childCount)
         if (parent.childCount == 1) {
             model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
-            model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
         } else {
             model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [parent.childCount - 1] as int[])
         }
@@ -569,7 +590,7 @@ class ModellingInformationTableTreeBuilder {
         DefaultMutableTableTreeNode parent = itemNode.getParent()
         int childIndex = parent.getIndex(itemNode)
         parent.remove(childIndex)
-        model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]),[childIndex] as int [],[itemNode] as Object[])
+        model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [childIndex] as int[], [itemNode] as Object[])
     }
 
     void removeAll() {

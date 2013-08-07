@@ -1,15 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
 
+import com.ulcjava.base.application.event.ITableTreeModelListener
+import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.server.SimpleContainerServices
 import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
-import models.core.CoreModel
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -18,6 +21,8 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
@@ -26,6 +31,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     ModellingInformationTableTreeModel model
     RiskAnalyticsMainModel mainModel
     ULCSession session = new ULCSession('Test', new SimpleContainerServices())
+    private TestModelListener modelListener
 
     void setUp() {
         LocaleResources.setTestMode()
@@ -51,6 +57,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
         model.service.registerSession(session)
+        modelListener = new TestModelListener()
+        model.addTableTreeModelListener(modelListener)
     }
 
     private void newParameterization(String name, String version) {
@@ -166,15 +174,15 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         model.addNodeForItem(batchUIItem)
         IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
         assertEquals(1, batchNode.childCount)
-        assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0),0))
-        model.removeNodeForItem(new BatchUIItem(mainModel,run))
+        assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0), 0))
+        model.removeNodeForItem(new BatchUIItem(mainModel, run))
         assertEquals(0, batchNode.childCount)
     }
 
     void testModel() {
         model.addNodeForItem(new EmptyModel())
         IMutableTableTreeNode modelNode = model.root.getChildAt(1) as IMutableTableTreeNode
-        assertEquals('Empty', model.getValueAt(modelNode,0))
+        assertEquals('Empty', model.getValueAt(modelNode, 0))
     }
 
     void testRefresh() {
@@ -202,5 +210,105 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         model = ModellingInformationTableTreeModel.getInstance(mainModel)
         assertTrue(model instanceof StandaloneTableTreeModel)
         assertEquals(4, model.columnCount)
+    }
+
+    void testUpdateP14nNodes() {
+        SimulationRun run = new SimulationRun()
+        ParameterizationDAO parameterziation = ParameterizationDAO.list()[0]
+        run.parameterization = parameterziation
+        run.resultConfiguration = ResultConfigurationDAO.list()[0]
+        run.name = 'TestRun1'
+        run.startTime = new DateTime()
+        run.endTime = new DateTime()
+        run.model = 'models.application.ApplicationModel'
+        run.save(flush: true)
+
+
+        model.updateTreeStructure(session)
+        // expect one nodeStructure changed on simulation node
+        assert 1 == modelListener.nodeStructureChangedEvents.size()
+        modelListener.reset()
+
+        run = new SimulationRun()
+        run.parameterization = parameterziation
+        run.resultConfiguration = ResultConfigurationDAO.list()[0]
+        run.name = 'TestRun2'
+        run.startTime = new DateTime()
+        run.endTime = new DateTime()
+        run.model = 'models.application.ApplicationModel'
+        run.save(flush: true)
+
+        model.updateTreeStructure(session)
+        assert 1 == modelListener.nodeInsertedEvents.size()
+        modelListener.reset()
+
+        //assert that tree contains the simulation nodes and the child nodes.
+        IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
+        ParameterizationNode paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
+        IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
+        assert 2 == resultsNode.childCount
+        ParameterizationNode simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
+        ParameterizationNode simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
+        paramsNode.values.each { k, v ->
+            assert v == simulationParamsNode1.values[k]
+            assert v == simulationParamsNode2.values[k]
+
+        }
+
+        parameterziation.addToTags(new ParameterizationTag(parameterizationDAO: parameterziation, tag: Tag.list()[0]))
+        parameterziation.save(flush: true)
+        model.updateTreeStructure(session)
+        assert 3 == modelListener.nodeChangedEvents.size()
+
+        paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
+        simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
+        simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
+        paramsNode.values.each { k, v ->
+            assert v == simulationParamsNode1.values[k]
+            assert v == simulationParamsNode2.values[k]
+        }
+
+
+    }
+
+    class TestModelListener implements ITableTreeModelListener {
+        List<TableTreeModelEvent> nodeChangedEvents = []
+        List<TableTreeModelEvent> structureChangedEvents = []
+        List<TableTreeModelEvent> nodeStructureChangedEvents = []
+        List<TableTreeModelEvent> nodeInsertedEvents = []
+        List<TableTreeModelEvent> nodeRemovedEvents = []
+
+        void reset() {
+            nodeChangedEvents.clear()
+            structureChangedEvents.clear()
+            nodeStructureChangedEvents.clear()
+            nodeInsertedEvents.clear()
+            nodeRemovedEvents.clear()
+        }
+
+        @Override
+        void tableTreeStructureChanged(TableTreeModelEvent event) {
+            structureChangedEvents << event
+        }
+
+        @Override
+        void tableTreeNodeStructureChanged(TableTreeModelEvent event) {
+            nodeStructureChangedEvents << event
+        }
+
+        @Override
+        void tableTreeNodesInserted(TableTreeModelEvent event) {
+            nodeInsertedEvents << event
+        }
+
+        @Override
+        void tableTreeNodesRemoved(TableTreeModelEvent event) {
+            nodeRemovedEvents << event
+        }
+
+        @Override
+        void tableTreeNodesChanged(TableTreeModelEvent event) {
+            nodeChangedEvents << event
+        }
     }
 }

@@ -110,6 +110,20 @@ class TableTreeBuilderUtils {
         return nodeForItem
     }
 
+    static List<ITableTreeNode> findAllNodesForItem(ITableTreeNode node, Object item) {
+        List<ITableTreeNode> allNodes = []
+        ITableTreeNode nodeForItem = null
+        if (ItemComparator.isEqual(item, node)) {
+            allNodes << node
+        } else {
+            for (int i = 0; i < node.childCount && nodeForItem == null; i++) {
+                def childNode = node.getChildAt(i)
+                allNodes.addAll(findAllNodesForItem(childNode, item))
+            }
+        }
+        return allNodes
+    }
+
     public static AbstractUIItem findUIItemForItem(ITableTreeNode root, Object item) {
         ModelNode modelNode1 = findModelNode(root, item)
         if (modelNode1) {
