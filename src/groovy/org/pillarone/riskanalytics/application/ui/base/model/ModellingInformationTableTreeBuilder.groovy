@@ -119,8 +119,9 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
-    private addToNode(DefaultMutableTableTreeNode node, List items) {
+    private addToNode(DefaultMutableTableTreeNode node, List<ModellingItem> items) {
         if (items) {
+            sortByName(items)
             getItemMap(items, false).values().each {
                 node.add(createItemNodes(it))
             }
@@ -128,6 +129,10 @@ class ModellingInformationTableTreeBuilder {
                 node.add(createItemNodes(it))
             }
         }
+    }
+
+    private void sortByName(List items) {
+        items.sort { a, b -> a.name.compareToIgnoreCase(b.name) }
     }
 
     private buildBatchNodes() {
@@ -317,13 +322,11 @@ class ModellingInformationTableTreeBuilder {
     private void addNodeForUIItem(ModellingUIItem modellingUIItem) {
         ITableTreeNode groupNode = findGroupNode(modellingUIItem, findModelNode(root, modellingUIItem))
         createAndInsertItemNode(groupNode, modellingUIItem)
-        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
     }
 
     private void addNodeForUIItem(ResourceUIItem modellingUIItem) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
         createAndInsertItemNode(itemGroupNode, modellingUIItem)
-        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemGroupNode) as Object[]))
     }
 
     public void itemChanged(ModellingItem item) {
@@ -419,6 +422,7 @@ class ModellingInformationTableTreeBuilder {
                     firstChild.add(it)
                 }
                 itemNode.removeAllChildren()
+                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
             }
         }
         removeNodeFromParent(itemNode)
@@ -435,11 +439,11 @@ class ModellingInformationTableTreeBuilder {
         for (int i = 0; i < node.childCount; i++) {
             if (isMatchingParent(node.getChildAt(i).abstractUIItem, modellingUIItem)) {
                 parameterNameFound = true
+                DefaultMutableTableTreeNode newNode = createNode(modellingUIItem)
+                DefaultMutableTableTreeNode childNode = node.getChildAt(i) as DefaultMutableTableTreeNode
                 if (modellingUIItem.isVersionable() && modellingUIItem.item.versionNumber.level > 1) {
-                    insertSubversionItemNode(node.getChildAt(i), createNode(modellingUIItem))
+                    insertSubversionItemNode(childNode, newNode)
                 } else {
-                    DefaultMutableTableTreeNode childNode = node.getChildAt(i)
-                    DefaultMutableTableTreeNode newNode = createNode(modellingUIItem)
                     def children = []
                     childNode.childCount.times {
                         children << childNode.getChildAt(it)
@@ -452,7 +456,13 @@ class ModellingInformationTableTreeBuilder {
                     } else {
                         insertSubversionItemNode(newNode, childNode)
                     }
-                    node.add(newNode)
+                    node.insert(newNode, i)
+                    if (node.childCount > 0){
+                        model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]), i as int[])
+                        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+                    }else {
+                        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+                    }
                     return
                 }
             }
@@ -495,7 +505,9 @@ class ModellingInformationTableTreeBuilder {
                 if (newItemNode.abstractUIItem.item.versionNumber.isDirectChildVersionOf(childNode.abstractUIItem.item.versionNumber)) {
                     childNode.leaf = false
                     newItemNode.leaf = true
-                    childNode.insert(newItemNode, childNode.childCount)
+                    childNode.add(newItemNode)
+                    model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+                    model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
                 } else {
                     insertSubversionItemNode(childNode, newItemNode)
                 }
@@ -578,16 +590,24 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent) {
-        parent.insert(newNode, parent.childCount)
+        List<ModellingUIItem> children = []
+        parent.childCount.times { i ->
+            children << parent.getChildAt(i)
+        }
+        children << newNode
+        sortByName(children)
+        int newIndex = children.indexOf(newNode)
+
+        parent.insert(newNode, newIndex)
         if (parent.childCount == 1) {
             model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
         } else {
-            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [parent.childCount - 1] as int[])
+            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
         }
     }
 
     private removeNodeFromParent(DefaultMutableTableTreeNode itemNode) {
-        DefaultMutableTableTreeNode parent = itemNode.getParent()
+        DefaultMutableTableTreeNode parent = itemNode.getParent() as DefaultMutableTableTreeNode
         int childIndex = parent.getIndex(itemNode)
         parent.remove(childIndex)
         model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [childIndex] as int[], [itemNode] as Object[])
