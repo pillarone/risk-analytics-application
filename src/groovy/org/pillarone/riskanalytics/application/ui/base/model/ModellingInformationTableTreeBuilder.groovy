@@ -359,7 +359,9 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
-        updateValues(item, itemNode)
+        if (itemNode){
+            updateValues(item, itemNode)
+        }
     }
 
     private void updateValues(ModellingItem item, ItemNode itemNode) {
