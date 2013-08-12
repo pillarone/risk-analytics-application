@@ -83,6 +83,7 @@ class ModellingInformationTableTreeBuilder {
             if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration)) {
                 list << item
             }
+            if (item instanceof  Simulation) return
         }
 
         for (int i = 0; i < currentNode.childCount; i++) {
@@ -461,10 +462,10 @@ class ModellingInformationTableTreeBuilder {
                         insertSubversionItemNode(newNode, childNode)
                     }
                     node.insert(newNode, i)
-                    if (node.childCount > 0){
+                    if (node.childCount > 0) {
                         model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]), i as int[])
                         model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
-                    }else {
+                    } else {
                         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
                     }
                     return

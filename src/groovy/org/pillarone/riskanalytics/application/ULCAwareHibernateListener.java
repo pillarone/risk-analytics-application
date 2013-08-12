@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application;
 
-import org.pillarone.riskanalytics.core.listener.ModellingItemHibernateListener;
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemHibernateListener;
 import org.hibernate.event.PostInsertEvent;
 import org.hibernate.event.PostUpdateEvent;
 import org.hibernate.event.PostDeleteEvent;

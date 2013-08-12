@@ -10,6 +10,6 @@ class OwnerFilter implements ISearchFilter {
 
     @Override
     boolean accept(ModellingItem item) {
-        return active ? item.creator.id == UserManagement.currentUser.id : true
+        return active ? item.creator?.id == UserManagement.currentUser.id : true
     }
 }

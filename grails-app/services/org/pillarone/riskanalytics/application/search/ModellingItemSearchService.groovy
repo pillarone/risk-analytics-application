@@ -2,33 +2,20 @@ package org.pillarone.riskanalytics.application.search
 
 import com.ulcjava.base.server.ULCSession
 import grails.util.Holders
-import org.apache.lucene.index.Term
 import org.pillarone.riskanalytics.core.ResourceDAO
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemMapper
 
 import java.util.concurrent.ConcurrentHashMap
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.apache.lucene.analysis.Analyzer
-import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.index.IndexWriter
-import org.apache.lucene.index.IndexWriter.MaxFieldLength
-import org.apache.lucene.queryParser.QueryParser
-import org.apache.lucene.queryParser.QueryParser.Operator
-import org.apache.lucene.search.IndexSearcher
-import org.apache.lucene.search.ScoreDoc
-import org.apache.lucene.search.TopDocs
-import org.apache.lucene.store.Directory
-import org.apache.lucene.store.RAMDirectory
-import org.apache.lucene.util.Version
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.listener.ModellingItemHibernateListener
-import org.pillarone.riskanalytics.core.listener.ModellingItemListener
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemHibernateListener
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemListener
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 class ModellingItemSearchService {
 
@@ -75,81 +62,41 @@ class ModellingItemSearchService {
     }
 
     protected synchronized void createInitialIndex() {
+        LOG.info("start creating initial index.")
         ParameterizationDAO.withTransaction {
             for (ParameterizationDAO dao in ParameterizationDAO.list()) {
-                cache.add(toParameterization(dao))
+                cache.add(ModellingItemMapper.getModellingItem(dao))
             }
             for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
-                cache.add(toResultConfiguration(dao))
+                cache.add(ModellingItemMapper.getModellingItem(dao))
             }
 
             for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
-                cache.add(toSimulation(dao))
+                cache.add(ModellingItemMapper.getModellingItem(dao))
             }
             for (ResourceDAO dao in ResourceDAO.list()) {
-                cache.add(toResource(dao))
+                cache.add(ModellingItemMapper.getModellingItem(dao))
             }
         }
+        LOG.info("end creating initial index.")
     }
 
-    public synchronized void refresh() {
+    synchronized void refresh() {
         cache.clear()
-
         createInitialIndex()
-    }
-
-    private Parameterization toParameterization(ParameterizationDAO dao) {
-        Parameterization parameterization = new Parameterization(dao.name, getClass().getClassLoader().loadClass(dao.modelClassName))
-        parameterization.versionNumber = new VersionNumber(dao.itemVersion)
-        parameterization.load(false)
-        if (dao.tags*.tag) {
-            parameterization.tags = dao.tags*.tag
-        }
-        return parameterization
-    }
-
-    private Resource toResource(ResourceDAO dao) {
-        Resource resource = new Resource(dao.name, getClass().getClassLoader().loadClass(dao.resourceClassName))
-        resource.versionNumber = new VersionNumber(dao.itemVersion)
-        resource.load(false)
-        if (dao.tags*.tag) {
-            resource.tags = dao.tags*.tag
-        }
-
-        return resource
-    }
-
-    private ResultConfiguration toResultConfiguration(ResultConfigurationDAO dao) {
-        ResultConfiguration resultConfiguration = new ResultConfiguration(dao.name)
-        resultConfiguration.modelClass = getClass().getClassLoader().loadClass(dao.modelClassName)
-        resultConfiguration.versionNumber = new VersionNumber(dao.itemVersion)
-        resultConfiguration.load(false)
-
-        return resultConfiguration
-    }
-
-    private Simulation toSimulation(SimulationRun dao) {
-        Simulation simulation = new Simulation(dao.name)
-        simulation.modelClass = getClass().getClassLoader().loadClass(dao.model)
-        simulation.load(false)
-        if (dao.tags*.tag) {
-            simulation.tags = dao.tags*.tag
-        }
-
-        return simulation
     }
 
     synchronized List<ModellingItem> search(List<ISearchFilter> filters) {
         List<ModellingItem> results = []
 
-        for(ModellingItem item in cache) {
+        for (ModellingItem item in cache) {
             boolean match = true
-            for(ISearchFilter filter in filters) {
-                if(!filter.accept(item)) {
+            for (ISearchFilter filter in filters) {
+                if (!filter.accept(item)) {
                     match = false
                 }
             }
-            if(match) {
+            if (match) {
                 results << item
             }
         }
@@ -167,6 +114,29 @@ class ModellingItemSearchService {
 
     private void updateModellingItemInIndex(ModellingItem item) {
         cache[cache.indexOf(item)] = item
+        internalUpdateModellingItemInIndex(item)
+    }
+
+    private void internalUpdateModellingItemInIndex(ModellingItem item){
+
+    }
+
+    private void internalUpdateModellingItemInIndex(Parameterization item){
+        List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
+        for (Simulation simulation in allSimulations){
+            if (simulation.parameterization.equals(item)){
+                simulation.parameterization = item
+            }
+        }
+    }
+
+    private void internalUpdateModellingItemInIndex(ResultConfiguration item){
+        List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
+        for (Simulation simulation in allSimulations){
+            if (simulation.template.equals(item)){
+                simulation.template = item
+            }
+        }
     }
 
 

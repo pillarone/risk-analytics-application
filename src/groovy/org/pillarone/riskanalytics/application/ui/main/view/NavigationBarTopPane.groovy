@@ -94,21 +94,15 @@ class NavigationBarTopPane {
     protected void attachListeners() {
         myStuffButton.addActionListener([actionPerformed: { ActionEvent event ->
             FilterDefinition filter = tableTreeModel.currentFilter
-            if (myStuffButton.isSelected()) {
-                filter.ownerFilter.active = true
-            } else {
-                filter.ownerFilter.active = false
-            }
+            filter.ownerFilter.active = myStuffButton.isSelected()
             fireFilterChanged(filter)
         }] as IActionListener)
         searchTextField.addFocusListener(new TextFieldFocusListener(searchTextField))
         Closure searchClosure = {
             String text = searchTextField.getText()
-            if (text) {
-                FilterDefinition filter = tableTreeModel.currentFilter
-                filter.allFieldsFilter.query = text
-                fireFilterChanged(filter)
-            }
+            FilterDefinition filter = tableTreeModel.currentFilter
+            filter.allFieldsFilter.query = text
+            fireFilterChanged(filter)
         }
         IActionListener action = [actionPerformed: { ActionEvent e -> searchClosure.call() }] as IActionListener
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);

@@ -125,20 +125,6 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         treeModel.builder.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
         }
-        treeModel.builder.metaClass.getItemsForModel = { Class modelClass, Class clazz ->
-            switch (clazz) {
-                case Simulation:
-                    Simulation simulation = new Simulation("simulation1")
-                    simulation.parameterization = new Parameterization("param1")
-                    simulation.template = new ResultConfiguration("result1")
-                    simulation.id = 1
-                    simulation.setEnd(new DateTime())
-                    simulation.modelClass = ApplicationModel
-                    simulation.metaClass.getSize = { Class SimulationClass -> return 0 }
-                    return [simulation]
-                default: return []
-            }
-        }
 
         treeModel.builder.metaClass.getAllBatchRuns = {->
             return [new BatchRun(name: "test")]
@@ -155,7 +141,14 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
             Parameterization parameterization3 = createStubParameterization(3, Status.IN_REVIEW)
             ResultConfiguration resultConfiguration = new ResultConfiguration("result1")
             resultConfiguration.modelClass = ApplicationModel
-            return [parameterization1, parameterization2, parameterization3, resultConfiguration]
+            Simulation simulation = new Simulation("simulation1")
+            simulation.parameterization = new Parameterization("param1")
+            simulation.template = new ResultConfiguration("result1")
+            simulation.id = 1
+            simulation.setEnd(new DateTime())
+            simulation.modelClass = ApplicationModel
+            simulation.metaClass.getSize = { Class SimulationClass -> return 0 }
+            return [parameterization1, parameterization2, parameterization3, resultConfiguration,simulation]
         }
 
         treeModel.buildTreeNodes()
