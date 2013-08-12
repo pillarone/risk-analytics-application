@@ -13,6 +13,7 @@ import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
@@ -52,6 +53,12 @@ class P1RATApplication extends Application {
         initMainView()
         searchService.registerSession(ULCSession.currentSession())
         traceLogManager.activateLogging()
+    }
+
+    @Override
+    void stop(Throwable reason) {
+        ExceptionSafe.saveError(reason)
+        super.stop(reason)
     }
 
     public void initMainView() {

@@ -99,7 +99,7 @@ class ExceptionSafe {
         LOG.error("\n" + niceStackTrace(e))
     }
 
-    public static void saveError(Exception e) {
+    public static void saveError(Throwable e) {
         String user = UserManagement.currentUser?.username ?: "local"
 
         String filename = "error-" + user + "-${System.currentTimeMillis()}.log"
@@ -137,7 +137,7 @@ class ExceptionSafe {
     }
 
 
-    private static String niceStackTrace(Exception e) {
+    private static String niceStackTrace(Throwable e) {
         def stackTraceElements = e.stackTrace.findAll { frame -> !IGNORE.any { frame.className =~ it } }
         return stackTraceElements.join("\n")
     }
