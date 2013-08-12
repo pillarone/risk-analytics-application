@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.search
 
 import com.ulcjava.base.server.ULCSession
+import grails.util.Holders
 import org.apache.lucene.index.Term
 import org.pillarone.riskanalytics.core.ResourceDAO
 
@@ -37,10 +38,8 @@ class ModellingItemSearchService {
 
     ModellingItemHibernateListener modellingItemListener
 
-    protected IndexSearcher indexSearcher
-    protected Directory directory
+    private List<ModellingItem> cache = []
 
-    protected Analyzer analyzer
     private ModellingItemListener listener = new SearchModellingItemListener()
 
     private Map<ULCSession, List<ModellingItemEvent>> queue = new ConcurrentHashMap<ULCSession, List<ModellingItemEvent>>()
@@ -54,9 +53,7 @@ class ModellingItemSearchService {
     @PreDestroy
     void cleanUp() {
         modellingItemListener.removeModellingItemListener(listener)
-        indexSearcher.close()
-        directory.close()
-        analyzer.close()
+        cache.clear()
         queue.clear()
     }
 
@@ -78,44 +75,26 @@ class ModellingItemSearchService {
     }
 
     protected synchronized void createInitialIndex() {
-        analyzer = new StandardAnalyzer(Version.LUCENE_30)
-        directory = new RAMDirectory()
-        IndexWriter indexWriter = createIndexWriter(true)
-
-        try {
-            ParameterizationDAO.withNewSession {
-                for (ParameterizationDAO dao in ParameterizationDAO.list()) {
-                    indexWriter.addDocument(DocumentFactory.createDocument(toParameterization(dao)))
-                }
-                for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
-                    indexWriter.addDocument(DocumentFactory.createDocument(toResultConfiguration(dao)))
-                }
-
-                for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
-                    indexWriter.addDocument(DocumentFactory.createDocument(toSimulation(dao)))
-                }
-                for (ResourceDAO dao in ResourceDAO.list()) {
-                    indexWriter.addDocument(DocumentFactory.createDocument(toResource(dao)))
-                }
+        ParameterizationDAO.withTransaction {
+            for (ParameterizationDAO dao in ParameterizationDAO.list()) {
+                cache.add(toParameterization(dao))
             }
-        } finally {
-            indexWriter.close()
-        }
+            for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
+                cache.add(toResultConfiguration(dao))
+            }
 
-        indexSearcher = new IndexSearcher(directory, true)
+            for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
+                cache.add(toSimulation(dao))
+            }
+            for (ResourceDAO dao in ResourceDAO.list()) {
+                cache.add(toResource(dao))
+            }
+        }
     }
 
     public synchronized void refresh() {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
+        cache.clear()
 
-        try {
-            indexWriter.deleteAll()
-        } finally {
-            indexWriter.close()
-        }
-
-        indexSearcher = new IndexSearcher(directory, true)
         createInitialIndex()
     }
 
@@ -160,73 +139,39 @@ class ModellingItemSearchService {
         return simulation
     }
 
-    protected IndexWriter createIndexWriter(boolean create) {
-        return new IndexWriter(directory, analyzer, create, MaxFieldLength.UNLIMITED)
-    }
-
-    List<ModellingItem> getAllItems() {
-        search("*")
-    }
-
-    synchronized List<ModellingItem> search(String queryString) {
-        QueryParser queryParser = createQueryParser()
-
-        final TopDocs searchResult = indexSearcher.search(queryParser.parse(queryString), Integer.MAX_VALUE)
-
+    synchronized List<ModellingItem> search(List<ISearchFilter> filters) {
         List<ModellingItem> results = []
 
-        for (ScoreDoc result in searchResult.scoreDocs) {
-            results << DocumentFactory.toModellingItem(indexSearcher.doc(result.doc))
+        for(ModellingItem item in cache) {
+            boolean match = true
+            for(ISearchFilter filter in filters) {
+                if(!filter.accept(item)) {
+                    match = false
+                }
+            }
+            if(match) {
+                results << item
+            }
         }
+
         return results
     }
 
-    protected QueryParser createQueryParser() {
-        QueryParser queryParser = new QueryParser(Version.LUCENE_30, DocumentFactory.NAME_FIELD, analyzer)
-        queryParser.allowLeadingWildcard = true
-        queryParser.defaultOperator = Operator.AND
-        return queryParser
-    }
-
     protected synchronized void addModellingItemToIndex(ModellingItem modellingItem) {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
-
-        try {
-            indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(modellingItem))
-        } finally {
-            indexWriter.close()
-        }
-
-        indexSearcher = new IndexSearcher(directory, true)
+        cache.add(modellingItem)
     }
 
     protected synchronized void removeModellingItemFromIndex(ModellingItem modellingItem) {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
-        try {
-            indexWriter.deleteDocuments(createQueryParser().parse(org.pillarone.riskanalytics.application.search.DocumentFactory.createDeleteQueryString(modellingItem)))
-        } finally {
-            indexWriter.close()
-        }
-
-        indexSearcher = new IndexSearcher(directory, true)
+        cache.remove(modellingItem)
     }
 
     private void updateModellingItemInIndex(ModellingItem item) {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
-        try {
-            indexWriter.updateDocument(new Term(DocumentFactory.ID_FIELD, DocumentFactory.id(item)), DocumentFactory.createDocument(item))
-        } finally {
-            indexWriter.close()
-        }
-        indexSearcher = new IndexSearcher(directory, true)
+        cache[cache.indexOf(item)] = item
     }
 
 
     public static ModellingItemSearchService getInstance() {
-        return ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
+        return Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService)
     }
 
     private class SearchModellingItemListener implements ModellingItemListener {
