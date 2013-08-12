@@ -1,13 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
-import org.pillarone.riskanalytics.application.search.DocumentFactory
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -41,10 +39,7 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
         super.attachListeners()
         applyButton.addActionListener([actionPerformed: { ActionEvent ->
             FilterDefinition filter = model.currentFilter
-            filter.clearField(columnDescriptor.searchPropertyName)
-            for(String val in filterValues) {
-                filter.putQueryPart(columnDescriptor.searchPropertyName, val)
-            }
+            columnDescriptor.getFilter(filter).values = filterValues
             fireFilterChanged(filter)
 
             dialog.dispose()
@@ -67,7 +62,8 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
 
         filterCheckBoxes << allCheckBox
         List<String> values = columnDescriptor.getValues()
-        List<String> activeValues = model.currentFilter.getActiveValues(columnDescriptor.searchPropertyName)
+
+        List<String> activeValues = columnDescriptor.getFilter(model.currentFilter).values
         for (String value in values) {
             ULCCheckBox box = new ULCCheckBox(String.valueOf(value))
             if(activeValues.contains(value)) {

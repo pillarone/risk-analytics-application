@@ -1,21 +1,21 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.application.search.DocumentFactory
+import org.pillarone.riskanalytics.application.search.AbstractMultiValueFilter
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.workflow.Status
-
 
 public interface IColumnDescriptor {
 
     List<String> getValues()
 
-    String getSearchPropertyName()
+    AbstractMultiValueFilter getFilter(FilterDefinition filterDefinition)
 
     public static class TagColumnDescriptor implements IColumnDescriptor {
 
         @Override
-        String getSearchPropertyName() {
-            return DocumentFactory.TAGS_FIELD
+        AbstractMultiValueFilter getFilter(FilterDefinition filterDefinition) {
+            return filterDefinition.tagFilter
         }
 
         @Override
@@ -27,8 +27,8 @@ public interface IColumnDescriptor {
     public static class StateColumnDescriptor implements IColumnDescriptor {
 
         @Override
-        String getSearchPropertyName() {
-            return DocumentFactory.STATE_FIELD
+        AbstractMultiValueFilter getFilter(FilterDefinition filterDefinition) {
+            return filterDefinition.statusFilter
         }
 
         @Override

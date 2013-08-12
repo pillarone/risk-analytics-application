@@ -125,7 +125,7 @@ abstract class SelectionTreeHeaderDialog {
 
         clearButton.addActionListener([actionPerformed: { ActionEvent ->
             FilterDefinition filter = model.currentFilter
-            filter.clearField(columnDescriptor.searchPropertyName)
+            columnDescriptor.getFilter(filter).clear()
             fireFilterChanged(filter)
             dialog.dispose()
         }] as IActionListener)

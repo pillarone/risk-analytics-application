@@ -11,13 +11,11 @@ import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.search.DocumentFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.user.UserManagement
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -97,9 +95,9 @@ class NavigationBarTopPane {
         myStuffButton.addActionListener([actionPerformed: { ActionEvent event ->
             FilterDefinition filter = tableTreeModel.currentFilter
             if (myStuffButton.isSelected()) {
-                filter.putQueryPart(DocumentFactory.OWNER_FIELD, UserManagement.currentUser.username)
+                filter.ownerFilter.active = true
             } else {
-                filter.clearField(DocumentFactory.OWNER_FIELD)
+                filter.ownerFilter.active = false
             }
             fireFilterChanged(filter)
         }] as IActionListener)
@@ -108,7 +106,7 @@ class NavigationBarTopPane {
             String text = searchTextField.getText()
             if (text) {
                 FilterDefinition filter = tableTreeModel.currentFilter
-                filter.setText("*$text*")
+                filter.allFieldsFilter.query = text
                 fireFilterChanged(filter)
             }
         }
@@ -119,8 +117,8 @@ class NavigationBarTopPane {
             searchTextField.setText(UIUtils.getText(this.class, "searchText"))
             searchTextField.setForeground Color.gray
             FilterDefinition filter = tableTreeModel.currentFilter
-            filter.setText("*")
-            filter.clearField(DocumentFactory.OWNER_FIELD)
+            filter.allFieldsFilter.query = ""
+            filter.ownerFilter.active = false
             fireFilterChanged(filter)
             myStuffButton.setSelected false
             assignedToMeButton.setSelected false
