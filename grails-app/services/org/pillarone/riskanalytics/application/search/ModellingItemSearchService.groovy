@@ -101,6 +101,14 @@ class ModellingItemSearchService {
             }
         }
 
+        return newInstances(results)
+    }
+
+    List<ModellingItem> newInstances(List<ModellingItem> items) {
+        List<ModellingItem> results = []
+        for (ModellingItem item in items){
+            results << ModellingItemMapper.newItemInstance(item)
+        }
         return results
     }
 
@@ -117,23 +125,23 @@ class ModellingItemSearchService {
         internalUpdateModellingItemInIndex(item)
     }
 
-    private void internalUpdateModellingItemInIndex(ModellingItem item){
+    private void internalUpdateModellingItemInIndex(ModellingItem item) {
 
     }
 
-    private void internalUpdateModellingItemInIndex(Parameterization item){
+    private void internalUpdateModellingItemInIndex(Parameterization item) {
         List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
-        for (Simulation simulation in allSimulations){
-            if (simulation.parameterization.equals(item)){
+        for (Simulation simulation in allSimulations) {
+            if (simulation.parameterization.equals(item)) {
                 simulation.parameterization = item
             }
         }
     }
 
-    private void internalUpdateModellingItemInIndex(ResultConfiguration item){
+    private void internalUpdateModellingItemInIndex(ResultConfiguration item) {
         List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
-        for (Simulation simulation in allSimulations){
-            if (simulation.template.equals(item)){
+        for (Simulation simulation in allSimulations) {
+            if (simulation.template.equals(item)) {
                 simulation.template = item
             }
         }
