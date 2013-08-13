@@ -1,11 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -91,7 +93,7 @@ class ModellingItemNodeFilter implements ITableTreeFilter {
     }
 
     private boolean contains(DateTime value) {
-        return values.find { it == ModellingInformationTableTreeModel.simpleDateFormat.print(value)} != null
+        return values.find { it == DateFormatUtils.formatSimple(value)} != null
     }
 
     private boolean contains(String tag, String value) {

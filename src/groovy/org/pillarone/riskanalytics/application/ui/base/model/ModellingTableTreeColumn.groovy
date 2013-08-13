@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -21,15 +23,20 @@ public class ModellingTableTreeColumn {
     class NameColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return node.abstractUIItem.getNameAndVersion()
+        Object getValue(def modellingItem) {
+            return modellingItem.getNameAndVersion()
+        }
+
+        @Override
+        Object getValue(Model model) {
+            return model.name
         }
     }
 
     class StateColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
+        Object getValue(ModellingItem modellingItem) {
             if (modellingItem instanceof Parameterization)
                 return modellingItem?.status?.getDisplayName()
             return ""
@@ -39,7 +46,7 @@ public class ModellingTableTreeColumn {
     class TagsColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
+        Object getValue(ModellingItem modellingItem) {
             if (!(modellingItem instanceof ResultConfiguration))
                 return modellingItem?.tags?.join(",")
             return ""
@@ -53,54 +60,32 @@ public class ModellingTableTreeColumn {
         Object getValue(ModellingItem modellingItem, ItemNode node) {
             if ((modellingItem instanceof Parameterization) && modellingItem.dealId) {
                 return getTransactionName(modellingItem.dealId)
-                // "<html><a href=\"http://zh-vs-portal-1.art-allianz.com:7070/forward_V2/forward?dt=DealWithDeletes&did=" + modellingItem.dealId + "\">" + getTransactionName(modellingItem.dealId) + "</a></html>"
             }
             return null
         }
 
     }
 
-//    class CommentsColumn extends ModellingTableTreeColumn {
-//
-//        @Override
-//        Object getValue(ModellingItem modellingItem, ItemNode node) {
-//            int count = 0
-//            if (modellingItem instanceof Parameterization) count = modellingItem.getSize(ParameterizationCommentDAO)
-//            if (modellingItem instanceof Simulation) count = modellingItem.getSize(SimulationRun)
-//            return count
-//        }
-//    }
-//
-//    class ReviewCommentsColumn extends ModellingTableTreeColumn {
-//
-//        @Override
-//        Object getValue(ModellingItem modellingItem, ItemNode node) {
-//            if (modellingItem instanceof Parameterization)
-//                return modellingItem.getSize(WorkflowCommentDAO)
-//            return 0
-//        }
-//    }
-
     class OwnerColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return modellingItem?.getCreator()?.username
+        Object getValue(ModellingItem modellingItem) {
+            return modellingItem?.creator?.username
         }
     }
 
     class LastUpdateColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return modellingItem?.getLastUpdater()?.username
+        Object getValue(ModellingItem modellingItem) {
+            return modellingItem?.lastUpdater?.username
         }
     }
 
     class CreationDateColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
+        Object getValue(ModellingItem modellingItem) {
             return DateFormatUtils.formatDetailed(modellingItem.creationDate)
         }
     }
@@ -108,38 +93,16 @@ public class ModellingTableTreeColumn {
     class LastModificationDateColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
+        Object getValue(ModellingItem modellingItem) {
             return DateFormatUtils.formatDetailed(modellingItem.modificationDate)
         }
     }
 
-    class AssignedToColumn extends ModellingTableTreeColumn {
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return "---"
-        }
-
+    Object getValue(def modellingItem) {
+        return null
     }
 
-    class VisibilityColumn extends ModellingTableTreeColumn {
-
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return "---"
-        }
-
-    }
-
-    class UknownColumn extends ModellingTableTreeColumn {
-
-        @Override
-        Object getValue(ModellingItem modellingItem, ItemNode node) {
-            return ""
-        }
-
-    }
-
-    Object getValue(ModellingItem modellingItem, ItemNode node) {
+    Object getValue(Model model) {
         return null
     }
 
@@ -162,7 +125,7 @@ public class ModellingTableTreeColumn {
         return ""
     }
 
-    Map getInstances() {
+    private Map getInstances() {
         if (!instances) {
             instances = [:]
             instances[ModellingInformationTableTreeModel.NAME] = new NameColumn()
@@ -173,9 +136,6 @@ public class ModellingTableTreeColumn {
             instances[ModellingInformationTableTreeModel.LAST_UPDATER] = new LastUpdateColumn()
             instances[ModellingInformationTableTreeModel.CREATION_DATE] = new CreationDateColumn()
             instances[ModellingInformationTableTreeModel.LAST_MODIFICATION_DATE] = new LastModificationDateColumn()
-//            instances[ModellingInformationTableTreeModel.ASSIGNED_TO] = new AssignedToColumn()
-//            instances[ModellingInformationTableTreeModel.VISIBILITY] = new VisibilityColumn()
-            instances[-1] = new UknownColumn()
 
         }
         return instances

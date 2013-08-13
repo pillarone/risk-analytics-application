@@ -1,42 +1,54 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
+import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.ParameterizationNodeFilterFactory
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class NavigationBarTopPane {
     ULCToolBar toolBar
     ULCToggleButton myStuffButton
     ULCToggleButton assignedToMeButton
     ULCTextField searchTextField
     ULCButton clearButton
-    ULCLabel noResults
     ModellingItemSearchBean searchBean
-    AbstractTableTreeModel tableTreeModel
+    ModellingInformationTableTreeModel tableTreeModel
     Log LOG = LogFactory.getLog(NavigationBarTopPane)
 
-    public NavigationBarTopPane(ULCToolBar toolBar, AbstractTableTreeModel tableTreeModel) {
+    private List<IFilterChangedListener> filterChangedListeners = []
+
+    public NavigationBarTopPane(ULCToolBar toolBar, ModellingInformationTableTreeModel tableTreeModel) {
         this.toolBar = toolBar
         this.searchBean = new ModellingItemSearchBean()
         this.tableTreeModel = tableTreeModel
-        this.tableTreeModel?.addChangeIndexerListener(this.searchBean)
+    }
+
+    void addFilterChangedListener(IFilterChangedListener listener) {
+        filterChangedListeners << listener
+    }
+
+    void removeFilterChangedListener(IFilterChangedListener listener) {
+        filterChangedListeners.remove(listener)
+    }
+
+    void fireFilterChanged(FilterDefinition newFilter) {
+        filterChangedListeners*.filterChanged(newFilter)
     }
 
     public void init() {
@@ -44,7 +56,6 @@ class NavigationBarTopPane {
         layoutComponents()
         attachListeners()
     }
-
 
     protected void initComponents() {
         myStuffButton = new ULCToggleButton(UIUtils.getText(this.class, "MyStuff"))
@@ -67,8 +78,6 @@ class NavigationBarTopPane {
         clearButton.name = "clearButton"
         clearButton.setToolTipText UIUtils.getText(this.class, "clear")
 
-        noResults = new ULCLabel("")
-        noResults.setForeground Color.red
     }
 
     protected void layoutComponents() {
@@ -80,56 +89,37 @@ class NavigationBarTopPane {
         }
         toolBar.add(searchTextField);
         toolBar.add(clearButton)
-        toolBar.add(noResults);
     }
 
     protected void attachListeners() {
-        myStuffButton.addActionListener([actionPerformed: {ActionEvent event ->
-            ModellingItemNodeFilter filter = null
-            String loggedUser = getLoggedUser()
-            if (loggedUser && myStuffButton.isSelected()) {
-                filter = new ModellingItemNodeFilter([loggedUser], ModellingInformationTableTreeModel.OWNER)
-            } else {
-                filter = new ModellingItemNodeFilter([], ModellingInformationTableTreeModel.OWNER)
-            }
-            tableTreeModel?.applyFilter(filter)
+        myStuffButton.addActionListener([actionPerformed: { ActionEvent event ->
+            FilterDefinition filter = tableTreeModel.currentFilter
+            filter.ownerFilter.active = myStuffButton.isSelected()
+            fireFilterChanged(filter)
         }] as IActionListener)
         searchTextField.addFocusListener(new TextFieldFocusListener(searchTextField))
-        Closure searchClosure = {ActionEvent event ->
+        Closure searchClosure = {
             String text = searchTextField.getText()
-            if (text) {
-                List<String> results = []
-                try {
-                    results = searchBean.performSearch(text)
-                } catch (Exception ex) {
-                    LOG.error "${ex}"
-                    results = []
-                }
-                boolean isNoResult = false
-                if (results.size() == 0) {
-                    results = ["no_result_found"]
-                    isNoResult = true
-                }
-                ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter(results)
-                tableTreeModel.applyFilter(filter)
-                noResults.setText(isNoResult ? UIUtils.getText(this.class, "noResults") : "")
-            }
+            FilterDefinition filter = tableTreeModel.currentFilter
+            filter.allFieldsFilter.query = text
+            fireFilterChanged(filter)
         }
-        IActionListener action = [actionPerformed: {e -> searchClosure.call()}] as IActionListener
+        IActionListener action = [actionPerformed: { ActionEvent e -> searchClosure.call() }] as IActionListener
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
         searchTextField.registerKeyboardAction(action, enter, ULCComponent.WHEN_FOCUSED);
-        clearButton.addActionListener([actionPerformed: {ActionEvent event ->
+        clearButton.addActionListener([actionPerformed: { ActionEvent event ->
             searchTextField.setText(UIUtils.getText(this.class, "searchText"))
             searchTextField.setForeground Color.gray
-            ModellingItemNodeFilter filter = ParameterizationNodeFilterFactory.getModellingNodeFilter([])
-            tableTreeModel?.applyFilter(filter)
-            noResults.setText("")
+            FilterDefinition filter = tableTreeModel.currentFilter
+            filter.allFieldsFilter.query = ""
+            filter.ownerFilter.active = false
+            fireFilterChanged(filter)
             myStuffButton.setSelected false
             assignedToMeButton.setSelected false
         }] as IActionListener)
     }
 
-    protected String getLoggedUser() {
+    private static String getLoggedUser() {
         return UserContext.getCurrentUser()?.getUsername()
     }
 

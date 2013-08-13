@@ -76,7 +76,7 @@ class CommentPane {
             if (model instanceof ResultViewModel) return true
             if (comment.tags.any { it.name == NewCommentView.POST_LOCKING }) return true
             if (model?.isReadOnly()) return false
-            if (((Parameterization) model?.item)?.isEditable()) return true
+            if (model?.item?.isEditable()) return true
             return false
         }
         editCommentAction.enablingClosure = enablingClosure

@@ -1,43 +1,33 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.ULCPollingTimer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-
 import groovy.beans.Bindable
-import org.apache.log4j.Logger
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.base.model.*
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
-
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.*
-import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
+import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
-import com.ulcjava.applicationframework.application.ApplicationContext
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
 
     Map<AbstractUIItem, Object> viewModelsInUse
-    AbstractTableTreeModel navigationTableTreeModel
+    ModellingInformationTableTreeModel navigationTableTreeModel
     def switchActions = []
     private List<IRiskAnalyticsModelListener> modelListeners = []
     private List<BatchTableListener> batchTableListeners = []
@@ -53,12 +43,11 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
-        ModellingInformationTableTreeModel modellingInformationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
-        modellingInformationTableTreeModel.buildTreeNodes()
-        navigationTableTreeModel = new MultiFilteringTableTreeModel(modellingInformationTableTreeModel)
+        navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
+        navigationTableTreeModel.buildTreeNodes()
     }
 
-    public RiskAnalyticsMainModel(AbstractTableTreeModel navigationTableTreeModel) {
+    public RiskAnalyticsMainModel(ModellingInformationTableTreeModel navigationTableTreeModel) {
         viewModelsInUse = [:]
         this.navigationTableTreeModel = navigationTableTreeModel
     }
@@ -255,12 +244,10 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public void simulationEnd(Simulation simulation, Model model) {
         if (simulation.end != null) {
-            navigationTableTreeModel.addNodeForItem(simulation)
             Parameterization parameterization = simulation.parameterization
             //after simulation running, lock the used the used p14n
             try {
                 parameterization.addRemoveLockTag()
-                navigationTableTreeModel.itemChanged(parameterization)
             } catch (HibernateOptimisticLockingFailureException e) {
                 LOG.warn("Failed to add LOCK tag to parameterization ${parameterization}. Probably because it was already added by a concurrent simulation.")
                 //most likely because multiple users start a simulation with the same parameterization at the same time

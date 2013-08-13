@@ -61,14 +61,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         parameterization.save()
         parameterization = (Parameterization) ModellingItemFactory.getItem(parameterization.dao, parameterization.modelClass)
         parameterization.load()
-        if (!item.is(parameterization)) {
-            model.navigationTableTreeModel.addNodeForItem(parameterization)
-        } else {
-            ParameterizationUIItem parameterizationUIItem = (ParameterizationUIItem) UIItemFactory.createItem(parameterization, null, model)
-            ITableTreeNode paramNode = TableTreeBuilderUtils.findNodeForItem(model.navigationTableTreeModel.root, parameterizationUIItem)
-            model.navigationTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(paramNode) as Object[]))
-        }
-        parameterization
+        return parameterization
     }
 
     abstract Status toStatus()

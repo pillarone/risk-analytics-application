@@ -11,6 +11,7 @@ abstract class DateFormatUtils {
 
     //DateTimeFormatter is thread safe
     private static DateTimeFormatter detailedFormatter
+    private static DateTimeFormatter simpleFormatter
     private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
     public static final String PARAMETER_DISPLAY_FORMAT = "MMM dd, yyyy"
 
@@ -19,6 +20,13 @@ abstract class DateFormatUtils {
             detailedFormatter = getDateFormat("dd.MM.yyyy, HH:mm z")
         }
         return detailedFormatter
+    }
+
+    public static DateTimeFormatter getSimpleDateFormat() {
+        if (simpleFormatter == null) {
+            simpleFormatter = getDateFormat("dd.MM.yyyy")
+        }
+        return simpleFormatter
     }
 
     public static DateTimeFormatter getDateFormat(String formatString) {
@@ -34,6 +42,13 @@ abstract class DateFormatUtils {
             return ""
         }
         return getDetailedDateFormat().print(date)
+    }
+
+    public static String formatSimple(DateTime date) {
+        if (date == null) {
+            return ""
+        }
+        return getSimpleDateFormat().print(date)
     }
 
     public static List<String> getInputDateFormats() {

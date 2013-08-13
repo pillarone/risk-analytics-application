@@ -32,7 +32,6 @@ class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
 
     public void update(BatchUIItem batchUIItem) {
         tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, batchUIItem)
-        batchUIItem.mainModel.navigationTableTreeModel.refreshBatchNode()
     }
 
     public static String removeUnsavedMark(String title) {

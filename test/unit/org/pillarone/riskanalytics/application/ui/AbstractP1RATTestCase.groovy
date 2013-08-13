@@ -3,26 +3,25 @@ package org.pillarone.riskanalytics.application.ui
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
-import org.pillarone.riskanalytics.application.util.LocaleResources
+import com.ulcjava.base.server.ULCSession
 import com.ulcjava.testframework.operator.*
-import com.ulcjava.base.application.ULCCheckBox
+import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
+import models.application.ApplicationModel
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
-import models.application.ApplicationModel
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.workflow.Status
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -106,14 +105,14 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
 
     protected RiskAnalyticsMainModel getMockRiskAnalyticsMainModel() {
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(getMockTreeModel(null))
-        mainModel.metaClass.startPollingTimer = {PollingBatchSimulationAction pollingBatchSimulationAction ->
+        mainModel.metaClass.startPollingTimer = { PollingBatchSimulationAction pollingBatchSimulationAction ->
         }
-        mainModel.metaClass.openItem = {Model pcModel, Parameterization item ->
+        mainModel.metaClass.openItem = { Model pcModel, Parameterization item ->
             assertEquals pcModel.name, "Application"
             assertNotNull item
         }
 
-        mainModel.metaClass.openItem = {Model pcModel, Simulation item ->
+        mainModel.metaClass.openItem = { Model pcModel, Simulation item ->
             assertEquals pcModel.name, "Application"
             assertNotNull item
         }
@@ -121,42 +120,37 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         return mainModel
     }
 
-    private ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
+    protected ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
         treeModel.builder.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
-        }
-        treeModel.builder.metaClass.getItemsForModel = {Class modelClass, Class clazz ->
-            switch (clazz) {
-                case Parameterization:
-                    Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
-                    Parameterization parameterization2 = createStubParameterization(2, Status.DATA_ENTRY)
-                    parameterization2.versionNumber = new VersionNumber("R1")
-                    Parameterization parameterization3 = createStubParameterization(3, Status.IN_REVIEW)
-                    return [parameterization1, parameterization2, parameterization3]
-                case ResultConfiguration: return [new ResultConfiguration("result1")]
-                case Simulation:
-                    Simulation simulation = new Simulation("simulation1")
-                    simulation.parameterization = new Parameterization("param1")
-                    simulation.template = new ResultConfiguration("result1")
-                    simulation.id = 1
-                    simulation.setEnd(new DateTime())
-                    simulation.modelClass = ApplicationModel
-                    simulation.metaClass.getSize = {Class SimulationClass -> return 0}
-                    return [simulation]
-                default: return []
-            }
         }
 
         treeModel.builder.metaClass.getAllBatchRuns = {->
             return [new BatchRun(name: "test")]
         }
 
-//        treeModel.metaClass.getValue = {Parameterization p, ParameterizationNode node, int columnIndex ->
-//            treeModel.addColumnValue(p, node, columnIndex, p.name + " " + columnIndex)
-//            return p.name + " " + columnIndex
-//        }
-//        treeModel.builder = builder
+
+        treeModel.metaClass.getPendingEvents = { ULCSession session ->
+            return []
+        }
+        treeModel.metaClass.getFilteredItems = {->
+            Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
+            Parameterization parameterization2 = createStubParameterization(2, Status.DATA_ENTRY)
+            parameterization2.versionNumber = new VersionNumber("R1")
+            Parameterization parameterization3 = createStubParameterization(3, Status.IN_REVIEW)
+            ResultConfiguration resultConfiguration = new ResultConfiguration("result1")
+            resultConfiguration.modelClass = ApplicationModel
+            Simulation simulation = new Simulation("simulation1")
+            simulation.parameterization = new Parameterization("param1")
+            simulation.template = new ResultConfiguration("result1")
+            simulation.id = 1
+            simulation.setEnd(new DateTime())
+            simulation.modelClass = ApplicationModel
+            simulation.metaClass.getSize = { Class SimulationClass -> return 0 }
+            return [parameterization1, parameterization2, parameterization3, resultConfiguration,simulation]
+        }
+
         treeModel.buildTreeNodes()
         return treeModel
     }
@@ -174,7 +168,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         parameterization.setModificationDate(new DateTime())
         parameterization.status = status
         parameterization.modelClass = ApplicationModel
-        parameterization.@loaded = true
+        parameterization.loaded = true
         return parameterization
 
     }

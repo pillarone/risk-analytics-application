@@ -45,7 +45,6 @@ class StochasticResultUIItem extends ResultUIItem {
             Parameterization parameterization = ((Simulation) item).parameterization
             //after deleting a simulation, delete a lock tag if the p14n is not used
             parameterization.addRemoveLockTag()
-            navigationTableTreeModel.itemChanged(parameterization)
         }
 
         return removed

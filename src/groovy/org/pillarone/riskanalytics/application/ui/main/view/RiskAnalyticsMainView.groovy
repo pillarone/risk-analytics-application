@@ -4,6 +4,7 @@ import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
 import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
@@ -107,6 +108,9 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         mainModel.addModelListener(this)
         mainModel.addPropertyChangeListener("currentItem", this)
+        headerView.navigationBarTopPane.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
+            navigationView.filterTree(filter)
+        }] as IFilterChangedListener)
     }
 
     void openDetailView(Model model, AbstractUIItem item) {

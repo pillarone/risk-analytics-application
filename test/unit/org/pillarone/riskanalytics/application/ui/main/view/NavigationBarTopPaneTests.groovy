@@ -37,7 +37,7 @@ class NavigationBarTopPaneTests extends AbstractP1RATTestCase {
 
     @Override
     ULCComponent createContentPane() {
-        NavigationBarTopPane topPane = new NavigationBarTopPane(new ULCToolBar(), null)
+        NavigationBarTopPane topPane = new NavigationBarTopPane(new ULCToolBar(), getMockTreeModel(getMockRiskAnalyticsMainModel()))
         topPane.metaClass.isStandAlone = {-> false}
         topPane.metaClass.getLoggedUser = {-> null}
         topPane.init()

@@ -3,24 +3,28 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.server.ULCSession
+import com.ulcjava.base.shared.IDefaults
+import org.pillarone.riskanalytics.application.ui.base.action.Collapser
+import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
-import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import static org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel.*
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
-import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
-import org.pillarone.riskanalytics.application.ui.base.action.Collapser
+import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -28,8 +32,9 @@ import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
+    ULCPollingTimer treeSyncTimer
     RiskAnalyticsMainModel mainModel
-    AbstractTableTreeModel navigationTableTreeModel
+    ModellingInformationTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
 
@@ -40,16 +45,39 @@ class SelectionTreeView {
         initComponents()
         layoutComponents()
         attachListeners()
+        treeSyncTimer.start()
     }
 
 
     protected void initComponents() {
         content = new ULCBoxPane()
         content.name = "treeViewContent"
+        treeSyncTimer = new ULCPollingTimer(2000, [
+                actionPerformed: { evt ->
+                    navigationTableTreeModel.updateTreeStructure(ULCSession.currentSession())
+                }] as IActionListener)
     }
 
     private void layoutComponents() {
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, tree)
+        content.add(IDefaults.BOX_EXPAND_EXPAND, tree)
+    }
+
+    public void filterTree(FilterDefinition filterDefinition) {
+        List<ModellingItem> currentItems = navigationTableTreeModel.builder.modellingItems
+
+        navigationTableTreeModel.currentFilter = filterDefinition
+        List<ModellingItem> filteredItems = navigationTableTreeModel.getFilteredItems()
+
+        for (ModellingItem item in filteredItems) {
+            if (!currentItems.contains(item)) {
+                navigationTableTreeModel.builder.addNodeForItem(item)
+            }
+        }
+
+        currentItems.removeAll(filteredItems)
+        for(ModellingItem item in currentItems) {
+            navigationTableTreeModel.builder.removeNodeForItem(item)
+        }
     }
 
     private void attachListeners() {
@@ -78,7 +106,7 @@ class SelectionTreeView {
         tree.viewPortTableTree.setRootVisible(false);
         tree.viewPortTableTree.showsRootHandles = true
 
-        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
+        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex { ULCTableTreeColumn it, int index ->
             it.setHeaderRenderer(new CenteredHeaderRenderer())
             //todo ART-206 add filter dialog
             //            it.setHeaderRenderer(new FilteredCenteredHeaderRenderer())
@@ -86,7 +114,7 @@ class SelectionTreeView {
 
         MainSelectionTableTreeCellRenderer renderer = getPopUpRenderer(tree)
 
-        tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
+        tree.rowHeaderTableTree.columnModel.getColumns().each { ULCTableTreeColumn it ->
             it.setCellRenderer(renderer)
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
@@ -99,17 +127,23 @@ class SelectionTreeView {
         tree.rowHeaderTableTree.getSelectionModel().setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([navigationTableTreeModel.root] as Object[])] as TreePath[], false);
-        tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: {ActionEvent event ->
+        tree.getViewPortTableTree().getTableTreeHeader().addActionListener([actionPerformed: { ActionEvent event ->
             ULCTableTreeColumn column = (ULCTableTreeColumn) event.getSource()
             int columnIndex = navigationTableTreeModel.getColumnIndex(column.getModelIndex())
-            // if (columnIndex == ASSIGNED_TO || columnIndex == VISIBILITY) return
+
             if (ActionEvent.META_MASK == event.getModifiers()) {
-                SelectionTreeHeaderDialog dialog
-                dialog = new CheckBoxDialog(tree.viewPortTableTree, columnIndex)
-                dialog.init()
-                dialog.dialog.setLocationRelativeTo(tree)
-                dialog.dialog.setAlignment(ULCBoxPane.BOX_CENTER_CENTER)
-                dialog.dialog.setVisible true
+                IColumnDescriptor descriptor = getDescriptor(columnIndex)
+                if (descriptor != null) {
+                    SelectionTreeHeaderDialog dialog =
+                        new CheckBoxDialog(tree.viewPortTableTree, columnIndex, descriptor)
+                    dialog.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
+                        filterTree(filter)
+                    }] as IFilterChangedListener)
+                    dialog.init()
+                    dialog.dialog.setLocationRelativeTo(tree)
+                    dialog.dialog.setAlignment(IDefaults.BOX_CENTER_CENTER)
+                    dialog.dialog.setVisible true
+                }
             } else if (ActionEvent.BUTTON1_MASK == event.getModifiers()) {
                 navigationTableTreeModel.order(columnIndex, ascOrder)
                 ascOrder = !ascOrder
@@ -127,7 +161,18 @@ class SelectionTreeView {
     }
 
     ITableTreeNode getRoot() {
-        return navigationTableTreeModel.root
+        return navigationTableTreeModel.getRoot()
+    }
+
+    private IColumnDescriptor getDescriptor(int columnIndex) {
+        switch (columnIndex) {
+            case ModellingInformationTableTreeModel.TAGS:
+                return new IColumnDescriptor.TagColumnDescriptor()
+            case ModellingInformationTableTreeModel.STATE:
+                return new IColumnDescriptor.StateColumnDescriptor()
+        }
+
+        return null
     }
 
 

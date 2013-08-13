@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.functional
 
+import com.ulcjava.base.server.ApplicationConfiguration
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -17,6 +18,7 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
     ULCFrameOperator mainFrameOperator
 
     protected void setUp() {
+        ApplicationConfiguration.reset()
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])

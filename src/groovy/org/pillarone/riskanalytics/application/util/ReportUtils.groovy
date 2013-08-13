@@ -3,11 +3,11 @@ package org.pillarone.riskanalytics.application.util
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBean
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.result.view.ResultSettingsView
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization

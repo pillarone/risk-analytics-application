@@ -48,6 +48,7 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
+        runtime "mysql:mysql-connector-java:5.1.20"
         compile group: 'canoo', name: 'ULCMigLayout-client', version: "1.0"
         compile group: 'canoo', name: 'miglayout', version: "3.7.3.1"
 

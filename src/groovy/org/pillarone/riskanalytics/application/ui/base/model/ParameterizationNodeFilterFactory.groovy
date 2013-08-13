@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 
 /**

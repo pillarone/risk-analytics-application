@@ -69,7 +69,7 @@ class BatchUIItem extends AbstractUIItem {
 
     public void addBatchRun(BatchRun batchRun) {
         if (!batchRun) return
-        navigationTableTreeModel.addNodeForItem(this)
+        navigationTableTreeModel.addNodeForItem(new BatchUIItem(mainModel,batchRun))
         mainModel.viewModelsInUse.each {k, v ->
             if (v instanceof BatchListener)
                 v.newBatchAdded(batchRun)

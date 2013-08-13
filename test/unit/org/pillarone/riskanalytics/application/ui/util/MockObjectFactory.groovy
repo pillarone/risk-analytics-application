@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
@@ -19,7 +19,7 @@ import org.joda.time.DateTime
 class MockObjectFactory {
 
     public static ModellingInformationTableTreeModel getMockTreeModel() {
-        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel()
+        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(null)
         treeModel.metaClass.getAllModelClasses = {->
             return [ApplicationModel]
         }

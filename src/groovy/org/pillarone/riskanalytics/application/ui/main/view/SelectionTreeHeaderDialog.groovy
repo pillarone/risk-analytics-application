@@ -7,7 +7,8 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.MultiFilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import com.ulcjava.base.application.*
@@ -16,6 +17,9 @@ import com.ulcjava.base.application.*
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class SelectionTreeHeaderDialog {
+
+    int columnIndex
+
     protected ULCWindow parent
     protected ULCDialog dialog
     protected ULCBoxPane content
@@ -25,17 +29,31 @@ abstract class SelectionTreeHeaderDialog {
     protected ULCButton clearButton
     protected ULCButton cancelButton
     protected ULCTableTree tableTree
-    int columnIndex
-    protected List filterValues
-    MultiFilteringTableTreeModel model
-    ModellingItemNodeFilter filter
 
-    public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex) {
+    ModellingInformationTableTreeModel model
+
+    protected IColumnDescriptor columnDescriptor
+
+    List<IFilterChangedListener> filterChangedListeners = []
+
+    public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex, IColumnDescriptor columnDescriptor) {
         this.tableTree = tree
-        model = tableTree.model
+        this.model = (ModellingInformationTableTreeModel) tableTree.model
         this.parent = UlcUtilities.getWindowAncestor(tableTree)
         this.columnIndex = columnIndex
-        this.filterValues = []
+        this.columnDescriptor = columnDescriptor
+    }
+
+    void addFilterChangedListener(IFilterChangedListener listener) {
+        filterChangedListeners << listener
+    }
+
+    void removeFilterChangedListener(IFilterChangedListener listener) {
+        filterChangedListeners.remove(listener)
+    }
+
+    void fireFilterChanged(FilterDefinition filter) {
+        filterChangedListeners*.filterChanged(filter)
     }
 
     public void init() {
@@ -79,27 +97,6 @@ abstract class SelectionTreeHeaderDialog {
         buttonsPane.add(ULCBoxPane.BOX_LEFT_TOP, ascOrder)
         buttonsPane.add(ULCBoxPane.BOX_LEFT_TOP, descOrder)
         content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
-        if (model.filters.size() > 0) {
-            ULCBoxPane filtersPane = new ULCBoxPane(2, 0)
-            filtersPane.setBorder BorderFactory.createTitledBorder(UIUtils.getText(SelectionTreeHeaderDialog.class, "alreadyUsed") + " : ");
-            model.filters.each {ITableTreeFilter filter ->
-                if (filter.column != columnIndex) {
-                    ULCCheckBox checkBox = new ULCCheckBox(getFilterValues(filter), true)
-                    checkBox.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
-                        if (checkBox.selected)
-                            model.addFilter(filter)
-                        else
-                            model.removeFilter(filter)
-                    }] as IValueChangedListener)
-                    filtersPane.add(ULCBoxPane.BOX_LEFT_TOP, checkBox)
-                    filtersPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-                }
-            }
-            filtersPane.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            ULCScrollPane filtersScrollPane = new ULCScrollPane(filtersPane)
-            filtersScrollPane.setPreferredSize new Dimension(160, 200)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, filtersScrollPane)
-        }
 
         ULCScrollPane scrollPane = new ULCScrollPane(addChoiceButton())
         scrollPane.setPreferredSize new Dimension(160, 200)
@@ -121,16 +118,15 @@ abstract class SelectionTreeHeaderDialog {
 
     abstract public void initFilter()
 
-    abstract protected void selectValues()
-
     protected void attachListeners() {
         cancelButton.addActionListener([actionPerformed: { ActionEvent ->
             dialog.dispose()
         }] as IActionListener)
 
         clearButton.addActionListener([actionPerformed: { ActionEvent ->
-            model.filters.clear()
-            model.applyFilter()
+            FilterDefinition filter = model.currentFilter
+            columnDescriptor.getFilter(filter).clear()
+            fireFilterChanged(filter)
             dialog.dispose()
         }] as IActionListener)
 

@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.joda.time.DateTime
@@ -32,7 +33,7 @@ class ModellingTableTreeColumnValues {
     }
 
     private static void addValue(Set values, DateTime value) {
-        values.add(ModellingInformationTableTreeModel.simpleDateFormat.print(value))
+        values.add(DateFormatUtils.formatSimple(value))
     }
 
     private static void addValue(Set values, Object value) {

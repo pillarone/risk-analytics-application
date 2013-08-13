@@ -1,11 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.*
+import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
+import com.ulcjava.base.application.util.Color
+import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
+import com.ulcjava.base.shared.IDefaults
+import groovy.transform.CompileStatic
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
@@ -14,20 +23,13 @@ import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsVie
 import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsViewDialog
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.main.action.*
-import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.application.border.ULCAbstractBorder
-import com.ulcjava.base.application.util.Color
-import com.ulcjava.base.application.event.ActionEvent
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 
 /**
  *  UI for the header of RiskAnalytics to show File menus and action buttons
  * for saving, refreshing and running a simulation
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@CompileStatic
 class HeaderView extends AbstractView {
 
     ULCBoxPane content
@@ -47,7 +49,7 @@ class HeaderView extends AbstractView {
     ULCMenu fileMenu
     ULCMenuItem saveAllItem
     ULCMenuItem refreshItem
-    ULCMenuItem runItem
+    SimulationRunMenuItem runItem
     ULCMenuItem exportAllItemsNewstVersion
     ULCMenuItem exportAllItems
     ULCMenuItem importAllItems
@@ -72,7 +74,7 @@ class HeaderView extends AbstractView {
     ULCTableTree navigationTableTree
 
     RiskAnalyticsMainModel model
-    AbstractTableTreeModel navigationTableTreeModel
+    ModellingInformationTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
 
     Log LOG = LogFactory.getLog(HeaderView.class)
@@ -110,10 +112,10 @@ class HeaderView extends AbstractView {
         //init menu
         menuBar = new ULCMenuBar()
         fileMenu = new ULCMenu(UIUtils.getText(HeaderView, "File"))
-        fileMenu.mnemonic = 'F'
+        fileMenu.mnemonic = 'F' as char
         saveItem = new ULCMenuItem(saveAction)
         saveItem.icon = null
-        saveItem.mnemonic = 'S'
+        saveItem.mnemonic = 'S' as char
         saveItem.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false)
         saveAllItem = new ULCMenuItem(new SaveAllAction(model))
         refreshItem = new ULCMenuItem(refreshAction)
@@ -122,13 +124,13 @@ class HeaderView extends AbstractView {
         exportAllItems = new ULCMenuItem(exportAllAction)
         importAllItems = new ULCMenuItem(importAllAction)
         exitItem = new ULCMenuItem(new ExitAction())
-        exitItem.mnemonic = 'X'
+        exitItem.mnemonic = 'X' as char
 
         helpMenu = new ULCMenu(UIUtils.getText(HeaderView, "Help"))
-        helpMenu.mnemonic = 'H'
+        helpMenu.mnemonic = 'H' as char
 
         aboutItem = new ULCMenuItem(UIUtils.getText(HeaderView, "About"))
-        aboutItem.mnemonic = 'A'
+        aboutItem.mnemonic = 'A' as char
 
         traceLogItem = new ULCMenuItem(UIUtils.getText(HeaderView, "Log"))
         traceLogItem.mnemonic = 'L'
@@ -215,8 +217,8 @@ class HeaderView extends AbstractView {
         rightToolBar.add(UIUtils.spaceAround(lockedLabel, 6, 3, 3, 3))
         rightToolBar.add(UIUtils.spaceAround(userInfoComboBox, 6, 3, 3, 3))
 
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, toolBar)
-        content.add(ULCBoxPane.BOX_RIGHT_TOP, rightToolBar)
+        content.add(IDefaults.BOX_EXPAND_TOP, toolBar)
+        content.add(IDefaults.BOX_RIGHT_TOP, rightToolBar)
         syncMenuBar()
     }
 

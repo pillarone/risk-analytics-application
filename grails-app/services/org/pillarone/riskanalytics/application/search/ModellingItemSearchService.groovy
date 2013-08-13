@@ -1,30 +1,21 @@
 package org.pillarone.riskanalytics.application.search
 
 import com.ulcjava.base.server.ULCSession
+import grails.util.Holders
+import org.pillarone.riskanalytics.core.ResourceDAO
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemMapper
+
 import java.util.concurrent.ConcurrentHashMap
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.apache.lucene.analysis.Analyzer
-import org.apache.lucene.analysis.standard.StandardAnalyzer
-import org.apache.lucene.index.IndexWriter
-import org.apache.lucene.index.IndexWriter.MaxFieldLength
-import org.apache.lucene.queryParser.QueryParser
-import org.apache.lucene.queryParser.QueryParser.Operator
-import org.apache.lucene.search.IndexSearcher
-import org.apache.lucene.search.ScoreDoc
-import org.apache.lucene.search.TopDocs
-import org.apache.lucene.store.Directory
-import org.apache.lucene.store.RAMDirectory
-import org.apache.lucene.util.Version
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.listener.ModellingItemHibernateListener
-import org.pillarone.riskanalytics.core.listener.ModellingItemListener
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemHibernateListener
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemListener
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 
 class ModellingItemSearchService {
 
@@ -34,13 +25,11 @@ class ModellingItemSearchService {
 
     ModellingItemHibernateListener modellingItemListener
 
-    protected IndexSearcher indexSearcher
-    protected Directory directory
+    private List<ModellingItem> cache = []
 
-    protected Analyzer analyzer
     private ModellingItemListener listener = new SearchModellingItemListener()
 
-    private Map<Integer, List<ModellingItemEvent>> queue = new ConcurrentHashMap<Integer, List<ModellingItemEvent>>()
+    private Map<ULCSession, List<ModellingItemEvent>> queue = new ConcurrentHashMap<ULCSession, List<ModellingItemEvent>>()
 
     @PostConstruct
     void init() {
@@ -51,18 +40,15 @@ class ModellingItemSearchService {
     @PreDestroy
     void cleanUp() {
         modellingItemListener.removeModellingItemListener(listener)
-        indexSearcher.close()
-        directory.close()
-        analyzer.close()
+        cache.clear()
         queue.clear()
     }
 
     void registerSession(ULCSession session) {
-        final int sessionId = session.id
-        if (queue.containsKey(sessionId)) {
-            LOG.warn("Session already registered $sessionId")
+        if (queue.containsKey(session)) {
+            LOG.warn("Session already registered $session")
         }
-        queue.put(sessionId, new ArrayList<ModellingItemEvent>())
+        queue.put(session, new ArrayList<ModellingItemEvent>())
     }
 
     void unregisterSession(ULCSession session) {
@@ -70,123 +56,100 @@ class ModellingItemSearchService {
     }
 
     List<ModellingItemEvent> getPendingEvents(ULCSession session) {
-        List<ModellingItemEvent> result = queue.get(session.id)
-        queue.put(session.id, new ArrayList<ModellingItemEvent>())
+        List<ModellingItemEvent> result = queue.get(session)
+        queue.put(session, new ArrayList<ModellingItemEvent>())
         return result
     }
 
     protected synchronized void createInitialIndex() {
-        analyzer = new StandardAnalyzer(Version.LUCENE_30)
-        directory = new RAMDirectory()
-        IndexWriter indexWriter = createIndexWriter(true)
-
-        try {
+        LOG.info("start creating initial index.")
+        ParameterizationDAO.withTransaction {
             for (ParameterizationDAO dao in ParameterizationDAO.list()) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toParameterization(dao)))
+                cache.add(ModellingItemMapper.getModellingItem(dao))
             }
             for (ResultConfigurationDAO dao in ResultConfigurationDAO.list()) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toResultConfiguration(dao)))
+                cache.add(ModellingItemMapper.getModellingItem(dao))
             }
-            for (SimulationRun dao in SimulationRun.list().findAll { ! it.toBeDeleted }) {
-                indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(toSimulation(dao)))
-            }
-        } finally {
-            indexWriter.close()
-        }
 
-        indexSearcher = new IndexSearcher(directory, true)
+            for (SimulationRun dao in SimulationRun.list().findAll { !it.toBeDeleted }) {
+                cache.add(ModellingItemMapper.getModellingItem(dao))
+            }
+            for (ResourceDAO dao in ResourceDAO.list()) {
+                cache.add(ModellingItemMapper.getModellingItem(dao))
+            }
+        }
+        LOG.info("end creating initial index.")
     }
 
-    public synchronized void refresh() {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
-
-        try {
-            indexWriter.deleteAll()
-        } finally {
-            indexWriter.close()
-        }
-
-        indexSearcher = new IndexSearcher(directory, true)
+    synchronized void refresh() {
+        cache.clear()
         createInitialIndex()
     }
 
-    private Parameterization toParameterization(ParameterizationDAO dao) {
-        Parameterization parameterization = new Parameterization(dao.name, getClass().getClassLoader().loadClass(dao.modelClassName))
-        parameterization.versionNumber = new VersionNumber(dao.itemVersion)
-        parameterization.load(false)
-
-        return parameterization
-    }
-
-    private ResultConfiguration toResultConfiguration(ResultConfigurationDAO dao) {
-        ResultConfiguration resultConfiguration = new ResultConfiguration(dao.name)
-        resultConfiguration.modelClass = getClass().getClassLoader().loadClass(dao.modelClassName)
-        resultConfiguration.versionNumber = new VersionNumber(dao.itemVersion)
-        resultConfiguration.load(false)
-
-        return resultConfiguration
-    }
-
-    private Simulation toSimulation(SimulationRun dao) {
-        Simulation simulation = new Simulation(dao.name)
-        simulation.modelClass = getClass().getClassLoader().loadClass(dao.model)
-        simulation.load(false)
-
-        return simulation
-    }
-
-    protected IndexWriter createIndexWriter(boolean create) {
-        return new IndexWriter(directory, analyzer, create, MaxFieldLength.UNLIMITED)
-    }
-
-    synchronized List<ModellingItem> search(String queryString) {
-        QueryParser queryParser = createQueryParser()
-
-        final TopDocs searchResult = indexSearcher.search(queryParser.parse(queryString), Integer.MAX_VALUE)
-
+    synchronized List<ModellingItem> search(List<ISearchFilter> filters) {
         List<ModellingItem> results = []
 
-        for (ScoreDoc result in searchResult.scoreDocs) {
-            results << DocumentFactory.toModellingItem(indexSearcher.doc(result.doc))
+        for (ModellingItem item in cache) {
+            boolean match = true
+            for (ISearchFilter filter in filters) {
+                if (!filter.accept(item)) {
+                    match = false
+                }
+            }
+            if (match) {
+                results << item
+            }
+        }
+
+        return newInstances(results)
+    }
+
+    List<ModellingItem> newInstances(List<ModellingItem> items) {
+        List<ModellingItem> results = []
+        for (ModellingItem item in items){
+            results << ModellingItemMapper.newItemInstance(item)
         }
         return results
     }
 
-    protected QueryParser createQueryParser() {
-        QueryParser queryParser = new QueryParser(Version.LUCENE_30, DocumentFactory.NAME_FIELD, analyzer)
-        queryParser.allowLeadingWildcard = true
-        queryParser.defaultOperator = Operator.AND
-        return queryParser
-    }
-
     protected synchronized void addModellingItemToIndex(ModellingItem modellingItem) {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
-
-        try {
-            indexWriter.addDocument(org.pillarone.riskanalytics.application.search.DocumentFactory.createDocument(modellingItem))
-        } finally {
-            indexWriter.close()
-        }
-
-        indexSearcher = new IndexSearcher(directory, true)
+        cache.add(modellingItem)
     }
 
     protected synchronized void removeModellingItemFromIndex(ModellingItem modellingItem) {
-        indexSearcher.close()
-        IndexWriter indexWriter = createIndexWriter(false)
-        try {
-            indexWriter.deleteDocuments(createQueryParser().parse(org.pillarone.riskanalytics.application.search.DocumentFactory.createDeleteQueryString(modellingItem)))
-        } finally {
-            indexWriter.close()
-        }
-
-        indexSearcher = new IndexSearcher(directory, true)
+        cache.remove(modellingItem)
     }
 
+    private void updateModellingItemInIndex(ModellingItem item) {
+        cache[cache.indexOf(item)] = item
+        internalUpdateModellingItemInIndex(item)
+    }
+
+    private void internalUpdateModellingItemInIndex(ModellingItem item) {
+
+    }
+
+    private void internalUpdateModellingItemInIndex(Parameterization item) {
+        List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
+        for (Simulation simulation in allSimulations) {
+            if (simulation.parameterization.equals(item)) {
+                simulation.parameterization = item
+            }
+        }
+    }
+
+    private void internalUpdateModellingItemInIndex(ResultConfiguration item) {
+        List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
+        for (Simulation simulation in allSimulations) {
+            if (simulation.template.equals(item)) {
+                simulation.template = item
+            }
+        }
+    }
+
+
     public static ModellingItemSearchService getInstance() {
-        return ApplicationHolder.application.mainContext.getBean(ModellingItemSearchService)
+        return Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService)
     }
 
     private class SearchModellingItemListener implements ModellingItemListener {
@@ -206,6 +169,7 @@ class ModellingItemSearchService {
         }
 
         void modellingItemChanged(ModellingItem item) {
+            updateModellingItemInIndex(item)
             for (List<ModellingItemEventType> list in queue.values()) {
                 list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
             }

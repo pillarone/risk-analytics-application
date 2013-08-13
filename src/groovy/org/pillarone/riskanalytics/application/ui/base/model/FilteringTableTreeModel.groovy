@@ -163,7 +163,7 @@ class FilteringTableTreeModel extends AbstractTableTreeModel implements ITableTr
         return model.root;
     }
 
-    public Object getChild(Object parent, int index) {
+    public ITableTreeNode getChild(Object parent, int index) {
         def filteredNode = nodeMapping[parent]
         int i = filteredNode.activeIndices[index]
 

@@ -61,7 +61,7 @@ class ConstrainedMultiDimensionalParameterViewTests extends AbstractSimpleFuncti
         assertEquals "1", operator.getText()
 
         //A double data type is created (based on MDP constraint info), despite the actual value being an integer
-        assertFalse operator.getUITextField().fDataType.integer
+        assertEquals 'Double', operator.getUITextField().fDataType.classType
         operator.enterText("2")
     }
 

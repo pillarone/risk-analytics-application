@@ -25,19 +25,19 @@ class ItemComparator {
     }
 
     public static boolean isEqual(Resource item1, Resource item2) {
-        return item1 != null && item2 != null && item1.name == item2.name && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
+        return item1 != null && item2 != null && item1.id == item2.id && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
     }
 
     public static boolean isEqual(Parameterization item1, Parameterization item2) {
-        return item1 != null && item2 != null && item1.name == item2.name && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
+        return item1 != null && item2 != null && item1.id == item2.id && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
     }
 
     public static boolean isEqual(ResultConfiguration item1, ResultConfiguration item2) {
-        return item1 != null && item2 != null && item1.name == item2.name && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
+        return item1 != null && item2 != null && item1.id == item2.id && item1.versionNumber.toString() == item2.versionNumber.toString() && item1.modelClass == item2.modelClass
     }
 
     public static boolean isEqual(Simulation item1, Simulation item2) {
-        return item1 != null && item2 != null && item1.name == item2.name && item1.modelClass == item2.modelClass
+        return item1 != null && item2 != null && item1.id == item2.id && item1.modelClass == item2.modelClass
     }
 
     public static boolean isEqual(BatchRun item1, BatchRun item2) {
