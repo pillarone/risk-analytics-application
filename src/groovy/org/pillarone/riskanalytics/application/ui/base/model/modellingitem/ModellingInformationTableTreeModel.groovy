@@ -168,7 +168,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    builder.addNodeForItem(itemEvent.item)
+                    builder.addNodeForItem(itemEvent.item,true)
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.REMOVED:
                     builder.removeNodeForItem(itemEvent.item)
@@ -209,5 +209,21 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     private Comparator getComparator(int column, boolean ascOrder) {
         return { x, y -> ascOrder ? x.values[column] <=> y.values[column] : y.values[column] <=> x.values[column] } as Comparator
+    }
+
+    void filterTree(FilterDefinition filterDefinition) {
+        LOG.debug("Apply filter definition start.")
+        List<ModellingItem> currentItems = builder.modellingItems
+        currentFilter = filterDefinition
+        List<ModellingItem> filteredItems = getFilteredItems()
+
+        List itemsToAdd = []
+        itemsToAdd.addAll(filteredItems)
+        itemsToAdd.removeAll(currentItems)
+        builder.addNodesForItems(itemsToAdd)
+
+        currentItems.removeAll(filteredItems)
+        builder.removeNodesForItems(currentItems)
+        LOG.debug("Apply filter definition done.")
     }
 }
