@@ -24,7 +24,7 @@ grails.project.dependency.resolution = {
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
 
-    String ulcVersion = "ria-suite-2012-u1-2"
+    String ulcVersion = "ria-suite-2013-2"
 
     plugins {
         runtime ":background-thread:1.3"
@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:1.2.7.3"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime("org.pillarone:pillar-one-ulc-extensions:0.8") { transitive = false }
+        runtime("org.pillarone:pillar-one-ulc-extensions:0.9") { transitive = false }
 
         test ":code-coverage:1.2.4"
 

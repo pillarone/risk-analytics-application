@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 
@@ -66,4 +67,9 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         traceLogManager.deactivateLogging()
     }
 
+    @Override
+    void stop(Throwable reason) {
+        ExceptionSafe.saveError(reason)
+        stop()
+    }
 }

@@ -55,7 +55,7 @@ class DownloadFileAction extends ResourceBasedAction {
         ClientContext.chooseFile([
                 onSuccess: { String[] filePaths, fileNames ->
                     userPreferences.setUserDirectory(UserPreferences.ADD_FILE_DIR, filePaths[0])
-                    ClientContext.storeFile(new FileStoreHandler(content, source), filePaths[0], Long.MAX_VALUE, true, false)
+                    ClientContext.storeFile(new FileStoreHandler(content, source), filePaths[0], Long.MAX_VALUE, true)
                 },
                 onFailure: { reason, description ->
                     if (IFileStoreHandler.CANCELLED != reason) {

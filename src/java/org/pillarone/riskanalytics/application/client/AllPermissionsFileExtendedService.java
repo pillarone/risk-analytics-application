@@ -15,15 +15,15 @@ import java.io.InputStream;
 public class AllPermissionsFileExtendedService extends AllPermissionsFileService {
 
     @Override
-    public FileContents storeFile(String filePath, boolean confirmBeforeOverwrite, boolean allowChoosingNewFileInOverwritePrompt, FileChooserConfig fileChooserConfig, InputStream in) throws ServiceException {
+    public FileContents storeFile(String filePath, InputStream inputStream, boolean failIfExists) throws ServiceException {
         createDirectory(filePath);
-        return super.storeFile(filePath, confirmBeforeOverwrite, allowChoosingNewFileInOverwritePrompt, fileChooserConfig, in);
+        return super.storeFile(filePath, inputStream, failIfExists);
     }
 
     @Override
-    public FileContents storeFile(FileChooserConfig fileChooserConfig, UIComponent parent, boolean confirmBeforeOverwrite, boolean allowChoosingNewFileInOverwritePrompt, InputStream in) throws ServiceException {
+    public FileContents storeFile(FileChooserConfig fileChooserConfig, UIComponent parent, InputStream inputStream) throws ServiceException {
         createDirectory(fileChooserConfig.getSelectedFile());
-        return super.storeFile(fileChooserConfig, parent, confirmBeforeOverwrite, allowChoosingNewFileInOverwritePrompt, in);
+        return super.storeFile(fileChooserConfig, parent, inputStream);
     }
 
     private void createDirectory(String filePath) {
@@ -31,7 +31,7 @@ public class AllPermissionsFileExtendedService extends AllPermissionsFileService
         if (index != -1) {
             File f = new File(filePath.substring(0, index));
             if (!f.exists()) {
-                if(!f.mkdirs()) {
+                if (!f.mkdirs()) {
                     throw new RuntimeException("Failed to create directories on client.");
                 }
             }
