@@ -24,7 +24,6 @@ import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -63,21 +62,7 @@ class SelectionTreeView {
     }
 
     public void filterTree(FilterDefinition filterDefinition) {
-        List<ModellingItem> currentItems = navigationTableTreeModel.builder.modellingItems
-
-        navigationTableTreeModel.currentFilter = filterDefinition
-        List<ModellingItem> filteredItems = navigationTableTreeModel.getFilteredItems()
-
-        for (ModellingItem item in filteredItems) {
-            if (!currentItems.contains(item)) {
-                navigationTableTreeModel.builder.addNodeForItem(item)
-            }
-        }
-
-        currentItems.removeAll(filteredItems)
-        for(ModellingItem item in currentItems) {
-            navigationTableTreeModel.builder.removeNodeForItem(item)
-        }
+        navigationTableTreeModel.filterTree(filterDefinition)
     }
 
     private void attachListeners() {
