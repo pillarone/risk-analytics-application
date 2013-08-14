@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
@@ -13,6 +14,15 @@ import models.core.CoreModel
  */
 class ModellingItemNodeFilterTests extends GroovyTestCase {
 
+    @Override
+    protected void setUp() throws Exception {
+        LocaleResources.setTestMode()
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        LocaleResources.clearTestMode()
+    }
 
     public void testIsAcceptedByTags() {
         ModellingItemNodeFilter tagFilter = new ModellingItemNodeFilter(["WORKFLOW"], ModellingInformationTableTreeModel.TAGS)
