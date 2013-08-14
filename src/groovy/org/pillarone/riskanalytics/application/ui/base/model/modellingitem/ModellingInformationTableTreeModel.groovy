@@ -168,7 +168,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    builder.addNodeForItem(itemEvent.item,true)
+                    builder.addNodeForItem(itemEvent.item)
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.REMOVED:
                     builder.removeNodeForItem(itemEvent.item)

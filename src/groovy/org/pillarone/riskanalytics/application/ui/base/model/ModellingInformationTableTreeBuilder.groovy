@@ -297,7 +297,7 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
-    public DefaultMutableTableTreeNode addNodeForItem(Model model, boolean notifyStructureChanged) {
+    public DefaultMutableTableTreeNode addNodeForItem(Model model, boolean notifyStructureChanged = true) {
         createModelNode(model)
         if (notifyStructureChanged) {
             this.model.nodesWereInserted(new TreePath(root), [root.childCount - 2] as int[])
@@ -305,7 +305,7 @@ class ModellingInformationTableTreeBuilder {
         return root
     }
 
-    public DefaultMutableTableTreeNode addNodeForItem(Simulation item, boolean notifyStructureChanged) {
+    public DefaultMutableTableTreeNode addNodeForItem(Simulation item, boolean notifyStructureChanged = true) {
         if (item.end) {
             DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
             groupNode.leaf = false
@@ -315,12 +315,12 @@ class ModellingInformationTableTreeBuilder {
         return null
     }
 
-    public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged) {
+    public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged = true) {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
         addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
-    public DefaultMutableTableTreeNode addNodeForItem(BatchUIItem batchRun, boolean notifyStructureChanged) {
+    public DefaultMutableTableTreeNode addNodeForItem(BatchUIItem batchRun, boolean notifyStructureChanged = true) {
         ITableTreeNode groupNode = findBatchRootNode(root)
         insertNodeInto(createNode(batchRun), groupNode, notifyStructureChanged)
         return groupNode
