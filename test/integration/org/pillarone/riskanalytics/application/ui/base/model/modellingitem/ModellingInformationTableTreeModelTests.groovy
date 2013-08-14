@@ -214,8 +214,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     void testUpdateP14nNodes() {
         SimulationRun run = new SimulationRun()
-        ParameterizationDAO parameterziation = ParameterizationDAO.list()[0]
-        run.parameterization = parameterziation
+        ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassName('ApplicationParameters', 'models.application.ApplicationModel')
+        run.parameterization = parameterizationDAO
         run.resultConfiguration = ResultConfigurationDAO.list()[0]
         run.name = 'TestRun1'
         run.startTime = new DateTime()
@@ -230,7 +230,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         modelListener.reset()
 
         run = new SimulationRun()
-        run.parameterization = parameterziation
+        run.parameterization = parameterizationDAO
         run.resultConfiguration = ResultConfigurationDAO.list()[0]
         run.name = 'TestRun2'
         run.startTime = new DateTime()
@@ -242,6 +242,11 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assert 1 == modelListener.nodeInsertedEvents.size()
         modelListener.reset()
 
+        parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
+        parameterizationDAO.save(flush: true)
+        model.updateTreeStructure(session)
+        assert 3 == modelListener.nodeChangedEvents.size()
+
         //assert that tree contains the simulation nodes and the child nodes.
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         ParameterizationNode paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
@@ -249,29 +254,11 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assert 2 == resultsNode.childCount
         ParameterizationNode simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
         ParameterizationNode simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
-        assert paramsNode.values[0] == simulationParamsNode1.values[0]
-        assert paramsNode.values[0] == simulationParamsNode2.values[0]
-        assert paramsNode.values[1] == simulationParamsNode1.values[1]
-        assert paramsNode.values[1] == simulationParamsNode2.values[1]
-        assert paramsNode.values[2] == simulationParamsNode1.values[2]
-        assert paramsNode.values[2] == simulationParamsNode2.values[2]
+        paramsNode.values.each { k, v ->
+            assert v == simulationParamsNode1.values[k]
+            assert v == simulationParamsNode2.values[k]
 
-
-        parameterziation.addToTags(new ParameterizationTag(parameterizationDAO: parameterziation, tag: Tag.list()[0]))
-        parameterziation.save(flush: true)
-        model.updateTreeStructure(session)
-        assert 3 == modelListener.nodeChangedEvents.size()
-
-        paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
-        simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
-        simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
-        assert paramsNode.values[0] == simulationParamsNode1.values[0]
-        assert paramsNode.values[0] == simulationParamsNode2.values[0]
-        assert paramsNode.values[1] == simulationParamsNode1.values[1]
-        assert paramsNode.values[1] == simulationParamsNode2.values[1]
-        assert paramsNode.values[2] == simulationParamsNode1.values[2]
-        assert paramsNode.values[2] == simulationParamsNode2.values[2]
-
+        }
     }
 
     class TestModelListener implements ITableTreeModelListener {
