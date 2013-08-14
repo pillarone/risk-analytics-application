@@ -26,10 +26,10 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
-        tree.doExpandRow(0)
-        tree.doExpandRow(1)
-
+        tree.doExpandPath(pathForRename.parentPath)
         int row = tree.getRowForPath(pathForRename)
+
+
         tree.selectCell(row, 0)
 
         tree.pushKey(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK)

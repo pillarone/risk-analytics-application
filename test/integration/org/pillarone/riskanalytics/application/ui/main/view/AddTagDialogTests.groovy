@@ -55,11 +55,11 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         assertNotNull "path not found", pathForRename
 
         printTree(tableTree.ULCTableTree)
-        tableTree.doExpandRow 0
-        tableTree.doExpandRow 1
+        tableTree.doExpandPath(pathForRename.parentPath)
+        int row = tableTree.getRowForPath(pathForRename)
+        tableTree.selectCell(row,0)
 
-        tableTree.selectCell(3, 0)
-        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(3, 0)
+        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(row,0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Tags")
 //        Thread.sleep 1000
@@ -98,11 +98,12 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
             TreePath pathForRename = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
             assertNotNull "path not found", pathForRename
-            tableTree.doExpandRow 0
-            tableTree.doExpandRow 1
+            tableTree.doExpandPath(pathForRename.parentPath)
 
-            tableTree.selectCell(3, 0)
-            ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(2, 0)
+            int row = tableTree.getRowForPath(pathForRename)
+
+            tableTree.selectCell(row, 0)
+            ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(row, 0)
             assertNotNull popUpMenu
             popUpMenu.pushMenu("Tags")
 //        Thread.sleep 1000

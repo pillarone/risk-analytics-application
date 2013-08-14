@@ -24,9 +24,7 @@ class RenameActionTests extends AbstractFunctionalTestCase {
         int oldParametersCount = tree.getChildCount(parameterizationNodePath.lastPathComponent)
 
         printTree(tree.ULCTableTree)
-        tree.doExpandRow(0)
-        tree.doExpandRow(1)
-
+        tree.doExpandPath(parameterizationNodePath)
         int row = tree.getRowForPath(pathForRename)
         tree.selectCell(row, 0)
 
