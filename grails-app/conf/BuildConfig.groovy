@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:1.2.7.3"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime("org.pillarone:pillar-one-ulc-extensions:0.9") { transitive = false }
+        runtime("org.pillarone:pillar-one-ulc-extensions:1.0") { transitive = false }
 
         test ":code-coverage:1.2.4"
 
