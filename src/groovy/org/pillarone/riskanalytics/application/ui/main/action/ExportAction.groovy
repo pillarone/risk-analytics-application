@@ -110,7 +110,7 @@ abstract class ExportAction extends SelectionTreeAction {
                         LOG.error description
                         showAlert("exportError")
                     }
-                }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+                }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true)
             } catch (IllegalArgumentException iae) {
                 LOG.error("Export failed: " + iae.message, iae)
                 showAlert("tooManyRowsError")
@@ -139,7 +139,7 @@ abstract class ExportAction extends SelectionTreeAction {
                     LOG.error description
                     showAlert("exportError")
                 }
-            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, false)
         } catch (Throwable t) {
             LOG.error("Export failed: " + t.message, t)
             showAlert("exportError")

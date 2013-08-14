@@ -6,6 +6,7 @@ import groovy.transform.CompileStatic;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
 import java.io.OutputStream;
 
 @CompileStatic
@@ -39,7 +40,7 @@ public class StoreFileStrategy implements IShowDocumentStrategy {
                 }
 
             }, fileName);
-            ClientContext.showDocument(fileName);
+            ClientContext.showDocument(new File(fileName).toURI().toURL().toString(),null);
         } catch (Exception e) {
             throw new RuntimeException("Error storing file", e);
         }

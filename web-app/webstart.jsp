@@ -39,7 +39,7 @@
 
     <resources>
         <j2se version="1.5+"/>
-        <jar href="./plugins/ulc-ria-suite-2012-u1-2/lib/ulc-core-client.jar"/>
+        <jar href="./plugins/ulc-ria-suite-2013-2/lib/ulc-core-client.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-jnlp-client.jar" main="true"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-extensions-client.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-client.jar"/>

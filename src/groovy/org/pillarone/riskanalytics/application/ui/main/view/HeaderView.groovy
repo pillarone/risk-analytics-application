@@ -133,7 +133,7 @@ class HeaderView extends AbstractView {
         aboutItem.mnemonic = 'A' as char
 
         traceLogItem = new ULCMenuItem(UIUtils.getText(HeaderView, "Log"))
-        traceLogItem.mnemonic = 'L'
+        traceLogItem.mnemonic = 'L' as char
 
         settingsMenu = new ULCMenuItem(UIUtils.getText(HeaderView, "Settings"))
 
