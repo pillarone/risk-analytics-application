@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.functional
 
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.server.ApplicationConfiguration
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
@@ -90,5 +92,4 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         tree.selectCell(row, 0)
         tree.pushKey(key, mask)
     }
-
 }

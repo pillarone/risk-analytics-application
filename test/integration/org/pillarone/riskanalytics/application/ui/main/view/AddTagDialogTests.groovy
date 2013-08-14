@@ -20,7 +20,7 @@ import com.ulcjava.base.application.ULCCheckBox
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
+class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     protected String getConfigurationResourceName() {
         return "/org/pillarone/riskanalytics/functional/resources/ULCApplicationConfiguration.xml"
@@ -54,6 +54,7 @@ class AddTagDialogITests extends RiskAnalyticsAbstractStandaloneTestCase {
         TreePath pathForRename = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", pathForRename
 
+        printTree(tableTree.ULCTableTree)
         tableTree.doExpandRow 0
         tableTree.doExpandRow 1
 

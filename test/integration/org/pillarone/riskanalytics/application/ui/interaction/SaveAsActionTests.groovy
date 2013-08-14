@@ -1,6 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
@@ -17,6 +21,7 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
     void testSaveAsParameter() {
         ULCFrameOperator frame = getMainFrameOperator()
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
+        printTree(tree.ULCTableTree)
 
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "path not found", pathForRename
@@ -50,5 +55,4 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
         TreePath newPath = tree.findPath(["Core", "Parameterization", "SavedAsParameters v1"] as String[])
         assertNotNull "new path not found", newPath
     }
-
 }

@@ -249,11 +249,13 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assert 2 == resultsNode.childCount
         ParameterizationNode simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
         ParameterizationNode simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
-        paramsNode.values.each { k, v ->
-            assert v == simulationParamsNode1.values[k]
-            assert v == simulationParamsNode2.values[k]
+        assert paramsNode.values[0] == simulationParamsNode1.values[0]
+        assert paramsNode.values[0] == simulationParamsNode2.values[0]
+        assert paramsNode.values[1] == simulationParamsNode1.values[1]
+        assert paramsNode.values[1] == simulationParamsNode2.values[1]
+        assert paramsNode.values[2] == simulationParamsNode1.values[2]
+        assert paramsNode.values[2] == simulationParamsNode2.values[2]
 
-        }
 
         parameterziation.addToTags(new ParameterizationTag(parameterizationDAO: parameterziation, tag: Tag.list()[0]))
         parameterziation.save(flush: true)
@@ -263,11 +265,12 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
         simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
         simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
-        paramsNode.values.each { k, v ->
-            assert v == simulationParamsNode1.values[k]
-            assert v == simulationParamsNode2.values[k]
-        }
-
+        assert paramsNode.values[0] == simulationParamsNode1.values[0]
+        assert paramsNode.values[0] == simulationParamsNode2.values[0]
+        assert paramsNode.values[1] == simulationParamsNode1.values[1]
+        assert paramsNode.values[1] == simulationParamsNode2.values[1]
+        assert paramsNode.values[2] == simulationParamsNode1.values[2]
+        assert paramsNode.values[2] == simulationParamsNode2.values[2]
 
     }
 

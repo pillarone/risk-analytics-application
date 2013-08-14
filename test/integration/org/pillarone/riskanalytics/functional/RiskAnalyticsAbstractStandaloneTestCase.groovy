@@ -1,23 +1,18 @@
-package org.pillarone.riskanalytics.functional;
+package org.pillarone.riskanalytics.functional
 
-
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.ModelStructureDAO
-import org.pillarone.riskanalytics.core.ModelDAO
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.output.SingleValueResult
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
-import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.*
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -60,5 +55,19 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
         super.tearDown()
     }
 
+    protected printTree(ULCTableTree tree) {
+        printNode(tree.getModel().root, 0)
+    }
+
+    private printNode(ITableTreeNode node, int level) {
+        String line = ""
+        level.times { line += "\t" }
+        line += "${node.getValueAt(0)},"
+        println line
+        level++
+        node.childCount.times {
+            printNode(node.getChildAt(it), level)
+        }
+    }
 
 }
