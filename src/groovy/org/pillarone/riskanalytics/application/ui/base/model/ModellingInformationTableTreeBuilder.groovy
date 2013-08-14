@@ -83,7 +83,7 @@ class ModellingInformationTableTreeBuilder {
             if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration)) {
                 list << item
             }
-            if (item instanceof  Simulation) return
+            if (item instanceof Simulation) return
         }
 
         for (int i = 0; i < currentNode.childCount; i++) {
@@ -158,7 +158,7 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
-    //legacy  - only used for mode node insertions.
+    //legacy  - only used for model node insertions.
     private createModelNode(Model model) {
         Class modelClass = model.class
 
@@ -297,41 +297,52 @@ class ModellingInformationTableTreeBuilder {
         }
     }
 
-    public void addNodeForItem(Model model) {
+    public DefaultMutableTableTreeNode addNodeForItem(Model model, boolean notifyStructureChanged) {
         createModelNode(model)
-        this.model.nodesWereInserted(new TreePath(root), [root.childCount - 2] as int[])
+        if (notifyStructureChanged) {
+            this.model.nodesWereInserted(new TreePath(root), [root.childCount - 2] as int[])
+        }
+        return root
     }
 
-    public void addNodeForItem(Simulation item) {
+    public DefaultMutableTableTreeNode addNodeForItem(Simulation item, boolean notifyStructureChanged) {
         if (item.end) {
             DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
             groupNode.leaf = false
-            insertNodeInto(createNode(item), groupNode)
+            insertNodeInto(createNode(item), groupNode, notifyStructureChanged)
+            return groupNode
         }
+        return null
     }
 
-    public void addNodeForItem(ModellingItem modellingItem) {
+    public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged) {
         ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
-        addNodeForUIItem(modellingUIItem)
+        addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
-    public void addNodeForItem(BatchUIItem batchRun) {
+    public DefaultMutableTableTreeNode addNodeForItem(BatchUIItem batchRun, boolean notifyStructureChanged) {
         ITableTreeNode groupNode = findBatchRootNode(root)
-        insertNodeInto(createNode(batchRun), groupNode)
+        insertNodeInto(createNode(batchRun), groupNode, notifyStructureChanged)
+        return groupNode
     }
 
-    private void addNodeForUIItem(ModellingUIItem modellingUIItem) {
+    private DefaultMutableTableTreeNode addNodeForUIItem(ModellingUIItem modellingUIItem, boolean notifyStructureChanged) {
         ModelNode modelNode = findModelNode(root, modellingUIItem)
         if (modelNode != null) { //item in db, but not enabled in Config
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
-            createAndInsertItemNode(groupNode, modellingUIItem)
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
+            createAndInsertItemNode(groupNode, modellingUIItem, notifyStructureChanged)
+            if (notifyStructureChanged) {
+                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
+            }
+            return groupNode
         }
+        return null
     }
 
-    private void addNodeForUIItem(ResourceUIItem modellingUIItem) {
+    private DefaultMutableTableTreeNode addNodeForUIItem(ResourceUIItem modellingUIItem, boolean notifyStructureChanged) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
-        createAndInsertItemNode(itemGroupNode, modellingUIItem)
+        createAndInsertItemNode(itemGroupNode, modellingUIItem, notifyStructureChanged)
+        return itemGroupNode
     }
 
     public void itemChanged(ModellingItem item) {
@@ -359,7 +370,7 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
-        if (itemNode){
+        if (itemNode) {
             updateValues(item, itemNode)
         }
     }
@@ -373,7 +384,7 @@ class ModellingInformationTableTreeBuilder {
     private void itemNodeChanged(ITableTreeNode itemGroupNode, Simulation item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
         if (!itemNode) {
-            addNodeForItem(item)
+            addNodeForItem(item, true)
         } else {
             model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
         }
@@ -394,11 +405,39 @@ class ModellingInformationTableTreeBuilder {
         def itemNode = findNodeForItem(groupNode, modellingUIItem)
         if (!itemNode) return
 
-        removeItemNode(itemNode)
+        removeItemNode(itemNode, true)
     }
 
     public void removeNodeForItem(ModellingItem modellingItem) {
         removeNodeForItem(UIItemFactory.createItem(modellingItem, null, mainModel))
+    }
+
+    public void addNodesForItems(List<ModellingItem> items) {
+        Set<DefaultMutableTableTreeNode> parentNodes = new HashSet<DefaultMutableTableTreeNode>()
+        items.each {
+            DefaultMutableTableTreeNode parent = addNodeForItem(it, false)
+            if (parent) {
+                parentNodes.add(parent)
+            }
+        }
+        parentNodes.each {
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
+        }
+
+    }
+
+    public void removeNodesForItems(List<ModellingItem> items) {
+        Set<DefaultMutableTableTreeNode> parentNodes = new HashSet<DefaultMutableTableTreeNode>()
+        items.each {
+            ModellingUIItem uiItem = UIItemFactory.createItem(it, null, mainModel)
+            ITableTreeNode groupNode = findGroupNode(uiItem, findModelNode(root, uiItem))
+            ITableTreeNode node = findNodeForItem(groupNode, uiItem)
+            if (!node) return
+            parentNodes.add(removeItemNode(node, false))
+        }
+        parentNodes.each {
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
+        }
     }
 
 
@@ -407,10 +446,10 @@ class ModellingInformationTableTreeBuilder {
         ITableTreeNode itemNode = findNodeForItem(itemGroupNode, modellingUIItem)
         if (!itemNode) return
 
-        removeItemNode(itemNode)
+        removeItemNode(itemNode, true)
     }
 
-    private void removeItemNode(DefaultMutableTableTreeNode itemNode) {
+    private DefaultMutableTableTreeNode removeItemNode(DefaultMutableTableTreeNode itemNode, boolean notifyStructureChanged) {
         if (itemNode instanceof SimulationNode) {
             itemNode.removeAllChildren()
         } else {
@@ -429,19 +468,32 @@ class ModellingInformationTableTreeBuilder {
                     firstChild.add(it)
                 }
                 itemNode.removeAllChildren()
-                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+                if (notifyStructureChanged) {
+                    model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+                }
             }
         }
-        removeNodeFromParent(itemNode)
+        return removeNodeFromParent(itemNode, notifyStructureChanged)
     }
+
+    private DefaultMutableTableTreeNode removeNodeFromParent(DefaultMutableTableTreeNode itemNode, boolean notifyStructureChanged) {
+        DefaultMutableTableTreeNode parent = itemNode.getParent() as DefaultMutableTableTreeNode
+        int childIndex = parent.getIndex(itemNode)
+        parent.remove(childIndex)
+        if (notifyStructureChanged) {
+            model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [childIndex] as int[], [itemNode] as Object[])
+        }
+        return parent
+    }
+
 
     public void removeNodeForItem(BatchUIItem batchUIItem) {
         ITableTreeNode groupNode = findBatchRootNode(root)
         ITableTreeNode itemNode = findNodeForItem(groupNode, batchUIItem)
-        removeNodeFromParent(itemNode)
+        removeNodeFromParent(itemNode, true)
     }
 
-    private createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem) {
+    private createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem, boolean notifyStructureChanged) {
         boolean parameterNameFound = false
         for (int i = 0; i < node.childCount; i++) {
             if (isMatchingParent(node.getChildAt(i).abstractUIItem, modellingUIItem)) {
@@ -449,7 +501,7 @@ class ModellingInformationTableTreeBuilder {
                 DefaultMutableTableTreeNode newNode = createNode(modellingUIItem)
                 DefaultMutableTableTreeNode childNode = node.getChildAt(i) as DefaultMutableTableTreeNode
                 if (modellingUIItem.isVersionable() && modellingUIItem.item.versionNumber.level > 1) {
-                    insertSubversionItemNode(childNode, newNode)
+                    insertSubversionItemNode(childNode, newNode, notifyStructureChanged)
                 } else {
                     def children = []
                     childNode.childCount.times {
@@ -461,14 +513,16 @@ class ModellingInformationTableTreeBuilder {
                     if (childNode.abstractUIItem.isVersionable() && childNode.abstractUIItem.item.versionNumber.level == 1) {
                         newNode.insert(childNode, 0)
                     } else {
-                        insertSubversionItemNode(newNode, childNode)
+                        insertSubversionItemNode(newNode, childNode, notifyStructureChanged)
                     }
                     node.insert(newNode, i)
-                    if (node.childCount > 0) {
-                        model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]), i as int[])
-                        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
-                    } else {
-                        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+                    if (notifyStructureChanged) {
+                        if (node.childCount > 0) {
+                            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]), i as int[])
+                            model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+                        } else {
+                            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+                        }
                     }
                     return
                 }
@@ -479,11 +533,11 @@ class ModellingInformationTableTreeBuilder {
             def newNode = createNode(modellingUIItem)
             newNode.leaf = true
             node.leaf = false
-            insertNodeInto(newNode, node)
+            insertNodeInto(newNode, node, notifyStructureChanged)
         }
     }
 
-    private createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchUIItem batchUIItem) {
+    private createAndInsertItemNode(DefaultMutableTableTreeNode node, BatchUIItem batchUIItem, boolean notifyStructureChanged) {
         DefaultMutableTableTreeNode newNode = createNode(batchUIItem)
         node.add(newNode)
     }
@@ -505,7 +559,7 @@ class ModellingInformationTableTreeBuilder {
         return currentItem.name == itemToAdd.name
     }
 
-    private void insertSubversionItemNode(DefaultMutableTableTreeNode node, DefaultMutableTableTreeNode newItemNode) {
+    private void insertSubversionItemNode(DefaultMutableTableTreeNode node, DefaultMutableTableTreeNode newItemNode, boolean notifyStructureChanged) {
         node.childCount.times {
             DefaultMutableTableTreeNode childNode = node.getChildAt(it)
             if (newItemNode.abstractUIItem.isVersionable() && newItemNode.abstractUIItem.item.versionNumber.toString().startsWith(childNode.abstractUIItem.item.versionNumber.toString())) {
@@ -513,10 +567,12 @@ class ModellingInformationTableTreeBuilder {
                     childNode.leaf = false
                     newItemNode.leaf = true
                     childNode.add(newItemNode)
-                    model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
-                    model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+                    if (notifyStructureChanged) {
+                        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+                        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+                    }
                 } else {
-                    insertSubversionItemNode(childNode, newItemNode)
+                    insertSubversionItemNode(childNode, newItemNode, notifyStructureChanged)
                 }
             }
         }
@@ -596,7 +652,7 @@ class ModellingInformationTableTreeBuilder {
         BatchRunner.getService().getAllBatchRuns()
     }
 
-    private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent) {
+    private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent, boolean notifyStructureChanged) {
         List<ModellingUIItem> children = []
         parent.childCount.times { i ->
             children << parent.getChildAt(i)
@@ -606,18 +662,13 @@ class ModellingInformationTableTreeBuilder {
         int newIndex = children.indexOf(newNode)
 
         parent.insert(newNode, newIndex)
-        if (parent.childCount == 1) {
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
-        } else {
-            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
+        if (notifyStructureChanged) {
+            if (parent.childCount == 1) {
+                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+            } else {
+                model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
+            }
         }
-    }
-
-    private removeNodeFromParent(DefaultMutableTableTreeNode itemNode) {
-        DefaultMutableTableTreeNode parent = itemNode.getParent() as DefaultMutableTableTreeNode
-        int childIndex = parent.getIndex(itemNode)
-        parent.remove(childIndex)
-        model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [childIndex] as int[], [itemNode] as Object[])
     }
 
     void removeAll() {
