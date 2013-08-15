@@ -248,6 +248,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assert 3 == modelListener.nodeChangedEvents.size()
 
         //assert that tree contains the simulation nodes and the child nodes.
+        printTree()
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         ParameterizationNode paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
