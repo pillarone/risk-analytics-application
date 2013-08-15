@@ -307,10 +307,13 @@ class ModellingInformationTableTreeBuilder {
 
     public DefaultMutableTableTreeNode addNodeForItem(Simulation item, boolean notifyStructureChanged = true) {
         if (item.end) {
-            DefaultMutableTableTreeNode groupNode = findGroupNode(item, findModelNode(root, item))
-            groupNode.leaf = false
-            insertNodeInto(createNode(item), groupNode, notifyStructureChanged)
-            return groupNode
+            ModelNode modelNode = findModelNode(root, item)
+            if (modelNode) {
+                DefaultMutableTableTreeNode groupNode = findGroupNode(item, modelNode)
+                groupNode.leaf = false
+                insertNodeInto(createNode(item), groupNode, notifyStructureChanged)
+                return groupNode
+            }
         }
         return null
     }
@@ -346,26 +349,33 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public void itemChanged(ModellingItem item) {
-        ITableTreeNode itemGroupNode = findGroupNode(item, findModelNode(root, item))
-        itemNodeChanged(itemGroupNode, item)
+        ModelNode modelNode = findModelNode(root, item)
+        if (modelNode) {
+            ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
+            itemNodeChanged(itemGroupNode, item)
+        }
     }
 
     public void itemChanged(Parameterization item) {
         ModelNode modelNode = findModelNode(root, item)
-        ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
-        itemNodeChanged(itemGroupNode, item)
-        ITableTreeNode simulationGroupNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
-        findAllNodesForItem(simulationGroupNode, item).each {
-            updateValues(item, it)
+        if (modelNode){
+            ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
+            itemNodeChanged(itemGroupNode, item)
+            ITableTreeNode simulationGroupNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
+            findAllNodesForItem(simulationGroupNode, item).each {
+                updateValues(item, it)
+            }
         }
     }
 
     public void itemChanged(ResultConfiguration item) {
         ModelNode modelNode = findModelNode(root, item)
-        ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
-        itemNodeChanged(itemGroupNode, item)
-        ITableTreeNode simulationGroupNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
-        itemNodeChanged(simulationGroupNode, item)
+        if (modelNode){
+            ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
+            itemNodeChanged(itemGroupNode, item)
+            ITableTreeNode simulationGroupNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
+            itemNodeChanged(simulationGroupNode, item)
+        }
     }
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
@@ -401,11 +411,14 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public void removeNodeForItem(ModellingUIItem modellingUIItem) {
-        ITableTreeNode groupNode = findGroupNode(modellingUIItem, findModelNode(root, modellingUIItem))
-        def itemNode = findNodeForItem(groupNode, modellingUIItem)
-        if (!itemNode) return
+        ModelNode modelNode = findModelNode(root, modellingUIItem)
+        if (modelNode) {
+            ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
+            def itemNode = findNodeForItem(groupNode, modellingUIItem)
+            if (!itemNode) return
 
-        removeItemNode(itemNode, true)
+            removeItemNode(itemNode, true)
+        }
     }
 
     public void removeNodeForItem(ModellingItem modellingItem) {
@@ -430,16 +443,18 @@ class ModellingInformationTableTreeBuilder {
         Set<DefaultMutableTableTreeNode> parentNodes = new HashSet<DefaultMutableTableTreeNode>()
         items.each {
             ModellingUIItem uiItem = UIItemFactory.createItem(it, null, mainModel)
-            ITableTreeNode groupNode = findGroupNode(uiItem, findModelNode(root, uiItem))
-            ITableTreeNode node = findNodeForItem(groupNode, uiItem)
-            if (!node) return
-            parentNodes.add(removeItemNode(node, false))
+            ModelNode modelNode = findModelNode(root, uiItem)
+            if (modelNode) {
+                ITableTreeNode groupNode = findGroupNode(uiItem, modelNode)
+                ITableTreeNode node = findNodeForItem(groupNode, uiItem)
+                if (!node) return
+                parentNodes.add(removeItemNode(node, false))
+            }
         }
         parentNodes.each {
             model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
         }
     }
-
 
     public void removeNodeForItem(ResourceUIItem modellingUIItem) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)

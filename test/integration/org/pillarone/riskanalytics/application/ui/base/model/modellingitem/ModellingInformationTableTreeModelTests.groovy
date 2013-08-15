@@ -73,6 +73,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         model.service.unregisterSession(session)
         SimulationRun.list()*.delete(flush: true)
         ParameterizationDAO.list()*.delete(flush: true)
+        ModelRegistry.instance.clear()
     }
 
     private void printTree() {
@@ -260,6 +261,14 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
             assert v == simulationParamsNode2.values[k]
 
         }
+    }
+
+    void testUnknownModelClass(){
+        ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
+        parameterizationDAO.save(flush: true)
+        model.updateTreeStructure(session)
+        assert 0 == modelListener.nodeChangedEvents.size()
+        assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
 
     class TestModelListener implements ITableTreeModelListener {
