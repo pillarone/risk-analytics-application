@@ -52,7 +52,10 @@ class ModellingItemSearchService {
     }
 
     void unregisterSession(ULCSession session) {
-        queue.remove(session.id)
+        List<ModellingItemEvent> eventQueue = queue.remove(session.id)
+        if (eventQueue == null) {
+            LOG.warn("Session not found $session")
+        }
     }
 
     List<ModellingItemEvent> getPendingEvents(ULCSession session) {
@@ -88,8 +91,8 @@ class ModellingItemSearchService {
 
     synchronized List<ModellingItem> search(List<ISearchFilter> filters) {
         List<ModellingItem> results = []
-
-        for (ModellingItem item in cache) {
+        List<ModellingItem> cacheCopy = new ArrayList<ModellingItem>(cache)
+        for (ModellingItem item in cacheCopy) {
             boolean match = true
             for (ISearchFilter filter in filters) {
                 if (!filter.accept(item)) {
@@ -101,35 +104,27 @@ class ModellingItemSearchService {
             }
         }
 
-        return newInstances(results)
+        return results.collect { ModellingItemMapper.newItemInstance(it) }
     }
 
-    List<ModellingItem> newInstances(List<ModellingItem> items) {
-        List<ModellingItem> results = []
-        for (ModellingItem item in items){
-            results << ModellingItemMapper.newItemInstance(item)
-        }
-        return results
-    }
-
-    protected synchronized void addModellingItemToIndex(ModellingItem modellingItem) {
+    private synchronized void addModellingItemToIndex(ModellingItem modellingItem) {
         cache.add(modellingItem)
     }
 
-    protected synchronized void removeModellingItemFromIndex(ModellingItem modellingItem) {
+    private synchronized void removeModellingItemFromIndex(ModellingItem modellingItem) {
         cache.remove(modellingItem)
     }
 
-    private void updateModellingItemInIndex(ModellingItem item) {
+    private synchronized void updateModellingItemInIndex(ModellingItem item) {
         cache[cache.indexOf(item)] = item
         internalUpdateModellingItemInIndex(item)
     }
 
-    private void internalUpdateModellingItemInIndex(ModellingItem item) {
+    private synchronized void internalUpdateModellingItemInIndex(ModellingItem item) {
 
     }
 
-    private void internalUpdateModellingItemInIndex(Parameterization item) {
+    private synchronized void internalUpdateModellingItemInIndex(Parameterization item) {
         List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
         for (Simulation simulation in allSimulations) {
             if (simulation.parameterization.equals(item)) {
@@ -138,7 +133,7 @@ class ModellingItemSearchService {
         }
     }
 
-    private void internalUpdateModellingItemInIndex(ResultConfiguration item) {
+    private synchronized void internalUpdateModellingItemInIndex(ResultConfiguration item) {
         List<ModellingItem> allSimulations = cache.findAll { it instanceof Simulation }
         for (Simulation simulation in allSimulations) {
             if (simulation.template.equals(item)) {
@@ -146,7 +141,6 @@ class ModellingItemSearchService {
             }
         }
     }
-
 
     public static ModellingItemSearchService getInstance() {
         return Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService)
