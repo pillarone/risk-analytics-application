@@ -12,7 +12,6 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -215,7 +214,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     void testUpdateP14nNodes() {
         SimulationRun run = new SimulationRun()
-        ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassName('ApplicationParameters', 'models.application.ApplicationModel')
+        ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '11')
         run.parameterization = parameterizationDAO
         run.resultConfiguration = ResultConfigurationDAO.list()[0]
         run.name = 'TestRun1'
@@ -250,8 +249,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
         //assert that tree contains the simulation nodes and the child nodes.
         printTree()
-        IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
-        ParameterizationNode paramsNode = modelNode.getChildAt(0).getChildAt(0) as ParameterizationNode
+        IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
+        ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
         assert 2 == resultsNode.childCount
         ParameterizationNode simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
@@ -263,7 +262,19 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         }
     }
 
-    void testUnknownModelClass(){
+    private ITableTreeNode getNodeByName(ITableTreeNode node, String name) {
+        ITableTreeNode result = null
+        if (node.getValueAt(0).toString().equals(name)) {
+            result = node
+        } else {
+            for (int i = 0; i < node.childCount && result == null; i++) {
+                result = getNodeByName(node.getChildAt(i), name)
+            }
+        }
+        return result
+    }
+
+    void testUnknownModelClass() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)
         model.updateTreeStructure(session)
