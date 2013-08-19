@@ -13,15 +13,11 @@ public class I18NAlert extends ULCAlert {
     List<String> args
 
     public I18NAlert(String key) {
-        super("", "", "")
-        this.@key = key
-        readValues()
+        this(null, key, null)
     }
 
     public I18NAlert(ULCRootPane parent, String key) {
-        super(parent, "", "", "")
-        this.@key = key
-        readValues()
+        this(parent, key, null)
     }
 
     public I18NAlert(ULCRootPane parent, String key, List<String> args) {
@@ -34,8 +30,8 @@ public class I18NAlert extends ULCAlert {
 
     protected readValues() {
         title = bundle.getString(key + "." + "title")
-        message = bundle.getString(key + "." + "message")
-        message = MessageFormat.format(message as String, args?.toArray())
+        String rawMessage = bundle.getString(key + "." + "message")
+        message = formatMessage(rawMessage, args)
         firstButtonLabel = bundle.getString(key + "." + "button1Message")
         String secondLabel = bundle.getString(key + "." + "button2Message")
         String thirdLabel = bundle.getString(key + "." + "button3Message")
@@ -48,6 +44,10 @@ public class I18NAlert extends ULCAlert {
 
         messageType = getAlertType()
 
+    }
+
+    static final String formatMessage(String rawMessage, List<String> args) {
+        MessageFormat.format(rawMessage, args as String[])
     }
 
     protected ResourceBundle getBundle() {

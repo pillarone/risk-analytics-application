@@ -44,8 +44,7 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
                     message.append(BULLET)
                     message.append(model.findNodeForPath(refPath).getDisplayPath())
                 }
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemainingReferences",
-                        [message.toString()] as List<String>)
+                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemainingReferences", [message.toString()])
                 alert.show()
             }
         }
