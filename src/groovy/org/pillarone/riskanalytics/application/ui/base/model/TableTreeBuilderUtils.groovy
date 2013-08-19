@@ -2,15 +2,14 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
-import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
-import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.main.view.item.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -101,7 +100,7 @@ class TableTreeBuilderUtils {
 
     public static ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
         ITableTreeNode nodeForItem = null
-        if (ItemComparator.isEqual(item, node)) {
+        if (isEqual(item, node)) {
             nodeForItem = node
         } else {
             for (int i = 0; i < node.childCount && nodeForItem == null; i++) {
@@ -112,10 +111,22 @@ class TableTreeBuilderUtils {
         return nodeForItem
     }
 
+    private static isEqual(def item, def node) {
+        false
+    }
+
+    private static isEqual(ModellingItem item, ItemNode node) {
+        item.equals(node.abstractUIItem.item)
+    }
+
+    private static isEqual(BatchUIItem item, BatchRunNode node) {
+        item.equals(node.abstractUIItem)
+    }
+
     static List<ITableTreeNode> findAllNodesForItem(ITableTreeNode node, Object item) {
         List<ITableTreeNode> allNodes = []
         ITableTreeNode nodeForItem = null
-        if (ItemComparator.isEqual(item, node)) {
+        if (isEqual(item, node)) {
             allNodes << node
         } else {
             for (int i = 0; i < node.childCount && nodeForItem == null; i++) {

@@ -414,8 +414,10 @@ class ModellingInformationTableTreeBuilder {
         ModelNode modelNode = findModelNode(root, modellingUIItem)
         if (modelNode) {
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
-            def itemNode = findNodeForItem(groupNode, modellingUIItem)
-            if (!itemNode) return
+            def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
+            if (!itemNode) {
+                LOG.warn('Unable to remove item from tree as it could not be found.')
+            }
 
             removeItemNode(itemNode, true)
         }
