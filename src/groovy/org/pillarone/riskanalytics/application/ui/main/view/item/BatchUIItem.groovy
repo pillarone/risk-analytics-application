@@ -3,21 +3,17 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com

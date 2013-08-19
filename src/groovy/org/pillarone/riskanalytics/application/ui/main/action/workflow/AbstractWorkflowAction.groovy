@@ -2,23 +2,17 @@ package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
-import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
-import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
 

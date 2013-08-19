@@ -95,7 +95,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
         item.daoClass.withTransaction {status ->
             if (!item.isLoaded())
                 item.load()
-            ITableTreeNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, this)
+            ITableTreeNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item)
 
             itemNode.userObject = newName
 
