@@ -21,7 +21,7 @@ public class I18NAlert extends ULCAlert {
     }
 
     public I18NAlert(ULCRootPane parent, String key, List<String> args) {
-        super(parent, "", "", "")
+        super(parent as ULCRootPane, "", "", "")
         this.@key = key
         this.args = args
         readValues()
