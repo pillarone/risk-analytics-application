@@ -16,6 +16,8 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.FileConstants
 
+import java.text.SimpleDateFormat
+
 /**
  * Convenience class to allow easy use of protect  {}  for centralized Exception handling.
  * Stack trace logging can be achieved by setting the static <i>out</i> property to anything
@@ -101,10 +103,11 @@ class ExceptionSafe {
 
     public static void saveError(Throwable e) {
         String user = UserManagement.currentUser?.username ?: "local"
-
-        String filename = "error-" + user + "-${System.currentTimeMillis()}.log"
+        String time = new SimpleDateFormat('yyyy-MM-dd_HH-mm-ss-z').format(new Date())
+        String filename = "error-" + user + "-${time}.log"
 
         StringBuilder text = new StringBuilder("Stack trace:\n\n")
+        text.append(e)
         text.append(niceStackTrace(e)).append("\n\n\nLog:\n\n")
 
         TraceLogManager traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
