@@ -444,11 +444,10 @@ class ModellingInformationTableTreeBuilder {
     public void removeNodesForItems(List<ModellingItem> items) {
         Set<DefaultMutableTableTreeNode> parentNodes = new HashSet<DefaultMutableTableTreeNode>()
         items.each {
-            ModellingUIItem uiItem = UIItemFactory.createItem(it, null, mainModel)
-            ModelNode modelNode = findModelNode(root, uiItem)
+            ModelNode modelNode = findModelNode(root, it)
             if (modelNode) {
-                ITableTreeNode groupNode = findGroupNode(uiItem, modelNode)
-                ITableTreeNode node = findNodeForItem(groupNode, uiItem)
+                ITableTreeNode groupNode = findGroupNode(it, modelNode)
+                ITableTreeNode node = findNodeForItem(groupNode, it)
                 if (!node) return
                 parentNodes.add(removeItemNode(node, false))
             }
