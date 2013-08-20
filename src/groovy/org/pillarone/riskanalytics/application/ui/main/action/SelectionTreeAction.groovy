@@ -189,7 +189,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     @Override
     String toString() {
-        return "Selected paths: ${tree.selectedPaths}"
+        return "Selected paths: ${tree?.selectedPaths}"
     }
 }
 

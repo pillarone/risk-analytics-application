@@ -182,7 +182,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     boolean equals(Object obj) {
         if (!(obj instanceof ModellingUIItem)) return false
-        return item.modelClass == obj.item.modelClass && item.name == obj.item.name
+        return item.equals(obj.item)
     }
 
     @Override
