@@ -217,13 +217,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         currentFilter = filterDefinition
         List<ModellingItem> filteredItems = getFilteredItems()
 
-        List itemsToAdd = []
-        itemsToAdd.addAll(filteredItems)
-        itemsToAdd.removeAll(currentItems)
-        builder.addNodesForItems(itemsToAdd)
-
-        currentItems.removeAll(filteredItems)
         builder.removeNodesForItems(currentItems)
+        builder.addNodesForItems(filteredItems)
+
         LOG.debug("Apply filter definition done.")
     }
 }
