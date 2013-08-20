@@ -89,7 +89,11 @@ environments {
             )
 
             debug(
-                    traceAppender: ['org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem', 'org.pillarone.riskanalytics.application.ui.parameterization.model'],
+                    traceAppender: [
+                            'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
+                            'org.pillarone.riskanalytics.application.ui.parameterization.model',
+                            'org.pillarone.riskanalytics.application.ui.main.action',
+                    ],
                     application: debugPackages,
                     stdout: debugPackages,
                     additivity: false
