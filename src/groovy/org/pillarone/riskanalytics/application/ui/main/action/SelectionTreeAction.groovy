@@ -187,6 +187,10 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedModelInstance
     }
 
+    @Override
+    String toString() {
+        return "Selected paths: ${tree.selectedPaths}"
+    }
 }
 
 
