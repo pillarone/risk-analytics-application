@@ -88,7 +88,7 @@ class ModellingItemFactory {
             if (parameterizations.size() > 0)
                 result << parameterizations.get(0)
         }
-        result.collect {getItem(it, modelClass)}
+        result.collect { getItem(it, modelClass) }
     }
 
     static List getNewestResultConfigurationsForModel(Class modelClass) {
@@ -113,7 +113,7 @@ class ModellingItemFactory {
             }
             result << ResultConfigurationDAO.findByNameAndItemVersion(name, highestVesion[0])
         }
-        result.collect {getItem(it)}
+        result.collect { getItem(it) }
     }
 
     static ModellingItem createItem(String name, ConfigObject data, Class itemClass, boolean forceImport) {
@@ -144,7 +144,7 @@ class ModellingItemFactory {
 
         if (highestVersion != null) {
             boolean equals = false
-            item.daoClass.withTransaction {status ->
+            item.daoClass.withTransaction { status ->
                 def existingDao = item.daoClass.findByNameAndItemVersion(name, highestVersion)
                 ModellingItem existingItem = getItem(existingDao)
                 if (!existingItem.isLoaded()) {
@@ -166,7 +166,7 @@ class ModellingItemFactory {
 
     static ModellingItem createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
         def item
-        ParameterizationDAO.withTransaction {TransactionStatus status ->
+        ParameterizationDAO.withTransaction { TransactionStatus status ->
             item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
             item.versionNumber = versionNumber
             item.creator = UserManagement.currentUser
@@ -214,10 +214,10 @@ class ModellingItemFactory {
     static List getActiveSimulationsForModel(Class modelClass) {
         SimulationRun.withTransaction {
             SimulationRun.findAllByModel(modelClass.name).
-                    findAll {SimulationRun run ->
+                    findAll { SimulationRun run ->
                         !run.toBeDeleted && run.endTime != null
                     }.
-                    collect {SimulationRun run ->
+                    collect { SimulationRun run ->
                         getItem(run)
                     }
         }
@@ -254,8 +254,8 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
-        List comments = oldItem?.comments?.collect {it.clone()}
-        comments?.each {newItem.addComment(it)}
+        List comments = oldItem?.comments?.collect { it.clone() }
+        comments?.each { newItem.addComment(it) }
 
         newItem.periodCount = oldItem.periodCount
         newItem.periodLabels = oldItem.periodLabels
@@ -273,8 +273,8 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
-        List comments = oldItem?.comments?.collect {it.clone()}
-        comments?.each {newItem.addComment(it)}
+        List comments = oldItem?.comments?.collect { it.clone() }
+        comments?.each { newItem.addComment(it) }
 
         def newId = newItem.save()
         newItem.load()
@@ -323,8 +323,8 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
-        List comments = item?.comments?.collect {it.clone()}
-        comments?.each {newItem.addComment(it)}
+        List comments = item?.comments?.collect { it.clone() }
+        comments?.each { newItem.addComment(it) }
 
         newItem.periodCount = item.periodCount
         newItem.periodLabels = item.periodLabels
@@ -332,7 +332,7 @@ class ModellingItemFactory {
         newItem.dealId = item.dealId
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
-        if(item.changed) { //drop unsaved changed PMO-1985
+        if (item.changed) { //drop unsaved changed PMO-1985
             item.unload()
             item.load()
         }
@@ -350,12 +350,12 @@ class ModellingItemFactory {
         newParameters.each {
             newItem.addParameter(it)
         }
-        List comments = item?.comments?.collect {it.clone()}
-        comments?.each {newItem.addComment(it)}
+        List comments = item?.comments?.collect { it.clone() }
+        comments?.each { newItem.addComment(it) }
 
         newItem.versionNumber = VersionNumber.incrementVersion(item)
 
-        if(item.changed) { //drop unsaved changed PMO-1985
+        if (item.changed) { //drop unsaved changed PMO-1985
             item.unload()
             item.load()
         }
@@ -454,26 +454,27 @@ class ModellingItemFactory {
         Parameterization item = getItemInstances()[key(Parameterization, dao.id)]
         if (!item) {
             item = new Parameterization(dao.name)
-            item.versionNumber = new VersionNumber(dao.itemVersion)
-            // PMO-645 set valid  for parameterization check
-            item.valid = dao.valid
-            item.status = dao.status
-            item.dealId = dao.dealId
-            if (modelClass != null) {
-                item.modelClass = modelClass
-                item.creator = dao.creator
-                if (item.creator)
-                    item.creator.username = dao.creator.username
-                item.lastUpdater = dao.lastUpdater
-                if (item.lastUpdater)
-                    item.lastUpdater.username = dao.lastUpdater.username
-                item.creationDate = dao.getCreationDate()
-                item.modificationDate = dao.getModificationDate()
-                try {
-                    item.tags = dao.tags*.tag
-                } catch (Exception ex) {}
-            }
             getItemInstances()[key(Parameterization, dao.id)] = item
+        }
+        item.name = dao.name
+        item.versionNumber = new VersionNumber(dao.itemVersion)
+        // PMO-645 set valid  for parameterization check
+        item.valid = dao.valid
+        item.status = dao.status
+        item.dealId = dao.dealId
+        if (modelClass != null) {
+            item.modelClass = modelClass
+            item.creator = dao.creator
+            if (item.creator)
+                item.creator.username = dao.creator.username
+            item.lastUpdater = dao.lastUpdater
+            if (item.lastUpdater)
+                item.lastUpdater.username = dao.lastUpdater.username
+            item.creationDate = dao.getCreationDate()
+            item.modificationDate = dao.getModificationDate()
+            try {
+                item.tags = dao.tags*.tag
+            } catch (Exception ex) {}
         }
         item
     }
@@ -481,22 +482,22 @@ class ModellingItemFactory {
     private static Simulation getItem(SimulationRun run) {
         String key = key(SimulationRun, run.id)
         Simulation simulation = getSimulationInstances()[key]
-        if (simulation == null) {
+        if (!simulation) {
             simulation = new Simulation(run.name)
-            simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
-            simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
-            simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
-            simulation.creationDate = run.startTime
-            simulation.modificationDate = run.getModificationDate()
-            simulation.periodCount = run.periodCount
-            simulation.numberOfIterations = run.iterations
-            simulation.comment = run.comment
-            simulation.creator = run.creator
-            try {
-                simulation.tags = run.tags*.tag
-            } catch (Exception ex) {}
             getSimulationInstances()[key] = simulation
         }
+        simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
+        simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
+        simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
+        simulation.creationDate = run.startTime
+        simulation.modificationDate = run.getModificationDate()
+        simulation.periodCount = run.periodCount
+        simulation.numberOfIterations = run.iterations
+        simulation.comment = run.comment
+        simulation.creator = run.creator
+        try {
+            simulation.tags = run.tags*.tag
+        } catch (Exception ex) {}
         return simulation
     }
 
@@ -514,20 +515,20 @@ class ModellingItemFactory {
         ResultConfiguration item = getItemInstances()[key(ResultConfiguration, dao.id)]
         if (!item) {
             item = new ResultConfiguration(dao.name)
-            item.modelClass = Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName)
-            item.versionNumber = new VersionNumber(dao.itemVersion)
-            if (modelClass != null) {
-                item.modelClass = modelClass
-                item.creator = dao.creator
-                if (item.creator)
-                    item.creator.username = dao.creator.username
-                item.lastUpdater = dao.lastUpdater
-                if (item.lastUpdater)
-                    item.lastUpdater.username = dao.lastUpdater.username
-                item.creationDate = dao.getCreationDate()
-                item.modificationDate = dao.getModificationDate()
-            }
             getItemInstances()[key(ResultConfiguration, dao.id)] = item
+        }
+        item.modelClass = Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName)
+        item.versionNumber = new VersionNumber(dao.itemVersion)
+        if (modelClass != null) {
+            item.modelClass = modelClass
+            item.creator = dao.creator
+            if (item.creator)
+                item.creator.username = dao.creator.username
+            item.lastUpdater = dao.lastUpdater
+            if (item.lastUpdater)
+                item.lastUpdater.username = dao.lastUpdater.username
+            item.creationDate = dao.getCreationDate()
+            item.modificationDate = dao.getModificationDate()
         }
         item
     }

@@ -297,7 +297,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         parameterizationNames.reload()
         parameterizationNames.selectedItem = currentSelection
 
-        parameterizationVersions.reload(currentSelection)
+        parameterizationVersions.reload(parameterizationNames.selectedItem)
 
         currentSelection = resultConfigurationNames.selectedItem
         resultConfigurationNames.reload()

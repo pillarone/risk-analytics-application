@@ -334,9 +334,6 @@ class ModellingInformationTableTreeBuilder {
         if (modelNode != null) { //item in db, but not enabled in Config
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
             createAndInsertItemNode(groupNode, modellingUIItem, notifyStructureChanged)
-            if (notifyStructureChanged) {
-                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
-            }
             return groupNode
         }
         return null
@@ -416,10 +413,11 @@ class ModellingInformationTableTreeBuilder {
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
             def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
             if (!itemNode) {
-                LOG.warn('Unable to remove item from tree as it could not be found.')
+                LOG.warn("Unable to remove item $modellingUIItem.item from tree as it could not be found.")
+            }else{
+                removeItemNode(itemNode, true)
             }
 
-            removeItemNode(itemNode, true)
         }
     }
 
@@ -534,7 +532,7 @@ class ModellingInformationTableTreeBuilder {
                     node.insert(newNode, i)
                     if (notifyStructureChanged) {
                         if (node.childCount > 0) {
-                            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]), i as int[])
+                            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]))
                             model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
                         } else {
                             model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
