@@ -355,7 +355,7 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(Parameterization item) {
         ModelNode modelNode = findModelNode(root, item)
-        if (modelNode){
+        if (modelNode) {
             ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
             itemNodeChanged(itemGroupNode, item)
             ITableTreeNode simulationGroupNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
@@ -367,7 +367,7 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(ResultConfiguration item) {
         ModelNode modelNode = findModelNode(root, item)
-        if (modelNode){
+        if (modelNode) {
             ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
             itemNodeChanged(itemGroupNode, item)
             ITableTreeNode simulationGroupNode = modelNode.getChildAt(RESULT_CONFIGURATION_NODE_INDEX)
@@ -414,7 +414,7 @@ class ModellingInformationTableTreeBuilder {
             def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
             if (!itemNode) {
                 LOG.warn("Unable to remove item $modellingUIItem.item from tree as it could not be found.")
-            }else{
+            } else {
                 removeItemNode(itemNode, true)
             }
 
@@ -524,6 +524,10 @@ class ModellingInformationTableTreeBuilder {
                     children.each { newNode.add(it) }
                     childNode.removeAllChildren()
                     childNode.leaf = true
+                    node.remove(i)
+                    if (notifyStructureChanged) {
+                        model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), [i] as int[], [childNode] as Object[])
+                    }
                     if (childNode.abstractUIItem.isVersionable() && childNode.abstractUIItem.item.versionNumber.level == 1) {
                         newNode.insert(childNode, 0)
                     } else {
@@ -532,7 +536,7 @@ class ModellingInformationTableTreeBuilder {
                     node.insert(newNode, i)
                     if (notifyStructureChanged) {
                         if (node.childCount > 0) {
-                            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(newNode) as Object[]))
+                            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), [i] as int[])
                             model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
                         } else {
                             model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
@@ -583,7 +587,7 @@ class ModellingInformationTableTreeBuilder {
                     childNode.add(newItemNode)
                     if (notifyStructureChanged) {
                         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
-                        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+//                        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
                     }
                 } else {
                     insertSubversionItemNode(childNode, newItemNode, notifyStructureChanged)
