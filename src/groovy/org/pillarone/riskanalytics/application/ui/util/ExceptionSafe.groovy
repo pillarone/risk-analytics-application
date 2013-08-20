@@ -108,7 +108,7 @@ class ExceptionSafe {
         text.append(niceStackTrace(e)).append("\n\n\nLog:\n\n")
 
         TraceLogManager traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
-        text.append(traceLogManager.trace.join(""))
+        text.append(traceLogManager.trace?.join(""))
         traceLogManager.clear()
 
         File file = new File(FileConstants.LOG_DIRECTORY + "/" + filename)
