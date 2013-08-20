@@ -210,8 +210,10 @@ class UIUtils {
     public static String getUserInfo() {
         Person currentUser = UserManagement.currentUser
         if (currentUser != null) {
-            Collection<Authority> authorities = currentUser.authorities
-            return currentUser.username + " (" + authorities.collect { getText(PersonAuthority.class, it.authority) }.join(", ") + ")"
+            Person.withTransaction {
+                Collection<Authority> authorities = currentUser.authorities
+                return currentUser.username + " (" + authorities.collect { getText(PersonAuthority.class, it.authority) }.join(", ") + ")"
+            }
         }
         return ""
     }
