@@ -72,6 +72,7 @@ abstract class ExportAction extends SelectionTreeAction {
                     onSuccess: { filePaths, fileNames ->
                         userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
                         items.each { def item ->
+                            item.load()
                             exportItem(item, itemCount, filePaths, ancestor)
                         }
                     },
@@ -122,9 +123,7 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     protected void exportItem(ModellingItem item, int itemCount, filePaths, ULCWindow ancestor) {
-        if (!item.isLoaded()) {
-            item.load()
-        }
+        item.load()
         IConfigObjectWriter writer = item.getWriter()
         String selectedFile = getFileName(itemCount, filePaths, item)
         LOG.info " selectedFile : $selectedFile "
