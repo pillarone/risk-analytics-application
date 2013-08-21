@@ -23,7 +23,7 @@ public class ModellingTableTreeColumn {
     class NameColumn extends ModellingTableTreeColumn {
 
         @Override
-        Object getValue(def modellingItem) {
+        Object getValue(ModellingItem modellingItem) {
             return modellingItem.getNameAndVersion()
         }
 
@@ -98,7 +98,7 @@ public class ModellingTableTreeColumn {
         }
     }
 
-    Object getValue(def modellingItem) {
+    Object getValue(ModellingItem modellingItem) {
         return null
     }
 
