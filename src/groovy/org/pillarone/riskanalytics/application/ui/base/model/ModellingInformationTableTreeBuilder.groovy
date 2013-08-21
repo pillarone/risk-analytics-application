@@ -496,7 +496,7 @@ class ModellingInformationTableTreeBuilder {
         int childIndex = parent.getIndex(itemNode)
         parent.remove(childIndex)
         if (notifyStructureChanged) {
-            model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [childIndex] as int[], [itemNode] as Object[])
+            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
         }
         return parent
     }
