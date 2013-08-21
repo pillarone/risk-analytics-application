@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -60,7 +61,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         ModellingItem modellingItem = null
-        item.daoClass.withTransaction {status ->
+        item.daoClass.withTransaction { status ->
             if (!item.isLoaded())
                 item.load()
             modellingItem = ModellingItemFactory.incrementVersion(item)
@@ -79,20 +80,54 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     public boolean remove() {
         if (ModellingItemFactory.delete(item)) {
-            ModellingUIItem openedItem = mainModel.getAbstractUIItem(item)
-            if (openedItem)
-                mainModel.closeItem(model, openedItem)
-            ModellingItemFactory.remove(item)
-            mainModel.fireModelChanged()
-            if (item instanceof Simulation) mainModel.fireRowDeleted(item)
+            closeItem()
             return true
         }
         return false
     }
 
+    void closeItem() {
+        ModellingUIItem openedItem = mainModel.getAbstractUIItem(item)
+        if (openedItem)
+            mainModel.closeItem(model, openedItem)
+        ModellingItemFactory.remove(item)
+        mainModel.fireModelChanged()
+        if (item instanceof Simulation) mainModel.fireRowDeleted(item)
+    }
+
+    void update(ModellingItem item) {
+        //update fields that could change when
+        this.item.name = item.name
+        this.item.lastUpdater = item.lastUpdater
+        this.item.modificationDate = item.modificationDate
+        internalUpdate(item)
+    }
+
+    private internalUpdate(ModellingItem item) {}
+
+    private internalUpdate(Parameterization item) {
+        Parameterization originalItem = this.item as Parameterization
+        originalItem.tags = item.tags
+        originalItem.status = item.status
+        originalItem.valid = item.valid
+        originalItem.dealId = item.dealId
+    }
+
+    private internalUpdate(Resource item) {
+        Resource originalItem = this.item as Resource
+        originalItem.tags = item.tags
+        originalItem.status = item.status
+        originalItem.valid = item.valid
+    }
+
+    private internalUpdate(Simulation item) {
+        Simulation originalItem = this.item as Simulation
+        originalItem.tags = item.tags
+    }
+
     @Override
     void rename(String newName) {
-        item.daoClass.withTransaction {status ->
+        item.daoClass.withTransaction { status ->
             if (!item.isLoaded())
                 item.load()
             ITableTreeNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item)
@@ -125,7 +160,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
 
     public void addItem(ModellingUIItem modellingUIItem, String name) {
-        modellingUIItem.item.daoClass.withTransaction {status ->
+        modellingUIItem.item.daoClass.withTransaction { status ->
             if (!modellingUIItem.isLoaded())
                 modellingUIItem.load()
             ModellingItem newItem = ModellingItemFactory.copyItem(modellingUIItem.item, name)

@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
@@ -213,6 +214,10 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     }
 
     void testUpdateP14nNodes() {
+        IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
+        ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
+        ModellingItem paramsItem = paramsNode.abstractUIItem.item
+
         SimulationRun run = new SimulationRun()
         ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '11')
         run.parameterization = parameterizationDAO
@@ -249,13 +254,13 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
         //assert that tree contains the simulation nodes and the child nodes.
         printTree()
-        IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
-        ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
+        ParameterizationNode paramsNode2 = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
+        assert paramsItem.is(paramsNode2.abstractUIItem.item)
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
         assert 2 == resultsNode.childCount
         ParameterizationNode simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
         ParameterizationNode simulationParamsNode2 = resultsNode.getChildAt(1).getChildAt(0) as ParameterizationNode
-        paramsNode.values.each { k, v ->
+        paramsNode2.values.each { k, v ->
             assert v == simulationParamsNode1.values[k]
             assert v == simulationParamsNode2.values[k]
 
