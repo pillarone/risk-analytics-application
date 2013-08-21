@@ -52,7 +52,7 @@ class ModellingItemSearchService {
     }
 
     void unregisterSession(ULCSession session) {
-        List<ModellingItemEvent> eventQueue = queue.remove(session.id)
+        List<ModellingItemEvent> eventQueue = queue.remove(session)
         if (eventQueue == null) {
             LOG.warn("Session not found $session")
         }
