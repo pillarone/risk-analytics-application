@@ -1,17 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.event.IValueChangedListener
-import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
-import org.pillarone.riskanalytics.application.ui.base.model.ITableTreeFilter
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNodeFilter
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -144,25 +140,6 @@ abstract class SelectionTreeHeaderDialog {
     public String getColumnName(int column) {
         return tableTree.model.getColumnFilterName(column)
     }
-
-    String getFilterValues(ModellingItemNodeFilter filter) {
-        StringBuilder sb = new StringBuilder("<html><b>" + getColumnName(filter.column) + "</b>:<br> ");
-        if (filter.displayValue) {
-            sb.append(filter.displayValue + "</html>")
-        } else {
-            if (filter.allSelected)
-                sb.append(UIUtils.getText(SelectionTreeHeaderDialog.class, "all"))
-            else
-                filter.values.eachWithIndex {def it, int index ->
-                    sb.append(it)
-                    if (index < filter.values.size() - 1)
-                        sb.append(", ")
-                }
-            sb.append("</html>")
-        }
-        return sb.toString()
-    }
-
 }
 
 
