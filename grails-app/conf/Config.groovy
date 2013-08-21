@@ -184,7 +184,7 @@ environments {
         }
     }
     mysql {
-nodeMappingStrategy = org.pillarone.riskanalytics.core.simulation.engine.grid.mapping.AllNodesStrategy
+        nodeMappingStrategy = org.pillarone.riskanalytics.core.simulation.engine.grid.mapping.AllNodesStrategy
         resultBulkInsert = MysqlBulkInsert
         calculationBulkInsert = MysqlCalculationsBulkInsert
         ExceptionSafeOut = System.out
