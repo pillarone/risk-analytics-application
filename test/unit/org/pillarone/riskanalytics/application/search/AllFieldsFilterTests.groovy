@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.user.Person
 
 class AllFieldsFilterTests extends GroovyTestCase {
 
@@ -51,6 +52,13 @@ class AllFieldsFilterTests extends GroovyTestCase {
         resource.name = 'some other name'
         filter.query = 'testName'
         resource.tags = [new Tag(name: 'testName'), new Tag(name: 'secondTag')]
+        assert filter.accept(resource)
+    }
+
+    void testSearchByOwner() {
+        AllFieldsFilter filter = new AllFieldsFilter(query: 'user')
+        Resource resource = new Resource('testName', null)
+        resource.creator = new Person(username: 'user')
         assert filter.accept(resource)
     }
 }

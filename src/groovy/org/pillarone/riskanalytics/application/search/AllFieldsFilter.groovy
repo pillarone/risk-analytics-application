@@ -14,7 +14,9 @@ class AllFieldsFilter implements ISearchFilter {
 
     @Override
     boolean accept(ModellingItem item) {
-        return StringUtils.containsIgnoreCase(item.name, query) || internalAccept(item)
+        return StringUtils.containsIgnoreCase(item.name, query) ||
+                StringUtils.containsIgnoreCase(item.creator?.username, query) ||
+                internalAccept(item)
 
     }
 
