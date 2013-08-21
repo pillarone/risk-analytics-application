@@ -100,7 +100,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     public int getRowIndex(SimulationRun simulationRun) {
         int index = 0;
         for (BatchRunSimulationRun batchRunSimulationRun: batchRunSimulationRuns) {
-            if (batchRunSimulationRun.simulationRun.name == simulationRun.name)
+            if (batchRunSimulationRun.simulationRun.id == simulationRun.id)
                 return index
             index++
         }
