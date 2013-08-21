@@ -9,13 +9,18 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class AllFieldsFilter implements ISearchFilter {
 
+    static final String OR_SEPARATOR = ' OR '
     String query = ""
 
 
     @Override
     boolean accept(ModellingItem item) {
-        return StringUtils.containsIgnoreCase(item.name, query) ||
-                StringUtils.containsIgnoreCase(item.creator?.username, query) ||
+        String[] searchStrings = query.split(OR_SEPARATOR)
+        boolean accept = false
+        searchStrings.each {
+            accept |= StringUtils.containsIgnoreCase(item.nameAndVersion, it.trim())
+        }
+        return accept || item.creator?.username?.equalsIgnoreCase(query) ||
                 internalAccept(item)
 
     }

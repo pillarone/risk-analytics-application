@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.search.AllFieldsFilter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.main.view.NavigationBarTopPane
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -23,11 +24,9 @@ class SetFilterToSelection extends SelectionTreeAction {
         final StringBuilder sb = new StringBuilder();
         for (ParameterizationNode node : elements) {
             if (sb.length() > 0) {
-                sb.append(" OR ")
+                sb.append(AllFieldsFilter.OR_SEPARATOR)
             }
-            sb.append("\"")
             sb.append(node.getAbstractUIItem().getNameAndVersion())
-            sb.append("\"")
         }
         ULCClipboard.getClipboard().content = sb.toString()
     }

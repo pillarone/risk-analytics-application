@@ -5,6 +5,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
 
 class AllFieldsFilterTests extends GroovyTestCase {
@@ -56,9 +57,25 @@ class AllFieldsFilterTests extends GroovyTestCase {
     }
 
     void testSearchByOwner() {
-        AllFieldsFilter filter = new AllFieldsFilter(query: 'user')
+        AllFieldsFilter filter = new AllFieldsFilter(query: 'use')
         Resource resource = new Resource('testName', null)
         resource.creator = new Person(username: 'user')
+        assert !filter.accept(resource)
+        filter = new AllFieldsFilter(query: 'user')
         assert filter.accept(resource)
+
+    }
+
+    void testSearchWithMultipleValues(){
+        AllFieldsFilter filter = new AllFieldsFilter(query: 'firstName v1 OR secondName OR thirdName')
+        Resource resource1 = new Resource('firstName', null)
+        resource1.versionNumber = new VersionNumber('1')
+        Resource resource2 = new Resource('secondName', null)
+        resource2.versionNumber = new VersionNumber('2')
+        Resource resource3 = new Resource('firstName', null)
+        resource3.versionNumber = new VersionNumber('2')
+        assert filter.accept(resource1)
+        assert filter.accept(resource2)
+        assert !filter.accept(resource3)
     }
 }
