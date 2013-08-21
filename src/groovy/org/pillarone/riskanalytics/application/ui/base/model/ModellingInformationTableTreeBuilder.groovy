@@ -383,7 +383,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private void updateValues(ModellingItem item, ItemNode itemNode) {
-        itemNode.abstractUIItem.item = item
+        itemNode.abstractUIItem.update(item)
         model.putValues(itemNode)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
@@ -416,6 +416,7 @@ class ModellingInformationTableTreeBuilder {
                 LOG.warn("Unable to remove item $modellingUIItem.item from tree as it could not be found.")
             } else {
                 removeItemNode(itemNode, true)
+                modellingUIItem.closeItem()
             }
 
         }
