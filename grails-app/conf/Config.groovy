@@ -89,14 +89,15 @@ environments {
             )
 
             debug(
-                    traceAppender: [
-                            'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
-                            'org.pillarone.riskanalytics.application.ui.parameterization.model',
-                            'org.pillarone.riskanalytics.application.ui.main.action',
-                    ],
                     application: debugPackages,
                     stdout: debugPackages,
                     additivity: false
+            )
+            trace(
+                    traceAppender: [
+                            'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
+                            'org.pillarone.riskanalytics.application.ui',
+                    ]
             )
 
         }
@@ -182,62 +183,6 @@ environments {
         log4j = {
             info 'org.pillarone.riskanalytics'
         }
-    }
-    mysql {
-        nodeMappingStrategy = org.pillarone.riskanalytics.core.simulation.engine.grid.mapping.AllNodesStrategy
-        resultBulkInsert = MysqlBulkInsert
-        calculationBulkInsert = MysqlCalculationsBulkInsert
-        ExceptionSafeOut = System.out
-        models = ["CoreModel", 'ApplicationModel']
-        log4j = {
-            appenders {
-
-                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
-
-                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
-
-                LoggingAppender loggingAppender = LoggingAppender.getInstance()
-                loggingAppender.setName('application')
-                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
-                appender loggingAppender
-
-            }
-            root {
-                error()
-                additivity = false
-            }
-
-            def infoPackages = [
-                    'org.pillarone.riskanalytics',
-            ]
-
-            def debugPackages = [
-                    'org.pillarone.riskanalytics.core.fileimport'
-            ]
-
-            info(
-                    application: infoPackages,
-                    stdout: infoPackages,
-                    additivity: false
-            )
-
-            debug(
-                    application: debugPackages,
-                    stdout: debugPackages,
-                    additivity: false
-            )
-
-        }
-        keyFiguresToCalculate = [
-                'stdev': true,
-                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'var': [99, 99.5],
-                'tvar': [99, 99.5],
-                'pdf': 200,
-                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'varProfitFunction': [99, 99.5],
-                'tvarProfitFunction': [99, 99.5]
-        ]
     }
     production {
         userLogin = true
