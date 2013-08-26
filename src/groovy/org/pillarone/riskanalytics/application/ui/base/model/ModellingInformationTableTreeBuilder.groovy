@@ -443,17 +443,29 @@ class ModellingInformationTableTreeBuilder {
     public void removeNodesForItems(List<ModellingItem> items) {
         Set<DefaultMutableTableTreeNode> parentNodes = new HashSet<DefaultMutableTableTreeNode>()
         items.each {
-            ModelNode modelNode = findModelNode(root, it)
-            if (modelNode) {
-                ITableTreeNode groupNode = findGroupNode(it, modelNode)
-                ITableTreeNode node = findNodeForItem(groupNode, it)
-                if (!node) return
-                parentNodes.add(removeItemNode(node, false))
+            ITableTreeNode node = null
+            ITableTreeNode groupNode = internalFindGroupNode(it)
+            if (groupNode){
+                node = findNodeForItem(groupNode, it)
             }
+            if (!node) {
+                LOG.debug("No node found for modelling item $it")
+            }
+            parentNodes.add(removeItemNode(node, false))
+
         }
         parentNodes.each {
             model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
         }
+    }
+
+    private ITableTreeNode internalFindGroupNode(ModellingItem item) {
+        ModelNode modelNode = findModelNode(root, item)
+        return modelNode ? findGroupNode(item, modelNode) : null
+    }
+
+    private ITableTreeNode internalFindGroupNode(Resource item) {
+        return findResourceItemGroupNode(findResourceGroupNode(root), item.modelClass)
     }
 
     public void removeNodeForItem(ResourceUIItem modellingUIItem) {
