@@ -21,7 +21,9 @@ class WindowSelectionAction extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
         cardPaneManager.selectCard(model)
-        cardPaneManager.selectCurrentItemFromTab(model, (ULCCloseableTabbedPane)cardPaneManager.getSelectedCard())
+        ULCCloseableTabbedPane selectedPane = cardPaneManager.getSelectedCard() as ULCCloseableTabbedPane
+        cardPaneManager.selectCurrentItemFromTab(model, selectedPane)
+        trace("Select model $model.name and selected Pane: $selectedPane")
     }
 
     static String getMenuName(Model model) {

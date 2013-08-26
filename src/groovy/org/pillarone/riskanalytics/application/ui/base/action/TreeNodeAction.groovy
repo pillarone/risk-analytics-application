@@ -45,8 +45,9 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         dialog.okAction = {
             try {
                 String newName = dialog.nameInput.text.trim()
-
+                trace("raw value newName: $newName")
                 newName = ComponentUtils.getSubComponentName(newName)
+                trace("component name: $newName")
                 if (validate(newName)) {
                     doAction(newName, model, node, tree, dialog.withComments.isSelected())
                 }

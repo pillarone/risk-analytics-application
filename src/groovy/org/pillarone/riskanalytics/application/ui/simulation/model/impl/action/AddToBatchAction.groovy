@@ -33,9 +33,11 @@ class AddToBatchAction extends RunSimulationAction {
                 BatchRun.withTransaction {
                     batchRun.save()
                 }
+                trace("Batch run created: $newBatchRunName")
                 model.mainModel.addBatch(batchRun)
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
+            trace("Adding simulation ${model.simulation.name} to batch with name $batchRun.name")
             BatchRunService.getService().addSimulationRun(batchRun, model.simulation, OutputStrategyFactory.getEnum(model.outputStrategy.class))
             def count = BatchRunSimulationRun.countByBatchRun(batchRun).toString()
             String message = UIUtils.getText(this.class, "succes", [model.simulation.name, count])

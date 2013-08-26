@@ -51,6 +51,7 @@ class TablePaster extends ExceptionSafeAction {
             @Override
             void applyContent(String content) {
                 ExceptionSafe.protect {
+                    trace("Paste content: $content, startRow $startRow, startColumn: $startColumn")
                     pasteContent(content, startRow, startColumn)
                 }
             }

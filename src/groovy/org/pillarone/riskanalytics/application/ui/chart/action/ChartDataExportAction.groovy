@@ -43,6 +43,7 @@ class ChartDataExportAction extends ResourceBasedAction {
 
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {
+                            trace("Export data: ${view.model.dataTable} to file: $selectedFile")
                             exporter.export view.model.dataTable
                             exporter.addTab UIUtils.getText(this.class, "SimulationSettings"), view.model.simulationSettings
                             exporter.writeWorkBook stream

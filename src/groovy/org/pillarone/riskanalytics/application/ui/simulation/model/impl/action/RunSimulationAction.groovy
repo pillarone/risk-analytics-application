@@ -32,6 +32,7 @@ class RunSimulationAction extends ResourceBasedAction {
     public void doActionPerformed(ActionEvent event) {
         boolean isValid = validate(event)
         if (isValid) {
+            trace("Running simulation $model.simulation.name")
             model.runSimulation()
         }
     }

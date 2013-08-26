@@ -51,6 +51,7 @@ class TableCopier extends ExceptionSafeAction {
 
     private void doCopyContent() {
         String content = copyContent(selectedRows, selectedColumns)
+        trace("Content: $content")
         ULCClipboard.getClipboard().content = content
     }
 

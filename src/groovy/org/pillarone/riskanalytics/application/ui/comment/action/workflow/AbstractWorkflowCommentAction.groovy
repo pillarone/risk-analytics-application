@@ -19,6 +19,7 @@ abstract class AbstractWorkflowCommentAction extends ExceptionSafeAction {
     abstract void changeStatus(WorkflowComment comment)
 
     final void doActionPerformed(ActionEvent event) {
+        trace("Change status to ${commentPane.comment?.text}")
         changeStatus(commentPane.comment)
         commentPane.model.item.changed = true
         commentPane.updateUI()

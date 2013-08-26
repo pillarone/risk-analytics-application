@@ -24,6 +24,7 @@ class OpenResultsAction extends ResourceBasedAction {
         if (!simulation.isLoaded()) {
             simulation.load()
         }
+        trace("Open result for simulation: ${simulation.name}")
         model.mainModel.notifyOpenDetailView((Model) simulation.modelClass.newInstance(), simulation)
     }
 

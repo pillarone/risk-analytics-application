@@ -61,6 +61,11 @@ class AddDynamicSubComponent extends ResourceBasedAction {
         dialog.show()
     }
 
+    @Override
+    String logContent() {
+        "Adding component with name:"
+    }
+
     public boolean isEnabled() {
         return super.isEnabled() && !model.paramterTableTreeModel.readOnly;
     }

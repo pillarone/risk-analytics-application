@@ -29,6 +29,11 @@ class AddColumnAction extends TableAction {
         }
         table.updateCount(false, 1)
     }
+
+    @Override
+    String logContent() {
+        "Column Position : $columnPosition , columnIndex : $columnIndex"
+    }
 }
 
 class RemoveColumnAction extends TableAction {
@@ -47,6 +52,11 @@ class RemoveColumnAction extends TableAction {
             table.model.removeColumnAt(index)
         }
         table.updateCount(false, -1)
+    }
+
+    @Override
+    String logContent() {
+        "ColumnIndex : $columnIndex"
     }
 }
 
@@ -73,6 +83,11 @@ class AddRowAction extends TableAction {
         }
         table.updateCount(true, 1)
     }
+
+    @Override
+    String logContent() {
+        "RowPosition: $rowPosition , rowIndex: $rowIndex"
+    }
 }
 
 class RemoveRowAction extends TableAction {
@@ -92,6 +107,12 @@ class RemoveRowAction extends TableAction {
         }
         table.updateCount(true, -1)
     }
+
+    @Override
+    String logContent() {
+        "RowIndex: $rowIndex"
+    }
+
 }
 
 class MoveRowAction extends TableAction {
@@ -121,6 +142,12 @@ class MoveRowAction extends TableAction {
         return (rowPosition == 1) ? index < getRowCount() - 1 : index > 0;
     }
 
+    @Override
+    String logContent() {
+        "RowPosition: $rowPosition , rowIndex: $rowIndex"
+    }
+
+
 }
 
 class MoveColumnAction extends TableAction {
@@ -149,6 +176,12 @@ class MoveColumnAction extends TableAction {
     private boolean validate(int index) {
         return (columnPosition == 1) ? index < getColumnCount() - 1 : index > 0;
     }
+
+    @Override
+    String logContent() {
+        "ColumnPosition: $columnPosition , columnIndex: $columnIndex"
+    }
+
 
 }
 

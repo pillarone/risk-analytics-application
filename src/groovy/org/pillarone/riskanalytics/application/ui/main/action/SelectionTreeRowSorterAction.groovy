@@ -22,6 +22,7 @@ class SelectionTreeRowSorterAction extends ResourceBasedAction {
 
     @Override
     void doActionPerformed(ActionEvent event) {
+        trace("Sort by $column, order: $ascOrder")
         model.order(column, ascOrder)
     }
 

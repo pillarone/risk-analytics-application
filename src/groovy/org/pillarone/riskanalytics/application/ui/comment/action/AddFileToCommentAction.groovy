@@ -1,15 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.comment.action
 
-import com.ulcjava.base.application.ClientContext
-import com.ulcjava.base.application.ULCAlert
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCWindow
-import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
@@ -21,7 +16,6 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-@CompileStatic
 class AddFileToCommentAction extends ResourceBasedAction {
 
     NewCommentView newCommentView
@@ -42,10 +36,12 @@ class AddFileToCommentAction extends ResourceBasedAction {
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
                     filePaths?.each {String selectedFile ->
+                        trace("Loading file $selectedFile")
                         ClientContext.loadFile(new FileLoadHandler(newCommentView), selectedFile)
                     }
                 },
                 onFailure: {reason, description ->
+                    trace("Something went wrong: $reason, $description")
                     if (IFileLoadHandler.CANCELLED != reason) {
                         LOG.error description
                         ULCAlert alert = new I18NAlert(getAncestor(event.source as ULCComponent), "importError")

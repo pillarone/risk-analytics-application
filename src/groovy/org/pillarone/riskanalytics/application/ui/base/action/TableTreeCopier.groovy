@@ -31,6 +31,7 @@ class TableTreeCopier extends ExceptionSafeAction {
         if (selectedRows != null) {
             String content = copyContent(selectedRows, selectedColumns)
             ULCClipboard.getClipboard().content = content
+            trace("Copy content $content to clipboard.")
         }
     }
 

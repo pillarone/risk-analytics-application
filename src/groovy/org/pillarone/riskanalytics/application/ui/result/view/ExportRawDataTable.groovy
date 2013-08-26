@@ -47,6 +47,7 @@ class ExportRawDataTable extends ResourceBasedAction {
 
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         try {
+                            trace("Export raw data $model.rawData")
                             ExcelExporter exporter = new ExcelExporter()
                             exporter.headers = model.columnHeader
                             exporter.exportResults(model.rawData, model.displayPaths)
@@ -67,7 +68,7 @@ class ExportRawDataTable extends ResourceBasedAction {
                     }, onFailure: { int reason, String description ->
                         LOG.error("Excel export failed: ${description}")
                         new ULCAlert(ancestor, "Export failed", "Failed to write to file, maybe it is already open?", "Ok").show()
-                    }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE,true,false)
+                    }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE,false)
 
                 },
                 onFailure: {reason, description ->

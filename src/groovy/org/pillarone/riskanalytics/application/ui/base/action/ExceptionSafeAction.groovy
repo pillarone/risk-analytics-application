@@ -20,9 +20,13 @@ abstract public class ExceptionSafeAction extends AbstractAction {
 
     final public void actionPerformed(ActionEvent event) {
         ExceptionSafe.protect {
-            LogFactory.getLog(this.class).debug(this)
+            trace(this.toString())
             doActionPerformed(event)
         }
+    }
+
+    protected void trace(String content) {
+        LogFactory.getLog(this.class).trace(content)
     }
 
     abstract void doActionPerformed(ActionEvent event)

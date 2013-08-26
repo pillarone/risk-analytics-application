@@ -58,6 +58,7 @@ class TreeNodeCopier extends ResourceBasedAction {
     }
 
     protected void writeToClipboard(String content) {
+        trace("Write to clipboard: $content")
         ULCClipboard.getClipboard().content = content
     }
 

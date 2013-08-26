@@ -179,6 +179,7 @@ class ExportModelItemAction extends ResourceBasedAction {
         ClientContext.chooseFile([
                 onSuccess: {filePaths, fileNames ->
                     String selectedFile = filePaths[0]
+                    trace("export model to $selectedFile")
                     ClientContext.storeFile([prepareFile: {OutputStream stream ->
                         BufferedWriter bw
                         try {

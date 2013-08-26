@@ -21,6 +21,7 @@ class TreeExpander extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         TreePath[] paths = tree.getSelectedPaths()
+        trace("Expand paths: $paths")
         if (paths[0].lastPathComponent == tree.rowHeaderTableTree.model.root) {
             tree.expandAll()
         } else {

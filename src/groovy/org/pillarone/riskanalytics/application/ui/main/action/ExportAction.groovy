@@ -111,7 +111,7 @@ abstract class ExportAction extends SelectionTreeAction {
                         LOG.error description
                         showAlert("exportError")
                     }
-                }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true)
+                }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, false)
             } catch (IllegalArgumentException iae) {
                 LOG.error("Export failed: " + iae.message, iae)
                 showAlert("tooManyRowsError")

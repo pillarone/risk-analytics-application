@@ -13,7 +13,6 @@ import org.pillarone.riskanalytics.application.ui.util.TableDataParser
 import org.pillarone.riskanalytics.application.ui.util.TableTreeMutator
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
-@CompileStatic
 class TreeNodePaster extends ExceptionSafeAction {
     ULCTableTree tree
 
@@ -29,11 +28,11 @@ class TreeNodePaster extends ExceptionSafeAction {
             @Override
             void applyContent(String content) {
                 ExceptionSafe.protect {
-
                     List data = new TableDataParser(columnMapping: new DefaultColumnMapping()).parseTableData(content)
 
                     int startColumn = tree.selectedColumn + 1
                     int startRow = tree.selectedRow
+                    trace("Content: $content, startRow: $startRow, startColumn: $startColumn")
 
                     List nodes = []
                     for (int row = startRow; row < (startRow + data.size()); row++) {
@@ -50,6 +49,5 @@ class TreeNodePaster extends ExceptionSafeAction {
                 }
             }
         })
-
     }
 }

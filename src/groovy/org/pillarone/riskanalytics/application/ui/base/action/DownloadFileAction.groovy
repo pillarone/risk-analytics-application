@@ -43,6 +43,7 @@ class DownloadFileAction extends ResourceBasedAction {
     @Override
     void doActionPerformed(ActionEvent event) {
         byte[] content = commentFile.content
+        trace("Download file ${commentFile.filename}")
         if (open) {
             ShowDocumentStrategyFactory.getInstance().showDocument(commentFile.filename, content, Magic.getMagicMatch(content, true).getMimeType())
             return
