@@ -107,7 +107,7 @@ class ExceptionSafe {
         String filename = "error-" + user + "-${time}.log"
 
         StringBuilder text = new StringBuilder("Stack trace:\n\n")
-        text.append(e)
+        text.append(e).append('\n')
         text.append(niceStackTrace(e)).append("\n\n\nLog:\n\n")
 
         TraceLogManager traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
