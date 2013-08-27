@@ -7,6 +7,7 @@ import com.ulcjava.base.application.datatype.IDataType
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterTableModel
 import org.joda.time.DateTime
+import org.pillarone.ulc.server.ULCNonEmptyTextField
 
 class MultiDimensionalParameterTableCellEditor extends DefaultCellEditor {
 
@@ -21,9 +22,17 @@ class MultiDimensionalParameterTableCellEditor extends DefaultCellEditor {
     }
 
     private IEditorComponent createEditor(ULCTable table, def value, int row, def values) {
-        IEditorComponent editorComponent = super.getTableCellEditorComponent(table, value, row)
+        IEditorComponent editorComponent = getEditor(table,value,row,values)
         editorComponent.dataType = getDataType(getMultiDimensionalParameter(table), value)
         return editorComponent
+    }
+
+    IEditorComponent getEditor(def table,def value, int row) {
+        super.getTableCellEditorComponent(table, value, row)
+    }
+
+    IEditorComponent getEditor(def table,Number value, int row) {
+        new ULCNonEmptyTextField()
     }
 
     private IEditorComponent createEditor(ULCTable table, def value, int row, List values) {
