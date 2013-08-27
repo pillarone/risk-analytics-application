@@ -7,7 +7,6 @@ import org.apache.lucene.search.IndexSearcher
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.TopDocs
 import org.apache.lucene.util.Version
-import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
@@ -16,6 +15,9 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class CommentSearchBean {
+    private static final String ESCAPE_CHARS = "[\\\\!\\(\\)\\:\\]\\{\\}\\'\\#]"
+    private static final String QUOTE = '"'
+    private static final List LUCENE_OPERATOR = ['AND', 'OR', '||', '~', QUOTE, '+', '-']
     private Indexer indexer
     private QueryParser parser = null;
     int commentSize = 0
@@ -24,7 +26,7 @@ abstract class CommentSearchBean {
     public List<Comment> performSearch(String queryString) throws IOException, ParseException {
         initIndexer()
         List<Comment> result = []
-        queryString = ModellingItemSearchBean.escapeQuery(queryString)
+        queryString = escapeQuery(queryString)
         // the "title" arg specifies the default field to use
         // when no field is explicitly specified in the query.
         QueryParser parser = new QueryParser(Version.LUCENE_30, Indexer.SEARCH_TEXT_TITLE, indexer.analyzer)
@@ -62,5 +64,31 @@ abstract class CommentSearchBean {
             case Simulation: return new SimulationCommentSearchBean(item)
         }
     }
+
+    /**
+     * Remove ESCAPE_CHARS from query, extend tokens with leading and trailing *, treat quoted parts as single token
+     * @param query
+     * @return
+     */
+    public static String escapeQuery(String query) {
+        query = query.replaceAll(ESCAPE_CHARS, " ")
+        List queries = query.split() as List
+        String escapedQuery = ""
+
+        boolean openingQuotes = false
+        for (String st: queries) {
+            openingQuotes = openingQuotes || st[0] == QUOTE
+            if (LUCENE_OPERATOR.contains(st) || openingQuotes) {
+                // don't add an asterix if the token contains a lucene operator or is placed within quotes
+                escapedQuery += st + ' '
+                openingQuotes = !(st[-1] == QUOTE)
+            }
+            else {
+                escapedQuery += "*" + st + "* "
+            }
+        }
+        return escapedQuery
+    }
+
 
 }

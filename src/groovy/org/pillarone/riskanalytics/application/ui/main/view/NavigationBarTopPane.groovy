@@ -14,7 +14,6 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
-import org.pillarone.riskanalytics.application.ui.main.model.ModellingItemSearchBean
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
@@ -27,7 +26,6 @@ class NavigationBarTopPane {
     ULCToggleButton assignedToMeButton
     ULCTextField searchTextField
     ULCButton clearButton
-    ModellingItemSearchBean searchBean
     ModellingInformationTableTreeModel tableTreeModel
     Log LOG = LogFactory.getLog(NavigationBarTopPane)
 
@@ -35,7 +33,6 @@ class NavigationBarTopPane {
 
     public NavigationBarTopPane(ULCToolBar toolBar, ModellingInformationTableTreeModel tableTreeModel) {
         this.toolBar = toolBar
-        this.searchBean = new ModellingItemSearchBean()
         this.tableTreeModel = tableTreeModel
     }
 
