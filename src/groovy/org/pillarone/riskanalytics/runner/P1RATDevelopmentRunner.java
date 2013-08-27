@@ -5,7 +5,7 @@ import com.ulcjava.base.application.event.RoundTripEvent;
 import com.ulcjava.base.development.DevelopmentRunner;
 import com.ulcjava.base.development.DevelopmentRunnerSessionProvider;
 import com.ulcjava.base.server.ULCSession;
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
+import grails.util.Holders;
 import org.codehaus.groovy.grails.support.PersistenceContextInterceptor;
 import org.pillarone.riskanalytics.application.ui.P1RATApplication;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +27,7 @@ class DevelopmentGrailsSessionProvider extends DevelopmentRunnerSessionProvider 
     @Override
     public ULCSession createSession() {
         ULCSession session = super.createSession();
-        session.addRoundTripListener(new GrailsInitializerForLocalUlcApp(ApplicationHolder.getApplication().getMainContext()));
+        session.addRoundTripListener(new GrailsInitializerForLocalUlcApp(Holders.getGrailsApplication().getMainContext()));
         return session;
     }
 }

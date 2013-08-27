@@ -1,4 +1,4 @@
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import grails.util.Holders
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 
 /**
@@ -23,7 +23,7 @@ class BatchRunJob {
 
     public static BatchRunService getService() {
         if (!batchRunService)
-            batchRunService = ApplicationHolder.getApplication().getMainContext().getBean('batchRunService')
+            batchRunService = Holders.grailsApplication.getMainContext().getBean('batchRunService')
         return batchRunService
     }
 }

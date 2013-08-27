@@ -8,14 +8,14 @@ import com.ulcjava.base.application.event.IRoundTripListener
 import com.ulcjava.base.application.event.RoundTripEvent
 import com.ulcjava.base.server.DefaultSessionProvider
 import com.ulcjava.base.server.ULCSession
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import grails.util.Holders
 import org.codehaus.groovy.grails.support.PersistenceContextInterceptor
 import org.springframework.context.ApplicationContext
 
 public class GrailsSessionProvider extends DefaultSessionProvider {
     ULCSession createSession() {
         ULCSession session = super.createSession();
-        session.addRoundTripListener(new GrailsInitializerForLocalUlcApp(ApplicationHolder.getApplication().getMainContext()))
+        session.addRoundTripListener(new GrailsInitializerForLocalUlcApp(Holders.grailsApplication.getMainContext()))
         return session
     }
 

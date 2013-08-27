@@ -1,24 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model.popup.impl
 
+import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.ULCMenuItem
-import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
-import org.pillarone.riskanalytics.application.ui.main.action.SimulationAction
+import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
-import org.pillarone.riskanalytics.application.ui.main.action.CompareParameterizationsAction
-import org.pillarone.riskanalytics.application.ui.main.action.TagsAction
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.pillarone.riskanalytics.application.ui.main.action.SetFilterToSelection
-import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
-import org.pillarone.riskanalytics.application.ui.main.action.SaveAsAction
-import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
-import org.pillarone.riskanalytics.application.ui.main.action.ExportItemAction
-import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
-import org.pillarone.riskanalytics.application.ui.main.action.OpenTransactionLinkAction
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 
 /**
  * Allianz Risk Transfer  ATOM
@@ -40,7 +30,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         tree.addTreeSelectionListener(compareParameterizationMenuItem);
         add(compareParameterizationMenuItem);
         add(new ULCMenuItem(new TagsAction(tree, uIItem.mainModel)));
-        Boolean useSetFilterToSelectionPopupMenu = (Boolean) ApplicationHolder.getApplication()?.getConfig()?.getProperty("useSetFilterToSelectionPopupMenu");
+        Boolean useSetFilterToSelectionPopupMenu = (Boolean) Holders.grailsApplication?.getConfig()?.getProperty("useSetFilterToSelectionPopupMenu");
         if (useSetFilterToSelectionPopupMenu != null && useSetFilterToSelectionPopupMenu) {
             add(new ULCMenuItem(new SetFilterToSelection(tree, uIItem.mainModel)));
         }

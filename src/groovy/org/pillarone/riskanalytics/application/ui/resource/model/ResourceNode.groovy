@@ -1,23 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.resource.model
 
-import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
+import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.ULCMenuItem
-import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
-import org.pillarone.riskanalytics.application.ui.main.action.TagsAction
-import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
-import org.pillarone.riskanalytics.application.ui.main.action.SaveAsAction
-import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.UserContext
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.pillarone.riskanalytics.application.ui.main.action.ChooseDealAction
+import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
+import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
-import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
-
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import org.pillarone.riskanalytics.core.workflow.Status
 
 class ResourceNode extends VersionedItemNode {
 
@@ -41,7 +33,7 @@ class ResourceNode extends VersionedItemNode {
         parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, abstractUIItem.mainModel)))
         if (UserContext.hasCurrentUser()) {
-            def transactionsEnabled = ApplicationHolder.getApplication().getConfig().getProperty("transactionsEnabled")
+            def transactionsEnabled = Holders.grailsApplication.getConfig().getProperty("transactionsEnabled")
             if (transactionsEnabled != null && transactionsEnabled) {
                 parameterNodePopUpMenu.addSeparator()
                 parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, abstractUIItem.mainModel)))

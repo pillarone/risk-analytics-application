@@ -1,27 +1,27 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.core.user.Authority
-import java.awt.FontMetrics
-import java.awt.Graphics
-import java.awt.image.BufferedImage
-import javax.swing.ImageIcon
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.parameterization.model.EnumParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationClassifierTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.base.application.*
-
-import org.pillarone.riskanalytics.core.user.PersonAuthority
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
+import org.pillarone.riskanalytics.core.user.Authority
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.PersonAuthority
+import org.pillarone.riskanalytics.core.user.UserManagement
+
+import javax.swing.*
+import java.awt.*
+import java.awt.image.BufferedImage
+import java.util.List
 
 class UIUtils {
 
@@ -123,7 +123,7 @@ class UIUtils {
 
     public static String getConfigProperty(String property) {
         try {
-            return ApplicationHolder.getApplication().getConfig().getProperty(property)
+            return Holders.grailsApplication.getConfig().getProperty(property)
         } catch (Exception ex) {
             return ""
         }
