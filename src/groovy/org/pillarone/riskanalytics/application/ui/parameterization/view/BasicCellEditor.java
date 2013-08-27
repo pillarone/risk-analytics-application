@@ -5,6 +5,7 @@ import com.ulcjava.base.application.IEditorComponent;
 import com.ulcjava.base.application.ULCTableTree;
 import com.ulcjava.base.application.ULCTextField;
 import com.ulcjava.base.application.datatype.IDataType;
+import org.pillarone.ulc.server.ULCNonEmptyTextField;
 
 
 public class BasicCellEditor extends DefaultCellEditor {
@@ -12,7 +13,7 @@ public class BasicCellEditor extends DefaultCellEditor {
     private IDataType dataType;
 
     public BasicCellEditor(IDataType dataType) {
-        super(new ULCTextField());
+        super(new ULCNonEmptyTextField());
         this.dataType = dataType;
     }
 

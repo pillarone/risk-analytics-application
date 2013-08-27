@@ -11,7 +11,7 @@ import org.pillarone.riskanalytics.core.parameter.DoubleParameter
 import org.pillarone.riskanalytics.core.parameter.IntegerParameter
 import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.ulc.server.ULCFlexibleDateDataType
-import org.pillarone.ulc.server.ULCNonEmptyNumberDataType
+import org.pillarone.ulc.server.ULCLocaleUnawareNumberDataType
 
 public class DataTypeFactory {
 
@@ -73,7 +73,7 @@ public class DataTypeFactory {
         IDataType integerDataTypeForEdit = UserContext.getAttribute("integerDataTypeForEdit")
 
         if (integerDataTypeForEdit == null) {
-            integerDataTypeForEdit = new ULCNonEmptyNumberDataType(getErrorManager(), UIUtils.clientLocale)
+            integerDataTypeForEdit = new ULCNumberDataType(getErrorManager(), UIUtils.clientLocale)
             integerDataTypeForEdit.classType = Integer
             integerDataTypeForEdit.groupingUsed = false
             UserContext.setAttribute("integerDataTypeForEdit", integerDataTypeForEdit)
@@ -113,7 +113,7 @@ public class DataTypeFactory {
     static IDataType getDoubleDataTypeForEdit() {
         IDataType floatingPointDataTypeForEdit = UserContext.getAttribute("floatingPointDataTypeForEdit")
         if (floatingPointDataTypeForEdit == null) {
-            floatingPointDataTypeForEdit = new ULCNonEmptyNumberDataType(getErrorManager(),UIUtils.clientLocale)
+            floatingPointDataTypeForEdit = new ULCLocaleUnawareNumberDataType(getErrorManager(),UIUtils.clientLocale)
             floatingPointDataTypeForEdit.classType = Double
             floatingPointDataTypeForEdit.minFractionDigits = 0
             floatingPointDataTypeForEdit.maxFractionDigits = 20
