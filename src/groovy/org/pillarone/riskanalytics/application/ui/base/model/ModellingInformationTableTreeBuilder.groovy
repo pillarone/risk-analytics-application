@@ -481,9 +481,10 @@ class ModellingInformationTableTreeBuilder {
             itemNode.removeAllChildren()
         } else {
             if (itemNode.childCount > 0) {
-                def parent = itemNode.parent
-                def firstChild = itemNode.getChildAt(0)
-                parent.add(firstChild)
+                DefaultMutableTableTreeNode parent = itemNode.parent
+                int childIndex = parent.getIndex(itemNode)
+                IMutableTableTreeNode firstChild = itemNode.getChildAt(0)
+                parent.insert(firstChild,childIndex)
                 def children = []
                 for (int i = 0; i < itemNode.childCount; i++) {
                     children << itemNode.getChildAt(i)
@@ -495,9 +496,6 @@ class ModellingInformationTableTreeBuilder {
                     firstChild.add(it)
                 }
                 itemNode.removeAllChildren()
-                if (notifyStructureChanged) {
-                    model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
-                }
             }
         }
         return removeNodeFromParent(itemNode, notifyStructureChanged)
@@ -600,7 +598,6 @@ class ModellingInformationTableTreeBuilder {
                     childNode.add(newItemNode)
                     if (notifyStructureChanged) {
                         model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
-//                        model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
                     }
                 } else {
                     insertSubversionItemNode(childNode, newItemNode, notifyStructureChanged)
