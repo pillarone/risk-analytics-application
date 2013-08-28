@@ -24,7 +24,7 @@ import org.pillarone.riskanalytics.core.model.Model
  */
 class DeleteAction extends SelectionTreeAction {
 
-    Closure okAction = { List<AbstractUIItem> selectedItems, def nextItemToSelect ->
+    Closure okAction = { List<AbstractUIItem> selectedItems ->
         removeItem(selectedItems)
     }
 
@@ -42,7 +42,7 @@ class DeleteAction extends SelectionTreeAction {
             }
         }
         if (!selectedItems) return
-        AlertDialog dialog = new AlertDialog(tree, selectedItems, getNextSelectedItem(), UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [getNames(selectedItems)]), okAction)
+        AlertDialog dialog = new AlertDialog(tree, selectedItems, UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [getNames(selectedItems)]), okAction)
         dialog.init()
         dialog.show()
     }
