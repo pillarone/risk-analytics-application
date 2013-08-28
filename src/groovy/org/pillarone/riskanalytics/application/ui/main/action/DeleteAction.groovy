@@ -26,7 +26,6 @@ class DeleteAction extends SelectionTreeAction {
 
     Closure okAction = { List<AbstractUIItem> selectedItems, def nextItemToSelect ->
         removeItem(selectedItems)
-        tree.addPathSelection(new TreePath(DefaultTableTreeModel.getPathToRoot(nextItemToSelect) as Object[]))
     }
 
     public DeleteAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
