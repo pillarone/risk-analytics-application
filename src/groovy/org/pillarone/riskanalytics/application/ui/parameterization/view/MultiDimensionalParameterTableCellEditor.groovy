@@ -22,7 +22,7 @@ class MultiDimensionalParameterTableCellEditor extends DefaultCellEditor {
     }
 
     private IEditorComponent createEditor(ULCTable table, def value, int row, def values) {
-        IEditorComponent editorComponent = getEditor(table,value,row,values)
+        IEditorComponent editorComponent = getEditor(table,value,row)
         editorComponent.dataType = getDataType(getMultiDimensionalParameter(table), value)
         return editorComponent
     }
