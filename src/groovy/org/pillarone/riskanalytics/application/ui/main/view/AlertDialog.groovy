@@ -26,13 +26,12 @@ class AlertDialog {
     def nextItemToSelect
     Dimension buttonDimension = new Dimension(80, 20)
 
-    public AlertDialog(ULCTableTree tree, List<AbstractUIItem> selectedItems, def nextItemToSelect, String title, String message, Closure okAction) {
+    public AlertDialog(ULCTableTree tree, List<AbstractUIItem> selectedItems, String title, String message, Closure okAction) {
         this.tree = tree
         this.title = title
         this.message = message
         this.okAction = okAction
         this.selectedItems = selectedItems
-        this.nextItemToSelect = nextItemToSelect
     }
 
     public void init() {
@@ -75,7 +74,7 @@ class AlertDialog {
     private void attachListeners() {
         cancelButton.addActionListener([actionPerformed: {ActionEvent evt -> closeAction.call()}] as IActionListener)
         okButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            (selectedItems) ? okAction.call([selectedItems, nextItemToSelect] as Object[]) : okAction.call()
+            (selectedItems) ? okAction.call([selectedItems] as Object[]) : okAction.call()
             closeAction.call()
         }] as IActionListener)
     }
