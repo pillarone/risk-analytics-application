@@ -300,7 +300,8 @@ class ModellingInformationTableTreeBuilder {
     public DefaultMutableTableTreeNode addNodeForItem(Model model, boolean notifyStructureChanged = true) {
         createModelNode(model)
         if (notifyStructureChanged) {
-            this.model.nodesWereInserted(new TreePath(root), [root.childCount - 2] as int[])
+            //TODO (db) check with Michi about the node structure changed'. Maybe we could use NodesWhereInserted, but somehow the index screws up.
+            this.model.nodeStructureChanged(new TreePath(root))
         }
         return root
     }
@@ -340,9 +341,13 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode addNodeForUIItem(ResourceUIItem modellingUIItem, boolean notifyStructureChanged) {
-        ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
-        createAndInsertItemNode(itemGroupNode, modellingUIItem, notifyStructureChanged)
-        return itemGroupNode
+        ResourceGroupNode resourceGroup = findResourceGroupNode(root)
+        if (resourceGroup) {
+            ITableTreeNode itemGroupNode = findResourceItemGroupNode(resourceGroup, modellingUIItem.item.modelClass)
+            createAndInsertItemNode(itemGroupNode, modellingUIItem, notifyStructureChanged)
+            return itemGroupNode
+        }
+        return null
     }
 
     public void itemChanged(ModellingItem item) {
@@ -445,7 +450,7 @@ class ModellingInformationTableTreeBuilder {
         items.each {
             ITableTreeNode node = null
             ITableTreeNode groupNode = internalFindGroupNode(it)
-            if (groupNode){
+            if (groupNode) {
                 node = findNodeForItem(groupNode, it)
             }
             if (!node) {
@@ -484,7 +489,7 @@ class ModellingInformationTableTreeBuilder {
                 DefaultMutableTableTreeNode parent = itemNode.parent
                 int childIndex = parent.getIndex(itemNode)
                 IMutableTableTreeNode firstChild = itemNode.getChildAt(0)
-                parent.insert(firstChild,childIndex)
+                parent.insert(firstChild, childIndex)
                 def children = []
                 for (int i = 0; i < itemNode.childCount; i++) {
                     children << itemNode.getChildAt(i)
@@ -536,9 +541,6 @@ class ModellingInformationTableTreeBuilder {
                     childNode.removeAllChildren()
                     childNode.leaf = true
                     node.remove(i)
-                    if (notifyStructureChanged) {
-                        model.nodesWereRemoved(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), [i] as int[], [childNode] as Object[])
-                    }
                     if (childNode.abstractUIItem.isVersionable() && childNode.abstractUIItem.item.versionNumber.level == 1) {
                         newNode.insert(childNode, 0)
                     } else {
@@ -546,12 +548,8 @@ class ModellingInformationTableTreeBuilder {
                     }
                     node.insert(newNode, i)
                     if (notifyStructureChanged) {
-                        if (node.childCount > 0) {
-                            model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), [i] as int[])
-                            model.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
-                        } else {
-                            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
-                        }
+                        //TODO (db) check with Michi about the node structure changed'. Maybe we could use NodesWhereInserted, but somehow the index screws up.
+                        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
                     }
                     return
                 }
@@ -691,11 +689,7 @@ class ModellingInformationTableTreeBuilder {
 
         parent.insert(newNode, newIndex)
         if (notifyStructureChanged) {
-            if (parent.childCount == 1) {
                 model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
-            } else {
-                model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
-            }
         }
     }
 
