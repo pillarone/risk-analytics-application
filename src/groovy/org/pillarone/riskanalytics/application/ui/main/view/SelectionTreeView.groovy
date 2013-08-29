@@ -33,6 +33,7 @@ class SelectionTreeView {
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
     RiskAnalyticsMainModel mainModel
+    ModellingItemSelectionListener modellingItemSelectionListener
     ModellingInformationTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
@@ -53,7 +54,10 @@ class SelectionTreeView {
         content.name = "treeViewContent"
         treeSyncTimer = new ULCPollingTimer(2000, [
                 actionPerformed: { evt ->
+                    modellingItemSelectionListener.rememberSelectionState()
                     navigationTableTreeModel.updateTreeStructure(ULCSession.currentSession())
+                    modellingItemSelectionListener.flushSelectionState()
+
                 }] as IActionListener)
     }
 
@@ -134,6 +138,7 @@ class SelectionTreeView {
                 ascOrder = !ascOrder
             }
         }] as IActionListener)
+        modellingItemSelectionListener = new ModellingItemSelectionListener(tree)
     }
 
     public MainSelectionTableTreeCellRenderer getPopUpRenderer(ULCFixedColumnTableTree tree) {
