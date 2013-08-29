@@ -138,4 +138,9 @@ class SaveAction extends ResourceBasedAction {
     boolean itemChanged(Object item) {
         return false
     }
+
+    @Override
+    String toString() {
+        "currentItem: $currentItem"
+    }
 }

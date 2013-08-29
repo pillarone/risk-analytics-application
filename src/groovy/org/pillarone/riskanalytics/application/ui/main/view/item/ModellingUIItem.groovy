@@ -228,5 +228,8 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return hcb.toHashCode()
     }
 
-
+    @Override
+    String toString() {
+        item?.toString()
+    }
 }
