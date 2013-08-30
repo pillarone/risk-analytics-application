@@ -230,6 +230,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     @Override
     String toString() {
-        item?.name()
+        item?.name
     }
 }
