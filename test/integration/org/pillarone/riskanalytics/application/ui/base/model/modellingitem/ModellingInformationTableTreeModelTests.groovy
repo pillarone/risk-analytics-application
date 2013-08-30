@@ -244,7 +244,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         run.save(flush: true)
 
         model.updateTreeStructure(session)
-        assert 1 == modelListener.nodeInsertedEvents.size()
+        assert 1 == modelListener.nodeStructureChangedEvents.size()
         modelListener.reset()
 
         parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
