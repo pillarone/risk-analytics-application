@@ -48,7 +48,8 @@ grails.serverURL = "http://localhost:${System.getProperty("server.port", "8080")
 
 environments {
     development {
-        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
+//        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
+        models = ["CoreModel", 'ApplicationModel']
         includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
         ExceptionSafeOut = System.out
         log4j = {
@@ -98,6 +99,73 @@ environments {
                             'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
                             'org.pillarone.riskanalytics.application.ui',
                     ]
+            )
+
+        }
+        keyFiguresToCalculate = [
+                'stdev': true,
+                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var': [99, 99.5],
+                'tvar': [99, 99.5],
+                'pdf': 200,
+                'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'varProfitFunction': [99, 99.5],
+                'tvarProfitFunction': [99, 99.5]
+        ]
+    }
+    mysql {
+//        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
+        models = ["CoreModel", 'ApplicationModel']
+        includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
+        ExceptionSafeOut = System.out
+        log4j = {
+            appenders {
+
+                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
+
+                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
+
+                LoggingAppender loggingAppender = LoggingAppender.getInstance()
+                loggingAppender.setName('application')
+                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
+                appender loggingAppender
+
+                TraceAppender traceAppender = new TraceAppender(name: "traceAppender")
+                traceAppender.layout = new PatternLayout("[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %-5p %c{1} %m%n")
+                appender traceAppender
+
+            }
+            root {
+                error()
+                additivity = false
+            }
+
+            def infoPackages = [
+                    'org.pillarone.riskanalytics',
+                    'org.pillarone.riskanalytics.application.ui.util.I18NUtils'
+            ]
+
+            def debugPackages = [
+                    'org.pillarone.riskanalytics.core.fileimport'
+            ]
+
+            info(
+                    traceAppender: infoPackages,
+                    application: infoPackages,
+                    stdout: infoPackages,
+                    additivity: false
+            )
+
+            debug(
+                    application: debugPackages,
+                    stdout: debugPackages,
+                    additivity: false
+            )
+            trace(
+                    traceAppender: [
+                            'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
+                            'org.pillarone.riskanalytics.application.ui.base',
+                    ],
             )
 
         }
