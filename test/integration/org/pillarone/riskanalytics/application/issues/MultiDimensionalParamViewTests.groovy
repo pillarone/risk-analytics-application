@@ -39,7 +39,7 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
         parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
-        ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
+        ModelStructure structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         ParameterView view = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
@@ -60,7 +60,7 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 1, tabbedPane.tabCount
 
         ULCTableTreeOperator parameterTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeContent"))
-        parameterTree.clickForEdit(2, 0)
+        parameterTree.clickForEdit(4, 0)
 
         assertEquals "not tab opened for MDP", 2, tabbedPane.tabCount
 
