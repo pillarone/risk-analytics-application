@@ -475,7 +475,7 @@ class ModellingInformationTableTreeBuilder {
 
     public void removeNodeForItem(ResourceUIItem modellingUIItem) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
-        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, modellingUIItem)
+        ITableTreeNode itemNode = findNodeForItem(itemGroupNode, modellingUIItem.item)
         if (!itemNode) return
 
         removeItemNode(itemNode, true)

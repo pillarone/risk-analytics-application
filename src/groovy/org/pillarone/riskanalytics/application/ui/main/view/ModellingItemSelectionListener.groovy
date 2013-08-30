@@ -56,17 +56,16 @@ class ModellingItemSelectionListener extends ULCTableTreeModelAdapter {
     @Override
     void tableTreeNodeStructureChanged(TableTreeModelEvent event) {
         if (!syncSelection) return
-        if (event.treePath.lastPathComponent.childCount == 0) {
-            tree.getRowHeaderTableTree().setPathSelection(event.treePath)
-        } else if (isSelectionInvalid(selectedPath)) {
-            if (tree.getRowHeaderTableTree().getPathForRow(selectedRow).lastPathComponent instanceof ItemNode) {
+        if (isSelectionInvalid(selectedPath)) {
+            if (event.treePath.lastPathComponent.childCount == 0) {
+                tree.getRowHeaderTableTree().setPathSelection(event.treePath)
+            } else if (tree.getRowHeaderTableTree().getPathForRow(selectedRow).lastPathComponent instanceof ItemNode) {
                 tree.getRowHeaderTableTree().setRowSelection(selectedRow)
             } else {
                 tree.getRowHeaderTableTree().setPathSelection(event.treePath)
             }
         } else {
             tree.getRowHeaderTableTree().setPathSelection(selectedPath)
-
         }
         tree.verticalScrollBar.setPosition(scrollPosition)
     }
