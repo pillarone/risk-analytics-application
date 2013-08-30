@@ -689,7 +689,11 @@ class ModellingInformationTableTreeBuilder {
 
         parent.insert(newNode, newIndex)
         if (notifyStructureChanged) {
+            if (parent.childCount == 1) {
                 model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+            } else {
+                model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
+            }
         }
     }
 
