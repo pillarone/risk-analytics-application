@@ -31,7 +31,7 @@ class MultiDimensionalParameterizationTableTreeNode extends ParameterizationTabl
 
     public void setValueAt(Object value, int column) {
         int period = column - 1
-        LOG.debug("Setting value to node @ ${parameterPath} P${period}")
+        LOG.debug("Setting value $value to node @ ${parameterPath} P${period}")
         parametrizedItem.updateParameterValue(parameterPath, period, value)
     }
 

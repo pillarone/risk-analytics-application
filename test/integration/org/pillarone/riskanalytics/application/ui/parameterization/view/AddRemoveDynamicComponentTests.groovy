@@ -1,56 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
 
-import com.ulcjava.base.application.ULCFrame
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-
-import java.awt.event.InputEvent
-import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import com.ulcjava.testframework.operator.*
 
-class AddRemoveDynamicComponentTests extends AbstractSimpleFunctionalTest {
+import java.awt.event.InputEvent
 
-    ApplicationModel model
-
-    protected void doStart() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
-
-        ModellingItemFactory.clear()
-
-        ULCFrame frame = new ULCFrame("test")
-        frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
-        frame.name = "test"
-        model = new ApplicationModel()
-        model.init()
-
-        Parameterization parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
-        parameterization.load()
-
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        ParameterViewModel viewModel = new ParameterViewModel(model, parameterization, ModelStructure.getStructureForModel(ApplicationModel))
-        ParameterView view = new ParameterView(viewModel, mainModel)
-
-        parameterization.addListener(viewModel)
-        frame.setContentPane(view.content)
-
-        UIUtils.setRootPane(frame)
-        frame.visible = true
-    }
+class AddRemoveDynamicComponentTests extends AbstractParameterFunctionalTest {
 
     void testAddRemove() {
-        ULCFrameOperator frame = new ULCFrameOperator("test")
-
-        ULCTableTreeOperator tree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("parameterTreeRowHeader"))
 
         def dynamicNode = tree.getChild(tree.getRoot(), 2)
         assertEquals(1, tree.getChildCount(dynamicNode))
