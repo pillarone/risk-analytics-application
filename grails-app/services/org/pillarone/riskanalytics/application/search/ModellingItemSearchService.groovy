@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.search
 
 import com.ulcjava.base.server.ULCSession
 import grails.util.Holders
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.ResourceDAO
 import org.pillarone.riskanalytics.core.modellingitem.ModellingItemMapper
 
@@ -104,7 +105,7 @@ class ModellingItemSearchService {
             }
         }
 
-        return results.collect { ModellingItemMapper.newItemInstance(it) }
+        return results.collect { ModellingItemFactory.getItemInstance(it) }
     }
 
     private synchronized void addModellingItemToIndex(ModellingItem modellingItem) {
