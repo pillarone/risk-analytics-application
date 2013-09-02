@@ -567,4 +567,13 @@ class ModellingItemFactory {
         getItemInstances().clear()
     }
 
+    static ModellingItem getItemInstance(ModellingItem item) {
+        ModellingItem itemInstance = getItemInstances()[key(item.class, item.id)]
+        if (!itemInstance) {
+            itemInstance = item
+            getItemInstances()[key(item.class, item.id)] = itemInstance
+        }
+        return itemInstance
+
+    }
 }
