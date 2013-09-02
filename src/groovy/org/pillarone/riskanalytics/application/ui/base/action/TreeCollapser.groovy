@@ -15,7 +15,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class TreeCollapser extends ResourceBasedAction {
 
-    ULCFixedColumnTableTree tree
+    final ULCFixedColumnTableTree tree
 
     public TreeCollapser(ULCFixedColumnTableTree tree) {
         super("CollapseNode")
@@ -51,6 +51,10 @@ class TreeCollapser extends ResourceBasedAction {
         tree.getViewPortTableTree().expandPaths(paths, includingDescendants);
     }
 
+    @Override
+    String toString() {
+        tree.getSelectedPaths()
+    }
 }
 
 @CompileStatic

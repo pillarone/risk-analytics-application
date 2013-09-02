@@ -309,8 +309,10 @@ class ModellingInformationTableTreeBuilder {
     public DefaultMutableTableTreeNode addNodeForItem(Simulation item, boolean notifyStructureChanged = true) {
         if (item.end) {
             ModelNode modelNode = findModelNode(root, item)
+            LOG.debug("Adding simulation to modelNode: $modelNode")
             if (modelNode) {
                 DefaultMutableTableTreeNode groupNode = findGroupNode(item, modelNode)
+                LOG.debug("Group node : ${groupNode.name}")
                 groupNode.leaf = false
                 insertNodeInto(createNode(item), groupNode, notifyStructureChanged)
                 return groupNode
@@ -332,8 +334,10 @@ class ModellingInformationTableTreeBuilder {
 
     private DefaultMutableTableTreeNode addNodeForUIItem(ModellingUIItem modellingUIItem, boolean notifyStructureChanged) {
         ModelNode modelNode = findModelNode(root, modellingUIItem)
+        LOG.debug("Model node : $modelNode")
         if (modelNode != null) { //item in db, but not enabled in Config
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
+            LOG.debug("Group node: $groupNode")
             createAndInsertItemNode(groupNode, modellingUIItem, notifyStructureChanged)
             return groupNode
         }
@@ -352,8 +356,10 @@ class ModellingInformationTableTreeBuilder {
 
     public void itemChanged(ModellingItem item) {
         ModelNode modelNode = findModelNode(root, item)
+        LOG.debug("Modify item $item on modelNode: $modelNode")
         if (modelNode) {
             ITableTreeNode itemGroupNode = findGroupNode(item, modelNode)
+            LOG.debug("GroupNode $itemGroupNode")
             itemNodeChanged(itemGroupNode, item)
         }
     }
@@ -382,6 +388,7 @@ class ModellingInformationTableTreeBuilder {
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, ModellingItem item) {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
+        LOG.debug("Node for item. ${itemNode?.name}")
         if (itemNode) {
             updateValues(item, itemNode)
         }
@@ -414,6 +421,7 @@ class ModellingInformationTableTreeBuilder {
 
     public void removeNodeForItem(ModellingUIItem modellingUIItem) {
         ModelNode modelNode = findModelNode(root, modellingUIItem)
+        LOG.debug("Removing node from modelNode: $modelNode")
         if (modelNode) {
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
             def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
@@ -530,6 +538,7 @@ class ModellingInformationTableTreeBuilder {
                 parameterNameFound = true
                 DefaultMutableTableTreeNode newNode = createNode(modellingUIItem)
                 DefaultMutableTableTreeNode childNode = node.getChildAt(i) as DefaultMutableTableTreeNode
+                LOG.debug("Item with previous version already in tree. ${childNode}")
                 if (modellingUIItem.isVersionable() && modellingUIItem.item.versionNumber.level > 1) {
                     insertSubversionItemNode(childNode, newNode, notifyStructureChanged)
                 } else {
@@ -557,6 +566,7 @@ class ModellingInformationTableTreeBuilder {
         }
 
         if (!parameterNameFound) {
+            LOG.debug("Add new item ${modellingUIItem}")
             def newNode = createNode(modellingUIItem)
             newNode.leaf = true
             node.leaf = false
@@ -688,6 +698,7 @@ class ModellingInformationTableTreeBuilder {
         int newIndex = children.indexOf(newNode)
 
         parent.insert(newNode, newIndex)
+        LOG.debug("Node ${newNode} added at index $newIndex to parent: $parent")
         if (notifyStructureChanged) {
             if (parent.childCount == 1) {
                 model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))

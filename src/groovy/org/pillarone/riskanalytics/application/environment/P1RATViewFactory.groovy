@@ -53,6 +53,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         mainView.init()
 
         searchService.registerSession(ULCSession.currentSession())
+        LOG.debug("Registering ulc session to search service. ${ULCSession.currentSession()}")
 
         frame.setMenuBar(mainView.getMenuBar())
         frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.content, IDefaults.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))

@@ -163,8 +163,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void updateTreeStructure(ULCSession session) {
-
         List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(session)
+        LOG.trace("Update tree structure. items : ${items.item} for session $session")
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:

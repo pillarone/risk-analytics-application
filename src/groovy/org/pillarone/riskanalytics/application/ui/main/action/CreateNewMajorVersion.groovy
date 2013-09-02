@@ -62,7 +62,7 @@ class CreateNewMajorVersion extends SelectionTreeAction {
     }
 
     private void createNewVersion(def node) {
-        ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Not supported", "Creating a new version is currently not supported for this item type", "Ok")
+        ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Not supported", "Creating a new version is currently not supported for this item type $node", "Ok")
         alert.messageType = ULCAlert.INFORMATION_MESSAGE
         alert.show()
     }

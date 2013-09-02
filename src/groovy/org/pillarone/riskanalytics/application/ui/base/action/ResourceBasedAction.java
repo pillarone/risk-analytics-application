@@ -80,4 +80,8 @@ public abstract class ResourceBasedAction extends ExceptionSafeAction {
         ApplicationContext.setAttribute(key.getName(), instance);
     }
 
+    @Override
+    public String toString() {
+        return fActionName;
+    }
 }

@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
@@ -159,7 +160,9 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
             Person user = UserManagement.getCurrentUser()
             List authorities = user.getAuthorities()*.authority
             return user != null && authorities.any { actionAllowedRoles.contains(it)}
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+            LogFactory.getLog(this.class).error("Error in roles lookup", ex)
+        }
         return false
     }
 
