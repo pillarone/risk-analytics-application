@@ -20,7 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.*
 
 class ModellingItemSearchService {
 
-    private static Log LOG = LogFactory.getLog(ModellingItemSearchService)
+    private final static Log LOG = LogFactory.getLog(ModellingItemSearchService)
 
     static transactional = false
 
@@ -30,7 +30,7 @@ class ModellingItemSearchService {
 
     private ModellingItemListener listener = new SearchModellingItemListener()
 
-    private Map<ULCSession, List<ModellingItemEvent>> queue = new ConcurrentHashMap<ULCSession, List<ModellingItemEvent>>()
+    private final Map<ULCSession, List<ModellingItemEvent>> queue = new ConcurrentHashMap<ULCSession, List<ModellingItemEvent>>()
 
     @PostConstruct
     void init() {
@@ -53,16 +53,20 @@ class ModellingItemSearchService {
     }
 
     void unregisterSession(ULCSession session) {
-        List<ModellingItemEvent> eventQueue = queue.remove(session)
-        if (eventQueue == null) {
-            LOG.warn("Session not found $session")
+        synchronized (queue) {
+            List<ModellingItemEvent> eventQueue = queue.remove(session)
+            if (eventQueue == null) {
+                LOG.warn("Session not found $session")
+            }
         }
     }
 
     List<ModellingItemEvent> getPendingEvents(ULCSession session) {
-        List<ModellingItemEvent> result = queue.get(session)
-        queue.put(session, new ArrayList<ModellingItemEvent>())
-        return result
+        synchronized (queue) {
+            List<ModellingItemEvent> result = queue.get(session)
+            queue.put(session, new ArrayList<ModellingItemEvent>())
+            return result
+        }
     }
 
     protected synchronized void createInitialIndex() {
@@ -151,25 +155,31 @@ class ModellingItemSearchService {
 
         void modellingItemAdded(ModellingItem item) {
             addModellingItemToIndex(item)
-            for (List<ModellingItemEventType> list in queue.values()) {
-                list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.ADDED)
+            synchronized (queue) {
+                for (List<ModellingItemEventType> list in queue.values()) {
+                    list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.ADDED)
+                }
             }
         }
 
         void modellingItemDeleted(ModellingItem item) {
             removeModellingItemFromIndex(item)
-            for (List<ModellingItemEventType> list in queue.values()) {
-                list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.REMOVED)
+            synchronized (queue) {
+
+                for (List<ModellingItemEventType> list in queue.values()) {
+                    list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.REMOVED)
+                }
             }
         }
 
         void modellingItemChanged(ModellingItem item) {
-            updateModellingItemInIndex(item)
-            for (List<ModellingItemEventType> list in queue.values()) {
-                list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
+            synchronized (queue) {
+                updateModellingItemInIndex(item)
+                for (List<ModellingItemEventType> list in queue.values()) {
+                    list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
+                }
             }
         }
-
     }
 
     public static class ModellingItemEvent {
