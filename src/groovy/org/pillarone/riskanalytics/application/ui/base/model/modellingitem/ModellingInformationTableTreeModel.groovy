@@ -10,6 +10,7 @@ import com.ulcjava.base.server.ULCSession
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.search.IEventConsumer
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
@@ -162,9 +163,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     private addColumnValue(def item, def node, int column, Object value) {
     }
 
-    public void updateTreeStructure(ULCSession session) {
-        List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(session)
-        LOG.trace("Update tree structure. items : ${items.item} for session $session")
+    public void updateTreeStructure(IEventConsumer consumer) {
+        List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(consumer)
+        LOG.trace("Update tree structure. items : ${items.item} for consumer $consumer")
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
@@ -180,8 +181,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
-    public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(ULCSession session) {
-        service.getPendingEvents(session)
+    public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {
+        service.getPendingEvents(consumer)
     }
 
     public void removeNodeForItem(BatchUIItem batchUIItem) {

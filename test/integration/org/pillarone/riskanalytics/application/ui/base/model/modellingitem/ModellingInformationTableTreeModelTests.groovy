@@ -9,6 +9,7 @@ import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.search.EventConsumer
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -31,6 +32,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     ModellingInformationTableTreeModel model
     RiskAnalyticsMainModel mainModel
     ULCSession session = new ULCSession('Test', new SimpleContainerServices())
+    EventConsumer eventConsumer
     private TestModelListener modelListener
 
     void setUp() {
@@ -56,7 +58,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         mainModel = new RiskAnalyticsMainModel()
         model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
-        model.service.registerSession(session)
+        eventConsumer = new EventConsumer(session, null)
+        model.service.register(eventConsumer)
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
     }
@@ -70,7 +73,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     protected void tearDown() {
         LocaleResources.clearTestMode()
-        model.service.unregisterSession(session)
+        model.service.unregisterAllConsumers(session)
         SimulationRun.list()*.delete(flush: true)
         ParameterizationDAO.list()*.delete(flush: true)
         ModelRegistry.instance.clear()
@@ -128,7 +131,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     void testUpdateTreeStructure() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
@@ -140,10 +143,10 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
         parameterizationDAO.status = Status.IN_REVIEW
         parameterizationDAO.save(flush: true)
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
         parameterizationDAO.delete(flush: true)
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         assertEquals(2, paramsNode.childCount)
         def v11Node = paramsNode.getChildAt(1)
         assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
@@ -155,7 +158,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         run.endTime = new DateTime()
         run.model = 'models.application.ApplicationModel'
         run.save(flush: true)
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         assertEquals(1, resultsNode.childCount)
 
     }
@@ -229,7 +232,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         run.save(flush: true)
 
 
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         // expect one nodeStructure changed on simulation node
         assert 1 == modelListener.nodeStructureChangedEvents.size()
         modelListener.reset()
@@ -243,13 +246,13 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         run.model = 'models.application.ApplicationModel'
         run.save(flush: true)
 
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         assert 1 == modelListener.nodeInsertedEvents.size()
         modelListener.reset()
 
         parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
         parameterizationDAO.save(flush: true)
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         assert 3 == modelListener.nodeChangedEvents.size()
 
         //assert that tree contains the simulation nodes and the child nodes.
@@ -282,7 +285,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     void testUnknownModelClass() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)
-        model.updateTreeStructure(session)
+        model.updateTreeStructure(eventConsumer)
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }

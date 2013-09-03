@@ -15,6 +15,8 @@ import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.server.ULCSession
 import com.ulcjava.base.shared.IDefaults
+import org.pillarone.riskanalytics.application.search.EventConsumer
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
@@ -32,6 +34,7 @@ class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
+    EventConsumer eventConsumer
     RiskAnalyticsMainModel mainModel
     ModellingItemSelectionListener modellingItemSelectionListener
     ModellingInformationTableTreeModel navigationTableTreeModel
@@ -55,10 +58,12 @@ class SelectionTreeView {
         treeSyncTimer = new ULCPollingTimer(2000, [
                 actionPerformed: { evt ->
                     modellingItemSelectionListener.rememberSelectionState()
-                    navigationTableTreeModel.updateTreeStructure(ULCSession.currentSession())
+                    navigationTableTreeModel.updateTreeStructure(eventConsumer)
                     modellingItemSelectionListener.flushSelectionState()
 
                 }] as IActionListener)
+        eventConsumer = new EventConsumer(ULCSession.currentSession(), treeSyncTimer)
+        ModellingItemSearchService.instance.register(eventConsumer)
     }
 
     private void layoutComponents() {

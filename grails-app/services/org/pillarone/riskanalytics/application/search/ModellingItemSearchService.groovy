@@ -30,7 +30,7 @@ class ModellingItemSearchService {
 
     private ModellingItemListener listener = new SearchModellingItemListener()
 
-    private final Map<ULCSession, List<ModellingItemEvent>> queue = new ConcurrentHashMap<ULCSession, List<ModellingItemEvent>>()
+    private final Map<IEventConsumer, List<ModellingItemEvent>> queue = new ConcurrentHashMap<IEventConsumer, List<ModellingItemEvent>>()
 
     @PostConstruct
     void init() {
@@ -45,26 +45,29 @@ class ModellingItemSearchService {
         queue.clear()
     }
 
-    void registerSession(ULCSession session) {
-        if (queue.containsKey(session)) {
-            LOG.warn("Session already registered $session")
+    void register(IEventConsumer consumer) {
+        if (queue.containsKey(consumer)) {
+            LOG.warn("Consumer already registered $consumer")
         }
-        queue.put(session, new ArrayList<ModellingItemEvent>())
+        queue.put(consumer, new ArrayList<ModellingItemEvent>())
     }
 
-    void unregisterSession(ULCSession session) {
+    void unregisterAllConsumers(ULCSession session) {
         synchronized (queue) {
-            List<ModellingItemEvent> eventQueue = queue.remove(session)
-            if (eventQueue == null) {
-                LOG.warn("Session not found $session")
+            List<IEventConsumer> consumers = []
+            queue.keySet().each { IEventConsumer c ->
+                if (c.session == session) {
+                    consumers << c
+                }
             }
+            consumers.each { queue.remove(it) }
         }
     }
 
-    List<ModellingItemEvent> getPendingEvents(ULCSession session) {
+    List<ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {
         synchronized (queue) {
-            List<ModellingItemEvent> result = queue.get(session)
-            queue.put(session, new ArrayList<ModellingItemEvent>())
+            List<ModellingItemEvent> result = queue.get(consumer)
+            queue.put(consumer, new ArrayList<ModellingItemEvent>())
             return result
         }
     }
@@ -156,7 +159,7 @@ class ModellingItemSearchService {
         void modellingItemAdded(ModellingItem item) {
             addModellingItemToIndex(item)
             synchronized (queue) {
-                for (List<ModellingItemEventType> list in queue.values()) {
+                for (List<ModellingItemEvent> list in queue.values()) {
                     list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.ADDED)
                 }
             }
@@ -166,7 +169,7 @@ class ModellingItemSearchService {
             removeModellingItemFromIndex(item)
             synchronized (queue) {
 
-                for (List<ModellingItemEventType> list in queue.values()) {
+                for (List<ModellingItemEvent> list in queue.values()) {
                     list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.REMOVED)
                 }
             }
@@ -175,7 +178,7 @@ class ModellingItemSearchService {
         void modellingItemChanged(ModellingItem item) {
             synchronized (queue) {
                 updateModellingItemInIndex(item)
-                for (List<ModellingItemEventType> list in queue.values()) {
+                for (List<ModellingItemEvent> list in queue.values()) {
                     list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
                 }
             }

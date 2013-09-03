@@ -10,6 +10,7 @@ import models.application.ApplicationModel
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.search.IEventConsumer
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -131,7 +132,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         }
 
 
-        treeModel.metaClass.getPendingEvents = { ULCSession session ->
+        treeModel.metaClass.getPendingEvents = { IEventConsumer consumer ->
             return []
         }
         treeModel.metaClass.getFilteredItems = {->

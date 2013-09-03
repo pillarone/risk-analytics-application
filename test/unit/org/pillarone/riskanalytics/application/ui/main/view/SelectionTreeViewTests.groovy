@@ -4,7 +4,14 @@ import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.testframework.operator.ULCMenuItemOperator
 import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
+import grails.util.Holders
+import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
+import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.codehaus.groovy.grails.support.MockApplicationContext
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.springframework.context.ApplicationContext
 
 import javax.swing.tree.TreePath
 import groovy.mock.interceptor.MockFor
@@ -20,6 +27,10 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
         RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
+        ApplicationContext mainContext = new MockApplicationContext()
+        mainContext.registerMockBean("modellingItemSearchService", new ModellingItemSearchService())
+        GrailsApplication application = new DefaultGrailsApplication(mainContext: mainContext)
+        Holders.setGrailsApplication(application)
         SelectionTreeView view = new SelectionTreeView(mainModel)
         return view.content;
     }

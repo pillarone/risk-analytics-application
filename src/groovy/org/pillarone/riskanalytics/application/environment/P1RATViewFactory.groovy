@@ -29,7 +29,6 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     private Log LOG = LogFactory.getLog(P1RATViewFactory)
 
-    ModellingItemSearchService searchService
     TraceLogManager traceLogManager
 
     public ULCRootPane create(ApplicationContext applicationContext) {
@@ -39,7 +38,6 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         } catch (Exception ex) {
             // put a user in MDC causes an exception in integration Test
         }
-        searchService = Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService)
         traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
         traceLogManager.activateLogging()
 
@@ -52,9 +50,6 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(new RiskAnalyticsMainModel(applicationContext: applicationContext))
         mainView.init()
 
-        searchService.registerSession(ULCSession.currentSession())
-        LOG.debug("Registering ulc session to search service. ${ULCSession.currentSession()}")
-
         frame.setMenuBar(mainView.getMenuBar())
         frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.content, IDefaults.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
         UIUtils.setRootPane(frame)
@@ -64,7 +59,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     abstract protected ULCRootPane createRootPane()
 
     void stop() {
-        searchService.unregisterSession(ULCSession.currentSession())
+        Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService).unregisterAllConsumers(ULCSession.currentSession())
         traceLogManager.deactivateLogging()
     }
 
