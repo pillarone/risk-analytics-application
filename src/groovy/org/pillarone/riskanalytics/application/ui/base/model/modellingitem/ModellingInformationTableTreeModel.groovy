@@ -1,12 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
 
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
-import com.ulcjava.base.server.ULCSession
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
@@ -165,7 +162,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public void updateTreeStructure(IEventConsumer consumer) {
         List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(consumer)
-        LOG.trace("Update tree structure. items : ${items.item} for consumer $consumer")
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
