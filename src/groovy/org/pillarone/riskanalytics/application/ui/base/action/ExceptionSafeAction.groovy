@@ -8,11 +8,8 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 
 abstract public class ExceptionSafeAction extends AbstractAction {
 
-    private Log logger
-
     public ExceptionSafeAction() {
         super("")
-        logger = LogFactory.getLog(this.class)
     }
 
     public ExceptionSafeAction(String name) {
@@ -28,7 +25,7 @@ abstract public class ExceptionSafeAction extends AbstractAction {
     }
 
     protected void trace(String content) {
-        logger.debug(content)
+        LogFactory.getLog(this.class).debug(content)
     }
 
     abstract void doActionPerformed(ActionEvent event)
