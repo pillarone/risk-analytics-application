@@ -46,62 +46,60 @@ transactionsEnabled = true
 serverSessionPrefix = ";jsessionid="
 grails.serverURL = "http://localhost:${System.getProperty("server.port", "8080")}/${appName}"
 
+log4j = {
+    appenders {
+
+        String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
+
+        console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
+
+        LoggingAppender loggingAppender = LoggingAppender.getInstance()
+        loggingAppender.setName('application')
+        loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
+        appender loggingAppender
+
+        TraceAppender traceAppender = new TraceAppender(name: "traceAppender")
+        traceAppender.layout = new PatternLayout("[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %-5p %c{1} %m%n")
+        appender traceAppender
+
+    }
+    root {
+        error()
+        additivity = false
+    }
+
+    def infoPackages = [
+            'org.pillarone.riskanalytics',
+    ]
+
+    def debugPackages = [
+            'org.pillarone.riskanalytics.core.fileimport'
+    ]
+
+    info(
+            traceAppender: infoPackages,
+            application: infoPackages,
+            stdout: infoPackages,
+            additivity: false
+    )
+
+    debug(
+            application: debugPackages,
+            stdout: debugPackages,
+            traceAppender: [
+                    'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
+                    'org.pillarone.riskanalytics.application.ui',
+            ],
+            additivity: false
+    )
+}
+
 environments {
     development {
 //        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
         models = ["CoreModel", 'ApplicationModel']
         includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
         ExceptionSafeOut = System.out
-        log4j = {
-            appenders {
-
-                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
-
-                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
-
-                LoggingAppender loggingAppender = LoggingAppender.getInstance()
-                loggingAppender.setName('application')
-                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
-                appender loggingAppender
-
-                TraceAppender traceAppender = new TraceAppender(name: "traceAppender")
-                traceAppender.layout = new PatternLayout("[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %-5p %c{1} %m%n")
-                appender traceAppender
-
-            }
-            root {
-                error()
-                additivity = false
-            }
-
-            def infoPackages = [
-                    'org.pillarone.riskanalytics',
-            ]
-
-            def debugPackages = [
-                    'org.pillarone.riskanalytics.core.fileimport'
-            ]
-
-            info(
-                    traceAppender: infoPackages,
-                    application: infoPackages,
-                    stdout: infoPackages,
-                    additivity: false
-            )
-
-            debug(
-                    application: debugPackages,
-                    stdout: debugPackages,
-                    additivity: false
-            )
-            trace(
-                    traceAppender: [
-                            'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
-                            'org.pillarone.riskanalytics.application.ui',
-                    ]
-            )
-
-        }
         keyFiguresToCalculate = [
                 'stdev': true,
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
@@ -118,57 +116,6 @@ environments {
         models = ["CoreModel", 'ApplicationModel']
         includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
         ExceptionSafeOut = System.out
-        log4j = {
-            appenders {
-
-                String layoutPattern = "[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %t (%X{username}) - %-5p %c{1} %m%n"
-
-                console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
-
-                LoggingAppender loggingAppender = LoggingAppender.getInstance()
-                loggingAppender.setName('application')
-                loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
-                appender loggingAppender
-
-                TraceAppender traceAppender = new TraceAppender(name: "traceAppender")
-                traceAppender.layout = new PatternLayout("[%d{dd.MMM.yyyy HH:mm:ss,SSS}] - %-5p %c{1} %m%n")
-                appender traceAppender
-
-            }
-            root {
-                error()
-                additivity = false
-            }
-
-            def infoPackages = [
-                    'org.pillarone.riskanalytics',
-                    'org.pillarone.riskanalytics.application.ui.util.I18NUtils'
-            ]
-
-            def debugPackages = [
-                    'org.pillarone.riskanalytics.core.fileimport'
-            ]
-
-            info(
-                    traceAppender: infoPackages,
-                    application: infoPackages,
-                    stdout: infoPackages,
-                    additivity: false
-            )
-
-            debug(
-                    application: debugPackages,
-                    stdout: debugPackages,
-                    additivity: false
-            )
-            trace(
-                    traceAppender: [
-                            'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
-                            'org.pillarone.riskanalytics.application.ui.base',
-                    ],
-            )
-
-        }
         keyFiguresToCalculate = [
                 'stdev': true,
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
@@ -212,26 +159,17 @@ environments {
                 additivity = false
             }
 
-            def infoPackages = [
+            def packages = [
                     'org.pillarone.riskanalytics',
             ]
-
-            def debugPackages = [
-                    'org.pillarone.riskanalytics.core.fileimport'
-            ]
-
             info(
-                    application: infoPackages,
-                    stdout: infoPackages,
+                    application: packages,
                     additivity: false
             )
-
-            debug(
-                    application: debugPackages,
-                    stdout: debugPackages,
+            error(
+                    stdout: packages,
                     additivity: false
             )
-
         }
     }
     sqlserver {
@@ -296,34 +234,3 @@ grails {
         }
     }
 }
-
-log4j = {
-    appenders {
-        console name: 'stdout', layout: pattern(conversionPattern: '[%d] %-5p %c{1} %m%n')
-        file name: 'file', file: 'RiskAnalytics.log', layout: pattern(conversionPattern: '[%d] %-5p %c{1} %m%n')
-    }
-    root {
-        error 'stdout', 'file'
-        additivity = false
-    }
-    error 'org.codehaus.groovy.grails.web.servlet',  //  controllers
-            'org.codehaus.groovy.grails.web.pages', //  GSP
-            'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-            'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-            'org.codehaus.groovy.grails.web.mapping', // URL mapping
-            'org.codehaus.groovy.grails.commons', // core / classloading
-            'org.codehaus.groovy.grails.plugins', // plugins
-            'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-//        'org.springframework',
-//        'org.hibernate',
-            'org.pillarone.modelling.fileimport',
-            'org.pillarone.modelling.ui.util.ExceptionSafe',
-            'org.pillarone.riskanalytics.core.wiring',
-            'org.pillarone.modelling.domain',
-            'org.pillarone.modelling.util'
-    info()
-    debug()
-    warn()
-}
-
-//log4j.logger.org.springframework.security='off,stdout'
