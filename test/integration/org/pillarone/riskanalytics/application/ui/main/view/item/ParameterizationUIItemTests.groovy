@@ -48,8 +48,6 @@ class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
-//        ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        //        frame.setContentPane(new ParameterView(parameterViewModel).content)
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(mainModel, model, parameterization)
         frame.setContentPane(parameterizationUIItem.createDetailView())
@@ -57,34 +55,6 @@ class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         UIUtils.setRootPane(frame)
         frame.visible = true
     }
-
-// TODO (msh): check with dani
-    /*
-        void testCollapseExpandTree() {
-            ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
-            ULCTableTreeOperator tableTreeOperator = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeRowHeader"))
-            assertTrue(tableTreeOperator.isExpanded(0))
-            tableTreeOperator.doCollapseRow 0
-            assertTrue(tableTreeOperator.isCollapsed(0))
-            tableTreeOperator.doExpandRow 0
-            assertTrue(tableTreeOperator.isExpanded(0))
-
-            tableTreeOperator.selectCell(1, 0)
-            tableTreeOperator.pushKey(KeyEvent.VK_LEFT)
-            assertTrue("left key should collaps node", tableTreeOperator.isCollapsed(1))
-
-            tableTreeOperator.pushKey(KeyEvent.VK_RIGHT)
-            assertTrue("right key should expand node", tableTreeOperator.isExpanded(1))
-
-            tableTreeOperator.selectCell(2, 0)
-            tableTreeOperator.pushKey(KeyEvent.VK_RIGHT)
-            assertTrue("key listener did not manipulate tree state", tableTreeOperator.isExpanded(2))
-
-            tableTreeOperator.pushKey(KeyEvent.VK_LEFT)
-            assertTrue("key listener did not manipulate tree state", tableTreeOperator.isCollapsed(2))
-        }
-    */
-
 
     void testExpandAll() {
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
