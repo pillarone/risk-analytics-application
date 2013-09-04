@@ -8,7 +8,6 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import groovy.transform.CompileStatic
 
-@CompileStatic
 class TreeExpander extends ResourceBasedAction {
 
     ULCFixedColumnTableTree tree
@@ -21,7 +20,7 @@ class TreeExpander extends ResourceBasedAction {
 
     public void doActionPerformed(ActionEvent event) {
         TreePath[] paths = tree.getSelectedPaths()
-        trace("Expand paths: $paths")
+        trace("Expand paths: ${paths?.lastPathComponent?.name}")
         if (paths[0].lastPathComponent == tree.rowHeaderTableTree.model.root) {
             tree.expandAll()
         } else {
