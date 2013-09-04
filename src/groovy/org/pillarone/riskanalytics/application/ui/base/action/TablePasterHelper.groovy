@@ -15,9 +15,12 @@ class TablePasterHelper {
     private NumberParser numberParser
     private Locale locale
 
-    TablePasterHelper(Locale locale) {
+    private String content
+
+    TablePasterHelper(Locale locale, String content) {
         this.locale = locale
         this.numberParser = new NumberParser(locale)
+        this.content = content
     }
 
     def fromString(String s, Class targetType) {
@@ -43,7 +46,7 @@ class TablePasterHelper {
         try {
             return NumberUtils.parseNumber(s, Integer, NumberFormat.getInstance(locale))
         } catch (IllegalArgumentException e) {
-            throw new CopyPasteException(s, Integer)
+            throw new CopyPasteException(s, Integer, content)
         }
     }
 
@@ -51,7 +54,7 @@ class TablePasterHelper {
         try {
             return NumberUtils.parseNumber(s, Double, NumberFormat.getInstance(locale))
         } catch (IllegalArgumentException e) {
-            throw new CopyPasteException(s, Double)
+            throw new CopyPasteException(s, Double, content)
         }
     }
 
@@ -61,7 +64,7 @@ class TablePasterHelper {
         } else if ("false".equalsIgnoreCase(s)) {
             return Boolean.FALSE
         } else {
-            throw new CopyPasteException(s, Boolean)
+            throw new CopyPasteException(s, Boolean, content)
         }
     }
 
@@ -75,6 +78,6 @@ class TablePasterHelper {
                 //try the next format
             }
         }
-        throw new CopyPasteException(s, DateTime, "The following formats are supported: ${formats}")
+        throw new CopyPasteException(s, DateTime, content, "The following formats are supported: ${formats}")
     }
 }

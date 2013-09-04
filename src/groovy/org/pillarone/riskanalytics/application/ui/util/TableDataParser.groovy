@@ -19,7 +19,7 @@ public class TableDataParser {
         if (locale == null) {
             locale = LocaleResources.locale
         }
-        TablePasterHelper pasterHelper = new TablePasterHelper(locale)
+        TablePasterHelper pasterHelper = new TablePasterHelper(locale, stringData)
 
         String[] lineStrings = stringData.split(lineSeparator)
         List lines = new ArrayList(lineStrings.length)
