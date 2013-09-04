@@ -6,7 +6,6 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
-import groovy.transform.CompileStatic
 
 class TreeExpander extends ResourceBasedAction {
 
