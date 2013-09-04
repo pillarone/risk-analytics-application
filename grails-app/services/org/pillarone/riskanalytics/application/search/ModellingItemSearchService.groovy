@@ -168,7 +168,6 @@ class ModellingItemSearchService {
         void modellingItemDeleted(ModellingItem item) {
             removeModellingItemFromIndex(item)
             synchronized (queue) {
-
                 for (List<ModellingItemEvent> list in queue.values()) {
                     list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.REMOVED)
                 }
