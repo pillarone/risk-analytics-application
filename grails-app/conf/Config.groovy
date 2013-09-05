@@ -90,7 +90,7 @@ log4j = {
                     'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
                     'org.pillarone.riskanalytics.application.ui',
             ],
-            additivity: false
+            additivity: true
     )
 }
 
