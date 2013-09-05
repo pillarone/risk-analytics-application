@@ -2,6 +2,8 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -9,19 +11,14 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class ParameterViewModelTests extends GroovyTestCase {
+    private ParameterViewModel parameterViewModel
 
     void setUp() {
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Core'])
-    }
-
-    void tearDown() {
-        LocaleResources.clearTestMode()
-    }
-
-    void testBuildingTree() {
         Model model = new CoreModel()
         model.init()
 
@@ -32,17 +29,34 @@ class ParameterViewModelTests extends GroovyTestCase {
         parameterization.load()
         modelStructure.load()
 
-        ParameterViewModel parameterViewModel = new TestParameterViewModel(model, parameterization, modelStructure)
+        parameterViewModel = new TestParameterViewModel(model, parameterization, modelStructure)
+    }
 
+    void tearDown() {
+        LocaleResources.clearTestMode()
+    }
+
+    void testBuildingTree() {
         assertNotNull "ParameterTreeBuilder created", parameterViewModel.builder
         assertNotNull "ctor builds tree root", parameterViewModel.getTreeModel().getRoot()
         assertNotNull "ctor create TreeTableModel", parameterViewModel.getTreeModel().getRoot()
         assertNotNull "periodCount read from parameter", parameterViewModel.periodCount
-
         assertEquals "columnCount of TreeTableModel", parameterViewModel.periodCount + 1, parameterViewModel.treeModel.columnCount
-//        assertSame "root node of TreeTableModel", parameterViewModel.treeRoot, parameterViewModel.treeModel.root
     }
 
+    void testComment_NonExistingPath() {
+        Comment comment = new Comment('nonExisting', 1)
+        assert !CommentAndErrorView.findNodeForPath(parameterViewModel.root, comment.path)
+        parameterViewModel.commentsChanged([comment])
+
+    }
+
+    void testComment_ExistingPath() {
+        Comment comment = new Comment('Core', 1)
+        SimpleTableTreeNode treeNode = CommentAndErrorView.findNodeForPath(parameterViewModel.root, comment.path) as SimpleTableTreeNode
+        parameterViewModel.commentsChanged([comment])
+        assert 1 == treeNode.comments.size()
+    }
 }
 
 class TestParameterViewModel extends ParameterViewModel {

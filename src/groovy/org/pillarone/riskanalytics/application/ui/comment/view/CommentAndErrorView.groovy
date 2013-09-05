@@ -9,6 +9,7 @@ import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCScrollPane
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.UndockedPaneListener
@@ -216,7 +217,7 @@ class CommentAndErrorView implements CommentListener {
         return displayName ? displayName : path
     }
 
-    static def findNodeForPath(def root, String path) {
+    static ITableTreeNode findNodeForPath(ITableTreeNode root, String path) {
         def nodeForPath = null
         if ((root instanceof ResultTableTreeNode) && root.getResultPath() == path) {
             nodeForPath = root

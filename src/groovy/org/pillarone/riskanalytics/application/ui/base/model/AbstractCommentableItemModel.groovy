@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.ChangedCommentListener
@@ -62,7 +63,7 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
         }
         if (comment) {
             String path = comment.getPath()
-            def node = CommentAndErrorView.findNodeForPath(getTableTreeModel().root, path)
+            def node = CommentAndErrorView.findNodeForPath(getRoot(), path)
             if (!node) return
             node.comments.remove(comment)
             if (!comment.deleted)
@@ -74,18 +75,28 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
     void commentsChanged(List<Comment> comments) {
         for (Comment comment: comments) {
             String path = comment.getPath()
-            def node = CommentAndErrorView.findNodeForPath(getTableTreeModel().root, path)
-            node.comments << comment
-            getTableTreeModel().nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+            def node = CommentAndErrorView.findNodeForPath(getRoot(), path)
+            if (node) {
+                node.comments << comment
+                getTableTreeModel().nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
+            }
         }
     }
 
-    TreePath getTreePath(String path) {
-        def node = CommentAndErrorView.findNodeForPath(getTableTreeModel().root, path)
-        return new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[])
+    ITableTreeNode getRoot() {
+        getTableTreeModel().root as ITableTreeNode
     }
 
-    boolean isNotEmpty(String path) {
+    TreePath getTreePath(String path) {
+        def node = CommentAndErrorView.findNodeForPath(getRoot(), path)
+        if (node){
+            return new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[])
+        }else {
+            return null
+        }
+    }
+
+        boolean isNotEmpty(String path) {
         return item.comments.any {it.path == path && !it.deleted && commentIsVisible(it)}
     }
 

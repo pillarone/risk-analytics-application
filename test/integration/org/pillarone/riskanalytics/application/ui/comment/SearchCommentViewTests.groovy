@@ -51,6 +51,9 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         Comment comment = new Comment("Core:exampleInputOutputComponent", 0)
         comment.text = "test"
         parameterization.addComment(comment)
+        comment = new Comment("Core:nonexisting", 0)
+        comment.text = 'test'
+        parameterization.addComment(comment)
         parameterization.save()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         ParameterView parameterView = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
@@ -92,6 +95,4 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         assertNotNull noCommentLabel
 
     }
-
-
 }

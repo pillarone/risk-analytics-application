@@ -4,7 +4,9 @@ import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.ULCLabel
 import com.ulcjava.base.application.ULCScrollPane
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Color
+import org.apache.log4j.Logger
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -15,6 +17,8 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workfl
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListener {
+    private static LOG = Logger.getLogger(ShowCommentsView)
+
     private ULCBoxPane content;
     private ULCBoxPane container;
     private CommentAndErrorView commentAndErrorView
@@ -60,7 +64,7 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
     public void addComments(Collection<Comment> comments, String searchText = null) {
         clear()
         if (comments && !comments.isEmpty()) {
-            for (Comment comment: comments) {
+            for (Comment comment : comments) {
                 addComment(comment, searchText);
             }
         } else {
@@ -88,7 +92,7 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
             return
         }
         clear()
-        addComments(getAllComments().findAll {filter.accept(it)})
+        addComments(getAllComments().findAll { filter.accept(it) })
     }
 
     void order(String orderBy, String order) {
@@ -101,8 +105,17 @@ class ShowCommentsView implements ChangedCommentListener, TabbedPaneChangeListen
     }
 
     private List<Comment> getAllComments() {
-        def all = model.item.comments.findAll {!it.deleted && model.commentIsVisible(it)}
-        return path ? all.findAll {it.path == path} : all
+        def all = model.item.comments.findAll { !it.deleted && model.commentIsVisible(it) && commentPathExists(it) }
+        return path ? all.findAll { it.path == path } : all
+    }
+
+    private boolean commentPathExists(Comment comment) {
+        ITableTreeNode path = CommentAndErrorView.findNodeForPath(model.root, comment.path)
+        if (!path) {
+            LOG.warn("Comment with path '$comment.path' does not exist in item ${model.item.class.simpleName} with name '${model.item}'. Will be ignored.")
+            return false
+        }
+        return true
     }
 
     public void setVisible(boolean visibility) {
