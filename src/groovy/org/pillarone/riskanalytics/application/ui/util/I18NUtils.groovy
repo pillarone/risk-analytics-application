@@ -51,6 +51,10 @@ public class I18NUtils {
         return value
     }
 
+    public static String findParameterDisplayName(SimpleTableTreeNode componentNode, String subPath, String toolTip = "") {
+        return null
+    }
+
     public static String findDisplayNameByParentComponent(ITableTreeNode simpleTableTreeNode, String parmKey, String toolTip = "") {
         if (simpleTableTreeNode?.parent instanceof ComponentTableTreeNode) {
             return findParameterDisplayNameBySuperClass(simpleTableTreeNode.parent.component.getClass(), parmKey + toolTip)
