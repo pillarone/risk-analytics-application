@@ -64,6 +64,6 @@ class DownloadFileAction extends ResourceBasedAction {
                         ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(source), "importError")
                         alert.show()
                     }
-                }] as IFileChooseHandler, config, null)
+                }] as IFileChooseHandler, config, event.source as ULCComponent)
     }
 }
