@@ -54,7 +54,6 @@ public class OpenItemAction extends BatchSimulationSelectionAction {
 
     private void openItem(Model itemModel, ModellingItem item) {
         itemModel.init()
-        item.dao.modelClassName = model.class.name
         mainModel.notifyOpenDetailView(itemModel, item)
     }
 

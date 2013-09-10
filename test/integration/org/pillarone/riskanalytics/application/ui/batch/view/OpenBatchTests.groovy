@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
 import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import javax.swing.tree.TreePath
@@ -23,7 +24,7 @@ import org.springframework.transaction.TransactionStatus
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class OpenBatchTests extends AbstractFunctionalTestCase {
-
+    ParameterizationDAO parameterizationDAO
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
@@ -33,10 +34,10 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         BatchRunSimulationRun.withTransaction {TransactionStatus status ->
             BatchRun batchRun = new BatchRun(name: "test", executionTime: new DateTime())
             batchRun.save(flush: true)
-            ParameterizationDAO dao = ParameterizationDAO.findByNameAndItemVersion("CoreAlternativeParameters", "1")
+            parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion("CoreAlternativeParameters", "1")
             ResultConfigurationDAO configurationDAO = ResultConfigurationDAO.findByNameAndItemVersion("CoreResultConfiguration", "1")
             run = new SimulationRun(name: "run")
-            run.parameterization = dao
+            run.parameterization = parameterizationDAO
             run.resultConfiguration = configurationDAO
             run.model = CoreModel.name
             run.periodCount = 2
@@ -81,6 +82,9 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         assertEquals 0, tableOperator.getValueAt(0, 5)
         assertEquals "No output", tableOperator.getValueAt(0, 6)
         assertEquals "not running", tableOperator.getValueAt(0, 7)
+        ULCPopupMenuOperator popup= tableOperator.callPopupOnCell(0,1)
+        popup.pushMenu('Open parameterization')
+        assert parameterizationDAO.modelClassName == CoreModel.class.name
 
     }
 }
