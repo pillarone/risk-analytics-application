@@ -6,6 +6,7 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -40,18 +41,6 @@ class ModellingInformationTableTreeBuilder {
     static final int SIMULATION_NODE_INDEX = 2
     static Log LOG = LogFactory.getLog(ModellingInformationTableTreeBuilder)
 
-    /**
-     * Initialize the resources only once, as the classpath will not change during runtime.
-     */
-    @Lazy
-    private static List<Class> resources = {
-        ClassPathScanner provider = new ClassPathScanner()
-        provider.addIncludeFilter(new AssignableTypeFilter(IResource))
-        List<String> acceptedResources = ConfigurationHolder.config.includedResources
-
-        List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
-        return classes.findAll { acceptedResources.contains(it.simpleName) }
-    }()
 
     final DefaultMutableTableTreeNode root
     private final AbstractTableTreeModel model
@@ -199,11 +188,22 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private List<Class> getAllResourceClasses() {
-        if (!(ConfigurationHolder.config?.includedResources instanceof List)) {
+        if (!(Holders.config?.includedResources instanceof List)) {
             LOG.info("Please note that there are no resource classes defined in the config.groovy file")
             return []
         }
-        return resources
+        List acceptedResources = Holders.config.includedResources
+        List<Class> classes = []
+        acceptedResources.each { Class resource ->
+            if (IResource.isAssignableFrom(resource)) {
+                classes << resource
+                LOG.info "Provided class ${resource} added to resource classes."
+            } else {
+                LOG.warn "Provided class ${resource} does not implement IResource interface."
+            }
+        }
+
+        return classes
     }
 
     private DefaultMutableTableTreeNode getModelNode(Model model) {
