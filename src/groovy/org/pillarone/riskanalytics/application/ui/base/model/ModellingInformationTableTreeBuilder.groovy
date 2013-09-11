@@ -147,7 +147,7 @@ class ModellingInformationTableTreeBuilder {
             ResourceGroupNode resourceGroupNode = new ResourceGroupNode("Resources")
             resourceClasses.each { Class resourceClass ->
 
-                ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
+                ResourceClassNode resourceNode = new ResourceClassNode(UIUtils.getText(ModellingInformationTableTreeModel.class, resourceClass.simpleName), resourceClass, mainModel)
                 List<ModellingItem> resourceItems = items.findAll { ModellingItem item -> item instanceof Resource && item.modelClass == resourceClass }
                 getItemMap(resourceItems, false).values().each {
                     resourceNode.add(createItemNodes(it))
