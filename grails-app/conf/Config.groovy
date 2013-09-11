@@ -90,7 +90,7 @@ log4j = {
                     'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
                     'org.pillarone.riskanalytics.application.ui',
             ],
-            additivity: true
+            additivity: false
     )
 }
 
@@ -98,7 +98,7 @@ environments {
     development {
 //        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
         models = ["CoreModel", 'ApplicationModel']
-        includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
+        includedResources = [ExampleResource, ApplicationResource]
         ExceptionSafeOut = System.out
         keyFiguresToCalculate = [
                 'stdev': true,
@@ -114,7 +114,7 @@ environments {
     mysql {
 //        models = ["CoreModel", "ResourceModel", 'ApplicationModel', 'DeterministicApplicationModel', 'MigratableCoreModel']
         models = ["CoreModel", 'ApplicationModel']
-        includedResources = [ExampleResource.simpleName, ApplicationResource.simpleName]
+        includedResources = [ExampleResource, ApplicationResource]
         ExceptionSafeOut = System.out
         keyFiguresToCalculate = [
                 'stdev': true,
@@ -129,7 +129,7 @@ environments {
     }
     test {
         ExceptionSafeOut = System.out
-        includedResources = [ExampleResource.simpleName]
+        includedResources = [ExampleResource]
         keyFiguresToCalculate = [
                 'stdev': true,
                 'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
