@@ -11,6 +11,10 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 class PopupMenuRegistry {
     private static Map<Object, List<ULCTableTreeMenuItemCreator>> popupMenuMap = [:]
 
+    static void clear() {
+        popupMenuMap.clear()
+    }
+
     static void register(Class<? extends INavigationTreeNode> nodeClass, ULCTableTreeMenuItemCreator creator) {
         if (!popupMenuMap.containsKey(nodeClass)) {
             popupMenuMap.put(nodeClass, [])

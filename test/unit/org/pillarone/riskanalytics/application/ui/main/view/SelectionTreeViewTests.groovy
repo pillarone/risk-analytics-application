@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.ULCMenuItem
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.testframework.operator.ULCMenuItemOperator
 import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
@@ -11,6 +13,7 @@ import org.codehaus.groovy.grails.support.MockApplicationContext
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.springframework.context.ApplicationContext
 
 import javax.swing.tree.TreePath
@@ -39,7 +42,11 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 //        Thread.sleep 15000
     }
 
-
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown()
+        PopupMenuRegistry.clear()
+    }
 
     public void testOpenItem() {
 
@@ -195,6 +202,24 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assertNotNull renameItem
         renameItem.clickMouse()
 
+    }
+
+    public void testCheckForAdditionalMenuItems() {
+        PopupMenuRegistry.register(ParameterizationNode, new ULCTableTreeMenuItemCreator() {
+            @Override
+            ULCMenuItem createComponent(ULCTableTree tree) {
+                return new ULCMenuItem("My Item")
+            }
+        })
+        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
+        componentTree.doExpandRow 0
+        componentTree.doExpandRow 1
+        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
+
+        assertNotNull popupMenuOperator
+
+        ULCMenuItemOperator myItem = new ULCMenuItemOperator(popupMenuOperator, "My Item")
+        assertNotNull myItem
     }
 
 
