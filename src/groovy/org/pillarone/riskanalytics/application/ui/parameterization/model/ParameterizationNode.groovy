@@ -35,7 +35,7 @@ public class ParameterizationNode extends VersionedItemNode implements IReportab
         return getParameterization().getStatus();
     }
 
-    private Parameterization getParameterization() {
+    public Parameterization getParameterization() {
         return ((Parameterization) getAbstractUIItem().getItem());
     }
 
