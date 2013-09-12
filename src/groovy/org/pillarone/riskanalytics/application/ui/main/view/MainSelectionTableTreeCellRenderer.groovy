@@ -49,13 +49,13 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private void renderComponent(ULCComponent component, INavigationTreeNode node) {
-        component.setComponentPopupMenu(getPopupMenu(node))
+        ULCPopupMenu popupMenu = getPopupMenu(node)
+        component.setComponentPopupMenu(popupMenu)
         component.setToolTipText(node.getToolTip())
         setIcon(node.getIcon())
     }
 
     private void renderComponent(ULCComponent component, Object node) {
-
     }
 
     void setFont(ParameterizationNode node) {
@@ -70,60 +70,57 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         setForeground(null)
     }
 
-    private ULCPopupMenu getPopupMenu(Object node) {
-        if (popupMenus.containsKey(node.class)) return popupMenus.get(node.class)
-        ULCPopupMenu popupMenu = ((INavigationTreeNode) node).getPopupMenu(tree)
-        popupMenus.put(node.class, popupMenu)
-        return popupMenu
+    private ULCPopupMenu getPopupMenu(INavigationTreeNode node) {
+        getOrCreatePopuMenu(popupMenus, node, node.class)
     }
 
     private ULCPopupMenu getPopupMenu(SimulationNode node) {
-        ULCPopupMenu simulationPopupMenu = simulationPopupMenus.get(node.abstractUIItem.model.modelClass)
-        if (simulationPopupMenu == null) {
-            //Not in cache, create and add it..
-            simulationPopupMenu = node.getPopupMenu(tree)
-            simulationPopupMenus.put(node.abstractUIItem.model.modelClass, simulationPopupMenu)
-        }
-        return simulationPopupMenu
+        getOrCreatePopuMenu(simulationPopupMenus, node, node.abstractUIItem.model.modelClass)
     }
 
     private ULCPopupMenu getPopupMenu(ItemGroupNode node) {
-        if (popupMenus.containsKey(node.itemClass)) return popupMenus.get(node.itemClass)
-        ULCPopupMenu popupMenu = node.getPopupMenu(tree)
-        popupMenus.put(node.itemClass, popupMenu)
-        return popupMenu
+        getOrCreatePopuMenu(popupMenus, node, node.itemClass)
     }
 
     private ULCPopupMenu getPopupMenu(BatchRunNode node) {
-        ULCPopupMenu batchPopUp = batchRunPopupMenus.get(node.getClass())
-        if (!batchPopUp) {
-            batchPopUp = node.getPopupMenu(tree)
-            batchRunPopupMenus.put(node.getClass(), batchPopUp)
-        }
-        return batchPopUp
+        getOrCreatePopuMenu(batchRunPopupMenus, node, node.class)
     }
 
     private ULCPopupMenu getPopupMenu(WorkflowParameterizationNode node) {
-        Status status = node.getStatus();
-        if (workflowMenus.containsKey(status)) return workflowMenus.get(status)
-        ULCPopupMenu popupMenu = node.getPopupMenu(tree)
-        workflowMenus.put(status, popupMenu)
-        return popupMenu
+        getOrCreatePopuMenu(workflowMenus, node, node.status)
     }
 
     private ULCPopupMenu getPopupMenu(ResourceNode node) {
-        if (resourceWorkflowMenus.containsKey(node.status)) return resourceWorkflowMenus.get(node.status)
-        ULCPopupMenu popupMenu = node.getPopupMenu(tree)
-        resourceWorkflowMenus.put(node.status, popupMenu)
-        return popupMenu
+        getOrCreatePopuMenu(resourceWorkflowMenus, node, node.status)
     }
 
     private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
-        ULCPopupMenu menu = paramNodePopupMenus.get(node.getParameterization().getModelClass())
-        if (!menu) {
-            menu = node.getPopupMenu(tree)
-            paramNodePopupMenus.put(node.getParameterization().getModelClass(), menu)
-        }
+        getOrCreatePopuMenu(paramNodePopupMenus, node, node.parameterization.modelClass)
+    }
+
+    private ULCPopupMenu getOrCreatePopuMenu(Map popupMenuMap, INavigationTreeNode node, Object key) {
+        if (popupMenuMap.containsKey(key)) return popupMenuMap.get(key)
+        ULCPopupMenu menu = node.getPopupMenu(tree)
+        addUserSpecificMenuItems(menu, node)
+        popupMenuMap.put(key, menu)
         return menu
+    }
+
+    private void addUserSpecificMenuItems(ULCPopupMenu popupMenu, INavigationTreeNode node) {
+        List<ULCTableTreeMenuItemCreator> additionalMenuItems = getMenuItems(node)
+        if (additionalMenuItems) {
+            popupMenu.addSeparator()
+            additionalMenuItems.each { ULCTableTreeMenuItemCreator c ->
+                popupMenu.add(c.createComponent(tree))
+            }
+        }
+    }
+
+    private List<ULCTableTreeMenuItemCreator> getMenuItems(INavigationTreeNode node) {
+        PopupMenuRegistry.get(node.class)
+    }
+
+    private List<ULCTableTreeMenuItemCreator> getMenuItems(ItemGroupNode node) {
+        PopupMenuRegistry.get(node)
     }
 }
