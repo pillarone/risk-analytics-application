@@ -13,7 +13,10 @@ import org.codehaus.groovy.grails.support.MockApplicationContext
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.ApplicationContext
 
 import javax.swing.tree.TreePath
@@ -205,22 +208,31 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     }
 
     public void testCheckForAdditionalMenuItems() {
-        PopupMenuRegistry.register(ParameterizationNode, new ULCTableTreeMenuItemCreator() {
-            @Override
-            ULCMenuItem createComponent(ULCTableTree tree) {
-                return new ULCMenuItem("My Item")
-            }
-        })
+        PopupMenuRegistry.register(ParameterizationNode, new TestMenuItemCreator(name:'ParamItem'))
+        PopupMenuRegistry.register(ItemGroupNode, Parameterization, new TestMenuItemCreator(name:'ParamGroup'))
+        PopupMenuRegistry.register(ItemGroupNode, Simulation, new TestMenuItemCreator(name:'SimGroup'))
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(2, 0)
-
-        assertNotNull popupMenuOperator
-
-        ULCMenuItemOperator myItem = new ULCMenuItemOperator(popupMenuOperator, "My Item")
-        assertNotNull myItem
+        ULCPopupMenuOperator popup = componentTree.callPopupOnCell(2, 0)
+        assertNotNull popup
+        ULCMenuItemOperator paramItem = new ULCMenuItemOperator(popup, "ParamItem")
+        assert paramItem
+        popup = componentTree.callPopupOnCell(1, 0)
+        ULCMenuItemOperator paramGroup = new ULCMenuItemOperator(popup, "ParamGroup")
+        assert paramGroup
+        TreePath simulationPath = componentTree.findPath(['Application', 'Results'] as String[])
+        componentTree.doExpandPath(simulationPath)
+        popup = componentTree.callPopupOnCell(componentTree.getRowForPath(simulationPath),0)
+        ULCMenuItemOperator simGroup = new ULCMenuItemOperator(popup, "SimGroup")
+        assert simGroup
     }
 
-
+    class TestMenuItemCreator implements ULCTableTreeMenuItemCreator {
+        String name
+        @Override
+        ULCMenuItem createComponent(ULCTableTree tree) {
+            return new ULCMenuItem(name)
+        }
+    }
 }
