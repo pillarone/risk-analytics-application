@@ -5,6 +5,7 @@ import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
@@ -62,7 +63,7 @@ class ModellingInformationTableTreeBuilder {
         if (!resourceClasses.isEmpty()) {
             ResourceGroupNode resourcesNode = new ResourceGroupNode("Resources")
             resourceClasses.each { Class resourceClass ->
-                ResourceClassNode resourceNode = new ResourceClassNode(resourceClass.simpleName, resourceClass, mainModel)
+                ResourceClassNode resourceNode = new ResourceClassNode(UIUtils.getText(ModellingInformationTableTreeModel.class, resourceClass.simpleName), resourceClass, mainModel)
                 getItemMap(getItemsForModel(resourceClass, Resource), false).values().each {
                     resourceNode.add(createItemNodes(it))
                 }
@@ -126,17 +127,21 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public List<Class> getAllResourceClasses() {
-
-        if (!(ConfigurationHolder.config?.includedResources instanceof List)) {
+        if (!(Holders.config?.includedResources instanceof List)) {
             LOG.info("Please note that there are no resource classes defined in the config.groovy file")
             return []
         }
-        ClassPathScanner provider = new ClassPathScanner()
-        provider.addIncludeFilter(new AssignableTypeFilter(IResource))
-        List<String> acceptedResources = ConfigurationHolder.config.includedResources
-
-        List<Class> classes = provider.findCandidateComponents("")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
-        return classes.findAll { acceptedResources.contains(it.simpleName) }
+        List acceptedResources = Holders.config.includedResources
+        List<Class> classes = []
+        acceptedResources.each { Class resource ->
+            if (IResource.isAssignableFrom(resource)) {
+                classes << resource
+                LOG.info "Provided class ${resource} added to resource classes."
+            } else {
+                LOG.warn "Provided class ${resource} does not implement IResource interface."
+            }
+        }
+        return classes
     }
 
     private ITableTreeNode getModelNode(Model model) {
