@@ -127,6 +127,8 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
         tree = new ULCFixedColumnTableTree(model.treeModel, 1, ([treeWidth] + [columnsWidths] * model.periodCount) as int[])
 
 
+        tree.viewPortTableTree.rowHeight += 1
+        tree.rowHeaderTableTree.rowHeight += 1
         tree.viewPortTableTree.name = getViewPortTableTreeName()
         tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
 
