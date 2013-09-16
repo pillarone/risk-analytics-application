@@ -11,7 +11,7 @@ import java.util.regex.Pattern
  * This NumberParser converts the given String into a:
  * <ul>
  * <li> Double
- * <li> Integer
+ * <li> Long
  * <li> String
  * </ul>
  *
@@ -46,7 +46,7 @@ public class NumberParser {
                 result = parseValue(value, Double)
             }
             else {
-                result = parseValue(value, Integer)
+                result = parseValue(value, Long)
             }
         }
         return result

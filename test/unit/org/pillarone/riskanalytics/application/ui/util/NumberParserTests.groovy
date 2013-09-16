@@ -7,7 +7,7 @@ class NumberParserTests extends GroovyTestCase {
 
     void testReturnTypes() {
         NumberParser parser = new NumberParser(Locale.defaultLocale)
-        assertSame "parsing integer value", Integer, parser.parse("2").class
+        assertSame "parsing long value", Long, parser.parse("2").class
         assertSame "parsing double value", Double, parser.parse("2.5").class
         assertSame "parsing double value", Double, parser.parse("2.0").class
         assertSame "parsing string value", String, parser.parse("foo").class
@@ -29,6 +29,10 @@ class NumberParserTests extends GroovyTestCase {
         parseValuesWithLocale([2, 20000, 2.0, 20000.20, 1E3, -1.23E4, "foo", ""], new Locale("de", "ch"))
     }
 
+    void testParse_LargeValue() {
+        parseValuesWithLocale([2E10], Locale.defaultLocale)
+    }
+
     void testIsString() {
         NumberParser parser = new NumberParser(Locale.defaultLocale)
         def groupingSeparator = new DecimalFormatSymbols(Locale.default).groupingSeparator
@@ -47,6 +51,7 @@ class NumberParserTests extends GroovyTestCase {
 
     private def parseValuesWithLocale(List values, Locale locale) {
         NumberFormat numberFormat = NumberFormat.getInstance(locale)
+        numberFormat.groupingUsed = false
         NumberParser parser = new NumberParser(locale)
         values.each {
             def value = it
