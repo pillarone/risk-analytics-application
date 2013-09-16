@@ -44,7 +44,7 @@ class CsvExportAction extends ExportItemAction {
             }, onFailure: {reason, description ->
                 LOG.error description
                 showAlert("exportError")
-            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, true, false)
+            }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, false)
         }
 
     }
