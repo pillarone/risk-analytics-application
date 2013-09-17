@@ -55,7 +55,14 @@ class LocaleResources {
                 UserSettings userSettings = UserContext.getCurrentUser()?.settings
                 UserPreferences preferences = UserPreferencesFactory.getUserPreferences()
                 if (userSettings != null) {
-                    locale = new Locale(userSettings.language)
+                    String language = userSettings.language
+                    String country = ''
+                    if (language.contains('_')){
+                        String[] parts = language.split('_')
+                        language = parts[0]
+                        country = parts[1]
+                    }
+                    locale = new Locale(language, country)
                     UserContext.setAttribute(LOCALE, locale)
                 } else if (preferences.getLanguage() != null) {
                     locale = new Locale(preferences.getLanguage())
