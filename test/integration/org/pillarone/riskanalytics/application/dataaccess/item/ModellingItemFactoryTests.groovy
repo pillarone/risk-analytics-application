@@ -19,10 +19,10 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
 class ModellingItemFactoryTests extends GroovyTestCase {
 
     void setUp() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
-        new ModelFileImportService().compareFilesAndWriteToDB(['CoreModel'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelFileImportService().compareFilesAndWriteToDB(['Core'])
         ModellingItemFactory.clear()
     }
 
@@ -96,7 +96,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
     }
 
     void testCopyParameterization() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
         ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
@@ -156,7 +156,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
 
     void testIncrementParameterizationVersion() {
 //        ParameterizationDAO dao = ParameterizationDAO.findByItemVersion('1')
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
         ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
@@ -183,7 +183,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
     }
 
     void testPMO1985() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
         ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
         parameterization.load()
