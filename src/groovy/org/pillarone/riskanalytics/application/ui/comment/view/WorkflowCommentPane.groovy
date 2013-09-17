@@ -1,25 +1,20 @@
 package org.pillarone.riskanalytics.application.ui.comment.view
 
-import com.ulcjava.base.application.AbstractAction
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCButton
-import com.ulcjava.base.application.ULCFiller
-import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
-
-import static org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus.*
+import com.ulcjava.base.application.*
 import org.apache.commons.lang.builder.HashCodeBuilder
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
-import com.ulcjava.base.application.ULCLabel
-import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ReopenWorkflowCommentAction
 import org.pillarone.riskanalytics.application.ui.comment.action.workflow.ResolveWorkflowCommentAction
-import org.pillarone.riskanalytics.application.ui.comment.action.workflow.CloseWorkflowCommentAction
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
+import org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.workflow.WorkflowComment
 import org.pillarone.riskanalytics.core.user.Authority
-import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.core.user.UserManagement
+
+import static org.pillarone.riskanalytics.core.parameter.comment.workflow.IssueStatus.*
 
 class WorkflowCommentPane extends CommentPane {
 
@@ -43,63 +38,38 @@ class WorkflowCommentPane extends CommentPane {
         super(model, comment, searchText);
     }
 
+    private internalLayoutComponents(List<ULCComponent> components) {
+        content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
+        ULCBoxPane buttons = new ULCBoxPane(components.size(), 1)
+        components.each {
+            buttons.add(it)
+        }
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
+        content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+        content.add(3, ULCBoxPane.BOX_LEFT_TOP, downloadFilePane);
+    }
+
     private void initMap() {
         uiStates = new HashMap()
         uiStates.put((OPEN_USER), {
-            content.removeAll()
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
-            ULCBoxPane buttons = new ULCBoxPane(1, 1)
-            buttons.add(resolveButton)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+            internalLayoutComponents([resolveButton])
+
         })
         uiStates.put((OPEN_REVIEWER), {
-            content.removeAll()
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
-            ULCBoxPane buttons = new ULCBoxPane(2, 1)
-            buttons.add(editButton)
-            buttons.add(deleteButton)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+            internalLayoutComponents([editButton, deleteButton])
         })
         uiStates.put((RESOLVED_USER), {
-            content.removeAll()
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
-            ULCBoxPane buttons = new ULCBoxPane(1, 1)
-            buttons.add(resolvedLabel)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+            internalLayoutComponents([resolvedLabel])
         })
         uiStates.put((RESOLVED_REVIEWER), {
-            content.removeAll()
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
-            ULCBoxPane buttons = new ULCBoxPane(2, 1)
-            buttons.add(reOpenButton)
-            buttons.add(closeButton)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+            internalLayoutComponents([reOpenButton, closeButton])
         })
         uiStates.put((CLOSED_REVIEWER), {
-            content.removeAll()
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
-            ULCBoxPane buttons = new ULCBoxPane(1, 1)
-            buttons.add(closedLabel)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+            internalLayoutComponents([closedLabel])
         })
         uiStates.put((CLOSED_USER), {
-            content.removeAll()
-            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
-            ULCBoxPane buttons = new ULCBoxPane(1, 1)
-            buttons.add(closedLabel)
-            content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
-            content.add(ULCBoxPane.BOX_RIGHT_TOP, buttons)
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, label);
+            internalLayoutComponents([closedLabel])
         })
     }
 
