@@ -32,8 +32,8 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         model = new ApplicationModel()
         model.init()
@@ -74,8 +74,8 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         model = new ApplicationModel()
         model.init()
@@ -119,8 +119,8 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         model = new ApplicationModel()
         model.init()

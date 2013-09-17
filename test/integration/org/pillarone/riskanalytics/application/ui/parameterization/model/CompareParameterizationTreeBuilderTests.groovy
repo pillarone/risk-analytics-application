@@ -31,9 +31,9 @@ public class CompareParameterizationTreeBuilderTests extends GroovyTestCase {
     }
 
     void prepareModel() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreAlternativeParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('CoreStructure'))
 

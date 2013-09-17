@@ -36,8 +36,8 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
 
     protected void doStart() {
         parameterizationName = 'ApplicationParameters'
-        new ParameterizationImportService().compareFilesAndWriteToDB([parameterizationName])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationWithoutHierarchyStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         ModellingItemFactory.clear()
 

@@ -30,10 +30,10 @@ class CompareSimulationsViewModelTests extends GroovyTestCase {
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
-        new ResultStructureImportService().compareFilesAndWriteToDB(['ApplicationDefaultResultTree'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
+        new ResultStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         initSimulations()
 

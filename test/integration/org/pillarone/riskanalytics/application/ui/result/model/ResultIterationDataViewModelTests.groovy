@@ -31,8 +31,8 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         ResultAccessor.clearCaches()
         LocaleResources.setTestMode()
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"
         simulationRun.parameterization = ParameterizationDAO.findByName('ApplicationParameters')

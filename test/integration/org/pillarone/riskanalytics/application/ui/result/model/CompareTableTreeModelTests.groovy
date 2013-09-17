@@ -18,8 +18,8 @@ class CompareTableTreeModelTests extends GroovyTestCase {
     Simulation simulation4
 
     void setUp() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
     }
 
     void testGetSimulationIndexOnePeriodTwoFunction() {

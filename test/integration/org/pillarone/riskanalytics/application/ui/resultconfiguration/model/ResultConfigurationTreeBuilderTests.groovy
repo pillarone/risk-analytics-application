@@ -22,8 +22,8 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
     }
 
     void testBuildTree() {
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
         configuration.modelClass = ApplicationModel
@@ -47,8 +47,8 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
     }
 
     void testBuildTreeWithPacketOutput() {
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         ResultConfiguration configuration = new ResultConfiguration("CoreResultConfiguration")
         configuration.modelClass = ApplicationModel
@@ -68,8 +68,8 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
 
 
     void testDynamicOutputProperties() {
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
         configuration.modelClass = ApplicationModel
@@ -95,8 +95,8 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
     }
 
     void testDynamicPropertiesOrder() {
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
         configuration.modelClass = ApplicationModel

@@ -126,7 +126,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
     }
 
     void testConstrainedStringNode() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(["ApplicationParameters"])
+        new ParameterizationImportService().compareFilesAndWriteToDB(["Application"])
         Model model = new ApplicationModel()
         model.init()
         model.injectComponentNames()
@@ -161,7 +161,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
     }
 
     void testConstrainedStringNode_PMO1562() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(["ApplicationParameters"])
+        new ParameterizationImportService().compareFilesAndWriteToDB(["Application"])
         Model model = new ApplicationModel()
 
         Parameterization parameterization = createParameterization([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))])

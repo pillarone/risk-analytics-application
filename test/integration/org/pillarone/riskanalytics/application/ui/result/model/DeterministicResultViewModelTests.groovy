@@ -27,9 +27,9 @@ class DeterministicResultViewModelTests extends GroovyTestCase {
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['DeterministicApplicationParameters'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['DeterministicApplicationResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['DeterministicApplicationStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
         ResultStructureImportService.importDefaults()
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"

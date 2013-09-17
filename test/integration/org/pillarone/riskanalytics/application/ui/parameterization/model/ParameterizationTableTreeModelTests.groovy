@@ -42,8 +42,8 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
     }
 
     void prepareCoreModel() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         model = new CoreModel()
         model.init()
@@ -58,8 +58,8 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
     }
 
     void prepareMultiPeriodCoreModel() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreMultiPeriodParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         model = new CoreModel()
         model.init()
@@ -74,8 +74,8 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
     }
 
     void prepareApplicationModel() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['ApplicationParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         model = new ApplicationModel()
         model.init()

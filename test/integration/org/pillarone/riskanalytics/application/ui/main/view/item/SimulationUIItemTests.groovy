@@ -33,8 +33,8 @@ class SimulationUIItemTests extends AbstractUIItemTest {
         ModellingItemFactory.clear()
 
         FileImportService.importModelsIfNeeded(["Core"])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['CoreResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
         Parameterization parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('CoreParameters'))
         parameterization.load()
 

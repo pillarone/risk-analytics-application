@@ -17,7 +17,7 @@ import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 class ExportParametrizationTests extends AbstractFunctionalTestCase {
     @Override
     protected void setUp() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(["CoreAlternativeParameters"])
+        new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         ModellingItemSearchService.instance.refresh()
         super.setUp()
     }

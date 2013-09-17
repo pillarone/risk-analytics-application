@@ -36,8 +36,8 @@ class SaveAlreadyUsedParameterizationTests extends AbstractSimpleFunctionalTest 
 //    IActionListener saveAction
 
     protected void doStart() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         ModellingItemFactory.clear()
 

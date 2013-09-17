@@ -25,9 +25,9 @@ class CompareParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
     Parameterization parameterization2
 
     @Override protected void doStart() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreAlternativeParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         Model model = new CoreModel()
         model.init()

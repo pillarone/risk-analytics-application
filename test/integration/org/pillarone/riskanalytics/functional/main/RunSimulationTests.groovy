@@ -16,7 +16,7 @@ import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 class RunSimulationTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
         super.setUp();
     }
 

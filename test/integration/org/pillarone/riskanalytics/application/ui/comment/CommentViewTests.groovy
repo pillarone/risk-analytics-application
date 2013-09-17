@@ -29,8 +29,8 @@ class CommentViewTests extends AbstractSimpleFunctionalTest {
     Parameterization parameterization
 
     protected void doStart() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(['CoreParameters'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['CoreStructure'])
+        new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
         ModellingItemFactory.clear()
 

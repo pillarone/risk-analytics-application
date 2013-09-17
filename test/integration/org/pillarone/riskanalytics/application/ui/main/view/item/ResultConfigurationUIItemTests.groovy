@@ -30,10 +30,10 @@ class ResultConfigurationUIItemTests extends AbstractSimpleFunctionalTest {
         frame.name = "Test"
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
 
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['ApplicationResultConfiguration'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['ApplicationStructure'])
+        new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
+        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
-        configuration = new ResultConfiguration("ApplicationResultConfiguration")
+        configuration = new ResultConfiguration("Application")
         configuration.modelClass = ApplicationModel
         configuration.load()
 
