@@ -86,11 +86,13 @@ log4j = {
     debug(
             application: debugPackages,
             stdout: debugPackages,
+            additivity: false
+    )
+    debug(
             traceAppender: [
                     'org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem',
                     'org.pillarone.riskanalytics.application.ui',
             ],
-            //TODO (dbr) somehow logging is not right. all lines in the traceAppender are doubled when set additivity to true. If it is set to false, no log messages are shown at stdout, esp. no error messages.
             additivity: true
     )
 }
