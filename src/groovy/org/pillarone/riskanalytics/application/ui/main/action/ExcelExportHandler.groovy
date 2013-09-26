@@ -2,9 +2,13 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import org.apache.poi.POIXMLProperties
 import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.ClientAnchor
+import org.apache.poi.ss.usermodel.Comment
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.usermodel.XSSFComment
+import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
 import org.pillarone.riskanalytics.core.components.Component
@@ -38,8 +42,9 @@ class ExcelExportHandler {
             Row headerRow = sheet.createRow(0)
 
             handleComponent(component, headerRow, 0)
-
-
+            (0..sheet.getRow(0).getLastCellNum()).each {
+                sheet.autoSizeColumn(it)
+            }
         }
         multiDimensionalParameters.each { ConstrainedMultiDimensionalParameter mdp ->
             Sheet sheet = workbook.createSheet("${mdp.constraints.class.simpleName}-MDP")
@@ -57,6 +62,16 @@ class ExcelExportHandler {
 
     private int handleComponent(Component component, Row headerRow, int columnIndex) {
         List allParms = getAllParms(component)
+        Cell cell = headerRow.createCell(columnIndex++, Cell.CELL_TYPE_STRING)
+        ClientAnchor anchor = headerRow.sheet.workbook.creationHelper.createClientAnchor()
+        anchor.setCol1(cell.columnIndex);
+        anchor.setCol2(cell.columnIndex + 1);
+        anchor.setRow1(headerRow.rowNum);
+        anchor.setRow2(headerRow.rowNum + 3);
+        Comment comment = headerRow.getSheet().createDrawingPatriarch().createCellComment(anchor)
+        comment.setString(new XSSFRichTextString("To disable import add '#' to this row"))
+        cell.setCellComment(comment)
+        cell.setCellValue('Disable Import')
         for (String parm in allParms) {
             headerRow.createCell(columnIndex++, Cell.CELL_TYPE_STRING).setCellValue(parm)
             columnIndex = addParameterCells(component[parm], headerRow, columnIndex)
