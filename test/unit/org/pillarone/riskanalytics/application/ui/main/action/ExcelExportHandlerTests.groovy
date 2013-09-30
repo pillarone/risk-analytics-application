@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 import models.application.ApplicationModel
 import models.orsa.ORSAModel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.components.ExampleMultiMarkerConstraint
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
@@ -42,6 +43,7 @@ class ExcelExportHandlerTests extends GroovyTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp()
+        LocaleResources.setTestMode()
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
         ConstraintsFactory.registerConstraint(new AnnualIndexTableConstraints())
         ConstraintsFactory.registerConstraint(new LinkRatioIndexTableConstraints())
@@ -79,6 +81,7 @@ class ExcelExportHandlerTests extends GroovyTestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown()
+        LocaleResources.clearTestMode()
     }
 
     void testExportModel() {
