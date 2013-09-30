@@ -1,15 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import org.apache.poi.POIXMLProperties
-import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.ss.usermodel.CellStyle
-import org.apache.poi.ss.usermodel.ClientAnchor
-import org.apache.poi.ss.usermodel.Comment
-import org.apache.poi.ss.usermodel.Font
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.xssf.usermodel.XSSFComment
+import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
@@ -49,7 +41,7 @@ class ExcelExportHandler {
             }
         }
         multiDimensionalParameters.each { ConstrainedMultiDimensionalParameter mdp ->
-            String mdpSheetName = "${mdp.constraints.class.simpleName}-MDP"
+            String mdpSheetName = getSheetName(mdp)
             Sheet sheet = workbook.createSheet(mdpSheetName)
             properties.addProperty(mdpSheetName, sheet.sheetName)
             Row headerRow = sheet.createRow(0)
@@ -118,6 +110,7 @@ class ExcelExportHandler {
 
                     Object classifierParameter = classifier.getType(parmName)
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
+                        setCellComment(parameterCell, getSheetName(classifierParameter))
                         addParameter(classifierParameter)
 
                     }
@@ -134,8 +127,12 @@ class ExcelExportHandler {
         return columnIndex
     }
 
+    private static String getSheetName(ConstrainedMultiDimensionalParameter constrainedMultiDimensionalParameter) {
+        String name = "${constrainedMultiDimensionalParameter.constraints.class.simpleName}-MDP"
+        return name.substring(0, Math.min(name.length(), 31));
+    }
 
-    void addParameter(ConstrainedMultiDimensionalParameter multiDimensionalParameter) {
+    private addParameter(ConstrainedMultiDimensionalParameter multiDimensionalParameter) {
         if (!multiDimensionalParameters*.constraints.contains(multiDimensionalParameter.constraints)) {
             multiDimensionalParameters << multiDimensionalParameter
         }
@@ -156,12 +153,12 @@ class ExcelExportHandler {
         cell.setCellStyle(style)
     }
 
-    private static setCellComment(Cell cell, String commentString) {
+    private static setCellComment(Cell cell, String commentString, int width = 4) {
         ClientAnchor anchor = cell.row.sheet.workbook.creationHelper.createClientAnchor()
         anchor.setCol1(cell.columnIndex);
-        anchor.setCol2(cell.columnIndex + 1);
+        anchor.setCol2(cell.columnIndex + width);
         anchor.setRow1(cell.row.rowNum);
-        anchor.setRow2(cell.row.rowNum + 3);
+        anchor.setRow2(cell.row.rowNum + 1);
         Comment comment = cell.row.getSheet().createDrawingPatriarch().createCellComment(anchor)
         comment.setString(new XSSFRichTextString(commentString))
         cell.setCellComment(comment)
