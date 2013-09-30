@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
@@ -34,8 +35,9 @@ class ExcelExportHandler {
         model.allComponents.each { Component component ->
             Sheet sheet = workbook.createSheet(component.name)
             Row headerRow = sheet.createRow(0)
+            Row technicalHeaderRow = sheet.createRow(1)
 
-            handleComponent(component, headerRow, 0)
+            handleComponent(component, headerRow, technicalHeaderRow, 0)
             (0..sheet.getRow(0).getLastCellNum()).each {
                 sheet.autoSizeColumn(it)
             }
@@ -56,68 +58,80 @@ class ExcelExportHandler {
 
     }
 
-    private int handleComponent(Component component, Row headerRow, int columnIndex) {
+    private int handleComponent(Component component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
         List allParms = getAllParms(component)
         for (String parm in allParms) {
-            Cell cell = headerRow.createCell(columnIndex++, Cell.CELL_TYPE_STRING)
+            Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+            Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
             setFont(cell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
-            cell.setCellValue(parm)
-            columnIndex = addParameterCells(component[parm], headerRow, columnIndex)
+            setFont(technicalCell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
+            String displayName = I18NUtils.findParameterDisplayName(component, parm)
+            cell.setCellValue(displayName ?: parm)
+            technicalCell.setCellValue(parm)
+            columnIndex = addParameterCells(component[parm], headerRow, technicalHeaderRow, ++columnIndex)
         }
 
         return columnIndex
     }
 
-    private int handleComponent(ComposedComponent component, Row headerRow, int columnIndex) {
-        columnIndex = handleComponent(component as Component, headerRow, columnIndex)
+    private int handleComponent(ComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
+        columnIndex = handleComponent(component as Component, headerRow, technicalHeaderRow, columnIndex)
         for (Component subComponent in component.allSubComponents()) {
             String propertyName = component.properties.entrySet().find { it.value == subComponent }.key
-            headerRow.createCell(columnIndex++).setCellValue(propertyName)
-            columnIndex = handleComponent(subComponent, headerRow, columnIndex)
+            Cell technicalCell = technicalHeaderRow.createCell(columnIndex)
+            Cell cell = headerRow.createCell(columnIndex)
+            String displayName = I18NUtils.findParameterDisplayName(component, propertyName)
+            cell.setCellValue(displayName ?: propertyName)
+            technicalCell.setCellValue(propertyName)
+            columnIndex = handleComponent(subComponent, headerRow, technicalHeaderRow, ++columnIndex)
         }
 
         return columnIndex
 
     }
 
-    private int handleComponent(DynamicComposedComponent component, Row headerRow, int columnIndex) {
-        Cell cell = headerRow.createCell(columnIndex++, Cell.CELL_TYPE_STRING)
-        setCellComment(cell, "To disable import add '#' to this row")
-        cell.setCellValue('Disable Import')
-        headerRow.createCell(columnIndex++).setCellValue('Component Name')
-        return handleComponent(component.createDefaultSubComponent(), headerRow, columnIndex)
+    private int handleComponent(DynamicComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
+        Cell technicalCell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+        Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+        setCellComment(technicalCell, "To disable import add '#' to this row")
+        technicalCell.setCellValue('Disable Import')
+        technicalHeaderRow.createCell(columnIndex).setCellValue('Component Name')
+        return handleComponent(component.createDefaultSubComponent(), headerRow, technicalHeaderRow, ++columnIndex)
     }
 
-    private int addParameterCells(def parmObject, Row headerRow, int columnIndex) {
+    private int addParameterCells(def parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex) {
         columnIndex
     }
 
-    private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, int columnIndex) {
+    private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, Row technicalHeaderRow, int columnIndex) {
         addParameter(multiDimensionalParameter)
         return columnIndex
     }
 
-    private int addParameterCells(IParameterObject parmObject, Row headerRow, int columnIndex) {
+    private int addParameterCells(IParameterObject parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex) {
         List<IParameterObjectClassifier> classifiers = parmObject.type.getClassifiers()
         Set writtenParameters = []
         classifiers.each { IParameterObjectClassifier classifier ->
             for (String parmName : classifier.parameterNames) {
                 if (!writtenParameters.contains(parmName)) {
                     writtenParameters << parmName
-                    Cell parameterCell = headerRow.createCell(columnIndex++, Cell.CELL_TYPE_STRING)
-                    setFont(parameterCell, 8 as short, true)
-                    parameterCell.setCellValue(parmName)
+                    Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+                    Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+                    setFont(cell, 8 as short, true)
+                    setFont(technicalCell, 8 as short, true)
+                    technicalCell.setCellValue(parmName)
+                    cell.setCellValue(parmName)
 
                     Object classifierParameter = classifier.getType(parmName)
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
-                        setCellComment(parameterCell, getSheetName(classifierParameter))
+                        setCellComment(cell, getSheetName(classifierParameter))
                         addParameter(classifierParameter)
 
                     }
                     if (parmObject.class == classifierParameter.class) {
                         // TODO (recursive call with same classifier not supported.)
                     } else {
-                        columnIndex = addParameterCells(classifierParameter, headerRow, columnIndex)
+                        columnIndex = addParameterCells(classifierParameter, headerRow, technicalHeaderRow, ++columnIndex)
 
                     }
                 }
