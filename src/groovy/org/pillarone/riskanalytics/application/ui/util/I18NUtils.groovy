@@ -39,7 +39,10 @@ public class I18NUtils {
     }
 
     public static String findParameterDisplayName(ComponentTableTreeNode componentNode, String subPath, String toolTip = "") {
-        Component component = componentNode.component
+        return findParameterDisplayName(componentNode.component, subPath, toolTip)
+    }
+
+    public static String findParameterDisplayName(Component component, String subPath, String toolTip = "") {
         String value = null
         String parmKey = subPath.replaceAll(":", ".")
         try {
@@ -49,6 +52,7 @@ public class I18NUtils {
             return findParameterDisplayNameBySuperClass(component.getClass().getSuperclass(), parmKey, toolTip)
         }
         return value
+
     }
 
     public static String findParameterDisplayName(SimpleTableTreeNode componentNode, String subPath, String toolTip = "") {
