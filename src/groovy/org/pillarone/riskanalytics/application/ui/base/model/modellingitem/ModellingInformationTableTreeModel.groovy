@@ -61,7 +61,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void buildTreeNodes() {
-        currentFilter.allFieldsFilter.query = ""
         List<ModellingItem> modellingItems = getFilteredItems()
         builder.buildTreeNodes(modellingItems)
     }
