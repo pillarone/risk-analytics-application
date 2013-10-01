@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.main.action
+package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import org.apache.poi.POIXMLProperties
 import org.apache.poi.ss.usermodel.*
@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
@@ -15,11 +16,12 @@ import org.pillarone.riskanalytics.core.parameterization.IParameterObject
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
-class ExcelExportHandler {
+class ExcelExportHandler extends AbstractExcelHandler {
     Model model
     List<ConstrainedMultiDimensionalParameter> multiDimensionalParameters = []
 
     ExcelExportHandler(Model model) {
+        super()
         this.model = model
     }
 
@@ -38,8 +40,10 @@ class ExcelExportHandler {
             Row technicalHeaderRow = sheet.createRow(1)
 
             handleComponent(component, headerRow, technicalHeaderRow, 0)
-            (0..sheet.getRow(0).getLastCellNum()).each {
-                sheet.autoSizeColumn(it)
+            if (sheet.getRow(0).lastCellNum > 0) {
+                (0..sheet.getRow(0).getLastCellNum()).each {
+                    sheet.autoSizeColumn(it)
+                }
             }
         }
         multiDimensionalParameters.each { ConstrainedMultiDimensionalParameter mdp ->
@@ -66,7 +70,8 @@ class ExcelExportHandler {
             setFont(cell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             setFont(technicalCell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             String displayName = I18NUtils.findParameterDisplayName(component, parm)
-            cell.setCellValue(displayName ?: parm)
+            //TODO: call normalizedName
+            cell.setCellValue(displayName ?: ComponentUtils.getNormalizedName(parm))
             technicalCell.setCellValue(parm)
             columnIndex = addParameterCells(component[parm], headerRow, technicalHeaderRow, ++columnIndex)
         }
@@ -91,11 +96,14 @@ class ExcelExportHandler {
     }
 
     private int handleComponent(DynamicComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
-        Cell technicalCell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+        Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
         Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
         setCellComment(technicalCell, "To disable import add '#' to this row")
-        technicalCell.setCellValue('Disable Import')
-        technicalHeaderRow.createCell(columnIndex).setCellValue('Component Name')
+        technicalCell.setCellValue(DISABLE_IMPORT)
+        cell.setCellValue(DISABLE_IMPORT)
+        columnIndex++
+        headerRow.createCell(columnIndex).setCellValue(COMPONENT_HEADER_NAME)
+        technicalHeaderRow.createCell(columnIndex).setCellValue(COMPONENT_HEADER_NAME)
         return handleComponent(component.createDefaultSubComponent(), headerRow, technicalHeaderRow, ++columnIndex)
     }
 
@@ -125,6 +133,8 @@ class ExcelExportHandler {
                     Object classifierParameter = classifier.getType(parmName)
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
                         setCellComment(cell, getSheetName(classifierParameter))
+                        //TODO
+//                        cell.setCellValue("=HYPERLINK(\"#Exampleresourceconstraints-MDP\";\"retrospectivereinsurance\")")
                         addParameter(classifierParameter)
 
                     }
@@ -151,10 +161,6 @@ class ExcelExportHandler {
             multiDimensionalParameters << multiDimensionalParameter
         }
 
-    }
-
-    private List getAllParms(Component component) {
-        TreeBuilderUtil.collectProperties(component, 'parm')
     }
 
     private static setFont(Cell cell, short fontSize, boolean italic, short bold = Font.BOLDWEIGHT_NORMAL) {

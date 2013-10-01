@@ -1,10 +1,10 @@
-package org.pillarone.riskanalytics.application.ui.main.action
+package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import models.application.ApplicationModel
 import models.orsa.ORSAModel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelExportHandler
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.components.ExampleMultiMarkerConstraint
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 import org.pillarone.riskanalytics.domain.pc.cf.claim.ClaimTypeSelectionTableConstraints
@@ -85,7 +85,7 @@ class ExcelExportHandlerTests extends GroovyTestCase {
     }
 
     void testExportModel() {
-        ExcelExportHandler handler = new ExcelExportHandler(new ORSAModel())
+        ExcelExportHandler handler = new ExcelExportHandler(new ApplicationModel())
         byte[] result = handler.exportModel()
         assert result != null
         new XSSFWorkbook(new ByteArrayInputStream(result)).write(new FileOutputStream(new File('exportresult.xlsx')))
