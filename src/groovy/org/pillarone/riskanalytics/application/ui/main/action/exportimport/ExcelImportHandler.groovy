@@ -4,6 +4,7 @@ import org.apache.poi.POIXMLProperties
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.codehaus.plexus.interpolation.util.StringUtils
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.components.Component
@@ -31,12 +32,15 @@ class ExcelImportHandler extends AbstractExcelHandler {
      */
     List<ImportResult> validate() {
         List<ImportResult> result = []
-        POIXMLProperties properties = workbook.getProperties()
-        POIXMLProperties.CustomProperties customProperties = properties.getCustomProperties()
-        if (!customProperties.contains('Model')) {
-            result << new ImportResult("Excel File does not contain mandatory property 'Model'", ImportResult.Type.ERROR)
+        XSSFSheet sheet = workbook.getSheet(META_INFO_SHEET)
+        if (!sheet){
+            result << new ImportResult("Excel File does not contain mandatory sheet '$META_INFO_SHEET'", ImportResult.Type.ERROR)
+        }else {
+            if (!findModelName()){
+                result << new ImportResult("Excel File does not contain mandatory sheet '$META_INFO_SHEET'", ImportResult.Type.ERROR)
+            }
         }
-        result
+        return result
     }
 
     List<ImportResult> process() {
@@ -60,7 +64,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
             Integer columnIndex = findParameterColumnIndex(sheet, paramName, columnStartIndex)
             if (dataRow && columnIndex != null) {
                 Cell cell = dataRow.getCell(columnIndex)
-                if (cell){
+                if (cell) {
                     def paramType = component[paramName]
                     component[paramName] = toType(paramType, cell)
                 }
@@ -77,52 +81,68 @@ class ExcelImportHandler extends AbstractExcelHandler {
         objectClass.setStringValue(cell.stringCellValue)
         return objectClass
     }
+
     def toType(IParameterObject objectClass, Cell cell) {
         AbstractParameterObjectClassifier classifier = objectClass.type.class."${cell.stringCellValue}"
         Map parameters = [:]
-        classifier.getParameterNames().each {String parameterName->
-            int parameterColumnIndex = findColumnIndex(cell.sheet,parameterName, cell.columnIndex)
+        classifier.getParameterNames().each { String parameterName ->
+            int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex)
             parameters.put(parameterName, toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex)))
         }
         return classifier.getParameterObject(parameters)
     }
 
     def toType(ConstrainedMultiDimensionalParameter mdp, Cell cell) {
-        def mdpSheet = cell.sheet.workbook.getSheet("${mdp.constraints.class.simpleName}-MDP")
+        def mdpSheet = findMdpSheet(cell)
         def tableName = cell.stringCellValue
-        int tableColumnIndex  = findColumnIndex(mdpSheet,tableName, 0)
+        int tableColumnIndex = findColumnIndex(mdpSheet, tableName, 0)
         List<List> values = []
         mdp.valueColumnCount.times {
             values << []
         }
-        (DATA_ROW_START_INDEX..mdpSheet.lastRowNum).each {int rowIndex ->
+        (DATA_ROW_START_INDEX..mdpSheet.lastRowNum).each { int rowIndex ->
             Row row = mdpSheet.getRow(rowIndex)
-            for (int columnIndex = tableColumnIndex; columnIndex < tableColumnIndex+ mdp.valueColumnCount; columnIndex++){
+            for (int columnIndex = tableColumnIndex; columnIndex < tableColumnIndex + mdp.valueColumnCount; columnIndex++) {
                 Cell dataCell = row.getCell(columnIndex)
-                if (dataCell){
-                    values[columnIndex-tableColumnIndex]<< toType(mdp.constraints.getColumnType(columnIndex - tableColumnIndex).newInstance(), dataCell)
+                if (dataCell) {
+                    values[columnIndex - tableColumnIndex] << toType(newInstance(mdp.constraints.getColumnType(columnIndex - tableColumnIndex)), dataCell)
                 }
             }
         }
         return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
     }
 
+    def newInstance(Class clazz){
+        switch (clazz){
+            case Integer:
+                return new Integer(0)
+            case Double:
+                return new Double(0)
+            default:
+                return clazz.newInstance()
+        }
+    }
+
     def toType(Integer objectClass, Cell cell) {
-        return cell.getNumericCellValue()
+        return cell.getNumericCellValue() as Integer
     }
 
     def toType(Double objectClass, Cell cell) {
-        return cell.getNumericCellValue()
+        return cell.getNumericCellValue() as Double
     }
 
     def toType(DateTime objectClass, Cell cell) {
         return new DateTime(cell.getDateCellValue().time)
     }
 
+    def toType(Boolean objectClass, Cell cell) {
+        return Boolean.parseBoolean(cell.stringCellValue)
+    }
+
     def toType(IResource resource, Cell cell) {
         String value = cell.stringCellValue
         String[] values = value.split(" v")
-        return new ResourceHolder(resource.class, values[0],new VersionNumber(values[1]))
+        return new ResourceHolder(resource.class, values[0], new VersionNumber(values[1]))
     }
 
     def toType(def objectClass, Cell cell) {
@@ -132,7 +152,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
     List<ImportResult> handleComponent(DynamicComposedComponent component, Sheet sheet, int rowIndex, int columnStartIndex) {
         List<ImportResult> result = []
         result.addAll(handleComponent(component as Component, sheet, DATA_ROW_START_INDEX, columnStartIndex))
-        for (int rowIdx = rowIndex; rowIdx < sheet.lastRowNum; rowIdx++) {
+        for (int rowIdx = rowIndex; rowIdx <= sheet.lastRowNum; rowIdx++) {
             Row row = sheet.getRow(rowIdx)
             Component subComponent = component.createDefaultSubComponent()
             String componentName = row.getCell(findColumnIndex(sheet, COMPONENT_HEADER_NAME, columnStartIndex))
@@ -150,7 +170,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
         for (Component subComponent in component.allSubComponents()) {
             String propertyName = component.properties.entrySet().find { it.value == subComponent }.key
             Integer columnIndex = findColumnIndex(sheet, propertyName, columnStartIndex)
-            result.addAll(handleComponent(subComponent, sheet, DATA_ROW_START_INDEX, columnIndex?:0))
+            result.addAll(handleComponent(subComponent, sheet, DATA_ROW_START_INDEX, columnIndex ?: 0))
         }
         return result
     }

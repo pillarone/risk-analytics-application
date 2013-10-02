@@ -4,6 +4,7 @@ import org.apache.poi.POIXMLProperties
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFHyperlink
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
@@ -31,27 +32,17 @@ class ExcelExportHandler extends AbstractExcelHandler {
         model.injectComponentNames()
         OutputStream outputStream = new ByteArrayOutputStream()
         Workbook workbook = new XSSFWorkbook()
-        POIXMLProperties.CustomProperties properties = workbook.getProperties().customProperties
-        //TODO (add other meta properties if needed)
-        properties.addProperty('Model', model.class.name)
-        properties.addProperty('application-version', new PropertiesUtils().getProperties("/version.properties").getProperty("version", "N/A"))
         model.allComponents.each { Component component ->
             Sheet sheet = workbook.createSheet(component.name)
             Row headerRow = sheet.createRow(0)
             Row technicalHeaderRow = sheet.createRow(1)
 
             handleComponent(component, headerRow, technicalHeaderRow, 0)
-            if (sheet.getRow(0).lastCellNum > 0) {
-                (0..sheet.getRow(0).getLastCellNum()).each {
-                    sheet.autoSizeColumn(it)
-                }
-            }
         }
         mdpConstraintsWithTitles.each { Map.Entry<IMultiDimensionalConstraints, List<MDPTitleContraints>> entry ->
             entry.value.eachWithIndex { MDPTitleContraints constraints, int index ->
                 String mdpSheetName = getSheetName(constraints)
                 Sheet sheet = workbook.createSheet(mdpSheetName)
-                properties.addProperty(mdpSheetName, sheet.sheetName)
                 Row headerRow = sheet.createRow(0)
                 headerRow.createCell(0).setCellValue('Link to component todo...')
                 Row columnNameRow = sheet.createRow(1)
@@ -60,6 +51,15 @@ class ExcelExportHandler extends AbstractExcelHandler {
                 }
             }
         }
+        workbook.numberOfSheets.times {
+            Sheet sheet = workbook.getSheetAt(it)
+            if (sheet.getRow(0).lastCellNum > 0) {
+                (0..sheet.getRow(0).getLastCellNum()).each {
+                    sheet.autoSizeColumn(it)
+                }
+            }
+        }
+        addMetaInfo(workbook,model)
         workbook.write(outputStream)
         return outputStream.toByteArray()
 
@@ -119,7 +119,9 @@ class ExcelExportHandler extends AbstractExcelHandler {
 
     private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell) {
         addParameter(multiDimensionalParameter)
-        setCellComment(cell, getSheetName(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints)))
+        String sheetName = getSheetName(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints))
+        setCellComment(cell, sheetName)
+        setHyperlink(cell, sheetName)
         return columnIndex
     }
 
@@ -142,11 +144,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                         addParameter(classifierParameter)
                         String sheetName = getSheetName(new MDPTitleContraints(classifierParameter.titles, classifierParameter.constraints))
                         setCellComment(cell, sheetName)
-                        //TODO
-                        Hyperlink hyperlink = cell.sheet.workbook.creationHelper.createHyperlink(Hyperlink.LINK_DOCUMENT)
-                        hyperlink.setAddress(sheetName)
-                        cell.setHyperlink(hyperlink)
-
+                        setHyperlink(cell, sheetName)
                     }
                     if (parmObject.class == classifierParameter.class) {
                         // TODO (recursive call with same classifier not supported.)
@@ -161,11 +159,11 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return columnIndex
     }
 
-    private String getSheetName(MDPTitleContraints mdpTitleContraints) {
+    private String getSheetName(MDPTitleContraints mdpTitleContraints, boolean truncate = true) {
         List<MDPTitleContraints> mdpsForConstraints = mdpConstraintsWithTitles.get(mdpTitleContraints.constraints)
         String counter = mdpsForConstraints.indexOf(mdpTitleContraints)
         String name = "MDP${counter}-${mdpTitleContraints.constraints.class.simpleName}"
-        return name.substring(0, Math.min(name.length(), 31));
+        return truncate ? name.substring(0, Math.min(name.length(), 31)): name
     }
 
     private addParameter(ConstrainedMultiDimensionalParameter multiDimensionalParameter) {
@@ -201,6 +199,13 @@ class ExcelExportHandler extends AbstractExcelHandler {
         comment.setString(new XSSFRichTextString(commentString))
         cell.setCellComment(comment)
     }
+
+    private static setHyperlink(Cell cell, String address) {
+        Hyperlink hyperlink = cell.sheet.workbook.creationHelper.createHyperlink(Hyperlink.LINK_DOCUMENT)
+        hyperlink.setAddress(address)
+        cell.setHyperlink(hyperlink)
+    }
+
 
     class MDPTitleContraints {
         List<String> titles

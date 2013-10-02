@@ -85,9 +85,9 @@ class ExcelExportHandlerTests extends GroovyTestCase {
     }
 
     void testExportModel() {
-        ExcelExportHandler handler = new ExcelExportHandler(new ApplicationModel())
+        ExcelExportHandler handler = new ExcelExportHandler(new ORSAModel())
         byte[] result = handler.exportModel()
         assert result != null
-        new XSSFWorkbook(new ByteArrayInputStream(result)).write(new FileOutputStream(new File('exportresult.xlsx')))
+        new XSSFWorkbook(new ByteArrayInputStream(result)).write(new FileOutputStream(new File('exportresult3.xlsx')))
     }
 }

@@ -1,20 +1,29 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import models.application.ApplicationModel
+import models.orsa.ORSAModel
 import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.usermodel.Comment
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.xssf.usermodel.XSSFRow
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
 class AbstractExcelHandler {
     XSSFWorkbook workbook = new XSSFWorkbook()
     Model modelInstance
     protected static String COMPONENT_HEADER_NAME = 'Component Name'
     protected static String DISABLE_IMPORT = 'Disable Import'
+    protected static String META_INFO_SHEET = 'Meta-Info'
+    protected static String MODEL_INFO_KEY = 'Model'
+    protected static String APPLICATION_VERSION_KEY = 'application-version'
     protected static final int DATA_ROW_START_INDEX = 2
     protected static final int TECHNICAL_HEADER_ROW_INDEX = 1
     protected static final int HEADER_ROW_INDEX = 0
@@ -28,16 +37,18 @@ class AbstractExcelHandler {
     }
 
     Model getModel() {
-        List<CTProperty> properties = workbook.getProperties().customProperties.underlyingProperties.propertyList
-        CTProperty modelProperty
-        for (CTProperty p : properties) {
-            if (p.getName().equals('Model')) {
-                modelProperty = p
-            }
+        return Thread.currentThread().contextClassLoader.loadClass(findModelName()).newInstance() as Model
+    }
+
+    String findModelName() {
+        XSSFSheet sheet = workbook.getSheet(META_INFO_SHEET)
+        if (sheet) {
+            Row modelNameRow = sheet.rowIterator().find { Row row ->
+                row.getCell(0).stringCellValue == MODEL_INFO_KEY
+            } as Row
+            return modelNameRow.getCell(1).stringCellValue
         }
-//        assert modelProperty.lpwstr
-//        return Thread.currentThread().contextClassLoader.loadClass(modelProperty.lpwstr).newInstance() as Model
-        return new ApplicationModel()
+        return null
     }
 
     Integer findParameterColumnIndex(Sheet sheet, String name, int columnStartIndex) {
@@ -76,4 +87,24 @@ class AbstractExcelHandler {
         TreeBuilderUtil.collectProperties(component, 'parm')
     }
 
+    protected void addRow(XSSFSheet sheet, String key, String value) {
+        XSSFRow row = sheet.createRow(sheet.lastRowNum + 1)
+        row.createCell(0).setCellValue(key)
+        row.createCell(1).setCellValue(value)
+    }
+
+    Sheet findMdpSheet(Cell cell) {
+        Row row = cell.sheet.getRow(HEADER_ROW_INDEX)
+        Comment comment = row.getCell(cell.columnIndex).getCellComment()
+        String mdpSheetName = comment.string.string
+        assert mdpSheetName
+        return workbook.getSheet(mdpSheetName)
+    }
+
+    void addMetaInfo(XSSFWorkbook workbook, Model model) {
+        XSSFSheet metaInfoSheet = workbook.createSheet(META_INFO_SHEET)
+        addRow(metaInfoSheet, MODEL_INFO_KEY, model.class.name)
+        addRow(metaInfoSheet, APPLICATION_VERSION_KEY, new PropertiesUtils().getProperties("/version.properties").getProperty("version", "N/A"))
+
+    }
 }
