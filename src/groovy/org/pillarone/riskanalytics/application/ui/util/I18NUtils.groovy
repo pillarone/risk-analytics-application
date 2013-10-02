@@ -120,6 +120,8 @@ public class I18NUtils {
 
     public static String findEnumDisplayName(Class declatingEnumClass, String enumValue) {
         String value
+        String enumClassName = StringUtils.lowercaseFirstLetter(declatingEnumClass.simpleName)
+        String enumType = "${declatingEnumClass.package.name}.${enumClassName}"
         try {
             ResourceBundle bundle = LocaleResources.getBundle("${enumType}Resources")
             value = bundle.getString(enumValue)
@@ -193,8 +195,6 @@ public class I18NUtils {
 
     private static String findDisplayNameByPacketSuperClass(Class packetClass, String parmKey) {
         String value
-        String enumClassName = StringUtils.lowercaseFirstLetter(declatingEnumClass.simpleName)
-        String enumType = "${declatingEnumClass.package.name}.${enumClassName}"
         try {
             if (packetClass != null) {
                 ResourceBundle bundle = findResourceBundle(packetClass)
