@@ -47,10 +47,11 @@ public class Formatter {
     static String format(List list, Locale locale, ConstrainedMultiDimensionalParameter mdp = null, int index = 0) {
         if (list.any { it instanceof List }) {
             StringBuilder result = new StringBuilder()
-            String results = ""
+            List formattedList = []
             for (int i = 0; i < list.size(); i++) {
-                results += format(list[i], locale, mdp, i) + "; "
+                formattedList <<  format(list[i], locale, mdp, i)
             }
+            String results = formattedList.join('; ')
             result << "["
             result << results
             result << "]"
