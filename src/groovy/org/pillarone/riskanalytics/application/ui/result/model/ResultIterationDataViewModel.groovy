@@ -58,10 +58,10 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     public String getCounterString() {
         int found = results.size()
+        String moreHint = (found < simulationRun.iterations) ? " (press Search button for more)." : ".";
         java.text.NumberFormat numberFormat = LocaleResources.getNumberFormat()
-        "Found ${numberFormat.format(found)} out of ${numberFormat.format(simulationRun.iterations)} Iterations"
+        "Found ${numberFormat.format(found)} out of ${numberFormat.format(simulationRun.iterations)} Iterations${moreHint}"
     }
-
 
 
     public List getColumnHeader() {
