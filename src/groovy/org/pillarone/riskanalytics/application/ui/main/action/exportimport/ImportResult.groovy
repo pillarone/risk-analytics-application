@@ -17,6 +17,18 @@ class ImportResult {
         this.type = type
     }
 
+    @Override
+    public java.lang.String toString() {
+        return "ImportResult{" +
+                "sheetName='" + sheetName + '\'' +
+                ", rowIndex=" + rowIndex +
+                ", message='" + message + '\'' +
+                ", type=" + type +
+                '}';
+    }
+
+
+
     enum Type {
         SUCCESS, ERROR, WARNING
     }

@@ -98,6 +98,9 @@ class ExcelImportHandler extends AbstractExcelHandler {
             Cell parameterCell = cell.row.getCell(parameterColumnIndex)
             if (parameterCell){
                 parameters.put(parameterName, toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex)))
+            }else {
+                // using default.
+                parameters.put(parameterName,classifier.parameters[parameterName])
             }
         }
         return classifier.getParameterObject(parameters)
