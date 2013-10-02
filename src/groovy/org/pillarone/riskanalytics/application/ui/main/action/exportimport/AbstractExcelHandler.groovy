@@ -75,7 +75,7 @@ class AbstractExcelHandler {
             Row row = sheet.getRow(it)
             for (int index = columnStartIndex; index < row.lastCellNum; index++) {
                 Cell cell = row.getCell(index)
-                if (cell.getStringCellValue().equals(name)) {
+                if (cell && cell.getStringCellValue().equals(name)) {
                     columnIndex = index
                 }
             }
