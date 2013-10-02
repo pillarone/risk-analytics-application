@@ -70,17 +70,16 @@ class AbstractExcelHandler {
     }
 
     Integer findColumnIndex(Sheet sheet, String name, int columnStartIndex) {
-        Integer columnIndex = null
-        (HEADER_ROW_INDEX..TECHNICAL_HEADER_ROW_INDEX).each {
-            Row row = sheet.getRow(it)
+        for (int i = HEADER_ROW_INDEX; i < TECHNICAL_HEADER_ROW_INDEX; i++) {
+            Row row = sheet.getRow(i)
             for (int index = columnStartIndex; index < row.lastCellNum; index++) {
                 Cell cell = row.getCell(index)
                 if (cell && cell.getStringCellValue().equals(name)) {
-                    columnIndex = index
+                    return index
                 }
             }
         }
-        return columnIndex
+        return null
     }
 
     protected List getAllParms(Component component) {
@@ -106,5 +105,11 @@ class AbstractExcelHandler {
         addRow(metaInfoSheet, MODEL_INFO_KEY, model.class.name)
         addRow(metaInfoSheet, APPLICATION_VERSION_KEY, new PropertiesUtils().getProperties("/version.properties").getProperty("version", "N/A"))
 
+    }
+
+    boolean importEnabled(Row row, int columnStartIndex) {
+        int columnIndex = findColumnIndex(row.sheet, DISABLE_IMPORT, columnStartIndex)
+        Cell cell = row.getCell(columnIndex)
+        return !cell?.stringCellValue?.contains('#')
     }
 }

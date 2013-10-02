@@ -97,7 +97,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     }
 
     void testParseExcel(){
-        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/develop/pillarone/risk-analytics-application/exportresult2.xlsx'))
+        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/develop/pillarone/risk-analytics-application/exportresult3-withData.xlsx'))
 //        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/temp/pmo-2449/exportresult.xlsx'))
         List result = handler.process()
         Model model = handler.modelInstance

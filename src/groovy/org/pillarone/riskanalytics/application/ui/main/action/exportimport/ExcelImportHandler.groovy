@@ -15,8 +15,11 @@ import org.pillarone.riskanalytics.core.components.ResourceHolder
 import org.pillarone.riskanalytics.core.example.component.ExampleResource
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.AbstractParameterObjectClassifier
+import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.parameterization.ComboBoxTableMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedString
+import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.IParameterObject
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
@@ -77,6 +80,11 @@ class ExcelImportHandler extends AbstractExcelHandler {
         return objectClass.class.valueOf(cell.stringCellValue)
     }
 
+    def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell) {
+        objectClass.setValueAt(cell.stringCellValue, 1,0)
+        return objectClass
+    }
+
     def toType(ConstrainedString objectClass, Cell cell) {
         objectClass.setStringValue(cell.stringCellValue)
         return objectClass
@@ -87,7 +95,10 @@ class ExcelImportHandler extends AbstractExcelHandler {
         Map parameters = [:]
         classifier.getParameterNames().each { String parameterName ->
             int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex)
-            parameters.put(parameterName, toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex)))
+            Cell parameterCell = cell.row.getCell(parameterColumnIndex)
+            if (parameterCell){
+                parameters.put(parameterName, toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex)))
+            }
         }
         return classifier.getParameterObject(parameters)
     }
@@ -102,10 +113,12 @@ class ExcelImportHandler extends AbstractExcelHandler {
         }
         (DATA_ROW_START_INDEX..mdpSheet.lastRowNum).each { int rowIndex ->
             Row row = mdpSheet.getRow(rowIndex)
-            for (int columnIndex = tableColumnIndex; columnIndex < tableColumnIndex + mdp.valueColumnCount; columnIndex++) {
-                Cell dataCell = row.getCell(columnIndex)
-                if (dataCell) {
-                    values[columnIndex - tableColumnIndex] << toType(newInstance(mdp.constraints.getColumnType(columnIndex - tableColumnIndex)), dataCell)
+            if (row){
+                for (int columnIndex = tableColumnIndex; columnIndex < tableColumnIndex + mdp.valueColumnCount; columnIndex++) {
+                    Cell dataCell = row.getCell(columnIndex)
+                    if (dataCell) {
+                        values[columnIndex - tableColumnIndex] << toType(newInstance(mdp.constraints.getColumnType(columnIndex - tableColumnIndex)), dataCell)
+                    }
                 }
             }
         }
@@ -154,14 +167,17 @@ class ExcelImportHandler extends AbstractExcelHandler {
         result.addAll(handleComponent(component as Component, sheet, DATA_ROW_START_INDEX, columnStartIndex))
         for (int rowIdx = rowIndex; rowIdx <= sheet.lastRowNum; rowIdx++) {
             Row row = sheet.getRow(rowIdx)
-            Component subComponent = component.createDefaultSubComponent()
             String componentName = row.getCell(findColumnIndex(sheet, COMPONENT_HEADER_NAME, columnStartIndex))
-            subComponent.setName("sub${StringUtils.capitalizeFirstLetter(componentName)}")
-            component.addSubComponent(subComponent)
-            handleComponent(subComponent, sheet, rowIdx, columnStartIndex)
-            result << new ImportResult(sheet.sheetName, rowIdx, "$componentName processed", ImportResult.Type.SUCCESS)
+            if (componentName && importEnabled(row,columnStartIndex)){
+                Component subComponent = component.createDefaultSubComponent()
+                componentName = componentName.replaceAll(' ','')
+                subComponent.setName("sub${StringUtils.capitalizeFirstLetter(componentName)}")
+                component.addSubComponent(subComponent)
+                handleComponent(subComponent, sheet, rowIdx, columnStartIndex)
+                result << new ImportResult(sheet.sheetName, rowIdx, "$componentName processed", ImportResult.Type.SUCCESS)
+            }
         }
-        result
+        return result
     }
 
     List<ImportResult> handleComponent(ComposedComponent component, Sheet sheet, int rowIndex, int columnStartIndex) {
