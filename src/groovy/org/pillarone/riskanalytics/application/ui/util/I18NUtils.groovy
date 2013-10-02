@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.util.HTMLUtilities
+import org.apache.maven.artifact.ant.shaded.StringUtils
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import java.text.MessageFormat
 import org.apache.commons.logging.Log
@@ -117,10 +118,10 @@ public class I18NUtils {
         return value
     }
 
-    public static String findEnumDisplayName(String enumType, String enumValue) {
+    public static String findEnumDisplayName(Class declatingEnumClass, String enumValue) {
         String value
         try {
-            ResourceBundle bundle = LocaleResources.getBundle(enumType + "Resources")
+            ResourceBundle bundle = LocaleResources.getBundle("${enumType}Resources")
             value = bundle.getString(enumValue)
         } catch (java.util.MissingResourceException e) {
             LOG.trace("resource for ${enumType} not found. Key: ${enumValue}")
@@ -192,6 +193,8 @@ public class I18NUtils {
 
     private static String findDisplayNameByPacketSuperClass(Class packetClass, String parmKey) {
         String value
+        String enumClassName = StringUtils.lowercaseFirstLetter(declatingEnumClass.simpleName)
+        String enumType = "${declatingEnumClass.package.name}.${enumClassName}"
         try {
             if (packetClass != null) {
                 ResourceBundle bundle = findResourceBundle(packetClass)
