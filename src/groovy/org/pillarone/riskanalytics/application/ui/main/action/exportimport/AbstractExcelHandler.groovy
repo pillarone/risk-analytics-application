@@ -1,23 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import com.ulcjava.base.application.util.IFileLoadHandler
-import models.application.ApplicationModel
-import models.orsa.ORSAModel
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Comment
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
-import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
-import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
-abstract class AbstractExcelHandler  implements IFileLoadHandler {
+abstract class AbstractExcelHandler implements IFileLoadHandler {
     XSSFWorkbook workbook = new XSSFWorkbook()
     Model modelInstance
     protected static String COMPONENT_HEADER_NAME = 'Component Name'
@@ -112,5 +108,14 @@ abstract class AbstractExcelHandler  implements IFileLoadHandler {
         int columnIndex = findColumnIndex(row.sheet, DISABLE_IMPORT, columnStartIndex)
         Cell cell = row.getCell(columnIndex)
         return !cell?.stringCellValue?.contains('#')
+    }
+
+    protected String toSubComponentName(String name) {
+        if (name && name.size() > 1){
+            String firstLetterUpperCase = name[0].toUpperCase()
+            return "sub$firstLetterUpperCase${name.substring(1).replaceAll(' ','')}"
+
+        }
+        return name
     }
 }

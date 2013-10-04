@@ -96,21 +96,19 @@ class ExcelImportHandlerTests extends GroovyTestCase {
 
     void testValidation() {
         ExcelImportHandler handler = new ExcelImportHandler(exportFile)
-        List<ImportResult> result = handler.validate()
+        List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 0 == result.size()
     }
 
     void testParseExcel() {
-        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/develop/pillarone/risk-analytics-application/exportresult3-withData.xlsx'))
+        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/temp/exportresult3-withData.xlsx'))
 //        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/temp/pmo-2449/exportresult.xlsx'))
         List result = handler.process()
         Model model = handler.modelInstance
         List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(model, 1)
         //ParameterHolder enumHolder = parameterHolders.find{it.path == 'parameterComponent:parmEnumParameter'}
         assert parameterHolders
-        Parameterization parameterization = new Parameterization('detlef123', model.class)
-        parameterization.parameterHolders = parameterHolders
-        assert 27 == result.size()
+        assert 31 == result.size()
         //assert enumHolder instanceof EnumParameterHolder
         //assert ExampleEnum.SECOND_VALUE == enumHolder.businessObject
     }
