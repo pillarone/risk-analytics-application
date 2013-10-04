@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
+import com.ulcjava.base.application.util.IFileLoadHandler
 import models.application.ApplicationModel
 import models.orsa.ORSAModel
 import org.apache.poi.ss.usermodel.Cell
@@ -16,7 +17,7 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
-class AbstractExcelHandler {
+abstract class AbstractExcelHandler  implements IFileLoadHandler {
     XSSFWorkbook workbook = new XSSFWorkbook()
     Model modelInstance
     protected static String COMPONENT_HEADER_NAME = 'Component Name'
@@ -70,7 +71,7 @@ class AbstractExcelHandler {
     }
 
     Integer findColumnIndex(Sheet sheet, String name, int columnStartIndex) {
-        for (int i = HEADER_ROW_INDEX; i < TECHNICAL_HEADER_ROW_INDEX; i++) {
+        for (int i = HEADER_ROW_INDEX; i <= TECHNICAL_HEADER_ROW_INDEX; i++) {
             Row row = sheet.getRow(i)
             for (int index = columnStartIndex; index < row.lastCellNum; index++) {
                 Cell cell = row.getCell(index)

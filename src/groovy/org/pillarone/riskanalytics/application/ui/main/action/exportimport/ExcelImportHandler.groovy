@@ -1,27 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
-import org.apache.poi.POIXMLProperties
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.codehaus.plexus.interpolation.util.StringUtils
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.components.Component
-import org.pillarone.riskanalytics.core.components.ComposedComponent
-import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.core.components.IResource
-import org.pillarone.riskanalytics.core.components.ResourceHolder
-import org.pillarone.riskanalytics.core.example.component.ExampleResource
+import org.pillarone.riskanalytics.core.components.*
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.parameterization.AbstractParameterObjectClassifier
-import org.pillarone.riskanalytics.core.parameterization.ComboBoxMatrixMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ComboBoxTableMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.ConstrainedString
-import org.pillarone.riskanalytics.core.parameterization.IComboBoxBasedMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.parameterization.IParameterObject
+import org.pillarone.riskanalytics.core.parameterization.*
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 class ExcelImportHandler extends AbstractExcelHandler {
 
@@ -29,7 +20,9 @@ class ExcelImportHandler extends AbstractExcelHandler {
         super(excelParameterization)
     }
 
-    /**
+    ExcelImportHandler() {
+    }
+/**
      * Returns a list of invalid lines
      * @return
      */
@@ -134,8 +127,13 @@ class ExcelImportHandler extends AbstractExcelHandler {
                 return new Integer(0)
             case Double:
                 return new Double(0)
+            case IComponentMarker:
+                return ""
             default:
-                return clazz.newInstance()
+                if (clazz.hasProperty('enumConstants')){
+                    return clazz.'enumConstants'[0]
+                }
+                throw new IllegalArgumentException('Dont know what to do.')
         }
     }
 
@@ -196,5 +194,23 @@ class ExcelImportHandler extends AbstractExcelHandler {
 
     Sheet findSheetForComponent(Component component) {
         workbook.getSheet(component.name)
+    }
+
+    @Override
+    void onSuccess(InputStream[] ins, String[] filePaths, String[] fileNames) {
+        workbook = new XSSFWorkbook(ins[0])
+        List<ImportResult> results = process()
+        List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(modelInstance, 0)
+        Parameterization parameterization = new Parameterization(System.currentTimeMillis().toString(), modelInstance.class)
+        parameterHolders.each {
+            parameterization.addParameter(it)
+        }
+        parameterization.save()
+        println parameterization.id
+    }
+
+    @Override
+    void onFailure(int reason, String description) {
+
     }
 }

@@ -1,12 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import models.application.ApplicationModel
+import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelExportHandler
+import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelImportHandler
+import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ImportResult
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.example.parameter.ExampleEnum
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.EnumParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
@@ -96,15 +100,17 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 0 == result.size()
     }
 
-    void testParseExcel(){
+    void testParseExcel() {
         ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/develop/pillarone/risk-analytics-application/exportresult3-withData.xlsx'))
 //        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/temp/pmo-2449/exportresult.xlsx'))
         List result = handler.process()
         Model model = handler.modelInstance
-        List<ParameterHolder> parameterizations = ParameterizationHelper.extractParameterHoldersFromModel(model, 1)
-        //ParameterHolder enumHolder = parameterizations.find{it.path == 'parameterComponent:parmEnumParameter'}
-        assert parameterizations
-        assert result
+        List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(model, 1)
+        //ParameterHolder enumHolder = parameterHolders.find{it.path == 'parameterComponent:parmEnumParameter'}
+        assert parameterHolders
+        Parameterization parameterization = new Parameterization('detlef123', model.class)
+        parameterization.parameterHolders = parameterHolders
+        assert 27 == result.size()
         //assert enumHolder instanceof EnumParameterHolder
         //assert ExampleEnum.SECOND_VALUE == enumHolder.businessObject
     }
