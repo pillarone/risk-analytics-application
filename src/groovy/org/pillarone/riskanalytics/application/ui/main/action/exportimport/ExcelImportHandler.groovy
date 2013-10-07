@@ -93,7 +93,12 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private def toType(Enum objectClass, Cell cell) {
         String value = stringValue(cell)
         if (value) {
-            return objectClass.class.valueOf(value)
+            try {
+                return objectClass.class.valueOf(value)
+            } catch (IllegalArgumentException iae) {
+                importResults << new ImportResult(cell, "Unknown value $value. Allowed: ${objectClass.values().collect { "'${it.toString()}'" }.join(',')}", ImportResult.Type.ERROR)
+                return objectClass
+            }
         } else {
             return objectClass
         }
@@ -116,20 +121,31 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     }
 
     private def toType(IParameterObject objectClass, Cell cell) {
-        AbstractParameterObjectClassifier classifier = objectClass.type.class."${cell.stringCellValue}"
-        Map parameters = [:]
-        classifier.getParameterNames().each { String parameterName ->
-            int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex)
-            Cell parameterCell = cell.row.getCell(parameterColumnIndex)
-            if (parameterCell) {
-                def parameterValue = toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex))
-                parameters.put(parameterName, parameterValue)
-            } else {
-                importResults << new ImportResult(cell, 'Cell is empty. Using default.', ImportResult.Type.WARNING)
-                parameters.put(parameterName, classifier.parameters[parameterName])
-            }
+        Class typeClass = objectClass.type.class
+        String propertyName = stringValue(cell)
+        AbstractParameterObjectClassifier classifier
+        try {
+            classifier = typeClass."$propertyName"
+        } catch (MissingPropertyException mpe) {
+            importResults << new ImportResult(cell, "Unknown value $propertyName. Allowed: ${typeClass['all'].collect { "'${it.typeName}'" }.join(',')}", ImportResult.Type.ERROR)
         }
-        return classifier.getParameterObject(parameters)
+        if (classifier) {
+            Map parameters = [:]
+            classifier.getParameterNames().each { String parameterName ->
+                int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex)
+                Cell parameterCell = cell.row.getCell(parameterColumnIndex)
+                if (parameterCell) {
+                    def parameterValue = toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex))
+                    parameters.put(parameterName, parameterValue)
+                } else {
+                    importResults << new ImportResult(cell, 'Cell is empty. Using default.', ImportResult.Type.WARNING)
+                    parameters.put(parameterName, classifier.parameters[parameterName])
+                }
+            }
+            return classifier.getParameterObject(parameters)
+        } else {
+            return objectClass
+        }
     }
 
     private def toType(ConstrainedMultiDimensionalParameter mdp, Cell cell) {
