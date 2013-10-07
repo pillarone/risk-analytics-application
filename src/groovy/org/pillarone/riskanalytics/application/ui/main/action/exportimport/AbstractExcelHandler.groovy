@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
-import com.ulcjava.base.application.util.IFileLoadHandler
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Comment
 import org.apache.poi.ss.usermodel.Row
@@ -9,12 +8,14 @@ import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
+import org.pillarone.riskanalytics.core.FileConstants
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
-abstract class AbstractExcelHandler implements IFileLoadHandler {
+abstract class AbstractExcelHandler {
     XSSFWorkbook workbook = new XSSFWorkbook()
+    protected File excelFile
     Model modelInstance
     protected static String COMPONENT_HEADER_NAME = 'Component Name'
     protected static String DISABLE_IMPORT = 'Disable Import'
@@ -25,16 +26,15 @@ abstract class AbstractExcelHandler implements IFileLoadHandler {
     protected static final int TECHNICAL_HEADER_ROW_INDEX = 1
     protected static final int HEADER_ROW_INDEX = 0
 
-
-    AbstractExcelHandler(File excelFile) {
-        workbook = new XSSFWorkbook(new FileInputStream(excelFile))
-    }
-
-    AbstractExcelHandler() {
-    }
-
     Model getModel() {
         return Thread.currentThread().contextClassLoader.loadClass(findModelName()).newInstance() as Model
+    }
+
+    void loadWorkbook(InputStream is, String filename) {
+        byte[] data = is.bytes
+        excelFile = File.createTempFile(filename, '', new File(FileConstants.TEMP_FILE_DIRECTORY))
+        excelFile.bytes = data
+        workbook = new XSSFWorkbook(new ByteArrayInputStream(data))
     }
 
     String findModelName() {
@@ -43,7 +43,7 @@ abstract class AbstractExcelHandler implements IFileLoadHandler {
             Row modelNameRow = sheet.rowIterator().find { Row row ->
                 row.getCell(0).stringCellValue == MODEL_INFO_KEY
             } as Row
-            return modelNameRow.getCell(1).stringCellValue
+            return modelNameRow?.getCell(1)?.stringCellValue
         }
         return null
     }
@@ -111,11 +111,24 @@ abstract class AbstractExcelHandler implements IFileLoadHandler {
     }
 
     protected String toSubComponentName(String name) {
-        if (name && name.size() > 1){
+        if (name && name.size() > 1) {
             String firstLetterUpperCase = name[0].toUpperCase()
-            return "sub$firstLetterUpperCase${name.substring(1).replaceAll(' ','')}"
+            return "sub$firstLetterUpperCase${name.substring(1).replaceAll(' ', '')}"
 
         }
         return name
+    }
+
+    protected boolean rowHasValuesInRange(Row row, int columnStartIndex, int columnEndIndex) {
+        for (int columnIndex = columnStartIndex; columnIndex <= columnEndIndex; columnIndex++) {
+            if (row.getCell(columnIndex)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    protected Sheet findSheetForComponent(Component component) {
+        workbook.getSheet(component.name)
     }
 }

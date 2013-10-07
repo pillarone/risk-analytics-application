@@ -1,11 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
-import org.apache.poi.POIXMLProperties
 import org.apache.poi.ss.usermodel.*
-import org.apache.poi.xssf.usermodel.XSSFHyperlink
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
-import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComponentUtils
@@ -16,14 +12,12 @@ import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensi
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
 import org.pillarone.riskanalytics.core.parameterization.IParameterObject
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
-import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
 class ExcelExportHandler extends AbstractExcelHandler {
     Model model
     Map<IMultiDimensionalConstraints, List<MDPTitleContraints>> mdpConstraintsWithTitles = [:]
 
     ExcelExportHandler(Model model) {
-        super()
         this.model = model
     }
 
@@ -31,7 +25,6 @@ class ExcelExportHandler extends AbstractExcelHandler {
         model.init()
         model.injectComponentNames()
         OutputStream outputStream = new ByteArrayOutputStream()
-        Workbook workbook = new XSSFWorkbook()
         model.allComponents.each { Component component ->
             Sheet sheet = workbook.createSheet(component.name)
             Row headerRow = sheet.createRow(0)
@@ -59,7 +52,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                 }
             }
         }
-        addMetaInfo(workbook,model)
+        addMetaInfo(workbook, model)
         workbook.write(outputStream)
         return outputStream.toByteArray()
 
@@ -72,7 +65,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
             Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
             setFont(cell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             setFont(technicalCell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
-            cell.setCellValue(getDisplayName(component,parm))
+            cell.setCellValue(getDisplayName(component, parm))
             technicalCell.setCellValue(parm)
 
             columnIndex = addParameterCells(component[parm], headerRow, technicalHeaderRow, ++columnIndex, cell)
@@ -81,7 +74,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return columnIndex
     }
 
-    private static String getDisplayName(Component component,String name) {
+    private static String getDisplayName(Component component, String name) {
         String displayName = I18NUtils.findParameterDisplayName(component, name)
         return displayName ?: ComponentUtils.getNormalizedName(name)
     }
@@ -92,7 +85,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
             String propertyName = component.properties.entrySet().find { it.value == subComponent }.key
             Cell technicalCell = technicalHeaderRow.createCell(columnIndex)
             Cell cell = headerRow.createCell(columnIndex)
-            cell.setCellValue(getDisplayName(component,propertyName))
+            cell.setCellValue(getDisplayName(component, propertyName))
             technicalCell.setCellValue(propertyName)
             columnIndex = handleComponent(subComponent, headerRow, technicalHeaderRow, ++columnIndex)
         }
@@ -163,7 +156,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         List<MDPTitleContraints> mdpsForConstraints = mdpConstraintsWithTitles.get(mdpTitleContraints.constraints)
         String counter = mdpsForConstraints.indexOf(mdpTitleContraints)
         String name = "MDP${counter}-${mdpTitleContraints.constraints.class.simpleName}"
-        return truncate ? name.substring(0, Math.min(name.length(), 31)): name
+        return truncate ? name.substring(0, Math.min(name.length(), 31)) : name
     }
 
     private addParameter(ConstrainedMultiDimensionalParameter multiDimensionalParameter) {
