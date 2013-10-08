@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.FileConstants
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.*
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.*
@@ -48,6 +49,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     List<ImportResult> doImport(String parmeterizationName) {
         List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(modelInstance, 0)
         Parameterization parameterization = new Parameterization(parmeterizationName, modelInstance.class)
+        updateVersionNumber(parameterization)
         Comment comment = new Comment(modelInstance.class.simpleName - 'Model', 0)
         comment.text = "Excel Import"
         comment.addFile(new CommentFile(filename, excelFile))
@@ -59,6 +61,16 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         // handle errors
         return importResults
 
+    }
+
+    private static void updateVersionNumber(Parameterization parameterization) {
+        for (int i = 1; i < Integer.MAX_VALUE; i++) {
+            ParameterizationDAO dao = ParameterizationDAO.find(parameterization.name, parameterization.modelClass.name, i as String)
+            if (!dao) {
+                parameterization.versionNumber = new VersionNumber(i as String)
+                break
+            }
+        }
     }
 
     private List<ImportResult> process() {
@@ -137,7 +149,6 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     def parameterValue = toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex))
                     parameters.put(parameterName, parameterValue)
                 } else {
-                    importResults << new ImportResult(cell, 'Cell is empty. Using default.', ImportResult.Type.WARNING)
                     parameters.put(parameterName, classifier.parameters[parameterName])
                 }
             }
@@ -168,7 +179,6 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                         }
                         values[columnIndex - tableColumnIndex] << value
                     } else {
-                        importResults << new ImportResult(mdpSheet.sheetName, rowIndex, columnIndex, 'Cell is empty. Using default.', ImportResult.Type.WARNING)
                         values[columnIndex - tableColumnIndex] << newInstance(mdp.constraints.getColumnType(columnIndex - tableColumnIndex))
                     }
                 }
