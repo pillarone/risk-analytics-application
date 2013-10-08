@@ -48,11 +48,10 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     List<ImportResult> doImport(String parmeterizationName) {
         List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(modelInstance, 0)
         Parameterization parameterization = new Parameterization(parmeterizationName, modelInstance.class)
-//        Comment comment = new Comment(modelInstance.class.simpleName - 'Model', 0)
-//        File file = File.createTempFile(parmeterizationName, '.xlsx', new File(FileConstants.TEMP_FILE_DIRECTORY))
-//        file.bytes = data
-//        comment.addFile(new CommentFile(filename, file))
-//        parameterization.addComment(comment)
+        Comment comment = new Comment(modelInstance.class.simpleName - 'Model', 0)
+        comment.text = "Excel Import"
+        comment.addFile(new CommentFile(filename, excelFile))
+        parameterization.addComment(comment)
         parameterHolders.each {
             parameterization.addParameter(it)
         }

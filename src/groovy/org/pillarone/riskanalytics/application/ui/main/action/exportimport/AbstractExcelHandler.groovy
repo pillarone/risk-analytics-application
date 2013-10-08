@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.util.PropertiesUtils
 abstract class AbstractExcelHandler {
     XSSFWorkbook workbook = new XSSFWorkbook()
     protected File excelFile
+    protected String filename
     Model modelInstance
     protected static String COMPONENT_HEADER_NAME = 'Component Name'
     protected static String DISABLE_IMPORT = 'Disable Import'
@@ -32,6 +33,7 @@ abstract class AbstractExcelHandler {
 
     void loadWorkbook(InputStream is, String filename) {
         byte[] data = is.bytes
+        this.filename = filename
         excelFile = File.createTempFile(filename, '', new File(FileConstants.TEMP_FILE_DIRECTORY))
         excelFile.bytes = data
         workbook = new XSSFWorkbook(new ByteArrayInputStream(data))
