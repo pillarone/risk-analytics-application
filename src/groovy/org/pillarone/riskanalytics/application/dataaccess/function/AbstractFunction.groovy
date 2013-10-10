@@ -19,7 +19,7 @@ abstract class AbstractFunction implements IFunction {
                 displayName = bundle.getString(getName() + ".name")
             } catch (MissingResourceException e) {
                 displayName = getName()
-                LOG.error("Resource not found for function ${getName()}")
+                LOG.error("Resource not found for function ${displayName}")
             }
         }
 

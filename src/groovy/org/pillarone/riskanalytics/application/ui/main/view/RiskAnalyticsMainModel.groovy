@@ -235,7 +235,9 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             pollingBatchSimulationTimer.repeats = true
             pollingBatchSimulationTimer.syncClientState = false
             pollingBatchSimulationTimer.start()
-        } catch (NullPointerException ex) {}
+        } catch (NullPointerException ex) {
+            LOG.warn("startPollingTimer() caught and ignoring NPE", ex);
+        }
     }
 
 
