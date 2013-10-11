@@ -27,7 +27,7 @@ class ConstrainedMultiDimensionalParameterTableModel extends MultiDimensionalPar
             if (columnType.isEnum()) {
                 BiMap values = HashBiMap.create()
                 for (def enumValue in columnType.values()) {
-                    final String displayName = I18NUtils.findEnumDisplayName(columnType.name, enumValue.toString())
+                    final String displayName = I18NUtils.findEnumDisplayName(columnType, enumValue.toString())
                     values.put(enumValue.toString(), displayName != null ? displayName : enumValue.toString())
                 }
                 localizedValues.put(i, values)
