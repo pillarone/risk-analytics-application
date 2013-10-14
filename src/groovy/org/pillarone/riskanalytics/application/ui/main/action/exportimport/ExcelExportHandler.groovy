@@ -7,7 +7,6 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
-import org.pillarone.riskanalytics.core.components.GlobalParameterComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
@@ -132,8 +131,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                     setFont(cell, 8 as short, true)
                     setFont(technicalCell, 8 as short, true)
                     technicalCell.setCellValue(parmName)
-                    cell.setCellValue(parmName)
-
+                    cell.setCellValue(getParameterDisplayName(classifier, parmName))
                     Object classifierParameter = classifier.getType(parmName)
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
                         addParameter(classifierParameter)
@@ -152,6 +150,11 @@ class ExcelExportHandler extends AbstractExcelHandler {
             }
         }
         return columnIndex
+    }
+
+    private String getParameterDisplayName(IParameterObjectClassifier classifier, String parmName) {
+        String parameterDisplayName = I18NUtils.findParameterDisplayName(classifier.class, parmName)
+        return parameterDisplayName ?: parmName
     }
 
     private String getSheetName(MDPTitleContraints mdpTitleContraints, boolean truncate = true) {

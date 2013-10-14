@@ -94,12 +94,16 @@ abstract class AbstractExcelHandler {
         row.createCell(1).setCellValue(value)
     }
 
-    Sheet findMdpSheet(Cell cell) {
-        Row row = cell.sheet.getRow(HEADER_ROW_INDEX)
-        Comment comment = row.getCell(cell.columnIndex).getCellComment()
-        String mdpSheetName = comment.string.string
+    protected Sheet findMdpSheet(Cell cell) {
+        String mdpSheetName = getMDPSheetName(cell)
         assert mdpSheetName
         return workbook.getSheet(mdpSheetName)
+    }
+
+    protected String getMDPSheetName(Cell cell) {
+        Row row = cell.sheet.getRow(HEADER_ROW_INDEX)
+        Comment comment = row.getCell(cell.columnIndex).getCellComment()
+        return comment.string.string
     }
 
     void addMetaInfo(XSSFWorkbook workbook, Model model) {

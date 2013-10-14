@@ -160,8 +160,20 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     private def toType(ConstrainedMultiDimensionalParameter mdp, Cell cell) {
         def mdpSheet = findMdpSheet(cell)
+        if (!mdpSheet) {
+            importResults << new ImportResult(cell, "Sheet for MDP with name ${getMDPSheetName(cell)} not found", ImportResult.Type.ERROR)
+            return mdp
+        }
         def tableName = cell.stringCellValue
-        int tableColumnIndex = findColumnIndex(mdpSheet, tableName, 0)
+        if (!tableName) {
+            importResults << new ImportResult(cell, "Cell with table name reference must not be empty.", ImportResult.Type.ERROR)
+            return mdp
+        }
+        Integer tableColumnIndex = findColumnIndex(mdpSheet, tableName, 0)
+        if (tableColumnIndex == null) {
+            importResults << new ImportResult(cell, "Table with name '${tableName}' in MDP Sheet ${mdpSheet.sheetName} not found", ImportResult.Type.ERROR)
+            return mdp
+        }
         List<List> values = []
         mdp.valueColumnCount.times {
             values << []
@@ -183,8 +195,8 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     }
                 }
             }
+            return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
         }
-        return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
     }
 
     private def toType(Integer objectClass, Cell cell) {

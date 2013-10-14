@@ -51,6 +51,41 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    void testMissingMDPSheet() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(10).setCellValue('tableName')
+        int sheetIndex = handler.workbook.getSheetIndex('MDP0-ExampleResourceConstraints')
+        handler.workbook.removeSheetAt(sheetIndex)
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testMissingMDPTableReference() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(10).setCellValue('tableName')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testMissingMDPTableIdentifier() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(10).setCellValue('')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
     void testIncorrectCellData() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
