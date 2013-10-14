@@ -45,37 +45,6 @@ class ExcelExportHandlerTests extends GroovyTestCase {
         super.setUp()
         LocaleResources.setTestMode()
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
-        ConstraintsFactory.registerConstraint(new AnnualIndexTableConstraints())
-        ConstraintsFactory.registerConstraint(new LinkRatioIndexTableConstraints())
-        ConstraintsFactory.registerConstraint(new DeterministicIndexTableConstraints())
-        ConstraintsFactory.registerConstraint(new PolicyIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new FrequencyIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new SeverityIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new RunOffIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new ReservesIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new LegalEntityPortionConstraints())
-        ConstraintsFactory.registerConstraint(new PatternTableConstraints())
-        ConstraintsFactory.registerConstraint(new CoverMap())
-        ConstraintsFactory.registerConstraint(new MatrixStructureContraints())
-        ConstraintsFactory.registerConstraint(new DoubleConstraints())
-        ConstraintsFactory.registerConstraint(new IntDateTimeDoubleConstraints())
-        ConstraintsFactory.registerConstraint(new DateTimeConstraints())
-        ConstraintsFactory.registerConstraint(new ClaimTypeSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new YieldCurveTableConstraints())
-        ConstraintsFactory.registerConstraint(new SegmentPortion())
-        ConstraintsFactory.registerConstraint(new ReinsuranceContractContraints())
-        ConstraintsFactory.registerConstraint(new PremiumSelectionConstraints())
-        ConstraintsFactory.registerConstraint(new ReinsuranceContractBasedOn())
-        ConstraintsFactory.registerConstraint(new ContractConstraint())
-
-        ConstraintsFactory.registerConstraint(new PremiumStructureReinstatementConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumStructureConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumStructureAPConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumStructureProfitCommissionConstraints())
-        ConstraintsFactory.registerConstraint(new PerilPortion())
-        ConstraintsFactory.registerConstraint(new ReservePortion())
-        ConstraintsFactory.registerConstraint(new UnderwritingPortion())
     }
 
     @Override
@@ -85,9 +54,17 @@ class ExcelExportHandlerTests extends GroovyTestCase {
     }
 
     void testExportModel() {
-        ExcelExportHandler handler = new ExcelExportHandler(new ORSAModel())
+        ExcelExportHandler handler = new ExcelExportHandler(new ApplicationModel())
         byte[] result = handler.exportModel()
         assert result != null
-        new XSSFWorkbook(new ByteArrayInputStream(result)).write(new FileOutputStream(new File('exportresult3.xlsx')))
+        XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(result))
+        assert 7 == workbook.numberOfSheets
+        assert workbook.getSheet('Global Parameter Component')
+        assert workbook.getSheet('parameter Component')
+        assert workbook.getSheet('hierarchy Component')
+        assert workbook.getSheet('dynamic Component')
+        assert workbook.getSheet('composed Component')
+        assert workbook.getSheet('MDP0-ExampleResourceConstraints')
+        assert workbook.getSheet('Meta-Info')
     }
 }
