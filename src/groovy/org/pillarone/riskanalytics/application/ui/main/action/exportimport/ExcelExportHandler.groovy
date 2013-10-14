@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
+import org.pillarone.riskanalytics.core.components.GlobalParameterComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
@@ -26,7 +27,8 @@ class ExcelExportHandler extends AbstractExcelHandler {
         model.injectComponentNames()
         OutputStream outputStream = new ByteArrayOutputStream()
         model.allComponents.each { Component component ->
-            Sheet sheet = workbook.createSheet(component.name)
+            String name = getComponentDisplayName(component)
+            Sheet sheet = workbook.createSheet(name)
             Row headerRow = sheet.createRow(0)
             Row technicalHeaderRow = sheet.createRow(1)
 

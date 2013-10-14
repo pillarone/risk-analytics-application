@@ -80,7 +80,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         model.allComponents.each { Component component ->
             Sheet sheet = findSheetForComponent(component)
             if (!sheet) {
-                importResults << new ImportResult("Sheet with name $component.name not found in workbook.", ImportResult.Type.WARNING)
+                importResults << new ImportResult("Sheet with name ${getComponentDisplayName(component)} not found in workbook.", ImportResult.Type.WARNING)
             } else {
                 handleComponent(component, sheet, DATA_ROW_START_INDEX, 0)
             }

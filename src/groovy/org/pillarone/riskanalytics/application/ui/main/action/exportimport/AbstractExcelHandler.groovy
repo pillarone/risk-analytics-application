@@ -8,8 +8,11 @@ import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.FileConstants
 import org.pillarone.riskanalytics.core.components.Component
+import org.pillarone.riskanalytics.core.components.ComponentUtils
+import org.pillarone.riskanalytics.core.components.GlobalParameterComponent
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
@@ -131,6 +134,18 @@ abstract class AbstractExcelHandler {
     }
 
     protected Sheet findSheetForComponent(Component component) {
-        workbook.getSheet(component.name)
+        String sheetName = getComponentDisplayName(component)
+        workbook.getSheet(sheetName)
     }
+
+    static String getComponentDisplayName(Component component) {
+        String displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component)
+        return displayName ?: ComponentUtils.getNormalizedName(component.name)
+    }
+
+    static String getComponentDisplayName(GlobalParameterComponent component) {
+        String displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component)
+        return displayName ?: "Global ${ComponentUtils.getNormalizedName(component.name)}"
+    }
+
 }
