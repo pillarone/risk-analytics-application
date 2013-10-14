@@ -80,6 +80,7 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllParameters")))
         parameterGroupNodePopUpMenu.addSeparator()
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel,'ImportFromExcel')))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportParameterizationExcelAction(tree, mainModel,'ExportToExcel')))
         return parameterGroupNodePopUpMenu
     }
 
