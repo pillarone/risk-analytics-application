@@ -6,6 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class ExcelImportHandlerTests extends GroovyTestCase {
@@ -84,6 +85,36 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         dataRow.createCell(10).setCellValue('')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
+    }
+
+    void testIncorrectParameterObjectClassifier() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('UNKNOWN_CLASSIFIER')
+        dataRow.createCell(10).setCellValue('')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+   void testMDPValues() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(10).setCellValue('tableName')
+       XSSFSheet mdpSheet = handler.workbook.getSheet('MDP0-ExampleResourceConstraints')
+       mdpSheet.getRow(0).getCell(0).setCellValue('tableName')
+       XSSFRow mdpRow = mdpSheet.createRow(2)
+       mdpRow.createCell(0).setCellValue('ONE')
+       mdpRow = mdpSheet.createRow(3)
+       mdpRow.createCell(0).setCellValue('TWO')
+       mdpRow = mdpSheet.createRow(4)
+       mdpRow.createCell(0).setCellValue('THREE')
+       handler.validate(new ApplicationModel())
+       assert ['ONE','TWO','THREE'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
     }
 
     void testIncorrectCellData() {

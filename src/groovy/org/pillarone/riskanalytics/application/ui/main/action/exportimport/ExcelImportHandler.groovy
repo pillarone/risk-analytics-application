@@ -137,7 +137,8 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         try {
             classifier = typeClass."$propertyName"
         } catch (MissingPropertyException ignored) {
-            importResults << new ImportResult(cell, "Unknown value $propertyName. Allowed: ${typeClass['all'].collect { "'${it.typeName}'" }.join(',')}", ImportResult.Type.ERROR)
+            List<AbstractParameterObjectClassifier> classifiers = objectClass.type.getClassifiers()
+            importResults << new ImportResult(cell, "Unknown value $propertyName. Allowed: ${classifiers.collect { "'${it.typeName}'" }.join(',')}", ImportResult.Type.ERROR)
         }
         if (classifier) {
             Map parameters = [:]
@@ -194,8 +195,8 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     }
                 }
             }
-            return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
         }
+        return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
     }
 
     private def toType(Integer objectClass, Cell cell) {
