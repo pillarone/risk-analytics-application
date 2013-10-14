@@ -1,49 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelExportHandler
-import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelImportHandler
-import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ImportResult
+import models.core.CoreModel
+import org.apache.poi.xssf.usermodel.XSSFRow
+import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.example.parameter.ExampleEnum
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
-import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.parameter.EnumParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.domain.pc.cf.claim.ClaimTypeSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.discounting.YieldCurveTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.AnnualIndexTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.DeterministicIndexTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.FrequencyIndexSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.LinkRatioIndexTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.PolicyIndexSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.PremiumIndexSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.ReservesIndexSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.RunOffIndexSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.indexing.SeverityIndexSelectionTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.legalentity.LegalEntityPortionConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.pattern.PatternTableConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.contract.stateless.constraints.PremiumSelectionConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.contract.stateless.constraints.PremiumStructureAPConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.contract.stateless.constraints.PremiumStructureConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.contract.stateless.constraints.PremiumStructureProfitCommissionConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.contract.stateless.constraints.PremiumStructureReinstatementConstraints
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.contract.stateless.cover.ContractConstraint
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.cover.CoverMap
-import org.pillarone.riskanalytics.domain.pc.cf.reinsurance.cover.MatrixStructureContraints
-import org.pillarone.riskanalytics.domain.utils.constraint.DateTimeConstraints
-import org.pillarone.riskanalytics.domain.utils.constraint.DoubleConstraints
-import org.pillarone.riskanalytics.domain.utils.constraint.IntDateTimeDoubleConstraints
-import org.pillarone.riskanalytics.domain.utils.constraint.PerilPortion
-import org.pillarone.riskanalytics.domain.utils.constraint.ReinsuranceContractBasedOn
-import org.pillarone.riskanalytics.domain.utils.constraint.ReinsuranceContractContraints
-import org.pillarone.riskanalytics.domain.utils.constraint.ReservePortion
-import org.pillarone.riskanalytics.domain.utils.constraint.SegmentPortion
-import org.pillarone.riskanalytics.domain.utils.constraint.UnderwritingPortion
 
 class ExcelImportHandlerTests extends GroovyTestCase {
     File exportFile
@@ -53,37 +16,6 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         super.setUp()
         LocaleResources.setTestMode()
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
-        ConstraintsFactory.registerConstraint(new AnnualIndexTableConstraints())
-        ConstraintsFactory.registerConstraint(new LinkRatioIndexTableConstraints())
-        ConstraintsFactory.registerConstraint(new DeterministicIndexTableConstraints())
-        ConstraintsFactory.registerConstraint(new PolicyIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new FrequencyIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new SeverityIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new RunOffIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new ReservesIndexSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new LegalEntityPortionConstraints())
-        ConstraintsFactory.registerConstraint(new PatternTableConstraints())
-        ConstraintsFactory.registerConstraint(new CoverMap())
-        ConstraintsFactory.registerConstraint(new MatrixStructureContraints())
-        ConstraintsFactory.registerConstraint(new DoubleConstraints())
-        ConstraintsFactory.registerConstraint(new IntDateTimeDoubleConstraints())
-        ConstraintsFactory.registerConstraint(new DateTimeConstraints())
-        ConstraintsFactory.registerConstraint(new ClaimTypeSelectionTableConstraints())
-        ConstraintsFactory.registerConstraint(new YieldCurveTableConstraints())
-        ConstraintsFactory.registerConstraint(new SegmentPortion())
-        ConstraintsFactory.registerConstraint(new ReinsuranceContractContraints())
-        ConstraintsFactory.registerConstraint(new PremiumSelectionConstraints())
-        ConstraintsFactory.registerConstraint(new ReinsuranceContractBasedOn())
-        ConstraintsFactory.registerConstraint(new ContractConstraint())
-
-        ConstraintsFactory.registerConstraint(new PremiumStructureReinstatementConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumStructureConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumStructureAPConstraints())
-        ConstraintsFactory.registerConstraint(new PremiumStructureProfitCommissionConstraints())
-        ConstraintsFactory.registerConstraint(new PerilPortion())
-        ConstraintsFactory.registerConstraint(new ReservePortion())
-        ConstraintsFactory.registerConstraint(new UnderwritingPortion())
         exportFile = File.createTempFile('excel', '.xlsx')
         exportFile.bytes = new ExcelExportHandler(new ApplicationModel()).exportModel()
     }
@@ -94,22 +26,38 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         LocaleResources.clearTestMode()
     }
 
-    void testValidation() {
-        ExcelImportHandler handler = new ExcelImportHandler(exportFile)
+    void testIncorrectModelClass() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(1).getCell(1).setCellValue(CoreModel.class.name)
         List<ImportResult> result = handler.validate(new ApplicationModel())
-        assert 0 == result.size()
+        assert 1 == result.size()
     }
 
-    void testParseExcel() {
-        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/temp/exportresult3-withData.xlsx'))
-//        ExcelImportHandler handler = new ExcelImportHandler(new File('/home/detlef/temp/pmo-2449/exportresult.xlsx'))
-        List result = handler.process()
-        Model model = handler.modelInstance
-        List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(model, 1)
-        //ParameterHolder enumHolder = parameterHolders.find{it.path == 'parameterComponent:parmEnumParameter'}
-        assert parameterHolders
-        assert 31 == result.size()
-        //assert enumHolder instanceof EnumParameterHolder
-        //assert ExampleEnum.SECOND_VALUE == enumHolder.businessObject
+    void testModelInfoNotFound() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(1).getCell(1).setCellValue(null as String)
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testMissingMetaInfoSheet() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        int sheetIndex = handler.workbook.getSheetIndex(AbstractExcelHandler.META_INFO_SHEET)
+        handler.workbook.removeSheetAt(sheetIndex)
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testIncorrectCellData() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('DUMMY')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
     }
 }
