@@ -7,7 +7,6 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.FileConstants
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.*
 import org.pillarone.riskanalytics.core.model.Model
@@ -89,7 +88,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         return importResults
     }
 
-    private def newInstance(Class clazz) {
+    private static def newInstance(Class clazz) {
         switch (clazz) {
             case Integer:
                 return new Integer(0)
@@ -106,7 +105,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         if (value) {
             try {
                 return objectClass.class.valueOf(value)
-            } catch (IllegalArgumentException iae) {
+            } catch (IllegalArgumentException ignored) {
                 importResults << new ImportResult(cell, "Unknown value $value. Allowed: ${objectClass.values().collect { "'${it.toString()}'" }.join(',')}", ImportResult.Type.ERROR)
                 return objectClass
             }
@@ -137,7 +136,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         AbstractParameterObjectClassifier classifier
         try {
             classifier = typeClass."$propertyName"
-        } catch (MissingPropertyException mpe) {
+        } catch (MissingPropertyException ignored) {
             importResults << new ImportResult(cell, "Unknown value $propertyName. Allowed: ${typeClass['all'].collect { "'${it.typeName}'" }.join(',')}", ImportResult.Type.ERROR)
         }
         if (classifier) {
@@ -234,7 +233,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private String stringValue(Cell cell) {
         try {
             return cell.stringCellValue
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException ignored) {
             importResults << new ImportResult(cell, "Cell type String expected", ImportResult.Type.ERROR)
             return null
         }
@@ -243,7 +242,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private Date dateValue(Cell cell) {
         try {
             return cell.dateCellValue
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException ignored) {
             importResults << new ImportResult(cell, "Cell type Date expected", ImportResult.Type.ERROR)
             return null
         }
@@ -252,7 +251,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private Number numericValue(Cell cell) {
         try {
             return cell.numericCellValue
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException ignored) {
             importResults << new ImportResult(cell, "Cell type Number expected", ImportResult.Type.ERROR)
             return null
         }
