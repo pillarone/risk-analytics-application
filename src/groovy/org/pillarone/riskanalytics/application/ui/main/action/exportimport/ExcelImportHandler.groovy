@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.*
 import org.pillarone.riskanalytics.core.model.Model
@@ -19,6 +20,9 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 
 class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandler {
     private List<ImportResult> importResults = []
+
+    private Model parameterizedModel
+    private Parameterization parameterization
 
     List<ImportResult> validate(Model expectedModel) {
         clearImportResults()
@@ -44,19 +48,33 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         importResults.clear()
     }
 
-
     List<ImportResult> doImport(String parmeterizationName) {
         List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(modelInstance, 0)
-        Parameterization parameterization = new Parameterization(parmeterizationName, modelInstance.class)
-        updateVersionNumber(parameterization)
-        Comment comment = new Comment(modelInstance.class.simpleName - 'Model', 0)
-        comment.text = "Excel Import"
-        comment.addFile(new CommentFile(filename, excelFile))
-        parameterization.addComment(comment)
-        parameterHolders.each {
-            parameterization.addParameter(it)
+        boolean mustSaveNewParameterization = parameterHolders.any {
+            !(parameterization.hasParameterAtPath(it.path))
         }
-        parameterization.save()
+        if (!mustSaveNewParameterization) {
+            importResults.clear()
+            importResults << new ImportResult("No additional components have been imported.", ImportResult.Type.SUCCESS)
+        } else {
+            Parameterization newParameterization
+            if (parameterization) {
+                newParameterization = ModellingItemFactory.incrementVersion(parameterization) as Parameterization
+            } else {
+                newParameterization = new Parameterization(parmeterizationName, modelInstance.class)
+                updateVersionNumber(newParameterization)
+            }
+            Comment comment = new Comment(modelInstance.class.simpleName - 'Model', 0)
+            comment.text = "Excel Import"
+            comment.addFile(new CommentFile(filename, excelFile))
+            newParameterization.addComment(comment)
+            parameterHolders.each {
+                if (!parameterization.hasParameterAtPath(it.path)) {
+                    newParameterization.addParameter(it)
+                }
+            }
+            newParameterization.save()
+        }
         // handle errors
         return importResults
 
@@ -73,10 +91,10 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     }
 
     private List<ImportResult> process() {
-        Model model = getModel()
-        model.init()
-        model.injectComponentNames()
-        model.allComponents.each { Component component ->
+        Model processedModel = getModel()
+        processedModel.init()
+        processedModel.injectComponentNames()
+        processedModel.allComponents.each { Component component ->
             Sheet sheet = findSheetForComponent(component)
             if (!sheet) {
                 importResults << new ImportResult("Sheet with name ${getComponentDisplayName(component)} not found in workbook.", ImportResult.Type.WARNING)
@@ -84,7 +102,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                 handleComponent(component, sheet, DATA_ROW_START_INDEX, 0)
             }
         }
-        modelInstance = model
+        modelInstance = processedModel
         return importResults
     }
 
@@ -266,11 +284,16 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                 int index = findColumnIndex(sheet, COMPONENT_HEADER_NAME, columnStartIndex)
                 String componentName = row.getCell(index)
                 if (componentName && importEnabled(row, columnStartIndex)) {
-                    Component subComponent = component.createDefaultSubComponent()
-                    subComponent.setName(toSubComponentName(componentName))
-                    component.addSubComponent(subComponent)
-                    handleComponent(subComponent, sheet, rowIdx, columnStartIndex)
-                    importResults << new ImportResult(sheet.sheetName, rowIdx, "$componentName processed", ImportResult.Type.SUCCESS)
+                    String subComponentName = toSubComponentName(componentName)
+                    if (componentAlreadyExists(subComponentName)) {
+                        importResults << new ImportResult(sheet.sheetName, rowIdx, "Parameterization for component '${componentName}' already present. Will be ignored.", ImportResult.Type.WARNING)
+                    } else {
+                        Component subComponent = component.createDefaultSubComponent()
+                        subComponent.setName(subComponentName)
+                        component.addSubComponent(subComponent)
+                        handleComponent(subComponent, sheet, rowIdx, columnStartIndex)
+                        importResults << new ImportResult(sheet.sheetName, rowIdx, "$componentName processed", ImportResult.Type.SUCCESS)
+                    }
                 }
             }
         }
@@ -299,6 +322,13 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
+    private boolean componentAlreadyExists(String componentName) {
+        if (parameterizedModel) {
+            return parameterizedModel.allComponentsRecursively.find { it.name == componentName }
+        }
+        return false
+    }
+
     @Override
     void onSuccess(InputStream[] ins, String[] filePaths, String[] fileNames) {
         workbook = new XSSFWorkbook(ins[0])
@@ -307,5 +337,17 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     @Override
     void onFailure(int reason, String description) {
 
+    }
+
+    void setParameterizationOnModel(final Model model, Parameterization parameterization) {
+        Model m = model.class.newInstance()
+        m.init()
+        m.injectComponentNames()
+        parameterization.load()
+        ParameterApplicator applicator = new ParameterApplicator(parameterization: parameterization, model: m)
+        applicator.init()
+        applicator.applyParameterForPeriod(0)
+        parameterizedModel = m
+        this.parameterization = parameterization
     }
 }

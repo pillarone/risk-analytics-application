@@ -32,15 +32,14 @@ class ImportResult {
     @Override
     public String toString() {
         StringBuffer result = new StringBuffer()
-        result.append("$type, ")
         if (sheetName) {
-            result.append("sheet=$sheetName, ")
+            result.append("Sheet=$sheetName, ")
         }
         if (rowIndex != null) {
-            result.append("row=$rowIndex, ")
+            result.append("Row=$rowIndex, ")
         }
         if (columnIndex != null) {
-            result.append("col=$columnIndex, ")
+            result.append("Col=$columnIndex, ")
         }
         if (message) {
             result.append(message)

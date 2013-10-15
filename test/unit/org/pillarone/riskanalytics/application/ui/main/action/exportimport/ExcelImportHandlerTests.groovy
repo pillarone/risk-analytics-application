@@ -4,9 +4,10 @@ import models.application.ApplicationModel
 import models.core.CoreModel
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.pillarone.riskanalytics.application.example.component.ExampleDynamicComponent
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class ExcelImportHandlerTests extends GroovyTestCase {
@@ -98,23 +99,23 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
-   void testMDPValues() {
+    void testMDPValues() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
         XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('RESOURCE')
         dataRow.createCell(10).setCellValue('tableName')
-       XSSFSheet mdpSheet = handler.workbook.getSheet('MDP0-ExampleResourceConstraints')
-       mdpSheet.getRow(0).getCell(0).setCellValue('tableName')
-       XSSFRow mdpRow = mdpSheet.createRow(2)
-       mdpRow.createCell(0).setCellValue('ONE')
-       mdpRow = mdpSheet.createRow(3)
-       mdpRow.createCell(0).setCellValue('TWO')
-       mdpRow = mdpSheet.createRow(4)
-       mdpRow.createCell(0).setCellValue('THREE')
-       handler.validate(new ApplicationModel())
-       assert ['ONE','TWO','THREE'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
+        XSSFSheet mdpSheet = handler.workbook.getSheet('MDP0-ExampleResourceConstraints')
+        mdpSheet.getRow(0).getCell(0).setCellValue('tableName')
+        XSSFRow mdpRow = mdpSheet.createRow(2)
+        mdpRow.createCell(0).setCellValue('ONE')
+        mdpRow = mdpSheet.createRow(3)
+        mdpRow.createCell(0).setCellValue('TWO')
+        mdpRow = mdpSheet.createRow(4)
+        mdpRow.createCell(0).setCellValue('THREE')
+        handler.validate(new ApplicationModel())
+        assert ['ONE', 'TWO', 'THREE'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
     }
 
     void testIncorrectCellData() {
@@ -123,6 +124,36 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         XSSFSheet sheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('DUMMY')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testAddSubComponent() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamic Component')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('DUMMY')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testImportToExistingParameterization() {
+        ApplicationModel model = new ApplicationModel()
+        model.init()
+        model.injectComponentNames()
+        ExampleDynamicComponent dynamicComponent = model.dynamicComponent
+        Component subComponent = dynamicComponent.createDefaultSubComponent()
+        subComponent.name = 'subComponentA'
+        dynamicComponent.addSubComponent(subComponent)
+
+        ExcelImportHandler handler = new ExcelImportHandler()
+
+        handler.parameterizedModel = model
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamic Component')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('componentA')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
     }
