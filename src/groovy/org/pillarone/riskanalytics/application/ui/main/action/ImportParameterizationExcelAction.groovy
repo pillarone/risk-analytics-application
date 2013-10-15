@@ -55,10 +55,10 @@ class ImportParameterizationExcelAction extends ImportAction {
                             }
                             List<ImportResult> validationResult = handler.validate(selectedModel)
                             if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.ERROR }) {
-                                ULCAlert alert = new I18NAlert(ancestor, "excelImportError", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.ERROR })])
+                                ULCAlert alert = new I18NAlert(ancestor, "excelImportError", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.ERROR })] as List<String>)
                                 alert.show()
                             } else if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.WARNING }) {
-                                ULCAlert alert = new I18NAlert(ancestor, "excelImportWarning", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.WARNING })])
+                                ULCAlert alert = new I18NAlert(ancestor, "excelImportWarning", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.WARNING })] as List<String>)
                                 alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert, handler, filenames[0]) }] as IWindowListener)
                                 alert.show()
                             } else {
@@ -80,11 +80,11 @@ class ImportParameterizationExcelAction extends ImportAction {
 
     }
 
-    private static String formatValidationResult(List<ImportResult> importResults) {
+    private static String formatValidationResult(Collection<ImportResult> importResults) {
         StringBuffer sb = new StringBuffer()
         if (importResults.size() > ALERT_ROW_SIZE) {
             ALERT_ROW_SIZE.times { int index ->
-                sb << importResults[index].toString() << '\n'
+                sb << importResults.toList()[index].toString() << '\n'
             }
             sb << "(${importResults.size() - ALERT_ROW_SIZE}) more ..."
         } else {
@@ -101,7 +101,7 @@ class ImportParameterizationExcelAction extends ImportAction {
 
     void doImport(ExcelImportHandler handler, String filename) {
         List<ImportResult> importResult = handler.doImport(filename - ".$extension")
-        ULCAlert alert = new I18NAlert(ancestor, "excelImportSuccess", [filename, formatValidationResult(importResult.findAll { ImportResult res -> res.type == ImportResult.Type.SUCCESS })])
+        ULCAlert alert = new I18NAlert(ancestor, "excelImportSuccess", [filename, formatValidationResult(importResult.findAll { ImportResult res -> res.type == ImportResult.Type.SUCCESS })] as List<String>)
         alert.show()
     }
 
