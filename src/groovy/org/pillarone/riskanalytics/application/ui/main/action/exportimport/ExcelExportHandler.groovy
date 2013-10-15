@@ -200,7 +200,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
 
     private static setHyperlink(Cell cell, String address) {
         Hyperlink hyperlink = cell.sheet.workbook.creationHelper.createHyperlink(Hyperlink.LINK_DOCUMENT)
-        hyperlink.setAddress(address)
+        hyperlink.setAddress("'$address'!A1")
         cell.setHyperlink(hyperlink)
     }
 
