@@ -18,7 +18,7 @@ class ImportResult {
     }
 
     ImportResult(Cell cell, String message, Type type) {
-        this(cell.sheet.sheetName, cell.rowIndex, cell.columnIndex, message, type)
+        this(cell?.sheet?.sheetName, cell?.rowIndex, cell?.columnIndex, message, type)
     }
 
     ImportResult(String sheetName, Integer rowIndex, Integer columnIndex, String message, Type type) {

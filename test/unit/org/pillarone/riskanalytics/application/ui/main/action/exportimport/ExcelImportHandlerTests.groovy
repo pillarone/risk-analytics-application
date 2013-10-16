@@ -59,6 +59,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(10).setCellValue('tableName')
         int sheetIndex = handler.workbook.getSheetIndex('MDP0-ExampleResourceConstraints')
         handler.workbook.removeSheetAt(sheetIndex)
@@ -71,6 +72,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
         XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(2).setCellValue('RESOURCE')
         dataRow.createCell(10).setCellValue('tableName')
         List<ImportResult> result = handler.validate(new ApplicationModel())
@@ -83,6 +85,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(10).setCellValue('')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
@@ -94,6 +97,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('UNKNOWN_CLASSIFIER')
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(10).setCellValue('')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
@@ -124,6 +128,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         XSSFSheet sheet = handler.workbook.getSheet('parameter Component')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('DUMMY')
+        dataRow.createCell(2).setCellValue('TYPE0')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
     }
@@ -138,7 +143,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
-    void testImportToExistingParameterization() {
+    void testImportExistingComponent() {
         ApplicationModel model = new ApplicationModel()
         model.init()
         model.injectComponentNames()
@@ -156,5 +161,27 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         dataRow.createCell(1).setCellValue('componentA')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
+        assert "Parameterization for component 'componentA' already present. Will be ignored." == result[0].message
+    }
+
+    void testImportToNonExistingComponent() {
+        ApplicationModel model = new ApplicationModel()
+        model.init()
+        model.injectComponentNames()
+        ExampleDynamicComponent dynamicComponent = model.dynamicComponent
+        Component subComponent = dynamicComponent.createDefaultSubComponent()
+        subComponent.name = 'subComponentA'
+        dynamicComponent.addSubComponent(subComponent)
+
+        ExcelImportHandler handler = new ExcelImportHandler()
+
+        handler.parameterizedModel = model
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamic Component')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('componentB')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+        assert 'componentB processed'== result[0].message
     }
 }
