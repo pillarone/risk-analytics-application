@@ -10,7 +10,6 @@ import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelImportHandler
 import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ImportResult
@@ -20,7 +19,6 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-@CompileStatic
 class ImportParameterizationExcelAction extends ImportAction {
     private static final int ALERT_ROW_SIZE = 20
 
@@ -99,7 +97,7 @@ class ImportParameterizationExcelAction extends ImportAction {
         }
     }
 
-    void doImport(ExcelImportHandler handler, String filename) {
+    private void doImport(ExcelImportHandler handler, String filename) {
         List<ImportResult> importResult = handler.doImport(filename - ".$extension")
         ULCAlert alert = new I18NAlert(ancestor, "excelImportSuccess", [filename, formatValidationResult(importResult.findAll { ImportResult res -> res.type == ImportResult.Type.SUCCESS })] as List<String>)
         alert.show()
