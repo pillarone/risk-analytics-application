@@ -2,8 +2,11 @@ package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import models.application.ApplicationModel
 import models.core.CoreModel
+import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.example.component.ExampleDynamicComponent
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.components.Component
@@ -182,6 +185,25 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         dataRow.createCell(1).setCellValue('componentB')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
-        assert 'componentB processed'== result[0].message
+        assert 'componentB processed' == result[0].message
+    }
+
+    void testImportDateFunction() {
+        int year = 2012
+        int day = 23
+        int month = 1
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('Global Parameter Component')
+        XSSFRow dataRow = sheet.createRow(2)
+        XSSFCell cell = dataRow.createCell(0)
+        cell.setCellType(Cell.CELL_TYPE_FORMULA)
+        cell.setCellFormula("DATE($year,$month,$day)")
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+        DateTime date = (handler.modelInstance as ApplicationModel).globalParameterComponent.parmProjectionStartDate
+        assert year == date.getYear()
+        assert month == date.getMonthOfYear()
+        assert day == date.getDayOfMonth()
     }
 }

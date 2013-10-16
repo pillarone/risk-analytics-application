@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import com.ulcjava.base.application.util.IFileLoadHandler
-import org.apache.poi.ss.usermodel.Cell
-import org.apache.poi.ss.usermodel.Row
-import org.apache.poi.ss.usermodel.Sheet
+import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
@@ -257,7 +255,13 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     private Date dateValue(Cell cell) {
         try {
-            return cell?.dateCellValue
+            if (cell.cellType == Cell.CELL_TYPE_FORMULA) {
+                FormulaEvaluator evaluator = workbook.creationHelper.createFormulaEvaluator()
+                evaluator.evaluate(cell)
+                return DateUtil.getJavaDate(evaluator.evaluate(cell).numberValue)
+            } else {
+                return cell?.dateCellValue
+            }
         } catch (IllegalStateException ignored) {
             importResults << new ImportResult(cell, "Cell type Date expected", ImportResult.Type.ERROR)
             return null
