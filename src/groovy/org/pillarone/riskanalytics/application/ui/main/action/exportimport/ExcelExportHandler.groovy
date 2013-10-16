@@ -64,6 +64,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         for (String parm in allParms) {
             Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
             Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+            addBorderToColumn(headerRow.sheet,columnIndex)
             setFont(cell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             setFont(technicalCell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             cell.setCellValue(getDisplayName(component, parm))
@@ -73,6 +74,12 @@ class ExcelExportHandler extends AbstractExcelHandler {
         }
 
         return columnIndex
+    }
+
+    private void addBorderToColumn(Sheet sheet, int columnIndex) {
+        CellStyle style = sheet.workbook.createCellStyle()
+        style.setBorderLeft(1 as short)
+        sheet.setDefaultColumnStyle(columnIndex, style)
     }
 
     private static String getDisplayName(Component component, String name) {
@@ -146,7 +153,6 @@ class ExcelExportHandler extends AbstractExcelHandler {
 
                     }
                 }
-
             }
         }
         return columnIndex
