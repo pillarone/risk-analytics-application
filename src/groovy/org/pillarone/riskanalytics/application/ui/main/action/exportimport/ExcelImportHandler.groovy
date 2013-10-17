@@ -6,6 +6,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.*
 import org.pillarone.riskanalytics.core.model.Model
@@ -17,6 +18,20 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
 
 class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandler {
+
+    private static final String MISSING_MODEL_CLASS_INFO = 'MissingModelClassInfo'
+    private static final String MISSING_META_INFO_SHEET = 'MissingMetaSheet'
+    private static final String INCORRECT_MODEL_CLASS_INFO = 'IncorrectModelClassInfo'
+    private static final String NO_ADDITIONAL_COMPONENTS_IMPORTED = 'NoAdditionalComponentsImported'
+    private static final String MISSING_SHEET = 'MissingSheet'
+    private static final String UNKNOWN_VALUE = 'UnknownValue'
+    private static final String MDPSHEET_NO_FOUND = 'MDPSheetNoFound'
+    private static final String TABLE_NOT_FOUND = 'TableNotFound'
+    private static final String COMPONENT_ALREADY_PRESENT = 'ComponentAlreadyPresent'
+    private static final String COMPONENT_PROCESSED = 'ComponentProcessed'
+    private static final String WRONG_CELL_TYPE = 'WrongCellType'
+    private static final String NULL_VALUE_NOT_ALLOWED = 'NullValueNotAllowed'
+
     private List<ImportResult> importResults = []
 
     private Model parameterizedModel
@@ -26,20 +41,24 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         clearImportResults()
         XSSFSheet sheet = workbook.getSheet(META_INFO_SHEET)
         if (!sheet) {
-            importResults << new ImportResult("Excel File does not contain mandatory sheet '$META_INFO_SHEET'", ImportResult.Type.ERROR)
+            importResults << new ImportResult(getMessage(MISSING_META_INFO_SHEET, [META_INFO_SHEET]), ImportResult.Type.ERROR)
         } else {
             if (!findModelName()) {
-                importResults << new ImportResult("Excel File does not contain model class info at sheet '$META_INFO_SHEET'", ImportResult.Type.ERROR)
+                importResults << new ImportResult(getMessage(MISSING_MODEL_CLASS_INFO, [META_INFO_SHEET]), ImportResult.Type.ERROR)
             } else {
                 Model modelFromSheet = getModel()
-                if (modelFromSheet.class != expectedModel.class) {
-                    importResults << new ImportResult("Excel File does not contain model class name ${expectedModel.class.simpleName}. Found: ${modelFromSheet.class.simpleName}", ImportResult.Type.ERROR)
+                if (modelFromSheet?.class != expectedModel.class) {
+                    importResults << new ImportResult(getMessage(INCORRECT_MODEL_CLASS_INFO, [expectedModel.class.simpleName, modelFromSheet?.class?.simpleName]), ImportResult.Type.ERROR)
                 } else {
                     process()
                 }
             }
         }
         return importResults
+    }
+
+    private static String getMessage(String messageKey, List args = []) {
+        return UIUtils.getText(ExcelImportHandler.class, messageKey, args.collect { it ?: 'null' })
     }
 
     void clearImportResults() {
@@ -53,7 +72,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
         if (!mustSaveNewParameterization) {
             importResults.clear()
-            importResults << new ImportResult("No additional components have been imported.", ImportResult.Type.SUCCESS)
+            importResults << new ImportResult(getMessage(NO_ADDITIONAL_COMPONENTS_IMPORTED), ImportResult.Type.SUCCESS)
         } else {
             Parameterization newParameterization
             if (parameterization) {
@@ -73,7 +92,6 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
             }
             newParameterization.save()
         }
-        // handle errors
         return importResults
 
     }
@@ -95,7 +113,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         processedModel.allComponents.each { Component component ->
             Sheet sheet = findSheetForComponent(component)
             if (!sheet) {
-                importResults << new ImportResult("Sheet with name ${getComponentDisplayName(component)} not found in workbook.", ImportResult.Type.WARNING)
+                importResults << new ImportResult(getMessage(MISSING_SHEET, [getComponentDisplayName(component)]), ImportResult.Type.WARNING)
             } else {
                 handleComponent(component, sheet, DATA_ROW_START_INDEX, 0)
             }
@@ -123,7 +141,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         try {
             return objectClass.class.valueOf(value)
         } catch (Exception ignored) {
-            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, "Unknown value '$value'. Allowed: ${objectClass.values().collect { "'${it.toString()}'" }.join(',')}", ImportResult.Type.ERROR)
+            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [value, objectClass.values().collect { "'${it.toString()}'" }.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
     }
@@ -164,7 +182,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
             }
             return classifier.getParameterObject(parameters)
         } else {
-            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, "Unknown value '$propertyName'. Allowed: ${classifiers.collect { "'${it.typeName}'" }.join(',')}", ImportResult.Type.ERROR)
+            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [propertyName, classifiers.collect { "'${it.typeName}'" }.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
     }
@@ -175,17 +193,17 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
         def mdpSheet = findMdpSheet(cell)
         if (!mdpSheet) {
-            importResults << new ImportResult(cell, "Sheet for MDP with name ${getMDPSheetName(cell)} not found", ImportResult.Type.ERROR)
+            importResults << new ImportResult(cell, getMessage(MDPSHEET_NO_FOUND, [getMDPSheetName(cell)]), ImportResult.Type.ERROR)
             return mdp
         }
         def tableName = cell.stringCellValue
         if (!tableName) {
-            importResults << new ImportResult(cell, "Cell with table name reference must not be empty.", ImportResult.Type.ERROR)
+            importResults << new ImportResult(cell, getMessage(NULL_VALUE_NOT_ALLOWED), ImportResult.Type.ERROR)
             return mdp
         }
         Integer tableColumnIndex = findColumnIndex(mdpSheet, tableName, 0)
         if (tableColumnIndex == null) {
-            importResults << new ImportResult(cell, "Table with name '${tableName}' in MDP Sheet ${mdpSheet.sheetName} not found", ImportResult.Type.ERROR)
+            importResults << new ImportResult(cell, getMessage(TABLE_NOT_FOUND, [tableName, mdpSheet.sheetName]), ImportResult.Type.ERROR)
             return mdp
         }
         List<List> values = []
@@ -199,7 +217,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     Cell dataCell = row.getCell(columnIndex)
                     if (dataCell) {
                         Class valueType = mdp.constraints.getColumnType(columnIndex - tableColumnIndex)
-                        def value = toType(newInstance(valueType), dataCell,mdpSheet,rowIndex,columnIndex)
+                        def value = toType(newInstance(valueType), dataCell, mdpSheet, rowIndex, columnIndex)
                         if (IComponentMarker.isAssignableFrom(valueType)) {
                             value = toSubComponentName(value as String)
                         }
@@ -249,7 +267,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         try {
             return cell?.stringCellValue
         } catch (IllegalStateException ignored) {
-            importResults << new ImportResult(cell, "Cell type String expected", ImportResult.Type.ERROR)
+            importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['String']), ImportResult.Type.ERROR)
             return null
         }
     }
@@ -264,7 +282,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                 return cell?.dateCellValue
             }
         } catch (IllegalStateException ignored) {
-            importResults << new ImportResult(cell, "Cell type Date expected", ImportResult.Type.ERROR)
+            importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['Date']), ImportResult.Type.ERROR)
             return null
         }
     }
@@ -273,7 +291,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         try {
             return cell?.numericCellValue
         } catch (IllegalStateException ignored) {
-            importResults << new ImportResult(cell, "Cell type Number expected", ImportResult.Type.ERROR)
+            importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['Number']), ImportResult.Type.ERROR)
             return null
         }
     }
@@ -288,13 +306,13 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                 if (componentName && importEnabled(row, columnStartIndex)) {
                     String subComponentName = toSubComponentName(componentName)
                     if (componentAlreadyExists(subComponentName)) {
-                        importResults << new ImportResult(sheet.sheetName, rowIdx, "Parameterization for component '${componentName}' already present. Will be ignored.", ImportResult.Type.WARNING)
+                        importResults << new ImportResult(sheet.sheetName, rowIdx, getMessage(COMPONENT_ALREADY_PRESENT, [componentName]), ImportResult.Type.WARNING)
                     } else {
                         Component subComponent = component.createDefaultSubComponent()
                         subComponent.setName(subComponentName)
                         component.addSubComponent(subComponent)
                         handleComponent(subComponent, sheet, rowIdx, columnStartIndex)
-                        importResults << new ImportResult(sheet.sheetName, rowIdx, "$componentName processed", ImportResult.Type.SUCCESS)
+                        importResults << new ImportResult(sheet.sheetName, rowIdx, getMessage(COMPONENT_PROCESSED, [componentName]), ImportResult.Type.SUCCESS)
                     }
                 }
             }

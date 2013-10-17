@@ -39,6 +39,14 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    void testInvalidModelClass() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(1).getCell(1).setCellValue("NONEXISTINGCLASS")
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
     void testModelInfoNotFound() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -136,6 +144,16 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    void testMissingCellData() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(2).setCellValue('TYPE0')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
     void testAddSubComponent() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -185,7 +203,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         dataRow.createCell(1).setCellValue('componentB')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
-        assert 'componentB processed' == result[0].message
+        assert "Component 'componentB' processed." == result[0].message
     }
 
     void testImportDateFunction() {

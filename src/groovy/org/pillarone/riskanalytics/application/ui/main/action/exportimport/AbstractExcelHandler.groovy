@@ -31,7 +31,11 @@ abstract class AbstractExcelHandler {
     protected static final int HEADER_ROW_INDEX = 0
 
     Model getModel() {
-        return Thread.currentThread().contextClassLoader.loadClass(findModelName()).newInstance() as Model
+        try {
+            return Thread.currentThread().contextClassLoader.loadClass(findModelName()).newInstance() as Model
+        } catch (Exception ignored) {
+            return null
+        }
     }
 
     void loadWorkbook(InputStream is, String filename) {
@@ -55,7 +59,7 @@ abstract class AbstractExcelHandler {
 
     Integer findParameterColumnIndex(Sheet sheet, String name, int columnStartIndex) {
         Integer columnIndex = null
-        if (!name.startsWith('parm')) {
+        if (!name.startsWith(ComponentUtils.PARM)) {
             return null
         }
         Row row = sheet.getRow(TECHNICAL_HEADER_ROW_INDEX)
@@ -85,7 +89,7 @@ abstract class AbstractExcelHandler {
     }
 
     protected List getAllParms(Component component) {
-        TreeBuilderUtil.collectProperties(component, 'parm')
+        TreeBuilderUtil.collectProperties(component, ComponentUtils.PARM)
     }
 
     protected void addRow(XSSFSheet sheet, String key, String value) {
@@ -122,7 +126,7 @@ abstract class AbstractExcelHandler {
     protected String toSubComponentName(String name) {
         if (name && name.size() > 1) {
             String firstLetterUpperCase = name[0].toUpperCase()
-            return "sub$firstLetterUpperCase${name.substring(1).replaceAll(' ', '')}"
+            return "${ComponentUtils.SUB}$firstLetterUpperCase${name.substring(1).replaceAll(' ', '')}"
 
         }
         return name

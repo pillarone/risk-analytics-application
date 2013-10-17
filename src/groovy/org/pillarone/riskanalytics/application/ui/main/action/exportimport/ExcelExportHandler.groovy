@@ -41,7 +41,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                 String mdpSheetName = getSheetName(constraints)
                 Sheet sheet = workbook.createSheet(mdpSheetName)
                 Row headerRow = sheet.createRow(0)
-                headerRow.createCell(0).setCellValue('Link to component todo...')
+                headerRow.createCell(0).setCellValue('Reference anchor.')
                 Row columnNameRow = sheet.createRow(1)
                 constraints.titles.eachWithIndex { String val, i ->
                     columnNameRow.createCell(i).setCellValue(val)
@@ -107,7 +107,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
     private int handleComponent(DynamicComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
         Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
         Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
-        setCellComment(technicalCell, "To disable import add '#' to this row")
+        setCellComment(technicalCell, "To disable import, add '#' to this row")
         technicalCell.setCellValue(DISABLE_IMPORT)
         cell.setCellValue(DISABLE_IMPORT)
         columnIndex++
