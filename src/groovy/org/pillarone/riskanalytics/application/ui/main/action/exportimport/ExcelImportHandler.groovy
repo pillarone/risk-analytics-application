@@ -118,7 +118,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     }
 
-    private def toType(Enum objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(Enum objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         try {
             return objectClass.class.valueOf(value)
@@ -128,7 +128,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
-    private def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         if (value) {
             objectClass.setValueAt(toSubComponentName(cell.stringCellValue), 1, 0)
@@ -136,7 +136,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         return objectClass
     }
 
-    private def toType(ConstrainedString objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(ConstrainedString objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         if (value) {
             objectClass.setStringValue(toSubComponentName(value))
@@ -148,6 +148,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         String propertyName = stringValue(cell)
         AbstractParameterObjectClassifier classifier
         List<AbstractParameterObjectClassifier> classifiers = objectClass.type.getClassifiers() as List<AbstractParameterObjectClassifier>
+        //TODO (db) this should be handled in Excel rather than here.
         classifier = classifiers.find { AbstractParameterObjectClassifier c -> c.displayName == propertyName?.toLowerCase() || c.typeName == propertyName?.toUpperCase() }
         if (classifier) {
             Map parameters = [:]
@@ -168,7 +169,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
-    private def toType(ConstrainedMultiDimensionalParameter mdp, Cell cell, Sheet sheet = null, int r = 0, int c = 0) {
+    private def toType(ConstrainedMultiDimensionalParameter mdp, Cell cell, Sheet s, int r, int c) {
         if (!cell) {
             return mdp
         }
@@ -198,7 +199,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     Cell dataCell = row.getCell(columnIndex)
                     if (dataCell) {
                         Class valueType = mdp.constraints.getColumnType(columnIndex - tableColumnIndex)
-                        def value = toType(newInstance(valueType), dataCell)
+                        def value = toType(newInstance(valueType), dataCell,mdpSheet,rowIndex,columnIndex)
                         if (IComponentMarker.isAssignableFrom(valueType)) {
                             value = toSubComponentName(value as String)
                         }
@@ -212,27 +213,27 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
     }
 
-    private def toType(Integer objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(Integer objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         Number numericValue = numericValue(cell)
         return numericValue ? numericValue as Integer : new Integer(0)
     }
 
-    private def toType(Double objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(Double objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         Number numericValue = numericValue(cell)
         return numericValue ? numericValue as Double : new Double(0)
     }
 
-    private def toType(DateTime objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(DateTime objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         Date value = dateValue(cell)
         return value ? new DateTime(value.time) : new DateTime()
     }
 
-    private def toType(Boolean objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(Boolean objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         return value ? Boolean.parseBoolean(value) : Boolean.FALSE
     }
 
-    private def toType(IResource resource, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(IResource resource, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         if (value) {
             String[] values = value.split(" v")
@@ -240,7 +241,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
-    private def toType(def objectClass, Cell cell, Sheet sheet = null, int rowIndex = 0, int columnIndex = 0) {
+    private def toType(def objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         return stringValue(cell)
     }
 

@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import org.apache.poi.ss.usermodel.*
+import org.apache.poi.xssf.usermodel.XSSFCellStyle
+import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
@@ -15,6 +17,7 @@ import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassif
 
 class ExcelExportHandler extends AbstractExcelHandler {
     Model model
+    static List<java.awt.Color> PARAM_COLORS = [java.awt.Color.LIGHT_GRAY, new java.awt.Color(230,230,230)]
     Map<IMultiDimensionalConstraints, List<MDPTitleContraints>> mdpConstraintsWithTitles = [:]
 
     ExcelExportHandler(Model model) {
@@ -64,22 +67,21 @@ class ExcelExportHandler extends AbstractExcelHandler {
         for (String parm in allParms) {
             Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
             Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
-            addBorderToColumn(headerRow.sheet,columnIndex)
             setFont(cell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             setFont(technicalCell, 10 as short, false, Font.BOLDWEIGHT_BOLD)
             cell.setCellValue(getDisplayName(component, parm))
             technicalCell.setCellValue(parm)
-
-            columnIndex = addParameterCells(component[parm], headerRow, technicalHeaderRow, ++columnIndex, cell)
+            XSSFCellStyle style = workbook.createCellStyle()
+            java.awt.Color color = PARAM_COLORS[columnIndex % PARAM_COLORS.size()]
+            style.setFillForegroundColor(new XSSFColor(color))
+            style.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+            XSSFCellStyle paramStyle = style.clone()
+            style.setBorderLeft(BorderStyle.THIN)
+            technicalHeaderRow.sheet.setDefaultColumnStyle(columnIndex, style)
+            columnIndex = addParameterCells(component[parm], headerRow, technicalHeaderRow, ++columnIndex, cell, paramStyle)
         }
 
         return columnIndex
-    }
-
-    private void addBorderToColumn(Sheet sheet, int columnIndex) {
-        CellStyle style = sheet.workbook.createCellStyle()
-        style.setBorderLeft(1 as short)
-        sheet.setDefaultColumnStyle(columnIndex, style)
     }
 
     private static String getDisplayName(Component component, String name) {
@@ -114,11 +116,11 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return handleComponent(component.createDefaultSubComponent(), headerRow, technicalHeaderRow, ++columnIndex)
     }
 
-    private int addParameterCells(def parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell) {
+    private int addParameterCells(def parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
         columnIndex
     }
 
-    private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell) {
+    private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
         addParameter(multiDimensionalParameter)
         String sheetName = getSheetName(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints))
         setCellComment(cell, sheetName)
@@ -126,7 +128,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return columnIndex
     }
 
-    private int addParameterCells(IParameterObject parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell c) {
+    private int addParameterCells(IParameterObject parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell c, XSSFCellStyle columnStyle) {
         List<IParameterObjectClassifier> classifiers = parmObject.type.getClassifiers()
         Set writtenParameters = []
         classifiers.each { IParameterObjectClassifier classifier ->
@@ -135,6 +137,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                     writtenParameters << parmName
                     Cell technicalCell = technicalHeaderRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
                     Cell cell = headerRow.createCell(columnIndex, Cell.CELL_TYPE_STRING)
+                    technicalHeaderRow.sheet.setDefaultColumnStyle(columnIndex, columnStyle)
                     setFont(cell, 8 as short, true)
                     setFont(technicalCell, 8 as short, true)
                     technicalCell.setCellValue(parmName)
@@ -143,13 +146,12 @@ class ExcelExportHandler extends AbstractExcelHandler {
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
                         addParameter(classifierParameter)
                         String sheetName = getSheetName(new MDPTitleContraints(classifierParameter.titles, classifierParameter.constraints))
-                        setCellComment(cell, sheetName)
                         setHyperlink(cell, sheetName)
                     }
                     if (parmObject.class == classifierParameter.class) {
                         // TODO (recursive call with same classifier not supported.)
                     } else {
-                        columnIndex = addParameterCells(classifierParameter, headerRow, technicalHeaderRow, ++columnIndex, cell)
+                        columnIndex = addParameterCells(classifierParameter, headerRow, technicalHeaderRow, ++columnIndex, cell, columnStyle)
 
                     }
                 }
@@ -198,7 +200,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         anchor.setCol1(cell.columnIndex);
         anchor.setCol2(cell.columnIndex + width);
         anchor.setRow1(cell.row.rowNum);
-        anchor.setRow2(cell.row.rowNum + 1);
+        anchor.setRow2(cell.row.rowNum + 3);
         Comment comment = cell.row.getSheet().createDrawingPatriarch().createCellComment(anchor)
         comment.setString(new XSSFRichTextString(commentString))
         cell.setCellComment(comment)
