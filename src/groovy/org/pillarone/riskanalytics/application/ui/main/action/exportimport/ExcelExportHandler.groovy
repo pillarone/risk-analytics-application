@@ -84,11 +84,6 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return columnIndex
     }
 
-    private static String getDisplayName(Component component, String name) {
-        String displayName = I18NUtils.findParameterDisplayName(component, name)
-        return displayName ?: ComponentUtils.getNormalizedName(name)
-    }
-
     private int handleComponent(ComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
         columnIndex = handleComponent(component as Component, headerRow, technicalHeaderRow, columnIndex)
         for (Component subComponent in component.allSubComponents()) {

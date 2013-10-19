@@ -102,6 +102,39 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    void testUnknownEnumDisplayName() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('TYPE0')
+        dataRow.createCell(1).setCellValue('unknown')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    void testEnumDisplayName() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('TYPE0')
+        dataRow.createCell(1).setCellValue('First value')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+    }
+
+    void testEnumTechnicalName() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('TYPE0')
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+    }
+
     void testIncorrectParameterObjectClassifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")

@@ -146,6 +146,16 @@ abstract class AbstractExcelHandler {
         workbook.getSheet(sheetName)
     }
 
+    static String getDisplayName(Component component, String name) {
+        String displayName = I18NUtils.findParameterDisplayName(component, name)
+        return displayName ?: ComponentUtils.getNormalizedName(name)
+    }
+
+    static String getDisplayName(Class clazz, String name) {
+        String displayName = I18NUtils.findParameterDisplayName(clazz, name)
+        return displayName ?: name
+    }
+
     static String getComponentDisplayName(Component component) {
         String displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component)
         return displayName ?: ComponentUtils.getNormalizedName(component.name)

@@ -138,12 +138,16 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     private def toType(Enum objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
-        try {
-            return objectClass.class.valueOf(value)
-        } catch (Exception ignored) {
-            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [value, objectClass.values().collect { "'${it.toString()}'" }.join(',')]), ImportResult.Type.ERROR)
+        List<Enum> possibleEnumValues = objectClass.values()
+        Enum enumObject = possibleEnumValues.find {
+            getDisplayName(it.class, it.toString()) == value || it.toString() == value
+        }
+        if (!enumObject) {
+            List<String> displayNames = possibleEnumValues.collect { "'${getDisplayName(it.class, it.toString())}'" }
+            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [value, displayNames.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
+        return enumObject
     }
 
     private def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
@@ -182,7 +186,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
             }
             return classifier.getParameterObject(parameters)
         } else {
-            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [propertyName, classifiers.collect { "'${it.typeName}'" }.join(',')]), ImportResult.Type.ERROR)
+            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [propertyName, classifiers.collect { "'${it.displayName}'" }.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
     }
