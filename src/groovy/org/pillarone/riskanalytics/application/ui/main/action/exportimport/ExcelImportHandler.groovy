@@ -170,8 +170,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         String propertyName = stringValue(cell)
         AbstractParameterObjectClassifier classifier
         List<AbstractParameterObjectClassifier> classifiers = objectClass.type.getClassifiers() as List<AbstractParameterObjectClassifier>
-        //TODO (db) this should be handled in Excel rather than here.
-        classifier = classifiers.find { AbstractParameterObjectClassifier c -> c.displayName == propertyName?.toLowerCase() || c.typeName == propertyName?.toUpperCase() }
+        classifier = classifiers.find { AbstractParameterObjectClassifier c -> c.displayName?.equalsIgnoreCase(propertyName) || c.typeName?.equalsIgnoreCase(propertyName) }
         if (classifier) {
             Map parameters = [:]
             classifier.getParameterNames().each { String parameterName ->
