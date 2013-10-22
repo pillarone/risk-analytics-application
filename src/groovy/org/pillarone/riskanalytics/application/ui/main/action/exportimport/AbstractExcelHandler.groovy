@@ -142,7 +142,7 @@ abstract class AbstractExcelHandler {
     }
 
     protected Sheet findSheetForComponent(Component component) {
-        String sheetName = getComponentDisplayName(component)
+        String sheetName = getSheetName(component)
         workbook.getSheet(sheetName)
     }
 
@@ -156,14 +156,7 @@ abstract class AbstractExcelHandler {
         return displayName ?: name
     }
 
-    static String getComponentDisplayName(Component component) {
-        String displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component)
-        return displayName ?: ComponentUtils.getNormalizedName(component.name)
+    static String getSheetName(Component component) {
+        return component.name
     }
-
-    static String getComponentDisplayName(GlobalParameterComponent component) {
-        String displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component)
-        return displayName ?: "Global ${ComponentUtils.getNormalizedName(component.name)}"
-    }
-
 }
