@@ -6,7 +6,6 @@ import org.apache.poi.xssf.usermodel.XSSFColor
 import org.apache.poi.xssf.usermodel.XSSFRichTextString
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
-import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
@@ -29,7 +28,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         model.injectComponentNames()
         OutputStream outputStream = new ByteArrayOutputStream()
         model.allComponents.each { Component component ->
-            String name = getComponentDisplayName(component)
+            String name = getSheetName(component)
             Sheet sheet = workbook.createSheet(name)
             Row headerRow = sheet.createRow(0)
             Row technicalHeaderRow = sheet.createRow(1)
@@ -38,7 +37,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         }
         mdpConstraintsWithTitles.each { Map.Entry<IMultiDimensionalConstraints, List<MDPTitleContraints>> entry ->
             entry.value.eachWithIndex { MDPTitleContraints constraints, int index ->
-                String mdpSheetName = getSheetName(constraints)
+                String mdpSheetName = getSheetNameForMDP(constraints)
                 Sheet sheet = workbook.createSheet(mdpSheetName)
                 Row headerRow = sheet.createRow(0)
                 headerRow.createCell(0).setCellValue('Reference anchor.')
@@ -117,7 +116,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
 
     private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
         addParameter(multiDimensionalParameter)
-        String sheetName = getSheetName(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints))
+        String sheetName = getSheetNameForMDP(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints))
         setCellComment(cell, sheetName)
         setHyperlink(cell, sheetName)
         return columnIndex
@@ -140,7 +139,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                     Object classifierParameter = classifier.getType(parmName)
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
                         addParameter(classifierParameter)
-                        String sheetName = getSheetName(new MDPTitleContraints(classifierParameter.titles, classifierParameter.constraints))
+                        String sheetName = getSheetNameForMDP(new MDPTitleContraints(classifierParameter.titles, classifierParameter.constraints))
                         setHyperlink(cell, sheetName)
                     }
                     if (parmObject.class == classifierParameter.class) {
@@ -160,7 +159,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return parameterDisplayName ?: parmName
     }
 
-    private String getSheetName(MDPTitleContraints mdpTitleContraints, boolean truncate = true) {
+    private String getSheetNameForMDP(MDPTitleContraints mdpTitleContraints, boolean truncate = true) {
         List<MDPTitleContraints> mdpsForConstraints = mdpConstraintsWithTitles.get(mdpTitleContraints.constraints)
         String counter = mdpsForConstraints.indexOf(mdpTitleContraints)
         String name = "MDP${counter}-${mdpTitleContraints.constraints.class.simpleName}"
