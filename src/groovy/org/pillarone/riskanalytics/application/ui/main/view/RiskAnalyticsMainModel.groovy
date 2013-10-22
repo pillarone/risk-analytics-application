@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationLi
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -126,8 +127,8 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         batchTableListeners << batchTableListener
     }
 
-    public void fireRowAdded() {
-        batchTableListeners.each {BatchTableListener batchTableListener -> batchTableListener.fireRowAdded()}
+    public void fireRowAdded(BatchRunSimulationRun addedRun) {
+        batchTableListeners.each {BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun)}
     }
 
     public void fireRowDeleted(Object item) {
