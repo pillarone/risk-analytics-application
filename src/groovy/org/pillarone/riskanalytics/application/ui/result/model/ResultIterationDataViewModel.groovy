@@ -4,6 +4,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 import org.pillarone.riskanalytics.application.ui.result.view.ResultView
+import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
@@ -11,6 +12,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.components.ComponentUtils
+
+import java.text.MessageFormat
 
 class ResultIterationDataViewModel extends QueryPaneModel {
     int periodCount
@@ -58,9 +61,11 @@ class ResultIterationDataViewModel extends QueryPaneModel {
 
     public String getCounterString() {
         int found = results.size()
-        String moreHint = (found < simulationRun.iterations) ? " (press Search button for more)." : ".";
+        String moreHint = (found < simulationRun.iterations) ? LocaleResources.getString("ResultIterationDataView.diplay.all.search.result") : ".";
+        MessageFormat foundIterations = new MessageFormat(LocaleResources.getString("ResultIterationDataView.found.iterations.hint"))
         java.text.NumberFormat numberFormat = LocaleResources.getNumberFormat()
-        "Found ${numberFormat.format(found)} out of ${numberFormat.format(simulationRun.iterations)} Iterations${moreHint}"
+        foundIterations.format([numberFormat.format(found), numberFormat.format(simulationRun.iterations), moreHint].toArray())
+//        "Found ${numberFormat.format(found)} out of ${numberFormat.format(simulationRun.iterations)} Iterations ${moreHint}"
     }
 
 
