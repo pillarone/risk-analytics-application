@@ -39,6 +39,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         add(new ULCMenuItem(new SaveAsAction(tree, uIItem.mainModel)));
         if (hasCreateNewMajorVersionAction()) add(new ULCMenuItem(new CreateNewMajorVersion(tree, uIItem.mainModel)));
         add(new ULCMenuItem(new ExportItemAction(tree, uIItem.mainModel)));
+        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, uIItem.mainModel,'ImportFromExcelAdditional')));
 
         addSeparator();
         boolean separatorNeeded = addMenuItemsForWorkflowState(tree, node);

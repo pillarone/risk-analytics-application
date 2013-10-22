@@ -100,14 +100,18 @@ class ImportAction extends SelectionTreeAction {
         config.setFileSelectionMode(FileChooserConfig.FILES_ONLY)
         config.setMultiSelectionEnabled(true)
         def ext = new String[1]
-        ext[0] = "groovy"
-        config.addFileFilterConfig(new FileChooserConfig.FileFilterConfig(ext, "description (*.groovy)"));
+        ext[0] = extension
+        config.addFileFilterConfig(new FileChooserConfig.FileFilterConfig(ext, "description (*.$extension)"));
         config.setAcceptAllFileFilterUsed(false)
         return config
     }
 
     protected String getDialogTitle(node) {
         return "Import"
+    }
+
+    String getExtension(){
+        'groovy'
     }
 
     ULCWindow getAncestor() {

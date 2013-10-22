@@ -40,16 +40,24 @@ public class I18NUtils {
     }
 
     public static String findParameterDisplayName(ComponentTableTreeNode componentNode, String subPath, String toolTip = "") {
-        Component component = componentNode.component
-        String value = null
+        return findParameterDisplayName(componentNode.component, subPath, toolTip)
+    }
+
+    public static String findParameterDisplayName(Component component, String subPath, String toolTip = "") {
         String parmKey = subPath.replaceAll(":", ".")
+        return findParameterDisplayName(component.class, parmKey, toolTip)
+    }
+
+    public static String findParameterDisplayName(Class resourceClass, String parmKey, String toolTip = "") {
+        String value = null
         try {
-            ResourceBundle bundle = findResourceBundle(component.getClass())
+            ResourceBundle bundle = findResourceBundle(resourceClass)
             value = bundle.getString(parmKey + toolTip)
         } catch (java.util.MissingResourceException e) {
-            return findParameterDisplayNameBySuperClass(component.getClass().getSuperclass(), parmKey, toolTip)
+            return findParameterDisplayNameBySuperClass(resourceClass.superclass, parmKey, toolTip)
         }
         return value
+
     }
 
     public static String findParameterDisplayName(SimpleTableTreeNode componentNode, String subPath, String toolTip = "") {
@@ -79,8 +87,7 @@ public class I18NUtils {
             Class superClass = componentClass.getSuperclass()
             if (superClass != null && superClass.name != "org.pillarone.riskanalytics.core.components.Component") {
                 value = findParameterDisplayNameBySuperClass(superClass, parmKey + toolTip)
-            }
-            else {
+            } else {
                 LOG.trace("resource for ${componentClass.getSimpleName()} not found. Key: ${parmKey}")
             }
         }
@@ -204,8 +211,7 @@ public class I18NUtils {
             Class superClass = packetClass.getSuperclass()
             if (superClass != null) {
                 value = findDisplayNameByPacketSuperClass(superClass, parmKey)
-            }
-            else {
+            } else {
                 LOG.trace("resource for ${packetClass.getSimpleName()} not found. Key: ${parmKey}")
             }
         }
@@ -221,8 +227,7 @@ public class I18NUtils {
             Class superClass = class2.getSuperclass()
             if (superClass != null && class2.getSuperclass().name != "org.pillarone.riskanalytics.core.components.Component") {
                 bundle = findResourceBundle(class2.getSuperclass())
-            }
-            else {
+            } else {
                 throw e
             }
         }
@@ -284,8 +289,8 @@ public class I18NUtils {
         if (!text) {
             text = toLines(exception, 70)
         }
-        text = text.replaceAll("<","&lt;")
-        text = text.replaceAll(">","&gt;")
+        text = text.replaceAll("<", "&lt;")
+        text = text.replaceAll(">", "&gt;")
         return HTMLUtilities.convertToHtml(text)
     }
 
@@ -319,14 +324,14 @@ public class I18NUtils {
         String text = ""
         try {
             argument = argument.replaceAll("\n", "")
-            for (ResourceBundle resourceBundle: bundles) {
+            for (ResourceBundle resourceBundle : bundles) {
                 keys = (List) new GroovyShell().evaluate(argument)
                 try {
                     text = resourceBundle.getString(keys[0])
                 } catch (Exception ex) {}
                 if (text) {
                     List args = []
-                    keys.eachWithIndex {String key, int index ->
+                    keys.eachWithIndex { String key, int index ->
                         if (index > 0) {
                             args << key
                         }
@@ -335,7 +340,7 @@ public class I18NUtils {
                         text = MessageFormat.format(text, args.toArray())
                 }
             }
-        } catch (Exception ex) { /*ignore the exception*/}
+        } catch (Exception ex) { /*ignore the exception*/ }
         return text;
     }
 
