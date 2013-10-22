@@ -67,7 +67,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testMissingMDPSheet() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('RESOURCE')
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
@@ -81,7 +81,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testMissingMDPTableReference() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(2).setCellValue('RESOURCE')
@@ -93,7 +93,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testMissingMDPTableIdentifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('RESOURCE')
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
@@ -105,7 +105,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testUnknownEnumDisplayName() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('TYPE0')
         dataRow.createCell(1).setCellValue('unknown')
@@ -116,7 +116,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testEnumDisplayName() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('TYPE0')
         dataRow.createCell(1).setCellValue('First value')
@@ -127,7 +127,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testEnumTechnicalName() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('TYPE0')
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
@@ -138,7 +138,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testIncorrectParameterObjectClassifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('UNKNOWN_CLASSIFIER')
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
@@ -150,7 +150,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testMDPValues() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(2).setCellValue('RESOURCE')
         dataRow.createCell(10).setCellValue('tableName')
@@ -169,7 +169,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testIncorrectCellData() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet sheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet sheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('DUMMY')
         dataRow.createCell(2).setCellValue('TYPE0')
@@ -180,7 +180,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testMissingCellData() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet sheet = handler.workbook.getSheet('parameter Component')
+        XSSFSheet sheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(2).setCellValue('TYPE0')
         List<ImportResult> result = handler.validate(new ApplicationModel())
@@ -190,7 +190,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
     void testAddSubComponent() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet sheet = handler.workbook.getSheet('dynamic Component')
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('DUMMY')
         List<ImportResult> result = handler.validate(new ApplicationModel())
@@ -210,7 +210,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
 
         handler.parameterizedModel = model
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet sheet = handler.workbook.getSheet('dynamic Component')
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('componentA')
         List<ImportResult> result = handler.validate(new ApplicationModel())
@@ -231,7 +231,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
 
         handler.parameterizedModel = model
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet sheet = handler.workbook.getSheet('dynamic Component')
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('componentB')
         List<ImportResult> result = handler.validate(new ApplicationModel())
@@ -245,7 +245,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         int month = 1
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        XSSFSheet sheet = handler.workbook.getSheet('Global Parameter Component')
+        XSSFSheet sheet = handler.workbook.getSheet('globalParameterComponent')
         XSSFRow dataRow = sheet.createRow(2)
         XSSFCell cell = dataRow.createCell(0)
         cell.setCellType(Cell.CELL_TYPE_FORMULA)
@@ -256,5 +256,16 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert year == date.getYear()
         assert month == date.getMonthOfYear()
         assert day == date.getDayOfMonth()
+    }
+
+    void testInstantiationErrorForClassifier() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile),'test.xlsx')
+        XSSFSheet sheet = handler.workbook.getSheet('parameterComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
+        dataRow.createCell(2).setCellValue('TYPE_WITH_ERROR')
+        List result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
     }
 }

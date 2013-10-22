@@ -7,7 +7,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.*
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.*
@@ -79,7 +78,11 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                 newParameterization = ModellingItemFactory.incrementVersion(parameterization) as Parameterization
             } else {
                 newParameterization = new Parameterization(parmeterizationName, modelInstance.class)
-                updateVersionNumber(newParameterization)
+                String highestVersion = VersionNumber.getHighestNonWorkflowVersion(newParameterization)?.toString()
+                if (highestVersion) {
+                    newParameterization.setVersionNumber(new VersionNumber(highestVersion))
+                    newParameterization.versionNumber = VersionNumber.incrementVersion(newParameterization)
+                }
             }
             Comment comment = new Comment(modelInstance.class.simpleName - 'Model', 0)
             comment.text = "Excel Import"
@@ -96,16 +99,6 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     }
 
-    private static void updateVersionNumber(Parameterization parameterization) {
-        for (int i = 1; i < Integer.MAX_VALUE; i++) {
-            ParameterizationDAO dao = ParameterizationDAO.find(parameterization.name, parameterization.modelClass.name, i as String)
-            if (!dao) {
-                parameterization.versionNumber = new VersionNumber(i as String)
-                break
-            }
-        }
-    }
-
     private List<ImportResult> process() {
         Model processedModel = getModel()
         processedModel.init()
@@ -113,7 +106,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         processedModel.allComponents.each { Component component ->
             Sheet sheet = findSheetForComponent(component)
             if (!sheet) {
-                importResults << new ImportResult(getMessage(MISSING_SHEET, [getComponentDisplayName(component)]), ImportResult.Type.WARNING)
+                importResults << new ImportResult(getMessage(MISSING_SHEET, [getSheetName(component)]), ImportResult.Type.WARNING)
             } else {
                 handleComponent(component, sheet, DATA_ROW_START_INDEX, 0)
             }
@@ -183,7 +176,12 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     parameters.put(parameterName, classifier.parameters[parameterName])
                 }
             }
-            return classifier.getParameterObject(parameters)
+            try {
+                return classifier.getParameterObject(parameters)
+            } catch (Exception parameterObjectInstantiationError) {
+                importResults << new ImportResult(sheet.sheetName, rowIndex, "Error instantiating object : ${classifier.toString()} of type : ${classifier.class.simpleName},  ${parameterObjectInstantiationError.message}", ImportResult.Type.ERROR)
+                return objectClass
+            }
         } else {
             importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [propertyName, classifiers.collect { "'${it.displayName}'" }.join(',')]), ImportResult.Type.ERROR)
             return objectClass
