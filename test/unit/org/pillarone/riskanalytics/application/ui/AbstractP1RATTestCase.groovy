@@ -16,7 +16,9 @@ import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimul
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -49,6 +51,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     @Override
     protected void setUp() {
         try {
+            ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
             super.setUp()
         } catch (Exception e) {
             LOG.error("Setup failed", e)

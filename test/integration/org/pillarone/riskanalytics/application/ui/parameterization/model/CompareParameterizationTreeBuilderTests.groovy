@@ -63,7 +63,7 @@ public class CompareParameterizationTreeBuilderTests extends GroovyTestCase {
         def root = builder.root
         assertNotNull root
 
-        assertEquals 2, root.childCount
+        assertEquals 3, root.childCount
         assertTrue builder.parameterizations.size() == 2
         assertTrue builder.minPeriod == 1
         assertEquals builder.item, parameterization1

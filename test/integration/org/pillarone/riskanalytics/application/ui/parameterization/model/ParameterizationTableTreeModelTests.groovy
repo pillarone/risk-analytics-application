@@ -100,7 +100,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         assertNotNull tableModel.root
 
-        def enumNode = tableModel.root.getChildAt(1).getChildAt(1)
+        def enumNode = tableModel.root.getChildAt(2).getChildAt(1)
         assertEquals ComponentUtils.getNormalizedName("parmEnumParameter"), enumNode.displayName
         assertEquals 'First value', tableModel.getValueAt(enumNode, 1)
 
@@ -202,7 +202,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         assertNotNull "no root", tableModel.root
 
-        def mdpNode = tableModel.root.getChildAt(1).getChildAt(0)
+        def mdpNode = tableModel.root.getChildAt(2).getChildAt(0)
         assertTrue "Wrong type:${mdpNode.class.name}", mdpNode instanceof MultiDimensionalParameterizationTableTreeNode
         def oldParameter = parameterization.getParameterHolder(mdpNode.parameterPath, 0)
         AbstractMultiDimensionalParameter parameterInstance = oldParameter.businessObject
@@ -237,7 +237,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         assertNotNull tableModel.root
 
-        def mdpNode = tableModel.root.getChildAt(1).getChildAt(0)
+        def mdpNode = tableModel.root.getChildAt(2).getChildAt(0)
         assertTrue mdpNode instanceof MultiDimensionalParameterizationTableTreeNode
         def oldParameter = parameterization.getParameterHolder(mdpNode.parameterPath, 0)
         AbstractMultiDimensionalParameter parameterInstance = oldParameter.businessObject
@@ -275,7 +275,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
 
         assertNotNull tableModel.root
 
-        def parameterObjectNode = tableModel.root.getChildAt(1).getChildAt(2)
+        def parameterObjectNode = tableModel.root.getChildAt(2).getChildAt(2)
         def oldParameter = parameterization.getParameterHolder(parameterObjectNode.parameterPath, 0)
         assertEquals 2, parameterObjectNode.childCount
         def mdpNode = parameterObjectNode.getChildAt(1)
