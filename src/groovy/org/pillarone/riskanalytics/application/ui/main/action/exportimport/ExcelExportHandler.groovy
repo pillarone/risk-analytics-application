@@ -42,8 +42,8 @@ class ExcelExportHandler extends AbstractExcelHandler {
                 Row headerRow = sheet.createRow(0)
                 headerRow.createCell(0).setCellValue('Reference anchor.')
                 Row columnNameRow = sheet.createRow(1)
-                constraints.titles.eachWithIndex { String val, i ->
-                    columnNameRow.createCell(i).setCellValue(val)
+                constraints.titles.eachWithIndex {val, i ->
+                    columnNameRow.createCell(i).setCellValue(val.toString())
                 }
             }
         }
