@@ -208,10 +208,10 @@ class ExcelExportHandler extends AbstractExcelHandler {
 
 
     class MDPTitleContraints {
-        List<String> titles
+        List titles
         IMultiDimensionalConstraints constraints
 
-        MDPTitleContraints(List<String> titles, IMultiDimensionalConstraints constraints) {
+        MDPTitleContraints(List titles, IMultiDimensionalConstraints constraints) {
             this.titles = titles
             this.constraints = constraints
         }

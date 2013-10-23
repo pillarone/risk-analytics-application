@@ -185,6 +185,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         dataRow.createCell(2).setCellValue('TYPE0')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
+        assert result[0].toString().contains('Col=B')
     }
 
     void testAddSubComponent() {
