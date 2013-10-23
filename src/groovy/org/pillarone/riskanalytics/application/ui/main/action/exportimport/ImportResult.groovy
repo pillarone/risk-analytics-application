@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import org.apache.poi.ss.usermodel.Cell
+import org.apache.poi.ss.util.CellReference
 
 class ImportResult {
     String sheetName
@@ -36,10 +37,10 @@ class ImportResult {
             result.append("Sheet=$sheetName, ")
         }
         if (rowIndex != null) {
-            result.append("Row=$rowIndex, ")
+            result.append("Row=${rowIndex + 1}, ")
         }
         if (columnIndex != null) {
-            result.append("Col=$columnIndex, ")
+            result.append("Col=${CellReference.convertNumToColString(columnIndex)}, ")
         }
         if (message) {
             result.append(message)
