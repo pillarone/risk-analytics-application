@@ -1,14 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ApplicationContext
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.core.output.DeleteSimulationService
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.pillarone.riskanalytics.application.UserContext
 import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 
 class ExitAction extends ResourceBasedAction {
 
@@ -26,11 +24,6 @@ class ExitAction extends ResourceBasedAction {
     }
 
     public static void terminate() {
-        // todo dk: move this into a job
-        DeleteSimulationService deleteSimulationService = (DeleteSimulationService) ApplicationHolder.application.mainContext.getBean('deleteSimulationService')
-        if (deleteSimulationService != null) {
-            deleteSimulationService.deleteAllMarkedSimulations()
-        }
         ApplicationContext.terminate();
     }
 
