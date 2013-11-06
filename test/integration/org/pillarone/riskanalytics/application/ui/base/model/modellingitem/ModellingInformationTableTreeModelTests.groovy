@@ -289,45 +289,45 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
+}
 
-    class TestModelListener implements ITableTreeModelListener {
-        List<TableTreeModelEvent> nodeChangedEvents = []
-        List<TableTreeModelEvent> structureChangedEvents = []
-        List<TableTreeModelEvent> nodeStructureChangedEvents = []
-        List<TableTreeModelEvent> nodeInsertedEvents = []
-        List<TableTreeModelEvent> nodeRemovedEvents = []
+class TestModelListener implements ITableTreeModelListener {
+    List<TableTreeModelEvent> nodeChangedEvents = []
+    List<TableTreeModelEvent> structureChangedEvents = []
+    List<TableTreeModelEvent> nodeStructureChangedEvents = []
+    List<TableTreeModelEvent> nodeInsertedEvents = []
+    List<TableTreeModelEvent> nodeRemovedEvents = []
 
-        void reset() {
-            nodeChangedEvents.clear()
-            structureChangedEvents.clear()
-            nodeStructureChangedEvents.clear()
-            nodeInsertedEvents.clear()
-            nodeRemovedEvents.clear()
-        }
+    void reset() {
+        nodeChangedEvents.clear()
+        structureChangedEvents.clear()
+        nodeStructureChangedEvents.clear()
+        nodeInsertedEvents.clear()
+        nodeRemovedEvents.clear()
+    }
 
-        @Override
-        void tableTreeStructureChanged(TableTreeModelEvent event) {
-            structureChangedEvents << event
-        }
+    @Override
+    void tableTreeStructureChanged(TableTreeModelEvent event) {
+        structureChangedEvents << event
+    }
 
-        @Override
-        void tableTreeNodeStructureChanged(TableTreeModelEvent event) {
-            nodeStructureChangedEvents << event
-        }
+    @Override
+    void tableTreeNodeStructureChanged(TableTreeModelEvent event) {
+        nodeStructureChangedEvents << event
+    }
 
-        @Override
-        void tableTreeNodesInserted(TableTreeModelEvent event) {
-            nodeInsertedEvents << event
-        }
+    @Override
+    void tableTreeNodesInserted(TableTreeModelEvent event) {
+        nodeInsertedEvents << event
+    }
 
-        @Override
-        void tableTreeNodesRemoved(TableTreeModelEvent event) {
-            nodeRemovedEvents << event
-        }
+    @Override
+    void tableTreeNodesRemoved(TableTreeModelEvent event) {
+        nodeRemovedEvents << event
+    }
 
-        @Override
-        void tableTreeNodesChanged(TableTreeModelEvent event) {
-            nodeChangedEvents << event
-        }
+    @Override
+    void tableTreeNodesChanged(TableTreeModelEvent event) {
+        nodeChangedEvents << event
     }
 }
