@@ -1,15 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import models.core.CoreModel
+import org.junit.Before
+import org.junit.Test
+import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import org.pillarone.riskanalytics.application.dataaccess.function.*
 
-class CompareTableTreeModelTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class CompareTableTreeModelTests {
 
 
     Simulation simulation1
@@ -17,11 +21,13 @@ class CompareTableTreeModelTests extends GroovyTestCase {
     Simulation simulation3
     Simulation simulation4
 
+    @Before
     void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
     }
 
+    @Test
     void testGetSimulationIndexOnePeriodTwoFunction() {
         simulation1 = createSimulation("simulation", 1)
         simulation2 = createSimulation("simulation2", 1)
@@ -60,6 +66,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         assertSame percentage, model.getFunction(6)
     }
 
+    @Test
     void testGetSimulationIndexOnePeriodOneFunction() {
 
         simulation1 = createSimulation("simulation", 1)
@@ -96,6 +103,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
 
     }
 
+    @Test
     void testGetSimulationIndexTwoPeriodOneFunction() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)
@@ -130,6 +138,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
 
     }
 
+    @Test
     void testGetSimulationIndexTwoPeriodTwoFunction() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)
@@ -230,6 +239,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         assertSame percentage, model.getFunction(12)
     }
 
+    @Test
     void testGetSimulationIndexTwoPeriodTwoFunctionTwoCompareFunction() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)
@@ -286,6 +296,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         assertSame difference, model.getFunction(16)
     }
 
+    @Test
     void testGetSimulationIndexTwoCompareFunctionTreeSimulationsbyPeriod() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)
@@ -333,6 +344,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
 
     }
 
+    @Test
     void testGetSimulationIndexTwoCompareFunctionTreeSimulationsByKeyFigure() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)
@@ -377,6 +389,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
     }
 
 
+    @Test
     void testGetSimulationIndexFourSimulationsbyKeyFigure() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)
@@ -404,6 +417,7 @@ class CompareTableTreeModelTests extends GroovyTestCase {
         assertEquals 3, model.getSimulationRunIndex(16)
     }
 
+    @Test
     void testGetSimulationIndexFourSimulationsbyPeriod() {
         simulation1 = createSimulation("simulation", 2)
         simulation2 = createSimulation("simulation2", 2)

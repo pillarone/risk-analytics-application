@@ -1,22 +1,30 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationRootNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
+
+import static org.junit.Assert.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class SingleValueTreeBuilderTests extends GroovyTestCase {
+class SingleValueTreeBuilderTests {
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testTreeStructure() {
         Map singleValueResultsMap = [:]
         singleValueResultsMap[0] = [["net", 1, "paid", 1, 0, 0], ["net", 11, "paid", 1, 0, 1], ["net", 111, "paid", 1, 0, 2]]

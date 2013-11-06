@@ -1,21 +1,22 @@
 package org.pillarone.riskanalytics.application.output.result.item
 
 import models.application.ApplicationModel
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
-import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
-import org.pillarone.riskanalytics.core.output.PathMapping
-import org.pillarone.riskanalytics.core.output.FieldMapping
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
-import org.pillarone.riskanalytics.core.output.CollectorMapping
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
+import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.output.FieldMapping
+import org.pillarone.riskanalytics.core.output.PathMapping
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
+import static org.junit.Assert.assertEquals
 
-class CustomTableTests extends GroovyTestCase {
+class CustomTableTests {
 
-    @Override
-    protected void setUp() {
+    @Before
+    void setUp() {
         if(PathMapping.countByPathName("mypath") == 0) {
             new PathMapping(pathName: "mypath").save()
         }
@@ -29,6 +30,7 @@ class CustomTableTests extends GroovyTestCase {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
     }
 
+    @Test
     void testSaveLoad() {
 
         Parameterization parameterization = new Parameterization("ApplicationParameters", ApplicationModel)

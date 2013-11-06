@@ -2,30 +2,38 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.components.ComponentUtils
 
-class ParameterizationTreeBuilderTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class ParameterizationTreeBuilderTests {
 
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testTreeStructure() {
 
         Parameterization parameterization
@@ -68,6 +76,7 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
         assertTrue popNode.getChildAt(1) instanceof MultiDimensionalParameterizationTableTreeNode
     }
 
+    @Test
     void testDynamicTreeStructure() {
 
         Parameterization parameterization
@@ -114,6 +123,7 @@ class ParameterizationTreeBuilderTests extends GroovyTestCase {
         assertTrue dynamicSubcomponentNode.getChildAt(3) instanceof ParameterizationTableTreeNode
     }
 
+    @Test
     void testNestedSubComponents() {
         Parameterization parameterization
         ModelStructure structure

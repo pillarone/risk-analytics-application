@@ -1,33 +1,41 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
+import models.core.CoreModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.*
-import models.core.CoreModel
-import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDataViewModel
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
 
-class QueryPanelModelTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class QueryPanelModelTests {
 
     PathMapping path
     FieldMapping field
     CollectorMapping aggregatedSingleCollector
     ResultWriter resultWriter
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Core'])
 
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testCreateCriteriaSubQuerry() {
         SimulationRun run = new SimulationRun()
         run.periodCount = 2
@@ -39,6 +47,7 @@ class QueryPanelModelTests extends GroovyTestCase {
         assertEquals "sum(s.value) > 123.12", model.createCriteriaSubQuerry(createQPM(model, "TESTPATH", 1, CriteriaComparator.GREATER_THAN, 123.12))
     }
 
+    @Test
     void testPMO1914() {
         final SimulationRun run = prepareDB()
 

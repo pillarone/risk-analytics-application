@@ -1,17 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.resource.model
 
+import org.junit.Before
+import org.junit.Test
+import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.IntegerTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.SimpleValueParameterizationTableTreeNode
 import org.pillarone.riskanalytics.core.example.component.ExampleResource
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
 
-class ResourceTreeBuilderTests extends GroovyTestCase {
+import static org.junit.Assert.assertEquals
+import static org.junit.Assert.assertTrue
 
-    @Override
-    protected void setUp() {
+class ResourceTreeBuilderTests {
+
+    @Before
+    void setUp() {
         Resource resource = new Resource("testTree", ExampleResource)
         resource.addParameter(ParameterHolderFactory.getHolder("parmInteger", 0, 99))
         resource.addParameter(ParameterHolderFactory.getHolder("parmString", 0, "String"))
@@ -23,6 +28,7 @@ class ResourceTreeBuilderTests extends GroovyTestCase {
         resource2.save()
     }
 
+    @Test
     void testTree() {
 
         Resource resource = new Resource("testTree", ExampleResource)
@@ -37,6 +43,7 @@ class ResourceTreeBuilderTests extends GroovyTestCase {
         assertEquals("parmString", stringNode.name)
     }
 
+    @Test
     void testTreeWithStructure() {
 
         Resource resource = new Resource("testTreeWithStructure", ApplicationResource)

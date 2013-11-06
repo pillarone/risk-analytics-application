@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import models.core.CoreModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.example.parameter.ExampleEnum
 import org.pillarone.riskanalytics.core.example.parameter.ExampleParameterObjectClassifier
@@ -10,19 +13,24 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
-class ParameterizationNodeFactoryTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class ParameterizationNodeFactoryTests {
 
     Model model
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
         model = new CoreModel()
     }
 
-    protected void tearDown() {
+    @After
+    void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testGetNode() {
 
         List parameters = new ArrayList()
@@ -68,6 +76,7 @@ class ParameterizationNodeFactoryTests extends GroovyTestCase {
 
     }
 
+    @Test
     void testGetParameterObjectTableTreeNodes() {
         List parameters = new ArrayList()
         parameters << ParameterHolderFactory.getHolder("path", 0, ExampleParameterObjectClassifier.TYPE0.getParameterObject(["a": 0, "b": 0]))
@@ -90,6 +99,7 @@ class ParameterizationNodeFactoryTests extends GroovyTestCase {
         assertEquals 0, paramNode.childCount
     }
 
+    @Test
     void testGetParameterObjectTableTreeNodesWithDifferentClassifiers() {
         List parameters = new ArrayList()
         parameters << ParameterHolderFactory.getHolder("path", 0, ExampleParameterObjectClassifier.TYPE0.getParameterObject(["a": 0, "b": 0]))
@@ -120,6 +130,7 @@ class ParameterizationNodeFactoryTests extends GroovyTestCase {
         assertEquals 0, paramNode.childCount
     }
 
+    @Test
     void testGetParameterObjectTableTreeNodesWithNullClassifiers() {
         List parameters = new ArrayList()
         parameters << ParameterHolderFactory.getHolder("path", 0, ExampleParameterObjectClassifier.TYPE0.getParameterObject(["a": 0, "b": 0]))

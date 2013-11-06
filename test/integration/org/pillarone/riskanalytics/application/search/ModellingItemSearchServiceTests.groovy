@@ -2,20 +2,26 @@ package org.pillarone.riskanalytics.application.search
 
 import grails.util.Holders
 import models.core.CoreModel
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-class ModellingItemSearchServiceTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class ModellingItemSearchServiceTests {
 
     ModellingItemSearchService modellingItemSearchService
 
+    @Before
     void setUp() {
         modellingItemSearchService = Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService)
         FileImportService.importModelsIfNeeded(['Core', 'Application'])
         modellingItemSearchService.refresh()
     }
 
+    @Test
     void testService() {
         final List<ModellingItem> results = modellingItemSearchService.search([new AllFieldsFilter(query: "Parameters")])
 
@@ -39,6 +45,7 @@ class ModellingItemSearchServiceTests extends GroovyTestCase {
 
     }
 
+    @Test
     void testRenameParametrization() {
 
         Parameterization parameterization = new Parameterization("MyParameters", CoreModel)

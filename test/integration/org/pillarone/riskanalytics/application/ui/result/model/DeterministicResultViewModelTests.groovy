@@ -1,6 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import models.deterministicApplication.DeterministicApplicationModel
+import org.joda.time.DateTime
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -9,12 +13,13 @@ import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.*
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.output.*
-import org.joda.time.DateTime
 
-class DeterministicResultViewModelTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class DeterministicResultViewModelTests {
 
     SimulationRun simulationRun
     PathMapping path1
@@ -23,6 +28,7 @@ class DeterministicResultViewModelTests extends GroovyTestCase {
     CollectorMapping collector1
     CollectorMapping collector2
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
@@ -69,10 +75,12 @@ class DeterministicResultViewModelTests extends GroovyTestCase {
         }
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testPaths() {
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()

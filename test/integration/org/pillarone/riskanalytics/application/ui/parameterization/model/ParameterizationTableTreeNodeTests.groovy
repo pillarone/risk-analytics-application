@@ -2,6 +2,9 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import models.application.ApplicationModel
 import models.core.CoreModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.example.component.ExampleParameterComponent
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -19,16 +22,21 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
-class ParameterizationTableTreeNodeTests extends GroovyTestCase {
+import static org.junit.Assert.*
 
+class ParameterizationTableTreeNodeTests {
+
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testGetValueAt() {
         Model model = new CoreModel()
 
@@ -69,6 +77,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals 'SECOND_VALUE', node.getValueAt(2)
     }
 
+    @Test
     void testSetValueAt() {
         Model model = new CoreModel()
 
@@ -114,6 +123,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals ExampleEnum.FIRST_VALUE, parameters[1].businessObject
     }
 
+    @Test
     void testNullValues_PMO353() {
         def mdp = new SimpleMultiDimensionalParameter([1, 2, 3])
         def parameters = []
@@ -125,6 +135,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertNotNull node.getValueAt(2)
     }
 
+    @Test
     void testConstrainedStringNode() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Application"])
         Model model = new ApplicationModel()
@@ -160,6 +171,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         assertEquals 6, node.getValues().size()
     }
 
+    @Test
     void testConstrainedStringNode_PMO1562() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Application"])
         Model model = new ApplicationModel()

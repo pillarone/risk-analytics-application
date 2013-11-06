@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.chart.model
 
 import groovy.mock.interceptor.StubFor
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -8,14 +11,18 @@ import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+import static org.junit.Assert.assertSame
+import static org.junit.Assert.assertTrue
+
 /**
  * @author: fouad.jaada (at) intuitive-collaboration (dot) com
  */
 
-public class DistributionChartsViewModelTests extends GroovyTestCase {
+public class DistributionChartsViewModelTests {
     DistributionChartsViewModel model
     StubFor resultAccessor
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
         resultAccessor = new StubFor(ResultAccessor)
@@ -35,11 +42,12 @@ public class DistributionChartsViewModelTests extends GroovyTestCase {
         }
     }
 
-    protected void tearDown() {
+    @After
+    void tearDown() {
         LocaleResources.clearTestMode()
-        super.tearDown();
     }
 
+    @Test
     void testChangeStrategy() {
         resultAccessor.use {
             assertTrue model.strategyModel instanceof PDFRawChartViewModel
@@ -54,6 +62,7 @@ public class DistributionChartsViewModelTests extends GroovyTestCase {
     }
 
 
+    @Test
     void testFireModelChanged() {
         boolean receivedEvent = false
         model.addListener([modelChanged: {

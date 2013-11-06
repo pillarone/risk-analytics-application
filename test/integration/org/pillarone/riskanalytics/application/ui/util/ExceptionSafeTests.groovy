@@ -1,29 +1,34 @@
 package org.pillarone.riskanalytics.application.ui.util
 
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 
-class ExceptionSafeTests extends GroovyTestCase {
+import static org.junit.Assert.assertEquals
+
+class ExceptionSafeTests {
 
     TraceLogManager traceLogManager
 
-    @Override
-    protected void setUp() {
-        super.setUp()
+    @Before
+    void setUp() {
         traceLogManager.activateLogging()
     }
 
-    @Override
-    protected void tearDown() {
+    @After
+    void tearDown() {
         traceLogManager.deactivateLogging()
-        super.tearDown()
     }
 
+    @Test
     void testSimple() {
         ExceptionSafe.protect {
             throw new NullPointerException()
         }
     }
 
+    @Test
     void testReturnValuesAreRelayed() {
         def result = ExceptionSafe.protect {
             1

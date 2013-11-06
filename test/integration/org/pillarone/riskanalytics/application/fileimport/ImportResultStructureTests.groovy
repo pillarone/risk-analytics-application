@@ -1,18 +1,21 @@
 package org.pillarone.riskanalytics.application.fileimport
 
 import models.application.ApplicationModel
+import org.junit.Test
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
-import org.pillarone.riskanalytics.core.output.DBCleanUpService
+
+import static org.junit.Assert.assertEquals
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ImportResultStructureTests extends GroovyTestCase {
+class ImportResultStructureTests {
 
     ResultStructureImportService service = new ResultStructureImportService()
 
+    @Test
     void testImport() {
 
         File paramFile = new File(getModelFolder(), "application/ApplicationDefaultResultTree.groovy")

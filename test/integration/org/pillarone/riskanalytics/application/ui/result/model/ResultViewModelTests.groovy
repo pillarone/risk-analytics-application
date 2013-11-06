@@ -1,25 +1,30 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import models.application.ApplicationModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.function.MaxFunction
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.MinFunction
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.*
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.output.*
-import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
-import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 
-class ResultViewModelTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class ResultViewModelTests {
 
     SimulationRun simulationRun
     PathMapping path1
@@ -28,6 +33,7 @@ class ResultViewModelTests extends GroovyTestCase {
     CollectorMapping collector1
     CollectorMapping collector2
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
@@ -74,10 +80,12 @@ class ResultViewModelTests extends GroovyTestCase {
         }
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testSelectedResultStructure() {
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
@@ -108,6 +116,7 @@ class ResultViewModelTests extends GroovyTestCase {
         assertSame(selectedStructure, resultViewModel.builder.resultStructure)
     }
 
+    @Test
     void testPaths() {
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
@@ -125,6 +134,7 @@ class ResultViewModelTests extends GroovyTestCase {
         assertEquals SingleValueCollectingModeStrategy.IDENTIFIER, resultViewModel.builder.allPaths.get(path2.pathName + ":" + field.fieldName).getIdentifier()
     }
 
+    @Test
     void testFunctions() {
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         assertNotNull new PostSimulationCalculation(run: simulationRun, period: 2, path: path2, collector: collector2, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()

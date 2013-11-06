@@ -2,28 +2,32 @@ package org.pillarone.riskanalytics.application.ui.chart.model
 
 import groovy.mock.interceptor.MockFor
 import org.jfree.chart.JFreeChart
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.core.simulation.item.*
 
-class ChartViewModelTests extends GroovyTestCase {
+import static org.junit.Assert.assertEquals
 
+class ChartViewModelTests {
+
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testGetSimulationSettings() {
 
         MockFor itemFactory = new MockFor(ModellingItemFactory)

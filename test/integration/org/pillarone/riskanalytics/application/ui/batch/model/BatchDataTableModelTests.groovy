@@ -2,6 +2,9 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 
 import models.core.CoreModel
 import org.joda.time.DateTime
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
@@ -11,21 +14,24 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 
+import static org.junit.Assert.assertEquals
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class BatchDataTableModelTests extends GroovyTestCase {
+class BatchDataTableModelTests {
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    void setUp() throws Exception {
         LocaleResources.setTestMode()
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    void tearDown() throws Exception {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     public void testModel() {
         BatchDataTableModel model = new BatchDataTableModel(new BatchRun(name: "test"))
         model.metaClass.init = {->

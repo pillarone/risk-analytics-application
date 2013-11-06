@@ -1,21 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.resource.model
 
-import org.pillarone.riskanalytics.core.simulation.item.Resource
-import org.pillarone.riskanalytics.core.example.component.ExampleResource
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
+import org.pillarone.riskanalytics.core.example.component.ExampleResource
+import org.pillarone.riskanalytics.core.simulation.item.Resource
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
-/**
- * Created with IntelliJ IDEA.
- * User: oandersson
- * Date: 11/16/12
- * Time: 2:52 PM
- * To change this template use File | Settings | File Templates.
- */
-class ResourceTableTreeModelTests extends GroovyTestCase {
+import static org.junit.Assert.assertNotNull
 
-    @Override
-    protected void setUp() {
+class ResourceTableTreeModelTests {
+
+    @Before
+    void setUp() {
         Resource resource = new Resource("testTree", ExampleResource)
         resource.addParameter(ParameterHolderFactory.getHolder("parmInteger", 0, 99))
         resource.addParameter(ParameterHolderFactory.getHolder("parmString", 0, "String"))
@@ -27,6 +24,7 @@ class ResourceTableTreeModelTests extends GroovyTestCase {
         resource2.save()
     }
 
+    @Test
     void testFindPath() {
         Resource resource = new Resource("testTree", ExampleResource)
         resource.load()
@@ -37,6 +35,7 @@ class ResourceTableTreeModelTests extends GroovyTestCase {
         assertNotNull(model.findNode(['parmInteger'] as String[]))
     }
 
+    @Test
     void testFindPathWithStructure() {
         Resource resource = new Resource("testTreeWithStructure", ApplicationResource)
         resource.load()

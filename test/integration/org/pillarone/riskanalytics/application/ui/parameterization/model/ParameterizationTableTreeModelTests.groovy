@@ -3,39 +3,45 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
 import models.core.CoreModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.parameter.MultiDimensionalParameterValue
-import org.pillarone.riskanalytics.core.parameter.Parameter
-import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.example.parameter.ExampleEnum
 import org.pillarone.riskanalytics.core.example.parameter.ExampleParameterObjectClassifier
+import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
+import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameter.MultiDimensionalParameterValue
+import org.pillarone.riskanalytics.core.parameter.Parameter
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.parameterization.MultiDimensionalParameterDimension
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
-import org.pillarone.riskanalytics.core.components.ComponentUtils
-import org.pillarone.riskanalytics.application.ui.resource.model.ResourceViewModel
 
-class ParameterizationTableTreeModelTests extends GroovyTestCase {
+import static junit.framework.Assert.*
+
+class ParameterizationTableTreeModelTests {
 
     Parameterization parameterization
     ModelStructure structure
     Model model
     ParameterViewModel viewModel
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
+    @After
     void tearDown() {
         parameterization.removeListener(viewModel)
         LocaleResources.clearTestMode()
@@ -89,6 +95,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         parameterization.addListener(viewModel)
     }
 
+    @Test
     void testSimpleSetValueAt() {
 
         prepareApplicationModel()
@@ -112,6 +119,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals initialParameterCount, Parameter.count()
     }
 
+    @Test
     void testSetValueAtClassifierNode() {
 
         prepareMultiPeriodCoreModel()
@@ -144,12 +152,13 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         parameterization.save()
         parameterObjectParameter = parameterization.getParameters('exampleInputOutputComponent:parmParameterObject').get(0)
         assertEquals ExampleParameterObjectClassifier.TYPE1, parameterObjectParameter.classifier
-        assertNotNull parameterObjectParameter.classifierParameters.find {it.key == 'p1'}
-        assertNotNull parameterObjectParameter.classifierParameters.find {it.key == 'p2'}
+        assertNotNull parameterObjectParameter.classifierParameters.find { it.key == 'p1' }
+        assertNotNull parameterObjectParameter.classifierParameters.find { it.key == 'p2' }
 
         assertEquals initialParameterCount, Parameter.count()
     }
 
+    @Test
     void testSetValueAtClassifierNodeWithStructureChanges() {
 
         prepareMultiPeriodCoreModel()
@@ -184,13 +193,14 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         parameterization.save()
         parameterObjectParameter = parameterization.getParameters('exampleInputOutputComponent:parmParameterObject').get(0)
         assertEquals ExampleParameterObjectClassifier.TYPE2, parameterObjectParameter.classifier
-        assertNotNull parameterObjectParameter.classifierParameters.find {it.key == 'p1'}
-        assertNotNull parameterObjectParameter.classifierParameters.find {it.key == 'p2'}
-        assertNotNull parameterObjectParameter.classifierParameters.find {it.key == 'p3'}
+        assertNotNull parameterObjectParameter.classifierParameters.find { it.key == 'p1' }
+        assertNotNull parameterObjectParameter.classifierParameters.find { it.key == 'p2' }
+        assertNotNull parameterObjectParameter.classifierParameters.find { it.key == 'p3' }
 
         assertEquals initialParameterCount + 1, Parameter.count()
     }
 
+    @Test
     void testSetValueAtMultiDimensionalNode() {
 
         prepareApplicationModel()
@@ -222,6 +232,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals mdpValueCount, MultiDimensionalParameterValue.count()
     }
 
+    @Test
     void testSetValueAtMultiDimensionalNodeWithDimensionChange() {
 
         prepareApplicationModel()
@@ -262,6 +273,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals multidimensionalValueCount + 2, MultiDimensionalParameterValue.count()
     }
 
+    @Test
     void testSetValueAtNestedMultiDimensionalNode() {
 
         prepareApplicationModel()
@@ -297,6 +309,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals initialParameterCount, Parameter.count()
     }
 
+    @Test
     void testSetNestedParameterObjects() {
 
         prepareCoreModel()
@@ -341,6 +354,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals initialParameterCount + 3, Parameter.count()
     }
 
+    @Test
     void testAddDynamicComponent() {
 
         prepareCoreModel()
@@ -363,7 +377,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         parameterization.save()
 
         boolean pathFound = false
-        parameterization.parameters*.path.each {String path ->
+        parameterization.parameters*.path.each { String path ->
             if (path.contains("subComponent0")) {
                 pathFound = true
                 assertTrue path.startsWith("dynamicComponent")
@@ -374,6 +388,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals initialParameterCount + 8, Parameter.count()
     }
 
+    @Test
     void testAddDynamicComponentMultiPeriod() {
 
         prepareMultiPeriodCoreModel()
@@ -395,7 +410,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals 2, dynamicNode.childCount
         parameterization.save()
 
-        def parms = parameterization.parameters.findAll {it -> it.path.contains("subTestComponent:parmParameterObject")}.sort {it.periodIndex}
+        def parms = parameterization.parameters.findAll { it -> it.path.contains("subTestComponent:parmParameterObject") }.sort { it.periodIndex }
         assertEquals 2, parms.size()
         assertEquals 0, parms[0].periodIndex
         assertEquals 1, parms[1].periodIndex
@@ -403,6 +418,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals initialParameterCount + 16, Parameter.count()
     }
 
+    @Test
     void testRemoveDynamicComponent() {
 
         prepareCoreModel()
@@ -429,6 +445,7 @@ class ParameterizationTableTreeModelTests extends GroovyTestCase {
         assertEquals initialParameterCount, Parameter.count()
     }
 
+    @Test
     void testKeepOldParameterValues() {
         prepareCoreModel()
 

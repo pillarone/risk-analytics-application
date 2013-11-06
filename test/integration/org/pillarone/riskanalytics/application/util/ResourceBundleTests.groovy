@@ -1,18 +1,25 @@
 package org.pillarone.riskanalytics.application.util
 
-class ResourceBundleTests extends GroovyTestCase {
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 
-    @Override protected void setUp() {
-        super.setUp()
+import static org.junit.Assert.*
+
+class ResourceBundleTests {
+
+    @Before
+    void setUp() {
         LocaleResources.setTestMode()
     }
 
-    @Override protected void tearDown() {
-        super.tearDown()
+    @After
+    void tearDown() {
         LocaleResources.clearTestMode()
         ResourceBundleFactory.reset()
     }
 
+    @Test
     void testReplacements() {
         ResourceBundle bundle = LocaleResources.getBundle("org.pillarone.riskanalytics.application.applicationResources")
 

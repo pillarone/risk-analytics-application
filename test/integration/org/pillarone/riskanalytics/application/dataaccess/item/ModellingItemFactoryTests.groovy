@@ -2,22 +2,26 @@ package org.pillarone.riskanalytics.application.dataaccess.item
 
 import models.application.ApplicationModel
 import models.core.CoreModel
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.example.model.EmptyModel
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.output.CollectorInformation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
-class ModellingItemFactoryTests extends GroovyTestCase {
+import static junit.framework.Assert.*
 
+class ModellingItemFactoryTests {
+
+    @Before
     void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
@@ -26,6 +30,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         ModellingItemFactory.clear()
     }
 
+    @Test
     void testCreateItem() {
         ConfigObject data = new ConfigObject()
         data.model = CoreModel
@@ -39,6 +44,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals '2', item.versionNumber.toString()
     }
 
+    @Test
     void testGetParameterization() {
         ParameterizationDAO dao = ParameterizationDAO.list()[0]
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
@@ -51,6 +57,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNotSame parameterization, ModellingItemFactory.getParameterization(dao)
     }
 
+    @Test
     void testGetNewestParameterization() {
         ParameterizationDAO dao = ParameterizationDAO.findByName('CoreParameters')
         Parameterization parameterization = ModellingItemFactory.getParameterization(dao)
@@ -70,6 +77,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertFalse newParams.contains(parameterization)
     }
 
+    @Test
     void testGetModelItem() {
         ModelDAO dao = ModelDAO.list()[0]
         ModelItem modelItem = ModellingItemFactory.getModelItem(dao)
@@ -82,6 +90,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNotSame modelItem, ModellingItemFactory.getModelItem(dao)
     }
 
+    @Test
     void testGetModelStructure() {
 
         ModelStructureDAO dao = ModelStructureDAO.list()[0]
@@ -95,6 +104,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertNotSame template, ModellingItemFactory.getModelStructure(dao)
     }
 
+    @Test
     void testCopyParameterization() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
         ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())
@@ -116,6 +126,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals parameterization.parameters.size(), copy.parameters.size()
     }
 
+    @Test
     void testCopyResultConfiguration() {
 
         int collectorCount = CollectorInformation.count()
@@ -135,6 +146,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals resultConfiguration.collectors.size(), copy.collectors.size()
     }
 
+    @Test
     void testIncrementResultConfigurationVersion() {
 
         int collectorCount = CollectorInformation.count()
@@ -154,6 +166,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals resultConfiguration.collectors.size(), newVersion.collectors.size()
     }
 
+    @Test
     void testIncrementParameterizationVersion() {
 //        ParameterizationDAO dao = ParameterizationDAO.findByItemVersion('1')
         new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
@@ -182,6 +195,7 @@ class ModellingItemFactoryTests extends GroovyTestCase {
         assertEquals 0, copy.comments.get(0).period
     }
 
+    @Test
     void testPMO1985() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
         ParameterizationDAO dao = ParameterizationDAO.findByModelClassName(ApplicationModel.getName())

@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.resultconfiguration.model
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
 import models.core.CoreModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -11,16 +14,21 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
-class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
+import static org.junit.Assert.*
 
+class ResultConfigurationTreeBuilderTests {
+
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
-    protected void tearDown() {
+    @After
+    void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testBuildTree() {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
@@ -46,6 +54,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
 //        assertEquals SingleValueCollectingModeStrategy.IDENTIFIER, outClaims.collector.mode.identifier
     }
 
+    @Test
     void testBuildTreeWithPacketOutput() {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
@@ -67,6 +76,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
     }
 
 
+    @Test
     void testDynamicOutputProperties() {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
@@ -94,6 +104,7 @@ class ResultConfigurationTreeBuilderTests extends GroovyTestCase {
         assertEquals 2, dynamicSub.childCount //subFirstComponent subSecondComponent
     }
 
+    @Test
     void testDynamicPropertiesOrder() {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])

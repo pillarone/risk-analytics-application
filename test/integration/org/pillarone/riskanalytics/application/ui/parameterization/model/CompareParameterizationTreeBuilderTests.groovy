@@ -1,6 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import models.core.CoreModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -8,24 +12,27 @@ import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+
+import static org.junit.Assert.*
 
 /**
  * @author fouad jaada
  */
 
-public class CompareParameterizationTreeBuilderTests extends GroovyTestCase {
+public class CompareParameterizationTreeBuilderTests {
 
     ModelStructure structure
     Model model
     Parameterization parameterization1
     Parameterization parameterization2
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
@@ -50,6 +57,7 @@ public class CompareParameterizationTreeBuilderTests extends GroovyTestCase {
         structure.load()
     }
 
+    @Test
     void testTreeStructure() {
 
         prepareModel()

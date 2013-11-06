@@ -1,11 +1,15 @@
 package org.pillarone.riskanalytics.application.output.structure.item
 
+import models.application.ApplicationModel
+import org.junit.Test
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.StructureMapping
-import models.application.ApplicationModel
 
-class ResultStructureTests extends GroovyTestCase {
+import static org.junit.Assert.*
 
+class ResultStructureTests {
+
+    @Test
     void testInsertNew() {
         int structureCount = ResultStructureDAO.count()
         int mappingCount = StructureMapping.count()
@@ -50,6 +54,7 @@ class ResultStructureTests extends GroovyTestCase {
         assertSame a, y.parent
     }
 
+    @Test
     void testLoad() {
         ResultStructure resultStructure = new ResultStructure("TEST")
         resultStructure.modelClass = ApplicationModel

@@ -1,15 +1,19 @@
 package org.pillarone.riskanalytics.application.fileimport
 
 import models.application.ApplicationModel
+import org.junit.Test
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
-class ResultStructureImportServiceTests extends GroovyTestCase {
+import static org.junit.Assert.*
+
+class ResultStructureImportServiceTests {
 
     ResultStructureImportService service = new ResultStructureImportService()
 
+    @Test
     void testImport() {
         int initialMappings = StructureMapping.count()
 
@@ -49,11 +53,5 @@ class ResultStructureImportServiceTests extends GroovyTestCase {
         assertNotNull value
         assertEquals "Application:dynamicComponent:outValue1:value", value.resultPath
         assertEquals 0, value.childCount
-    }
-
-
-
-    private File getModelFolder() {
-        return new File(getClass().getResource("/models").toURI())
     }
 }

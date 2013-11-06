@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import models.application.ApplicationModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -9,16 +12,16 @@ import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.*
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.output.*
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
+
+import static org.junit.Assert.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-
-class CompareSimulationsViewModelTests extends GroovyTestCase {
+class CompareSimulationsViewModelTests {
 
     SimulationRun simulationRun1
     SimulationRun simulationRun2
@@ -26,6 +29,7 @@ class CompareSimulationsViewModelTests extends GroovyTestCase {
     FieldMapping field
     CollectorMapping collector1
 
+    @Before
     void setUp() {
         LocaleResources.setTestMode()
         ModellingItemFactory.clear()
@@ -56,10 +60,12 @@ class CompareSimulationsViewModelTests extends GroovyTestCase {
     }
 
 
+    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testPaths() {
         assertNotNull new PostSimulationCalculation(run: simulationRun1, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
         assertNotNull new PostSimulationCalculation(run: simulationRun2, period: 0, path: path1, collector: collector1, field: field, result: 0, keyFigure: PostSimulationCalculation.MEAN).save()
