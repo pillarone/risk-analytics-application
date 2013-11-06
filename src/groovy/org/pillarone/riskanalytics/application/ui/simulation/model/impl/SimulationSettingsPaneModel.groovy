@@ -1,12 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import com.ulcjava.base.application.ULCSpinnerDateModel
-import javax.sql.DataSource
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
@@ -14,8 +12,12 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.simulation.model.OutputStrategyComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationNameListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationVersionsListModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationValidationListener
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.PostSimulationCalculationPaneModel
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterPaneModel
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.DBOutput
@@ -25,12 +27,11 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterPaneModel
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.PostSimulationCalculationPaneModel
+import org.springframework.jdbc.datasource.DelegatingDataSource
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy
+
+import javax.sql.DataSource
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -179,8 +180,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     }
 
     private String getDatabaseUrl() {
-        DataSource dataSource = ApplicationHolder.application.getMainContext().getBean("dataSource")
-        if (dataSource instanceof TransactionAwareDataSourceProxy) {
+        DataSource dataSource = Holders.grailsApplication.getMainContext().getBean("dataSource")
+        if (dataSource instanceof DelegatingDataSource) {
+            dataSource = dataSource.targetDataSource
+        }
+        if (dataSource instanceof LazyConnectionDataSourceProxy){
             dataSource = dataSource.targetDataSource
         }
         return dataSource.url
