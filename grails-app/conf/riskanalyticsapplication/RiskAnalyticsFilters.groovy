@@ -1,9 +1,8 @@
 package riskanalyticsapplication
 
+import grails.plugin.springsecurity.SpringSecurityService
+import grails.plugin.springsecurity.userdetails.GrailsUser
 import org.apache.log4j.MDC
-import org.pillarone.riskanalytics.application.UserContext
-import grails.plugins.springsecurity.SpringSecurityService
-import org.codehaus.groovy.grails.plugins.springsecurity.GrailsUser
 import org.pillarone.riskanalytics.core.user.UserManagement
 
 class RiskAnalyticsFilters {
