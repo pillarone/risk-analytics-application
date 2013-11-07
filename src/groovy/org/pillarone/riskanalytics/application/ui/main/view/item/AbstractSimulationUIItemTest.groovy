@@ -32,10 +32,10 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
         writeResult new SingleValueResult(simulationRun: run, path: path1, collector: collector1, field: field, period: 0, iteration: 2, value: 500)
         writeResult new SingleValueResult(simulationRun: run, path: path2, collector: collector1, field: field, period: 0, iteration: 2, value: 1)
 
-        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 11.1 * index).save()
-        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 22.2 * index).save()
-        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 33.3 * index).save()
-        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 44.4 * index).save()
+        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 11.1 * index).save()
+        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 22.2 * index).save()
+        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 33.3 * index).save()
+        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 44.4 * index).save()
 
 
         return run
@@ -80,7 +80,7 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
 
     protected void addResultFunction(ULCFrameOperator frameOperator, String buttonName) {
         ULCButtonOperator buttonOperator = new ULCButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
-        assertNotNull buttonOperator
+        junit.framework.Assert.assertNotNull buttonOperator
 
         buttonOperator.getFocus()
 
@@ -91,7 +91,7 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
 
     protected void addFunction(ULCFrameOperator frameOperator, String buttonName) {
         ULCToggleButtonOperator toggleButtonOperator = new ULCToggleButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
-        assertNotNull toggleButtonOperator
+        junit.framework.Assert.assertNotNull toggleButtonOperator
 
         toggleButtonOperator.getFocus()
 
