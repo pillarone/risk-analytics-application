@@ -1,9 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-//import org.pillarone.riskanalytics.functional.P1RATAbstractStandaloneTestCase
-
-
-import javax.swing.tree.TreePath
+import com.ulcjava.testframework.operator.*
 import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -13,8 +10,8 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
-import com.ulcjava.testframework.operator.*
-import com.ulcjava.base.application.ULCCheckBox
+
+import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -31,10 +28,8 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         LocaleResources.setTestMode()
         removeTags()
         initTags()
-        super.setUp();
+        super.setUp()
     }
-
-
 
     protected void tearDown() {
         super.tearDown();
