@@ -50,7 +50,7 @@ class PostSimulationCalculationPaneTests extends AbstractSimpleFunctionalTest {
         ULCButtonOperator add = new ULCButtonOperator(frame, new ComponentByNameChooser("lossPercentile-add"))
         add.clickMouse()
 
-        runVoidCommand(new AssertParametersCommand(pane, 12, true))
+        runVoidCommand(new OnServerAssertion(pane, 12, true))
 
         ULCListOperator list = new ULCListOperator(frame, new ComponentByNameChooser("lossPercentile-list"))
         list.selectItem(10)
@@ -58,7 +58,7 @@ class PostSimulationCalculationPaneTests extends AbstractSimpleFunctionalTest {
         ULCButtonOperator remove = new ULCButtonOperator(frame, new ComponentByNameChooser("lossPercentile-remove"))
         remove.clickMouse()
 
-        runVoidCommand(new AssertParametersCommand(pane, 11, false))
+        runVoidCommand(new OnServerAssertion(pane, 11, false))
     }
 }
 
