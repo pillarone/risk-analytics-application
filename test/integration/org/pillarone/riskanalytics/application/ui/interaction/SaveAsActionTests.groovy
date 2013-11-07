@@ -18,6 +18,11 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
         super.setUp()
     }
 
+    @Override
+    protected void tearDown() {
+        super.tearDown()
+    }
+
     void testSaveAsParameter() {
         ULCFrameOperator frame = getMainFrameOperator()
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
