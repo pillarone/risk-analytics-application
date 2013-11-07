@@ -20,6 +20,11 @@ public class ReportTests extends AbstractStandaloneTestCase {
         super.setUp();
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown()    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
     protected Class getApplicationClass() {
         P1RATApplication
     }
