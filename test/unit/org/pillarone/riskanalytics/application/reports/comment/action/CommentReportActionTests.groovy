@@ -1,19 +1,10 @@
 package org.pillarone.riskanalytics.application.reports.comment.action
 
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
-import com.ulcjava.base.application.ULCComponent
-
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.parameter.comment.CommentDAO
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.application.reports.bean.PropertyValuePairBean
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.reports.ReportHelper
 import org.pillarone.riskanalytics.application.reports.AbstractReportActionTests
-import org.pillarone.riskanalytics.application.reports.gira.action.GiraSubReportTests
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
