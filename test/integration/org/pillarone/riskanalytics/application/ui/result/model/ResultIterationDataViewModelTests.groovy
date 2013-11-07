@@ -1,28 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
 import models.application.ApplicationModel
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
 import org.pillarone.riskanalytics.application.ui.chart.model.ValueInterpretationType
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.components.ComponentUtils
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.output.*
-import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
-
-class ResultIterationDataViewModelTests {
+class ResultIterationDataViewModelTests extends GroovyTestCase {
 
     SimulationRun simulationRun
     PathMapping path1
@@ -33,7 +27,6 @@ class ResultIterationDataViewModelTests {
 
     private ResultWriter resultWriter
 
-    @Before
     void setUp() {
         ResultAccessor.clearCaches()
         LocaleResources.setTestMode()
@@ -79,12 +72,11 @@ class ResultIterationDataViewModelTests {
         }
     }
 
-    @After
-    void tearDown() {
+    protected void tearDown() {
         LocaleResources.clearTestMode()
+        super.tearDown();
     }
 
-    @Test
     void testCriteriaList() {
         ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false, null)
         rawDataViewModel.addCriteriaGroup()
@@ -98,7 +90,6 @@ class ResultIterationDataViewModelTests {
         assertEquals 2, rawDataViewModel.getCriteriaGroupCount()
     }
 
-    @Test
     void testPathOrder() {
         ResultTableTreeNode node1 = new ResultTableTreeNode("testPath1")
         node1.resultPath = "testPath1:ultimate"
@@ -123,7 +114,6 @@ class ResultIterationDataViewModelTests {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)}", model.shortPaths.get(1)
     }
 
-    @Test
     void testSimpleQuery() {
         assertNotNull simulationRun
         initResults()
@@ -162,7 +152,6 @@ class ResultIterationDataViewModelTests {
         assertEquals 30, model.resultTableModel.getValueAt(1, 4)
     }
 
-    @Test
     void testSimpleQueryWithDifferentFields() {
         assertNotNull simulationRun
         initResultsWithDifferentFields()
@@ -201,7 +190,6 @@ class ResultIterationDataViewModelTests {
         assertEquals 30, model.resultTableModel.getValueAt(1, 4)
     }
 
-    @Test
     void testOrQuery() {
         assertNotNull simulationRun
         initResults()
@@ -249,7 +237,6 @@ class ResultIterationDataViewModelTests {
         assertEquals 30, model.resultTableModel.getValueAt(1, 4)
     }
 
-    @Test
     void testAndQuery() {
         assertNotNull simulationRun
         initResults()
@@ -298,7 +285,6 @@ class ResultIterationDataViewModelTests {
         assertEquals 30, model.resultTableModel.getValueAt(1, 4)
     }
 
-    @Test
     void testEmptyQuery() {
         assertNotNull simulationRun
         initResults()

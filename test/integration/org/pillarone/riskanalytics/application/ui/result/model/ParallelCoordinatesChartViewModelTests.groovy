@@ -3,26 +3,26 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import models.core.CoreModel
 import org.jfree.chart.JFreeChart
 import org.jfree.data.category.DefaultCategoryDataset
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.chart.model.ParallelCoordinatesChartViewModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.components.ComponentUtils
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import org.pillarone.riskanalytics.core.output.*
-import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
+import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.output.FieldMapping
+import org.pillarone.riskanalytics.core.output.PathMapping
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.chart.model.ParallelCoordinatesChartViewModel
+import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 
-import static org.junit.Assert.assertEquals
-import static org.junit.Assert.assertNotNull
-
-class ParallelCoordinatesChartViewModelTests  {
+class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
 
     SimulationRun simulationRun
     PathMapping path1
@@ -33,7 +33,6 @@ class ParallelCoordinatesChartViewModelTests  {
 
     private ResultWriter resultWriter
 
-    @Before
     void setUp() {
         ResultAccessor.clearCaches()
         LocaleResources.setTestMode()
@@ -78,12 +77,13 @@ class ParallelCoordinatesChartViewModelTests  {
         }
     }
 
-    @After
-    void tearDown() {
+    protected void tearDown() {
         LocaleResources.clearTestMode()
+        super.tearDown();
     }
 
-    @Test
+
+
     void testDataset() {
         assertNotNull simulationRun
         initResults()
