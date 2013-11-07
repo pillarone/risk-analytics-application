@@ -8,6 +8,8 @@ import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import com.ulcjava.testframework.operator.*
+import org.springframework.transaction.support.TransactionSynchronizationManager
+
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
@@ -25,6 +27,10 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
         ModelRegistry.instance.loadFromDatabase()
         super.setUp()
+        if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.clearSynchronization()
+        }
+
     }
 
     private void stubLocaleResource() {

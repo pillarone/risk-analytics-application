@@ -55,7 +55,7 @@ class ParameterizationTreeBuilderTests {
         def root = builder.root
         assertNotNull root
 
-        assertEquals 4, root.childCount
+        assertEquals 5, root.childCount
         def structureNode = root.getChildAt(0)
         assertEquals ComponentUtils.getNormalizedName("hierarchyLevel"), structureNode.displayName
 
@@ -67,7 +67,7 @@ class ParameterizationTreeBuilderTests {
         assertEquals ComponentUtils.getNormalizedName("parmValue"), parameterNode.displayName
         assertTrue parameterNode instanceof SimpleValueParameterizationTableTreeNode
 
-        def popNode = root.getChildAt(1).getChildAt(2)
+        def popNode = root.getChildAt(2).getChildAt(2)
         assertEquals ComponentUtils.getNormalizedName("parmNestedMdp"), popNode.displayName
         assertTrue popNode instanceof ParameterObjectParameterTableTreeNode
         assertEquals 2, popNode.childCount
@@ -100,8 +100,8 @@ class ParameterizationTreeBuilderTests {
 
         //test dynamic lobs (dynamic components with sub components)
 
-        assertEquals 4, root.childCount
-        def dynamicComponentNode = root.getChildAt(2)
+        assertEquals 5, root.childCount
+        def dynamicComponentNode = root.getChildAt(3)
         assertEquals ComponentUtils.getNormalizedName("dynamicComponent"), dynamicComponentNode.displayName
 
         assertEquals 1, dynamicComponentNode.childCount
@@ -144,7 +144,7 @@ class ParameterizationTreeBuilderTests {
         def root = builder.root
         assertNotNull root
 
-        ITableTreeNode composedComponentNode = root.getChildAt(3)
+        ITableTreeNode composedComponentNode = root.getChildAt(4)
         assertEquals 1, composedComponentNode.childCount
 
         DynamicComposedComponentTableTreeNode dynamicComposedComponentNode = composedComponentNode.getChildAt(0)

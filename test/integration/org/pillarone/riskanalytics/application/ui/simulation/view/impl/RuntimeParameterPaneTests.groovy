@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.ServerSideCommand
 import models.application.ApplicationModel
 import org.joda.time.DateTime
+import org.junit.Assert
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
@@ -86,32 +87,40 @@ class RuntimeParameterPaneTests extends AbstractSimpleFunctionalTest {
         ULCTextFieldOperator iterations = new ULCTextFieldOperator(tabbedPaneOperator, new ComponentByNameChooser("iterations"))
         iterations.enterText("10")
 
-        runVoidCommand(new ServerSideCommand() {
-            @Override
-            protected void proceedOnServer() {
-                final Simulation simulation = pane.model.simulation
-                final List<ParameterHolder> parameters = simulation.runtimeParameters
-                assertEquals(7, parameters.size())
-
-                ParameterHolder param = parameters.find { it.path == "runtimeStringParameter"}
-                assertEquals("new value", param.businessObject)
-
-                param = parameters.find { it.path == "runtimeIntParameter"}
-                assertEquals(10, param.businessObject)
-
-                param = parameters.find { it.path == "runtimeDoubleParameter"}
-                assertEquals(2.2d, param.businessObject)
-
-                param = parameters.find { it.path == "runtimeBooleanParameter"}
-                assertEquals(false, param.businessObject)
-
-                param = parameters.find { it.path == "runtimeEnumParameter"}
-                assertEquals(ExampleEnum.FIRST_VALUE, param.businessObject)
-
-                param = parameters.find { it.path == "runtimeDateParameter"}
-                assertEquals(new DateTime(2011, 1, 1, 0, 0, 0, 0), param.businessObject)
-            }
-
-        })
+        runVoidCommand(new AssertParametersCommand(pane.model.simulation))
     }
+
+}
+
+class AssertParametersCommand extends ServerSideCommand {
+    private Simulation simulation
+
+    AssertParametersCommand(Simulation simulation) {
+        this.simulation = simulation
+    }
+
+    @Override
+    protected void proceedOnServer() {
+        final List<ParameterHolder> parameters = simulation.runtimeParameters
+        Assert.assertEquals(7, parameters.size())
+
+        ParameterHolder param = parameters.find { it.path == "runtimeStringParameter" }
+        Assert.assertEquals("new value", param.businessObject)
+
+        param = parameters.find { it.path == "runtimeIntParameter" }
+        Assert.assertEquals(10, param.businessObject)
+
+        param = parameters.find { it.path == "runtimeDoubleParameter" }
+        Assert.assertEquals(2.2d, param.businessObject as Double, 0)
+
+        param = parameters.find { it.path == "runtimeBooleanParameter" }
+        Assert.assertEquals(false, param.businessObject)
+
+        param = parameters.find { it.path == "runtimeEnumParameter" }
+        Assert.assertEquals(ExampleEnum.FIRST_VALUE, param.businessObject)
+
+        param = parameters.find { it.path == "runtimeDateParameter" }
+        Assert.assertEquals(new DateTime(2011, 1, 1, 0, 0, 0, 0), param.businessObject)
+    }
+
 }

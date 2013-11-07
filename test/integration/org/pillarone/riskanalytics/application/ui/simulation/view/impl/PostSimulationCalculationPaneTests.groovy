@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ULCFrameOperator
+import org.junit.Assert
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -49,16 +50,7 @@ class PostSimulationCalculationPaneTests extends AbstractSimpleFunctionalTest {
         ULCButtonOperator add = new ULCButtonOperator(frame, new ComponentByNameChooser("lossPercentile-add"))
         add.clickMouse()
 
-        runVoidCommand(new ServerSideCommand() {
-            @Override
-            protected void proceedOnServer() {
-                assertFalse(pane.model.standardDeviation)
-
-                assertEquals(12, pane.model.percentileLoss.size())
-                assertTrue(pane.model.percentileLoss.contains(95d))
-            }
-
-        })
+        runVoidCommand(new AssertParametersCommand(pane, 12, true))
 
         ULCListOperator list = new ULCListOperator(frame, new ComponentByNameChooser("lossPercentile-list"))
         list.selectItem(10)
@@ -66,14 +58,29 @@ class PostSimulationCalculationPaneTests extends AbstractSimpleFunctionalTest {
         ULCButtonOperator remove = new ULCButtonOperator(frame, new ComponentByNameChooser("lossPercentile-remove"))
         remove.clickMouse()
 
-        runVoidCommand(new ServerSideCommand() {
-            @Override
-            protected void proceedOnServer() {
-                assertEquals(11, pane.model.percentileLoss.size())
-                assertFalse(pane.model.percentileLoss.contains(95d))
-            }
-
-        })
-
+        runVoidCommand(new AssertParametersCommand(pane, 11, false))
     }
+}
+
+class OnServerAssertion extends ServerSideCommand {
+    private PostSimulationCalculationPane pane
+    private int expectedPercentileLossCount
+    private boolean containsPercentile
+
+    OnServerAssertion(PostSimulationCalculationPane pane, int expectedPercentileLossCount, boolean containsPercentile) {
+        this.pane = pane
+        this.expectedPercentileLossCount = expectedPercentileLossCount
+        this.containsPercentile = containsPercentile
+    }
+
+    protected void proceedOnServer() {
+        Assert.assertFalse(pane.model.standardDeviation)
+        Assert.assertEquals(expectedPercentileLossCount, pane.model.percentileLoss.size())
+        if (containsPercentile) {
+            Assert.assertTrue(pane.model.percentileLoss.contains(95d))
+        } else {
+            Assert.assertFalse(pane.model.percentileLoss.contains(95d))
+        }
+    }
+
 }

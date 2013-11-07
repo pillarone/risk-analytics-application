@@ -22,21 +22,16 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
-import static org.junit.Assert.*
+class ParameterizationTableTreeNodeTests extends GroovyTestCase {
 
-class ParameterizationTableTreeNodeTests {
-
-    @Before
     void setUp() {
         LocaleResources.setTestMode()
     }
 
-    @After
     void tearDown() {
         LocaleResources.clearTestMode()
     }
 
-    @Test
     void testGetValueAt() {
         Model model = new CoreModel()
 
@@ -77,7 +72,6 @@ class ParameterizationTableTreeNodeTests {
         assertEquals 'SECOND_VALUE', node.getValueAt(2)
     }
 
-    @Test
     void testSetValueAt() {
         Model model = new CoreModel()
 
@@ -123,7 +117,6 @@ class ParameterizationTableTreeNodeTests {
         assertEquals ExampleEnum.FIRST_VALUE, parameters[1].businessObject
     }
 
-    @Test
     void testNullValues_PMO353() {
         def mdp = new SimpleMultiDimensionalParameter([1, 2, 3])
         def parameters = []
@@ -135,7 +128,6 @@ class ParameterizationTableTreeNodeTests {
         assertNotNull node.getValueAt(2)
     }
 
-    @Test
     void testConstrainedStringNode() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Application"])
         Model model = new ApplicationModel()
@@ -171,7 +163,6 @@ class ParameterizationTableTreeNodeTests {
         assertEquals 6, node.getValues().size()
     }
 
-    @Test
     void testConstrainedStringNode_PMO1562() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Application"])
         Model model = new ApplicationModel()

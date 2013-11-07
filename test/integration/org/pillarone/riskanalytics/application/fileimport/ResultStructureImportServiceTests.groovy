@@ -1,19 +1,15 @@
 package org.pillarone.riskanalytics.application.fileimport
 
 import models.application.ApplicationModel
-import org.junit.Test
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 
-import static org.junit.Assert.*
-
-class ResultStructureImportServiceTests {
+class ResultStructureImportServiceTests extends GroovyTestCase {
 
     ResultStructureImportService service = new ResultStructureImportService()
 
-    @Test
     void testImport() {
         int initialMappings = StructureMapping.count()
 

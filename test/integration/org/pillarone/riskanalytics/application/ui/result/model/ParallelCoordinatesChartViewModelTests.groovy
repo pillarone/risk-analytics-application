@@ -79,7 +79,7 @@ class ParallelCoordinatesChartViewModelTests  {
     }
 
     @After
-    protected void tearDown() {
+    void tearDown() {
         LocaleResources.clearTestMode()
     }
 

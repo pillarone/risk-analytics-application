@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.parameterization.view
 
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import com.ulcjava.base.application.ULCFrame
-import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalParameter
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -22,9 +21,6 @@ import com.ulcjava.testframework.operator.ULCCheckBoxMenuItemOperator
 import com.ulcjava.testframework.operator.ULCTableOperator
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import com.ulcjava.testframework.ServerSideCommand
-import com.ulcjava.base.application.util.Point
-import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.ULCScrollPane
 
 class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
 
@@ -99,26 +95,7 @@ class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalT
         parameterization.save()
 
         //Create a new frame & table with the loaded param, needs to happen serverside..
-        runVoidCommand(new ServerSideCommand() {
-            @Override
-            protected void proceedOnServer() {
-                Parameterization loaded = new Parameterization("Name", CoreModel)
-                loaded.load()
-                MultiDimensionalParameterHolder param = loaded.getParameters("path")[0]
-                PeriodMatrixMultiDimensionalParameter loadedParam = param.businessObject
-                ParameterHolder holder = loaded.getParameterHolder("path", 0)
-                def node = ParameterizationNodeFactory.getNode(holder.path, loaded, coreModel)
-                MultiDimensionalParameterModel loadedModel = new TestMultiDimensionalParameterModel(null, node, 1)
-                PeriodMultiDimensionalParameterView view = new PeriodMultiDimensionalParameterView(loadedModel)
-                frame2 = new ULCFrame("test2")
-                frame2.name = "test2"
-                frame2.setDefaultCloseOperation(ULCFrame.TERMINATE_ON_CLOSE)
-                frame2.setSize(1500, 600)
-                frame2.setLocation(500, 500)
-                frame2.contentPane = view.content
-                frame2.visible = true
-            }
-        });
+        runVoidCommand(new MakeFrameVisibleCommand(coreModel,frame2));
         //Wait a while...
 
         //At this point we should have the original table & new one launched with the param loaded from db
@@ -142,4 +119,34 @@ class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalT
         ULCTextFieldOperator period2Op = new ULCTextFieldOperator(frame2Op, new ComponentByNameChooser("periodTextField"))
         assertEquals(period2Op.getText(), periodOp.getText())
     }
+}
+
+class MakeFrameVisibleCommand extends ServerSideCommand {
+    CoreModel model
+    ULCFrame frame
+
+    MakeFrameVisibleCommand(CoreModel model, ULCFrame frame) {
+        this.model = model
+        this.frame = frame
+    }
+
+    @Override
+    protected void proceedOnServer() {
+        Parameterization loaded = new Parameterization("Name", CoreModel)
+        loaded.load()
+        MultiDimensionalParameterHolder param = loaded.getParameters("path")[0]
+        PeriodMatrixMultiDimensionalParameter loadedParam = param.businessObject
+        ParameterHolder holder = loaded.getParameterHolder("path", 0)
+        def node = ParameterizationNodeFactory.getNode(holder.path, loaded, model)
+        MultiDimensionalParameterModel loadedModel = new TestMultiDimensionalParameterModel(null, node, 1)
+        PeriodMultiDimensionalParameterView view = new PeriodMultiDimensionalParameterView(loadedModel)
+        frame = new ULCFrame("test2")
+        frame.name = "test2"
+        frame.setDefaultCloseOperation(ULCFrame.TERMINATE_ON_CLOSE)
+        frame.setSize(1500, 600)
+        frame.setLocation(500, 500)
+        frame.contentPane = view.content
+        frame.visible = true
+    }
+
 }

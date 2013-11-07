@@ -2,19 +2,15 @@ package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationTableTreeNode
+import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 import org.pillarone.riskanalytics.core.components.ComponentUtils
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-import static org.junit.Assert.assertEquals
+class TableTreeMutatorTests extends GroovyTestCase {
 
-class TableTreeMutatorTests {
-
-    @Test
     void testBulkChange() {
         DefaultMutableTableTreeNode root = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[], [true, true, true] as boolean[])
         DefaultMutableTableTreeNode child = new DefaultMutableTableTreeNode([1.0, 2.0, 3.0] as Object[], [true, true, true] as boolean[])
@@ -35,7 +31,6 @@ class TableTreeMutatorTests {
         assertEquals 3.3, child.getValueAt(2)
     }
 
-    @Test
     void testTransactionalBulkChange() {
 
         DefaultMutableTableTreeNode root = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[], [true, true, true] as boolean[])
@@ -81,7 +76,6 @@ class TableTreeMutatorTests {
         assertEquals "value not rollbacked", "Normal", rootNode.getChildAt(0).getValueAt(1)
     }*/
 
-    @Test
     void testDataFormatFailure() {
         DefaultMutableTableTreeNode root = new DefaultMutableTableTreeNode(["a", "b", "c"] as Object[], [true, true, true] as boolean[])
         DefaultMutableTableTreeNode child = new DefaultMutableTableTreeNode([1.0, 2.0, 3.0] as Object[], [true, false, true] as boolean[])
