@@ -133,10 +133,10 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         String value = stringValue(cell)
         List<Enum> possibleEnumValues = objectClass.values()
         Enum enumObject = possibleEnumValues.find {
-            getDisplayName(it.class, it.toString()) == value || it.toString() == value
+            getDisplayName(it.declaringClass, it.toString()) == value || it.toString() == value
         }
         if (!enumObject) {
-            List<String> displayNames = possibleEnumValues.collect { "'${getDisplayName(it.class, it.toString())}'" }
+            List<String> displayNames = possibleEnumValues.collect { "'${getDisplayName(it.declaringClass, it.toString())}'" }
             importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [value, displayNames.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
@@ -167,10 +167,10 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         if (classifier) {
             Map parameters = [:]
             classifier.getParameterNames().each { String parameterName ->
-                int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex)
+                int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex+1)
                 Cell parameterCell = cell.row.getCell(parameterColumnIndex)
                 if (parameterCell) {
-                    def parameterValue = toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex), sheet, rowIndex, columnIndex)
+                    def parameterValue = toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex), sheet, rowIndex, parameterColumnIndex)
                     parameters.put(parameterName, parameterValue)
                 } else {
                     parameters.put(parameterName, classifier.parameters[parameterName])
@@ -266,7 +266,12 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     private String stringValue(Cell cell) {
         try {
-            return cell?.stringCellValue
+            CellValue cellValue = evaluate(cell)
+            if (cellValue) {
+                return cellValue.stringValue
+            } else {
+                return cell?.stringCellValue
+            }
         } catch (IllegalStateException ignored) {
             importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['String']), ImportResult.Type.ERROR)
             return null
@@ -275,10 +280,9 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     private Date dateValue(Cell cell) {
         try {
-            if (cell.cellType == Cell.CELL_TYPE_FORMULA) {
-                FormulaEvaluator evaluator = workbook.creationHelper.createFormulaEvaluator()
-                evaluator.evaluate(cell)
-                return DateUtil.getJavaDate(evaluator.evaluate(cell).numberValue)
+            CellValue cellValue = evaluate(cell)
+            if (cellValue) {
+                return DateUtil.getJavaDate(cellValue.numberValue)
             } else {
                 return cell?.dateCellValue
             }
@@ -289,13 +293,38 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     }
 
     private Number numericValue(Cell cell) {
+        CellValue cellValue = evaluate(cell)
         try {
-            return cell?.numericCellValue
+            if (cellValue) {
+                if (cellValue.cellType == Cell.CELL_TYPE_NUMERIC) {
+                    return cellValue.numberValue
+                } else if (!cellValue.stringValue.isEmpty()) {
+                    if (cellValue.stringValue.isNumber()) {
+                        return cellValue.stringValue.toDouble()
+                    } else {
+                        importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['Number']), ImportResult.Type.ERROR)
+                        return null
+                    }
+                } else {
+                    return null
+                }
+            } else {
+                return cell?.numericCellValue
+            }
         } catch (IllegalStateException ignored) {
             importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['Number']), ImportResult.Type.ERROR)
             return null
         }
     }
+
+    private CellValue evaluate(Cell cell) {
+        if (cell?.cellType == Cell.CELL_TYPE_FORMULA) {
+            FormulaEvaluator evaluator = workbook.creationHelper.createFormulaEvaluator()
+            return evaluator.evaluate(cell)
+        }
+        return null
+    }
+
 
     private void handleComponent(DynamicComposedComponent component, Sheet sheet, int rowIndex, int columnStartIndex) {
         handleComponent(component as Component, sheet, DATA_ROW_START_INDEX, columnStartIndex)
