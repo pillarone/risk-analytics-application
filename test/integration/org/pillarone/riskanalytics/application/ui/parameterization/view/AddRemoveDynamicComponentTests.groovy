@@ -38,5 +38,13 @@ class AddRemoveDynamicComponentTests extends AbstractParameterFunctionalTest {
         assertEquals(1, model.dynamicComponent.componentList.size())
     }
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp() //TODO: IntegrationTestMixin does not work when this method does not exist
+    }
 
+    @Override
+    protected void tearDown() {
+        super.tearDown() //TODO: IntegrationTestMixin does not work when this method does not exist
+    }
 }

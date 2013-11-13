@@ -34,4 +34,13 @@ class ImportP14NTests extends AbstractFunctionalTestCase {
 //        assertNotNull(path)
     }
 
+    @Override
+    protected void setUp() {
+        super.setUp() //TODO: IntegrationTestMixin does not work when this method does not exist
+    }
+
+    @Override
+    protected void tearDown() {
+        super.tearDown() //TODO: IntegrationTestMixin does not work when this method does not exist
+    }
 }

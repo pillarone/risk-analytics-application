@@ -8,8 +8,12 @@ import com.ulcjava.base.server.SimpleContainerServices
 import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
 import org.joda.time.DateTime
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.search.EventConsumer
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -25,9 +29,10 @@ import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
-class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStandaloneTestCase {
+import static org.junit.Assert.*
+
+class ModellingInformationTableTreeModelTests {
 
     ModellingInformationTableTreeModel model
     RiskAnalyticsMainModel mainModel
@@ -35,7 +40,11 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     EventConsumer eventConsumer
     private TestModelListener modelListener
 
+    @Before
     void setUp() {
+        ModellingItemSearchService.instance.cleanUp()
+        ModellingItemSearchService.instance.init()
+
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Application'])
         ModelRegistry.instance.clear()
@@ -64,6 +73,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         model.addTableTreeModelListener(modelListener)
     }
 
+
+
     private void newParameterization(String name, String version) {
         new ParameterizationDAO(name: name, itemVersion: version,
                 modelClassName: 'models.application.ApplicationModel', periodCount: 1,
@@ -71,7 +82,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     }
 
-    protected void tearDown() {
+    @After
+    void tearDown() {
         LocaleResources.clearTestMode()
         model.service.unregisterAllConsumers(session)
         SimulationRun.list()*.delete(flush: true)
@@ -83,10 +95,12 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         printNode(model, model.root, 0)
     }
 
+    @Test
     void testColumnCount() {
         assert 8 == model.columnCount
     }
 
+    @Test
     void testTreeStructure() {
         IMutableTableTreeNode root = model.root
         assert root
@@ -106,6 +120,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         }
     }
 
+    @Test
     void testSimpleParamStructureWithTenNodes() {
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
@@ -128,6 +143,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assertEquals '1.4.1', v141Node.abstractUIItem.item.versionNumber.toString()
     }
 
+    @Test
     void testUpdateTreeStructure() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)
@@ -163,6 +179,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     }
 
+    @Test
     void testGetValueAt() {
         ITableTreeNode applicationNode = model.root.getChildAt(0)
         IMutableTableTreeNode paramsNode = applicationNode.getChildAt(0) as IMutableTableTreeNode
@@ -171,6 +188,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assertEquals('ApplicationParameters v1', model.getValueAt(paramsNode.getChildAt(0), 0))
     }
 
+    @Test
     void testBatch() {
         BatchRun run = new BatchRun()
         run.name = 'testBatch'
@@ -183,12 +201,14 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assertEquals(0, batchNode.childCount)
     }
 
+    @Test
     void testModel() {
         model.addNodeForItem(new EmptyModel())
         IMutableTableTreeNode modelNode = model.root.getChildAt(1) as IMutableTableTreeNode
         assertEquals('Empty', model.getValueAt(modelNode, 0))
     }
 
+    @Test
     void testRefresh() {
         IMutableTableTreeNode oldModelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode oldParamsNode = oldModelNode.getChildAt(0) as IMutableTableTreeNode
@@ -200,6 +220,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assertNotSame(oldParamsNode, newParamsNode)
     }
 
+    @Test
     void testReturnedInstance() {
         UserContext.metaClass.static.hasCurrentUser = {->
             true
@@ -216,6 +237,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assertEquals(4, model.columnCount)
     }
 
+    @Test
     void testUpdateP14nNodes() {
         IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
         ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
@@ -282,6 +304,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         return result
     }
 
+    @Test
     void testUnknownModelClass() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)

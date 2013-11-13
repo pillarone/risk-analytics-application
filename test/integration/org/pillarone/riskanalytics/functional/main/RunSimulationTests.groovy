@@ -43,4 +43,8 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
         }
     }
 
+    @Override
+    protected void tearDown() {
+        super.tearDown() //TODO: IntegrationTestMixin does not work when this method does not exist
+    }
 }

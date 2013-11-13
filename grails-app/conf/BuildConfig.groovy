@@ -9,7 +9,9 @@ grails.project.dependency.resolver = "maven"
 grails.project.fork = [test: false, run: false]
 
 grails.project.dependency.resolution = {
-    inherits "global" // inherit Grails' default dependencies
+    inherits ("global") { // inherit Grails' default dependencies
+        excludes "grails-plugin-testing"
+    }
     log "warn"
 
     repositories {
@@ -55,6 +57,9 @@ grails.project.dependency.resolution = {
         test 'org.mortbay.jetty:jetty:6.1.21', 'org.mortbay.jetty:jetty-plus:6.1.21'
         test 'org.mortbay.jetty:jetty-util:6.1.21', 'org.mortbay.jetty:jetty-naming:6.1.21'
         test 'hsqldb:hsqldb:1.8.0.10'
+
+        test("org.grails:grails-plugin-testing:2.2.3.FIXED")
+        test("org.springframework:spring-test:3.2.4.RELEASE")
     }
 
 }
