@@ -13,8 +13,12 @@ class RenameActionTests extends AbstractFunctionalTestCase {
         super.setUp()
     }
 
-    //TODO: try to get it working
-    void _testRenameParameter() {
+    @Override
+    protected void tearDown() {
+        super.tearDown()    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    void testRenameParameter() {
         ULCFrameOperator frame = getMainFrameOperator()
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
 

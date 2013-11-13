@@ -60,7 +60,7 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
         assertEquals 1, tabbedPane.tabCount
 
         ULCTableTreeOperator parameterTree = new ULCTableTreeOperator(frameOperator, new ComponentByNameChooser("parameterTreeContent"))
-        parameterTree.clickForEdit(4, 0)
+        parameterTree.clickForEdit(5, 0)
 
         assertEquals "not tab opened for MDP", 2, tabbedPane.tabCount
 

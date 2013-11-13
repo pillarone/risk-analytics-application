@@ -22,7 +22,10 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
         super.setUp()
     }
 
-
+    @Override
+    protected void tearDown() {
+        super.tearDown()
+    }
 
     public void testExportParametrization() {
         File testExportFile = File.createTempFile("testParameter", ".groovy")

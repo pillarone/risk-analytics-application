@@ -27,10 +27,6 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
         ModelRegistry.instance.loadFromDatabase()
         super.setUp()
-        if (TransactionSynchronizationManager.isSynchronizationActive()) {
-            TransactionSynchronizationManager.clearSynchronization()
-        }
-
     }
 
     private void stubLocaleResource() {
