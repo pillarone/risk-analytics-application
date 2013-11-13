@@ -19,8 +19,6 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
     SimulationSettingsPane pane
-    StubFor modelStub
-
 
     protected void doStart() {
         LocaleResources.setTestMode()
@@ -46,11 +44,6 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         modelDAO.srcCode = ""
         modelDAO.save(flush: true)
         assertNotNull(modelDAO.id)
-
-//        modelStub = new StubFor(Model)
-//        modelStub.demand.getModelVersion(3..3) { modelClass ->
-//            return new VersionNumber("0.5")
-//        }
     }
 
 

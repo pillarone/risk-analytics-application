@@ -19,7 +19,7 @@ import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
-    protected Throwable throwable
+    private Throwable throwable
 
 
     final void start() {
@@ -35,11 +35,6 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
     abstract protected void doStart()
 
     void testInitialization() {
-        if (throwable){
-            throwable?.printStackTrace()
-        }else {
-            print 'throwable is  null'
-        }
         assertNull "Error during doStart(): ${throwable?.message}", throwable
     }
 
@@ -59,7 +54,6 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
                         ParameterizationDAO.list()*.delete()
                         ModelStructureDAO.list()*.delete()
                         ModelDAO.list()*.delete()
-                        Tag.list()*.delete()
                     }
                 }] as Runnable
         )

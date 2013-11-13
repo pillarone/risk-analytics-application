@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.testframework.operator.*
 import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -18,8 +19,9 @@ import javax.swing.tree.TreePath
  */
 class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
-    protected String getConfigurationResourceName() {
-        return "/org/pillarone/riskanalytics/functional/resources/ULCApplicationConfiguration.xml"
+    @Override
+    protected Class getApplicationClass() {
+        P1RATApplication
     }
 
     protected void setUp() {
