@@ -48,7 +48,7 @@ class ImportParameterizationExcelAction extends ImportAction {
                         ExcelImportHandler handler = new ExcelImportHandler()
                         ClientContext.loadFile([onSuccess: { InputStream[] ins, String[] paths, String[] filenames ->
                             handler.loadWorkbook(ins[0], filenames[0])
-                            ins[0].close()
+                            releaseHandle(ins[0])
                             if (selectedUIItem instanceof ParameterizationUIItem) {
                                 handler.setParameterizationOnModel(selectedModel, selectedUIItem.item as Parameterization)
                             }
@@ -77,6 +77,15 @@ class ImportParameterizationExcelAction extends ImportAction {
                     ancestor?.cursor = Cursor.DEFAULT_CURSOR
                 }] as IFileChooseHandler, config, ancestor)
 
+    }
+
+    /**
+     * Releases the handle to that inputStream. If not doing so, on Windows it is not guaranteed that the handle is released. Calling System.gc() will ensure releasing.
+     * @param inputStream
+     */
+    private void releaseHandle(InputStream inputStream) {
+        inputStream.close()
+        System.gc()
     }
 
     private static String formatValidationResult(Collection<ImportResult> importResults) {
