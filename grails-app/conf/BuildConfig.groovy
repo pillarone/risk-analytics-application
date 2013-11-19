@@ -1,7 +1,7 @@
 import org.apache.ivy.plugins.resolver.FileSystemResolver
 
 //Use a custom plugins dir, because different branches use different plugin versions
-grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
+grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-1.8.x"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 
@@ -43,6 +43,8 @@ grails.project.dependency.resolution = {
 
         if (appName == 'RiskAnalyticsApplication') {
             runtime "org.pillarone:risk-analytics-core:1.8.2"
+//            runtime "org.pillarone:risk-analytics-pc-cashflow:1.8"
+//            runtime "org.pillarone:risk-analytics-commons:1.8.1"
         }
 
     }
