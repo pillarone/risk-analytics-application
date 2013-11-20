@@ -4,13 +4,15 @@
 
     <property file="application.properties"/>
     <property file="${user.home}/cert.properties"/>
+    <!-- plugin.dir must match entry 'grails.project.plugins.dir' in BuildConfig.groovy -->
+    <property name="plugin.dir" value="${basedir}/../local-plugins/${app.name}-1.8.x"/>
     <property name="resources.prod.dir" value="src/java"/>
     <property name="webapp.lib.dir" value="web-app/lib"/>
 
     <property name="GRAILS_JVM_OPTS" value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
 
     <copy tofile="_build.xml" overwrite="true">
-        <fileset dir="../local-plugins/${app.name}-master" includes="risk-analytics-core*/scripts/build.xml" />
+        <fileset dir="${plugin.dir}" includes="risk-analytics-core*/scripts/build.xml" />
     </copy>
     <import file="_build.xml"/>
 
