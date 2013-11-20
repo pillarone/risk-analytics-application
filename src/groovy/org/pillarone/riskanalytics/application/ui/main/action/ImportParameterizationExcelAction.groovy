@@ -47,6 +47,7 @@ class ImportParameterizationExcelAction extends ImportAction {
                     filePaths.each { String selectedFile ->
                         ExcelImportHandler handler = new ExcelImportHandler()
                         ClientContext.loadFile([onSuccess: { InputStream[] ins, String[] paths, String[] filenames ->
+                            userPreferences.setUserDirectory(paths,filenames)
                             handler.loadWorkbook(ins[0], filenames[0])
                             releaseHandle(ins[0])
                             if (selectedUIItem instanceof ParameterizationUIItem) {
