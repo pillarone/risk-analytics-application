@@ -543,7 +543,7 @@ class ModellingItemFactory {
         item
     }
 
-    private static def key(Class itemClass, Long daoId) {
+    static def key(Class itemClass, Long daoId) {
         return "${itemClass?.simpleName}_$daoId".toString()
     }
 

@@ -7,6 +7,7 @@ import com.ulcjava.base.application.tree.TreePath
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.search.IEventConsumer
 import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
@@ -164,10 +165,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    builder.addNodeForItem(itemEvent.item)
+                    builder.addNodeForItem(ModellingItemFactory.getItemInstance(itemEvent.item))
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.REMOVED:
-                    builder.removeNodeForItem(itemEvent.item)
+                    builder.removeNodeForItem(ModellingItemFactory.getItemInstance(itemEvent.item))
                     break;
                 case ModellingItemSearchService.ModellingItemEventType.UPDATED:
                     builder.itemChanged(itemEvent.item)

@@ -9,6 +9,7 @@ import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.search.EventConsumer
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -24,6 +25,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
@@ -77,6 +79,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         SimulationRun.list()*.delete(flush: true)
         ParameterizationDAO.list()*.delete(flush: true)
         ModelRegistry.instance.clear()
+        ModellingItemFactory.clear()
     }
 
     private void printTree() {
@@ -288,6 +291,18 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         model.updateTreeStructure(eventConsumer)
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
+    }
+
+    void testItemInstanceIdentity() {
+        newParameterization('Parametrization X','12')
+        ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '12')
+        model.updateTreeStructure(eventConsumer)
+        IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
+        ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v12') as ParameterizationNode
+        assertNotNull(paramsNode)
+        assertNotNull (ModellingItemFactory.getItemInstances()[ModellingItemFactory.key(Parameterization,parameterizationDAO.id)])
+        Parameterization cachedItem = ModellingItemFactory.getParameterization(parameterizationDAO)
+        assertTrue(cachedItem.is(paramsNode.abstractUIItem.item))
     }
 
     class TestModelListener implements ITableTreeModelListener {
