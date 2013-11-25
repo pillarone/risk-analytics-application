@@ -7,54 +7,59 @@ import org.apache.poi.xssf.usermodel.XSSFCell
 import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.joda.time.DateTime
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.example.component.ExampleDynamicComponent
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
-class ExcelImportHandlerTests extends GroovyTestCase {
+class ExcelImportHandlerTests  {
     File exportFile
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp()
+    @Before
+    void setUp() throws Exception {
         LocaleResources.setTestMode()
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
         exportFile = File.createTempFile('excel', '.xlsx')
         exportFile.bytes = new ExcelExportHandler(new ApplicationModel()).exportModel()
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown()
+    @After
+    void tearDown() throws Exception {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testIncorrectModelClass() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(1).getCell(1).setCellValue(CoreModel.class.name)
+        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(0).getCell(1).setCellValue(CoreModel.class.name)
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
     }
 
+    @Test
     void testInvalidModelClass() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(1).getCell(1).setCellValue("NONEXISTINGCLASS")
+        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(0).getCell(1).setCellValue("NONEXISTINGCLASS")
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
     }
 
+    @Test
     void testModelInfoNotFound() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
-        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(1).getCell(1).setCellValue(null as String)
+        handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(0).getCell(1).setCellValue(null as String)
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
     }
 
+    @Test
     void testMissingMetaInfoSheet() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -64,6 +69,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testMissingMDPSheet() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -78,6 +84,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testMissingMDPTableReference() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -90,6 +97,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testMissingMDPTableIdentifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -102,6 +110,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testUnknownEnumDisplayName() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -113,6 +122,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testEnumDisplayName() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -124,6 +134,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 0 == result.size()
     }
 
+    @Test
     void testEnumTechnicalName() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -135,6 +146,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 0 == result.size()
     }
 
+    @Test
     void testIncorrectParameterObjectClassifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -147,6 +159,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testMDPValues() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -166,6 +179,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert ['ONE', 'TWO', 'THREE'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
     }
 
+    @Test
     void testIncorrectCellData() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -177,6 +191,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testMissingCellData() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -188,6 +203,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert result[0].toString().contains('Col=B')
     }
 
+    @Test
     void testAddSubComponent() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -198,6 +214,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert 1 == result.size()
     }
 
+    @Test
     void testImportExistingComponent() {
         ApplicationModel model = new ApplicationModel()
         model.init()
@@ -219,6 +236,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert "Parameterization for component 'componentA' already present. Will be ignored." == result[0].message
     }
 
+    @Test
     void testImportToNonExistingComponent() {
         ApplicationModel model = new ApplicationModel()
         model.init()
@@ -240,6 +258,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert "Component 'componentB' processed." == result[0].message
     }
 
+    @Test
     void testImportDateFunction() {
         int year = 2012
         int day = 23
@@ -259,6 +278,7 @@ class ExcelImportHandlerTests extends GroovyTestCase {
         assert day == date.getDayOfMonth()
     }
 
+    @Test
     void testInstantiationErrorForClassifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile),'test.xlsx')
