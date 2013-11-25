@@ -1,9 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import org.apache.poi.ss.usermodel.*
-import org.apache.poi.xssf.usermodel.XSSFCellStyle
-import org.apache.poi.xssf.usermodel.XSSFColor
-import org.apache.poi.xssf.usermodel.XSSFRichTextString
+import org.apache.poi.ss.util.CellReference
+import org.apache.poi.xssf.usermodel.*
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComposedComponent
@@ -13,11 +12,14 @@ import org.pillarone.riskanalytics.core.parameterization.ConstrainedMultiDimensi
 import org.pillarone.riskanalytics.core.parameterization.IMultiDimensionalConstraints
 import org.pillarone.riskanalytics.core.parameterization.IParameterObject
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
+import org.pillarone.riskanalytics.core.util.PropertiesUtils
 
 class ExcelExportHandler extends AbstractExcelHandler {
     Model model
-    static List<java.awt.Color> PARAM_COLORS = [java.awt.Color.LIGHT_GRAY, new java.awt.Color(230,230,230)]
+    static List<java.awt.Color> PARAM_COLORS = [java.awt.Color.LIGHT_GRAY, new java.awt.Color(230, 230, 230)]
     Map<IMultiDimensionalConstraints, List<MDPTitleContraints>> mdpConstraintsWithTitles = [:]
+    private final int PARAMETER_OBJECT_START_INDEX = 3
+    private List enumerationObjects = []
 
     ExcelExportHandler(Model model) {
         this.model = model
@@ -42,11 +44,12 @@ class ExcelExportHandler extends AbstractExcelHandler {
                 Row headerRow = sheet.createRow(0)
                 headerRow.createCell(0).setCellValue('Reference anchor.')
                 Row columnNameRow = sheet.createRow(1)
-                constraints.titles.eachWithIndex {val, i ->
+                constraints.titles.eachWithIndex { val, i ->
                     columnNameRow.createCell(i).setCellValue(val.toString())
                 }
             }
         }
+        addMetaInfo(workbook, model)
         workbook.numberOfSheets.times {
             Sheet sheet = workbook.getSheetAt(it)
             if (sheet.getRow(0).lastCellNum > 0) {
@@ -55,10 +58,42 @@ class ExcelExportHandler extends AbstractExcelHandler {
                 }
             }
         }
-        addMetaInfo(workbook, model)
         workbook.write(outputStream)
         return outputStream.toByteArray()
 
+    }
+
+    private void addMetaInfo(XSSFWorkbook workbook, Model model) {
+        XSSFSheet metaInfoSheet = workbook.createSheet(META_INFO_SHEET)
+        addRow(metaInfoSheet, MODEL_INFO_KEY, model.class.name, 0)
+        addRow(metaInfoSheet, APPLICATION_VERSION_KEY, new PropertiesUtils().getProperties("/version.properties").getProperty("version", "N/A"), 1)
+        Row headerRow = metaInfoSheet.getRow(0)
+        enumerationObjects.eachWithIndex { def enumerationObject, int index ->
+            handleEnumeration(enumerationObject,index, headerRow.createCell(PARAMETER_OBJECT_START_INDEX + index), metaInfoSheet)
+
+        }
+    }
+
+    void handleEnumeration(Enum anEnum, int index, Cell cell, Sheet metaInfoSheet) {
+        cell.setCellValue(anEnum.declaringClass.simpleName)
+        anEnum.declaringClass.enumConstants.eachWithIndex { Enum possibleEnum, int rowIndex ->
+            Row row = metaInfoSheet.getRow(1 + rowIndex)
+            if (!row) {
+                row = metaInfoSheet.createRow(1 + rowIndex)
+            }
+            row.createCell(PARAMETER_OBJECT_START_INDEX + index).setCellValue(possibleEnum.name())
+        }
+    }
+
+    void handleEnumeration(IParameterObject parameterObject, int index, Cell cell, Sheet metaInfoSheet) {
+        cell.setCellValue(parameterObject.class.simpleName)
+        parameterObject.type.classifiers.eachWithIndex { IParameterObjectClassifier objectClassifier, int rowIndex ->
+            Row row = metaInfoSheet.getRow(1 + rowIndex)
+            if (!row) {
+                row = metaInfoSheet.createRow(1 + rowIndex)
+            }
+            row.createCell(PARAMETER_OBJECT_START_INDEX + index).setCellValue(objectClassifier.displayName)
+        }
     }
 
     private int handleComponent(Component component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
@@ -77,10 +112,21 @@ class ExcelExportHandler extends AbstractExcelHandler {
             XSSFCellStyle paramStyle = style.clone()
             style.setBorderLeft(BorderStyle.THIN)
             technicalHeaderRow.sheet.setDefaultColumnStyle(columnIndex, style)
-            columnIndex = addParameterCells(component[parm], headerRow, technicalHeaderRow, ++columnIndex, cell, paramStyle)
+            def parameterType = component[parm]
+            if (parameterType instanceof Enum) {
+                addToParameterEnumerations(parameterType,cell)
+            }
+            columnIndex = addParameterCells(parameterType, headerRow, technicalHeaderRow, ++columnIndex, cell, paramStyle)
         }
 
         return columnIndex
+    }
+
+    void addToParameterEnumerations(def enumerationObject, Cell cell) {
+        if (!enumerationObjects.contains(enumerationObject)) {
+            enumerationObjects << enumerationObject
+        }
+        setHyperlink(cell, "'Meta-Info'!${CellReference.convertNumToColString(PARAMETER_OBJECT_START_INDEX + enumerationObjects.indexOf(enumerationObject))}1")
     }
 
     private int handleComponent(ComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
@@ -118,11 +164,12 @@ class ExcelExportHandler extends AbstractExcelHandler {
         addParameter(multiDimensionalParameter)
         String sheetName = getSheetNameForMDP(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints))
         setCellComment(cell, sheetName)
-        setHyperlink(cell, sheetName)
+        setHyperlink(cell, "'$sheetName'!A1")
         return columnIndex
     }
 
     private int addParameterCells(IParameterObject parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell c, XSSFCellStyle columnStyle) {
+        addToParameterEnumerations(parmObject,c)
         List<IParameterObjectClassifier> classifiers = parmObject.type.getClassifiers()
         Set writtenParameters = []
         classifiers.each { IParameterObjectClassifier classifier ->
@@ -140,7 +187,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
                     if (classifierParameter instanceof ConstrainedMultiDimensionalParameter) {
                         addParameter(classifierParameter)
                         String sheetName = getSheetNameForMDP(new MDPTitleContraints(classifierParameter.titles, classifierParameter.constraints))
-                        setHyperlink(cell, sheetName)
+                        setHyperlink(cell, "'$sheetName'!A1")
                     }
                     if (parmObject.class == classifierParameter.class) {
                         // TODO (recursive call with same classifier not supported.)
@@ -202,7 +249,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
 
     private static setHyperlink(Cell cell, String address) {
         Hyperlink hyperlink = cell.sheet.workbook.creationHelper.createHyperlink(Hyperlink.LINK_DOCUMENT)
-        hyperlink.setAddress("'$address'!A1")
+        hyperlink.setAddress(address)
         cell.setHyperlink(hyperlink)
     }
 

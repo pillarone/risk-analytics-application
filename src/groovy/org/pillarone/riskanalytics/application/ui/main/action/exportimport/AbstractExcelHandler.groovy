@@ -92,8 +92,8 @@ abstract class AbstractExcelHandler {
         TreeBuilderUtil.collectProperties(component, ComponentUtils.PARM)
     }
 
-    protected void addRow(XSSFSheet sheet, String key, String value) {
-        XSSFRow row = sheet.createRow(sheet.lastRowNum + 1)
+    protected void addRow(XSSFSheet sheet, String key, String value, int rowIndex) {
+        XSSFRow row = sheet.createRow(rowIndex)
         row.createCell(0).setCellValue(key)
         row.createCell(1).setCellValue(value)
     }
@@ -108,13 +108,6 @@ abstract class AbstractExcelHandler {
         Row row = cell.sheet.getRow(HEADER_ROW_INDEX)
         Comment comment = row.getCell(cell.columnIndex).getCellComment()
         return comment.string.string
-    }
-
-    void addMetaInfo(XSSFWorkbook workbook, Model model) {
-        XSSFSheet metaInfoSheet = workbook.createSheet(META_INFO_SHEET)
-        addRow(metaInfoSheet, MODEL_INFO_KEY, model.class.name)
-        addRow(metaInfoSheet, APPLICATION_VERSION_KEY, new PropertiesUtils().getProperties("/version.properties").getProperty("version", "N/A"))
-
     }
 
     boolean importEnabled(Row row, int columnStartIndex) {

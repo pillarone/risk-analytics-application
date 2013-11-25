@@ -2,26 +2,27 @@ package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import models.application.ApplicationModel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.components.ExampleMultiMarkerConstraint
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
-class ExcelExportHandlerTests extends GroovyTestCase {
+class ExcelExportHandlerTests {
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp()
+    @Before
+    void setUp() throws Exception {
         LocaleResources.setTestMode()
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown()
+    @After
+    void tearDown() throws Exception {
         LocaleResources.clearTestMode()
     }
 
+    @Test
     void testExportModel() {
         ExcelExportHandler handler = new ExcelExportHandler(new ApplicationModel())
         byte[] result = handler.exportModel()
