@@ -28,6 +28,9 @@ Defining parameters within the generated excel file must follow the same rules a
 !excel-reference-to-mdp.png!
 - Within the MDP sheet a table with such a headline must exist.
 !mdp-table-anchor.png!
+h3. Defining enumerated parameters:
+In case of strategies or enumartions e.g. Rating, only a defined set of values is allowed. For those parameters a code table exists in the Meta-Info sheet which is
+linked from the used parameter. When importing this cell, only values from the code table are valid.
 
 In case all the rules are met, the import will succeed, otherwise a warning or an error will be shown.
 
