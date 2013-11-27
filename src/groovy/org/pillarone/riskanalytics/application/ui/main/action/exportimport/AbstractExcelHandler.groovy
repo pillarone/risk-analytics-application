@@ -125,15 +125,6 @@ abstract class AbstractExcelHandler {
         return name
     }
 
-    protected boolean rowHasValuesInRange(Row row, int columnStartIndex, int columnEndIndex) {
-        for (int columnIndex = columnStartIndex; columnIndex <= columnEndIndex; columnIndex++) {
-            if (row.getCell(columnIndex)) {
-                return true
-            }
-        }
-        return false
-    }
-
     protected Sheet findSheetForComponent(Component component) {
         String sheetName = getSheetName(component)
         workbook.getSheet(sheetName)

@@ -41,33 +41,26 @@ class ImportParameterizationExcelAction extends ImportAction {
 
         FileChooserConfig config = getFileChooserConfig(node)
         config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.IMPORT_DIR_KEY))
-
-        ClientContext.chooseFile([
-                onSuccess: { String[] filePaths, String[] fileNames ->
-                    filePaths.each { String selectedFile ->
-                        ExcelImportHandler handler = new ExcelImportHandler()
-                        ClientContext.loadFile([onSuccess: { InputStream[] ins, String[] paths, String[] filenames ->
-                            userPreferences.setUserDirectory(paths,filenames)
-                            handler.loadWorkbook(ins[0], filenames[0])
-                            releaseHandle(ins[0])
-                            if (selectedUIItem instanceof ParameterizationUIItem) {
-                                handler.setParameterizationOnModel(selectedModel, selectedUIItem.item as Parameterization)
-                            }
-                            List<ImportResult> validationResult = handler.validate(selectedModel)
-                            if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.ERROR }) {
-                                ULCAlert alert = new I18NAlert(ancestor, "excelImportError", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.ERROR })] as List<String>)
-                                alert.show()
-                            } else if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.WARNING }) {
-                                ULCAlert alert = new I18NAlert(ancestor, "excelImportWarning", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.WARNING })] as List<String>)
-                                alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert, handler, filenames[0]) }] as IWindowListener)
-                                alert.show()
-                            } else {
-                                doImport(handler, filenames[0])
-                            }
-                            ancestor?.cursor = Cursor.DEFAULT_CURSOR
-                        }] as IFileLoadHandler, selectedFile)
-
+        ExcelImportHandler handler = new ExcelImportHandler()
+        ClientContext.loadFile([
+                onSuccess: { InputStream[] ins, String[] paths, String[] filenames ->
+                    userPreferences.setUserDirectory(paths, filenames)
+                    handler.loadWorkbook(ins[0], filenames[0])
+                    if (selectedUIItem instanceof ParameterizationUIItem) {
+                        handler.setParameterizationOnModel(selectedModel, selectedUIItem.item as Parameterization)
                     }
+                    List<ImportResult> validationResult = handler.validate(selectedModel)
+                    if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.ERROR }) {
+                        ULCAlert alert = new I18NAlert(ancestor, "excelImportError", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.ERROR })] as List<String>)
+                        alert.show()
+                    } else if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.WARNING }) {
+                        ULCAlert alert = new I18NAlert(ancestor, "excelImportWarning", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.WARNING })] as List<String>)
+                        alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert, handler, filenames[0]) }] as IWindowListener)
+                        alert.show()
+                    } else {
+                        doImport(handler, filenames[0])
+                    }
+                    ancestor?.cursor = Cursor.DEFAULT_CURSOR
                 },
                 onFailure: { reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {
@@ -75,18 +68,7 @@ class ImportParameterizationExcelAction extends ImportAction {
                         ULCAlert alert = new I18NAlert(ancestor, "importError")
                         alert.show()
                     }
-                    ancestor?.cursor = Cursor.DEFAULT_CURSOR
-                }] as IFileChooseHandler, config, ancestor)
-
-    }
-
-    /**
-     * Releases the handle to that inputStream. If not doing so, on Windows it is not guaranteed that the handle is released. Calling System.gc() will ensure releasing.
-     * @param inputStream
-     */
-    private void releaseHandle(InputStream inputStream) {
-        inputStream.close()
-        System.gc()
+                }] as IFileLoadHandler, config, ancestor)
     }
 
     private static String formatValidationResult(Collection<ImportResult> importResults) {

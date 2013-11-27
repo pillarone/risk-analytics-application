@@ -167,7 +167,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         if (classifier) {
             Map parameters = [:]
             classifier.getParameterNames().each { String parameterName ->
-                int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex+1)
+                int parameterColumnIndex = findColumnIndex(cell.sheet, parameterName, cell.columnIndex + 1)
                 Cell parameterCell = cell.row.getCell(parameterColumnIndex)
                 if (parameterCell) {
                     def parameterValue = toType(classifier.parameters[parameterName], cell.row.getCell(parameterColumnIndex), sheet, rowIndex, parameterColumnIndex)
@@ -231,6 +231,27 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
         return new ConstrainedMultiDimensionalParameter(values, mdp.titles, mdp.constraints)
     }
+
+    private boolean rowHasValuesInRange(Row row, int columnStartIndex, int columnEndIndex) {
+        for (int columnIndex = columnStartIndex; columnIndex <= columnEndIndex; columnIndex++) {
+            Cell cell = row.getCell(columnIndex)
+            if (cell) {
+                switch (cell.cellType) {
+                    case Cell.CELL_TYPE_STRING:
+                        return cell.stringCellValue
+                    case Cell.CELL_TYPE_NUMERIC:
+                        return true
+                    case Cell.CELL_TYPE_FORMULA:
+                        CellValue value = evaluate(cell)
+                        if (value.cellType == Cell.CELL_TYPE_NUMERIC || value.cellType == Cell.CELL_TYPE_STRING && value.stringValue) {
+                            return true
+                        }
+                }
+            }
+        }
+        return false
+    }
+
 
     private def toType(Integer objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         Number numericValue = numericValue(cell)

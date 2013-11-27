@@ -174,9 +174,50 @@ class ExcelImportHandlerTests  {
         mdpRow = mdpSheet.createRow(3)
         mdpRow.createCell(0).setCellValue('TWO')
         mdpRow = mdpSheet.createRow(4)
-        mdpRow.createCell(0).setCellValue('THREE')
+        mdpRow.createCell(0).setCellValue('')
         handler.validate(new ApplicationModel())
-        assert ['ONE', 'TWO', 'THREE'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
+        assert ['ONE', 'TWO'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
+    }
+
+    void testMDPEmptyValues_EmptyString() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(10).setCellValue('tableName')
+        XSSFSheet mdpSheet = handler.workbook.getSheet('MDP0-ExampleResourceConstraints')
+        mdpSheet.getRow(0).getCell(0).setCellValue('tableName')
+        XSSFRow mdpRow = mdpSheet.createRow(2)
+        mdpRow.createCell(0).setCellValue('ONE')
+        mdpRow = mdpSheet.createRow(3)
+        mdpRow.createCell(0).setCellValue('TWO')
+        mdpRow = mdpSheet.createRow(4)
+        mdpRow.createCell(0).setCellValue('')
+        handler.validate(new ApplicationModel())
+        assert ['ONE', 'TWO'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
+    }
+
+    @Test
+    void testMDPEmptyValues_FormulaString() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        dataRow.createCell(10).setCellValue('tableName')
+        XSSFSheet mdpSheet = handler.workbook.getSheet('MDP0-ExampleResourceConstraints')
+        mdpSheet.getRow(0).getCell(0).setCellValue('tableName')
+        XSSFRow mdpRow = mdpSheet.createRow(2)
+        mdpRow.createCell(0).setCellValue('ONE')
+        mdpRow = mdpSheet.createRow(3)
+        mdpRow.createCell(0).setCellValue('TWO')
+        mdpRow = mdpSheet.createRow(4)
+        Cell cell = mdpRow.createCell(0)
+        cell.setCellType(Cell.CELL_TYPE_FORMULA)
+        cell.setCellFormula('""')
+        handler.validate(new ApplicationModel())
+        assert ['ONE', 'TWO'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
     }
 
     @Test
