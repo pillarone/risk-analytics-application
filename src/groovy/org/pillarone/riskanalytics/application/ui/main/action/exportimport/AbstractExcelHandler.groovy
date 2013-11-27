@@ -110,12 +110,6 @@ abstract class AbstractExcelHandler {
         return comment.string.string
     }
 
-    boolean importEnabled(Row row, int columnStartIndex) {
-        int columnIndex = findColumnIndex(row.sheet, DISABLE_IMPORT, columnStartIndex)
-        Cell cell = row.getCell(columnIndex)
-        return !cell?.stringCellValue?.contains('#')
-    }
-
     protected String toSubComponentName(String name) {
         if (name && name.size() > 1) {
             String firstLetterUpperCase = name[0].toUpperCase()

@@ -256,6 +256,48 @@ class ExcelImportHandlerTests  {
     }
 
     @Test
+    void testDisableImport() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(0).setCellValue('#')
+        dataRow.createCell(1).setCellValue('componentA')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+    }
+
+    @Test
+    void testDisableImport_invalidFormatting() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        Cell cell = dataRow.createCell(0)
+        cell.setCellType(Cell.CELL_TYPE_NUMERIC)
+        cell.setCellValue(1)
+        dataRow.createCell(1).setCellValue('componentA')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+        assert "Component 'componentA' processed." == result[0].message
+
+    }
+
+    @Test
+    void testDisableImport_invalidFormula() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        Cell cell = dataRow.createCell(0)
+        cell.setCellType(Cell.CELL_TYPE_FORMULA)
+        cell.setCellFormula('IF(TRUE,"#","")')
+        dataRow.createCell(1).setCellValue('componentA')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+    }
+
+    @Test
     void testImportExistingComponent() {
         ApplicationModel model = new ApplicationModel()
         model.init()

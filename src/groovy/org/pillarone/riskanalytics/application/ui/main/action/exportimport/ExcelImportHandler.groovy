@@ -285,6 +285,18 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         return stringValue(cell)
     }
 
+    private boolean importEnabled(Row row, int columnStartIndex) {
+        int columnIndex = findColumnIndex(row.sheet, DISABLE_IMPORT, columnStartIndex)
+        Cell cell = row.getCell(columnIndex)
+        if (cell?.cellType == Cell.CELL_TYPE_STRING) {
+            return !cell.stringCellValue?.contains('#')
+        } else if (cell?.cellType == Cell.CELL_TYPE_FORMULA) {
+            return !evaluate(cell)?.stringValue?.contains('#')
+        }
+        return true
+    }
+
+
     private String stringValue(Cell cell) {
         try {
             CellValue cellValue = evaluate(cell)
