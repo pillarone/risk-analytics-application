@@ -62,6 +62,7 @@ class SelectionTreeView {
                     modellingItemSelectionListener.flushSelectionState()
 
                 }] as IActionListener)
+        treeSyncTimer.setSyncClientState(false)
         eventConsumer = new EventConsumer(ULCSession.currentSession(), treeSyncTimer)
         ModellingItemSearchService.instance.register(eventConsumer)
     }
