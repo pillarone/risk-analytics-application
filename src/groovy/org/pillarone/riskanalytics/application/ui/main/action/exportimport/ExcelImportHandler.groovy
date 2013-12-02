@@ -29,6 +29,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private static final String COMPONENT_ALREADY_PRESENT = 'ComponentAlreadyPresent'
     private static final String COMPONENT_PROCESSED = 'ComponentProcessed'
     private static final String WRONG_CELL_TYPE = 'WrongCellType'
+    private static final String FORMULA_RESULT_WRONG_CELL_TYPE = 'FormulaResultWrongCellType'
     private static final String NULL_VALUE_NOT_ALLOWED = 'NullValueNotAllowed'
 
     private List<ImportResult> importResults = []
@@ -146,7 +147,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         if (value) {
-            objectClass.setValueAt(toSubComponentName(cell.stringCellValue), 1, 0)
+            objectClass.setValueAt(toSubComponentName(value), 1, 0)
         }
         return objectClass
     }
@@ -197,7 +198,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
             importResults << new ImportResult(cell, getMessage(MDPSHEET_NO_FOUND, [getMDPSheetName(cell)]), ImportResult.Type.ERROR)
             return mdp
         }
-        def tableName = cell.stringCellValue
+        def tableName = stringValue(cell)
         if (!tableName) {
             importResults << new ImportResult(cell, getMessage(NULL_VALUE_NOT_ALLOWED), ImportResult.Type.ERROR)
             return mdp
@@ -263,14 +264,18 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         return numericValue ? numericValue as Double : new Double(0)
     }
 
+    private def toType(BigDecimal objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
+        Number numericValue = numericValue(cell)
+        return numericValue ? numericValue as BigDecimal : new BigDecimal(0)
+    }
+
     private def toType(DateTime objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         Date value = dateValue(cell)
         return value ? new DateTime(value.time) : new DateTime()
     }
 
     private def toType(Boolean objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
-        String value = stringValue(cell)
-        return value ? Boolean.parseBoolean(value) : Boolean.FALSE
+        return booleanValue(cell)
     }
 
     private def toType(IResource resource, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
@@ -301,7 +306,13 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         try {
             CellValue cellValue = evaluate(cell)
             if (cellValue) {
-                return cellValue.stringValue
+                if (cellValue.cellType == Cell.CELL_TYPE_STRING) {
+                    return cellValue.stringValue
+                } else {
+                    importResults << new ImportResult(cell, getMessage(FORMULA_RESULT_WRONG_CELL_TYPE, ['String']), ImportResult.Type.ERROR)
+                    return null
+                }
+
             } else {
                 return cell?.stringCellValue
             }
@@ -311,11 +322,40 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
+    private boolean booleanValue(Cell cell) {
+        try {
+            CellValue cellValue = evaluate(cell)
+            if (cellValue) {
+                if (cellValue.cellType == Cell.CELL_TYPE_BOOLEAN) {
+                    return cellValue.booleanValue
+                } else {
+                    importResults << new ImportResult(cell, getMessage(FORMULA_RESULT_WRONG_CELL_TYPE, ['Boolean']), ImportResult.Type.ERROR)
+                    return null
+                }
+
+            } else {
+                if (cell?.cellType == Cell.CELL_TYPE_BOOLEAN) {
+                    return cell?.booleanCellValue
+                } else {
+                    return Boolean.parseBoolean(cell?.stringCellValue)
+                }
+            }
+        } catch (IllegalStateException ignored) {
+            importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['Boolean']), ImportResult.Type.ERROR)
+            return null
+        }
+    }
+
     private Date dateValue(Cell cell) {
         try {
             CellValue cellValue = evaluate(cell)
             if (cellValue) {
-                return DateUtil.getJavaDate(cellValue.numberValue)
+                if (cellValue.cellType == Cell.CELL_TYPE_NUMERIC) {
+                    return DateUtil.getJavaDate(cellValue.numberValue)
+                } else {
+                    importResults << new ImportResult(cell, getMessage(FORMULA_RESULT_WRONG_CELL_TYPE, ['Numeric']), ImportResult.Type.ERROR)
+                    return null
+                }
             } else {
                 return cell?.dateCellValue
             }
@@ -335,7 +375,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                     if (cellValue.stringValue.isNumber()) {
                         return cellValue.stringValue.toDouble()
                     } else {
-                        importResults << new ImportResult(cell, getMessage(WRONG_CELL_TYPE, ['Number']), ImportResult.Type.ERROR)
+                        importResults << new ImportResult(cell, getMessage(FORMULA_RESULT_WRONG_CELL_TYPE, ['Number']), ImportResult.Type.ERROR)
                         return null
                     }
                 } else {
@@ -353,9 +393,13 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private CellValue evaluate(Cell cell) {
         if (cell?.cellType == Cell.CELL_TYPE_FORMULA) {
             FormulaEvaluator evaluator = workbook.creationHelper.createFormulaEvaluator()
-            return evaluator.evaluate(cell)
+            try {
+                return evaluator.evaluate(cell)
+            } catch (Exception e) {
+                importResults << new ImportResult(cell, e.message, ImportResult.Type.ERROR)
+                return null
+            }
         }
-        return null
     }
 
 
@@ -368,7 +412,7 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
                 String componentName = stringValue(row.getCell(index))
                 if (componentName && importEnabled(row, columnStartIndex)) {
                     String subComponentName = toSubComponentName(componentName)
-                    if (componentAlreadyExists(subComponentName)) {
+                    if (componentAlreadyExists(subComponentName) || component.getComponentByName(subComponentName)) {
                         importResults << new ImportResult(sheet.sheetName, rowIdx, getMessage(COMPONENT_ALREADY_PRESENT, [componentName]), ImportResult.Type.WARNING)
                     } else {
                         Component subComponent = component.createDefaultSubComponent()

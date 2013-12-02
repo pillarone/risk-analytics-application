@@ -16,7 +16,7 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
-class ExcelImportHandlerTests  {
+class ExcelImportHandlerTests {
     File exportFile
 
     @Before
@@ -179,6 +179,7 @@ class ExcelImportHandlerTests  {
         assert ['ONE', 'TWO'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
     }
 
+    @Test
     void testMDPEmptyValues_EmptyString() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
@@ -364,12 +365,58 @@ class ExcelImportHandlerTests  {
     @Test
     void testInstantiationErrorForClassifier() {
         ExcelImportHandler handler = new ExcelImportHandler()
-        handler.loadWorkbook(new FileInputStream(exportFile),'test.xlsx')
+        handler.loadWorkbook(new FileInputStream(exportFile), 'test.xlsx')
         XSSFSheet sheet = handler.workbook.getSheet('parameterComponent')
         XSSFRow dataRow = sheet.createRow(2)
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(2).setCellValue('TYPE_WITH_ERROR')
         List result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
+    }
+
+    @Test
+    void importTwoDynamicComponentWithSameName() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('DUMMY')
+        dataRow = sheet.createRow(3)
+        dataRow.createCell(1).setCellValue('DUMMY')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 2 == result.size()
+        assert 1 == result.findAll { it.type == ImportResult.Type.WARNING }.size()
+    }
+
+    @Test
+    void mdpNameIsNumericValue() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
+        dataRow.createCell(2).setCellValue('RESOURCE')
+        Cell cell = dataRow.createCell(10,Cell.CELL_TYPE_NUMERIC)
+        cell.setCellValue(20)
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 2 == result.size()
+        cell = dataRow.createCell(10,Cell.CELL_TYPE_FORMULA)
+        cell.setCellFormula('IF(TRUE,20,-1)')
+        result = handler.validate(new ApplicationModel())
+        assert 2 == result.size()
+    }
+
+    @Test
+    void importBooleanCell() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('globalParameterComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        XSSFCell cell = dataRow.createCell(1,Cell.CELL_TYPE_BOOLEAN)
+        cell.setCellValue(true)
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+        ApplicationModel applicationModel = handler.modelInstance as ApplicationModel
+        assert applicationModel.globalParameterComponent.parmRunOffAfterFirstPeriod
     }
 }

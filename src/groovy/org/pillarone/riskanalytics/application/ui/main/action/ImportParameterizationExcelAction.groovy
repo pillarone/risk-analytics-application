@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.exportimport.Excel
 import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ImportResult
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -44,23 +45,27 @@ class ImportParameterizationExcelAction extends ImportAction {
         ExcelImportHandler handler = new ExcelImportHandler()
         ClientContext.loadFile([
                 onSuccess: { InputStream[] ins, String[] paths, String[] filenames ->
-                    userPreferences.setUserDirectory(paths, filenames)
-                    handler.loadWorkbook(ins[0], filenames[0])
-                    if (selectedUIItem instanceof ParameterizationUIItem) {
-                        handler.setParameterizationOnModel(selectedModel, selectedUIItem.item as Parameterization)
+                    ExceptionSafe.protect {
+                        userPreferences.setUserDirectory(paths, filenames)
+                        handler.loadWorkbook(ins[0], filenames[0])
+                        if (selectedUIItem instanceof ParameterizationUIItem) {
+                            handler.setParameterizationOnModel(selectedModel, selectedUIItem.item as Parameterization)
+                        }
+                        List<ImportResult> validationResult = handler.validate(selectedModel)
+                        if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.ERROR }) {
+                            LOG.error(validationResult)
+                            ULCAlert alert = new I18NAlert(ancestor, "excelImportError", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.ERROR })] as List<String>)
+                            alert.show()
+                        } else if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.WARNING }) {
+                            LOG.warn(validationResult)
+                            ULCAlert alert = new I18NAlert(ancestor, "excelImportWarning", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.WARNING })] as List<String>)
+                            alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert, handler, filenames[0]) }] as IWindowListener)
+                            alert.show()
+                        } else {
+                            doImport(handler, filenames[0])
+                        }
+                        ancestor?.cursor = Cursor.DEFAULT_CURSOR
                     }
-                    List<ImportResult> validationResult = handler.validate(selectedModel)
-                    if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.ERROR }) {
-                        ULCAlert alert = new I18NAlert(ancestor, "excelImportError", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.ERROR })] as List<String>)
-                        alert.show()
-                    } else if (validationResult.any { ImportResult res -> res.type == ImportResult.Type.WARNING }) {
-                        ULCAlert alert = new I18NAlert(ancestor, "excelImportWarning", [filenames[0], formatValidationResult(validationResult.findAll { ImportResult res -> res.type == ImportResult.Type.WARNING })] as List<String>)
-                        alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert, handler, filenames[0]) }] as IWindowListener)
-                        alert.show()
-                    } else {
-                        doImport(handler, filenames[0])
-                    }
-                    ancestor?.cursor = Cursor.DEFAULT_CURSOR
                 },
                 onFailure: { reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {
