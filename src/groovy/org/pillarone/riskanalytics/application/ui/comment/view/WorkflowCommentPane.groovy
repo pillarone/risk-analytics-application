@@ -40,7 +40,12 @@ class WorkflowCommentPane extends CommentPane {
 
     private internalLayoutComponents(List<ULCComponent> components) {
         content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller());
+        ULCComponent buttonsPane = content.components.find { it.name == 'buttonsPane' }
+        if (buttonsPane){
+            content.remove(buttonsPane)
+        }
         ULCBoxPane buttons = new ULCBoxPane(components.size(), 1)
+        buttons.name = 'buttonsPane'
         components.each {
             buttons.add(it)
         }
@@ -53,23 +58,23 @@ class WorkflowCommentPane extends CommentPane {
     private void initMap() {
         uiStates = new HashMap()
         uiStates.put((OPEN_USER), {
-            internalLayoutComponents([resolveButton])
+            internalLayoutComponents([makeVisibleButton, resolveButton])
 
         })
         uiStates.put((OPEN_REVIEWER), {
-            internalLayoutComponents([editButton, deleteButton])
+            internalLayoutComponents([makeVisibleButton, editButton, deleteButton])
         })
         uiStates.put((RESOLVED_USER), {
-            internalLayoutComponents([resolvedLabel])
+            internalLayoutComponents([makeVisibleButton, resolvedLabel])
         })
         uiStates.put((RESOLVED_REVIEWER), {
-            internalLayoutComponents([reOpenButton, closeButton])
+            internalLayoutComponents([makeVisibleButton, reOpenButton, closeButton])
         })
         uiStates.put((CLOSED_REVIEWER), {
-            internalLayoutComponents([closedLabel])
+            internalLayoutComponents([makeVisibleButton, closedLabel])
         })
         uiStates.put((CLOSED_USER), {
-            internalLayoutComponents([closedLabel])
+            internalLayoutComponents([makeVisibleButton, closedLabel])
         })
     }
 
