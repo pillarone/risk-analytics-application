@@ -16,7 +16,13 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.CommentFile
 
-class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandler {
+/**
+ * Deals with excel files that are imported into the application.
+ * An export of such an excel file can be done using {@link ExcelExportHandler} class.
+ * The {@link ExcelImportHandler#validate(Model)} method tries to map the data from the excel file onto the passed model.
+ * There are many errors that can occur when the excel is mapped. e.g. the excel file hasn't got the required sheets or contains the wrong model.
+ */
+class ExcelImportHandler extends AbstractExcelHandler {
 
     private static final String MISSING_MODEL_CLASS_INFO = 'MissingModelClassInfo'
     private static final String MISSING_META_INFO_SHEET = 'MissingMetaSheet'
@@ -32,11 +38,19 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
     private static final String FORMULA_RESULT_WRONG_CELL_TYPE = 'FormulaResultWrongCellType'
     private static final String NULL_VALUE_NOT_ALLOWED = 'NullValueNotAllowed'
 
+    /**
+     * Holds the validation results after calling {@link ExcelImportHandler#validate(Model)}
+     */
     private List<ImportResult> importResults = []
 
     private Model parameterizedModel
     private Parameterization parameterization
 
+    /**
+     * Validates the data within the workbook and tries to map all data onto the {@link ExcelImportHandler#modelInstance model}
+     * @param expectedModel
+     * @return A list of validation results.
+     */
     List<ImportResult> validate(Model expectedModel) {
         clearImportResults()
         XSSFSheet sheet = workbook.getSheet(META_INFO_SHEET)
@@ -65,6 +79,11 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         importResults.clear()
     }
 
+    /**
+     * Imports the parameterized Model into the database.
+     * @param parmeterizationName The name for the new parameterization.
+     * @return
+     */
     List<ImportResult> doImport(String parmeterizationName) {
         List<ParameterHolder> parameterHolders = ParameterizationHelper.extractParameterHoldersFromModel(modelInstance, 0)
         boolean mustSaveNewParameterization = !parameterization || parameterHolders.any {
@@ -100,6 +119,12 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
 
     }
 
+    /**
+     * Initiates a model with the type that is given inside the excel file on the Meta-info sheet.
+     * This method expects that the model can be instantiated.
+     * After instantiation the model structure is taken to find the relevant data on the workbook.
+     * If a sheet is missing in the workbook, the processing will not map anything to that component but continues processing.
+     */
     private List<ImportResult> process() {
         Model processedModel = getModel()
         processedModel.init()
@@ -290,15 +315,25 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         return stringValue(cell)
     }
 
-    private boolean importEnabled(Row row, int columnStartIndex) {
+    private boolean importDisabled(Row row, int columnStartIndex) {
         int columnIndex = findColumnIndex(row.sheet, DISABLE_IMPORT, columnStartIndex)
         Cell cell = row.getCell(columnIndex)
-        if (cell?.cellType == Cell.CELL_TYPE_STRING) {
-            return !cell.stringCellValue?.contains('#')
-        } else if (cell?.cellType == Cell.CELL_TYPE_FORMULA) {
-            return !evaluate(cell)?.stringValue?.contains('#')
+        if (cell) {
+            switch (cell.cellType) {
+                case Cell.CELL_TYPE_BOOLEAN:
+                    return cell.booleanCellValue
+                case Cell.CELL_TYPE_STRING:
+                    return cell.stringCellValue?.contains('#')
+                case Cell.CELL_TYPE_FORMULA:
+                    CellValue evalutatedValue = evaluate(cell)
+                    if (evalutatedValue.cellType == Cell.CELL_TYPE_BOOLEAN) {
+                        return evalutatedValue.booleanValue
+                    } else {
+                        return evaluate(cell)?.stringValue?.contains('#')
+                    }
+            }
         }
-        return true
+        return false
     }
 
 
@@ -402,15 +437,22 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
-
+    /**
+     * Handles dynamic components. Each row represents a sub component. If the Disable Import cell contains a '#' or a boolean value TRUE
+     * then this row is ignored.
+     * @param component The parent component to which the sub components are added.
+     * @param sheet The sheet to process.
+     * @param rowIndex The
+     * @param columnStartIndex
+     */
     private void handleComponent(DynamicComposedComponent component, Sheet sheet, int rowIndex, int columnStartIndex) {
-        handleComponent(component as Component, sheet, DATA_ROW_START_INDEX, columnStartIndex)
+        handleComponent(component as Component, sheet, rowIndex, columnStartIndex)
         for (int rowIdx = rowIndex; rowIdx <= sheet.lastRowNum; rowIdx++) {
             Row row = sheet.getRow(rowIdx)
             if (row) {
                 int index = findColumnIndex(sheet, COMPONENT_HEADER_NAME, columnStartIndex)
                 String componentName = stringValue(row.getCell(index))
-                if (componentName && importEnabled(row, columnStartIndex)) {
+                if (componentName && !importDisabled(row, columnStartIndex)) {
                     String subComponentName = toSubComponentName(componentName)
                     if (componentAlreadyExists(subComponentName) || component.getComponentByName(subComponentName)) {
                         importResults << new ImportResult(sheet.sheetName, rowIdx, getMessage(COMPONENT_ALREADY_PRESENT, [componentName]), ImportResult.Type.WARNING)
@@ -426,15 +468,29 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
         }
     }
 
+    /**
+     * Handles the composed components.
+     * @param component
+     * @param sheet
+     * @param rowIndex
+     * @param columnStartIndex
+     */
     private void handleComponent(ComposedComponent component, Sheet sheet, int rowIndex, int columnStartIndex) {
         handleComponent(component as Component, sheet, rowIndex, columnStartIndex)
         for (Component subComponent in component.allSubComponents()) {
             String propertyName = component.properties.entrySet().find { it.value == subComponent }.key
             Integer columnIndex = findColumnIndex(sheet, propertyName, columnStartIndex)
-            handleComponent(subComponent, sheet, DATA_ROW_START_INDEX, columnIndex ?: 0)
+            handleComponent(subComponent, sheet, rowIndex, columnIndex ?: 0)
         }
     }
 
+    /**
+     * Handles the basic components.
+     * @param component
+     * @param sheet
+     * @param rowIndex
+     * @param columnStartIndex
+     */
     private void handleComponent(Component component, Sheet sheet, int rowIndex, int columnStartIndex) {
         Row dataRow = sheet.getRow(rowIndex)
         getAllParms(component).each { String paramName ->
@@ -452,16 +508,6 @@ class ExcelImportHandler extends AbstractExcelHandler implements IFileLoadHandle
             return parameterizedModel.allComponentsRecursively.find { it.name == componentName }
         }
         return false
-    }
-
-    @Override
-    void onSuccess(InputStream[] ins, String[] filePaths, String[] fileNames) {
-        workbook = new XSSFWorkbook(ins[0])
-    }
-
-    @Override
-    void onFailure(int reason, String description) {
-
     }
 
     void setParameterizationOnModel(final Model model, Parameterization parameterization) {

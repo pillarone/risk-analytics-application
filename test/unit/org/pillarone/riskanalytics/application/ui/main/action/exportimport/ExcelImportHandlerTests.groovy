@@ -11,6 +11,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.example.component.ExampleDynamicComponent
+import org.pillarone.riskanalytics.application.example.component.ExampleInputOutputComponentWithSubcomponent
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
@@ -285,7 +286,7 @@ class ExcelImportHandlerTests {
     }
 
     @Test
-    void testDisableImport_invalidFormula() {
+    void testDisableImport_Formula() {
         ExcelImportHandler handler = new ExcelImportHandler()
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
         XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
@@ -296,6 +297,28 @@ class ExcelImportHandlerTests {
         dataRow.createCell(1).setCellValue('componentA')
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 0 == result.size()
+        cell.setCellFormula('IF(TRUE,TRUE,FALSE)')
+        result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+        cell.setCellFormula('IF(TRUE,FALSE,TRUE)')
+        result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
+    }
+
+    @Test
+    void testDisableImport_booleanCell() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        Cell cell = dataRow.createCell(0, Cell.CELL_TYPE_BOOLEAN)
+        cell.setCellValue(true)
+        dataRow.createCell(1).setCellValue('componentA')
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        assert 0 == result.size()
+        cell.setCellValue(false)
+        result = handler.validate(new ApplicationModel())
+        assert 1 == result.size()
     }
 
     @Test
@@ -418,5 +441,33 @@ class ExcelImportHandlerTests {
         assert 0 == result.size()
         ApplicationModel applicationModel = handler.modelInstance as ApplicationModel
         assert applicationModel.globalParameterComponent.parmRunOffAfterFirstPeriod
+    }
+
+    @Test
+    void importMultipleSubComponent() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet sheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = sheet.createRow(2)
+        dataRow.createCell(1).setCellValue('DUMMY')
+        dataRow.createCell(2).setCellValue(22)
+        dataRow.createCell(5).setCellValue(1000)
+        dataRow = sheet.createRow(3)
+        dataRow.createCell(1).setCellValue('DUMMY2')
+        dataRow.createCell(2).setCellValue(44)
+        dataRow.createCell(5).setCellValue(100)
+        List<ImportResult> result = handler.validate(new ApplicationModel())
+        ApplicationModel applicationModel = handler.modelInstance as ApplicationModel
+        ExampleInputOutputComponentWithSubcomponent dummyComp = applicationModel.dynamicComponent.getComponentByName('subDUMMY')
+        ExampleInputOutputComponentWithSubcomponent dummy2Comp = applicationModel.dynamicComponent.getComponentByName('subDUMMY2')
+        assert dummyComp
+        assert dummy2Comp
+        assert 1000 == dummyComp.subSecondComponent.parmValue
+        assert 22 == dummyComp.parmFirstParameter
+        assert 100 == dummy2Comp.subSecondComponent.parmValue
+        assert 44 == dummy2Comp.parmFirstParameter
+
+
+
     }
 }
