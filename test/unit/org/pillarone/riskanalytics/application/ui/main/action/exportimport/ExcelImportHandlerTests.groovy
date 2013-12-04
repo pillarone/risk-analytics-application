@@ -40,7 +40,7 @@ class ExcelImportHandlerTests {
         handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(0).getCell(1).setCellValue(CoreModel.class.name)
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
-    }
+      }
 
     @Test
     void testInvalidModelClass() {
@@ -172,10 +172,13 @@ class ExcelImportHandlerTests {
         mdpSheet.getRow(0).getCell(0).setCellValue('tableName')
         XSSFRow mdpRow = mdpSheet.createRow(2)
         mdpRow.createCell(0).setCellValue('ONE')
+        mdpRow.createCell(1).setCellValue('BESIDE')
         mdpRow = mdpSheet.createRow(3)
         mdpRow.createCell(0).setCellValue('TWO')
+        mdpRow.createCell(1).setCellValue('BESIDE')
         mdpRow = mdpSheet.createRow(4)
         mdpRow.createCell(0).setCellValue('')
+        mdpRow.createCell(1).setCellValue('BESIDE')
         handler.validate(new ApplicationModel())
         assert ['ONE', 'TWO'] == handler.modelInstance.parameterComponent.parmNestedMdp.parameters['resource'].values[0]
     }

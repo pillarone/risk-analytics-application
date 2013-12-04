@@ -68,6 +68,7 @@ class ImportParameterizationExcelAction extends ImportAction {
                     }
                 },
                 onFailure: { reason, description ->
+                    ancestor?.cursor = Cursor.DEFAULT_CURSOR
                     if (IFileLoadHandler.CANCELLED != reason) {
                         LOG.error description
                         ULCAlert alert = new I18NAlert(ancestor, "importError")

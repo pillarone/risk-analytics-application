@@ -259,17 +259,20 @@ class ExcelImportHandler extends AbstractExcelHandler {
     }
 
     private boolean rowHasValuesInRange(Row row, int columnStartIndex, int columnEndIndex) {
-        for (int columnIndex = columnStartIndex; columnIndex <= columnEndIndex; columnIndex++) {
+        for (int columnIndex = columnStartIndex; columnIndex < columnEndIndex; columnIndex++) {
             Cell cell = row.getCell(columnIndex)
             if (cell) {
                 switch (cell.cellType) {
                     case Cell.CELL_TYPE_STRING:
-                        return cell.stringCellValue
+                        if (cell.stringCellValue) {
+                            return true
+                        }
+                        break
                     case Cell.CELL_TYPE_NUMERIC:
                         return true
                     case Cell.CELL_TYPE_FORMULA:
                         CellValue value = evaluate(cell)
-                        if (value.cellType == Cell.CELL_TYPE_NUMERIC || value.cellType == Cell.CELL_TYPE_STRING && value.stringValue) {
+                        if (value?.cellType == Cell.CELL_TYPE_NUMERIC || value?.cellType == Cell.CELL_TYPE_STRING && value?.stringValue) {
                             return true
                         }
                 }
@@ -326,10 +329,10 @@ class ExcelImportHandler extends AbstractExcelHandler {
                     return cell.stringCellValue?.contains('#')
                 case Cell.CELL_TYPE_FORMULA:
                     CellValue evalutatedValue = evaluate(cell)
-                    if (evalutatedValue.cellType == Cell.CELL_TYPE_BOOLEAN) {
+                    if (evalutatedValue?.cellType == Cell.CELL_TYPE_BOOLEAN) {
                         return evalutatedValue.booleanValue
                     } else {
-                        return evaluate(cell)?.stringValue?.contains('#')
+                        return evalutatedValue?.stringValue?.contains('#')
                     }
             }
         }
