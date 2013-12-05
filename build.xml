@@ -9,8 +9,10 @@
 
     <property name="GRAILS_JVM_OPTS" value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'"/>
 
-    <copy tofile="_build.xml" overwrite="true">
-        <fileset dir="../local-plugins/${app.name}-master" includes="risk-analytics-core*/scripts/build.xml" />
+    <get src="https://github.com/pillarone/risk-analytics-core/raw/master/scripts/build.xml" dest="_build.xml" skipexisting="true" />
+
+    <copy tofile="_build.xml" overwrite="true" failonerror="false">
+        <fileset dir=".." includes="local-plugins/${app.name}-master/risk-analytics-core*/scripts/build.xml" />
     </copy>
     <import file="_build.xml"/>
 
