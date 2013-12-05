@@ -40,7 +40,7 @@ class ExcelImportHandlerTests {
         handler.workbook.getSheet(AbstractExcelHandler.META_INFO_SHEET).getRow(0).getCell(1).setCellValue(CoreModel.class.name)
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 1 == result.size()
-      }
+    }
 
     @Test
     void testInvalidModelClass() {
@@ -422,11 +422,11 @@ class ExcelImportHandlerTests {
         XSSFRow dataRow = parmComponentSheet.createRow(2)
         dataRow.createCell(1).setCellValue('FIRST_VALUE')
         dataRow.createCell(2).setCellValue('RESOURCE')
-        Cell cell = dataRow.createCell(10,Cell.CELL_TYPE_NUMERIC)
+        Cell cell = dataRow.createCell(10, Cell.CELL_TYPE_NUMERIC)
         cell.setCellValue(20)
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 2 == result.size()
-        cell = dataRow.createCell(10,Cell.CELL_TYPE_FORMULA)
+        cell = dataRow.createCell(10, Cell.CELL_TYPE_FORMULA)
         cell.setCellFormula('IF(TRUE,20,-1)')
         result = handler.validate(new ApplicationModel())
         assert 2 == result.size()
@@ -438,7 +438,7 @@ class ExcelImportHandlerTests {
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
         XSSFSheet sheet = handler.workbook.getSheet('globalParameterComponent')
         XSSFRow dataRow = sheet.createRow(2)
-        XSSFCell cell = dataRow.createCell(1,Cell.CELL_TYPE_BOOLEAN)
+        XSSFCell cell = dataRow.createCell(1, Cell.CELL_TYPE_BOOLEAN)
         cell.setCellValue(true)
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 0 == result.size()
@@ -469,8 +469,38 @@ class ExcelImportHandlerTests {
         assert 22 == dummyComp.parmFirstParameter
         assert 100 == dummy2Comp.subSecondComponent.parmValue
         assert 44 == dummy2Comp.parmFirstParameter
+    }
 
+    @Test
+    void subComponentMissing() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('TYPE0')
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
+        dataRow.createCell(11).setCellValue('abc component')
+        def validate = handler.validate(new ApplicationModel())
+        assert 1 == validate.size()
+        assert 'Cell must reference to an existing component.' == validate[0].message
+    }
 
+    @Test
+    void subComponentExist() {
+        String componentName = 'abc component'
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet parmComponentSheet = handler.workbook.getSheet('parameterComponent')
+        XSSFRow dataRow = parmComponentSheet.createRow(2)
+        dataRow.createCell(2).setCellValue('TYPE0')
+        dataRow.createCell(1).setCellValue('FIRST_VALUE')
+        dataRow.createCell(11).setCellValue(componentName)
+        XSSFSheet dynamicComponentSheet = handler.workbook.getSheet('dynamicComponent')
+        dataRow = dynamicComponentSheet.createRow(2)
+        dataRow.createCell(1).setCellValue(componentName)
+        def validate = handler.validate(new ApplicationModel())
+        assert 1 == validate.size()
+        assert "Component '$componentName' processed." == validate[0].message
 
     }
 }

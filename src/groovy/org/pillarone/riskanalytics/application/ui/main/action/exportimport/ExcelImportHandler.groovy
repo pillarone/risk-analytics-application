@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
-import com.ulcjava.base.application.util.IFileLoadHandler
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFSheet
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -37,6 +35,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
     private static final String WRONG_CELL_TYPE = 'WrongCellType'
     private static final String FORMULA_RESULT_WRONG_CELL_TYPE = 'FormulaResultWrongCellType'
     private static final String NULL_VALUE_NOT_ALLOWED = 'NullValueNotAllowed'
+    private static final String UNKNOWN_REFERENCE_VALUE = 'UnknownReference'
 
     /**
      * Holds the validation results after calling {@link ExcelImportHandler#validate(Model)}
@@ -45,6 +44,8 @@ class ExcelImportHandler extends AbstractExcelHandler {
 
     private Model parameterizedModel
     private Parameterization parameterization
+    private Set allSubComponents = []
+    private Set referencesToSubComponents = []
 
     /**
      * Validates the data within the workbook and tries to map all data onto the {@link ExcelImportHandler#modelInstance model}
@@ -68,6 +69,12 @@ class ExcelImportHandler extends AbstractExcelHandler {
                 }
             }
         }
+        referencesToSubComponents.each {Cell c ->
+            String componentName = stringValue(c)
+            if (!allSubComponents.contains(componentName)){
+                importResults << new ImportResult(c,getMessage(UNKNOWN_REFERENCE_VALUE, [componentName]), ImportResult.Type.ERROR)
+            }
+        }
         return importResults
     }
 
@@ -76,6 +83,8 @@ class ExcelImportHandler extends AbstractExcelHandler {
     }
 
     void clearImportResults() {
+        allSubComponents.clear()
+        referencesToSubComponents.clear()
         importResults.clear()
     }
 
@@ -173,14 +182,26 @@ class ExcelImportHandler extends AbstractExcelHandler {
         String value = stringValue(cell)
         if (value) {
             objectClass.setValueAt(toSubComponentName(value), 1, 0)
+            referencesToSubComponents << cell
         }
         return objectClass
+    }
+
+    private String toSubComponentName(String name) {
+        if (name && name.size() > 1) {
+            String firstLetterUpperCase = name[0].toUpperCase()
+            String subComponentName = "${ComponentUtils.SUB}$firstLetterUpperCase${name.substring(1).replaceAll(' ', '')}"
+            return subComponentName
+
+        }
+        return name
     }
 
     private def toType(ConstrainedString objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         if (value) {
             objectClass.setStringValue(toSubComponentName(value))
+            referencesToSubComponents << cell
         }
         return objectClass
     }
@@ -246,6 +267,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
                         Class valueType = mdp.constraints.getColumnType(columnIndex - tableColumnIndex)
                         def value = toType(newInstance(valueType), dataCell, mdpSheet, rowIndex, columnIndex)
                         if (IComponentMarker.isAssignableFrom(valueType)) {
+                            referencesToSubComponents << dataCell
                             value = toSubComponentName(value as String)
                         }
                         values[columnIndex - tableColumnIndex] << value
@@ -460,6 +482,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
                     if (componentAlreadyExists(subComponentName) || component.getComponentByName(subComponentName)) {
                         importResults << new ImportResult(sheet.sheetName, rowIdx, getMessage(COMPONENT_ALREADY_PRESENT, [componentName]), ImportResult.Type.WARNING)
                     } else {
+                        allSubComponents << componentName
                         Component subComponent = component.createDefaultSubComponent()
                         subComponent.setName(subComponentName)
                         component.addSubComponent(subComponent)
