@@ -20,6 +20,7 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
+        mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public-snapshot/"
         mavenRepo "http://repo.spring.io/milestone/" //needed for spring-security-core 2.0-rc2 plugin
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
@@ -42,7 +43,7 @@ grails.project.dependency.resolution = {
         test ":code-coverage:1.2.6"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.9-a3"
+            runtime "org.pillarone:risk-analytics-core:1.9-SNAPSHOT"
         }
 
     }
@@ -70,11 +71,16 @@ grails.project.dependency.distribution = {
     String scpUrl = ""
     try {
         Properties properties = new Properties()
+        String version = new GroovyClassLoader().loadClass('RiskAnalyticsApplicationGrailsPlugin').newInstance().version
         properties.load(new File("${userHome}/deployInfo.properties").newInputStream())
-
         user = properties.get("user")
         password = properties.get("password")
-        scpUrl = properties.get("url")
+
+        if (version?.endsWith('-SNAPSHOT')){
+            scpUrl = properties.get("urlSnapshot")
+        }else {
+            scpUrl = properties.get("url")
+        }
     } catch (Throwable t) {
     }
     remoteRepository(id: "pillarone", url: scpUrl) {
