@@ -40,7 +40,7 @@ grails.project.dependency.resolution = {
         compile "com.canoo:ulc:${ulcVersion}"
         runtime("org.pillarone:pillar-one-ulc-extensions:1.3") { transitive = false }
 
-        test ":code-coverage:1.2.6"
+        test ":code-coverage:1.2.7"
 
         if (appName == 'RiskAnalyticsApplication') {
             runtime "org.pillarone:risk-analytics-core:1.9-SNAPSHOT"
