@@ -110,15 +110,6 @@ abstract class AbstractExcelHandler {
         return comment.string.string
     }
 
-    protected String toSubComponentName(String name) {
-        if (name && name.size() > 1) {
-            String firstLetterUpperCase = name[0].toUpperCase()
-            return "${ComponentUtils.SUB}$firstLetterUpperCase${name.substring(1).replaceAll(' ', '')}"
-
-        }
-        return name
-    }
-
     protected Sheet findSheetForComponent(Component component) {
         String sheetName = getSheetName(component)
         workbook.getSheet(sheetName)
