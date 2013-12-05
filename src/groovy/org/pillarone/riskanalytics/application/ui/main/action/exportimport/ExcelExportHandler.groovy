@@ -68,14 +68,14 @@ class ExcelExportHandler extends AbstractExcelHandler {
         addRow(metaInfoSheet, MODEL_INFO_KEY, model.class.name, 0)
         addRow(metaInfoSheet, APPLICATION_VERSION_KEY, new PropertiesUtils().getProperties("/version.properties").getProperty("version", "N/A"), 1)
         Row headerRow = metaInfoSheet.getRow(0)
-        enumerationObjects.eachWithIndex { def enumerationObject, int index ->
-            handleEnumeration(enumerationObject,index, headerRow.createCell(PARAMETER_OBJECT_START_INDEX + index), metaInfoSheet)
+        enumerationObjects.eachWithIndex { EnumerationObject enumerationObject, int index ->
+            headerRow.createCell(PARAMETER_OBJECT_START_INDEX + index).setCellValue("${enumerationObject.name}")
+            handleEnumeration(enumerationObject.enumeration, index, metaInfoSheet)
 
         }
     }
 
-    void handleEnumeration(Enum anEnum, int index, Cell cell, Sheet metaInfoSheet) {
-        cell.setCellValue(anEnum.declaringClass.simpleName)
+    void handleEnumeration(Enum anEnum, int index, Sheet metaInfoSheet) {
         anEnum.declaringClass.enumConstants.eachWithIndex { Enum possibleEnum, int rowIndex ->
             Row row = metaInfoSheet.getRow(1 + rowIndex)
             if (!row) {
@@ -85,8 +85,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
         }
     }
 
-    void handleEnumeration(IParameterObject parameterObject, int index, Cell cell, Sheet metaInfoSheet) {
-        cell.setCellValue(parameterObject.class.simpleName)
+    void handleEnumeration(IParameterObject parameterObject, int index, Sheet metaInfoSheet) {
         parameterObject.type.classifiers.eachWithIndex { IParameterObjectClassifier objectClassifier, int rowIndex ->
             Row row = metaInfoSheet.getRow(1 + rowIndex)
             if (!row) {
@@ -114,7 +113,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
             technicalHeaderRow.sheet.setDefaultColumnStyle(columnIndex, style)
             def parameterType = component[parm]
             if (parameterType instanceof Enum) {
-                addToParameterEnumerations(parameterType,cell)
+                addToParameterEnumerations(parameterType, cell)
             }
             columnIndex = addParameterCells(parameterType, headerRow, technicalHeaderRow, ++columnIndex, cell, paramStyle)
         }
@@ -123,10 +122,11 @@ class ExcelExportHandler extends AbstractExcelHandler {
     }
 
     void addToParameterEnumerations(def enumerationObject, Cell cell) {
-        if (!enumerationObjects.contains(enumerationObject)) {
-            enumerationObjects << enumerationObject
+        EnumerationObject enumObject = new EnumerationObject(enumerationObject, cell?.stringCellValue)
+        if (!enumerationObjects.contains(enumObject)) {
+            enumerationObjects << enumObject
         }
-        setHyperlink(cell, "'Meta-Info'!${CellReference.convertNumToColString(PARAMETER_OBJECT_START_INDEX + enumerationObjects.indexOf(enumerationObject))}1")
+        setHyperlink(cell, "'Meta-Info'!${CellReference.convertNumToColString(PARAMETER_OBJECT_START_INDEX + enumerationObjects.indexOf(enumObject))}1")
     }
 
     private int handleComponent(ComposedComponent component, Row headerRow, Row technicalHeaderRow, int columnIndex) {
@@ -160,6 +160,11 @@ class ExcelExportHandler extends AbstractExcelHandler {
         columnIndex
     }
 
+    private int addParameterCells(Enum enumObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
+        addToParameterEnumerations(enumObject, cell)
+        columnIndex
+    }
+
     private int addParameterCells(ConstrainedMultiDimensionalParameter multiDimensionalParameter, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
         addParameter(multiDimensionalParameter)
         String sheetName = getSheetNameForMDP(new MDPTitleContraints(multiDimensionalParameter.titles, multiDimensionalParameter.constraints))
@@ -169,7 +174,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
     }
 
     private int addParameterCells(IParameterObject parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell c, XSSFCellStyle columnStyle) {
-        addToParameterEnumerations(parmObject,c)
+        addToParameterEnumerations(parmObject, c)
         List<IParameterObjectClassifier> classifiers = parmObject.type.getClassifiers()
         Set writtenParameters = []
         classifiers.each { IParameterObjectClassifier classifier ->
@@ -283,4 +288,25 @@ class ExcelExportHandler extends AbstractExcelHandler {
         }
     }
 
+    class EnumerationObject {
+        def enumeration
+        String name
+
+        EnumerationObject(enumeration, String name) {
+            this.enumeration = enumeration
+            this.name = name
+        }
+
+        boolean equals(o) {
+            if (this.is(o)) return true
+            if (getClass() != o.class) return false
+            EnumerationObject that = (EnumerationObject) o
+            if (enumeration.class != that.enumeration.class) return false
+            return true
+        }
+
+        int hashCode() {
+            return (enumeration != null ? enumeration.class.hashCode() : 0)
+        }
+    }
 }
