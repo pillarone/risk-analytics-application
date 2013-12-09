@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.joda.time.DateTime
@@ -21,7 +23,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Commen
  * There are many errors that can occur when the excel is mapped. e.g. the excel file hasn't got the required sheets or contains the wrong model.
  */
 class ExcelImportHandler extends AbstractExcelHandler {
-
+    private static final Log LOG = LogFactory.getLog(ExcelImportHandler)
     private static final String MISSING_MODEL_CLASS_INFO = 'MissingModelClassInfo'
     private static final String MISSING_META_INFO_SHEET = 'MissingMetaSheet'
     private static final String INCORRECT_MODEL_CLASS_INFO = 'IncorrectModelClassInfo'
@@ -69,10 +71,10 @@ class ExcelImportHandler extends AbstractExcelHandler {
                 }
             }
         }
-        referencesToSubComponents.each {Cell c ->
+        referencesToSubComponents.each { Cell c ->
             String componentName = stringValue(c)
-            if (!allSubComponents.contains(componentName)){
-                importResults << new ImportResult(c,getMessage(UNKNOWN_REFERENCE_VALUE, [componentName]), ImportResult.Type.ERROR)
+            if (!allSubComponents.contains(componentName)) {
+                importResults << new ImportResult(c, getMessage(UNKNOWN_REFERENCE_VALUE, [componentName]), ImportResult.Type.ERROR)
             }
         }
         return importResults
@@ -456,6 +458,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
             try {
                 return evaluator.evaluate(cell)
             } catch (Exception e) {
+                LOG.error(e.message, e)
                 importResults << new ImportResult(cell, e.message, ImportResult.Type.ERROR)
                 return null
             }
