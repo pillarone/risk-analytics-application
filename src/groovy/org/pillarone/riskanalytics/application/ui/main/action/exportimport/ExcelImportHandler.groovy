@@ -171,10 +171,10 @@ class ExcelImportHandler extends AbstractExcelHandler {
         String value = stringValue(cell)
         List<Enum> possibleEnumValues = objectClass.values()
         Enum enumObject = possibleEnumValues.find {
-            getDisplayName(it.declaringClass, it.toString()) == value || it.toString() == value
+            getDisplayName(it.declaringClass, it.toString())?.equalsIgnoreCase(value) || it.toString()?.equalsIgnoreCase(value)
         }
         if (!enumObject) {
-            List<String> displayNames = possibleEnumValues.collect { "'${getDisplayName(it.declaringClass, it.toString())}'" }
+            List<String> displayNames = possibleEnumValues.collect { "'${it.toString()}'" }
             importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [value, displayNames.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
