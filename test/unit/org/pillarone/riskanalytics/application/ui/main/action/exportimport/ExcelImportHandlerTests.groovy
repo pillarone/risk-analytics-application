@@ -503,4 +503,16 @@ class ExcelImportHandlerTests {
         assert "Component '$componentName' processed." == validate[0].message
 
     }
+
+    @Test
+    void unknownFormula() {
+        ExcelImportHandler handler = new ExcelImportHandler()
+        handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
+        XSSFSheet dynamicComponentSheet = handler.workbook.getSheet('dynamicComponent')
+        XSSFRow dataRow = dynamicComponentSheet.createRow(2)
+        dataRow.createCell(1,Cell.CELL_TYPE_FORMULA).setCellFormula('COUNTIFS(A1,1)')
+        def validate = handler.validate(new ApplicationModel())
+        assert 2 == validate.size()
+        assert "Formula not implemented: 'COUNTIFS'" == validate[0].message
+    }
 }

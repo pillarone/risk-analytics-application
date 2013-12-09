@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.apache.poi.ss.formula.eval.NotImplementedException
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.joda.time.DateTime
@@ -457,6 +458,10 @@ class ExcelImportHandler extends AbstractExcelHandler {
             FormulaEvaluator evaluator = workbook.creationHelper.createFormulaEvaluator()
             try {
                 return evaluator.evaluate(cell)
+            } catch (NotImplementedException e) {
+                LOG.error(e.message, e)
+                importResults << new ImportResult(cell,"Formula not implemented: '${e.cause?.message}'", ImportResult.Type.ERROR)
+                return null
             } catch (Exception e) {
                 LOG.error(e.message, e)
                 importResults << new ImportResult(cell, e.message, ImportResult.Type.ERROR)
