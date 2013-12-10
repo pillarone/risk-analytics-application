@@ -24,7 +24,7 @@ abstract public class ExceptionSafeAction extends AbstractAction {
         }
     }
 
-    protected void trace(String content) {
+    void trace(String content) { //protected does not work (PMO-2661)
         LogFactory.getLog(this.class).debug(content)
     }
 
