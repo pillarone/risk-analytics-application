@@ -124,8 +124,7 @@ class DealLinkDialog {
     }
 
     private static List<TransactionInfo> getAllTransactions() {
-        ITransactionService transactionService = RemotingUtils.getTransactionService()
-        return transactionService.allTransactions
+        return RemotingUtils.allTransactions
     }
 
     /**
