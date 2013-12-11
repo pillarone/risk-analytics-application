@@ -68,7 +68,7 @@
         <jar jarfile="${webapp.lib.dir}/${app.name}-extensions-client.jar">
             <fileset dir="${plugin.classes.prod.dir}" includes="com/canoo/ulc/**/client/**"/>
             <fileset dir="${plugin.classes.prod.dir}" includes="org/pillarone/ulc/client/**"/>
-            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.1/src/java" includes="**/close-*.png"/>
+            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.2/src/java" includes="**/close-*.png"/>
         </jar>
 
         <jar jarfile="${webapp.lib.dir}/${app.name}-client.jar">
