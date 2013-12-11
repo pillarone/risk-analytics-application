@@ -113,7 +113,7 @@ public class ModellingTableTreeColumn {
     private String getTransactionName(Long dealId) {
         try {
             if (transactionInfos == null) {
-                transactionInfos = RemotingUtils.getTransactionService().allTransactions
+                transactionInfos = RemotingUtils.allTransactions
             }
             TransactionInfo transactionInfo = transactionInfos.find {it.dealId == dealId}
             if (transactionInfo)
