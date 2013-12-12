@@ -8,8 +8,6 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -42,12 +40,12 @@ class DeleteAction extends SelectionTreeAction {
             }
         }
         if (!selectedItems) return
-        AlertDialog dialog = new AlertDialog(tree, selectedItems, UIUtils.getText(this.class, "warningTitle"), UIUtils.getText(this.class, "warningMessage", [getNames(selectedItems)]), okAction)
+        AlertDialog dialog = new AlertDialog(tree, selectedItems, UIUtils.getText(DeleteAction, "warningTitle"), UIUtils.getText(DeleteAction, "warningMessage", [getNames(selectedItems)]), okAction)
         dialog.init()
         dialog.show()
     }
 
-    private void removeItem(ModellingUIItem selectedItem) {
+    protected void removeItem(ModellingUIItem selectedItem) {
         boolean usedInSimulation = selectedItem.isUsedInSimulation()
         Model selectedModel = getSelectedModel()
         if (!usedInSimulation) {
@@ -64,13 +62,13 @@ class DeleteAction extends SelectionTreeAction {
     }
 
 
-    private void removeItem(def selectedItem) {}
+    protected void removeItem(def selectedItem) {}
 
-    private void removeItem(AbstractUIItem selectedItem) {
+    protected void removeItem(AbstractUIItem selectedItem) {
         selectedItem.remove()
     }
 
-    private void removeItem(List<AbstractUIItem> selectedItems) {
+    protected void removeItem(List<AbstractUIItem> selectedItems) {
         selectedItems.each { selectedItem ->
             removeItem(selectedItem)
         }
