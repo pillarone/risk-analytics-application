@@ -1,21 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCButtonOperator
-import com.ulcjava.testframework.operator.ULCDialogOperator
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCMenuItemOperator
-import com.ulcjava.testframework.operator.ULCPopupMenuOperator
-import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import com.ulcjava.testframework.operator.ULCTextAreaOperator
-import com.ulcjava.testframework.operator.ULCTreeOperator
+import com.ulcjava.testframework.operator.*
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.workflow.AuditLog
 
 import javax.swing.tree.TreePath
@@ -35,6 +26,7 @@ class WorkflowActionTests extends AbstractStandaloneTestCase {
     protected void tearDown() {
         super.tearDown();
         LocaleResources.clearTestMode()
+        AuditLog.list()*.delete(flush: true)
     }
 
     protected Class getApplicationClass() {
