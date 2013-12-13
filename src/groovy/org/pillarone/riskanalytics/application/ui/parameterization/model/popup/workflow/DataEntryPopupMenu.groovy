@@ -2,10 +2,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model.popup.
 
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
-import org.pillarone.riskanalytics.application.ui.main.action.workflow.DeleteWorkflowParameterizationAction
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.impl.AbstractWorkflowParameterNodePopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 
@@ -27,8 +24,4 @@ class DataEntryPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
     @Override
     protected boolean hasDeleteAction() { return true; }
 
-    @Override
-    protected DeleteAction getDeleteAction(ULCTableTree tree, AbstractUIItem uIItem) {
-        return new DeleteWorkflowParameterizationAction(tree, uIItem.mainModel)
-    }
 }

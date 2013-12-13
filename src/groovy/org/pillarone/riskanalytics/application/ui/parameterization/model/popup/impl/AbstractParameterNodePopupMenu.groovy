@@ -47,12 +47,8 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         node.addReportMenus(this, tree, separatorNeeded);
         if (hasDeleteAction()) {
             addSeparator();
-            add(new ULCMenuItem(getDeleteAction(tree, uIItem)));
+            add(new ULCMenuItem(new DeleteAction(tree, uIItem.mainModel)));
         }
-    }
-
-    protected DeleteAction getDeleteAction(ULCTableTree tree, AbstractUIItem uIItem) {
-        new DeleteAction(tree, uIItem.mainModel)
     }
 
     protected abstract boolean hasRenameAction();

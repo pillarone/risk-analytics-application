@@ -13,9 +13,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -70,6 +74,9 @@ class DeleteAction extends SelectionTreeAction {
 
     protected void removeItem(List<AbstractUIItem> selectedItems) {
         selectedItems.each { selectedItem ->
+            if (selectedItem instanceof ParameterizationUIItem && selectedItem.item?.status == Status.DATA_ENTRY) {
+                StatusChangeService.service.clearAudit(selectedItem.item as Parameterization)
+            }
             removeItem(selectedItem)
         }
     }
