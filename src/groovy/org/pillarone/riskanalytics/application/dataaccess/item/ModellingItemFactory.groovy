@@ -225,6 +225,8 @@ class ModellingItemFactory {
 
     static boolean delete(def item) {
         try {
+            //TODO : Decide whether to log or not ? Maybe only p14n deletions should be logged ??
+            LOG.info("Deleting ${item?.class?.simpleName}: ${item?.name} v${item?.versionNumber} (status: ${item?.status})")
             item.delete()
         } catch (Exception ex) {
             LOG.error("Error deleting ${item?.class?.simpleName}: ", ex)
