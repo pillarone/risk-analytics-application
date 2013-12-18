@@ -94,6 +94,8 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
             if (simulation.numberOfIterations > iterationThreshold &&
                     simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
+                // TODO send this from view not this model so a parent will be available for the dialog, then it will display in
+                // better location
                 I18NAlert alert = new I18NAlert("WarnPotentiallyLargeResultSet")
                 alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert)}] as IWindowListener)
                 alert.show()
