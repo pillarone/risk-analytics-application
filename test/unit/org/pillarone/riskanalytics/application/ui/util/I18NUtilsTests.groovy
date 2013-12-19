@@ -16,9 +16,9 @@ class I18NUtilsTests extends GroovyTestCase {
 
 
     public void testGetExceptionText() {//exceptionKey
-        assertTrue I18NUtils.getExceptionText("exception text").indexOf("exception text") > 0
-        assertTrue I18NUtils.getExceptionText("['exception0Key']").indexOf("exception message") > 0
-        assertTrue I18NUtils.getExceptionText("['exception1Key', 'key1']").indexOf("exception message key1") > 0
-        assertTrue I18NUtils.getExceptionText("['exception2Key', 'key1', 'key2']").indexOf("exception message key1 and key2") > 0
+        assertTrue I18NUtilities.getExceptionText("exception text").indexOf("exception text") > 0
+        assertTrue I18NUtilities.getExceptionText("['exception0Key']").indexOf("exception message") > 0
+        assertTrue I18NUtilities.getExceptionText("['exception1Key', 'key1']").indexOf("exception message key1") > 0
+        assertTrue I18NUtilities.getExceptionText("['exception2Key', 'key1', 'key2']").indexOf("exception message key1 and key2") > 0
     }
 }

@@ -4,13 +4,12 @@ import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.view.IMultiValueTableTreeNode
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy
 
 class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IMultiValueTableTreeNode {
 
@@ -75,10 +74,7 @@ class ResultConfigurationTableTreeNode extends SimpleTableTreeNode implements IM
     }
 
     private lookUp(String value, String tooltip) {
-        String displayName = I18NUtils.findResultParameterDisplayName(this, name, tooltip)
-        if (displayName == null)
-            displayName = I18NUtils.findDisplayNameByParentComponent(this, name, tooltip)
-        return displayName
+        return I18NUtilities.findResultParameterDisplayName(this, name, tooltip)
     }
 
 

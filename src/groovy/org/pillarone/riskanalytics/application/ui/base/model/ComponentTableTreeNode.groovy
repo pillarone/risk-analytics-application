@@ -2,17 +2,19 @@ package org.pillarone.riskanalytics.application.ui.base.model
 
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.core.components.Component
 
 @CompileStatic
 class ComponentTableTreeNode extends SimpleTableTreeNode {
 
     Component component
+    Class modelClass
 
-    public ComponentTableTreeNode(Component component, String propertyName) {
+    public ComponentTableTreeNode(Component component, Class modelClass, String propertyName) {
         super(propertyName)
         this.component = component
+        this.modelClass = modelClass
     }
 
     public String getDisplayName() {
@@ -43,14 +45,14 @@ class ComponentTableTreeNode extends SimpleTableTreeNode {
     private String lookUp(String value, String tooltip) {
         String displayName
         if (!ComponentUtils.isDynamicComposedSubComponentNode(this)) {
-            displayName = I18NUtils.findComponentDisplayNameByTreeNode(this, tooltip)
+            displayName = I18NUtilities.findComponentDisplayNameByTreeNode(this, tooltip)
         }
 
         if (displayName == null && !ComponentUtils.isDynamicComposedSubComponentNode(this)) {
-            displayName = I18NUtils.findComponentDisplayNameInModelBundle(path, tooltip)
+            displayName = I18NUtilities.findComponentDisplayNameInModelBundle(modelClass, path, tooltip)
         }
         if (displayName == null && !ComponentUtils.isDynamicComposedSubComponentNode(this)) {
-            displayName = I18NUtils.findComponentDisplayNameInComponentBundle(component, tooltip)
+            displayName = I18NUtilities.findComponentDisplayNameInComponentBundle(component, tooltip)
         }
         return displayName
     }

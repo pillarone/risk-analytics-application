@@ -1,10 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
@@ -25,7 +24,7 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
         classifiers.each {
             String resourceBundleKey = it.typeName
             String modelKey = it.toString()
-            String value = I18NUtils.findParameterDisplayName(parent, "type." + resourceBundleKey)
+            String value = I18NUtilities.findParameterDisplayName(parent, "type." + resourceBundleKey)
             if (value != null) {
                 possibleValues << value
             } else {

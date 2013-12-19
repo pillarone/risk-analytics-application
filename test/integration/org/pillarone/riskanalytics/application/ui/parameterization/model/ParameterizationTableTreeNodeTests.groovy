@@ -109,7 +109,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
         parameters << ParameterHolderFactory.getHolder('path:to:parmName', 0, ExampleEnum.FIRST_VALUE)
         parameters << ParameterHolderFactory.getHolder('path:to:parmName', 1, ExampleEnum.SECOND_VALUE)
         node = ParameterizationNodeFactory.getNode('path:to:parmName', createParameterization(parameters), model)
-        node.parent = new ComponentTableTreeNode(new ExampleInputOutputComponent(), 'propName')
+        node.parent = new ComponentTableTreeNode(new ExampleInputOutputComponent(), model.class, 'propName')
 
         node.setValueAt('SECOND_VALUE', 1)
         node.setValueAt('FIRST_VALUE', 2)
@@ -141,7 +141,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
 
         Parameterization parameterization = createParameterization([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))])
         ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode("path", parameterization, model)
-        node.setParent(new ComponentTableTreeNode(null, "name"))
+        node.setParent(new ComponentTableTreeNode(null, model.class, "name"))
 
         //Test PMO-555: node must be editable and the value not null if it's initialized with a component default
         assertTrue node.isCellEditable(1)
@@ -169,7 +169,7 @@ class ParameterizationTableTreeNodeTests extends GroovyTestCase {
 
         Parameterization parameterization = createParameterization([ParameterHolderFactory.getHolder("path", 0, new ConstrainedString(ITestComponentMarker, "Component Default"))])
         ConstrainedStringParameterizationTableTreeNode node = ParameterizationNodeFactory.getNode("path", parameterization, model)
-        node.setParent(new ComponentTableTreeNode(null, "name"))
+        node.setParent(new ComponentTableTreeNode(null, model.class, "name"))
 
         assertEquals "", parameterization.getParameterHolder(node.parameterPath, 0).businessObject.stringValue
 

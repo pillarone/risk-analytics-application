@@ -1,12 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
+
 import java.text.NumberFormat
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.CollectingModeFactory
 import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
@@ -121,7 +121,7 @@ abstract class ResultViewUtils {
             int index = 0
             String separator = " / "
             for (String nodeName: pathNames) {
-                stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+                stringBuilder.append(I18NUtilities.getResultStructureString(modelClass, nodeName, null))
                 if (index++ != pathNames.size() - 1)
                     stringBuilder.append(separator)
             }
@@ -138,7 +138,7 @@ abstract class ResultViewUtils {
             String separator = " / "
             for (int i = 2; i < pathNames.length - 1; i++) {
                 String nodeName = pathNames[i]
-                stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+                stringBuilder.append(I18NUtilities.getResultStructureString(modelClass, nodeName, null))
                 if (i != pathNames.length - 2)
                     stringBuilder.append(separator)
             }
@@ -156,7 +156,7 @@ abstract class ResultViewUtils {
             String separator = " / "
             for (String nodeName: pathNames) {
                 if (index > 1) {
-                    stringBuilder.append(I18NUtils.getResultStructureString(modelClass, nodeName, null))
+                    stringBuilder.append(I18NUtilities.getResultStructureString(modelClass, nodeName, null))
                     if (index != pathNames.size() - 1)
                         stringBuilder.append(separator)
                 }

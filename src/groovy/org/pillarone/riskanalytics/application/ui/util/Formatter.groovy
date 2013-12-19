@@ -49,7 +49,7 @@ public class Formatter {
             StringBuilder result = new StringBuilder()
             List formattedList = []
             for (int i = 0; i < list.size(); i++) {
-                formattedList <<  format(list[i], locale, mdp, i)
+                formattedList << format(list[i], locale, mdp, i)
             }
             String results = formattedList.join('; ')
             result << "["
@@ -68,7 +68,7 @@ public class Formatter {
             } else {
                 String displayName = ComponentUtils.getNormalizedName(String.valueOf(it))
                 if (mdp && mdp.constraints.getColumnType(index)?.isEnum()) {
-                    String enumDisplayName = I18NUtils.findEnumDisplayName(mdp.constraints.getColumnType(index), it)
+                    String enumDisplayName = I18NUtilities.findEnumDisplayName(mdp.constraints.getColumnType(index), it.toString())
                     if (enumDisplayName) {
                         displayName = enumDisplayName
                     }

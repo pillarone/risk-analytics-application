@@ -39,7 +39,7 @@ class ResultConfigurationTreeBuilder extends TreeBuilder {
         if (!hasCollectableOutput(component)) {
             return null
         }
-        ComponentTableTreeNode componentNode = new ComponentTableTreeNode(component, propertyName)
+        ComponentTableTreeNode componentNode = new ComponentTableTreeNode(component, model.class, propertyName)
         componentNodes[component] = componentNode
 
         List componentProperties = TreeBuilderUtil.collectDynamicProperties(componentNode.component, 'out')

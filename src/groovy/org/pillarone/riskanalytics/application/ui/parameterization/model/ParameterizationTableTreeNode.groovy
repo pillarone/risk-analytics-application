@@ -7,13 +7,12 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
 import org.pillarone.riskanalytics.core.parameterization.validation.ValidationType
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
@@ -80,15 +79,15 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
 
     public Color getErrorColor() {
         if (!errors) return Color.black
-        if (errors.any { it.validationType == ValidationType.ERROR}) return UIUtils.getColor(ValidationType.ERROR)
-        if (errors.any { it.validationType == ValidationType.WARNING}) return UIUtils.getColor(ValidationType.WARNING)
-        if (errors.any { it.validationType == ValidationType.HINT}) return UIUtils.getColor(ValidationType.HINT)
+        if (errors.any { it.validationType == ValidationType.ERROR }) return UIUtils.getColor(ValidationType.ERROR)
+        if (errors.any { it.validationType == ValidationType.WARNING }) return UIUtils.getColor(ValidationType.WARNING)
+        if (errors.any { it.validationType == ValidationType.HINT }) return UIUtils.getColor(ValidationType.HINT)
         return Color.black
     }
 
     public void addError(ParameterValidation error) {
         if (!errors) errors = new HashSet<ParameterValidation>()
-        if (!errors.any {it.msg == error.msg})
+        if (!errors.any { it.msg == error.msg })
             errors << error
     }
 
@@ -103,10 +102,10 @@ abstract class ParameterizationTableTreeNode extends SimpleTableTreeNode {
     private String findParameterDisplayNameInParentNodes(ITableTreeNode node, String toolTip = "") {
         String value = null
         if (node instanceof ComponentTableTreeNode) {
-            value = I18NUtils.findParameterDisplayName(node, path.substring(node.path.length() + 1), toolTip)
+            value = I18NUtilities.findParameterDisplayName(node, path.substring(node.path.length() + 1), toolTip)
         } else {
             if (node instanceof ParameterObjectParameterTableTreeNode) {
-                value = I18NUtils.findParameterDisplayName(node, path.substring(node.path.length() + 1), toolTip)
+                value = I18NUtilities.findParameterDisplayName(node, path.substring(node.path.length() + 1), toolTip)
             }
             if (value == null && node.parent != null) {
                 value = findParameterDisplayNameInParentNodes(node.getParent(), toolTip)

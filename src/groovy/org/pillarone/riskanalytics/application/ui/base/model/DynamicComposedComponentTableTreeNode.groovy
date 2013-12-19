@@ -10,8 +10,8 @@ import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 @CompileStatic
 class DynamicComposedComponentTableTreeNode extends ComponentTableTreeNode {
 
-    DynamicComposedComponentTableTreeNode(DynamicComposedComponent component, String propertyName) {
-        super(component, propertyName);
+    DynamicComposedComponentTableTreeNode(DynamicComposedComponent component, Class modelClass, String propertyName) {
+        super(component, modelClass, propertyName);
     }
 
 }

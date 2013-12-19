@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.base.model
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 
 class SimpleTableTreeNode implements IMutableTableTreeNode {
@@ -56,7 +56,7 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
         String value = name
         String displayNameValue = lookUp(value, "")
         if (displayNameValue == null)
-            displayNameValue = I18NUtils.formatDisplayName(value)
+            displayNameValue = I18NUtilities.formatDisplayName(value)
 
         if (displayNameValue != null) {
             cachedDisplayName = displayNameValue
@@ -66,13 +66,7 @@ class SimpleTableTreeNode implements IMutableTableTreeNode {
     }
 
     private String lookUp(String value, String tooltip = "") {
-        //try to get a displayValue from the parent.component
-        String displayNameValue = I18NUtils.findResultParameterDisplayName(this, value, tooltip)
-        if (displayNameValue == null)
-            displayNameValue = I18NUtils.findDisplayNameByParentComponent(this, value, tooltip)
-        if (displayNameValue == null)
-            displayNameValue = I18NUtils.findDisplayNameByParentComponent(this.parent, value, tooltip)
-        return displayNameValue
+        return I18NUtilities.findResultParameterDisplayName(this, value, tooltip)
     }
 
     public String getToolTip() {
