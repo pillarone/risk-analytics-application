@@ -175,6 +175,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     break;
             }
         }
+        if (items){
+            mainModel.fireModelChanged()
+        }
     }
 
     public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {

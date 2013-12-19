@@ -11,6 +11,7 @@ import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.search.EventConsumer
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -134,7 +135,10 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     void testUpdateTreeStructure() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)
+        TestModelChangedListener listener = new TestModelChangedListener()
+        mainModel.addModelChangedListener(listener)
         model.updateTreeStructure(eventConsumer)
+        assertTrue(listener.changeCalled)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
@@ -343,6 +347,14 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         @Override
         void tableTreeNodesChanged(TableTreeModelEvent event) {
             nodeChangedEvents << event
+        }
+    }
+
+    class TestModelChangedListener implements IModelChangedListener {
+        boolean changeCalled
+        @Override
+        void modelChanged() {
+            changeCalled = true
         }
     }
 }
