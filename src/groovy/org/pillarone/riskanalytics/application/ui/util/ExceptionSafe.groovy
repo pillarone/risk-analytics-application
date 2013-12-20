@@ -94,7 +94,8 @@ class ExceptionSafe {
 
     public static def logException(Exception e, def context) {
         saveError(e)
-
+        // 20131220 frahman TODO figure out why IDEA console NOT showing expected error:
+        // java.lang.IllegalArgumentException: No enum constant com.allianz.art.riskanalytics.pc.generators.claims.rms.RmsEventSet.V13_STANDARD_MEDIUMTERM
         Throwable sanitized = StackTraceUtils.deepSanitize(e)
         def logMessage = "${context.class.name} caused ${sanitized.class.name}: ${sanitized.message}"
         LOG.error(logMessage)
