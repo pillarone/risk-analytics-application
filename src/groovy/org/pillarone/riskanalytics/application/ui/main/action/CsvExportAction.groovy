@@ -30,7 +30,7 @@ class CsvExportAction extends ExportItemAction {
                     if (fileName) {
                         FileInputStream fis = new FileInputStream(fileName)
                         stream.write("ITERATION,PERIOD,PATH,FIELD,VALUE,COLLECTOR,DATE\n".bytes)
-                        stream.write fis.getBytes()
+                        stream.write fis.getBytes() // PMO-2676 would be a good idea to avoid writing to disk twice
                         stream.write(UIUtils.toCSV(getSimulationSettings(simulationRun)).getBytes())
                     } else
                         showAlert("exportError")
