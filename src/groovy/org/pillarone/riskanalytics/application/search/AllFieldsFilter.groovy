@@ -15,14 +15,17 @@ class AllFieldsFilter implements ISearchFilter {
 
     @Override
     boolean accept(ModellingItem item) {
+        //TODO: Split query once (when query set), not thousands of times
         String[] searchStrings = query.split(OR_SEPARATOR)
-        boolean accept = false
-        searchStrings.each {
-            accept |= StringUtils.containsIgnoreCase(item.nameAndVersion, it.trim())
+        // 'any' short-circuits once a match found (| operator does not)
+        boolean accept = searchStrings.any {
+            StringUtils.containsIgnoreCase(item.nameAndVersion, it.trim())
         }
-        return accept || item.creator?.username?.equalsIgnoreCase(query) ||
-                internalAccept(item)
 
+        return accept ||
+               //Multiple usernames can be matched in the same way
+               searchStrings.any { item.creator?.username?.equalsIgnoreCase(it.trim()) } ||
+               internalAccept(item)
     }
 
     boolean internalAccept(ModellingItem item) {
