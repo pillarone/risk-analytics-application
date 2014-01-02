@@ -38,8 +38,9 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
 
         add(new ULCMenuItem(new TagsAction(tree, mainModel)));
 
-        if( Boolean.valueOf(Holders.grailsApplication?.getConfig()?.getProperty("useSetFilterToSelectionPopupMenu")) ) {
-            add(new ULCMenuItem(new SetFilterToSelection(tree, mainModel)));
+        Boolean b = ((Boolean) Holders.grailsApplication?.getConfig()?.getProperty("useSetFilterToSelectionPopupMenu")) ?: Boolean.FALSE;
+        if (b) {
+            add(new ULCMenuItem(new SetFilterToSelection(tree, uIItem.mainModel)));
         }
         addSeparator();
         if (hasRenameAction()) add(new ULCMenuItem(new RenameAction(tree, mainModel)));
