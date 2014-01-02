@@ -118,6 +118,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return getSelectedModel(itemNode)
     }
 
+    // TODO This code is begging to be simplified.
     Model getSelectedModel(DefaultMutableTableTreeNode itemNode) {
         if (itemNode == null) return null
         DefaultMutableTableTreeNode modelNode = null
