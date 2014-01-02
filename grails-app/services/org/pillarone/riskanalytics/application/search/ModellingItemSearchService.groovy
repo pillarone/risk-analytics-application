@@ -100,16 +100,12 @@ class ModellingItemSearchService {
     synchronized List<ModellingItem> search(List<ISearchFilter> filters) {
         List<ModellingItem> results = []
         List<ModellingItem> cacheCopy = new ArrayList<ModellingItem>(cache)
-        ITEMLOOP:
-        for (ModellingItem item in cacheCopy) {
-            for (ISearchFilter filter in filters) {
-                if (!filter.accept(item)) {
-                    // Can immediately move onto next item at this point
-                    continue ITEMLOOP
-                }
+        cacheCopy.each { ModellingItem item ->
+            if( filters.every { it.accept(item) } ){
+                results << item
             }
-            results << item
         }
+
         // TODO: Understand why next step is needed instead of just returning results
         return results.collect { ModellingItemFactory.getItemInstance(it) }
     }
