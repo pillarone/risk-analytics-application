@@ -96,6 +96,7 @@ class AboutDialog {
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Melchior Martin, UAS Northwestern Switzerland")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Noe Michael, Munich Re Group")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Parten Simon, Allianz Risk Transfer")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Rahman Fazl, Allianz Risk Transfer")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Spahn Michael, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Stricker Markus, Intuitive Collaboration AG")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Terry Chris, Allianz Risk Transfer")); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
