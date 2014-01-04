@@ -55,7 +55,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         //(Like a 'statemachine' encoded in class diagram, fixed at compile time)
         boolean separatorNeeded = addMenuItemsForWorkflowState(tree, node);
 
-        node.addReportMenus(this, tree, separatorNeeded);
+        node.addReportMenus(this, tree, separatorNeeded); //reach here on first opening of Parameterizations subtree in gui, hits 4 times for different pns.
         if (hasDeleteAction()) {
             addSeparator();
             add(new ULCMenuItem(new DeleteAction(tree, mainModel)));
