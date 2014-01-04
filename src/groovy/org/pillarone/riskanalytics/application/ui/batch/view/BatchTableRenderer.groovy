@@ -29,6 +29,9 @@ public class BatchTableRenderer extends DefaultTableCellRenderer {
         return component
     }
 
+    //frahman Context menu on a simulation inside a batch, in the right hand pane.
+    //        Not the context menu on a node in the batch subtree on the left hand pane.
+    //        Still looking for that.. :(
     private ULCPopupMenu getNodePopUp(ULCTable table) {
         if (!nodePopup) {
             nodePopup = new ULCPopupMenu()
