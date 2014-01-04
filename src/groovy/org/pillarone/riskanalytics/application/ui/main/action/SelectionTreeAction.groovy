@@ -5,6 +5,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
@@ -21,6 +22,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
+    private static Log LOG = LogFactory.getLog(SelectionTreeAction)
 
     ULCTableTree tree
     RiskAnalyticsMainModel model
@@ -160,11 +162,24 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         try {
             Person user = UserManagement.getCurrentUser()
             List authorities = user.getAuthorities()*.authority
-            return user != null && authorities.any { actionAllowedRoles.contains(it)}
+            if( user != null && authorities.any { actionAllowedRoles.contains(it)} ){
+                return true;
+            }
+            logActionDenied(user) // Hint: it helps if log file shows some clue when things go wrong
+            return false;
         } catch (Exception ex) {
             LogFactory.getLog(this.class).error("Error in roles lookup", ex)
         }
         return false
+    }
+
+    private logActionDenied( Person user ){
+        String actionName = this.getClass().getSimpleName();
+        if(user == null){
+            LOG.warn("Action ${actionName} denied: User NULL!")
+        } else {
+            LOG.warn("Action ${actionName} denied to ${user.username} who lacks all of these roles (hint: table person_authority): " + actionAllowedRoles)
+        }
     }
 
     protected List allowedRoles() {
