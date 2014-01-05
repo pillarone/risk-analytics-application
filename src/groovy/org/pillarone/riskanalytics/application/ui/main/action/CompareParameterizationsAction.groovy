@@ -32,41 +32,30 @@ class CompareParameterizationsAction extends SelectionTreeAction {
     }
 
     //fr 2014-01-02 Dont need to declare we throw a java.lang.RuntimeException!
-    //Added IllegalStateException to list in ExceptionSafe so the message appears in the alert
+    //Added IllegalStateException to ExceptionSafe so the message appears in the alert
     //(instead of some mysterious runtime problem with a hint to user that logfile has more info)
-    //esp useless when user has no access to logs...
+    //(esp useless when user has no access to logs)
     private void validate(List elements) {
-        if (elements.size() < 2) throw new IllegalStateException("select two or more parameterizations for comparing")
+        if (elements.size() < 2){
+            throw new IllegalStateException("Pls select two or more parameterizations to compare (and tell developers how you managed to get this error!)")
+        }
         Model model = getSelectedModel(elements[0])
         elements.each {
             if (getSelectedModel(it) != model) {
-                throw new IllegalStateException("select a parameterizations with same ModelClass")
+                throw new IllegalStateException("Can only compare parameterizations with same ModelClass")
             }
         }
     }
 
-    //frahman 2014-01-02 Adding logging reveals this exception is thrown TEN TIMES when
-    // the pns tree is first opened - and there are no selected objects :
-    //java.lang.IllegalArgumentException: select at lease two parameterizations for compare
-    //at org.pillarone.riskanalytics.application.ui.main.action.CompareParameterizationsAction.validate(CompareParameterizationsAction.groovy:38)
-    //at org.pillarone.riskanalytics.application.ui.main.action.CompareParameterizationsAction.isEnabled(CompareParameterizationsAction.groovy:51)
-    //at com.ulcjava.base.application.ULCAbstractButton.configureDefaultPropertiesFromAction(ULCAbstractButton.java:156)
-    //at com.ulcjava.base.application.ULCMenuItem.configurePropertiesFromAction(ULCMenuItem.java:37)
-    //at com.ulcjava.base.application.ULCAbstractButton.setAction(ULCAbstractButton.java:176)
-    //at com.ulcjava.base.application.ULCMenuItem.<init>(ULCMenuItem.java:16)
-    //
-    //Clearly, this method should NOT be calling validate() to decide whether the action is enabled.
-    //
-    //In fact, it works fine without overriding this method.
-//    public boolean isEnabled() {
-//        List elements = getSelectedObjects(Parameterization.class)
-//        try {
-//            validate(elements)
-//        } catch (IllegalArgumentException ex) {
-//            LOG.error("isEnabled(): validate(${elements.size()} elements) threw.. " + ex.message)
-//            return false
-//        }
-//        return true
-//    }
+    // I think this is the 'right' way to do this
+    public boolean isEnabled() {
+
+        if(getSelectedObjects(Parameterization.class).size()<2){
+            return false;
+        }
+
+        return super.isEnabled() //generic checks like user roles
+    }
+
 
 }
