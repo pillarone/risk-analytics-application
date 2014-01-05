@@ -110,7 +110,9 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         //TEMPORARILY don't cache batchrun menus, see if this fixes the batch report menu - BINGO!
         //This is probably just a sticking plaster on the wound - but I don't have time or understanding
         //for a redesign..
-        if(popupMenuMap != batchRunPopupMenus)
+ //       if(popupMenuMap != batchRunPopupMenus) This completely slows down the tree drawing to unacceptable levels. Must find a better way to ensure batchnodes don't get stuck with an empty report menu.
+        // (Discovered this was the cause by pausing in dbg many times and catching it in the proces of throwing some stupid exception durng the infamous 'intersect' call.)
+        //https://issuetracking.intuitive-collaboration.com/jira/browse/PMO-2677 more details
         popupMenuMap.put(key, menu)
         return menu
     }
