@@ -28,6 +28,7 @@ import java.awt.event.MouseAdapter
  * speed inital creation of popup menus, requiring data analysis only when a user has expressed interest in actually
  * reporting on a given item.
  *
+ * That comment above is highly ironic given the bug I have been battling over the last couple days. -fr
  */
 class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
 
@@ -61,6 +62,7 @@ class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
      * This this method we add all the potnetial reports, but don't show them. We can do this quickly. Deciding whether
      * or not to show the reports expensive context information. Don't retrieve it until the user has explicitly asked for it.
      */
+    // I'm glad I don't drink - fr
     private addIndividualReportMenus(){
         for (IReportModel aModel in reportModels ) {
             for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
