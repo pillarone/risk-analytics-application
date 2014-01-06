@@ -8,3 +8,5 @@ web-app/lib/RiskAnalytics*.jar
 *.iml
 .idea/*
 out/*
+_build.xml
+cobertura.ser
