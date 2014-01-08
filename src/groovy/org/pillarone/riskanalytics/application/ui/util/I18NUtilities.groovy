@@ -23,6 +23,7 @@ class I18NUtilities {
     static ResourceBundle testResourceBundle = null
     static Set<ResourceBundle> exceptionResourceBundles = null
     static Set<ResourceBundle> helpResourceBundles = null
+    private static Map<String,String> PARAMS_CACHE = [:]
 
 
 
@@ -37,12 +38,19 @@ class I18NUtilities {
         String value = null
         String bundlePackage = bundleClassName.package.name
         String bundleName = StringUtils.lowercaseFirstLetter(bundleClassName.simpleName)
-        String resuourceBundleName = "${bundlePackage}.${bundleName}Resources"
-        try {
-            ResourceBundle bundle = LocaleResources.getBundle(resuourceBundleName)
-            value = bundle.getString(key)
-        } catch (MissingResourceException ignore) {
-            LOG.trace("Resource for ${resuourceBundleName} not found. Key: displayName")
+        String resourceBundleName = "${bundlePackage}.${bundleName}Resources"
+        String paramsKey = "${LocaleResources.locale}_${resourceBundleName}_${key}"
+        if (PARAMS_CACHE.containsKey(paramsKey)) {
+            value = PARAMS_CACHE[paramsKey]
+        } else {
+            try {
+                ResourceBundle bundle = LocaleResources.getBundle(resourceBundleName)
+                value = bundle.getString(key)
+            } catch (MissingResourceException ignore) {
+                LOG.trace("Resource for ${resourceBundleName} not found. Key: displayName")
+            } finally {
+                PARAMS_CACHE[paramsKey] = value
+            }
         }
         return value
     }
