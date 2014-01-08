@@ -44,7 +44,6 @@ class I18NUtilities {
         } catch (MissingResourceException ignore) {
             LOG.trace("Resource for ${resuourceBundleName} not found. Key: displayName")
         }
-        println "$key = $value"
         return value
     }
 
