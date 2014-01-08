@@ -25,10 +25,9 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
     }
 
     public String getDisplayName() {
-        String value = null
-        value = lookUp(value, "")
+        String value = super.getDisplayName()
         if (value == null) {
-            value = super.getDisplayName()
+            value = lookUp(value, "")
         }
         return value
     }
@@ -36,7 +35,7 @@ class ParameterObjectParameterTableTreeNode extends ParameterizationTableTreeNod
     private String lookUp(String value, String tooltip) {
         String displayName
         if (!(parent instanceof DynamicComposedComponent)) {
-            ParameterObjectParameterHolder parameter = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath).find {it -> it != null }
+            ParameterObjectParameterHolder parameter = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath).find { it -> it != null }
             displayName = I18NUtilities.findParameterTypeDisplayName(parameter.classifier.class, tooltip)
         }
         return displayName
