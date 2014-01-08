@@ -4,6 +4,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.HTMLUtilities
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.apache.maven.artifact.ant.shaded.StringUtils
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterObjectParameterTableTreeNode
@@ -27,24 +28,29 @@ class I18NUtilities {
 
     static final Log LOG = LogFactory.getLog(I18NUtilities)
 
-    public static String findParameterTypeDisplayName(String type, String key, String tooltip = "") {
-        return findParameter(type, "displayName" + tooltip)
+    public static String findParameterTypeDisplayName(Class clazz, String key, String tooltip = "") {
+        return findParameter(clazz, "displayName" + tooltip)
 
     }
 
-    private static String findParameter(String bundleName, String key) {
+    private static String findParameter(Class bundleClassName, String key) {
         String value = null
+        String bundlePackage = bundleClassName.package.name
+        String bundleName = StringUtils.lowercaseFirstLetter(bundleClassName.simpleName)
+        String resuourceBundleName = "${bundlePackage}.${bundleName}Resources"
         try {
-            ResourceBundle bundle = LocaleResources.getBundle("${bundleName}Resource")
+            ResourceBundle bundle = LocaleResources.getBundle(resuourceBundleName)
             value = bundle.getString(key)
         } catch (MissingResourceException ignore) {
-            LOG.trace("Resource for ${bundleName} not found. Key: displayName")
+            LOG.trace("Resource for ${resuourceBundleName} not found. Key: displayName")
         }
+        println "$key = $value"
         return value
     }
 
     public static String findEnumDisplayName(Class declatingEnumClass, String enumValue) {
-        return findParameter(declatingEnumClass.name, enumValue)
+
+        return findParameter(declatingEnumClass, enumValue)
         // TODO Check for enum Resources.properties files
         //String enumClassName = StringUtils.lowercaseFirstLetter(declatingEnumClass.simpleName)
         //String enumType = "${declatingEnumClass.package.name}.${enumClassName}"
@@ -56,12 +62,12 @@ class I18NUtilities {
         //TODO capitalize properties files.
         //int lastIndex = parameterType.lastIndexOf('.') + 1
         //parameterType = parameterType.substring(0, lastIndex) + parameterType.substring(lastIndex, lastIndex + 1).toLowerCase() + parameterType.substring(lastIndex + 1)
-        return findParameter(parameter.classifier.class.name, subPath.replaceAll(":", "."))
+        return findParameter(parameter.classifier.class, subPath.replaceAll(":", "."))
     }
 
     public static String findParameterDisplayName(ComponentTableTreeNode componentNode, String subPath, String toolTip = "") {
         Component component = componentNode.component
-        return findParameter(component.class.name, subPath.replaceAll(":", ".") + toolTip)
+        return findParameter(component.class, subPath.replaceAll(":", ".") + toolTip)
     }
 
     public static String findParameterDisplayName(ITableTreeNode node, String subPath, String toolTip = "") {
@@ -73,7 +79,7 @@ class I18NUtilities {
         String value = null
         if (simpleTableTreeNode instanceof SimpleTableTreeNode && simpleTableTreeNode.parent != null && simpleTableTreeNode.parent instanceof ComponentTableTreeNode) {
             Component component = simpleTableTreeNode.parent.component
-            return findParameter(component.class.name, parmKey + toolTip)
+            return findParameter(component.class, parmKey + toolTip)
         }
         return value
     }
@@ -103,13 +109,13 @@ class I18NUtilities {
     }
 
     public static String findComponentDisplayNameInComponentBundle(Component component, String toolTip = "") {
-        return findParameter(component.class.name, "displayName" + toolTip)
+        return findParameter(component.class, "displayName" + toolTip)
     }
 
     public static String findComponentDisplayNameByTreeNode(ComponentTableTreeNode node, String toolTip = "") {
         String name = null
         if (node?.parent instanceof ComponentTableTreeNode) {
-            name = findParameter(node?.parent?.component?.class.name, node?.name + toolTip)
+            name = findParameter(node?.parent?.component?.class, node?.name + toolTip)
         }
         return name
     }
@@ -133,7 +139,7 @@ class I18NUtilities {
     public static String findResultDisplayName(String path, Component component) {
         path = path[(path.indexOf(":") + 1)..(path.length() - 1)]
         String resultKey = path.replaceAll(":", ".")
-        return findParameter(component.getClass().name, resultKey)
+        return findParameter(component.class, resultKey)
     }
 
     //TODO : is that used ?
@@ -142,7 +148,7 @@ class I18NUtilities {
     }
 
     public static String getPropertyDisplayName(Model model, String propertyName) {
-        return findParameter(model.class.name, propertyName)
+        return findParameter(model.class, propertyName)
     }
 
     //TODO move that to a separate class.
