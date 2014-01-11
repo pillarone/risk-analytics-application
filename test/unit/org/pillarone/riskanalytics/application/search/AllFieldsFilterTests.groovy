@@ -14,7 +14,7 @@ class AllFieldsFilterTests extends GroovyTestCase {
     void testSearchByOwner() {
         Resource resource = new Resource('testName', null)
         resource.creator  = new Person(username: 'user')
-        assert ! new AllFieldsFilter(query: 'use').accept(resource)
+        assert   new AllFieldsFilter(query: 'use').accept(resource)
         assert   new AllFieldsFilter(query: 'user').accept(resource)
         // Must not find 'user' in name of resource, nor 'testName' in username
         assert ! new AllFieldsFilter(query: 'name:user').accept(resource)
@@ -63,6 +63,13 @@ class AllFieldsFilterTests extends GroovyTestCase {
         parameterization.tags = [new Tag(name: 'paramTestName')]
         assert ! new AllFieldsFilter(query: 'paramTestName').accept(simulation)  //should not match pn's tags
         assert ! new AllFieldsFilter(query: 'tag:paramtest').accept(simulation)  //should not match pn's tags
+
+        parameterization.dealId = new Long(12345)
+        assert ! new AllFieldsFilter(query: 't:12345').accept(simulation)        //should not match pn's tags
+        assert   new AllFieldsFilter(query: 'd:12345').accept(simulation)        //should match pn's deal id
+        assert   new AllFieldsFilter(query: '12345').accept(simulation)          //should match pn's deal id
+        assert ! new AllFieldsFilter(query: 'd:2345').accept(simulation)         //but not on partial deal id
+        assert ! new AllFieldsFilter(query: '2345').accept(simulation)           //but not on partial deal id
     }
 
     void testSearchResources() {

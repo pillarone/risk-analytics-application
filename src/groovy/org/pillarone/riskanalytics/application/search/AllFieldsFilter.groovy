@@ -28,6 +28,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
    + Filter terms can now be restricted in their scope
    + Filtering can successively narrow a search via AND clauses
    + Negative filtering allows to exclude specific values via ! prefix
+   + Match allowed on partial username (its hard to remember exact usernames)
+   + Allow finding simulation results for given (exact) deal id, in addition to finding P4ns
 
    This has been extended as described below.
    The implementation is not particularly 'object oriented' and would probably fit into some kind of visitor
@@ -96,8 +98,7 @@ class AllFieldsFilter implements ISearchFilter {
         return false
     }
 
-    // TODO Do we want to include sims whose Pn is selected by a name rejector term ? Not sure..
-    //
+    //  Useful to match results on dealid off the pn though, for quarter runs.
     private static boolean internalAccept(Simulation sim, String[] matchTerms) {
         return FilterHelp.matchTags(sim, matchTerms) ||
                matchTerms.any {
@@ -105,8 +106,8 @@ class AllFieldsFilter implements ISearchFilter {
                    ( StringUtils.containsIgnoreCase(sim.parameterization?.name, FilterHelp.getText(it))  ||
                      StringUtils.containsIgnoreCase(sim.template?.name,         FilterHelp.getText(it))
                    )
-
-               }
+               } ||
+               FilterHelp.matchDealId(sim.parameterization,matchTerms)
     }
 
     //matchTerms.any { isStateAcceptor(it) && StringUtils.containsIgnoreCase(p14n.status?.toString(), getText(it)) } ||
@@ -241,6 +242,9 @@ class AllFieldsFilter implements ISearchFilter {
 
 
         private static boolean matchName( ModellingItem item, String[] matchTerms){
+            if(item == null){
+                return false
+            }
             return matchTerms.any {
                   isNameAcceptor(it) ?   StringUtils.containsIgnoreCase(item.nameAndVersion, getText(it))
                 : isNameRejector(it) ?  !StringUtils.containsIgnoreCase(item.nameAndVersion, getText(it))
@@ -249,14 +253,20 @@ class AllFieldsFilter implements ISearchFilter {
         }
 
         private static boolean matchOwner( ModellingItem item, String[] matchTerms){
+            if(item == null){
+                return false
+            }
             return matchTerms.any {
-                  isOwnerAcceptor(it) ?   item.creator?.username?.equalsIgnoreCase(getText(it))
-                : isOwnerRejector(it) ?  !item.creator?.username?.equalsIgnoreCase(getText(it))
+                  isOwnerAcceptor(it) ?   StringUtils.containsIgnoreCase(item.creator?.username, getText(it))
+                : isOwnerRejector(it) ?  !StringUtils.containsIgnoreCase(item.creator?.username, getText(it))
                 : false
             };
         }
 
         private static boolean matchState( Parameterization p14n, String[] matchTerms){
+            if(p14n == null){
+                return false
+            }
             return matchTerms.any {
                   isStateAcceptor(it) ?  StringUtils.containsIgnoreCase(p14n.status?.toString(), getText(it))
                 : isStateRejector(it) ? !StringUtils.containsIgnoreCase(p14n.status?.toString(), getText(it))
@@ -265,6 +275,9 @@ class AllFieldsFilter implements ISearchFilter {
         }
 
         private static boolean matchDealId( Parameterization p14n, String[] matchTerms){
+            if(p14n == null){
+                return false
+            }
             return matchTerms.any {
                   isDealIdAcceptor(it) ?  StringUtils.equalsIgnoreCase(p14n.dealId?.toString(), getText(it))
                 : isDealIdRejector(it) ? !StringUtils.equalsIgnoreCase(p14n.dealId?.toString(), getText(it))
@@ -276,13 +289,16 @@ class AllFieldsFilter implements ISearchFilter {
 
         // Only call this for things that have tags (Simulation, Parameterization or Resource)
         private static boolean matchTags( def item, String[] matchTerms){
+            if(item == null){
+                return false
+            }
             return matchTerms.any {
 
                 //e.g. term 'tag:Q4 2013' will match any sim or pn tagged 'Q4 2013' (but also eg 'Q4 2013 ReRun')
                 isTagAcceptor(it) ?  item.tags*.name.any { String tag -> StringUtils.containsIgnoreCase(tag, getText(it)) }
 
                 //e.g. term '!tag:Q4 2013' will match any sim or pn tagged 'H2 2013' (but not 'Q4 2013 ReRun')
-                : isTagRejector(it) ? !item.tags*.name.any { String tag -> StringUtils.containsIgnoreCase(tag, getText(it)) }
+              : isTagRejector(it) ? !item.tags*.name.any { String tag -> StringUtils.containsIgnoreCase(tag, getText(it)) }
 
                 //e.g. term 'status:Q4 2013' would fail to match a sim tagged Q4 2013 (and status 'in review' etc)
                 : false
