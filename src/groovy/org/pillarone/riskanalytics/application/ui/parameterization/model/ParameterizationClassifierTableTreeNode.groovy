@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.AbstractParameterObjectClassifier
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
@@ -19,12 +20,12 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
 
     public List initValues() {
         List possibleValues = []
-        ParameterObjectParameterHolder parameterObjectHolder = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)[0]
+        ParameterObjectParameterHolder parameterObjectHolder = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
         IParameterObjectClassifier classifier = parameterObjectHolder.classifier
         List<IParameterObjectClassifier> classifiers = simulationModel.configureClassifier(parameterObjectHolder.path, classifier.classifiers)
-        classifiers.each {
-            String resourceBundleKey = it.typeName
-            String modelKey = it.toString()
+        for(AbstractParameterObjectClassifier singleClassifier in classifiers){
+            String resourceBundleKey = singleClassifier.typeName
+            String modelKey = singleClassifier.toString()
             String value = I18NUtils.findParameterDisplayName(parent, "type." + resourceBundleKey)
             if (value != null) {
                 possibleValues << value

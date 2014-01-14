@@ -15,7 +15,7 @@ class ResourceParameterizationTableTreeNode extends AbstractMultiValueParameteri
 
     @Override
     protected List initValues() {
-        ResourceParameterHolder parameter = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)[0]
+        ResourceParameterHolder parameter = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
         List<ResourceParameterHolder.NameVersionPair> allValues = ResourceDAO.findAllByResourceClassName(parameter.resourceClass.name).collect { new ResourceParameterHolder.NameVersionPair(it.name, it.itemVersion)}
 
         allValues.each { lookupMap.put(it.toString(), it)}

@@ -46,9 +46,9 @@ class ParameterizationTreeBuilder {
 
     private void createDynamicSubComponents(Component component, String componentPath) {
         if (component instanceof DynamicComposedComponent) {
-            List parameters = getItemsParameters(componentPath).collect {ParameterHolder param ->
+            def parameters = getItemsParameters(componentPath).collect {ParameterHolder param ->
                 param.path.substring(componentPath.length() + 1, param.path.indexOf(":", componentPath.length() + 1))
-            }.unique().toList()
+            }.unique()
             component.clear()
             for (String name in parameters) {
                 Component subComponent = component.createDefaultSubComponent()
@@ -143,11 +143,11 @@ class ParameterizationTreeBuilder {
 
         def props = new TreeMap(new ParmComparator(TreeBuilderUtil.collectProperties(componentNode.component, 'parm')))
         props.putAll(componentNode.component.properties)
-        props.each {name, value ->
-            if (name.startsWith('sub')) {
-                addParameterValueNodes(componentNodes[value])
-            } else if (name.startsWith('parm')) {
-                String path = ComponentUtils.removeModelFromPath("${componentNode.path}:$name".toString(), model)
+        for (Map.Entry<String, Object> entry in props){
+            if (entry.key.startsWith('sub')) {
+                addParameterValueNodes(componentNodes[entry.value])
+            } else if (entry.key.startsWith('parm')) {
+                String path = ComponentUtils.removeModelFromPath("${componentNode.path}:${entry.key}".toString(), model)
                 if (item.hasParameterAtPath(path)) {
                     componentNode.add(ParameterizationNodeFactory.getNode(path, item, model))
                 } else {
@@ -209,7 +209,7 @@ class ParameterizationTreeBuilder {
     protected List getItemsParameters(String componentPath) {
         List parameters = item.parameters.findAll {ParameterHolder p ->
             p.path.startsWith(componentPath)
-        }.toList()
+        }
         return parameters
     }
 

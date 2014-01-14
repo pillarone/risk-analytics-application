@@ -209,7 +209,7 @@ class ParameterizationUtilities {
         boolean result = false
         for(ParametrizedItem item in items) {
             try {
-                ParameterHolder parameterHolder = item.getParameterHoldersForAllPeriods(path)[0]
+                ParameterHolder parameterHolder = item.getParameterHoldersForFirstPeriod(path)
                 if(parameterHolder instanceof ParameterObjectParameterHolder) {
                     result = true
                 }

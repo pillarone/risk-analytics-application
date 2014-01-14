@@ -16,7 +16,7 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
     public ConstrainedStringParameterizationTableTreeNode(String path, ParametrizedItem item, Model model) {
         super(path, item);
         this.simulationModel = model
-        ConstrainedStringParameterHolder holder = parametrizedItem.getParameterHoldersForAllPeriods(parameterPath)[0]
+        ConstrainedStringParameterHolder holder = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
         markerClass = holder.businessObject.getMarkerClass()
     }
 
