@@ -21,7 +21,6 @@ class ImportP14NTests extends AbstractFunctionalTestCase {
         assertNotNull(fileChooserOperator)
         ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
         final String file = ImportP14NTests.getResource("CoreAlternativeParameters.groovy").getFile()
-        println(file)
         pathField.typeText(file)
         ULCButtonOperator button = fileChooserOperator.getApproveButton()
         assertNotNull(button)

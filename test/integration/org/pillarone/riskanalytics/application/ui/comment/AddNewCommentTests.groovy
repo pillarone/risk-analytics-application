@@ -93,7 +93,6 @@ class AddNewCommentTests extends AbstractSimpleFunctionalTest {
 
         assertEquals 1, parameterization.comments.size()
         assertEquals 'Comment', parameterization.comments.get(0).text
-        println parameterization.comments.get(0).path
         assertEquals 1, tabbedPaneOperator.getComponentCount()
 
     }

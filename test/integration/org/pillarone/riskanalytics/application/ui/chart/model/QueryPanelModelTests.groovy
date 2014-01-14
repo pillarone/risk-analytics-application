@@ -53,8 +53,6 @@ class QueryPanelModelTests extends GroovyTestCase {
 
         assertTrue(model.results.contains(1))
         assertEquals(2000, model.resultTableModel.tableValues[0][1])
-
-        println()
     }
 
     protected SimulationRun prepareDB() {

@@ -16,7 +16,6 @@ class FormatterTests extends GroovyTestCase {
     void testFormatListOfList() {
         List values = [[1.2d, 3.5d, 4], [1.2d, 3.5d, 4]]
         String result = Formatter.format(values, Locale.GERMAN)
-        println result
         assertEquals "GERMAN List format", "[[1,2; 3,5; 4]; [1,2; 3,5; 4]]", result
         assertEquals "ENGLISH List format", "[[1.2; 3.5; 4]; [1.2; 3.5; 4]]", Formatter.format(values, Locale.ENGLISH)
     }
