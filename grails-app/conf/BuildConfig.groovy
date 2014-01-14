@@ -21,7 +21,7 @@ grails.project.dependency.resolution = {
 
         mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
         mavenRepo("https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public-snapshot/") {
-            interval: System.hasProperty('snapshotUpdatePolicy') ? System.getProperty('snapshotUpdatePolicy') : '1d'
+            updatePolicy System.getProperty('snapshotUpdatePolicy') ?: 'daily'
         }
         mavenRepo "http://repo.spring.io/milestone/" //needed for spring-security-core 2.0-rc2 plugin
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
