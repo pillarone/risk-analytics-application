@@ -9,7 +9,7 @@ grails.project.dependency.resolver = "maven"
 grails.project.fork = [test: false, run: false]
 
 grails.project.dependency.resolution = {
-    inherits ("global") { // inherit Grails' default dependencies
+    inherits("global") { // inherit Grails' default dependencies
         excludes "grails-plugin-testing"
     }
     log "warn"
@@ -20,7 +20,9 @@ grails.project.dependency.resolution = {
         mavenCentral()
 
         mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public/"
-        mavenRepo "https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public-snapshot/"
+        mavenRepo("https://repository.intuitive-collaboration.com/nexus/content/repositories/pillarone-public-snapshot/") {
+            interval: System.hasProperty('snapshotUpdatePolicy') ? System.getProperty('snapshotUpdatePolicy') : '1d'
+        }
         mavenRepo "http://repo.spring.io/milestone/" //needed for spring-security-core 2.0-rc2 plugin
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
@@ -50,9 +52,8 @@ grails.project.dependency.resolution = {
 
     dependencies {
         runtime "mysql:mysql-connector-java:5.1.20"
-        compile (group: 'com.canoo.ulc.ext.ULCMigLayout', name: 'ULCMigLayout-client', version: "1.0") { transitive = false }
+        compile(group: 'com.canoo.ulc.ext.ULCMigLayout', name: 'ULCMigLayout-client', version: "1.0") { transitive = false }
         compile group: 'com.miglayout', name: 'miglayout', version: "3.7.3.1"
-
 
         //required for ulc tests
         test 'org.mortbay.jetty:jetty:6.1.21', 'org.mortbay.jetty:jetty-plus:6.1.21'
@@ -76,15 +77,16 @@ grails.project.dependency.distribution = {
         user = properties.get("user")
         password = properties.get("password")
 
-        if (version?.endsWith('-SNAPSHOT')){
+        if (version?.endsWith('-SNAPSHOT')) {
             scpUrl = properties.get("urlSnapshot")
-        }else {
+        } else {
             scpUrl = properties.get("url")
         }
+        remoteRepository(id: "pillarone", url: scpUrl) {
+            authentication username: user, password: password
+        }
     } catch (Throwable t) {
-    }
-    remoteRepository(id: "pillarone", url: scpUrl) {
-        authentication username: user, password: password
+        println "deployInfo.properties not found. $t.message"
     }
 }
 
