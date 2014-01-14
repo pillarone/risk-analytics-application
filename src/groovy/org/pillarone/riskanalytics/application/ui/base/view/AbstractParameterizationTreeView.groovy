@@ -121,8 +121,11 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
 
         def treeModel = model.treeModel
 
-        int treeWidth = UIUtils.calculateTreeWidth(treeModel.root)
-        def columnsWidths = Math.max(UIUtils.calculateColumnWidth(treeModel.root, 1) + 10, 150)
+        // PMO-2442 make param tree having a fixed width instead of calulating the width by traversing the whole tree. TODO : See if that works good enough.
+//        int treeWidth = UIUtils.calculateTreeWidth(treeModel.root)
+//        def columnsWidths = Math.max(UIUtils.calculateColumnWidth(treeModel.root, 1) + 10, 150)
+        int treeWidth = 280
+        def columnsWidths = 286
 
         tree = new ULCFixedColumnTableTree(model.treeModel, 1, ([treeWidth] + [columnsWidths] * model.periodCount) as int[])
 
