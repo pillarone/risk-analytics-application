@@ -1,8 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
+
 import java.lang.reflect.Field
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
@@ -79,7 +80,7 @@ abstract class TreeBuilder {
             if (property instanceof Component) {
                 ITableTreeNode iTableTreeNode = buildComponentNode(property, propertyName)
                 if (iTableTreeNode != null) {
-                    String displayName = I18NUtils.getPropertyDisplayName(model, propertyName)
+                    String displayName = I18NUtilities.getPropertyDisplayName(model, propertyName)
                     if (displayName != null)
                         iTableTreeNode.cachedDisplayName = displayName
                 }

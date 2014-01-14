@@ -63,7 +63,7 @@ class ResultConfigurationTableTreeNodeTests extends GroovyTestCase {
 
     private ResultConfigurationTableTreeNode initConfigNode() {
         SimpleTableTreeNode root = new SimpleTableTreeNode("root")
-        ComponentTableTreeNode component = new ComponentTableTreeNode(null, "component")
+        ComponentTableTreeNode component = new ComponentTableTreeNode(null, null, "component")
         root.add(component)
 
         ResultConfiguration configuration = new ResultConfiguration("config")

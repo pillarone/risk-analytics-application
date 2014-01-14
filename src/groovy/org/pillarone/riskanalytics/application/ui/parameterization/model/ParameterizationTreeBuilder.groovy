@@ -193,14 +193,14 @@ class ParameterizationTreeBuilder {
     }
 
     protected ComponentTableTreeNode createComponentNode(String propertyName, Component component) {
-        ComponentTableTreeNode componentNode = new ComponentTableTreeNode(component, propertyName)
+        ComponentTableTreeNode componentNode = new ComponentTableTreeNode(component, model.class, propertyName)
         componentNodes[component] = componentNode
 
         return componentNode
     }
 
     protected ComponentTableTreeNode createComponentNode(String propertyName, DynamicComposedComponent component) {
-        ComponentTableTreeNode componentNode = new DynamicComposedComponentTableTreeNode(component, propertyName)
+        ComponentTableTreeNode componentNode = new DynamicComposedComponentTableTreeNode(component, model.class, propertyName)
         componentNodes[component] = componentNode
 
         return componentNode

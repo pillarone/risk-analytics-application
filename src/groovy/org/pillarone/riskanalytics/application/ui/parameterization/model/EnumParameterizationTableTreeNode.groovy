@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
 
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.EnumParameterHolder
 
@@ -32,9 +32,9 @@ class EnumParameterizationTableTreeNode extends AbstractMultiValueParameterizati
         List allValues = []
         possibleValues.each {
             String resourceBundleKey = it.toString()
-            String value = I18NUtils.findParameterDisplayName(parent, name + "." + resourceBundleKey)
+            String value = I18NUtilities.findParameterDisplayName(parent, name + "." + resourceBundleKey)
             if (value == null) {
-                value = I18NUtils.findEnumDisplayName(enumParameterizationHolder.getBusinessObject().declaringClass, it.toString())
+                value = I18NUtilities.findEnumDisplayName(enumParameterizationHolder.getBusinessObject().declaringClass, it.toString())
             }
             if (value != null) {
                 allValues << value
