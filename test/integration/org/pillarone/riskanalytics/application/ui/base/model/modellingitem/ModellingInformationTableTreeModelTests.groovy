@@ -330,7 +330,7 @@ class ModellingInformationTableTreeModelTests {
         Parameterization cachedItem = ModellingItemFactory.getParameterization(parameterizationDAO)
         assertTrue(cachedItem.is(paramsNode.abstractUIItem.item))
     }
-
+}
     class TestModelListener implements ITableTreeModelListener {
         List<TableTreeModelEvent> nodeChangedEvents = []
         List<TableTreeModelEvent> structureChangedEvents = []
@@ -379,4 +379,3 @@ class ModellingInformationTableTreeModelTests {
             changeCalled = true
         }
     }
-}
