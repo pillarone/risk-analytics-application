@@ -35,7 +35,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
     abstract protected void doStart()
 
     void testInitialization() {
-        assertNull "Error during doStart(): ${throwable?.message}", throwable
+        assertNull "Error during doStart(): ${throwable?.message}: ${throwable?.stackTrace}", throwable
     }
 
     protected void tearDown() {
