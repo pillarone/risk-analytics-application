@@ -30,6 +30,7 @@ class ExceptionSafe {
     private static LOG = Logger.getLogger(ExceptionSafe)
     private static messagePatterns = [
             Exception: "PillarOne has hit a technical error, please contact application support\n(details regarding the error have been written to the log files).",
+            IllegalStateException: "{0}\nMore details may be found in logs.",
             RiskAnalyticsInconsistencyException: "An internal consistency check has failed: \n{0}\nMore details available in the log files.",
             ParameterizationSaveError: "Invalid parameterization:\n\n {0}\n\nThe parameterization is not saved.",
             ParameterizationImportError: "Error in parameterization on line {1}:\n\n{0}\n\nParameterization import failed.",
@@ -42,6 +43,7 @@ class ExceptionSafe {
 
     private static titles = [
             Exception: "Notification",
+            IllegalStateException: "Runtime error",
             RiskAnalyticsInconsistencyException: "Internal error",
             ParameterizationSaveError: "Parameterization error",
             ParameterizationImportError: "Parameterization error",
@@ -54,6 +56,7 @@ class ExceptionSafe {
 
     private static errorLevel = [
             Exception: ULCAlert.ERROR_MESSAGE,
+            IllegalStateException: ULCAlert.ERROR_MESSAGE,
             RiskAnalyticsInconsistencyException: ULCAlert.ERROR_MESSAGE,
             ParameterizationSaveError: ULCAlert.WARNING_MESSAGE,
             ParameterizationImportError: ULCAlert.WARNING_MESSAGE,
@@ -89,12 +92,13 @@ class ExceptionSafe {
     static void handleException(Exception e) {
         try {
             showErrorAlert(e)
-        } catch (ignore) { /* if the alert cannot be shown, there is nothing we can do... */ }
+        } catch (ignore) { /* if the alert cannot be shown, there is nothing we can do... */ } //TODO Why not at least write something to the log file ?
     }
 
     public static def logException(Exception e, def context) {
         saveError(e)
-
+        // 20131220 frahman TODO figure out why IDEA console NOT showing expected error:
+        // java.lang.IllegalArgumentException: No enum constant com.allianz.art.riskanalytics.pc.generators.claims.rms.RmsEventSet.V13_STANDARD_MEDIUMTERM
         Throwable sanitized = StackTraceUtils.deepSanitize(e)
         def logMessage = "${context.class.name} caused ${sanitized.class.name}: ${sanitized.message}"
         LOG.error(logMessage)

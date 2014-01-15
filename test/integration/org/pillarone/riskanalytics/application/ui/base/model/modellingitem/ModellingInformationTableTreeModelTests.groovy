@@ -12,8 +12,8 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.search.EventConsumer
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -28,6 +28,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 
 import static org.junit.Assert.*
@@ -89,6 +90,7 @@ class ModellingInformationTableTreeModelTests {
         SimulationRun.list()*.delete(flush: true)
         ParameterizationDAO.list()*.delete(flush: true)
         ModelRegistry.instance.clear()
+        ModellingItemFactory.clear()
     }
 
     private void printTree() {
@@ -147,7 +149,10 @@ class ModellingInformationTableTreeModelTests {
     void testUpdateTreeStructure() {
         ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
         parameterizationDAO.save(flush: true)
+        TestModelChangedListener listener = new TestModelChangedListener()
+        mainModel.addModelChangedListener(listener)
         model.updateTreeStructure(eventConsumer)
+        assertTrue(listener.changeCalled)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
@@ -313,12 +318,24 @@ class ModellingInformationTableTreeModelTests {
     }
 }
 
-class TestModelListener implements ITableTreeModelListener {
-    List<TableTreeModelEvent> nodeChangedEvents = []
-    List<TableTreeModelEvent> structureChangedEvents = []
-    List<TableTreeModelEvent> nodeStructureChangedEvents = []
-    List<TableTreeModelEvent> nodeInsertedEvents = []
-    List<TableTreeModelEvent> nodeRemovedEvents = []
+    void testItemInstanceIdentity() {
+        newParameterization('Parametrization X','12')
+        ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '12')
+        model.updateTreeStructure(eventConsumer)
+        IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
+        ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v12') as ParameterizationNode
+        assertNotNull(paramsNode)
+        assertNotNull (ModellingItemFactory.getItemInstances()[ModellingItemFactory.key(Parameterization,parameterizationDAO.id)])
+        Parameterization cachedItem = ModellingItemFactory.getParameterization(parameterizationDAO)
+        assertTrue(cachedItem.is(paramsNode.abstractUIItem.item))
+    }
+
+    class TestModelListener implements ITableTreeModelListener {
+        List<TableTreeModelEvent> nodeChangedEvents = []
+        List<TableTreeModelEvent> structureChangedEvents = []
+        List<TableTreeModelEvent> nodeStructureChangedEvents = []
+        List<TableTreeModelEvent> nodeInsertedEvents = []
+        List<TableTreeModelEvent> nodeRemovedEvents = []
 
     void reset() {
         nodeChangedEvents.clear()
@@ -348,8 +365,17 @@ class TestModelListener implements ITableTreeModelListener {
         nodeRemovedEvents << event
     }
 
-    @Override
-    void tableTreeNodesChanged(TableTreeModelEvent event) {
-        nodeChangedEvents << event
+        @Override
+        void tableTreeNodesChanged(TableTreeModelEvent event) {
+            nodeChangedEvents << event
+        }
+    }
+
+    class TestModelChangedListener implements IModelChangedListener {
+        boolean changeCalled
+        @Override
+        void modelChanged() {
+            changeCalled = true
+        }
     }
 }

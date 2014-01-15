@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.workflow.AuditLog
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -37,6 +38,7 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
         Thread cleanUpThread = new Thread(
                 [run: {
                     SimulationRun.withTransaction {
+                        AuditLog.list()*.delete()
                         BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
                         PostSimulationCalculation.list()*.delete()

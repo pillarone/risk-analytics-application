@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.core.simulation.item.*
 class ModellingItemSearchService {
 
     private final static Log LOG = LogFactory.getLog(ModellingItemSearchService)
+    private final static boolean profileCacheFiltering = System.getProperty("disableProfileCacheFiltering", "false").equalsIgnoreCase("false")
 
     static transactional = false
 
@@ -74,6 +75,15 @@ class ModellingItemSearchService {
 
     protected synchronized void createInitialIndex() {
         LOG.info("start creating initial index.")
+
+        long t;
+        if( profileCacheFiltering ){
+            LOG.info("-DdisableProfileCacheFiltering not set, will time search service")
+            t = System.currentTimeMillis()
+        }else{
+            LOG.info("-DdisableProfileCacheFiltering=true, will not time search service")
+        }
+
         ParameterizationDAO.withTransaction {
             for (ParameterizationDAO dao in ParameterizationDAO.list()) {
                 cache.add(ModellingItemMapper.getModellingItem(dao))
@@ -90,6 +100,10 @@ class ModellingItemSearchService {
             }
         }
         LOG.info("end creating initial index.")
+        if( profileCacheFiltering ){
+            t = System.currentTimeMillis() - t
+            LOG.info("Timed " + t + " ms: creating initial index");
+        }
     }
 
     synchronized void refresh() {
@@ -98,21 +112,41 @@ class ModellingItemSearchService {
     }
 
     synchronized List<ModellingItem> search(List<ISearchFilter> filters) {
+
+        long t
+        long start
+
+        if( profileCacheFiltering ){
+            start = System.currentTimeMillis()
+        }
+
         List<ModellingItem> results = []
         List<ModellingItem> cacheCopy = new ArrayList<ModellingItem>(cache)
-        for (ModellingItem item in cacheCopy) {
-            boolean match = true
-            for (ISearchFilter filter in filters) {
-                if (!filter.accept(item)) {
-                    match = false
-                }
-            }
-            if (match) {
+
+        if( profileCacheFiltering ){
+            t = System.currentTimeMillis()
+            LOG.info("Timed " + (t-start) + " ms: copying cache")
+        }
+
+        cacheCopy.each { ModellingItem item ->
+            if( filters.every { it.accept(item) } ){
                 results << item
             }
         }
+        if( profileCacheFiltering ){
+            long now = System.currentTimeMillis()
+            LOG.info("Timed " + (now - t) + " ms: filtered copy")
+            t = now
+        }
 
-        return results.collect { ModellingItemFactory.getItemInstance(it) }
+        // TODO: Please someone explain why next step is needed instead of just returning results -fr
+        List<ModellingItem> ret = results.collect { ModellingItemFactory.getItemInstance(it) }
+        if( profileCacheFiltering ){
+            long now = System.currentTimeMillis()
+            LOG.info("Timed " + (now - t) + " ms: collecting. Total: " + (now-start)/1000 + " sec.");
+        }
+
+        return ret;
     }
 
     private synchronized void addModellingItemToIndex(ModellingItem modellingItem) {

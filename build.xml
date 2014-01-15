@@ -4,6 +4,8 @@
 
     <property file="application.properties"/>
     <property file="${user.home}/cert.properties"/>
+    <!-- plugin.dir must match entry 'grails.project.plugins.dir' in BuildConfig.groovy -->
+    <property name="plugin.dir" value="${basedir}/../local-plugins/${app.name}-master"/>
     <property name="resources.prod.dir" value="src/java"/>
     <property name="webapp.lib.dir" value="web-app/lib"/>
 
@@ -68,7 +70,7 @@
         <jar jarfile="${webapp.lib.dir}/${app.name}-extensions-client.jar">
             <fileset dir="${plugin.classes.prod.dir}" includes="com/canoo/ulc/**/client/**"/>
             <fileset dir="${plugin.classes.prod.dir}" includes="org/pillarone/ulc/client/**"/>
-            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.3/src/java" includes="**/close-*.png"/>
+            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.1/src/java" includes="**/close-*.png"/>
         </jar>
 
         <jar jarfile="${webapp.lib.dir}/${app.name}-client.jar">

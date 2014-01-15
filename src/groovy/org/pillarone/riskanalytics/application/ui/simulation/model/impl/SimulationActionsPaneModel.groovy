@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
@@ -93,6 +94,8 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
             if (simulation.numberOfIterations > iterationThreshold &&
                     simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
+                // TODO send this from view not this model so a parent will be available for the dialog, then it will display in
+                // better location
                 I18NAlert alert = new I18NAlert("WarnPotentiallyLargeResultSet")
                 alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert)}] as IWindowListener)
                 alert.show()
@@ -192,11 +195,11 @@ class SimulationActionsPaneModel implements IModelChangedListener {
         listeners*.simulationEnd(simulation, simulation.modelClass.newInstance())
     }
 
-    void notifySimulationToBatchAdded(String message) {
+    void notifySimulationToBatchAdded(String message, BatchRunSimulationRun batchRun) {
         batchMessage = message
         ISimulationListener pane = listeners.find {it.class.name == SimulationActionsPane.class.name}
         pane?.simulationToBatchAdded()
-        mainModel.fireRowAdded()
+        mainModel.fireRowAdded(batchRun)
     }
 
     String getErrorMessage() {

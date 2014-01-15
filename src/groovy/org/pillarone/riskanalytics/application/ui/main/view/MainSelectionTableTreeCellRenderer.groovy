@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRu
  */
 class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
+    // TODO frahman these maps look likely suspects for our joy with menus esp report menus
     ULCTableTree tree
     RiskAnalyticsMainModel mainModel
     Map<Class, ULCPopupMenu> popupMenus = [:]
@@ -98,10 +99,20 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         getOrCreatePopuMenu(paramNodePopupMenus, node, node.parameterization.modelClass)
     }
 
+    // frahman - this seems the code that precooks a single exemplar popup menu per class of target.
+    // All batch nodes will get the first batchnode menu ever created because it will be stored in that map.
+    // So once it gets created bad, it stays bad..
+    //
     private ULCPopupMenu getOrCreatePopuMenu(Map popupMenuMap, INavigationTreeNode node, Object key) {
         if (popupMenuMap.containsKey(key)) return popupMenuMap.get(key)
         ULCPopupMenu menu = node.getPopupMenu(tree)
         addUserSpecificMenuItems(menu, node)
+        //TEMPORARILY don't cache batchrun menus, see if this fixes the batch report menu - BINGO!
+        //This is probably just a sticking plaster on the wound - but I don't have time or understanding
+        //for a redesign..
+ //       if(popupMenuMap != batchRunPopupMenus) This completely slows down the tree drawing to unacceptable levels. Must find a better way to ensure batchnodes don't get stuck with an empty report menu.
+        // (Discovered this was the cause by pausing in dbg many times and catching it in the proces of throwing some stupid exception durng the infamous 'intersect' call.)
+        //https://issuetracking.intuitive-collaboration.com/jira/browse/PMO-2677 more details
         popupMenuMap.put(key, menu)
         return menu
     }

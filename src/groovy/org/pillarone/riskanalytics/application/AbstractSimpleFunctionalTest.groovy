@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.workflow.AuditLog
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
@@ -44,6 +45,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
         Thread cleanUpThread = new Thread(
                 [run: {
                     SimulationRun.withTransaction {
+                        AuditLog.list()*.delete()
                         BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
                         PostSimulationCalculation.list()*.delete()

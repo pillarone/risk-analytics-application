@@ -120,12 +120,12 @@ class MultiDimensionalParameterCompareView {
             }
         }
 
-        final ULCScrollPane scrollPane = new ULCScrollPane(referenceTable)
+        ULCScrollPane scrollPane = new ULCScrollPane(referenceTable)
         scrollPane.setHorizontalScrollBarPolicy(ULCScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
         scrollPane.setVerticalScrollBarPolicy(ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED)
         content.add(scrollPane)
 
-        for (ULCTable table in comparedTables) {
+        for (ULCComponent table in comparedTables) {
             scrollPane = new ULCScrollPane(table)
             scrollPane.setHorizontalScrollBarPolicy(ULCScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED)
             scrollPane.setVerticalScrollBarPolicy(ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED)

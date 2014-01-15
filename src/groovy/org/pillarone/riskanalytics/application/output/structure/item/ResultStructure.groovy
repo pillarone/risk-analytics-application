@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.output.structure.item
 
+import com.google.common.collect.ArrayListMultimap
+import com.google.common.collect.Multimap
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
@@ -61,11 +63,17 @@ class ResultStructure extends ModellingItem {
         Set<StructureMapping> mappings = resultStructureDAO.structureMappings
         StructureMapping root = mappings.find { it.parent == null }
         rootNode = new ResultNode(root.name, root.resultPath)
-        loadMappings(mappings, rootNode, root)
+        Multimap<StructureMapping, StructureMapping> allMappings = ArrayListMultimap.create()
+        for(StructureMapping mapping in mappings) {
+            if(mapping.parent != null) {
+                allMappings.put(mapping.parent, mapping)
+            }
+        }
+        loadMappings(allMappings, rootNode, root)
     }
 
-    private void loadMappings(Set<StructureMapping> allMappings, ResultNode currentNode, StructureMapping parentMapping) {
-        Collection<StructureMapping> children = allMappings.findAll { it.parent == parentMapping }.sort { it.orderWithinLevel }
+    private void loadMappings(Multimap<StructureMapping, StructureMapping> allMappings, ResultNode currentNode, StructureMapping parentMapping) {
+        Collection<StructureMapping> children = allMappings.get(parentMapping).sort { it.orderWithinLevel }
         for (StructureMapping child in children) {
             ResultNode childNode = new ResultNode(child.name, child.resultPath)
             currentNode.addChild(childNode)

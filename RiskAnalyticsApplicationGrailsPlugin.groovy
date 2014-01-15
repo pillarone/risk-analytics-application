@@ -48,7 +48,8 @@ ULC view
     }
 
     def doWithApplicationContext = {applicationContext ->
-
+        ConstraintsFactory.registerConstraint(new LinePercentage())
+        ConstraintsFactory.registerConstraint(new CopyPasteConstraint())
     }
 
     def onChange = {event ->

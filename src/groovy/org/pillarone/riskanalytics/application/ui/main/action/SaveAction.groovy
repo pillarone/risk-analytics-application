@@ -16,6 +16,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.workflow.Status
+import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
 class SaveAction extends ResourceBasedAction {
 
@@ -49,7 +52,7 @@ class SaveAction extends ResourceBasedAction {
         } else {
             LOG.info("Cannot save ${abstractUIItem.nameAndVersion} because it already used in a simulation.")
             I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(parent), "SaveItemAlreadyUsed")
-            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert, abstractUIItem)}] as IWindowListener)
+            alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert, abstractUIItem) }] as IWindowListener)
             alert.show()
         }
     }
@@ -91,16 +94,26 @@ class SaveAction extends ResourceBasedAction {
     }
 
     private void handleNewVersion(Model model, ParameterizationUIItem item) {
-        Closure okAction = {String commentText ->
+        Closure okAction = { String commentText ->
             if (!item.isLoaded()) {
                 item.load()
             }
-            item.createNewVersion(model, commentText, false)
+            createNewVersion(item, model, commentText)
             this.model.closeItem(model, item)
         }
 
         NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
         versionCommentDialog.show()
+    }
+
+    private void createNewVersion(ParameterizationUIItem item, Model model, String commentText) {
+        Parameterization originalParameterization = item.item as Parameterization
+        if (originalParameterization.status != Status.NONE) {
+            Parameterization parameterization = StatusChangeService.service.changeStatus(originalParameterization, Status.DATA_ENTRY)
+            parameterization.save()
+        } else {
+            item.createNewVersion(model, commentText, false)
+        }
     }
 
 

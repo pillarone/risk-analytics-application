@@ -138,13 +138,14 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         }
     }
 
-    public void fireRowAdded() {
-        BatchRunSimulationRun batchRunSimulationRun = BatchRunService.getService().addedBatchRunSimulationRun
-        batchRunSimulationRuns << batchRunSimulationRun
-        tableValues << toList(batchRunSimulationRun)
-        int index = tableValues.size() - 1
-        fireTableRowsInserted(index, index);
-        startPollingTimer()
+    public void fireRowAdded(BatchRunSimulationRun batchRunSimulationRun) {
+        if (batchRunSimulationRun.batchRun.id == batchRun.id) {
+            batchRunSimulationRuns << batchRunSimulationRun
+            tableValues << toList(batchRunSimulationRun)
+            int index = tableValues.size() - 1
+            fireTableRowsInserted(index, index);
+            startPollingTimer()
+        }
     }
 
     public void fireRowDeleted(SimulationRun run) {
@@ -216,7 +217,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
 
 interface BatchTableListener {
 
-    void fireRowAdded()
+    void fireRowAdded(BatchRunSimulationRun batchRun)
 
     void fireRowDeleted(int rowIndex)
 

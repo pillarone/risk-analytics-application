@@ -65,18 +65,19 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
     public String getName() {
         return abstractUIItem.item.name
     }
-
+    // Definitely called on first click to open Batches subtree in the left pane of GUI..
+    // and for some bad reason, the reporting menu is never regenerated on a per-batch-node basis afterwards.
+    // (ah, that reason is, the menus are cached in MainSelectionTableTreeCellRenderer)
     public void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
 
         if (!(this instanceof IReportableNode)) {
-            throw new RiskAnalyticsInconsistencyException(this.toString() + """ has been asked to present reports for a
-                    popup menu, but is not a reportable item. Please report to development. """)
+            throw new RiskAnalyticsInconsistencyException(this.toString() + """ asked for report menu; but NOT reportable item. Please report to development. """)
         }
 
-        List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
+        List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn() // Returns empty list as 'Bjorns First Batch' happened to be empty.
         List<IReportModel> reports = new ArrayList<IReportModel>()
-        reports.addAll(ReportRegistry.getReportModel(modelsToDisplay))
-        if (!reports.empty) {
+        reports.addAll(ReportRegistry.getReportModel(modelsToDisplay)) //TODO rename method to getReportModels and test.
+        if (!reports.empty) { //Fails here consequently
             CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, abstractUIItem.mainModel, simulationNodePopUpMenu)
             reportsMenu.visible = true
             if (separatorNeeded) simulationNodePopUpMenu.addSeparator();

@@ -23,4 +23,5 @@ class DataEntryPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
 
     @Override
     protected boolean hasDeleteAction() { return true; }
+
 }
