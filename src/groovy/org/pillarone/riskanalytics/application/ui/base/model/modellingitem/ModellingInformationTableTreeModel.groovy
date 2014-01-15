@@ -175,9 +175,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     break;
             }
         }
-        if (items){
-            mainModel.fireModelChanged()
-        }
+// try fix PMO-2679 - Detlef added event firing to add new p14n to dropdown list inside simulation window, but it disables the 'open results' button too after the sim.
+//        if (items){
+//            mainModel.fireModelChanged()
+//        }
     }
 
     public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {
