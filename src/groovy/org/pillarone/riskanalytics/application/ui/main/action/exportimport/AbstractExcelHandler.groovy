@@ -8,7 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFSheet
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.pillarone.riskanalytics.application.ui.parameterization.model.TreeBuilderUtil
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.core.FileConstants
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComponentUtils
@@ -116,12 +116,12 @@ abstract class AbstractExcelHandler {
     }
 
     static String getDisplayName(Component component, String name) {
-        String displayName = I18NUtils.findParameterDisplayName(component, name)
+        String displayName = I18NUtilities.findParameterDisplayName(component, name)
         return displayName ?: ComponentUtils.getNormalizedName(name)
     }
 
     static String getDisplayName(Class clazz, String name) {
-        String displayName = I18NUtils.findParameterDisplayName(clazz, name)
+        String displayName = I18NUtilities.findParameterDisplayName(clazz, name)
         return displayName ?: name
     }
 

@@ -14,6 +14,8 @@ import org.junit.Test
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.search.EventConsumer
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -316,7 +318,6 @@ class ModellingInformationTableTreeModelTests {
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
-}
 
     void testItemInstanceIdentity() {
         newParameterization('Parametrization X','12')

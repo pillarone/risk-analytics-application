@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.action.exportimport
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellReference
 import org.apache.poi.xssf.usermodel.*
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
+import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.ComposedComponent
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
@@ -207,7 +207,7 @@ class ExcelExportHandler extends AbstractExcelHandler {
     }
 
     private String getParameterDisplayName(IParameterObjectClassifier classifier, String parmName) {
-        String parameterDisplayName = I18NUtils.findParameterDisplayName(classifier.class, parmName)
+        String parameterDisplayName = I18NUtilities.findParameterDisplayName(classifier.class, parmName)
         return parameterDisplayName ?: parmName
     }
 

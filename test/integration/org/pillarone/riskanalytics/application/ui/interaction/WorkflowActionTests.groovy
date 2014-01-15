@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
 import javax.swing.tree.TreePath
 

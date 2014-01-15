@@ -4,7 +4,6 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.QueryPaneModel
 import org.pillarone.riskanalytics.application.ui.result.view.ResultView
-import org.pillarone.riskanalytics.application.ui.util.I18NUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.AggregatedWithSingleAvailableCollectingModeStrategy

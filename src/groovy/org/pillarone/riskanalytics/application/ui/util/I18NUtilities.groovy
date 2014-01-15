@@ -73,8 +73,15 @@ class I18NUtilities {
     }
 
     public static String findParameterDisplayName(ComponentTableTreeNode componentNode, String subPath, String toolTip = "") {
-        Component component = componentNode.component
+        return findParameterDisplayName(componentNode.component, subPath.replaceAll(":", ".") + toolTip)
+    }
+
+    public static String findParameterDisplayName(Component component, String subPath, String toolTip = "") {
         return findParameter(component.class, subPath.replaceAll(":", ".") + toolTip)
+    }
+
+    public static String findParameterDisplayName(Class clazz, String subPath, String toolTip = "") {
+        return findParameter(clazz, subPath.replaceAll(":", ".") + toolTip)
     }
 
     public static String findParameterDisplayName(ITableTreeNode node, String subPath, String toolTip = "") {
