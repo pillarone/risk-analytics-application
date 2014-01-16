@@ -61,6 +61,9 @@ grails.project.dependency.resolution = {
 
         test("org.grails:grails-plugin-testing:2.2.3.FIXED")
         test("org.springframework:spring-test:3.2.4.RELEASE")
+
+        //see http://jira.grails.org/browse/GRAILS-10671
+        build "com.lowagie:itext:2.1.7"
     }
 }
 
