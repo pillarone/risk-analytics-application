@@ -1,11 +1,8 @@
 package org.pillarone.riskanalytics.application.reports
 
-import javax.sql.DataSource
+import net.sf.jasperreports.engine.*
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
 import net.sf.jasperreports.engine.export.JRPdfExporter
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import net.sf.jasperreports.engine.*
-import org.apache.commons.io.FileUtils
 
 class ReportHelper {
 
@@ -39,7 +36,4 @@ class ReportHelper {
         return byteArray
 
     }
-
-
-
 }
