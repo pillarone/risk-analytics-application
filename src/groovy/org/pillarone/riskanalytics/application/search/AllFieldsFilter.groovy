@@ -79,15 +79,33 @@ class AllFieldsFilter implements ISearchFilter {
     static final String OR_SEPARATOR  = " OR "
     String query = ""
 
-    @Override
-    boolean accept(ModellingItem item) {
+    List<String[]> matchTerms ;
+
+    // Add setter to avoid splitting query string for each item ( > 3K items )
+    //
+    void setQuery( String q ){
+        LOG.debug("*** Splitting up filter : " + q)
+        query = q
         String[] restrictions = query.split(AND_SEPARATOR)
-        return restrictions.every {passesRestriction(item,it)}
+        LOG.debug("Restrictions (AND clauses): " + restrictions)
+        if( matchTerms == null ){
+            matchTerms = new ArrayList<>();
+        }
+        matchTerms.clear()
+        restrictions.each {
+            String[] orArray = it.split(OR_SEPARATOR)
+            orArray.each { String bit -> bit = bit.trim() }
+            LOG.debug("Terms (OR clauses): " + orArray)
+            matchTerms.add( orArray )
+        }
     }
 
-    static boolean passesRestriction(ModellingItem item, String restriction ){
-        String[] matchTerms = restriction.split(OR_SEPARATOR)
-        matchTerms.each {it = it.trim()}
+    @Override
+    boolean accept(ModellingItem item) {
+        return matchTerms.every { passesRestriction(item,it)}
+    }
+
+    static boolean passesRestriction(ModellingItem item, String[] matchTerms){
 
         return FilterHelp.matchName(item, matchTerms) ||
                FilterHelp.matchOwner(item, matchTerms) ||
