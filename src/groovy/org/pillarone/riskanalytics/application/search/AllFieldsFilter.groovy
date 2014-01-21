@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.search
 
+import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -74,6 +75,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class AllFieldsFilter implements ISearchFilter {
 
     protected static Log LOG = LogFactory.getLog(AllFieldsFilter)
+    private static final boolean matchSimulationResultsOnDealId=System.getProperty("matchSimulationResultsOnDealId", "false").equalsIgnoreCase("true");
 
     static final String AND_SEPARATOR = " AND "
     static final String OR_SEPARATOR  = " OR "
@@ -102,7 +104,7 @@ class AllFieldsFilter implements ISearchFilter {
 
     @Override
     boolean accept(ModellingItem item) {
-        return matchTerms.every { passesRestriction(item,it)}
+        return item != null && matchTerms.every { passesRestriction(item,it)}
     }
 
     static boolean passesRestriction(ModellingItem item, String[] matchTerms){
@@ -125,7 +127,11 @@ class AllFieldsFilter implements ISearchFilter {
                      StringUtils.containsIgnoreCase(sim.template?.name,         FilterHelp.getText(it))
                    )
                } ||
-               FilterHelp.matchDealId(sim.parameterization,matchTerms)
+               (
+               //Can disable this to check performance impact..
+               //
+               matchSimulationResultsOnDealId && FilterHelp.matchDealId(sim.parameterization,matchTerms)
+               )
     }
 
     //matchTerms.any { isStateAcceptor(it) && StringUtils.containsIgnoreCase(p14n.status?.toString(), getText(it)) } ||
@@ -260,9 +266,6 @@ class AllFieldsFilter implements ISearchFilter {
 
 
         private static boolean matchName( ModellingItem item, String[] matchTerms){
-            if(item == null){
-                return false
-            }
             return matchTerms.any {
                   isNameAcceptor(it) ?   StringUtils.containsIgnoreCase(item.nameAndVersion, getText(it))
                 : isNameRejector(it) ?  !StringUtils.containsIgnoreCase(item.nameAndVersion, getText(it))
@@ -271,9 +274,6 @@ class AllFieldsFilter implements ISearchFilter {
         }
 
         private static boolean matchOwner( ModellingItem item, String[] matchTerms){
-            if(item == null){
-                return false
-            }
             return matchTerms.any {
                   isOwnerAcceptor(it) ?   StringUtils.containsIgnoreCase(item.creator?.username, getText(it))
                 : isOwnerRejector(it) ?  !StringUtils.containsIgnoreCase(item.creator?.username, getText(it))
@@ -282,9 +282,6 @@ class AllFieldsFilter implements ISearchFilter {
         }
 
         private static boolean matchState( Parameterization p14n, String[] matchTerms){
-            if(p14n == null){
-                return false
-            }
             return matchTerms.any {
                   isStateAcceptor(it) ?  StringUtils.containsIgnoreCase(p14n.status?.toString(), getText(it))
                 : isStateRejector(it) ? !StringUtils.containsIgnoreCase(p14n.status?.toString(), getText(it))
@@ -293,9 +290,6 @@ class AllFieldsFilter implements ISearchFilter {
         }
 
         private static boolean matchDealId( Parameterization p14n, String[] matchTerms){
-            if(p14n == null){
-                return false
-            }
             return matchTerms.any {
                   isDealIdAcceptor(it) ?  StringUtils.equalsIgnoreCase(p14n.dealId?.toString(), getText(it))
                 : isDealIdRejector(it) ? !StringUtils.equalsIgnoreCase(p14n.dealId?.toString(), getText(it))
@@ -307,9 +301,6 @@ class AllFieldsFilter implements ISearchFilter {
 
         // Only call this for things that have tags (Simulation, Parameterization or Resource)
         private static boolean matchTags( def item, String[] matchTerms){
-            if(item == null){
-                return false
-            }
             return matchTerms.any {
 
                 //e.g. term 'tag:Q4 2013' will match any sim or pn tagged 'Q4 2013' (but also eg 'Q4 2013 ReRun')
@@ -319,7 +310,7 @@ class AllFieldsFilter implements ISearchFilter {
               : isTagRejector(it) ? !item.tags*.name.any { String tag -> StringUtils.containsIgnoreCase(tag, getText(it)) }
 
                 //e.g. term 'status:Q4 2013' would fail to match a sim tagged Q4 2013 (and status 'in review' etc)
-                : false
+              : false
             };
         }
 
