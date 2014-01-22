@@ -291,8 +291,8 @@ class AllFieldsFilter implements ISearchFilter {
 
         private static boolean matchDealId( Parameterization p14n, String[] matchTerms){
             return matchTerms.any {
-                  isDealIdAcceptor(it) ?  StringUtils.equalsIgnoreCase(p14n.dealId?.toString(), getText(it))
-                : isDealIdRejector(it) ? !StringUtils.equalsIgnoreCase(p14n.dealId?.toString(), getText(it))
+                  isDealIdAcceptor(it) ?  StringUtils.equalsIgnoreCase(p14n?.dealId?.toString(), getText(it))
+                : isDealIdRejector(it) ? !StringUtils.equalsIgnoreCase(p14n?.dealId?.toString(), getText(it))
                 : false
             };
         }
