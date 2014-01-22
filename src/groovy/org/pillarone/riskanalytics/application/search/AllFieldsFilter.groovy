@@ -75,7 +75,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class AllFieldsFilter implements ISearchFilter {
 
     protected static Log LOG = LogFactory.getLog(AllFieldsFilter)
-    private static final boolean matchSimulationResultsOnDealId=System.getProperty("matchSimulationResultsOnDealId", "false").equalsIgnoreCase("true");
+    private static final boolean matchSimulationResultsOnDealId=System.getProperty("matchSimulationResultsOnDealId", "true").equalsIgnoreCase("true");
 
     static final String AND_SEPARATOR = " AND "
     static final String OR_SEPARATOR  = " OR "
