@@ -35,7 +35,8 @@
 
     <target name="standalone-output" depends="init" description="--> Run a Grails applications unit tests">
         <exec executable="${grails}" failonerror="true" resolveexecutable="true">
-            <arg value="jar -destination=out/production/RiskAnalyticsApplication -mainClass=org.pillarone.riskanalytics.application.Main"/>
+            <arg
+                value="jar -destination=out/production/RiskAnalyticsApplication -mainClass=org.pillarone.riskanalytics.application.Main" />
             <arg value="-buildJar"/>
             <arg value="-buildClasses"/>
             <env key="GRAILS_HOME" value="${GRAILS_HOME}"/>
@@ -58,6 +59,9 @@
     </target>
 
     <target name="jar-client" depends="-self-signed-cert" description="--> Create clientside jar files">
+        <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+            <classpath location="./lib-build/ant-contrib-1.0b3.jar" />
+        </taskdef>
         <echo message="${signjar.keystore}"/>
         <mkdir dir="${webapp.lib.dir}"/>
         <delete dir="${webapp.lib.dir}">
@@ -87,19 +91,39 @@
                      includes="org/pillarone/riskanalytics/application/environment/applet/**"/>
         </jar>
 
+        <foreach param="jarFile" target="updateManifestForClientJars">
+           <path>
+               <fileset dir="${webapp.lib.dir}">
+                   <include name="*.jar" />
+               </fileset>
+           </path>
+        </foreach>
         <!-- has to be replaced with a trusted certificate issued for the builder of the jar files -->
-        <!-- this is a self signed certificate and won't work with a strict security policy -->
+        <!-- this is a self signed certificate and won't work with a strict security policy
         <signjar alias="${signjar.alias}"  storetype="PKCS12" keystore="${signjar.keystore}" storepass="${signjar.storepass}"
+                 keypass="${signjar.keypass}" lazy="false">
+            <fileset dir="${webapp.lib.dir}" includes="*.jar"/>
+        </signjar>
+        -->
+        <signjar alias="${signjar.alias}"  keystore="${signjar.keystore}" storepass="${signjar.storepass}"
                  keypass="${signjar.keypass}" lazy="false">
             <fileset dir="${webapp.lib.dir}" includes="*.jar"/>
         </signjar>
     </target>
 
+    <target name="updateManifestForClientJars" >
+        <jar update="true" file="${jarFile}">
+            <manifest>
+                <attribute name="Codebase" value="*" />
+                <attribute name="Permissions" value="all-permissions" />
+            </manifest>
+        </jar>
+    </target>
+
     <target name="_beforeReleasePlugin" depends="jar-client"/>
 
     <target name="doc" depends="javadoc">
-        <Groovydoc destdir="${doc.dir}/gapi" sourcepath="src/groovy"
-                   packagenames="**.*" use="true"
+        <Groovydoc destdir="${doc.dir}/gapi" sourcepath="src/groovy" packagenames="**.*" use="true"
                    windowtitle="RiskAnalyticsApplication v${version}" private="false">
 
             <link packages="com.ulcjava." href="http://canoo.com/ulc/developerzone/apidoc/extension"/>
@@ -118,8 +142,7 @@
             </classpath>
         </taskdef>
         <mkdir dir="${doc.dir}"/>
-        <Groovydoc destdir="${doc.dir}/api" sourcepath="src/java"
-                   packagenames="**.*" use="true"
+        <Groovydoc destdir="${doc.dir}/api" sourcepath="src/java" packagenames="**.*" use="true"
                    windowtitle="RiskAnalyticsApplication v${version}" private="false">
             <link packages="com.ulcjava." href="http://canoo.com/ulc/developerzone/apidoc/extension"/>
             <link packages="java.,org.xml.,javax.,org.xml." href="http://java.sun.com/j2se/1.5.0/docs/api"/>
