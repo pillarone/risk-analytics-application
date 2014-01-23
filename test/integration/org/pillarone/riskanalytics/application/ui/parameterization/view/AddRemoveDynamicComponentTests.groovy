@@ -34,6 +34,10 @@ class AddRemoveDynamicComponentTests extends AbstractParameterFunctionalTest {
         menuItem = new ULCMenuItemOperator(popupMenu, "Remove")
         menuItem.clickMouse()
 
+        ULCDialogOperator alert = new ULCDialogOperator(frame)
+        ULCButtonOperator okButton = new ULCButtonOperator(alert)
+        okButton.clickMouse()
+
         assertEquals(1, tree.getChildCount(dynamicNode))
         assertEquals(1, model.dynamicComponent.componentList.size())
     }

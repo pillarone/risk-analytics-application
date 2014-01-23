@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
 
+import com.ulcjava.testframework.operator.ULCButtonOperator
+import com.ulcjava.testframework.operator.ULCDialogOperator
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -34,6 +36,8 @@ class DuplicateDynamicComponentTests extends AbstractParameterFunctionalTest {
         }
 
         removeParameter(['dynamic Component', 'duplicate'])
+        clickOk()
+
         save()
         ParameterizationDAO.withNewSession {
             Parameterization parameterization = findParameterizationById()
@@ -43,6 +47,8 @@ class DuplicateDynamicComponentTests extends AbstractParameterFunctionalTest {
             assert 0 == parameterization.getParameters('dynamicComponent:subDuplicate:subFirstComponent:parmValue').size()
         }
         removeParameter(['dynamic Component', 'Test'])
+        clickOk()
+
         save()
         ParameterizationDAO.withNewSession {
             Parameterization parameterization = findParameterizationById()
@@ -51,5 +57,11 @@ class DuplicateDynamicComponentTests extends AbstractParameterFunctionalTest {
             assert 0 == parameterization.getParameters('dynamicComponent:subTest:subFirstComponent:parmValue').size()
         }
 
+    }
+
+    private void clickOk() {
+        ULCDialogOperator alert = new ULCDialogOperator(frame)
+        ULCButtonOperator okButton = new ULCButtonOperator(alert)
+        okButton.clickMouse()
     }
 }

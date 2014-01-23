@@ -34,7 +34,7 @@ class RemoveDynamicSubComponentAction extends ResourceBasedAction {
         if (model.paramterTableTreeModel.readOnly) return
         def node = tree.selectedPath.lastPathComponent
         if (node && ComponentUtils.isDynamicComposedSubComponentNode(node)) {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemoveDynamicSubComponent")
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemoveDynamicSubComponentAlert")
             alert.addWindowListener([windowClosing: { WindowEvent e ->
                 if (isOKPressed(alert)) removeSubComponent(node)
             }] as IWindowListener)
