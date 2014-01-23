@@ -4,7 +4,9 @@ import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
@@ -13,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
 
-class RemoveDynamicSubComponent extends ResourceBasedAction {
+class RemoveDynamicSubComponentAction extends ResourceBasedAction {
 
     def tree
     ParameterViewModel model
@@ -21,7 +23,7 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
     private static final String VISUAL_PATH_SEPARATOR = ' > '
 
 
-    public RemoveDynamicSubComponent(tree, ParameterViewModel model) {
+    public RemoveDynamicSubComponentAction(tree, ParameterViewModel model) {
         super("RemoveDynamicSubComponent")
         this.tree = tree
         this.model = model
@@ -32,24 +34,35 @@ class RemoveDynamicSubComponent extends ResourceBasedAction {
         if (model.paramterTableTreeModel.readOnly) return
         def node = tree.selectedPath.lastPathComponent
         if (node && ComponentUtils.isDynamicComposedSubComponentNode(node)) {
-            String path = getPathName(node.parent, "${node.name}")
-            // todo(sku): build i18n path
-            List<String> referencingPaths = ParameterHolderFactory.referencingParametersPaths(model.builder.item, path, node.component)
-            if (referencingPaths.size() == 0) {
-                trace("Remove node ${node.name}")
-                model.parametrizedItem.removeComponent(node.path)
-            }
-            else {
-                trace("Remove failed due to References ${referencingPaths} on ${node.name}")
-                StringBuilder message = new StringBuilder()
-                for (String refPath: referencingPaths) {
-                    message.append(BULLET)
-                    message.append(model.findNodeForPath(refPath).getDisplayPath())
-                }
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemainingReferences", [message.toString()])
-                alert.show()
-            }
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemoveDynamicSubComponent")
+            alert.addWindowListener([windowClosing: { WindowEvent e ->
+                if (isOKPressed(alert)) removeSubComponent(node)
+            }] as IWindowListener)
+            alert.show()
         }
+    }
+
+    protected removeSubComponent(def node) {
+        String path = getPathName(node.parent, "${node.name}")
+        // todo(sku): build i18n path
+        List<String> referencingPaths = ParameterHolderFactory.referencingParametersPaths(model.builder.item, path, node.component)
+        if (referencingPaths.size() == 0) {
+            trace("Remove node ${node.name}")
+            model.parametrizedItem.removeComponent(node.path)
+        } else {
+            trace("Remove failed due to References ${referencingPaths} on ${node.name}")
+            StringBuilder message = new StringBuilder()
+            for (String refPath : referencingPaths) {
+                message.append(BULLET)
+                message.append(model.findNodeForPath(refPath).getDisplayPath())
+            }
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemainingReferences", [message.toString()])
+            alert.show()
+        }
+    }
+
+    static boolean isOKPressed(def alert) {
+        alert.value?.equals(alert.firstButtonLabel)
     }
 
     public boolean isEnabled() {

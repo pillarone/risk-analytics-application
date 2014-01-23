@@ -39,16 +39,11 @@ import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.ulcjava.base.application.event.SelectionChangedEvent
 import com.ulcjava.base.application.event.ISelectionChangedListener
-import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.ULCComponent
-import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
-import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import com.ulcjava.base.application.ULCSplitPane
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCBoxPane

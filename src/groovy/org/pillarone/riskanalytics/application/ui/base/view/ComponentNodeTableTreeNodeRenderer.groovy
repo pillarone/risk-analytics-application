@@ -25,7 +25,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAct
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowValidationAndCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
-import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponent
+import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponentAction
 import org.pillarone.riskanalytics.application.ui.main.view.LockSensitiveMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.SubComponentMenuItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -165,7 +165,7 @@ class ComponentNodeTableTreeNodeRenderer extends DefaultTableTreeCellRenderer {
         removeDynamicNodeMenu.add(new ULCMenuItem(help))
         removeDynamicNodeMenu.addSeparator()
 
-        LockSensitiveMenuItem removeDynamicSubComponentMenuItem = new LockSensitiveMenuItem(new RemoveDynamicSubComponent(tree.rowHeaderTableTree, model))
+        LockSensitiveMenuItem removeDynamicSubComponentMenuItem = new LockSensitiveMenuItem(new RemoveDynamicSubComponentAction(tree.rowHeaderTableTree, model))
         tree.addTreeSelectionListener removeDynamicSubComponentMenuItem
         removeDynamicNodeMenu.add(removeDynamicSubComponentMenuItem)
     }
