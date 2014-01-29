@@ -9,6 +9,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.shared.UlcEventConstants
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentPathFilter
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedTableTreeModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractParametrizedViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterView
@@ -49,12 +51,12 @@ class MultiDimensionalTabStarter implements IActionListener {
 
             if (index == null) {
                 MultiDimensionalParameterModel model = new MultiDimensionalParameterModel(tree.model, lastComponent, tree.selectedColumn + 1)
-                model.tableModel.readOnly = parameterView.model.treeModel.readOnly
+                model.tableModel.readOnly = isReadOnly(lastComponent)
                 ClientContext.setModelUpdateMode(model.tableModel, UlcEventConstants.SYNCHRONOUS_MODE)
                 AbstractMultiDimensionalParameterView view
-                if(model.multiDimensionalParameter instanceof PeriodMatrixMultiDimensionalParameter){
+                if (model.multiDimensionalParameter instanceof PeriodMatrixMultiDimensionalParameter) {
                     view = new PeriodMultiDimensionalParameterView(model)
-                }else{
+                } else {
                     view = new MultiDimensionalParameterView(model)
                 }
                 tabbedPane.addTab("${lastComponent.displayName} ${tree.getColumnModel().getColumn(tree.getSelectedColumn()).getHeaderValue()}", UIUtils.getIcon(UIUtils.getText(this.class, "MDP.icon")), view.content)
@@ -84,7 +86,7 @@ class MultiDimensionalTabStarter implements IActionListener {
                 removeTab(index)
             }
         }
-        parameterView.tabbedPane.addTabListener([tabClosing: {TabEvent event -> removeTab(event.getTabClosingIndex()) }] as ITabListener)
+        parameterView.tabbedPane.addTabListener([tabClosing: { TabEvent event -> removeTab(event.getTabClosingIndex()) }] as ITabListener)
         parameterView.tabbedPane.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, false),
                 ULCComponent.WHEN_IN_FOCUSED_WINDOW)
 
@@ -102,4 +104,8 @@ class MultiDimensionalTabStarter implements IActionListener {
         }
     }
 
+    protected isReadOnly(def node) {
+        AbstractParametrizedTableTreeModel model = ((AbstractParametrizedViewModel) parameterView.model).paramterTableTreeModel
+        model.readOnly || !model.isNodeInEditablePaths(node)
+    }
 }

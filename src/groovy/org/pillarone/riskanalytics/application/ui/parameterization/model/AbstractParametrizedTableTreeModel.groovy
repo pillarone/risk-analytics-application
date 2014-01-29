@@ -45,12 +45,12 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
         if (readOnly) {
             return false
         }
+        isNodeInEditablePaths(node) ? node.isCellEditable(columnIndex) : false
+    }
+
+    boolean isNodeInEditablePaths(def node) {
         List<String> allEditablePaths = getAllEditablePaths()
-        if (allEditablePaths.size() == 0 || allEditablePaths.any { node.path.startsWith(it)}) {
-            return node.isCellEditable(columnIndex)
-        } else {
-            return false
-        }
+        allEditablePaths.size() == 0 || allEditablePaths.any { node.path.startsWith(it) }
     }
 
     abstract protected List<String> getAllEditablePaths()
@@ -212,7 +212,7 @@ abstract class AbstractParametrizedTableTreeModel extends AbstractCommentableIte
     protected SimpleTableTreeNode findNode(String[] pathComponents) {
         SimpleTableTreeNode current = getRoot() as SimpleTableTreeNode
         for (String currentElement in pathComponents) {
-            if(isBeingInserted(current)) {
+            if (isBeingInserted(current)) {
                 return null
             }
             current = current.getChildByName(currentElement)
