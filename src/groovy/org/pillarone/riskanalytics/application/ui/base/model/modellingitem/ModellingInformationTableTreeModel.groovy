@@ -163,23 +163,33 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public void updateTreeStructure(IEventConsumer consumer) {
         List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(consumer)
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
-            switch (itemEvent.eventType) {
-                case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    builder.addNodeForItem(ModellingItemFactory.getItemInstance(itemEvent.item))
-                    break;
-                case ModellingItemSearchService.ModellingItemEventType.REMOVED:
-                    builder.removeNodeForItem(ModellingItemFactory.getItemInstance(itemEvent.item))
-                    break;
-                case ModellingItemSearchService.ModellingItemEventType.UPDATED:
-                    builder.itemChanged(itemEvent.item)
-                    break;
-            }
+//          if (isAcceptedByCurrentFilter(itemEvent.item)) { //Uncomment later to fix PMO-2691
+                switch (itemEvent.eventType) {
+                    case ModellingItemSearchService.ModellingItemEventType.ADDED:
+                        builder.addNodeForItem(ModellingItemFactory.addItemInstance(itemEvent.item))
+                        break;
+                    case ModellingItemSearchService.ModellingItemEventType.REMOVED:
+                        builder.removeNodeForItem(ModellingItemFactory.getOrCreateItemInstance(itemEvent.item))
+                        ModellingItemFactory.remove(itemEvent.item)
+                        break;
+                    case ModellingItemSearchService.ModellingItemEventType.UPDATED:
+                        builder.itemChanged(ModellingItemFactory.addItemInstance(itemEvent.item))
+                        break;
+                }
+//          } //Uncomment later to fix PMO-2691
         }
 // try fix PMO-2679 - Detlef added event firing to add new p14n to dropdown list inside simulation window, but it disables the 'open results' button too after the sim.
 //        if (items){
 //            mainModel.fireModelChanged()
 //        }
     }
+
+// Uncomment later to fix PMO-2691
+//    boolean isAcceptedByCurrentFilter(ModellingItem item) {
+//        return currentFilter.toQuery().every {
+//            it.accept(item)
+//        }
+//    }
 
     public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {
         service.getPendingEvents(consumer)
