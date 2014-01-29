@@ -165,7 +165,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
             if( user != null && authorities.any { actionAllowedRoles.contains(it)} ){
                 return true;
             }
-            logActionDenied(user) // Hint: it helps if log file shows some clue when things go wrong
+            logActionDenied(user, actionAllowedRoles) // Hint: it helps if log file shows some clue when things go wrong
             return false;
         } catch (Exception ex) {
             LogFactory.getLog(this.class).error("Error in roles lookup", ex)
@@ -173,7 +173,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return false
     }
 
-    private logActionDenied( Person user ){
+    private logActionDenied( Person user, def actionAllowedRoles){
         String actionName = this.getClass().getSimpleName();
         if(user == null){
             LOG.warn("Action ${actionName} denied: User NULL!")
