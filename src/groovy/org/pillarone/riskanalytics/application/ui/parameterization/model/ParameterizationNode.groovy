@@ -13,9 +13,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem;
 
 public class ParameterizationNode extends VersionedItemNode implements IReportableNode {
-    //Cache component popup menus based on model, as reports will differ.
-    private static Map<Class, ULCPopupMenu> popupMenuMap = new HashMap<Class, ULCPopupMenu>()
-
 
     public ParameterizationNode(ParameterizationUIItem parameterizationUIItem) {
         super(parameterizationUIItem, false);
