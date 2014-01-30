@@ -30,12 +30,14 @@ class AddDynamicSubComponent extends ResourceBasedAction {
     }
 
 
-
     public void doActionPerformed(ActionEvent event) {
         if (model.paramterTableTreeModel.readOnly) return
         def node = tree.selectedPath.lastPathComponent
         if (!node || !ComponentUtils.isDynamicComposedComponent(node)) return;
 
+        if (isNotEditable(node)) {
+            return
+        }
         DynamicComponentNameDialog dialog = new DynamicComponentNameDialog(UlcUtilities.getWindowAncestor(tree))
         dialog.title = UIUtils.getText(this.class, "newDynamicSubComponent") + ": " + (node ? node.getDisplayName() : "dynamic component")
         dialog.okAction = {
@@ -68,5 +70,10 @@ class AddDynamicSubComponent extends ResourceBasedAction {
 
     public boolean isEnabled() {
         return super.isEnabled() && !model.paramterTableTreeModel.readOnly;
+    }
+
+    private boolean isNotEditable(def node) {
+        def model = model.paramterTableTreeModel
+        model.readOnly || !model.isNodeInEditablePaths(node)
     }
 }

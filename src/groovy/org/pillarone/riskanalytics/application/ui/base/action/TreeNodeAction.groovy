@@ -59,7 +59,8 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         dialog.show()
     }
 
-    abstract protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments)
+    abstract
+    protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments)
 
     protected String getPathName(ITableTreeNode node, String name) {
         String pathName = node.path
@@ -68,8 +69,13 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         return pathName + ":${name}"
     }
 
-    public DynamicComponentNameDialog getInputNameDialog(ULCWindow parent, String displayName){
+    public DynamicComponentNameDialog getInputNameDialog(ULCWindow parent, String displayName) {
         return new DynamicComponentNameDialog(parent, displayName)
+    }
+
+    protected boolean isNotEditable(def node) {
+        def model = model.paramterTableTreeModel
+        model.readOnly || !model.isNodeInEditablePaths(node)
     }
 
 }

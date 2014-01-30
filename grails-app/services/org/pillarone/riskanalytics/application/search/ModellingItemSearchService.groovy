@@ -209,8 +209,8 @@ class ModellingItemSearchService {
         }
 
         void modellingItemChanged(ModellingItem item) {
+            updateModellingItemInIndex(item)
             synchronized (queue) {
-                updateModellingItemInIndex(item)
                 for (List<ModellingItemEvent> list in queue.values()) {
                     list << new ModellingItemEvent(item: item, eventType: ModellingItemEventType.UPDATED)
                 }
