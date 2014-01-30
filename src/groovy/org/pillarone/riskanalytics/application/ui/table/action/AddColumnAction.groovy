@@ -182,7 +182,6 @@ class MoveColumnAction extends TableAction {
         "ColumnPosition: $columnPosition , columnIndex: $columnIndex"
     }
 
-
 }
 
 

@@ -31,9 +31,8 @@ class RemoveDynamicSubComponentAction extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        if (model.paramterTableTreeModel.readOnly) return
         def node = tree.selectedPath.lastPathComponent
-        if (node && ComponentUtils.isDynamicComposedSubComponentNode(node)) {
+        if (node && ComponentUtils.isDynamicComposedSubComponentNode(node) && isEditable(node)) {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "RemoveDynamicSubComponentAlert")
             alert.addWindowListener([windowClosing: { WindowEvent e ->
                 if (isOKPressed(alert)) removeSubComponent(node)
@@ -75,5 +74,10 @@ class RemoveDynamicSubComponentAction extends ResourceBasedAction {
             pathName = pathName.substring(pathName.indexOf(":") + 1, pathName.length())
         }
         return pathName + ":${name}"
+    }
+
+    private boolean isEditable(def node) {
+        def model = model.paramterTableTreeModel
+        !model.readOnly && model.isNodeInEditablePaths(node)
     }
 }
