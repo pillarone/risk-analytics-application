@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.interaction
 
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.testframework.operator.*
+import org.netbeans.jemmy.operators.Operator
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
@@ -18,7 +19,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         super.setUp()
-        UserContext.metaClass.static.hasCurrentUser = {->
+        UserContext.metaClass.static.hasCurrentUser = { ->
             true
         }
     }
@@ -35,7 +36,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
     void testDeleteP14NInWorkflowWithPopup() {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTableTreeOperator itemTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
-        TreePath applicationModelPath = itemTree.findPath('Application')
+        TreePath applicationModelPath = itemTree.findPath('0=Application')
         int applicationModelRow = itemTree.getRowForPath(applicationModelPath)
         itemTree.doExpandRow(applicationModelRow)
         itemTree.doExpandRow(applicationModelRow + 1)
@@ -70,25 +71,27 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
 
         //V2 added to the tree.
         itemTree.selectRow(3)
-        int row = itemTree.getRowForPath(itemTree.findPath(['Application', 'Parameterization', 'Connection failed - contact support. vR2'] as String[]))
+        int row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR2'] as String[]))
         assert applicationModelRow + 3 == row
         popupMenu = itemTree.callPopupOnCell(applicationModelRow + 3, 0)
         ULCMenuItemOperator delete = new ULCMenuItemOperator(popupMenu, "Delete")
         delete.clickMouse()
+        sleep(2000)
         ULCDialogOperator deleteConfirm = new ULCDialogOperator(new ComponentByNameChooser('AlertDialog'))
         ULCButtonOperator okButton = new ULCButtonOperator(deleteConfirm, new ComponentByNameChooser('AlertDialog.ok'))
         okButton.clickMouse()
         sleep(2000)
 
         //V2 removed from the tree.
-        row = itemTree.getRowForPath(itemTree.findPath(['Application', 'Parameterization', 'Connection failed - contact support. vR1'] as String[]))
+        row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR1'] as String[]))
         assert applicationModelRow + 3 == row
     }
 
     void testDeleteP14NInWorkflowWithKeyboardAction() {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTableTreeOperator itemTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
-        TreePath applicationModelPath = itemTree.findPath('Application')
+        TreePath applicationModelPath = itemTree.findPath('0=Application')
+        println(applicationModelPath)
         int applicationModelRow = itemTree.getRowForPath(applicationModelPath)
         itemTree.doExpandRow(applicationModelRow)
         itemTree.doExpandRow(applicationModelRow + 1)
@@ -123,9 +126,10 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
 
         //V2 added to the tree.
         itemTree.selectRow(applicationModelRow + 3)
-        int row = itemTree.getRowForPath(itemTree.findPath(['Application', 'Parameterization', 'Connection failed - contact support. vR2'] as String[]))
+        int row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR2'] as String[]))
         assert applicationModelRow + 3 == row
         itemTree.pushKey(KeyEvent.VK_DELETE, 0)
+        sleep(2000)
 
         ULCDialogOperator deleteConfirm = new ULCDialogOperator(new ComponentByNameChooser('AlertDialog'))
         ULCButtonOperator okButton = new ULCButtonOperator(deleteConfirm, new ComponentByNameChooser('AlertDialog.ok'))
@@ -133,7 +137,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         sleep(2000)
 
         //V2 removed from the tree.
-        row = itemTree.getRowForPath(itemTree.findPath(['Application', 'Parameterization', 'Connection failed - contact support. vR1'] as String[]))
+        row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR1'] as String[]))
         assert applicationModelRow + 3 == row
     }
 }
