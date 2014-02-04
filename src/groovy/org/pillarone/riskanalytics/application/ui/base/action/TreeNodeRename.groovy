@@ -19,7 +19,9 @@ public class TreeNodeRename extends TreeNodeAction {
     }
 
     protected void doAction(String newName, ParameterViewModel model, ITableTreeNode node, tree, boolean withComments) {
-        if (isNotEditable(node) || node.component.name == newName) return
+        if (node.component.name == newName)  {
+            return
+        }
         String oldPath = ComponentUtils.removeModelFromPath(node.path, model.model)
         String newPath = ComponentUtils.removeModelFromPath(node.parent.path, model.model) + ":$newName"
 

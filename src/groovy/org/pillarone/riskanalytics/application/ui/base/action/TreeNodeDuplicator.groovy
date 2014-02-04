@@ -25,9 +25,6 @@ public class TreeNodeDuplicator extends TreeNodeAction {
         if (model.paramterTableTreeModel.readOnly) return
         if (node instanceof ComponentTableTreeNode) {
             ITableTreeNode parent = node.parent
-            if (isNotEditable(parent)) {
-                return
-            }
             if (parent instanceof DynamicComposedComponentTableTreeNode) {
                 String oldPath = ComponentUtils.removeModelFromPath(node.path, model.model)
                 String newPath = ComponentUtils.removeModelFromPath(node.parent.path, model.model) + ":$newName"
@@ -50,4 +47,8 @@ public class TreeNodeDuplicator extends TreeNodeAction {
         return dialog
     }
 
+    @Override
+    protected boolean isEditable(def Object node) {
+        return super.isEditable(node.parent)
+    }
 }

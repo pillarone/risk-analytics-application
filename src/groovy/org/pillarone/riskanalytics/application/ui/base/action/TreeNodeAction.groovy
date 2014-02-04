@@ -37,9 +37,10 @@ abstract class TreeNodeAction extends ResourceBasedAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        if (model.paramterTableTreeModel.readOnly) return
         ITableTreeNode node = tree.selectedPath.lastPathComponent
-        if (!node || !ComponentUtils.isDynamicComposedSubComponentNode(node)) return;
+        if (!node || !ComponentUtils.isDynamicComposedSubComponentNode(node) || !isEditable(node)) {
+            return
+        }
         DynamicComponentNameDialog dialog = getInputNameDialog(UlcUtilities.getWindowAncestor(tree), node?.displayName)
         dialog.title = UIUtils.getText(this.class, "title") + ":"
         dialog.okAction = {
@@ -73,9 +74,10 @@ abstract class TreeNodeAction extends ResourceBasedAction {
         return new DynamicComponentNameDialog(parent, displayName)
     }
 
-    protected boolean isNotEditable(def node) {
+    protected boolean isEditable(def node) {
         def model = model.paramterTableTreeModel
-        model.readOnly || !model.isNodeInEditablePaths(node)
+        !model.readOnly && model.isNodeInEditablePaths(node)
     }
+
 
 }
