@@ -37,7 +37,7 @@ class ExceptionSafe {
             PasteError: "Paste Error:\n\n {0} \nThis error appears also if the tree structure changes while pasting.",
             MissingHelpException: "No help available",
             HibernateOptimisticLockingFailureException: "Your values cannot be stored because another\nuser has changed them in the meantime.",
-            WorkflowException: "Workflow action failed. Reason: {0}",
+            WorkflowException: "Problem: {0}",
             CopyPasteException: "Unable to paste at least one value: {0}"
     ]
 
