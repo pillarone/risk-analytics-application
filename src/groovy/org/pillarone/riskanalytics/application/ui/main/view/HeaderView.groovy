@@ -9,6 +9,7 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.shared.IDefaults
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -23,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsVie
 import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsViewDialog
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.security.LogoutService
 
 /**
  *  UI for the header of RiskAnalytics to show File menus and action buttons
@@ -91,7 +93,6 @@ class HeaderView extends AbstractView {
         super.init()
         syncMenuBar()
     }
-
 
 
     void initComponents() {
@@ -185,13 +186,13 @@ class HeaderView extends AbstractView {
 
         fileMenu.add(exitItem)
 
-        aboutItem.addActionListener([actionPerformed: {event ->  new AboutDialog(UlcUtilities.getWindowAncestor(content)).visible = true}] as IActionListener)
+        aboutItem.addActionListener([actionPerformed: { event -> new AboutDialog(UlcUtilities.getWindowAncestor(content)).visible = true }] as IActionListener)
         helpMenu.add(aboutItem)
 
-        traceLogItem.addActionListener([actionPerformed: {event ->  new UserTraceDialog(UlcUtilities.getWindowAncestor(content)).dialog.visible = true}] as IActionListener)
+        traceLogItem.addActionListener([actionPerformed: { event -> new UserTraceDialog(UlcUtilities.getWindowAncestor(content)).dialog.visible = true }] as IActionListener)
         helpMenu.add(traceLogItem)
 
-        settingsMenu.addActionListener([actionPerformed: {event ->
+        settingsMenu.addActionListener([actionPerformed: { event ->
             new UserSettingsViewDialog(new UserSettingsViewModel(), UlcUtilities.getWindowAncestor(content)).visible = true
         }] as IActionListener)
         windowMenu.add(settingsMenu)
@@ -223,14 +224,18 @@ class HeaderView extends AbstractView {
     }
 
     void attachListeners() {
-        userInfoComboBox.addActionListener([actionPerformed: {ActionEvent evt ->
+        userInfoComboBox.addActionListener([actionPerformed: { ActionEvent evt ->
             if (userInfoComboBoxModel.getSelectedItem() == UIUtils.getText(HeaderView.class, "Logout")) {
                 String url = null
                 try {
+                    LogoutService logoutService = Holders.grailsApplication.mainContext.getBean('logoutService') as LogoutService
+                    logoutService.logout(false)
                     url = UserContext.getBaseUrl() + "/logout"
                     ClientContext.showDocument(url, "_self")
                 } catch (Exception ex) {
                     LOG.error("Logout error by calling $url : $ex")
+                } finally {
+                    ApplicationContext.terminate()
                 }
             }
         }] as IActionListener)
