@@ -29,7 +29,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
-    @Lazy ModellingItemSearchService service = { ModellingItemSearchService.getInstance() }()
+    @Lazy
+    ModellingItemSearchService service = { ModellingItemSearchService.getInstance() }()
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
@@ -102,8 +103,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         return column
     }
 
-
-
     public Object getChild(Object parent, int index) {
         return parent.getChildAt(index)
     }
@@ -164,18 +163,19 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(consumer)
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
 //          if (isAcceptedByCurrentFilter(itemEvent.item)) { //Uncomment later to fix PMO-2691
-                switch (itemEvent.eventType) {
-                    case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                        builder.addNodeForItem(ModellingItemFactory.addItemInstance(itemEvent.item))
-                        break;
-                    case ModellingItemSearchService.ModellingItemEventType.REMOVED:
-                        builder.removeNodeForItem(ModellingItemFactory.getOrCreateItemInstance(itemEvent.item))
-                        ModellingItemFactory.remove(itemEvent.item)
-                        break;
-                    case ModellingItemSearchService.ModellingItemEventType.UPDATED:
-                        builder.itemChanged(ModellingItemFactory.addItemInstance(itemEvent.item))
-                        break;
-                }
+            switch (itemEvent.eventType) {
+                case ModellingItemSearchService.ModellingItemEventType.ADDED:
+                    builder.addNodeForItem(ModellingItemFactory.addItemInstance(itemEvent.item))
+                    break;
+                case ModellingItemSearchService.ModellingItemEventType.REMOVED:
+                    builder.removeNodeForItem(ModellingItemFactory.getOrCreateItemInstance(itemEvent.item))
+                    ModellingItemFactory.remove(itemEvent.item)
+                    break;
+                case ModellingItemSearchService.ModellingItemEventType.UPDATED:
+                    //the item in the tree will be updated. Since it should be the same instance as in the ModellingItemFactory, there is no need to update it in the ModellingItemFactory
+                    builder.itemChanged(itemEvent.item)
+                    break;
+            }
 //          } //Uncomment later to fix PMO-2691
         }
 // try fix PMO-2679 - Detlef added event firing to add new p14n to dropdown list inside simulation window, but it disables the 'open results' button too after the sim.

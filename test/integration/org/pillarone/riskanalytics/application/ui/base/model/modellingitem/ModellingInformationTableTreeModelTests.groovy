@@ -39,6 +39,8 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     private TestModelListener modelListener
 
     void setUp() {
+        ParameterizationDAO.list()*.delete(flush: true)
+        ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Application'])
         ModelRegistry.instance.clear()
@@ -83,10 +85,6 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         ModellingItemFactory.clear()
     }
 
-    private void printTree() {
-        printNode(model, model.root, 0)
-    }
-
     void testColumnCount() {
         assert 8 == model.columnCount
     }
@@ -95,19 +93,6 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         IMutableTableTreeNode root = model.root
         assert root
         assert 3 == root.childCount
-    }
-
-    private printNode(ModellingInformationTableTreeModel model, ITableTreeNode node, int level) {
-        String line = ""
-        level.times { line += "\t" }
-        model.columnCount.times {
-            line += "${model.getValueAt(node, it)},"
-        }
-        println line
-        level++
-        node.childCount.times {
-            printNode(model, node.getChildAt(it), level)
-        }
     }
 
     void testSimpleParamStructureWithTenNodes() {
@@ -263,7 +248,6 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         assert 3 == modelListener.nodeChangedEvents.size()
 
         //assert that tree contains the simulation nodes and the child nodes.
-        printTree()
         ParameterizationNode paramsNode2 = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
         assert paramsItem.is(paramsNode2.abstractUIItem.item)
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode

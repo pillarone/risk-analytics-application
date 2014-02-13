@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.output.structure.item.ResultStruc
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemCopyUtils
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -473,7 +474,7 @@ class ModellingItemFactory {
             try {
                 item.tags = dao.tags*.tag
             } catch (Exception ex) {}
-        }
+            }
         item
     }
 
@@ -495,7 +496,8 @@ class ModellingItemFactory {
         simulation.creator = run.creator
         try {
             simulation.tags = run.tags*.tag
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        }
         return simulation
     }
 
@@ -569,8 +571,9 @@ class ModellingItemFactory {
     }
 
     static ModellingItem addItemInstance(ModellingItem item) {
+        def itemCopy = ModellingItemCopyUtils.copyModellingItem(item)
         def key = key(item.class, item.id)
-        getItemInstances()[key] = item
-        return item
+        getItemInstances()[key] = itemCopy
+        return itemCopy
     }
 }
