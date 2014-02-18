@@ -2,10 +2,11 @@ import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
 import org.pillarone.riskanalytics.application.example.constraint.CopyPasteConstraint
 import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.8.36"
+    def version = "1.8.37"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.2.1 > *"
     // the other plugins this plugin depends on
@@ -33,6 +34,9 @@ ULC view
     }
 
     def doWithSpring = {
+        securityContextLogoutHandler(SecurityContextLogoutHandler) {
+            invalidateHttpSession = false
+        }
         // 20140129 Removed modellingItemListener and hibernateEventListeners in favour of
         // alternative configured in ra-core, which furthermore doesn't run on ULC thread.
         // (During investigation with Matthias Ansorge into PMO-2679 Sim results not auto appearing.)
