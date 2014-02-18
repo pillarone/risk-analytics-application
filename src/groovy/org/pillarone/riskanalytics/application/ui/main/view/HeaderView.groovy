@@ -95,7 +95,6 @@ class HeaderView extends AbstractView {
     }
 
 
-
     void initComponents() {
         content = new ULCBoxPane(2, 0)
         //init toolbar
@@ -229,8 +228,7 @@ class HeaderView extends AbstractView {
             if (userInfoComboBoxModel.getSelectedItem() == UIUtils.getText(HeaderView.class, "Logout")) {
                 String url = null
                 try {
-                    LogoutService logoutService = Holders.grailsApplication.mainContext.getBean('logoutService') as LogoutService
-                    logoutService.logout(false)
+                    Holders.grailsApplication.mainContext.getBean('logoutService', LogoutService).logout(false)
                     url = UserContext.getBaseUrl() + "/logout"
                     ClientContext.showDocument(url, "_self")
                 } catch (Exception ex) {

@@ -39,8 +39,7 @@ class ExitAction extends ResourceBasedAction {
     public void logout() {
         String url = null
         try {
-            LogoutService logoutService = Holders.grailsApplication.mainContext.getBean('logoutService')
-            logoutService.logout(false)
+            Holders.grailsApplication.mainContext.getBean('logoutService', LogoutService).logout(false)
             url = UserContext.getBaseUrl() + "/logout"
             ClientContext.showDocument(url, "_self")
         } catch (Exception ex) {

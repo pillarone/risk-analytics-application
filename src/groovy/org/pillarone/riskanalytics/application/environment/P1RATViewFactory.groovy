@@ -84,7 +84,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     }
 
     private boolean isLoggedIn() {
-        (Holders.grailsApplication.mainContext.getBean("springSecurityService") as SpringSecurityService).isLoggedIn()
+        Holders.grailsApplication.mainContext.getBean("springSecurityService", SpringSecurityService).isLoggedIn()
     }
 
     abstract protected ULCRootPane createRootPane()
