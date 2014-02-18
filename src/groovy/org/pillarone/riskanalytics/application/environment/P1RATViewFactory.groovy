@@ -6,10 +6,13 @@ import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCRootPane
+import com.ulcjava.base.application.event.IRoundTripListener
+import com.ulcjava.base.application.event.RoundTripEvent
 import com.ulcjava.base.application.util.BorderedComponentUtilities
 import com.ulcjava.base.server.ULCSession
 import com.ulcjava.base.shared.IDefaults
 import com.ulcjava.container.grails.UlcViewFactory
+import grails.plugins.springsecurity.SpringSecurityService
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
@@ -32,6 +35,9 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     TraceLogManager traceLogManager
 
     public ULCRootPane create(ApplicationContext applicationContext) {
+        addTerminationListener()
+
+        LOG.info "Started session for user '${UserContext.currentUser?.username}'"
         // 20140107 in Chrome, on production, login as frahman and see the following kind of output in logfile:
         //
         //.. (jrichardson)- INFO  P1RATViewFactory Started session for user 'null'
@@ -61,6 +67,24 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         frame.add(BorderedComponentUtilities.createBorderedComponent(mainView.content, IDefaults.BOX_EXPAND_EXPAND, BorderFactory.createEmptyBorder(5, 5, 5, 5)))
         UIUtils.setRootPane(frame)
         return frame
+    }
+
+    private void addTerminationListener() {
+        ApplicationContext.addRoundTripListener([roundTripDidStart: { def event -> },
+                roundTripWillEnd: { RoundTripEvent event ->
+                    if (!isLoggedIn()) {
+                        terminate()
+                    }
+                }
+        ] as IRoundTripListener)
+    }
+
+    private void terminate() {
+        com.ulcjava.base.application.ApplicationContext.terminate()
+    }
+
+    private boolean isLoggedIn() {
+        (Holders.grailsApplication.mainContext.getBean("springSecurityService") as SpringSecurityService).isLoggedIn()
     }
 
     abstract protected ULCRootPane createRootPane()

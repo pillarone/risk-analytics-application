@@ -1,14 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ApplicationContext
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.core.output.DeleteSimulationService
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.pillarone.riskanalytics.application.UserContext
 import com.ulcjava.base.application.ClientContext
+import com.ulcjava.base.application.event.ActionEvent
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.core.output.DeleteSimulationService
+import org.pillarone.riskanalytics.core.security.LogoutService
 
 class ExitAction extends ResourceBasedAction {
 
@@ -37,6 +39,8 @@ class ExitAction extends ResourceBasedAction {
     public void logout() {
         String url = null
         try {
+            LogoutService logoutService = Holders.grailsApplication.mainContext.getBean('logoutService')
+            logoutService.logout(false)
             url = UserContext.getBaseUrl() + "/logout"
             ClientContext.showDocument(url, "_self")
         } catch (Exception ex) {
