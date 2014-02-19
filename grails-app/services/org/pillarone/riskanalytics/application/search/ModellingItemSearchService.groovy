@@ -139,8 +139,7 @@ class ModellingItemSearchService {
             t = now
         }
 
-        // TODO: Please someone explain why next step is needed instead of just returning results -fr
-        List<ModellingItem> ret = results.collect { ModellingItemFactory.getItemInstance(it) }
+        List<ModellingItem> ret = results.collect { ModellingItemFactory.getOrCreateItemInstance(it) }
         if( profileCacheFiltering ){
             long now = System.currentTimeMillis()
             LOG.info("Timed " + (now - t) + " ms: collecting. Total: " + (now-start)/1000 + " sec.");

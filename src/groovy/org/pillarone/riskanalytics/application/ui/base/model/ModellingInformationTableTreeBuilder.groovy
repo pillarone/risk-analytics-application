@@ -1,16 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
-import com.ulcjava.base.application.tabletree.ITableTreeNode
+import com.ulcjava.base.application.tabletree.*
 import com.ulcjava.base.application.tree.TreePath
 import grails.util.Holders
-import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -29,9 +23,6 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.simulation.item.*
-import org.pillarone.riskanalytics.core.util.ClassPathScanner
-import org.pillarone.riskanalytics.core.workflow.Status
-import org.springframework.core.type.filter.AssignableTypeFilter
 
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
@@ -231,7 +222,9 @@ class ModellingInformationTableTreeBuilder {
 
     private Map getItemMap(items, boolean workflow) {
         Map<String, List> map = [:]
-        items = items.findAll { workflow ? it.versionNumber.toString().startsWith("R") : !it.versionNumber.toString().startsWith("R") }
+        items = items.findAll {
+            workflow ? it.versionNumber.toString().startsWith("R") : !it.versionNumber.toString().startsWith("R")
+        }
         items.each {
             List list = map.get(it.name)
             if (!list) {
@@ -248,7 +241,7 @@ class ModellingInformationTableTreeBuilder {
     private ITableTreeNode createItemNodes(List items) {
         List tree = []
         tree.addAll(items)
-        tree.sort { a, b -> b.versionNumber <=> a.versionNumber }
+        tree.sort { a, b -> b.versionNumber<=>a.versionNumber }
 
         IMutableTableTreeNode root = createNode(tree.first())
         tree.remove(tree.first())
@@ -623,7 +616,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
-        ParameterizationNode node = parameterizationUIItem.item.status == Status.NONE ? new ParameterizationNode(parameterizationUIItem) : new WorkflowParameterizationNode(parameterizationUIItem)
+        ParameterizationNode node = new WorkflowParameterizationNode(parameterizationUIItem)
         model.putValues(node)
         return node
     }

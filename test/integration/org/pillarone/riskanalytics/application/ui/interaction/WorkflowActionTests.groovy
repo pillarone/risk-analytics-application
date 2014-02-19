@@ -119,6 +119,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         popupMenu = itemTree.callPopupOnCell(applicationModelRow + 3, 0)
         ULCMenuItemOperator createNewVersion = new ULCMenuItemOperator(popupMenu, "Create new version")
         createNewVersion.clickMouse()
+        sleep(2000)
         newVersion = new ULCDialogOperator(new ComponentByNameChooser('renameDialog'))
         commentTextArea = new ULCTextAreaOperator(newVersion, new ComponentByNameChooser('commentTextArea'))
         commentTextArea.enterText('test')

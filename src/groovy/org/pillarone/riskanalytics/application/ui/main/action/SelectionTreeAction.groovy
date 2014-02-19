@@ -157,29 +157,32 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     final boolean accessAllowed() {
         if (UserContext.isStandAlone()) return true
-        List actionAllowedRoles = allowedRoles()
-        if (!actionAllowedRoles || actionAllowedRoles.size() == 0) return true
         try {
+            List actionAllowedRoles = allowedRoles() //restricted actions supply this
+            if (!actionAllowedRoles || actionAllowedRoles.size() == 0){
+                return true
+            }
+
+            String actionName = this.getClass().getSimpleName();
+
             Person user = UserManagement.getCurrentUser()
-            List authorities = user.getAuthorities()*.authority
-            if( user != null && authorities.any { actionAllowedRoles.contains(it)} ){
+            if( user == null ){
+                LOG.warn("User NULL - action ${actionName} denied.")
+                return false
+            }
+
+            if( user.getAuthorities()*.authority.any { actionAllowedRoles.contains(it)} ){
                 return true;
             }
-            logActionDenied(user, actionAllowedRoles) // Hint: it helps if log file shows some clue when things go wrong
-            return false;
+
+            // As code decides whether to enable menus on selected items.
+            // lets not spam the logfile every time - level debug is enough.
+            LOG.debug("Action ${actionName} denied to ${user.username} as lacks these roles (hint: table person_authority): " + actionAllowedRoles)
+
         } catch (Exception ex) {
             LogFactory.getLog(this.class).error("Error in roles lookup", ex)
         }
         return false
-    }
-
-    private logActionDenied( Person user, def actionAllowedRoles){
-        String actionName = this.getClass().getSimpleName();
-        if(user == null){
-            LOG.warn("Action ${actionName} denied: User NULL!")
-        } else {
-            LOG.warn("Action ${actionName} denied to ${user.username} who lacks all of these roles (hint: table person_authority): " + actionAllowedRoles)
-        }
     }
 
     protected List allowedRoles() {

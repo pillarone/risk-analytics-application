@@ -80,7 +80,7 @@ class AddTagDialog {
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ULCScrollPane scrollList = new ULCScrollPane(tagesListView.content)
         scrollList.setPreferredSize(new Dimension(160, 200))
-        content.add(ULCBoxPane.BOX_LEFT_CENTER, scrollList)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollList)
         content.add(ULCBoxPane.BOX_LEFT_TOP, applyButton)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, newTag)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, addNewButton)
@@ -90,7 +90,7 @@ class AddTagDialog {
         dialog.add(content)
         dialog.setLocationRelativeTo(parent)
         dialog.pack()
-        dialog.resizable = false
+        dialog.resizable = true
     }
 
     private void attachListeners() {

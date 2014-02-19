@@ -22,7 +22,7 @@ class UserContext {
         try {
             ApplicationContext.setAttribute key, value
         } catch (Exception e) {
-            LOG.debug('ULC Application context not available', e)
+            LOG.warn('Using fallbackContext as ULC ApplicationContext threw:' + e.getMessage())
             fallbackContext.put(key, value)
         }
     }
@@ -31,7 +31,7 @@ class UserContext {
         try {
             return ApplicationContext.getAttribute(key)
         } catch (Exception e) {
-            LOG.debug('ULC Application context not available', e)
+            LOG.warn('Using fallbackContext as ULC ApplicationContext threw:' + e.getMessage())
             return fallbackContext.get(key)
         }
     }
@@ -40,6 +40,7 @@ class UserContext {
         try {
             return getCurrentUser() != null
         } catch (Exception e) {
+            LOG.warn("getCurrentUser() threw:" + e.getMessage())
             return false
         }
     }

@@ -19,15 +19,34 @@ public class WorkflowParameterizationNode extends ParameterizationNode {
     }
 
     private Map<String, ULCPopupMenu> statusToMenuMap;
+
     @Override
     public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         if (statusToMenuMap == null) {
             statusToMenuMap = new HashMap<String, ULCPopupMenu>();
-            statusToMenuMap.put(Status.DATA_ENTRY.getDisplayName(), new DataEntryPopupMenu(tree, this));
-            statusToMenuMap.put(Status.REJECTED.getDisplayName(), new RejectedPopupMenu(tree, this));
-            statusToMenuMap.put(Status.IN_REVIEW.getDisplayName(), new InReviewPopupMenu(tree, this));
-            statusToMenuMap.put(Status.IN_PRODUCTION.getDisplayName(), new InProductionPopupMenu(tree, this));
         }
-        return statusToMenuMap.get(getStatus().getDisplayName());
+        ULCPopupMenu ulcPopupMenu = statusToMenuMap.get(getStatus().getDisplayName());
+        if (ulcPopupMenu == null) {
+            ulcPopupMenu = createPopupForStatus(getStatus(), tree);
+            statusToMenuMap.put(getStatus().getDisplayName(), ulcPopupMenu);
+        }
+        return ulcPopupMenu;
+    }
+
+    private ULCPopupMenu createPopupForStatus(Status status, ULCTableTree tree) {
+        switch (status) {
+            case NONE:
+                return super.getPopupMenu(tree);
+            case DATA_ENTRY:
+                return new DataEntryPopupMenu(tree, this);
+            case IN_REVIEW:
+                return new InReviewPopupMenu(tree, this);
+            case REJECTED:
+                return new RejectedPopupMenu(tree, this);
+            case IN_PRODUCTION:
+                return new InProductionPopupMenu(tree, this);
+            default:
+                return null;
+        }
     }
 }

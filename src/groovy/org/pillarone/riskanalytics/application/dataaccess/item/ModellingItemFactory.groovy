@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.output.structure.item.ResultStruc
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemCopyUtils
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -23,15 +24,6 @@ import org.pillarone.riskanalytics.application.output.result.item.CustomTable
 class ModellingItemFactory {
 
     private static Log LOG = LogFactory.getLog(ModellingItemFactory)
-
-    static Map getSimulationInstances() {
-        def map = UserContext.getAttribute("simulationInstances")
-        if (map == null) {
-            map = [:]
-            UserContext.setAttribute("simulationInstances", map)
-        }
-        map
-    }
 
     static Map getItemInstances() {
         def map = UserContext.getAttribute("itemInstances")
@@ -475,16 +467,16 @@ class ModellingItemFactory {
             try {
                 item.tags = dao.tags*.tag
             } catch (Exception ex) {}
-        }
+            }
         item
     }
 
     private static Simulation getItem(SimulationRun run) {
         String key = key(SimulationRun, run.id)
-        Simulation simulation = getSimulationInstances()[key]
+        Simulation simulation = getItemInstances()[key]
         if (!simulation) {
             simulation = new Simulation(run.name)
-            getSimulationInstances()[key] = simulation
+            getItemInstances()[key] = simulation
         }
         simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
         simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
@@ -497,7 +489,8 @@ class ModellingItemFactory {
         simulation.creator = run.creator
         try {
             simulation.tags = run.tags*.tag
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        }
         return simulation
     }
 
@@ -548,7 +541,7 @@ class ModellingItemFactory {
     }
 
     static void remove(ModellingItem item) {
-        getSimulationInstances().remove(key(SimulationRun, item.id))
+        getItemInstances().remove(key(item.class, item.id))
     }
 
     public static void put(ParameterizationDAO dao, Class modelClass = null) {
@@ -563,17 +556,17 @@ class ModellingItemFactory {
 
 
     static void clear() {
-        getSimulationInstances().clear()
         getItemInstances().clear()
     }
 
-    static ModellingItem getItemInstance(ModellingItem item) {
-        ModellingItem itemInstance = getItemInstances()[key(item.class, item.id)]
-        if (!itemInstance) {
-            itemInstance = item
-            getItemInstances()[key(item.class, item.id)] = itemInstance
-        }
-        return itemInstance
+    static ModellingItem getOrCreateItemInstance(ModellingItem item) {
+        return getItemInstances()[key(item.class, item.id)] ?: addItemInstance(item)
+    }
 
+    static ModellingItem addItemInstance(ModellingItem item) {
+        def itemCopy = ModellingItemCopyUtils.copyModellingItem(item)
+        def key = key(item.class, item.id)
+        getItemInstances()[key] = itemCopy
+        return itemCopy
     }
 }

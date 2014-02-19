@@ -1,5 +1,4 @@
 import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
-import org.pillarone.riskanalytics.application.ULCAwareHibernateListener
 import org.pillarone.riskanalytics.application.example.constraint.CopyPasteConstraint
 import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
@@ -34,13 +33,9 @@ ULC view
     }
 
     def doWithSpring = {
-        modellingItemListener(ULCAwareHibernateListener)
-
-        hibernateEventListeners(HibernateEventListeners) {
-            listenerMap = ['post-insert': modellingItemListener,
-                    'post-update': modellingItemListener,
-                    'post-delete': modellingItemListener]
-        }
+        // 20140129 Removed modellingItemListener and hibernateEventListeners in favour of
+        // alternative configured in ra-core, which furthermore doesn't run on ULC thread.
+        // (During investigation with Matthias Ansorge into PMO-2679 Sim results not auto appearing.)
     }
 
     def doWithDynamicMethods = {ctx ->

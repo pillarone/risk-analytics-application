@@ -38,10 +38,18 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         addTerminationListener()
 
         LOG.info "Started session for user '${UserContext.currentUser?.username}'"
+        // 20140107 in Chrome, on production, login as frahman and see the following kind of output in logfile:
+        //
+        //.. (jrichardson)- INFO  P1RATViewFactory Started session for user 'null'
+        //
+        // (But no such problem on test instance - Is it to do with test DB being a newer SQL Server ?)
+        String username = UserContext.currentUser?.username;
+        LOG.info "Started session for user '${username}'"
         try {
-            MDC.put("username", UserContext.currentUser?.username)
+            MDC.put("username", username)
         } catch (Exception ex) {
             // put a user in MDC causes an exception in integration Test
+            LOG.warn("Exception trying to put username into Mapped Diagnostic Context (MDC): " + username)
         }
         traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
         traceLogManager.activateLogging()
@@ -76,7 +84,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     }
 
     private boolean isLoggedIn() {
-        (Holders.grailsApplication.mainContext.getBean("springSecurityService") as SpringSecurityService).isLoggedIn()
+        Holders.grailsApplication.mainContext.getBean("springSecurityService", SpringSecurityService).isLoggedIn()
     }
 
     abstract protected ULCRootPane createRootPane()

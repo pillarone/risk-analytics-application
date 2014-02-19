@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.ApplicationContext
@@ -208,7 +209,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     }
 
     public void testCheckForAdditionalMenuItems() {
-        PopupMenuRegistry.register(ParameterizationNode, new TestMenuItemCreator(name:'ParamItem'))
+        PopupMenuRegistry.register(WorkflowParameterizationNode, new TestMenuItemCreator(name:'ParamItem'))
         PopupMenuRegistry.register(ItemGroupNode, Parameterization, new TestMenuItemCreator(name:'ParamGroup'))
         PopupMenuRegistry.register(ItemGroupNode, Simulation, new TestMenuItemCreator(name:'SimGroup'))
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
