@@ -2,7 +2,7 @@ target/*
 dist/*
 web-app/plugins/*
 web-app/lib/RiskAnalytics*.jar
-*.zip
+*.zip*
 *.log
 *.jasper
 *.iml
@@ -10,3 +10,4 @@ web-app/lib/RiskAnalytics*.jar
 out/*
 _build.xml
 cobertura.ser
+plugin.xml

@@ -1,8 +1,12 @@
 <%@ page import="grails.util.Holders" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.codehaus.groovy.grails.plugins.GrailsPluginManager" %>
 <%@ page contentType="application/x-java-jnlp-file" language="java" %>
 <%
     Map grailsConfig = Holders.getConfig().flatten();
+
+    GrailsPluginManager pluginManager = Holders.getGrailsApplication().getMainContext().getBean("pluginManager", GrailsPluginManager.class);
+    String ulcPluginPath = pluginManager.getPluginPath("ulc");
 
     String codebase = grailsConfig.get("grails.serverURL").toString();
 
@@ -39,7 +43,7 @@
 
     <resources>
         <j2se version="1.5+"/>
-        <jar href="./plugins/ulc-ria-suite-2013-2/lib/ulc-core-client.jar"/>
+        <jar href=".<%= ulcPluginPath %>/lib/ulc-core-client.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-jnlp-client.jar" main="true"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-extensions-client.jar"/>
         <jar href="<%= appPluginDir %>/lib/RiskAnalyticsApplication-client.jar"/>
