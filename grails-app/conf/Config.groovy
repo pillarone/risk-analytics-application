@@ -214,6 +214,7 @@ environments {
 grails {
     plugin {
         springsecurity {
+            logout.invalidateHttpSession = false
             userLookup {
                 userDomainClassName = 'org.pillarone.riskanalytics.core.user.Person'
                 authorityJoinClassName = 'org.pillarone.riskanalytics.core.user.PersonAuthority'
