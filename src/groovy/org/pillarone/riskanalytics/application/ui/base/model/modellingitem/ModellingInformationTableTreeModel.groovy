@@ -51,6 +51,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     FilterDefinition currentFilter = new FilterDefinition()
 
+    private static String logTreeStructureUpdatesKey="ModellingInformationTableTreeModel.logTreeStructureUpdates";
+    private static boolean logTreeStructureUpdates = Boolean.valueOf( System.getProperty(logTreeStructureUpdatesKey,"false") );
+
     @Override
     ITableTreeNode getRoot() {
         builder.root
@@ -60,6 +63,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
+        if( logTreeStructureUpdates){
+            LOG.info("-D"+logTreeStructureUpdatesKey+" is true, will log tree structure updates");
+        } else {
+            LOG.info("-D"+logTreeStructureUpdatesKey+" not true, will NOT log tree structure updates");
+        }
     }
 
     public void buildTreeNodes() {
@@ -160,8 +168,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void updateTreeStructure(IEventConsumer consumer) {
+        if( logTreeStructureUpdates ){
+            LOG.info("update Tree Structure for consumer " + consumer)
+        }
         List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(consumer)
         items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
+            if( logTreeStructureUpdates ){
+                LOG.info("handling ModellingItemEvent: $itemEvent")
+            }
 //          if (isAcceptedByCurrentFilter(itemEvent.item)) { //Uncomment later to fix PMO-2691
             switch (itemEvent.eventType) {
                 case ModellingItemSearchService.ModellingItemEventType.ADDED:
@@ -177,7 +191,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     break;
             }
 //          } //Uncomment later to fix PMO-2691
-        }
+          }
 // try fix PMO-2679 - Detlef added event firing to add new p14n to dropdown list inside simulation window, but it disables the 'open results' button too after the sim.
 //        if (items){
 //            mainModel.fireModelChanged()
