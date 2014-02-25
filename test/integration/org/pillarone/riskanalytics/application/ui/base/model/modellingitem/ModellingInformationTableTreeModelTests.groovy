@@ -11,6 +11,7 @@ import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.search.EventConsumer
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -39,7 +40,6 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     private TestModelListener modelListener
 
     void setUp() {
-        ParameterizationDAO.list()*.delete(flush: true)
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         FileImportService.importModelsIfNeeded(['Application'])
@@ -60,6 +60,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         newParameterization('Parametrization X', '9')
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
+        ModellingItemSearchService.getInstance().refresh()
         mainModel = new RiskAnalyticsMainModel()
         model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
@@ -70,17 +71,16 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     }
 
     private void newParameterization(String name, String version) {
-        new ParameterizationDAO(name: name, itemVersion: version,
-                modelClassName: 'models.application.ApplicationModel', periodCount: 1,
-                status: Status.NONE, creationDate: new DateTime(), modificationDate: new DateTime()).save(flush: true)
-
+        ParameterizationDAO.withNewSession {
+            new ParameterizationDAO(name: name, itemVersion: version,
+                    modelClassName: 'models.application.ApplicationModel', periodCount: 1,
+                    status: Status.NONE, creationDate: new DateTime(), modificationDate: new DateTime()).save(flush: true)
+        }
     }
 
     protected void tearDown() {
         LocaleResources.clearTestMode()
         model.service.unregisterAllConsumers(session)
-        SimulationRun.list()*.delete(flush: true)
-        ParameterizationDAO.list()*.delete(flush: true)
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
     }
@@ -98,6 +98,12 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     void testSimpleParamStructureWithTenNodes() {
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
+        def count = paramsNode.getChildCount()
+        println(count)
+        for (int i = 0; i < count; i++) {
+            println(paramsNode.getChildAt(i))
+        }
+
         assertEquals 2, paramsNode.childCount
         def v11Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v11Node.name
@@ -118,8 +124,10 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     }
 
     void testUpdateTreeStructure() {
-        ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
-        parameterizationDAO.save(flush: true)
+        ParameterizationDAO.withNewSession {
+            ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
+            parameterizationDAO.save(flush: true)
+        }
         TestModelChangedListener listener = new TestModelChangedListener()
         mainModel.addModelChangedListener(listener)
         model.updateTreeStructure(eventConsumer)
@@ -127,29 +135,44 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
+        def count = paramsNode.getChildCount()
+        println(count)
+        for (int i = 0; i < count; i++) {
+            println(paramsNode.getChildAt(i))
+        }
+
         assertEquals 2, paramsNode.childCount
         def v12Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v12Node.name
 
         assertEquals '12', v12Node.abstractUIItem.item.versionNumber.toString()
 
-        parameterizationDAO.status = Status.IN_REVIEW
-        parameterizationDAO.save(flush: true)
+        ParameterizationDAO.withNewSession {
+            ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion('Parametrization X', '12')
+            parameterizationDAO.status = Status.IN_REVIEW
+            parameterizationDAO.save(flush: true)
+        }
         model.updateTreeStructure(eventConsumer)
         assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
-        parameterizationDAO.delete(flush: true)
+
+        ParameterizationDAO.withNewSession {
+            ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion('Parametrization X', '12')
+            parameterizationDAO.delete(flush: true)
+        }
         model.updateTreeStructure(eventConsumer)
         assertEquals(2, paramsNode.childCount)
         def v11Node = paramsNode.getChildAt(1)
         assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
-        SimulationRun run = new SimulationRun()
-        run.parameterization = ParameterizationDAO.list()[0]
-        run.resultConfiguration = ResultConfigurationDAO.list()[0]
-        run.name = 'TestRun'
-        run.startTime = new DateTime()
-        run.endTime = new DateTime()
-        run.model = 'models.application.ApplicationModel'
-        run.save(flush: true)
+        SimulationRun.withNewSession {
+            SimulationRun run = new SimulationRun()
+            run.parameterization = ParameterizationDAO.list()[0]
+            run.resultConfiguration = ResultConfigurationDAO.list()[0]
+            run.name = 'TestRun'
+            run.startTime = new DateTime()
+            run.endTime = new DateTime()
+            run.model = 'models.application.ApplicationModel'
+            run.save(flush: true)
+        }
         model.updateTreeStructure(eventConsumer)
         assertEquals(1, resultsNode.childCount)
 
@@ -160,6 +183,13 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         IMutableTableTreeNode paramsNode = applicationNode.getChildAt(0) as IMutableTableTreeNode
         assertEquals('Application', model.getValueAt(applicationNode, 0))
         assertEquals('Parameterization', model.getValueAt(paramsNode, 0))
+
+
+        def count = paramsNode.getChildCount()
+        println(count)
+        for (int i = 0; i < count; i++) {
+            println(paramsNode.getChildAt(i))
+        }
         assertEquals('ApplicationParameters v1', model.getValueAt(paramsNode.getChildAt(0), 0))
     }
 
@@ -193,13 +223,13 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     }
 
     void testReturnedInstance() {
-        UserContext.metaClass.static.hasCurrentUser = {->
+        UserContext.metaClass.static.hasCurrentUser = { ->
             true
         }
         ModellingInformationTableTreeModel model = ModellingInformationTableTreeModel.getInstance(mainModel)
         assertTrue(model instanceof ModellingInformationTableTreeModel)
         assertFalse(model instanceof StandaloneTableTreeModel)
-        UserContext.metaClass.static.hasCurrentUser = {->
+        UserContext.metaClass.static.hasCurrentUser = { ->
             false
         }
         assertEquals(8, model.columnCount)
@@ -213,37 +243,44 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
         ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
         ModellingItem paramsItem = paramsNode.abstractUIItem.item
 
-        SimulationRun run = new SimulationRun()
-        ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '11')
-        run.parameterization = parameterizationDAO
-        run.resultConfiguration = ResultConfigurationDAO.list()[0]
-        run.name = 'TestRun1'
-        run.startTime = new DateTime()
-        run.endTime = new DateTime()
-        run.model = 'models.application.ApplicationModel'
-        run.save(flush: true)
-
+        SimulationRun.withNewSession {
+            SimulationRun run = new SimulationRun()
+            ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '11')
+            run.parameterization = parameterizationDAO
+            run.resultConfiguration = ResultConfigurationDAO.list()[0]
+            run.name = 'TestRun1'
+            run.startTime = new DateTime()
+            run.endTime = new DateTime()
+            run.model = 'models.application.ApplicationModel'
+            run.save(flush: true)
+        }
 
         model.updateTreeStructure(eventConsumer)
         // expect one nodeStructure changed on simulation node
         assert 1 == modelListener.nodeStructureChangedEvents.size()
         modelListener.reset()
 
-        run = new SimulationRun()
-        run.parameterization = parameterizationDAO
-        run.resultConfiguration = ResultConfigurationDAO.list()[0]
-        run.name = 'TestRun2'
-        run.startTime = new DateTime()
-        run.endTime = new DateTime()
-        run.model = 'models.application.ApplicationModel'
-        run.save(flush: true)
+        SimulationRun.withNewSession {
+            ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '11')
+            SimulationRun run = new SimulationRun()
+            run.parameterization = parameterizationDAO
+            run.resultConfiguration = ResultConfigurationDAO.list()[0]
+            run.name = 'TestRun2'
+            run.startTime = new DateTime()
+            run.endTime = new DateTime()
+            run.model = 'models.application.ApplicationModel'
+            run.save(flush: true)
+        }
 
         model.updateTreeStructure(eventConsumer)
         assert 1 == modelListener.nodeInsertedEvents.size()
         modelListener.reset()
 
-        parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
-        parameterizationDAO.save(flush: true)
+        ParameterizationDAO.withNewSession {
+            ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '11')
+            parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
+            parameterizationDAO.save(flush: true)
+        }
         model.updateTreeStructure(eventConsumer)
         assert 3 == modelListener.nodeChangedEvents.size()
 
@@ -274,21 +311,23 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
     }
 
     void testUnknownModelClass() {
-        ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
-        parameterizationDAO.save(flush: true)
+        ParameterizationDAO.withNewSession {
+            ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
+            parameterizationDAO.save(flush: true)
+        }
         model.updateTreeStructure(eventConsumer)
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
 
     void testItemInstanceIdentity() {
-        newParameterization('Parametrization X','12')
+        newParameterization('Parametrization X', '12')
         ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '12')
         model.updateTreeStructure(eventConsumer)
         IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
         ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v12') as ParameterizationNode
         assertNotNull(paramsNode)
-        assertNotNull (ModellingItemFactory.getItemInstances()[ModellingItemFactory.key(Parameterization,parameterizationDAO.id)])
+        assertNotNull(ModellingItemFactory.getItemInstances()[ModellingItemFactory.key(Parameterization, parameterizationDAO.id)])
         Parameterization cachedItem = ModellingItemFactory.getParameterization(parameterizationDAO)
         assertTrue(cachedItem.is(paramsNode.abstractUIItem.item))
     }
@@ -336,6 +375,7 @@ class ModellingInformationTableTreeModelTests extends RiskAnalyticsAbstractStand
 
     class TestModelChangedListener implements IModelChangedListener {
         boolean changeCalled
+
         @Override
         void modelChanged() {
             changeCalled = true

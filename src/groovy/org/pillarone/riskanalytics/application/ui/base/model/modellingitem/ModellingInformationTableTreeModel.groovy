@@ -25,12 +25,14 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
+import static org.pillarone.riskanalytics.application.search.ModellingItemSearchService.*
+
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     @Lazy
-    ModellingItemSearchService service = { ModellingItemSearchService.getInstance() }()
+    ModellingItemSearchService service = { getInstance() }()
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
@@ -51,8 +53,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     FilterDefinition currentFilter = new FilterDefinition()
 
-    private static String logTreeStructureUpdatesKey="ModellingInformationTableTreeModel.logTreeStructureUpdates";
-    private static boolean logTreeStructureUpdates = Boolean.valueOf( System.getProperty(logTreeStructureUpdatesKey,"false") );
+    private static String logTreeStructureUpdatesKey = "ModellingInformationTableTreeModel.logTreeStructureUpdates";
+    private
+    static boolean logTreeStructureUpdates = Boolean.valueOf(System.getProperty(logTreeStructureUpdatesKey, "false"));
 
     @Override
     ITableTreeNode getRoot() {
@@ -63,10 +66,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
-        if( logTreeStructureUpdates){
-            LOG.info("-D"+logTreeStructureUpdatesKey+" is true, will log tree structure updates");
+        if (logTreeStructureUpdates) {
+            LOG.info("-D" + logTreeStructureUpdatesKey + " is true, will log tree structure updates");
         } else {
-            LOG.info("-D"+logTreeStructureUpdatesKey+" not true, will NOT log tree structure updates");
+            LOG.info("-D" + logTreeStructureUpdatesKey + " not true, will NOT log tree structure updates");
         }
     }
 
@@ -168,34 +171,40 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void updateTreeStructure(IEventConsumer consumer) {
-        if( logTreeStructureUpdates ){
-            LOG.info("update Tree Structure for consumer " + consumer)
-        }
-        List<ModellingItemSearchService.ModellingItemEvent> items = getPendingEvents(consumer)
-        items.each { ModellingItemSearchService.ModellingItemEvent itemEvent ->
-            if( logTreeStructureUpdates ){
-                LOG.info("handling ModellingItemEvent: $itemEvent")
-            }
+        List<ModellingItemEvent> wrapped = updateAndGetItemsFromModellingItemFactory(getPendingEvents(consumer))
+
+        wrapped.each { ModellingItemEvent itemEvent ->
 //          if (isAcceptedByCurrentFilter(itemEvent.item)) { //Uncomment later to fix PMO-2691
             switch (itemEvent.eventType) {
-                case ModellingItemSearchService.ModellingItemEventType.ADDED:
-                    builder.addNodeForItem(ModellingItemFactory.addItemInstance(itemEvent.item))
+                case ModellingItemEventType.ADDED:
+                    builder.addNodeForItem(itemEvent.item)
                     break;
-                case ModellingItemSearchService.ModellingItemEventType.REMOVED:
-                    builder.removeNodeForItem(ModellingItemFactory.getOrCreateItemInstance(itemEvent.item))
-                    ModellingItemFactory.remove(itemEvent.item)
+                case ModellingItemEventType.REMOVED:
+                    builder.removeNodeForItem(itemEvent.item)
                     break;
-                case ModellingItemSearchService.ModellingItemEventType.UPDATED:
-                    //the item in the tree will be updated. Since it should be the same instance as in the ModellingItemFactory, there is no need to update it in the ModellingItemFactory
+                case ModellingItemEventType.UPDATED:
                     builder.itemChanged(itemEvent.item)
                     break;
             }
 //          } //Uncomment later to fix PMO-2691
-          }
+        }
 // try fix PMO-2679 - Detlef added event firing to add new p14n to dropdown list inside simulation window, but it disables the 'open results' button too after the sim.
 //        if (items){
 //            mainModel.fireModelChanged()
 //        }
+    }
+
+    private List<ModellingItemEvent> updateAndGetItemsFromModellingItemFactory(List<ModellingItemEvent> items) {
+        items.collect { ModellingItemEvent itemEvent ->
+            def wrappedEvent = new ModellingItemEvent(
+                    item: ModellingItemFactory.updateOrCreateModellingItem(itemEvent.item),
+                    eventType: itemEvent.eventType
+            )
+            if (itemEvent.eventType == ModellingItemEventType.REMOVED) {
+                ModellingItemFactory.remove(itemEvent.item)
+            }
+            wrappedEvent
+        }
     }
 
 // Uncomment later to fix PMO-2691
@@ -205,7 +214,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 //        }
 //    }
 
-    public List<ModellingItemSearchService.ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {
+    public List<ModellingItemEvent> getPendingEvents(IEventConsumer consumer) {
         service.getPendingEvents(consumer)
     }
 

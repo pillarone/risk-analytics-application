@@ -475,8 +475,8 @@ class ModellingItemFactory {
                 item.tags = dao.tags*.tag
             } catch (Exception ex) {}
             }
-        item
-    }
+            item
+        }
 
     private static Simulation getItem(SimulationRun run) {
         String key = key(SimulationRun, run.id)
@@ -566,14 +566,10 @@ class ModellingItemFactory {
         getItemInstances().clear()
     }
 
-    static ModellingItem getOrCreateItemInstance(ModellingItem item) {
-        return getItemInstances()[key(item.class, item.id)] ?: addItemInstance(item)
-    }
-
-    static ModellingItem addItemInstance(ModellingItem item) {
-        def itemCopy = ModellingItemCopyUtils.copyModellingItem(item)
-        def key = key(item.class, item.id)
-        getItemInstances()[key] = itemCopy
-        return itemCopy
+    static ModellingItem updateOrCreateModellingItem(ModellingItem source) {
+        def key = key(source.class, source.id)
+        def target = ModellingItemCopyUtils.copyModellingItem(source, getItemInstances()[key])
+        getItemInstances()[key] = target
+        return target
     }
 }

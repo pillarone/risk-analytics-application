@@ -27,7 +27,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         this.item = item
     }
 
-
     @Override
     public boolean isLoaded() {
         return ((ModellingItem) item).isLoaded()
@@ -68,8 +67,9 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         mainModel.fireModelChanged()
         AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, selectedModel, mainModel)
-        if (openNewVersion)
+        if (openNewVersion) {
             mainModel.openItem(selectedModel, modellingUIItem)
+        }
         return modellingUIItem
     }
 
@@ -95,36 +95,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         if (item instanceof Simulation) mainModel.fireRowDeleted(item)
     }
 
-    void update(ModellingItem item) {
-        //update fields that could change when
-        this.item.name = item.name
-        this.item.lastUpdater = item.lastUpdater
-        this.item.modificationDate = item.modificationDate
-        internalUpdate(item)
-    }
-
-    private internalUpdate(ModellingItem item) {}
-
-    private internalUpdate(Parameterization item) {
-        Parameterization originalItem = this.item as Parameterization
-        originalItem.tags = item.tags
-        originalItem.status = item.status
-        originalItem.valid = item.valid
-        originalItem.dealId = item.dealId
-    }
-
-    private internalUpdate(Resource item) {
-        Resource originalItem = this.item as Resource
-        originalItem.tags = item.tags
-        originalItem.status = item.status
-        originalItem.valid = item.valid
-    }
-
-    private internalUpdate(Simulation item) {
-        Simulation originalItem = this.item as Simulation
-        originalItem.tags = item.tags
-    }
-
     @Override
     void rename(String newName) {
         item.daoClass.withTransaction { status ->
@@ -146,7 +116,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
             ((ModellingUIItem) childNode.abstractUIItem).rename(name)
         }
     }
-
 
     @Override
     void save() {
@@ -173,8 +142,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
             }
         }
     }
-
-
 
     public void importItem() {
         mainModel.fireModelChanged()
@@ -203,8 +170,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
     String getNameAndVersion() {
         return item.nameAndVersion
     }
-
-
 
     public Model getModel() {
         if (!this.@model) {
