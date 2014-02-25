@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+
 //import org.pillarone.riskanalytics.functional.P1RATAbstractStandaloneTestCase
 
 
@@ -28,6 +30,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     protected void setUp() {
         FileImportService.importModelsIfNeeded(["Core"])
+        ModellingItemSearchService.getInstance().refresh()
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         removeTags()
