@@ -7,6 +7,7 @@ import com.ulcjava.base.server.ULCSession
 import com.ulcjava.testframework.operator.*
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import models.application.ApplicationModel
+import models.core.CoreModel
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
@@ -58,7 +59,6 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
             throw e;
         }
     }
-
 
 
     ULCFrameOperator getMainFrameOperator() {
@@ -126,11 +126,11 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
 
     protected ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
-        treeModel.builder.metaClass.getAllModelClasses = {->
+        treeModel.builder.metaClass.getAllModelClasses = { ->
             return [ApplicationModel]
         }
 
-        treeModel.builder.metaClass.getAllBatchRuns = {->
+        treeModel.builder.metaClass.getAllBatchRuns = { ->
             return [new BatchRun(name: "test")]
         }
 
@@ -138,7 +138,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         treeModel.metaClass.getPendingEvents = { IEventConsumer consumer ->
             return []
         }
-        treeModel.metaClass.getFilteredItems = {->
+        treeModel.metaClass.getFilteredItems = { ->
             Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
             Parameterization parameterization2 = createStubParameterization(2, Status.DATA_ENTRY)
             parameterization2.versionNumber = new VersionNumber("R1")
@@ -147,18 +147,19 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
             resultConfiguration.modelClass = ApplicationModel
             Simulation simulation = new Simulation("simulation1")
             simulation.parameterization = new Parameterization("param1")
+            simulation.parameterization.modelClass = CoreModel
             simulation.template = new ResultConfiguration("result1")
+            simulation.template.modelClass = CoreModel
             simulation.id = 1
             simulation.setEnd(new DateTime())
             simulation.modelClass = ApplicationModel
             simulation.metaClass.getSize = { Class SimulationClass -> return 0 }
-            return [parameterization1, parameterization2, parameterization3, resultConfiguration,simulation]
+            return [parameterization1, parameterization2, parameterization3, resultConfiguration, simulation]
         }
 
         treeModel.buildTreeNodes()
         return treeModel
     }
-
 
 
     Parameterization createStubParameterization(int index, Status status) {

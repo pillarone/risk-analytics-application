@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.interaction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 
 import javax.swing.tree.TreePath
@@ -28,7 +29,6 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
 
         tree.doExpandPath(pathForRename.parentPath)
         int row = tree.getRowForPath(pathForRename)
-
 
         tree.selectCell(row, 0)
 
