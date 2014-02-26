@@ -22,12 +22,6 @@ import org.pillarone.riskanalytics.application.output.CustomTableDAO
 import org.pillarone.riskanalytics.application.output.result.item.CustomTable
 
 
-/*
-*  Dont understand why theres a cache per user context
-*  This is a dangerous antipattern singleton
-*  Doesnt seem to replace or update changed modeling items - bug ?
-*  No obvious synchronisation visible here either - race conditions ?
-* */
 class ModellingItemFactory {
 
     private static Log LOG = LogFactory.getLog(ModellingItemFactory)
@@ -474,9 +468,9 @@ class ModellingItemFactory {
             try {
                 item.tags = dao.tags*.tag
             } catch (Exception ex) {}
-            }
-            item
         }
+        item
+    }
 
     private static Simulation getItem(SimulationRun run) {
         String key = key(SimulationRun, run.id)
@@ -569,6 +563,13 @@ class ModellingItemFactory {
     static ModellingItem updateOrCreateModellingItem(ModellingItem source) {
         def key = key(source.class, source.id)
         def target = ModellingItemCopyUtils.copyModellingItem(source, getItemInstances()[key])
+        getItemInstances()[key] = target
+        return target
+    }
+
+    static ModellingItem getOrCreateModellingItem(ModellingItem source) {
+        def key = key(source.class, source.id)
+        def target = getItemInstances()[key] ?: ModellingItemCopyUtils.copyModellingItem(source, null)
         getItemInstances()[key] = target
         return target
     }
