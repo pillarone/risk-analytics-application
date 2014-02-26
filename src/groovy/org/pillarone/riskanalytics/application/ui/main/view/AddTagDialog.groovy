@@ -79,6 +79,7 @@ class AddTagDialog {
         ULCBoxPane content = new ULCBoxPane(rows: 3, columns: 2)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ULCScrollPane scrollList = new ULCScrollPane(tagesListView.content)
+        scrollList.verticalScrollBar.blockIncrement = 180  // more reasonable scrollbar page-up/down size
         scrollList.setPreferredSize(new Dimension(160, 200))
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollList)
         content.add(ULCBoxPane.BOX_LEFT_TOP, applyButton)
