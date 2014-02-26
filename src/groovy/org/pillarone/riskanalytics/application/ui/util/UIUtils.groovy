@@ -108,7 +108,7 @@ class UIUtils {
     }
 
     public static ULCIcon getIcon(String fileName) {
-        URL url = new UIUtils().class.getResource(ICON_DIRECTORY + fileName)
+        URL url = UIUtils.getResource(ICON_DIRECTORY + fileName)
         if (url) {
             return new ULCIcon(url)
         }

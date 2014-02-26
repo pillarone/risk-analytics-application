@@ -139,7 +139,7 @@ class ModellingItemSearchService {
             t = now
         }
 
-        List<ModellingItem> ret = results.collect { ModellingItemFactory.getOrCreateItemInstance(it) }
+        List<ModellingItem> ret = results.collect { ModellingItemFactory.getOrCreateModellingItem(it) }
         if( profileCacheFiltering ){
             long now = System.currentTimeMillis()
             LOG.info("Timed " + (now - t) + " ms: collecting. Total: " + (now-start)/1000 + " sec.");

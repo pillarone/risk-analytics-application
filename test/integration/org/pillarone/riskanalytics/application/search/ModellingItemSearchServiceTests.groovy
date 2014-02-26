@@ -4,6 +4,7 @@ import grails.util.Holders
 import models.core.CoreModel
 import org.junit.Before
 import org.junit.Test
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -28,20 +29,25 @@ class ModellingItemSearchServiceTests {
         assertEquals(4, results.size())
 
         Parameterization parameterization = new Parameterization("MyParameters", CoreModel)
-        parameterization.save()
+        ParameterizationDAO.withNewSession {
+            parameterization.save()
+        }
 
         results = modellingItemSearchService.search([new AllFieldsFilter(query: "Parameters")])
 
         assertEquals(5, results.size())
 
-        assertNotNull(results.find { it.name == parameterization.name})
+        assertNotNull(results.find { it.name == parameterization.name })
 
-        parameterization.delete()
+        ParameterizationDAO.withNewSession {
+            parameterization.delete()
+        }
+
         results = modellingItemSearchService.search([new AllFieldsFilter(query: "Parameters")])
 
         assertEquals(4, results.size())
 
-        assertNull(results.find { it.name == parameterization.name})
+        assertNull(results.find { it.name == parameterization.name })
 
     }
 
@@ -49,11 +55,15 @@ class ModellingItemSearchServiceTests {
     void testRenameParametrization() {
 
         Parameterization parameterization = new Parameterization("MyParameters", CoreModel)
-        parameterization.save()
+        ParameterizationDAO.withNewSession {
+            parameterization.save()
+        }
         List<ModellingItem> results = modellingItemSearchService.search([new AllFieldsFilter(query: "MyParameters")])
         assertEquals(1, results.size())
 
-        parameterization.rename("RenamedParameters")
+        ParameterizationDAO.withNewSession {
+            parameterization.rename("RenamedParameters")
+        }
         results = modellingItemSearchService.search([new AllFieldsFilter(query: "MyParameters")])
         assertEquals(0, results.size())
         results = modellingItemSearchService.search([new AllFieldsFilter(query: "RenamedParameters")])

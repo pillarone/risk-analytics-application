@@ -364,7 +364,7 @@ class ModellingInformationTableTreeBuilder {
             itemNodeChanged(itemGroupNode, item)
             ITableTreeNode simulationGroupNode = modelNode.getChildAt(SIMULATION_NODE_INDEX)
             findAllNodesForItem(simulationGroupNode, item).each {
-                updateValues(item, it)
+                updateValues(it)
             }
         }
     }
@@ -383,12 +383,11 @@ class ModellingInformationTableTreeBuilder {
         ItemNode itemNode = findNodeForItem(itemGroupNode, item)
         LOG.debug("Node for item. ${itemNode?.name}")
         if (itemNode) {
-            updateValues(item, itemNode)
+            updateValues(itemNode)
         }
     }
 
-    private void updateValues(ModellingItem item, ItemNode itemNode) {
-        itemNode.abstractUIItem.update(item)
+    private void updateValues(ItemNode itemNode) {
         model.putValues(itemNode)
         model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
@@ -398,7 +397,7 @@ class ModellingInformationTableTreeBuilder {
         if (!itemNode) {
             addNodeForItem(item, true)
         } else {
-            model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+            updateValues(itemNode)
         }
     }
 
@@ -654,9 +653,11 @@ class ModellingInformationTableTreeBuilder {
         Model selectedModelInstance = item.modelClass?.newInstance()
         try {
             node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
-            DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
+            def parameterization = ModellingItemFactory.updateOrCreateModellingItem(item.parameterization)
+            DefaultMutableTableTreeNode paramsNode = createNode(parameterization)
             paramsNode.leaf = true
-            DefaultMutableTableTreeNode templateNode = createNode(item.template)
+            def template = ModellingItemFactory.updateOrCreateModellingItem(item.template)
+            DefaultMutableTableTreeNode templateNode = createNode(template)
             templateNode.leaf = true
 
             node.add(paramsNode)

@@ -79,9 +79,11 @@ class SimulationSettingsPane {
         parameterizationVersionsComboBox.addActionListener([actionPerformed: {e ->
             ParameterizationVersionsListModel listModel = parameterizationVersionsComboBox.model
             if (listModel.isValid(listModel.selectedItem)) {
+                parameterizationVersionsComboBox.background = Color.white
                 parameterizationVersionsComboBox.foreground = Color.black
             } else {
-                parameterizationVersionsComboBox.foreground = Color.orange
+                parameterizationVersionsComboBox.background = Color.red
+                parameterizationVersionsComboBox.foreground= Color.black
             }
             model.notifyConfigurationChanged()
         }] as IActionListener)
@@ -301,25 +303,6 @@ class SimulationSettingsPane {
         }
         tabbedPane.addTab("Post simulation calculations", new ULCScrollPane(postSimulationCalculationPane.content))
         return tabbedPane
-    }
-
-}
-
-class VersionComboBoxRenderer extends DefaultComboBoxCellRenderer {
-
-    IRendererComponent getComboBoxCellRendererComponent(ULCComboBox comboBox, Object value, boolean isSelected, int row) {
-        ULCLabel component = super.getComboBoxCellRendererComponent(comboBox, value, isSelected, row)
-        ParameterizationVersionsListModel model = comboBox.model
-        if (value != null) {
-            if (!model.isValid(value)) {
-                component.font = component.font.deriveFont(Font.ITALIC + Font.BOLD)
-                component.foreground = Color.orange
-            } else {
-                component.font = component.font.deriveFont(Font.PLAIN + Font.BOLD)
-                component.foreground = Color.black
-            }
-        }
-        return component;
     }
 
 }

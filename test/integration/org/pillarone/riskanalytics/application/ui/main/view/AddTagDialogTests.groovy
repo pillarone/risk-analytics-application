@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.testframework.operator.*
 import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -26,6 +27,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     protected void setUp() {
         FileImportService.importModelsIfNeeded(["Core"])
+        ModellingItemSearchService.getInstance().refresh()
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         removeTags()

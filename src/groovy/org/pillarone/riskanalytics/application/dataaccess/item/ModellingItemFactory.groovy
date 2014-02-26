@@ -467,7 +467,7 @@ class ModellingItemFactory {
             try {
                 item.tags = dao.tags*.tag
             } catch (Exception ex) {}
-            }
+        }
         item
     }
 
@@ -559,14 +559,17 @@ class ModellingItemFactory {
         getItemInstances().clear()
     }
 
-    static ModellingItem getOrCreateItemInstance(ModellingItem item) {
-        return getItemInstances()[key(item.class, item.id)] ?: addItemInstance(item)
+    static ModellingItem updateOrCreateModellingItem(ModellingItem source) {
+        def key = key(source.class, source.id)
+        def target = ModellingItemCopyUtils.copyModellingItem(source, getItemInstances()[key])
+        getItemInstances()[key] = target
+        return target
     }
 
-    static ModellingItem addItemInstance(ModellingItem item) {
-        def itemCopy = ModellingItemCopyUtils.copyModellingItem(item)
-        def key = key(item.class, item.id)
-        getItemInstances()[key] = itemCopy
-        return itemCopy
+    static ModellingItem getOrCreateModellingItem(ModellingItem source) {
+        def key = key(source.class, source.id)
+        def target = getItemInstances()[key] ?: ModellingItemCopyUtils.copyModellingItem(source, null)
+        getItemInstances()[key] = target
+        return target
     }
 }
