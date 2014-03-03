@@ -13,12 +13,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainVie
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+
 import com.ulcjava.base.server.ULCSession
 import com.ulcjava.applicationframework.application.Application
 
@@ -72,19 +73,18 @@ class P1RATApplication extends Application {
         UIUtils.setRootPane(mainFrame)
         mainFrame.visible = true
         mainFrame.toFront()
-        mainFrame.addWindowListener([windowClosing: {WindowEvent e -> mainFrame.visible = false; handleEvent(e)}] as IWindowListener)
+        mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; handleEvent(e) }] as IWindowListener)
 
         ModelRegistry.instance.addListener(mainModel)
     }
 
     private void handleEvent(WindowEvent e) {
-        Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService).unregisterAllConsumers(ULCSession.currentSession())
+        def session = ULCSession.currentSession()
+        Holders.grailsApplication.mainContext.getBean(CacheItemSearchService).unregisterAllConsumersForSession(session)
         ModelRegistry.instance.removeListener(mainModel)
         traceLogManager.deactivateLogging()
         ExitAction.terminate()
     }
-
-
 
 
 }

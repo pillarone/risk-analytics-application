@@ -1,8 +1,7 @@
 package org.pillarone.riskanalytics.application
 
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
-import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -21,7 +20,6 @@ import org.pillarone.riskanalytics.core.workflow.AuditLog
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
 
     private Throwable throwable
-
 
     final void start() {
         try {
@@ -42,27 +40,22 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
     protected void tearDown() {
         MockUserPreferences.INSTANCE.clearFakePreferences()
         ModelRegistry.instance.listeners.clear() //TODO: find better solution
-        Thread cleanUpThread = new Thread(
-                [run: {
-                    SimulationRun.withTransaction {
-                        AuditLog.list()*.delete()
-                        BatchRunSimulationRun.list()*.delete()
-                        BatchRun.list()*.delete()
-                        PostSimulationCalculation.list()*.delete()
-                        SingleValueResult.list()*.delete()
-                        SimulationRun.list()*.delete()
-                        ResultStructureDAO.list()*.delete()
-                        ResultConfigurationDAO.list()*.delete()
-                        ParameterizationDAO.list()*.delete()
-                        ModelStructureDAO.list()*.delete()
-                        ModelDAO.list()*.delete()
-                    }
-                }] as Runnable
-        )
-        cleanUpThread.start()
-        cleanUpThread.join()
+        SimulationRun.withNewSession { def session ->
+            AuditLog.list()*.delete()
+            BatchRunSimulationRun.list()*.delete()
+            BatchRun.list()*.delete()
+            PostSimulationCalculation.list()*.delete()
+            SingleValueResult.list()*.delete()
+            SimulationRun.list()*.delete()
+            ResultStructureDAO.list()*.delete()
+            ResultConfigurationDAO.list()*.delete()
+            ParameterizationDAO.list()*.delete()
+            ModelStructureDAO.list()*.delete()
+            ModelDAO.list()*.delete()
+            session.flush()
+        }
+        CacheItemSearchService.getInstance().refresh()
         super.tearDown()
-
     }
 
 }

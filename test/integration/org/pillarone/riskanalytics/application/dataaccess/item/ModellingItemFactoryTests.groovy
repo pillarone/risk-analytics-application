@@ -72,7 +72,7 @@ class ModellingItemFactoryTests {
         assertEquals currentCount + 1, ModellingItemFactory.getParameterizationsForModel(CoreModel).size()
         List newParams = ModellingItemFactory.getNewestParameterizationsForModel(CoreModel)
         assertEquals currentCount, newParams.size()
-        newParams.each {it.load()}
+        newParams.each { it.load() }
         assertTrue newParams.contains(newVersion)
         assertFalse newParams.contains(parameterization)
     }

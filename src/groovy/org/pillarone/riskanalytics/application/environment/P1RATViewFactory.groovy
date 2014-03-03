@@ -19,12 +19,13 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 
 //used for Applet & JNLP (but not standalone)
 @CompileStatic
@@ -90,7 +91,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     abstract protected ULCRootPane createRootPane()
 
     void stop() {
-        Holders.grailsApplication.mainContext.getBean(ModellingItemSearchService).unregisterAllConsumers(ULCSession.currentSession())
+        CacheItemSearchService.getInstance().unregisterAllConsumersForSession(ULCSession.currentSession())
         traceLogManager.deactivateLogging()
     }
 

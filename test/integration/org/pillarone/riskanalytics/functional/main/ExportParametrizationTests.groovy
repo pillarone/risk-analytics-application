@@ -5,7 +5,7 @@ import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
@@ -18,7 +18,7 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
     @Override
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
-        ModellingItemSearchService.instance.refresh()
+        CacheItemSearchService.instance.refresh()
         super.setUp()
     }
 

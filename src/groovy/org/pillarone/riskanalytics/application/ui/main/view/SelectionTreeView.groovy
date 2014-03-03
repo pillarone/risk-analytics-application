@@ -15,8 +15,7 @@ import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.server.ULCSession
 import com.ulcjava.base.shared.IDefaults
-import org.pillarone.riskanalytics.application.search.EventConsumer
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
@@ -26,6 +25,8 @@ import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -34,7 +35,7 @@ class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
-    EventConsumer eventConsumer
+    CacheItemEventConsumer eventConsumer
     RiskAnalyticsMainModel mainModel
     ModellingItemSelectionListener modellingItemSelectionListener
     ModellingInformationTableTreeModel navigationTableTreeModel
@@ -63,8 +64,8 @@ class SelectionTreeView {
 
                 }] as IActionListener)
         treeSyncTimer.setSyncClientState(false)
-        eventConsumer = new EventConsumer(ULCSession.currentSession(), treeSyncTimer)
-        ModellingItemSearchService.instance.register(eventConsumer)
+        eventConsumer = new CacheItemEventConsumer(ULCSession.currentSession(), treeSyncTimer)
+        CacheItemSearchService.instance.register(eventConsumer)
     }
 
     private void layoutComponents() {
@@ -130,7 +131,7 @@ class SelectionTreeView {
                 IColumnDescriptor descriptor = getDescriptor(columnIndex)
                 if (descriptor != null) {
                     SelectionTreeHeaderDialog dialog =
-                        new CheckBoxDialog(tree.viewPortTableTree, columnIndex, descriptor)
+                            new CheckBoxDialog(tree.viewPortTableTree, columnIndex, descriptor)
                     dialog.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
                         filterTree(filter)
                     }] as IFilterChangedListener)

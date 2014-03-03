@@ -653,11 +653,9 @@ class ModellingInformationTableTreeBuilder {
         Model selectedModelInstance = item.modelClass?.newInstance()
         try {
             node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
-            def parameterization = ModellingItemFactory.updateOrCreateModellingItem(item.parameterization)
-            DefaultMutableTableTreeNode paramsNode = createNode(parameterization)
+            DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
             paramsNode.leaf = true
-            def template = ModellingItemFactory.updateOrCreateModellingItem(item.template)
-            DefaultMutableTableTreeNode templateNode = createNode(template)
+            DefaultMutableTableTreeNode templateNode = createNode(item.template)
             templateNode.leaf = true
 
             node.add(paramsNode)

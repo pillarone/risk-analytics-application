@@ -1,16 +1,14 @@
 package org.pillarone.riskanalytics.functional
 
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.server.ApplicationConfiguration
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import com.ulcjava.testframework.operator.*
-import org.springframework.transaction.support.TransactionSynchronizationManager
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 
 import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
@@ -28,7 +26,7 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
         ModelRegistry.instance.loadFromDatabase()
-        ModellingItemSearchService.getInstance().refresh()
+        CacheItemSearchService.getInstance().refresh()
         super.setUp()
     }
 

@@ -3,6 +3,7 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
@@ -10,9 +11,10 @@ import org.pillarone.riskanalytics.application.output.structure.ResultStructureD
 class ApplicationBootStrap {
 
     def quartzScheduler
-    def modellingItemSearchService
+    //TODO only injected to initialize the cache. Find a better place
+    CacheItemSearchService cacheItemSearchService
 
-    def init = {servletContext ->
+    def init = { servletContext ->
 
         if (Environment.current == Environment.TEST) {
             return
@@ -21,7 +23,7 @@ class ApplicationBootStrap {
         def modelFilter = ApplicationHolder.application.config?.models
         List models = null
         if (modelFilter) {
-            models = modelFilter.collect {it - "Model"}
+            models = modelFilter.collect { it - "Model" }
         }
 
         // PMO-1752: Clear the views (structure_mapping, result_structuredao) on startup

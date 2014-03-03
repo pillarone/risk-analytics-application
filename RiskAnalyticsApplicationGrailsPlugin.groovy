@@ -33,7 +33,7 @@ ULC view
     }
 
     def doWithSpring = {
-        // 20140129 Removed modellingItemListener and hibernateEventListeners in favour of
+        // 20140129 Removed cacheItemListener and hibernateEventListeners in favour of
         // alternative configured in ra-core, which furthermore doesn't run on ULC thread.
         // (During investigation with Matthias Ansorge into PMO-2679 Sim results not auto appearing.)
     }

@@ -54,8 +54,9 @@ class AddNewCommentTests extends AbstractSimpleFunctionalTest {
         ULCClipboard.install()
         UIUtils.setRootPane(frame)
         frame.visible = true
-        new Tag(name: NewCommentView.POST_LOCKING).save()
-        new Tag(name: "TAG1", tagType: EnumTagType.COMMENT).save()
+        NewCommentView.allTags*.delete(flush: true)
+        new Tag(name: NewCommentView.POST_LOCKING).save(flush: true)
+        new Tag(name: "TAG1", tagType: EnumTagType.COMMENT).save(flush: true)
     }
 
     void testAddNewComment() {

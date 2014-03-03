@@ -1,25 +1,27 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.output.CustomTableDAO
+import org.pillarone.riskanalytics.application.output.result.item.CustomTable
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.modellingitem.ModellingItemCopyUtils
+import org.pillarone.riskanalytics.core.ResourceDAO
+import org.pillarone.riskanalytics.core.modellingitem.CacheItem
+import org.pillarone.riskanalytics.core.modellingitem.ModellingItemUpdater
+import org.pillarone.riskanalytics.core.modellingitem.SimulationCacheItem
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
-import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.core.user.UserManagement
 import org.springframework.transaction.TransactionStatus
-import org.pillarone.riskanalytics.core.ResourceDAO
-import org.apache.commons.logging.LogFactory
-import org.apache.commons.logging.Log
-import org.pillarone.riskanalytics.application.output.CustomTableDAO
-import org.pillarone.riskanalytics.application.output.result.item.CustomTable
 
 class ModellingItemFactory {
 
@@ -466,7 +468,8 @@ class ModellingItemFactory {
             item.modificationDate = dao.getModificationDate()
             try {
                 item.tags = dao.tags*.tag
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+            }
         }
         item
     }
@@ -559,16 +562,40 @@ class ModellingItemFactory {
         getItemInstances().clear()
     }
 
-    static ModellingItem updateOrCreateModellingItem(ModellingItem source) {
-        def key = key(source.class, source.id)
-        def target = ModellingItemCopyUtils.copyModellingItem(source, getItemInstances()[key])
+    static ModellingItem updateOrCreateModellingItem(CacheItem source) {
+        def key = key(source.itemClass, source.id)
+        def target = ModellingItemUpdater.createOrUpdateModellingItem(source, getItemInstances()[key])
         getItemInstances()[key] = target
         return target
     }
 
-    static ModellingItem getOrCreateModellingItem(ModellingItem source) {
-        def key = key(source.class, source.id)
-        def target = getItemInstances()[key] ?: ModellingItemCopyUtils.copyModellingItem(source, null)
+    static Simulation updateOrCreateModellingItem(SimulationCacheItem source) {
+        def key = key(source.itemClass, source.id)
+        Simulation target = ModellingItemUpdater.createOrUpdateModellingItem(source, getItemInstances()[key])
+        target.parameterization = updateOrCreateModellingItem(source.parameterization)
+        target.template = updateOrCreateModellingItem(source.resultConfiguration)
+        getItemInstances()[key] = target
+        return target
+    }
+
+    static List<ModellingItem> getOrCreateModellingItems(List<CacheItem> itemTOs) {
+        itemTOs.collect { CacheItem to ->
+            getOrCreateModellingItem(to)
+        }
+    }
+
+    private static ModellingItem getOrCreateModellingItem(CacheItem source) {
+        def key = key(source.itemClass, source.id)
+        def target = getItemInstances()[key] ?: ModellingItemUpdater.createOrUpdateModellingItem(source, null)
+        getItemInstances()[key] = target
+        return target
+    }
+
+    private static ModellingItem getOrCreateModellingItem(SimulationCacheItem source) {
+        def key = key(source.itemClass, source.id)
+        Simulation target = getItemInstances()[key] ?: ModellingItemUpdater.createOrUpdateModellingItem(source, null)
+        target.parameterization = getOrCreateModellingItem(source.parameterization)
+        target.template = getOrCreateModellingItem(source.resultConfiguration)
         getItemInstances()[key] = target
         return target
     }

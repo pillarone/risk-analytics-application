@@ -1,6 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.result.model
 
+import junit.framework.TestCase
 import models.application.ApplicationModel
+import org.junit.After
+import org.junit.Before
+import org.junit.Test
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaComparator
 import org.pillarone.riskanalytics.application.ui.chart.model.CriteriaViewModel
@@ -16,7 +20,9 @@ import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWrit
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 
-class ResultIterationDataViewModelTests extends GroovyTestCase {
+import static junit.framework.TestCase.*
+
+class ResultIterationDataViewModelTests {
 
     SimulationRun simulationRun
     PathMapping path1
@@ -27,6 +33,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
 
     private ResultWriter resultWriter
 
+    @Before
     void setUp() {
         ResultAccessor.clearCaches()
         LocaleResources.setTestMode()
@@ -72,11 +79,12 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         }
     }
 
-    protected void tearDown() {
+    @After
+    void tearDown() {
         LocaleResources.clearTestMode()
-        super.tearDown();
     }
 
+    @Test
     void testCriteriaList() {
         ResultIterationDataViewModel rawDataViewModel = new ResultIterationDataViewModel(new SimulationRun(), [new ResultTableTreeNode("testNode")], false, true, false, null)
         rawDataViewModel.addCriteriaGroup()
@@ -90,6 +98,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals 2, rawDataViewModel.getCriteriaGroupCount()
     }
 
+    @Test
     void testPathOrder() {
         ResultTableTreeNode node1 = new ResultTableTreeNode("testPath1")
         node1.resultPath = "testPath1:ultimate"
@@ -114,6 +123,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)}", model.shortPaths.get(1)
     }
 
+    @Test
     void testSimpleQuery() {
         assertNotNull simulationRun
         initResults()
@@ -140,18 +150,19 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 3, model.resultTableModel.getValueAt(0, 0)
-        assertEquals 4, model.resultTableModel.getValueAt(0, 1)
-        assertEquals 12, model.resultTableModel.getValueAt(0, 2)
-        assertEquals 8, model.resultTableModel.getValueAt(0, 3)
-        assertEquals 24, model.resultTableModel.getValueAt(0, 4)
+        assertEquals 4d, model.resultTableModel.getValueAt(0, 1)
+        assertEquals 12d, model.resultTableModel.getValueAt(0, 2)
+        assertEquals 8d, model.resultTableModel.getValueAt(0, 3)
+        assertEquals 24d, model.resultTableModel.getValueAt(0, 4)
 
         //assertEquals 4, model.resultTableModel.getValueAt(1, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(1, 1)
-        assertEquals 15, model.resultTableModel.getValueAt(1, 2)
-        assertEquals 10, model.resultTableModel.getValueAt(1, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(1, 4)
+        assertEquals 5d, model.resultTableModel.getValueAt(1, 1)
+        assertEquals 15d, model.resultTableModel.getValueAt(1, 2)
+        assertEquals 10d, model.resultTableModel.getValueAt(1, 3)
+        assertEquals 30d, model.resultTableModel.getValueAt(1, 4)
     }
 
+    @Test
     void testSimpleQueryWithDifferentFields() {
         assertNotNull simulationRun
         initResultsWithDifferentFields()
@@ -178,18 +189,19 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 3, model.resultTableModel.getValueAt(0, 0)
-        assertEquals 4, model.resultTableModel.getValueAt(0, 1)
-        assertEquals 12, model.resultTableModel.getValueAt(0, 2)
-        assertEquals 8, model.resultTableModel.getValueAt(0, 3)
-        assertEquals 24, model.resultTableModel.getValueAt(0, 4)
+        assertEquals 4d, model.resultTableModel.getValueAt(0, 1)
+        assertEquals 12d, model.resultTableModel.getValueAt(0, 2)
+        assertEquals 8d, model.resultTableModel.getValueAt(0, 3)
+        assertEquals 24d, model.resultTableModel.getValueAt(0, 4)
 
         //assertEquals 4, model.resultTableModel.getValueAt(1, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(1, 1)
-        assertEquals 15, model.resultTableModel.getValueAt(1, 2)
-        assertEquals 10, model.resultTableModel.getValueAt(1, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(1, 4)
+        assertEquals 5d, model.resultTableModel.getValueAt(1, 1)
+        assertEquals 15d, model.resultTableModel.getValueAt(1, 2)
+        assertEquals 10d, model.resultTableModel.getValueAt(1, 3)
+        assertEquals 30d, model.resultTableModel.getValueAt(1, 4)
     }
 
+    @Test
     void testOrQuery() {
         assertNotNull simulationRun
         initResults()
@@ -225,18 +237,19 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 3, model.resultTableModel.getValueAt(0, 0)
-        assertEquals 4, model.resultTableModel.getValueAt(0, 1)
-        assertEquals 12, model.resultTableModel.getValueAt(0, 2)
-        assertEquals 8, model.resultTableModel.getValueAt(0, 3)
-        assertEquals 24, model.resultTableModel.getValueAt(0, 4)
+        assertEquals 4d, model.resultTableModel.getValueAt(0, 1)
+        assertEquals 12d, model.resultTableModel.getValueAt(0, 2)
+        assertEquals 8d, model.resultTableModel.getValueAt(0, 3)
+        assertEquals 24d, model.resultTableModel.getValueAt(0, 4)
 
         //assertEquals 4, model.resultTableModel.getValueAt(1, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(1, 1)
-        assertEquals 15, model.resultTableModel.getValueAt(1, 2)
-        assertEquals 10, model.resultTableModel.getValueAt(1, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(1, 4)
+        assertEquals 5d, model.resultTableModel.getValueAt(1, 1)
+        assertEquals 15d, model.resultTableModel.getValueAt(1, 2)
+        assertEquals 10d, model.resultTableModel.getValueAt(1, 3)
+        assertEquals 30d, model.resultTableModel.getValueAt(1, 4)
     }
 
+    @Test
     void testAndQuery() {
         assertNotNull simulationRun
         initResults()
@@ -273,18 +286,19 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 0, model.resultTableModel.getValueAt(0, 0)
-        assertEquals 1, model.resultTableModel.getValueAt(0, 1)
-        assertEquals 3, model.resultTableModel.getValueAt(0, 2)
-        assertEquals 2, model.resultTableModel.getValueAt(0, 3)
-        assertEquals 6, model.resultTableModel.getValueAt(0, 4)
+        assertEquals 1d, model.resultTableModel.getValueAt(0, 1)
+        assertEquals 3d, model.resultTableModel.getValueAt(0, 2)
+        assertEquals 2d, model.resultTableModel.getValueAt(0, 3)
+        assertEquals 6d, model.resultTableModel.getValueAt(0, 4)
 
         //assertEquals 4, model.resultTableModel.getValueAt(1, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(1, 1)
-        assertEquals 15, model.resultTableModel.getValueAt(1, 2)
-        assertEquals 10, model.resultTableModel.getValueAt(1, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(1, 4)
+        assertEquals 5d, model.resultTableModel.getValueAt(1, 1)
+        assertEquals 15d, model.resultTableModel.getValueAt(1, 2)
+        assertEquals 10d, model.resultTableModel.getValueAt(1, 3)
+        assertEquals 30d, model.resultTableModel.getValueAt(1, 4)
     }
 
+    @Test
     void testEmptyQuery() {
         assertNotNull simulationRun
         initResults()
@@ -303,16 +317,16 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 1, model.resultTableModel.getValueAt(1, 0)
-        assertEquals 2, model.resultTableModel.getValueAt(1, 1)
-        assertEquals 6, model.resultTableModel.getValueAt(1, 2)
-        assertEquals 4, model.resultTableModel.getValueAt(1, 3)
-        assertEquals 12, model.resultTableModel.getValueAt(1, 4)
+        assertEquals 2d, model.resultTableModel.getValueAt(1, 1)
+        assertEquals 6d, model.resultTableModel.getValueAt(1, 2)
+        assertEquals 4d, model.resultTableModel.getValueAt(1, 3)
+        assertEquals 12d, model.resultTableModel.getValueAt(1, 4)
 
         //assertEquals 4, model.resultTableModel.getValueAt(4, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(4, 1)
-        assertEquals 15, model.resultTableModel.getValueAt(4, 2)
-        assertEquals 10, model.resultTableModel.getValueAt(4, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(4, 4)
+        assertEquals 5d, model.resultTableModel.getValueAt(4, 1)
+        assertEquals 15d, model.resultTableModel.getValueAt(4, 2)
+        assertEquals 10d, model.resultTableModel.getValueAt(4, 3)
+        assertEquals 30d, model.resultTableModel.getValueAt(4, 4)
 
         model.orderByPath = true
         model.query()
@@ -326,23 +340,23 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
         assertEquals "${ComponentUtils.getNormalizedName(path2.pathName)} / ultimate P1", model.resultTableModel.getColumnName(4)
 
         //assertEquals 1, model.resultTableModel.getValueAt(1, 0)
-        assertEquals 2, model.resultTableModel.getValueAt(1, 1)
-        assertEquals 4, model.resultTableModel.getValueAt(1, 2)
-        assertEquals 6, model.resultTableModel.getValueAt(1, 3)
-        assertEquals 12, model.resultTableModel.getValueAt(1, 4)
+        assertEquals 2d, model.resultTableModel.getValueAt(1, 1)
+        assertEquals 4d, model.resultTableModel.getValueAt(1, 2)
+        assertEquals 6d, model.resultTableModel.getValueAt(1, 3)
+        assertEquals 12d, model.resultTableModel.getValueAt(1, 4)
 
         //assertEquals 4, model.resultTableModel.getValueAt(4, 0)
-        assertEquals 5, model.resultTableModel.getValueAt(4, 1)
-        assertEquals 10, model.resultTableModel.getValueAt(4, 2)
-        assertEquals 15, model.resultTableModel.getValueAt(4, 3)
-        assertEquals 30, model.resultTableModel.getValueAt(4, 4)
+        assertEquals 5d, model.resultTableModel.getValueAt(4, 1)
+        assertEquals 10d, model.resultTableModel.getValueAt(4, 2)
+        assertEquals 15d, model.resultTableModel.getValueAt(4, 3)
+        assertEquals 30d, model.resultTableModel.getValueAt(4, 4)
 
 
     }
 
     private void initResults() {
-        simulationRun.iterations.times {int iteration ->
-            simulationRun.periodCount.times {int period ->
+        simulationRun.iterations.times { int iteration ->
+            simulationRun.periodCount.times { int period ->
                 writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1), field: field, path: path1, collector: collector)
                 writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1) * 3, field: field, path: path2, collector: collector)
             }
@@ -350,8 +364,8 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
     }
 
     private void initResultsWithDifferentFields() {
-        simulationRun.iterations.times {int iteration ->
-            simulationRun.periodCount.times {int period ->
+        simulationRun.iterations.times { int iteration ->
+            simulationRun.periodCount.times { int period ->
                 writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1), field: field, path: path1, collector: collector)
                 writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: (iteration + 1) * (period + 1) * 3, field: field, path: path2, collector: collector)
                 writeResult new SingleValueResult(simulationRun: simulationRun, period: period, iteration: (iteration + 1), valueIndex: 0, value: 5, field: field2, path: path1, collector: collector)
@@ -361,7 +375,7 @@ class ResultIterationDataViewModelTests extends GroovyTestCase {
 
     private List createResultNodes() {
         def res = []
-        2.times {int i ->
+        2.times { int i ->
             String testPath = "testPath${i + 1}"
             def parent = new SimpleTableTreeNode(testPath)
             def result = new ResultTableTreeNode("ultimate")

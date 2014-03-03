@@ -59,7 +59,8 @@ class NewCommentView {
     public NewCommentView(CommentAndErrorView commentAndErrorView) {
         this.commentAndErrorView = commentAndErrorView
         this.model = commentAndErrorView.model
-        this.tagListModel = new ItemListModel<Tag>(allTags?.collect { it.name }.toArray(), getAllTags())
+        def tags = allTags
+        this.tagListModel = new ItemListModel<Tag>(tags?.collect { it.name }.toArray(), tags)
     }
 
     public NewCommentView(CommentAndErrorView commentAndErrorView, String path, int periodIndex) {
@@ -178,7 +179,11 @@ class NewCommentView {
     }
 
     public static List getAllTags() {
-        return Tag.executeQuery(" from ${Tag.class.name} as t where t.name != ? and t.name != ? and t.tagType =?", [POST_LOCKING, SHARED_COMMENTS, EnumTagType.COMMENT])
+        Tag.createCriteria().list {
+            ne('name', POST_LOCKING)
+            ne('name', SHARED_COMMENTS)
+            eq('tagType', EnumTagType.COMMENT)
+        }
     }
 
     String getDisplayPath() {

@@ -1,8 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.application.search.AbstractMultiValueFilter
+
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.search.AbstractMultiValueFilter
 import org.pillarone.riskanalytics.core.workflow.Status
 
 public interface IColumnDescriptor {

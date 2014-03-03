@@ -3,13 +3,14 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.testframework.operator.*
 import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
+
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
@@ -27,7 +28,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     protected void setUp() {
         FileImportService.importModelsIfNeeded(["Core"])
-        ModellingItemSearchService.getInstance().refresh()
+        CacheItemSearchService.getInstance().refresh()
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
         removeTags()
@@ -55,9 +56,9 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         printTree(tableTree.ULCTableTree)
         tableTree.doExpandPath(pathForRename.parentPath)
         int row = tableTree.getRowForPath(pathForRename)
-        tableTree.selectCell(row,0)
+        tableTree.selectCell(row, 0)
 
-        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(row,0)
+        ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(row, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu("Tags")
 //        Thread.sleep 1000
@@ -86,7 +87,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
     }
 
     void testAddTagToParameterization() {
-        Tag.withSession {Session session ->
+        Tag.withSession { Session session ->
 
             int size = Tag.findAllByTagType(EnumTagType.PARAMETERIZATION).size()
             ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
@@ -122,7 +123,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
             applyButton.clickMouse()
             session.flush()
         }
-        Tag.withNewSession {Session session ->
+        Tag.withNewSession { Session session ->
             ParameterizationDAO parameterization = ParameterizationDAO.findByName("CoreAlternativeParameters")
             assertNotNull parameterization
             //todo save changed data in database doesn't work correctly in cruise
@@ -139,7 +140,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
     }
 
     private void removeTags() {
-        Tag.findAll().each {it.delete()}
+        Tag.findAll().each { it.delete(flush: true) }
     }
 
 }

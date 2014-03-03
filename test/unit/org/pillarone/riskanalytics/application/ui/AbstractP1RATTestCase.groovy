@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFrame
-import com.ulcjava.base.server.ULCSession
 import com.ulcjava.testframework.operator.*
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import models.application.ApplicationModel
@@ -11,7 +10,6 @@ import models.core.CoreModel
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.application.search.IEventConsumer
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -20,6 +18,7 @@ import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -135,7 +134,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         }
 
 
-        treeModel.metaClass.getPendingEvents = { IEventConsumer consumer ->
+        treeModel.metaClass.getPendingEvents = { CacheItemEventConsumer consumer ->
             return []
         }
         treeModel.metaClass.getFilteredItems = { ->

@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
 
-import org.pillarone.riskanalytics.application.search.*
+import org.pillarone.riskanalytics.core.search.*
 
 class FilterDefinition {
 

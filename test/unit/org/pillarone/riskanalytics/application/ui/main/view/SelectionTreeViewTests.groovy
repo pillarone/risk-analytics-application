@@ -10,22 +10,15 @@ import grails.util.Holders
 import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.support.MockApplicationContext
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.ApplicationContext
 
 import javax.swing.tree.TreePath
-import groovy.mock.interceptor.MockFor
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import groovy.mock.interceptor.StubFor
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -35,7 +28,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     ULCComponent createContentPane() {
         RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
         ApplicationContext mainContext = new MockApplicationContext()
-        mainContext.registerMockBean("modellingItemSearchService", new ModellingItemSearchService())
+        mainContext.registerMockBean("modellingItemTOSearchService", new CacheItemSearchService())
         GrailsApplication application = new DefaultGrailsApplication(mainContext: mainContext)
         Holders.setGrailsApplication(application)
         SelectionTreeView view = new SelectionTreeView(mainModel)

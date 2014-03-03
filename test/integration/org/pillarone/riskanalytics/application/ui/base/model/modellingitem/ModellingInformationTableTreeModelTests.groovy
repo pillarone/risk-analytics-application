@@ -4,8 +4,6 @@ import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
-import com.ulcjava.base.server.SimpleContainerServices
-import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.junit.After
@@ -13,8 +11,6 @@ import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.search.EventConsumer
-import org.pillarone.riskanalytics.application.search.ModellingItemSearchService
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -29,6 +25,8 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
@@ -39,14 +37,14 @@ class ModellingInformationTableTreeModelTests {
 
     ModellingInformationTableTreeModel model
     RiskAnalyticsMainModel mainModel
-    ULCSession session = new ULCSession('Test', new SimpleContainerServices())
-    EventConsumer eventConsumer
+    def session = new Object()
+    CacheItemEventConsumer eventConsumer
     private TestModelListener modelListener
 
     @Before
     void setUp() {
-        ModellingItemSearchService.instance.cleanUp()
-        ModellingItemSearchService.instance.init()
+        CacheItemSearchService.instance.cleanUp()
+        CacheItemSearchService.instance.init()
 
         ModellingItemFactory.clear()
         LocaleResources.setTestMode()
@@ -68,11 +66,11 @@ class ModellingInformationTableTreeModelTests {
         newParameterization('Parametrization X', '9')
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
-        ModellingItemSearchService.getInstance().refresh()
+        CacheItemSearchService.getInstance().refresh()
         mainModel = new RiskAnalyticsMainModel()
         model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
-        eventConsumer = new EventConsumer(session, null)
+        eventConsumer = new CacheItemEventConsumer(session, 'consumer')
         model.service.register(eventConsumer)
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
@@ -91,7 +89,7 @@ class ModellingInformationTableTreeModelTests {
     @After
     void tearDown() {
         LocaleResources.clearTestMode()
-        model.service.unregisterAllConsumers(session)
+        model.service.unregisterAllConsumersForSession(session)
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
     }
