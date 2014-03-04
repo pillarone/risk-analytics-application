@@ -39,13 +39,13 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     public void start() {
         LocaleResources.setTestMode()
         frame = new ULCFrame()
-        frame.setTitle("mainFrame")
-        frame.setName("mainFrame")
+        frame.title = "mainFrame"
+        frame.name = "mainFrame"
         frame.setSize(1024, 768)
         ULCBoxPane contentPane = new ULCBoxPane()
         frame.contentPane = contentPane
         contentPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, createContentPane())
-        frame.setVisible true
+        frame.visible = true
     }
 
     @Override
@@ -79,10 +79,6 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         new ULCButtonOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
-    ULCToggleButtonOperator getToggleButtonOperator(String name) {
-        new ULCToggleButtonOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
-    }
-
     ULCComboBoxOperator getComboBoxOperator(String name) {
         new ULCComboBoxOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
@@ -95,16 +91,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         return new ULCComponentOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
     }
 
-    ULCPopupMenuOperator getPopupMenuOperator(String name) {
-        return new ULCPopupMenuOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
-    }
-
-    ULCSpinnerOperator getSpinnerOperator(String name) {
-        new ULCSpinnerOperator(getMainFrameOperator(), new ComponentByNameChooser(name))
-    }
-
     abstract ULCComponent createContentPane()
-
 
     protected RiskAnalyticsMainModel getMockRiskAnalyticsMainModel() {
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(getMockTreeModel(null))
@@ -126,16 +113,16 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     protected ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
         ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
         treeModel.builder.metaClass.getAllModelClasses = { ->
-            return [ApplicationModel]
+            [ApplicationModel]
         }
 
         treeModel.builder.metaClass.getAllBatchRuns = { ->
-            return [new BatchRun(name: "test")]
+            [new BatchRun(name: "test")]
         }
 
 
         treeModel.metaClass.getPendingEvents = { CacheItemEventConsumer consumer ->
-            return []
+            []
         }
         treeModel.metaClass.getFilteredItems = { ->
             Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
@@ -150,10 +137,10 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
             simulation.template = new ResultConfiguration("result1")
             simulation.template.modelClass = CoreModel
             simulation.id = 1
-            simulation.setEnd(new DateTime())
+            simulation.end = new DateTime()
             simulation.modelClass = ApplicationModel
-            simulation.metaClass.getSize = { Class SimulationClass -> return 0 }
-            return [parameterization1, parameterization2, parameterization3, resultConfiguration, simulation]
+            simulation.metaClass.getSize = { Class SimulationClass -> 0 }
+            [parameterization1, parameterization2, parameterization3, resultConfiguration, simulation]
         }
 
         treeModel.buildTreeNodes()
@@ -176,15 +163,4 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         return parameterization
 
     }
-
-    Simulation createNewSimulation() {
-        Simulation simulation = new Simulation("simulation2")
-        simulation.modelClass = ApplicationModel
-        simulation.parameterization = new Parameterization("param1")
-        simulation.template = new ResultConfiguration("result1")
-        simulation.id = 2
-        simulation.setEnd(new DateTime())
-        return simulation
-    }
-
 }

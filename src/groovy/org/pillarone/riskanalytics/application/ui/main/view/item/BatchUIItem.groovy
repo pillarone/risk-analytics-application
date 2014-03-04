@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.UlcUtilities
+import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
@@ -13,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchLis
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 
 /**
@@ -73,12 +75,16 @@ class BatchUIItem extends AbstractUIItem {
     }
 
     public boolean remove() {
-        if (batchRun.batchRunService.deleteBatchRun(batchRun)) {
+        if (batchRunService.deleteBatchRun(batchRun)) {
             navigationTableTreeModel.removeNodeForItem(this)
             mainModel.fireModelChanged()
             return true
         }
         return false
+    }
+
+    private BatchRunService getBatchRunService() {
+        Holders.grailsApplication.mainContext.getBean(BatchRunService)
     }
 
     @Override

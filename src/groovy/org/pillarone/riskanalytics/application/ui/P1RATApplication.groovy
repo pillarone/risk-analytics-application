@@ -1,28 +1,25 @@
 package org.pillarone.riskanalytics.application.ui
-
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import com.ulcjava.applicationframework.application.Application
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.Dimension
+import com.ulcjava.base.server.ULCSession
 import com.ulcjava.base.shared.IWindowConstants
 import grails.util.Holders
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
-import org.pillarone.riskanalytics.core.search.CacheItemSearchService
-import org.pillarone.ulc.server.ULCMinimalSizeFrame
-import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-
-import com.ulcjava.base.server.ULCSession
-import com.ulcjava.applicationframework.application.Application
-
+import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
+import org.pillarone.ulc.server.ULCMinimalSizeFrame
 //used for standalone
 class P1RATApplication extends Application {
 
@@ -80,7 +77,7 @@ class P1RATApplication extends Application {
 
     private void handleEvent(WindowEvent e) {
         def session = ULCSession.currentSession()
-        Holders.grailsApplication.mainContext.getBean(CacheItemSearchService).unregisterAllConsumersForSession(session)
+        CacheItemEventQueueService.getInstance().unregisterAllConsumersForSession(session)
         ModelRegistry.instance.removeListener(mainModel)
         traceLogManager.deactivateLogging()
         ExitAction.terminate()

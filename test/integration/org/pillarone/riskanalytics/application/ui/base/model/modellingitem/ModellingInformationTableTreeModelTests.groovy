@@ -71,7 +71,7 @@ class ModellingInformationTableTreeModelTests {
         model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
         eventConsumer = new CacheItemEventConsumer(session, 'consumer')
-        model.service.register(eventConsumer)
+        model.queueService.register(eventConsumer)
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
     }
@@ -89,7 +89,7 @@ class ModellingInformationTableTreeModelTests {
     @After
     void tearDown() {
         LocaleResources.clearTestMode()
-        model.service.unregisterAllConsumersForSession(session)
+        model.queueService.unregisterAllConsumersForSession(session)
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
     }

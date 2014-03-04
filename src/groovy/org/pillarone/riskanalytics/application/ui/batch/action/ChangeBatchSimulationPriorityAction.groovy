@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
 /**
@@ -26,12 +28,16 @@ public class ChangeBatchSimulationPriorityAction extends BatchSimulationSelectio
     }
 
     public void doActionPerformed(ActionEvent event) {
-        SimulationRun run = getSelectedSimulationRun()
+        SimulationRun run = selectedSimulationRun
         int rowIndex = model.getRowIndex(run)
         if (rowIndex != -1) {
-            model.batchRun.batchRunService.changePriority(model.batchRun, run, step)
+            batchRunService.changePriority(model.batchRun, run, step)
             model.firePriorityChanged rowIndex, step
         }
+    }
+
+    private BatchRunService getBatchRunService() {
+        Holders.grailsApplication.mainContext.getBean(BatchRunService)
     }
 
 }

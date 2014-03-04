@@ -21,17 +21,25 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
+import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
+import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
+import static org.pillarone.riskanalytics.core.search.CacheItemEvent.EventType.*
+
+
 class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
-    static List<String> columnNames = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
+    static List<String> COLUMN_NAMES = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
     @Lazy
-    CacheItemSearchService service = CacheItemSearchService.getInstance()
+    CacheItemEventQueueService queueService = CacheItemEventQueueService.instance
+    @Lazy
+    CacheItemSearchService searchService = CacheItemSearchService.instance
+
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel mainModel
@@ -48,7 +56,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public static int CREATION_DATE = 6
     public static int LAST_MODIFICATION_DATE = 7
 
-    int columnCount = columnNames.size()
+    int columnCount = COLUMN_NAMES.size()
 
     FilterDefinition currentFilter = new FilterDefinition()
 
@@ -73,12 +81,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void buildTreeNodes() {
-        List<ModellingItem> modellingItems = getFilteredItems()
-        builder.buildTreeNodes(modellingItems)
+        builder.buildTreeNodes(filteredItems)
     }
 
     public List<ModellingItem> getFilteredItems() {
-        ModellingItemFactory.getOrCreateModellingItems(service.search(currentFilter.toQuery()))
+        ModellingItemFactory.getOrCreateModellingItems(searchService.search(currentFilter.toQuery()))
     }
 
     Object getValueAt(Object node, int i) {
@@ -102,11 +109,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public String getColumnName(int i) {
-        return UIUtils.getText(ModellingInformationTableTreeModel.class, this.columnNames[getColumnIndex(i)])
+        return UIUtils.getText(ModellingInformationTableTreeModel.class, COLUMN_NAMES[getColumnIndex(i)])
     }
 
     public String getColumnFilterName(int i) {
-        return UIUtils.getText(ModellingInformationTableTreeModel.class, this.columnNames[i])
+        return UIUtils.getText(ModellingInformationTableTreeModel.class, COLUMN_NAMES[i])
     }
 
     protected int getColumnIndex(int column) {
@@ -146,14 +153,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void putValues(ItemNode node) {
-        for (int column = 0; column < columnNames.size(); column++) {
+        for (int column = 0; column < COLUMN_NAMES.size(); column++) {
             addColumnValue(node.abstractUIItem.item, node, column, getValue(node, column))
         }
     }
 
     private addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
         if (columnValues[parameterization] == null)
-            columnValues[parameterization] = new Object[columnNames.size()]
+            columnValues[parameterization] = new Object[COLUMN_NAMES.size()]
         columnValues[parameterization][column] = value
         node.values[column] = value
     }
@@ -174,13 +181,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         //for deleted elements we also have to update the tree, because the items for deletion are not fully mapped, so it could be that the filter does not work correctly.
         eachNotFilteredOrDeleted(getPendingEvents(consumer)) { ItemEvent itemEvent ->
             switch (itemEvent.eventType) {
-                case CacheItemSearchService.EventType.ADDED:
+                case ADDED:
                     builder.addNodeForItem(itemEvent.modellingItem)
                     break;
-                case CacheItemSearchService.EventType.REMOVED:
+                case REMOVED:
                     builder.removeNodeForItem(itemEvent.modellingItem)
                     break;
-                case CacheItemSearchService.EventType.UPDATED:
+                case UPDATED:
                     builder.itemChanged(itemEvent.modellingItem)
                     break;
             }
@@ -194,7 +201,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     private eachNotFilteredOrDeleted(List<ItemEvent> events, Closure c) {
         events.each {
-            if (it.eventType == CacheItemSearchService.EventType.REMOVED || isAcceptedByCurrentFilter(it.cacheItem)) {
+            if (it.eventType == REMOVED || isAcceptedByCurrentFilter(it.cacheItem)) {
                 c.call(it)
             }
         }
@@ -208,13 +215,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     public List<ItemEvent> getPendingEvents(CacheItemEventConsumer consumer) {
-        service.getPendingEvents(consumer).collect { CacheItemSearchService.CacheItemEvent event ->
+        queueService.pollCacheItemEvents(consumer).collect { CacheItemEvent event ->
             def itemEvent = new ItemEvent(
                     cacheItem: event.item,
                     modellingItem: ModellingItemFactory.updateOrCreateModellingItem(event.item),
                     eventType: event.eventType
             )
-            if (itemEvent.eventType == CacheItemSearchService.EventType.REMOVED) {
+            if (itemEvent.eventType == REMOVED) {
                 ModellingItemFactory.remove(itemEvent.modellingItem)
             }
             itemEvent
@@ -235,7 +242,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     }
 
     private void refreshService() {
-        service.refresh()
+        searchService.refresh()
+        ModellingItemFactory.clear()
     }
 
     public void order(int column, boolean asc) {
@@ -250,24 +258,20 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     void filterTree(FilterDefinition filterDefinition) {
         LOG.debug("Apply filter definition start.")
-        List<ModellingItem> currentItems = builder.modellingItems
         currentFilter = filterDefinition
-        List<ModellingItem> filteredItems = getFilteredItems()
-
-        builder.removeNodesForItems(currentItems)
+        builder.removeNodesForItems(builder.modellingItems)
         builder.addNodesForItems(filteredItems)
-
         LOG.debug("Apply filter definition done.")
     }
 
     static class ItemEvent {
         CacheItem cacheItem
         ModellingItem modellingItem
-        CacheItemSearchService.EventType eventType
+        CacheItemEvent.EventType eventType
 
         @Override
         String toString() {
-            return "$item $eventType"
+            return "$cacheItem $eventType"
         }
     }
 }

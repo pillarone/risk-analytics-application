@@ -13,6 +13,8 @@ import org.codehaus.groovy.grails.support.MockApplicationContext
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
+import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
+import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -26,17 +28,18 @@ import javax.swing.tree.TreePath
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
-        RiskAnalyticsMainModel mainModel = getMockRiskAnalyticsMainModel()
-        ApplicationContext mainContext = new MockApplicationContext()
-        mainContext.registerMockBean("modellingItemTOSearchService", new CacheItemSearchService())
-        GrailsApplication application = new DefaultGrailsApplication(mainContext: mainContext)
-        Holders.setGrailsApplication(application)
-        SelectionTreeView view = new SelectionTreeView(mainModel)
-        return view.content;
+        mockApplicationContext()
+        new SelectionTreeView(mockRiskAnalyticsMainModel).content;
     }
 
-    public void testView() {
-//        Thread.sleep 15000
+    private void mockApplicationContext() {
+        ApplicationContext mainContext = new MockApplicationContext()
+        mainContext.registerMockBean("cacheItemSearchService", new CacheItemSearchService())
+        def cacheItemEventQueueService = new CacheItemEventQueueService(cacheItemListener: new CacheItemHibernateListener())
+        cacheItemEventQueueService.init()
+        mainContext.registerMockBean("cacheItemEventQueueService", cacheItemEventQueueService)
+        GrailsApplication application = new DefaultGrailsApplication(mainContext: mainContext)
+        Holders.grailsApplication = application
     }
 
     @Override
@@ -135,20 +138,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assertNotNull newVersion
     }
 
-    private ULCPopupMenuOperator getTestBatchPopupMenu() {
-        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        TreePath batchPath = componentTree.findPath(["Batches"] as String[])
-        componentTree.doExpandPath(batchPath)
-        TreePath testBatchPath = componentTree.findPath(["Batches", "test"] as String[])
-        componentTree.selectPath(testBatchPath)
-
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(componentTree.getRowForPath(testBatchPath), 0)
-
-        assertNotNull popupMenuOperator
-        return popupMenuOperator
-
-    }
-
     public void testNewBatch() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         TreePath batchPath = componentTree.findPath(["Batches"] as String[])
@@ -160,7 +149,6 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
         assertNotNull openBatch
     }
-
 
     public void testOpenResult() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
@@ -202,9 +190,9 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
     }
 
     public void testCheckForAdditionalMenuItems() {
-        PopupMenuRegistry.register(WorkflowParameterizationNode, new TestMenuItemCreator(name:'ParamItem'))
-        PopupMenuRegistry.register(ItemGroupNode, Parameterization, new TestMenuItemCreator(name:'ParamGroup'))
-        PopupMenuRegistry.register(ItemGroupNode, Simulation, new TestMenuItemCreator(name:'SimGroup'))
+        PopupMenuRegistry.register(WorkflowParameterizationNode, new TestMenuItemCreator(name: 'ParamItem'))
+        PopupMenuRegistry.register(ItemGroupNode, Parameterization, new TestMenuItemCreator(name: 'ParamGroup'))
+        PopupMenuRegistry.register(ItemGroupNode, Simulation, new TestMenuItemCreator(name: 'SimGroup'))
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
@@ -217,13 +205,14 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assert paramGroup
         TreePath simulationPath = componentTree.findPath(['Application', 'Results'] as String[])
         componentTree.doExpandPath(simulationPath)
-        popup = componentTree.callPopupOnCell(componentTree.getRowForPath(simulationPath),0)
+        popup = componentTree.callPopupOnCell(componentTree.getRowForPath(simulationPath), 0)
         ULCMenuItemOperator simGroup = new ULCMenuItemOperator(popup, "SimGroup")
         assert simGroup
     }
 
     class TestMenuItemCreator implements ULCTableTreeMenuItemCreator {
         String name
+
         @Override
         ULCMenuItem createComponent(ULCTableTree tree) {
             return new ULCMenuItem(name)

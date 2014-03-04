@@ -42,6 +42,7 @@ grails.project.dependency.resolution = {
         runtime("org.pillarone:pillar-one-ulc-extensions:1.3") { transitive = false }
 
         test ":code-coverage:1.2.7"
+        test ":codenarc:0.20"
 
         if (appName == 'RiskAnalyticsApplication') {
             runtime "org.pillarone:risk-analytics-core:1.9-SNAPSHOT"
@@ -106,3 +107,84 @@ coverage {
 }
 
 reportFolders = [new File("./src/java/reports")]
+
+//grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
+
+codenarc.maxPriority1Violations = 0
+codenarc.maxPriority2Violations = 0
+codenarc.maxPriority3Violations = 0
+
+codenarc.properties = {
+    MisorderedStaticImports.enabled = false
+    FactoryMethodName.enabled = false
+    CatchException.enabled = false
+    SerializableClassMustDefineSerialVersionUID.enabled = false
+    ClassJavadoc.enabled = false
+
+    //domain
+    GrailsDomainHasEquals.enabled = false
+    GrailsDomainHasToString.enabled = false
+
+    //formatting
+    SpaceAroundMapEntryColon.enabled = false
+    SpaceBeforeOpeningBrace.enabled = false
+    SpaceAfterIf.enabled = false
+    //TODO discuss about rules together
+//    GrailsPublicControllerMethod.enabled = false
+//    SimpleDateFormatMissingLocale.enabled = false
+//    ThrowRuntimeException.enabled = false
+//    CatchThrowable.enabled = false
+//    CatchRuntimeException.enabled = false
+//    ThrowException.enabled = false
+//    ReturnNullFromCatchBlock.enabled = false
+
+
+    LineLength.length = 200
+
+    def allTestClasses = testClasses().join(', ')
+
+    MethodName.doNotApplyToClassNames = allTestClasses
+    AbcComplexity.doNotApplyToClassNames = allTestClasses
+}
+
+private List testClasses() {
+    List result = []
+    new File('./test/').eachFileRecurse { File file ->
+        String name = file.name
+        if (name.endsWith('Tests.groovy')) {
+            result << name.replaceAll('.groovy', '')
+        }
+    }
+    result
+}
+
+codenarc.reports = {
+    Jenkins('xml') {
+        outputFile = 'target/code-analysis/CodeNarcReport.xml'
+        title = 'Code Narc Code Report'
+    }
+    LocalReport('html') {
+        outputFile = 'target/code-analysis/CodeNarcReport.html'
+        title = 'Code Narc Code Report'
+    }
+}
+
+codenarc.ruleSetFiles = [
+        'rulesets/basic.xml',
+        'rulesets/braces.xml',
+        'rulesets/concurrency.xml',
+        'rulesets/design.xml',
+        'rulesets/exceptions.xml',
+        'rulesets/formatting.xml',
+        'rulesets/grails.xml',
+        'rulesets/imports.xml',
+        'rulesets/jdbc.xml',
+        'rulesets/junit.xml',
+        'rulesets/logging.xml',
+        'rulesets/naming.xml',
+        'rulesets/security.xml',
+        'rulesets/serialization.xml',
+        'rulesets/size.xml',
+        'rulesets/unnecessary.xml',
+        'rulesets/unused.xml'].join(',').toString()
+
