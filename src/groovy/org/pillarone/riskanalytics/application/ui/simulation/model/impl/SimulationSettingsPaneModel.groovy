@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
+import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import grails.util.Holders
 import org.apache.commons.logging.Log
@@ -184,7 +185,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         if (dataSource instanceof DelegatingDataSource) {
             dataSource = dataSource.targetDataSource
         }
-        if (dataSource instanceof LazyConnectionDataSourceProxy){
+        if (dataSource instanceof LazyConnectionDataSourceProxy) {
             dataSource = dataSource.targetDataSource
         }
         return dataSource.url
@@ -221,7 +222,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
 
         initConfigParameters(simulation, parameterization.periodCount)
 
-        for(ParameterHolder holder in parameterPaneModel.parameters) {
+        for (ParameterHolder holder in parameterPaneModel.parameters) {
             simulation.addParameter(holder)
         }
         simulation.keyFiguresToPreCalculate = postSimulationCalculationPaneModel.keyFigureMap
@@ -297,18 +298,38 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     }
 
     void modelChanged() {
-        String currentSelection = parameterizationNames.selectedItem
-        parameterizationNames.reload()
-        parameterizationNames.selectedItem = currentSelection
-
-        parameterizationVersions.reload(parameterizationNames.selectedItem)
-
-        currentSelection = resultConfigurationNames.selectedItem
-        resultConfigurationNames.reload()
-        resultConfigurationNames.selectedItem = currentSelection
-
-        resultConfigurationVersions.reload(currentSelection)
+        doWithoutListening(parameterizationNames) {
+            parameterizationNames.reload()
+        }
+        doWithoutListening(parameterizationVersions) {
+            parameterizationVersions.reload(parameterizationNames.selectedItem as String)
+        }
+        doWithoutListening(resultConfigurationNames) {
+            resultConfigurationNames.reload()
+        }
+        doWithoutListening(resultConfigurationVersions) {
+            resultConfigurationVersions.reload(resultConfigurationNames.selectedItem as String)
+        }
     }
 
+    private void doWithoutListening(DefaultComboBoxModel comboBoxModel, Closure c) {
+        doWithRestoredSelection(comboBoxModel) {
+            def listeners = comboBoxModel.listDataListeners
+            listeners.each {
+                comboBoxModel.removeListDataListener(it)
+            }
+            c.call()
+            listeners.each {
+                comboBoxModel.addListDataListener(it)
+            }
+        }
+    }
 
+    private doWithRestoredSelection(DefaultComboBoxModel comboBoxModel, Closure c) {
+        def current = comboBoxModel.selectedItem
+        c.call()
+        if (current) {
+            comboBoxModel.selectedItem = current
+        }
+    }
 }

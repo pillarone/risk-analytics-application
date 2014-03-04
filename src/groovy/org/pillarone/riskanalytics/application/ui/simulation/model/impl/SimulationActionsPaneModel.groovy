@@ -1,16 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
+import com.ulcjava.base.application.DefaultComboBoxModel
+import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.event.serializable.IWindowListener
+import grails.util.Holders
 import groovy.time.TimeCategory
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.AddToBatchAction
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.CancelSimulationAction
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.OpenResultsAction
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.RunSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
@@ -18,6 +24,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
@@ -25,15 +32,6 @@ import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.event.IWindowListener
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 
 /**
  * The view model for the SimulationActionsPane.
@@ -46,7 +44,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     protected SimulationHandler runner
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
-    private List listeners = []
+    private List<ISimulationListener> listeners = []
 
     volatile Simulation simulation
     ICollectorOutputStrategy outputStrategy
@@ -80,8 +78,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     void runSimulation() {
         simulation.save()
-
-        if (ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector) {
+        if (Holders.config.iterationCountThresholdForWarningWhenUsingSingleCollector) {
             possiblyWarnUserIfHugeResultSetExpected()
         } else {
             startSimulation()
@@ -90,20 +87,20 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     private void possiblyWarnUserIfHugeResultSetExpected() {
         try {
-            int iterationThreshold = ConfigurationHolder.config.iterationCountThresholdForWarningWhenUsingSingleCollector
+            int iterationThreshold = Holders.config.iterationCountThresholdForWarningWhenUsingSingleCollector
 
             if (simulation.numberOfIterations > iterationThreshold &&
                     simulation.template.collectors.find { collector -> collector.mode instanceof SingleValueCollectingModeStrategy }) {
                 // TODO send this from view not this model so a parent will be available for the dialog, then it will display in
                 // better location
                 I18NAlert alert = new I18NAlert("WarnPotentiallyLargeResultSet")
-                alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert)}] as IWindowListener)
+                alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert) }] as IWindowListener)
                 alert.show()
             } else {
                 startSimulation()
             }
         } catch (Exception e) {
-            LOG.error("Failure in possiblyWarnUserIfHugeResultSetExpected(), running simulation without checking" + e.getMessage())
+            LOG.error("Failure in possiblyWarnUserIfHugeResultSetExpected(), running simulation without checking" + e.message)
             startSimulation()
         }
     }
@@ -111,16 +108,13 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     void handleEvent(I18NAlert alert) {
         if (alert.value.equals(alert.firstButtonLabel)) {
             startSimulation()
-        } else if (alert.value.equals(alert.secondButtonLabel) || alert.value.equals("windowClosing")) {
-            //User has clicked "Cancel" or simply closed the alert window... either way, just return
-            return
-        } else {
+        } else if (!(alert.value.equals(alert.secondButtonLabel) || alert.value.equals("windowClosing"))) {
             throw new RuntimeException("Unknown button pressed: " + alert.value)
         }
     }
 
     private void startSimulation() {
-        runner = RunSimulationService.getService().runSimulationOnGrid(
+        runner = RunSimulationService.service.runSimulationOnGrid(
                 new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy),
                 simulation.template)
         notifySimulationStart()
@@ -131,7 +125,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     int getProgress() {
-        runner.getProgress()
+        runner.progress
     }
 
     int getIterationsDone() {
@@ -139,11 +133,11 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     SimulationState getSimulationState() {
-        runner.getSimulationState()
+        runner.simulationState
     }
 
     String getEstimatedEndTime() {
-        DateTime estimatedSimulationEnd = runner.getEstimatedSimulationEnd()
+        DateTime estimatedSimulationEnd = runner.estimatedSimulationEnd
         if (estimatedSimulationEnd != null) {
             return dateFormat.print(estimatedSimulationEnd)
         }
@@ -167,15 +161,15 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     String getRemainingTime() {
-        String result = "-"
-        DateTime end = runner.getEstimatedSimulationEnd()
+        DateTime end = runner.estimatedSimulationEnd
         if (end != null) {
             use(TimeCategory) {
                 def duration = end.toDate() - new Date()
-                result = "$duration.hours h $duration.minutes m $duration.seconds s"
+                "$duration.hours h $duration.minutes m $duration.seconds s"
             }
+        } else {
+            "-"
         }
-        return result
     }
 
     void addSimulationListener(ISimulationListener listener) {
@@ -192,19 +186,19 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     void notifySimulationStop() {
         this.simulation = runner.simulation
-        listeners*.simulationEnd(simulation, simulation.modelClass.newInstance())
+        listeners*.simulationEnd(simulation, (Model) simulation.modelClass.newInstance())
     }
 
     void notifySimulationToBatchAdded(String message, BatchRunSimulationRun batchRun) {
         batchMessage = message
-        ISimulationListener pane = listeners.find {it.class.name == SimulationActionsPane.class.name}
+        SimulationActionsPane pane = listeners.find { it instanceof SimulationActionsPane }
         pane?.simulationToBatchAdded()
         mainModel.fireRowAdded(batchRun)
     }
 
     String getErrorMessage() {
         HashSet<String> messages = new HashSet<String>();
-        for (Throwable simulationException: runner.getSimulationErrors()) {
+        for (Throwable simulationException : runner.simulationErrors) {
             String exceptionMessage = simulationException.message
             if (exceptionMessage == null) {
                 exceptionMessage = simulationException.class.name
@@ -213,7 +207,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
         }
 
         StringBuffer text = new StringBuffer();
-        for (String exceptionMessage: messages) {
+        for (String exceptionMessage : messages) {
             List words = exceptionMessage.split(" ") as List
             int lineLength = 0
             for (String s in words) {
@@ -235,18 +229,32 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     void modelChanged() {
-
-        final BatchRun selected = batchRunComboBoxModel.getSelectedObject()
-        batchRunComboBoxModel.removeAllElements()
-
-        for (BatchRun run in BatchRun.list()) {
-            batchRunComboBoxModel.addItem(run)
-        }
-
-        if (selected != null) {
-            batchRunComboBoxModel.setSelectedItem(selected.name)
+        doWithoutListening(batchRunComboBoxModel) {
+            batchRunComboBoxModel.removeAllElements()
+            for (BatchRun run in BatchRun.list()) {
+                batchRunComboBoxModel.addItem(run)
+            }
         }
     }
 
+    private void doWithoutListening(DefaultComboBoxModel comboBoxModel, Closure c) {
+        doWithRestoredSelection(comboBoxModel) {
+            def listeners = comboBoxModel.listDataListeners
+            listeners.each {
+                comboBoxModel.removeListDataListener(it)
+            }
+            c.call()
+            listeners.each {
+                comboBoxModel.addListDataListener(it)
+            }
+        }
+    }
 
+    private doWithRestoredSelection(DefaultComboBoxModel comboBoxModel, Closure c) {
+        def current = comboBoxModel.selectedItem
+        c.call()
+        if (current) {
+            comboBoxModel.selectedItem = current
+        }
+    }
 }

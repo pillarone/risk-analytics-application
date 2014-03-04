@@ -28,7 +28,7 @@ class ModellingItemFactory {
     private static Log LOG = LogFactory.getLog(ModellingItemFactory)
 
     static Map getItemInstances() {
-        def map = UserContext.getAttribute("itemInstances")
+        Map map = UserContext.getAttribute("itemInstances")
         if (map == null) {
             map = [:]
             UserContext.setAttribute("itemInstances", map)
@@ -37,11 +37,11 @@ class ModellingItemFactory {
     }
 
     static Parameterization getParameterization(ParameterizationDAO dao) {
-        return getItem(dao)
+        getItem(dao)
     }
 
     static ModelItem getModelItem(ModelDAO dao) {
-        return getItem(dao)
+        getItem(dao)
     }
 
     static List getParameterizationsForModel(Class modelClass) {
@@ -112,7 +112,7 @@ class ModellingItemFactory {
 
     static ModellingItem createItem(String name, ConfigObject data, Class itemClass, boolean forceImport) {
 
-        def item
+        ModellingItem item
 
         if (itemClass == Parameterization) {
             item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
@@ -153,7 +153,7 @@ class ModellingItemFactory {
         }
         item.creator = UserManagement.currentUser
         def id = item.save()
-        getItemInstances()[key(itemClass, id)] = item
+        itemInstances[key(itemClass, id)] = item
 
         item
     }
@@ -165,7 +165,7 @@ class ModellingItemFactory {
             item.versionNumber = versionNumber
             item.creator = UserManagement.currentUser
             def id = item.save()
-            getItemInstances()[key(itemClass, id)] = item
+            itemInstances[key(itemClass, id)] = item
         }
         return item
     }
@@ -195,11 +195,11 @@ class ModellingItemFactory {
     }
 
     static ModelStructure getModelStructure(ModelStructureDAO dao) {
-        return getItem(dao)
+        getItem(dao)
     }
 
     static Simulation getSimulation(SimulationRun run) {
-        return getItem(run)
+        getItem(run)
     }
 
     /**
@@ -217,14 +217,14 @@ class ModellingItemFactory {
         }
     }
 
-    static boolean delete(def item) {
+    static boolean delete(ModellingItem item) {
         try {
             item.delete()
+            return true
         } catch (Exception ex) {
             LOG.error("Error deleting ${item?.class?.simpleName}: ", ex)
             return false
         }
-        return true
     }
 
 
@@ -237,7 +237,7 @@ class ModellingItemFactory {
         }
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -256,7 +256,7 @@ class ModellingItemFactory {
         newItem.modelClass = oldItem.modelClass
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -272,7 +272,7 @@ class ModellingItemFactory {
 
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -281,7 +281,7 @@ class ModellingItemFactory {
 
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -306,7 +306,7 @@ class ModellingItemFactory {
         }
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -333,7 +333,7 @@ class ModellingItemFactory {
 
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -356,7 +356,7 @@ class ModellingItemFactory {
 
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -366,7 +366,7 @@ class ModellingItemFactory {
 
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
@@ -380,7 +380,7 @@ class ModellingItemFactory {
         }
         def newID = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newID)] = newItem
+        itemInstances[key(newItem.class, newID)] = newItem
         return newItem
     }
 
@@ -398,23 +398,23 @@ class ModellingItemFactory {
 
         def newId = newItem.save()
         newItem.load()
-        getItemInstances()[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId)] = newItem
         return newItem
     }
 
     private static ModellingItem getItem(ResultStructureDAO dao) {
-        ResultStructure item = getItemInstances()[key(ResultStructure, dao.id)]
+        ResultStructure item = itemInstances[key(ResultStructure, dao.id)]
         if (!item) {
             item = new ResultStructure(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.modelClassName))
             item.versionNumber = new VersionNumber(dao.itemVersion)
 
-            getItemInstances()[key(ResultStructure, dao.id)] = item
+            itemInstances[key(ResultStructure, dao.id)] = item
         }
         item
     }
 
     private static ModellingItem getItem(ResourceDAO dao) {
-        Resource item = getItemInstances()[key(Resource, dao.id)]
+        Resource item = itemInstances[key(Resource, dao.id)]
         if (!item) {
             item = new Resource(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.resourceClassName))
             item.versionNumber = new VersionNumber(dao.itemVersion)
@@ -429,26 +429,26 @@ class ModellingItemFactory {
             item.creationDate = dao.getCreationDate()
             item.modificationDate = dao.getModificationDate()
             item.tags = dao.tags*.tag
-            getItemInstances()[key(Resource, dao.id)] = item
+            itemInstances[key(Resource, dao.id)] = item
         }
         item
     }
 
     private static ModellingItem getItem(CustomTableDAO dao) {
-        CustomTable item = getItemInstances()[key(CustomTable, dao.id)]
+        CustomTable item = itemInstances[key(CustomTable, dao.id)]
         if (!item) {
             item = new CustomTable(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.modelClassName))
 
-            getItemInstances()[key(CustomTable, dao.id)] = item
+            itemInstances[key(CustomTable, dao.id)] = item
         }
         item
     }
 
     private static ModellingItem getItem(ParameterizationDAO dao, Class modelClass = null) {
-        Parameterization item = getItemInstances()[key(Parameterization, dao.id)]
+        Parameterization item = itemInstances[key(Parameterization, dao.id)]
         if (!item) {
             item = new Parameterization(dao.name)
-            getItemInstances()[key(Parameterization, dao.id)] = item
+            itemInstances[key(Parameterization, dao.id)] = item
         }
         item.name = dao.name
         item.versionNumber = new VersionNumber(dao.itemVersion)
@@ -476,10 +476,10 @@ class ModellingItemFactory {
 
     private static Simulation getItem(SimulationRun run) {
         String key = key(SimulationRun, run.id)
-        Simulation simulation = getItemInstances()[key]
+        Simulation simulation = itemInstances[key]
         if (!simulation) {
             simulation = new Simulation(run.name)
-            getItemInstances()[key] = simulation
+            itemInstances[key] = simulation
         }
         simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
         simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
@@ -498,20 +498,20 @@ class ModellingItemFactory {
     }
 
     private static ModellingItem getItem(ModelDAO dao) {
-        ModelItem item = getItemInstances()[key(ModelItem, dao.id)]
+        ModelItem item = itemInstances[key(ModelItem, dao.id)]
         if (!item) {
             item = new ModelItem(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
-            getItemInstances()[key(ModelItem, dao.id)] = item
+            itemInstances[key(ModelItem, dao.id)] = item
         }
         item
     }
 
     private static ModellingItem getItem(ResultConfigurationDAO dao, Class modelClass = null) {
-        ResultConfiguration item = getItemInstances()[key(ResultConfiguration, dao.id)]
+        ResultConfiguration item = itemInstances[key(ResultConfiguration, dao.id)]
         if (!item) {
             item = new ResultConfiguration(dao.name)
-            getItemInstances()[key(ResultConfiguration, dao.id)] = item
+            itemInstances[key(ResultConfiguration, dao.id)] = item
         }
         item.modelClass = Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName)
         item.versionNumber = new VersionNumber(dao.itemVersion)
@@ -530,11 +530,11 @@ class ModellingItemFactory {
     }
 
     private static ModellingItem getItem(ModelStructureDAO dao) {
-        ModelStructure item = getItemInstances()[key(ModelStructure, dao.id)]
+        ModelStructure item = itemInstances[key(ModelStructure, dao.id)]
         if (!item) {
             item = new ModelStructure(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
-            getItemInstances()[key(ModelStructure, dao.id)] = item
+            itemInstances[key(ModelStructure, dao.id)] = item
         }
         item
     }
@@ -544,7 +544,7 @@ class ModellingItemFactory {
     }
 
     static void remove(ModellingItem item) {
-        getItemInstances().remove(key(item.class, item.id))
+        itemInstances.remove(key(item.class, item.id))
     }
 
     public static void put(ParameterizationDAO dao, Class modelClass = null) {
@@ -554,27 +554,27 @@ class ModellingItemFactory {
         item.valid = dao.valid
         if (modelClass != null)
             item.modelClass = modelClass
-        getItemInstances()[key(Parameterization, dao.id)] = item
+        itemInstances[key(Parameterization, dao.id)] = item
     }
 
 
     static void clear() {
-        getItemInstances().clear()
+        itemInstances.clear()
     }
 
     static ModellingItem updateOrCreateModellingItem(CacheItem source) {
         def key = key(source.itemClass, source.id)
-        def target = ModellingItemUpdater.createOrUpdateModellingItem(source, getItemInstances()[key])
-        getItemInstances()[key] = target
+        def target = ModellingItemUpdater.createOrUpdateModellingItem(source, itemInstances[key])
+        itemInstances[key] = target
         return target
     }
 
     static Simulation updateOrCreateModellingItem(SimulationCacheItem source) {
         def key = key(source.itemClass, source.id)
-        Simulation target = ModellingItemUpdater.createOrUpdateModellingItem(source, getItemInstances()[key])
-        target.parameterization = updateOrCreateModellingItem(source.parameterization)
-        target.template = updateOrCreateModellingItem(source.resultConfiguration)
-        getItemInstances()[key] = target
+        Simulation target = ModellingItemUpdater.createOrUpdateModellingItem(source, itemInstances[key])
+        target.parameterization = source.parameterization ? updateOrCreateModellingItem(source.parameterization) : null
+        target.template = source.resultConfiguration ? updateOrCreateModellingItem(source.resultConfiguration) : null
+        itemInstances[key] = target
         return target
     }
 
@@ -584,19 +584,19 @@ class ModellingItemFactory {
         }
     }
 
-    private static ModellingItem getOrCreateModellingItem(CacheItem source) {
+    static ModellingItem getOrCreateModellingItem(CacheItem source) {
         def key = key(source.itemClass, source.id)
-        def target = getItemInstances()[key] ?: ModellingItemUpdater.createOrUpdateModellingItem(source, null)
-        getItemInstances()[key] = target
-        return target
+        def target = itemInstances[key] ?: ModellingItemUpdater.createOrUpdateModellingItem(source, null)
+        itemInstances[key] = target
+        target
     }
 
-    private static ModellingItem getOrCreateModellingItem(SimulationCacheItem source) {
+    static ModellingItem getOrCreateModellingItem(SimulationCacheItem source) {
         def key = key(source.itemClass, source.id)
-        Simulation target = getItemInstances()[key] ?: ModellingItemUpdater.createOrUpdateModellingItem(source, null)
-        target.parameterization = getOrCreateModellingItem(source.parameterization)
-        target.template = getOrCreateModellingItem(source.resultConfiguration)
-        getItemInstances()[key] = target
-        return target
+        Simulation target = itemInstances[key] ?: ModellingItemUpdater.createOrUpdateModellingItem(source, null)
+        target.parameterization = source.parameterization ? getOrCreateModellingItem(source.parameterization) : null
+        target.template = source.resultConfiguration ? getOrCreateModellingItem(source.resultConfiguration) : null
+        itemInstances[key] = target
+        target
     }
 }

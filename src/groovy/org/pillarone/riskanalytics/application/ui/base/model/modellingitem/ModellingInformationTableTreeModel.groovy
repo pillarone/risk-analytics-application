@@ -179,7 +179,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
     public void updateTreeStructure(CacheItemEventConsumer consumer) {
         //only update tree for items which are accepted by the current filter.
         //for deleted elements we also have to update the tree, because the items for deletion are not fully mapped, so it could be that the filter does not work correctly.
-        eachNotFilteredOrDeleted(getPendingEvents(consumer)) { ItemEvent itemEvent ->
+        def events = getPendingEvents(consumer)
+        eachNotFilteredOrDeleted(events) { ItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ADDED:
                     builder.addNodeForItem(itemEvent.modellingItem)
@@ -192,10 +193,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
                     break;
             }
         }
-// try fix PMO-2679 - Detlef added event firing to add new p14n to dropdown list inside simulation window, but it disables the 'open results' button too after the sim.
-//        if (items){
-//            mainModel.fireModelChanged()
-//        }
+        if (events) {
+            mainModel.fireModelChanged()
+        }
     }
 
 
@@ -216,15 +216,18 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     public List<ItemEvent> getPendingEvents(CacheItemEventConsumer consumer) {
         queueService.pollCacheItemEvents(consumer).collect { CacheItemEvent event ->
-            def itemEvent = new ItemEvent(
+            ModellingItem modellingItem
+            if (event.eventType == REMOVED) {
+                modellingItem = ModellingItemFactory.getOrCreateModellingItem(event.item)
+                ModellingItemFactory.remove(modellingItem)
+            } else {
+                modellingItem = ModellingItemFactory.updateOrCreateModellingItem(event.item)
+            }
+            new ItemEvent(
                     cacheItem: event.item,
-                    modellingItem: ModellingItemFactory.updateOrCreateModellingItem(event.item),
+                    modellingItem: modellingItem,
                     eventType: event.eventType
             )
-            if (itemEvent.eventType == REMOVED) {
-                ModellingItemFactory.remove(itemEvent.modellingItem)
-            }
-            itemEvent
         }
     }
 
