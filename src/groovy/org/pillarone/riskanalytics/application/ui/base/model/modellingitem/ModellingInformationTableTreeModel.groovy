@@ -53,10 +53,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     FilterDefinition currentFilter = new FilterDefinition()
 
-    private static String logTreeStructureUpdatesKey = "ModellingInformationTableTreeModel.logTreeStructureUpdates";
-    private
-    static boolean logTreeStructureUpdates = Boolean.valueOf(System.getProperty(logTreeStructureUpdatesKey, "false"));
-
     @Override
     ITableTreeNode getRoot() {
         builder.root
@@ -66,11 +62,6 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         this.mainModel = mainModel
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         builder = new ModellingInformationTableTreeBuilder(this, mainModel)
-        if (logTreeStructureUpdates) {
-            LOG.info("-D" + logTreeStructureUpdatesKey + " is true, will log tree structure updates");
-        } else {
-            LOG.info("-D" + logTreeStructureUpdatesKey + " not true, will NOT log tree structure updates");
-        }
     }
 
     public void buildTreeNodes() {
