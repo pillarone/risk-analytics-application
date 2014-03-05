@@ -23,7 +23,7 @@ class RuntimeParameterPaneTests extends AbstractSimpleFunctionalTest {
 
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         FileImportService.importModelsIfNeeded(["Application"])
@@ -44,7 +44,7 @@ class RuntimeParameterPaneTests extends AbstractSimpleFunctionalTest {
 
 
     public void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     public void testRuntimeParameters() {

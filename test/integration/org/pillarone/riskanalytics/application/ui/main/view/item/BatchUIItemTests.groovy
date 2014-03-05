@@ -25,7 +25,7 @@ class BatchUIItemTests extends AbstractUIItemTest {
     AbstractUIItem createUIItem() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         SimulationRun run
         BatchRun batchRun = null
         BatchRunSimulationRun.withTransaction {TransactionStatus status ->

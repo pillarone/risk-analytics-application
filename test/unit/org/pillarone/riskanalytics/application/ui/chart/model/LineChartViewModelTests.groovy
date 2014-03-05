@@ -9,11 +9,11 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 public class LineChartViewModelTests extends GroovyTestCase {
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testGetDataTable() {

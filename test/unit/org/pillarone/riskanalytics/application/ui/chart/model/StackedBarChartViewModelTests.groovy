@@ -9,11 +9,11 @@ import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 public class StackedBarChartViewModelTests extends GroovyTestCase {
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testGetDataTable() {

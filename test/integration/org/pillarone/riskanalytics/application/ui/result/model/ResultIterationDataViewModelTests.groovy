@@ -36,7 +36,7 @@ class ResultIterationDataViewModelTests {
     @Before
     void setUp() {
         ResultAccessor.clearCaches()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
@@ -81,7 +81,7 @@ class ResultIterationDataViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

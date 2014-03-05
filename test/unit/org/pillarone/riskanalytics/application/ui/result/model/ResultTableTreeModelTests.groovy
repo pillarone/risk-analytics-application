@@ -15,7 +15,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
     StubFor stub
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         stub = new StubFor(PostSimulationCalculation)
         stub.demand.executeQuery(1..2) {query, params -> return [] }
@@ -23,7 +23,7 @@ class ResultTableTreeModelTests extends GroovyTestCase {
 
     @Override
     protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
 

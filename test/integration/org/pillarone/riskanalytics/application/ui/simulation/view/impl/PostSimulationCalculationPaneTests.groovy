@@ -19,7 +19,7 @@ class PostSimulationCalculationPaneTests extends AbstractSimpleFunctionalTest {
 
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         ULCFrame frame = new ULCFrame("test")
@@ -33,7 +33,7 @@ class PostSimulationCalculationPaneTests extends AbstractSimpleFunctionalTest {
 
 
     public void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     public void testView() {

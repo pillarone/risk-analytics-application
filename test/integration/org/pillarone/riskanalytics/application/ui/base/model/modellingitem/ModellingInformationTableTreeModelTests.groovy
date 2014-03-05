@@ -47,7 +47,7 @@ class ModellingInformationTableTreeModelTests {
         CacheItemSearchService.instance.init()
 
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         FileImportService.importModelsIfNeeded(['Application'])
         ModelRegistry.instance.clear()
         ModelRegistry.instance.addModel(ApplicationModel)
@@ -88,7 +88,7 @@ class ModellingInformationTableTreeModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
         model.queueService.unregisterAllConsumersForSession(session)
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()

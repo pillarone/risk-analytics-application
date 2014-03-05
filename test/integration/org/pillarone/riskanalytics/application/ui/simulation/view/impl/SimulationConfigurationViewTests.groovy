@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         FileImportService.importModelsIfNeeded(["Core"])
 
@@ -43,7 +43,7 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
     }
 
     void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
 

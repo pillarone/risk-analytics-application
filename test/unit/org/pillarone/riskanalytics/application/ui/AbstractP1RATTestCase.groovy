@@ -37,7 +37,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     ULCFrameOperator mainFrameOperator
 
     public void start() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         frame = new ULCFrame()
         frame.title = "mainFrame"
         frame.name = "mainFrame"

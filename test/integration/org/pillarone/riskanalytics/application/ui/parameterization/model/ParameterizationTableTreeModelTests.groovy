@@ -39,13 +39,13 @@ class ParameterizationTableTreeModelTests {
     @Before
     void setUp() {
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     @After
     void tearDown() {
         parameterization.removeListener(viewModel)
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
         ModellingItemFactory.clear()
     }
 

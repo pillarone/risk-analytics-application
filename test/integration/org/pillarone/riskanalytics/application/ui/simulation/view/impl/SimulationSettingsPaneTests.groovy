@@ -21,7 +21,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
     SimulationSettingsPane pane
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         FileImportService.importModelsIfNeeded(["Core"])
@@ -48,7 +48,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
 
     public void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     public void testRandomSeed() {

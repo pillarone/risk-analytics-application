@@ -28,7 +28,7 @@ class SimulationUIItemTests extends AbstractUIItemTest {
 
     @Override
     AbstractUIItem createUIItem() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         FileImportService.importModelsIfNeeded(["Core"])

@@ -12,7 +12,7 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
     ParallelCoordinatesChartViewModel model
 
     protected void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         ResultTableTreeNode node = new ResultTableTreeNode("outTest")
         node.collector = "testCollector"
@@ -22,7 +22,7 @@ class ParallelCoordinatesChartViewModelTests extends GroovyTestCase {
     }
 
     protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testGetDataTable() {

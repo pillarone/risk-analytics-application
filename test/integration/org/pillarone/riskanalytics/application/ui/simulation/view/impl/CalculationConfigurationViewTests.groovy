@@ -15,7 +15,7 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 class CalculationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         FileImportService.importModelsIfNeeded(["DeterministicApplication"])
 
@@ -41,6 +41,6 @@ class CalculationConfigurationViewTests extends AbstractSimpleFunctionalTest {
     }
 
     void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 }

@@ -9,12 +9,12 @@ class ConstrainedMultiDimensionalParameterTableModelTests extends GroovyTestCase
 
     @Override
     protected void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     @Override
     protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testEnumI18N() {

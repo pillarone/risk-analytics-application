@@ -45,7 +45,7 @@ grails.project.dependency.resolution = {
         test ":codenarc:0.20"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.9-SNAPSHOT"
+//            runtime "org.pillarone:risk-analytics-core:1.9-SNAPSHOT"
         }
 
     }
@@ -108,7 +108,7 @@ coverage {
 
 reportFolders = [new File("./src/java/reports")]
 
-//grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
+grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
 
 codenarc.maxPriority1Violations = 0
 codenarc.maxPriority2Violations = 0

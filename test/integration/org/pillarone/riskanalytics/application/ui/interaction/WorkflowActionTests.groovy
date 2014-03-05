@@ -17,7 +17,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
     protected void setUp() {
         FileImportService.importModelsIfNeeded(["Application"])
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         super.setUp()
         UserContext.metaClass.static.hasCurrentUser = { ->
             true
@@ -26,7 +26,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
 
     protected void tearDown() {
         super.tearDown();
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     protected Class getApplicationClass() {

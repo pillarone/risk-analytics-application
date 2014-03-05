@@ -17,7 +17,7 @@ class ComponentHelpConfigTests extends GroovyTestCase {
         if (Holders.config) {
             configValue = Holders.config.get(ComponentHelp.DEFAULT_HELP_URL_CONFIG_KEY)
         }
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ResourceBundleRegistry.addBundle(ResourceBundleRegistry.HELP, "org/pillarone/riskanalytics/application/help/ComponentHelp")
     }
 
@@ -46,6 +46,6 @@ class ComponentHelpConfigTests extends GroovyTestCase {
         } else {
             Holders.config.remove(ComponentHelp.DEFAULT_HELP_URL_CONFIG_KEY)
         }
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 }

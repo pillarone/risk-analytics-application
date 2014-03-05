@@ -17,7 +17,7 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
 
 
     void testGetPossibleValues() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         AbstractMultiDimensionalParameter param = new ComboBoxMatrixMultiDimensionalParameter([0], ['hierarchyComponent'], ITestComponentMarker)
         Model model = new ApplicationModel()
@@ -43,7 +43,7 @@ class MultiDimensionalParameterTests extends GroovyTestCase {
         values = param.getPossibleValues(1, 1)
         assertFalse values instanceof Collection
 
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testGetValuesAsObjects() {

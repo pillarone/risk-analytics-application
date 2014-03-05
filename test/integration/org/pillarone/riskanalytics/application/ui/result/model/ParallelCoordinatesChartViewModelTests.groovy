@@ -41,7 +41,7 @@ class ParallelCoordinatesChartViewModelTests {
     @Before
     void setUp() {
         ResultAccessor.clearCaches()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
@@ -85,7 +85,7 @@ class ParallelCoordinatesChartViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
 

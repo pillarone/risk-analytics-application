@@ -19,13 +19,13 @@ class QueryPanelModelTests extends GroovyTestCase {
     ResultWriter resultWriter
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         FileImportService.importModelsIfNeeded(['Core'])
 
     }
 
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testCreateCriteriaSubQuerry() {

@@ -17,7 +17,7 @@ class CalculationSettingsPaneTests extends AbstractSimpleFunctionalTest {
     CalculationSettingsPane pane
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         FileImportService.importModelsIfNeeded(["DeterministicApplication"])
@@ -38,7 +38,7 @@ class CalculationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
 
     public void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     public void testPeriodCount() {

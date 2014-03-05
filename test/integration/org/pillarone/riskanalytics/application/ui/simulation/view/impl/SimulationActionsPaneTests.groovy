@@ -20,7 +20,7 @@ class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
     private SimulationActionsPane pane
 
     protected void doStart() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
 
         FileImportService.importModelsIfNeeded(["Core"])
 
@@ -44,7 +44,7 @@ class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
 
 
     public void stop() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     //TODO: re-enable when all features are supported by core

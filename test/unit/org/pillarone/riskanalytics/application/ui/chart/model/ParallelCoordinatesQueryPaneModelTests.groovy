@@ -7,11 +7,11 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 class ParallelCoordinatesQueryPaneModelTests extends GroovyTestCase {
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testPMO_361() {

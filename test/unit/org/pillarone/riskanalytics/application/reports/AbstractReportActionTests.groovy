@@ -13,13 +13,13 @@ abstract class AbstractReportActionTests extends GroovyTestCase {
 
     @Override
     protected void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         super.setUp()
     }
 
     @Override
     protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
         super.tearDown()
     }
 
