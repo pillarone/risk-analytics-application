@@ -2,17 +2,28 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import com.ulcjava.base.application.table.AbstractTableModel
 
-abstract class SortableListModel<T> extends AbstractTableModel {
+abstract class SortableTableModel<T> extends AbstractTableModel {
 
     private List<T> backedList
+
+    private List<ISimulationOrderChangedListener> listeners;
 
     @Override
     int getRowCount() {
         return backedList.size()
     }
 
-    SortableListModel(List<T> objects) {
+    SortableTableModel(List<T> objects) {
         backedList = objects
+        listeners = []
+    }
+
+    void addOrderChangedListener(ISimulationOrderChangedListener listener) {
+        listeners.add(listener)
+    }
+
+    void removedOrderChangedListener(ISimulationOrderChangedListener listener) {
+        listeners.remove(listener)
     }
 
     boolean moveFromTo(int[] sources, int target) {
@@ -32,7 +43,14 @@ abstract class SortableListModel<T> extends AbstractTableModel {
         //TODO fire some kind of sort event
         //TODO fire more specific
         fireTableDataChanged()
+        int[] newIndices = fromItems.collect { backedList.indexOf(it) }.toArray(new int[fromItems.size()])
+        def event = new SortedEvent<T>(sources, newIndices, fromItems.toArray() as T[])
+        fireSortedEvent(event)
         return true
+    }
+
+    private List<ISimulationOrderChangedListener> fireSortedEvent(SortedEvent<T> event) {
+        listeners.each { it.orderChanged(event) }
     }
 
     void setBackedList(List<T> backedList) {

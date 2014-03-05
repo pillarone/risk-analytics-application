@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class SimulationQueuePaneModel {
 
-    SortableListModel simulationTableModel
+    SortableTableModel simulationTableModel
 
     private List<ISimulationOrderChangedListener> orderChangedListeners;
 

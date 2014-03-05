@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
-class QueueItemListModel extends SortableListModel<IQueueItem> {
+class QueueItemListModel extends SortableTableModel<IQueueItem> {
 
     QueueItemListModel(List<IQueueItem> objects) {
         super(objects)
