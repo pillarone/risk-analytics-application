@@ -9,11 +9,11 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 class CriteriaViewModelTests extends GroovyTestCase {
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testSelectedComperator() {

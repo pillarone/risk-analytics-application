@@ -25,11 +25,11 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
 class ParameterizationTableTreeNodeTests extends GroovyTestCase {
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testGetValueAt() {

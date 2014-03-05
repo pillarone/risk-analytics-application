@@ -30,7 +30,7 @@ class DeterministicResultViewModelTests {
 
     @Before
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         new ParameterizationImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
@@ -77,7 +77,7 @@ class DeterministicResultViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

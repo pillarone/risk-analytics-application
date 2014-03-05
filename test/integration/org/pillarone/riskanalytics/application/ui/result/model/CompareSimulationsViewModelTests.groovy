@@ -31,7 +31,7 @@ class CompareSimulationsViewModelTests {
 
     @Before
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ModellingItemFactory.clear()
 
         new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
@@ -62,7 +62,7 @@ class CompareSimulationsViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

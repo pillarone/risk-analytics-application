@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
@@ -28,18 +27,18 @@ class TreeDoubleClickAction extends SelectionTreeAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        delegate(getSelectedItem(), event)
+        delegate(selectedItem, event)
     }
 
     protected void delegate(def item, ActionEvent event) {
 
     }
 
-    protected void delegate(ModellingItem item,ActionEvent  event) {
+    protected void delegate(ModellingItem item, ActionEvent event) {
         openItemAction.doActionPerformed(event)
     }
 
-    protected void delegate(BatchRun item,ActionEvent  event) {
+    protected void delegate(BatchRun item, ActionEvent event) {
         openBatchAction.doActionPerformed(event)
     }
 

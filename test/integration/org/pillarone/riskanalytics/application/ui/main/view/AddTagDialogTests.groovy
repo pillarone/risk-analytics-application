@@ -30,7 +30,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         FileImportService.importModelsIfNeeded(["Core"])
         CacheItemSearchService.getInstance().refresh()
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         removeTags()
         initTags()
         super.setUp()
@@ -39,7 +39,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
     protected void tearDown() {
         super.tearDown();
         removeTags()
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
         BatchUIItem
     }
 

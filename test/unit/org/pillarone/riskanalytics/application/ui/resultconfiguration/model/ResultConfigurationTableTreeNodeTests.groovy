@@ -15,14 +15,14 @@ class ResultConfigurationTableTreeNodeTests extends GroovyTestCase {
     private PacketCollector collector
 
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         //Boot strap is not executed for unit tests
         CollectingModeFactory.registerStrategy(new SingleValueCollectingModeStrategy())
         CollectingModeFactory.registerStrategy(new AggregatedCollectingModeStrategy())
     }
 
     protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testFindCollector() {

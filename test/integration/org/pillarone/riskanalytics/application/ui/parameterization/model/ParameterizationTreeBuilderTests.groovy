@@ -25,12 +25,12 @@ class ParameterizationTreeBuilderTests {
 
     @Before
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

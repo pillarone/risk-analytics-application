@@ -1,18 +1,18 @@
 package org.pillarone.riskanalytics.application.util
 
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.user.UserSettings
-import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
 import com.canoo.ulc.community.locale.server.ULCClientLocaleSetter
 import com.ulcjava.base.application.ClientContext
+import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
+import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserSettings
+import org.pillarone.riskanalytics.core.util.ResourceBundleRegistry
+
 import java.text.DateFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
-import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 
 /**
  * This class provides properties from resource bundles using client-specific internationalization.
@@ -32,39 +32,39 @@ class LocaleResources {
     }
 
     static ResourceBundle getBundle(String bundleFilename) {
-        ResourceBundleFactory.getBundle(bundleFilename, getLocale())
+        ResourceBundleFactory.getBundle(bundleFilename, locale)
     }
 
     static Set getBundles(String key) {
         def resourceBundle = []
         def resources = ResourceBundleRegistry.getBundles(key)
         for (String bundleName in resources) {
-            resourceBundle << ResourceBundle.getBundle(bundleName, getLocale(), Thread.currentThread().contextClassLoader)
+            resourceBundle << ResourceBundle.getBundle(bundleName, locale, Thread.currentThread().contextClassLoader)
         }
         return resourceBundle
     }
 
     static Locale getLocale() {
         if (sTestMode) {
-            return Locale.getDefault()
+            return Locale.default
         }
         Locale locale = (Locale) UserContext.getAttribute(LOCALE)
 
         if (locale == null) {
-            Person.withTransaction {e ->
-                UserSettings userSettings = UserContext.getCurrentUser()?.settings
-                UserPreferences preferences = UserPreferencesFactory.getUserPreferences()
+            Person.withTransaction { e ->
+                UserSettings userSettings = UserContext.currentUser?.settings
+                UserPreferences preferences = UserPreferencesFactory.userPreferences
                 if (userSettings != null) {
                     locale = buildLocale(userSettings)
                     UserContext.setAttribute(LOCALE, locale)
-                } else if (preferences.getLanguage() != null) {
-                    locale = new Locale(preferences.getLanguage())
+                } else if (preferences.language != null) {
+                    locale = new Locale(preferences.language)
                     UserContext.setAttribute(LOCALE, locale)
                 }
             }
             if (locale == null) {
                 try {
-                    locale = ClientContext.getLocale()
+                    locale = ClientContext.locale
                     if (locale == null) {
                         locale = new Locale("en", "US")
                     }
@@ -74,7 +74,7 @@ class LocaleResources {
 
                 UserContext.setAttribute(LOCALE, locale)
             }
-            ULCClientLocaleSetter.setDefaultLocale(locale)
+            ULCClientLocaleSetter.defaultLocale = locale
         }
 
         return locale
@@ -98,19 +98,14 @@ class LocaleResources {
 
 
     static DateFormat getDateFormat() {
-        SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.DEFAULT, SimpleDateFormat.SHORT, getLocale())
+        SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.DEFAULT, SimpleDateFormat.SHORT, locale)
     }
 
-    static void setTestMode() {
-        sTestMode = true
+    static setTestMode(boolean testMode) {
+        sTestMode = testMode
     }
 
     static boolean getTestMode() {
         return sTestMode
     }
-
-    static void clearTestMode() {
-        sTestMode = false
-    }
-
 }

@@ -29,7 +29,7 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         SimulationRun run
         BatchRunSimulationRun.withTransaction {TransactionStatus status ->
             BatchRun batchRun = new BatchRun(name: "test", executionTime: new DateTime())
@@ -57,7 +57,7 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
     }
 
     @Override protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
         super.tearDown()
     }
 

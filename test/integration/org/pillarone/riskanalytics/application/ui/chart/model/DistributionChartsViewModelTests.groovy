@@ -24,7 +24,7 @@ public class DistributionChartsViewModelTests {
 
     @Before
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         resultAccessor = new StubFor(ResultAccessor)
         resultAccessor.demand.hasDifferentValues(1..100) {SimulationRun simulationRun, int periodIndex, String path, String s, String s2 -> true}
         resultAccessor.demand.getValues(1..100) {simulationRun, periodIndex, path, String s, String s2 -> [1d, 2d, 3d, 4d, 5d]}
@@ -44,7 +44,7 @@ public class DistributionChartsViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

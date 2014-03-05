@@ -13,13 +13,13 @@ class ExcelExportHandlerTests {
 
     @Before
     void setUp() throws Exception {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
     }
 
     @After
     void tearDown() throws Exception {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

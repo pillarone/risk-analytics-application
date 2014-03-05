@@ -24,7 +24,7 @@ class ParameterViewModelTests {
 
     @Before
     void setUp() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         FileImportService.importModelsIfNeeded(['Core'])
         Model model = new CoreModel()
         model.init()
@@ -41,7 +41,7 @@ class ParameterViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

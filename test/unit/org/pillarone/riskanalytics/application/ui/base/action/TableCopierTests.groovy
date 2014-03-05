@@ -11,12 +11,12 @@ import org.pillarone.riskanalytics.core.parameterization.SimpleMultiDimensionalP
 class TableCopierTests extends GroovyTestCase {
     @Override protected void setUp() {
         super.setUp()
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
     }
 
     @Override protected void tearDown() {
         super.tearDown()
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
 

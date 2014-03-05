@@ -14,13 +14,13 @@ class BatchViewTests extends AbstractFunctionalTestCase {
 
     protected void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         super.setUp();
 
     }
 
     @Override protected void tearDown() {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
         super.tearDown()
     }
 

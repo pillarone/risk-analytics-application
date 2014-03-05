@@ -10,7 +10,7 @@ class I18NUtilsTests extends GroovyTestCase {
 
     protected void setUp() {
         super.setUp();
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ResourceBundleRegistry.addBundle(ResourceBundleRegistry.RESOURCE, "org.pillarone.riskanalytics.application.i18nutilsTests")
     }
 

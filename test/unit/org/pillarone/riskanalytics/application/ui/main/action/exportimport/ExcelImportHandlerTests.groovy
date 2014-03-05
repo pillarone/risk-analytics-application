@@ -22,7 +22,7 @@ class ExcelImportHandlerTests {
 
     @Before
     void setUp() throws Exception {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
         exportFile = File.createTempFile('excel', '.xlsx')
         exportFile.bytes = new ExcelExportHandler(new ApplicationModel()).exportModel()
@@ -30,7 +30,7 @@ class ExcelImportHandlerTests {
 
     @After
     void tearDown() throws Exception {
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     @Test

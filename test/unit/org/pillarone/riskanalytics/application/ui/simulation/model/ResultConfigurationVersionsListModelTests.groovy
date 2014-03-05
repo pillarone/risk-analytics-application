@@ -10,7 +10,7 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
 
     void testLoad() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ResultConfigurationVersionsListModel listModel = new ResultConfigurationVersionsListModel()
         assertEquals 0, listModel.size
 
@@ -21,11 +21,11 @@ class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
             listModel.load(CoreModel, 'CoreResultConfiguration')
             assertEquals 1, listModel.size
         }
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testGetElementAt() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ResultConfigurationVersionsListModel listModel = new ResultConfigurationVersionsListModel()
         assertEquals 0, listModel.size
 
@@ -42,11 +42,11 @@ class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
             assertEquals 'v2', listModel.getElementAt(0)
             assertEquals 'v1', listModel.getElementAt(1)
         }
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 
     void testSelection() {
-        LocaleResources.setTestMode()
+        LocaleResources.setTestMode(true)
         ResultConfigurationVersionsListModel listModel = new ResultConfigurationVersionsListModel()
         assertEquals 0, listModel.size
 
@@ -61,6 +61,6 @@ class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
             assertEquals "v1", listModel.getSelectedItem()
             assertEquals template, listModel.getSelectedObject()
         }
-        LocaleResources.clearTestMode()
+        LocaleResources.setTestMode(false)
     }
 }
