@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
-
 import com.ulcjava.base.application.ULCFrame
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
@@ -11,8 +10,6 @@ import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.testframework.operator.*
-import static org.pillarone.riskanalytics.core.simulation.SimulationState.*
 
 class SimulationActionsPaneTests extends AbstractSimpleFunctionalTest {
 

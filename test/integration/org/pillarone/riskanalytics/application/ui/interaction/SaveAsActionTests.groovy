@@ -26,8 +26,6 @@ class SaveAsActionTests extends AbstractFunctionalTestCase {
     void testSaveAsParameter() {
         ULCFrameOperator frame = getMainFrameOperator()
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
-        printTree(tree.ULCTableTree)
-
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         assertNotNull "path not found", pathForRename
 

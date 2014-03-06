@@ -47,7 +47,7 @@ class ModellingInformationTableTreeModelTests {
         CacheItemSearchService.instance.init()
 
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         FileImportService.importModelsIfNeeded(['Application'])
         ModelRegistry.instance.clear()
         ModelRegistry.instance.addModel(ApplicationModel)
@@ -66,7 +66,7 @@ class ModellingInformationTableTreeModelTests {
         newParameterization('Parametrization X', '9')
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
-        CacheItemSearchService.getInstance().refresh()
+        CacheItemSearchService.instance.refresh()
         mainModel = new RiskAnalyticsMainModel()
         model = new ModellingInformationTableTreeModel(mainModel)
         model.buildTreeNodes()
@@ -75,7 +75,6 @@ class ModellingInformationTableTreeModelTests {
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
     }
-
 
 
     private void newParameterization(String name, String version) {
@@ -88,14 +87,10 @@ class ModellingInformationTableTreeModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
         model.queueService.unregisterAllConsumersForSession(session)
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
-    }
-
-    private void printTree() {
-        printNode(model, model.root, 0)
     }
 
     @Test
@@ -105,33 +100,15 @@ class ModellingInformationTableTreeModelTests {
 
     @Test
     void testTreeStructure() {
-        IMutableTableTreeNode root = model.root
+        IMutableTableTreeNode root = model.root as IMutableTableTreeNode
         assert root
         assert 3 == root.childCount
-    }
-
-    private printNode(ModellingInformationTableTreeModel model, ITableTreeNode node, int level) {
-        String line = ""
-        level.times { line += "\t" }
-        model.columnCount.times {
-            line += "${model.getValueAt(node, it)},"
-        }
-        println line
-        level++
-        node.childCount.times {
-            printNode(model, node.getChildAt(it), level)
-        }
     }
 
     @Test
     void testSimpleParamStructureWithTenNodes() {
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
-        def count = paramsNode.getChildCount()
-        println(count)
-        for (int i = 0; i < count; i++) {
-            println(paramsNode.getChildAt(i))
-        }
 
         assertEquals 2, paramsNode.childCount
         def v11Node = paramsNode.getChildAt(1)
@@ -160,16 +137,10 @@ class ModellingInformationTableTreeModelTests {
         TestModelChangedListener listener = new TestModelChangedListener()
         mainModel.addModelChangedListener(listener)
         model.updateTreeStructure(eventConsumer)
-//        assertTrue(listener.changeCalled)
+        assertTrue(listener.changeCalled)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
-        def count = paramsNode.getChildCount()
-        println(count)
-        for (int i = 0; i < count; i++) {
-            println(paramsNode.getChildAt(i))
-        }
-
         assertEquals 2, paramsNode.childCount
         def v12Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v12Node.name
@@ -213,13 +184,6 @@ class ModellingInformationTableTreeModelTests {
         IMutableTableTreeNode paramsNode = applicationNode.getChildAt(0) as IMutableTableTreeNode
         assertEquals('Application', model.getValueAt(applicationNode, 0))
         assertEquals('Parameterization', model.getValueAt(paramsNode, 0))
-
-
-        def count = paramsNode.getChildCount()
-        println(count)
-        for (int i = 0; i < count; i++) {
-            println(paramsNode.getChildAt(i))
-        }
         assertEquals('ApplicationParameters v1', model.getValueAt(paramsNode.getChildAt(0), 0))
     }
 
@@ -368,12 +332,13 @@ class ModellingInformationTableTreeModelTests {
         assertTrue(cachedItem.is(paramsNode.abstractUIItem.item))
     }
 }
-    class TestModelListener implements ITableTreeModelListener {
-        List<TableTreeModelEvent> nodeChangedEvents = []
-        List<TableTreeModelEvent> structureChangedEvents = []
-        List<TableTreeModelEvent> nodeStructureChangedEvents = []
-        List<TableTreeModelEvent> nodeInsertedEvents = []
-        List<TableTreeModelEvent> nodeRemovedEvents = []
+
+class TestModelListener implements ITableTreeModelListener {
+    List<TableTreeModelEvent> nodeChangedEvents = []
+    List<TableTreeModelEvent> structureChangedEvents = []
+    List<TableTreeModelEvent> nodeStructureChangedEvents = []
+    List<TableTreeModelEvent> nodeInsertedEvents = []
+    List<TableTreeModelEvent> nodeRemovedEvents = []
 
     void reset() {
         nodeChangedEvents.clear()
@@ -403,17 +368,17 @@ class ModellingInformationTableTreeModelTests {
         nodeRemovedEvents << event
     }
 
-        @Override
-        void tableTreeNodesChanged(TableTreeModelEvent event) {
-            nodeChangedEvents << event
-        }
+    @Override
+    void tableTreeNodesChanged(TableTreeModelEvent event) {
+        nodeChangedEvents << event
     }
+}
 
-    class TestModelChangedListener implements IModelChangedListener {
-        boolean changeCalled
+class TestModelChangedListener implements IModelChangedListener {
+    boolean changeCalled
 
-        @Override
-        void modelChanged() {
-            changeCalled = true
-        }
+    @Override
+    void modelChanged() {
+        changeCalled = true
     }
+}

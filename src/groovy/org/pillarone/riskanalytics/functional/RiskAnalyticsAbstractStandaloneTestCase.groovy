@@ -56,20 +56,4 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
         cleanUpThread.join()
         super.tearDown()
     }
-
-    protected printTree(ULCTableTree tree) {
-        printNode(tree.getModel().root, 0)
-    }
-
-    private printNode(ITableTreeNode node, int level) {
-        String line = ""
-        level.times { line += "\t" }
-        line += "${node.getValueAt(0)},"
-        println line
-        level++
-        node.childCount.times {
-            printNode(node.getChildAt(it), level)
-        }
-    }
-
 }

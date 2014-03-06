@@ -1,28 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
 
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import com.ulcjava.base.application.ULCFrame
-import org.pillarone.riskanalytics.application.ui.comment.action.AbstractCommentAction
+import com.ulcjava.testframework.ServerSideCommand
+import com.ulcjava.testframework.operator.*
+import models.core.CoreModel
+import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
+import org.pillarone.riskanalytics.application.ui.parameterization.model.TestMultiDimensionalParameterModel
+import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
+import org.pillarone.riskanalytics.core.parameterization.PeriodMatrixMultiDimensionalParameter
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolderFactory
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNodeFactory
-import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.TestMultiDimensionalParameterModel
-import org.pillarone.riskanalytics.core.parameterization.PeriodMatrixMultiDimensionalParameter
-import org.pillarone.riskanalytics.core.example.marker.ITestComponentMarker
-import models.core.CoreModel
-import com.ulcjava.testframework.operator.ULCTextFieldOperator
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCButtonOperator
-import com.ulcjava.testframework.operator.ULCPopupMenuOperator
-import com.ulcjava.testframework.operator.AWTComponentOperator
-import com.ulcjava.testframework.operator.ULCCheckBoxMenuItemOperator
-import com.ulcjava.testframework.operator.ULCTableOperator
-import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
-import com.ulcjava.testframework.ServerSideCommand
 
 class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalTest {
 
@@ -50,10 +41,9 @@ class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalT
         def node = ParameterizationNodeFactory.getNode(holder.path, parameterization, coreModel)
         MultiDimensionalParameterModel multiDimensionalParameterModel = new TestMultiDimensionalParameterModel(null, node, 1)
         PeriodMultiDimensionalParameterView view = new PeriodMultiDimensionalParameterView(multiDimensionalParameterModel)
-        frame.contentPane = view.getContent()
+        frame.contentPane = view.content
         frame.visible = true
     }
-
 
 
     void testUpdateAndSave() {
@@ -65,10 +55,10 @@ class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalT
         //Select all components..
         compSelectOp.clickForPopup()
         ULCPopupMenuOperator popOp = new ULCPopupMenuOperator(frameOp, new ComponentByNameChooser("componentPopupMenu"))
-        popOp.getComponents().each { AWTComponentOperator op ->
+        popOp.components.each { AWTComponentOperator op ->
             assertTrue(op instanceof ULCCheckBoxMenuItemOperator)
             ULCCheckBoxMenuItemOperator checkBoxMenuItemOperator = (ULCCheckBoxMenuItemOperator) op
-            if (!checkBoxMenuItemOperator.isSelected()) {
+            if (!checkBoxMenuItemOperator.selected) {
                 checkBoxMenuItemOperator.clickMouse()
             }
         }
@@ -78,9 +68,8 @@ class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalT
         //Apply new vals & save
         applyOp.clickMouse()
         //enter values into table..
-        for (int row = 2; row < originalTable.getRowCount(); row++) {
-            for (int col = 3; col < originalTable.getColumnCount(); col++) {
-                Object value = originalTable.getValueAt(row, col)
+        for (int row = 2; row < originalTable.rowCount; row++) {
+            for (int col = 3; col < originalTable.columnCount; col++) {
                 if (row != col - 1) {
                     AWTComponentOperator op = originalTable.clickForEdit(row, col)
                     if (op instanceof ULCTextFieldOperator) {
@@ -92,8 +81,6 @@ class PeriodMultiDimensionalParameterViewTests extends AbstractSimpleFunctionalT
                         //After ulc upgrade to at least 7.2.1 it will work again.
                         //Also this test is not really a test. We should check, if the values in the parametrization are correct!
 //                        op.enterText(toEnter.toString())
-                    } else {
-                        println(op.getClass())
                     }
                 }
             }

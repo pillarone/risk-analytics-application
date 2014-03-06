@@ -91,7 +91,6 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTableTreeOperator itemTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
         TreePath applicationModelPath = itemTree.findPath('0=Application')
-        println(applicationModelPath)
         int applicationModelRow = itemTree.getRowForPath(applicationModelPath)
         itemTree.doExpandRow(applicationModelRow)
         itemTree.doExpandRow(applicationModelRow + 1)

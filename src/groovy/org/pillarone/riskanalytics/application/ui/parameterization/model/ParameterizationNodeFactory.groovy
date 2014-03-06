@@ -15,7 +15,7 @@ class ParameterizationNodeFactory {
 
     public static ParameterizationTableTreeNode getNode(String path, ParametrizedItem item, Model simulationModel) {
         ParameterHolder param = item.getParameterHoldersForFirstPeriod(path)
-        switch (param.getClass()) {
+        switch (param.class) {
             case IntegerParameterHolder:
                 return createIntegerNode(path, item)
             case DoubleParameterHolder:

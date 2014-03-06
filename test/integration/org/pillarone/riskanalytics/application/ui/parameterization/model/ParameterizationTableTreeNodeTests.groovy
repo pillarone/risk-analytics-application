@@ -1,10 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
-
 import models.application.ApplicationModel
 import models.core.CoreModel
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
 import org.pillarone.riskanalytics.application.example.component.ExampleParameterComponent
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.util.LocaleResources

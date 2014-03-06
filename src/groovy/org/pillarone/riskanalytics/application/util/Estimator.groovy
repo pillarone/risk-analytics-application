@@ -8,7 +8,6 @@ class Estimator {
     protected static double threshold = 4.0  //used for speeding up pdf calculations for graphical representations.
 
     public static List gaussKernelBandwidthCdf(List<Double> observations, double t, boolean dataExportMode) {
-        println "use JEstimator instead of Estimator"
         List cdfValues = []
         List<Double> plotMesh = MeshCalculations.getUniformMeshWithModifiedEdges(t, dataExportMode, observations)
         for (double x: plotMesh) {
@@ -20,7 +19,6 @@ class Estimator {
     }
 
     public static List adaptiveKernelBandwidthCdf(List<Double> observations, double priorBandwidth, boolean dataExportMode) {
-        println "use JEstimator instead of Estimator"
         List cdfValues = []
         List<Double> plotMesh = MeshCalculations.getUniformMeshWithModifiedEdges(priorBandwidth, dataExportMode, observations)
         List<Integer> meshCounts = MeshCalculations.calculateMeshCount(plotMesh, observations)
@@ -34,7 +32,6 @@ class Estimator {
     }
 
     public static List gaussKernelBandwidthPdf(List<Double> observations, double t, boolean dataExportMode) {
-        println "use JEstimator instead of Estimator"
         List pdfValues = []
         List<Double> plotMesh = MeshCalculations.getUniformMeshWithModifiedEdges(t, dataExportMode, observations)
         double norm = 0d
@@ -61,7 +58,6 @@ class Estimator {
     }
 
     public static List adaptiveKernelBandwidthPdf(List observations, double priorBandwidth, boolean dataExportMode) {
-        println "use JEstimator instead of Estimator"
         List pdfValues = []
         List<Double> plotMesh = MeshCalculations.getUniformMeshWithModifiedEdges(priorBandwidth, dataExportMode, observations)
         List<Integer> meshCounts = MeshCalculations.calculateMeshCount(plotMesh, observations)
@@ -90,7 +86,6 @@ class Estimator {
     }
 
     public static double calcBandwidthForGaussKernelEstimate(double stdDev, double IQR, double n) {
-        println "use JEstimator instead of Estimator"
         if (IQR > 0) {
             return Estimator.CONST * Math.min(stdDev, IQR) * Math.pow(n, (-1 / 5));
         } else {
@@ -99,7 +94,6 @@ class Estimator {
     }
 
     protected static double _adaptiveKernelBandwidthPdf(double x, double priorBandwidth, List observations, boolean dataExportMode, List<Double> meshMidPoints, List<Integer> meshCounts, List<Double> bandwidths) {
-        println "use JEstimator instead of Estimator"
         double freq = 0
         double norm = 0
 
@@ -117,7 +111,6 @@ class Estimator {
     }
 
     protected static double _adaptiveKernelBandwidthCdf(double x, double priorBandwidth, List observations, boolean dataExportMode, List<Double> meshMidPoints, List<Integer> meshCounts, List<Double> bandwidths) {
-        println "use JEstimator instead of Estimator"
         double freq = 0
         double norm = 0
 
@@ -141,7 +134,6 @@ class Estimator {
     */
 
     protected static double adaptiveKernelBandwidthPriorPdf(double x, double priorBandwidth, List observations, boolean dataExportMode, List<Double> meshMidPoints, List<Integer> meshCounts) {
-        println "use JEstimator instead of Estimator"
         double freq = 0
         double norm = 0
         int n = meshMidPoints.size()
@@ -157,7 +149,6 @@ class Estimator {
     }
 
     protected static double _gaussKernelBandwidthPdf(double x, List<Double> observations, double t) {
-        println "use JEstimator instead of Estimator"
         double sum = 0
         double iStart = 0
         int n = observations.size()
@@ -176,12 +167,10 @@ class Estimator {
     }
 
     protected static double calculateScalingFactor(double n, double t) {
-        println "use JEstimator instead of Estimator"
         1 / (n * Math.sqrt(2 * Math.PI) * t)
     }
 
     protected static double _gaussKernelBandwidthCdf(double x, List<Double> observations, double t) {
-        println "use JEstimator instead of Estimator"
         double iStart = 0
         double sum = 0
         int n = observations.size()
@@ -199,7 +188,6 @@ class Estimator {
     }
 
     protected static List<Double> computeBandwidths(List<Double> meshMidPoints, List<Integer> meshCounts, double priorBandwidth, List observations, boolean dataExportMode) {
-        println "use JEstimator instead of Estimator"
         List<Double> bws = []
         int n = meshMidPoints.size()
         double norm = 0.0;
