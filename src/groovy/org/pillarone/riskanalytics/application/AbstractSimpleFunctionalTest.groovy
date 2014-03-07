@@ -54,7 +54,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
             ModelDAO.list()*.delete()
             session.flush()
         }
-        CacheItemSearchService.getInstance().refresh()
+        CacheItemSearchService.instance.refresh()
         super.tearDown()
     }
 

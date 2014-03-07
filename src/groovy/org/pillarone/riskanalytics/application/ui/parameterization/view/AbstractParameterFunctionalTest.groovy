@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
@@ -40,6 +41,7 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
         ModellingItemFactory.clear()
+        CacheItemSearchService.instance.refresh()
 
         ULCFrame frame = new ULCFrame("test")
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
