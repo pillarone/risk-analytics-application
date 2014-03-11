@@ -1,23 +1,25 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.core.BatchRun
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CalculationConfigurationModel implements BatchListener {
-
-    SimulationSettingsPaneModel settingsPaneModel
-    SimulationActionsPaneModel actionsPaneModel
+class CalculationConfigurationModel extends SimulationConfigurationModel {
 
     public CalculationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        settingsPaneModel = new CalculationSettingsPaneModel(modelClass)
+        super(modelClass, mainModel)
+    }
+
+    @Override
+    protected initSubModels(Class modelClass, RiskAnalyticsMainModel mainModel) {
+        simulationProfilePaneModel = new CalculationProfilePaneModel(modelClass)
         //Use the setting pane model as ISimulationProvider for the actions pane model
         actionsPaneModel = new SimulationActionsPaneModel(settingsPaneModel, mainModel)
     }
 
-    void newBatchAdded(BatchRun batchRun) {
-        actionsPaneModel.newBatchAdded(batchRun)
+    @Override
+    CalculationProfilePaneModel getSimulationProfilePaneModel() {
+        super.simulationProfilePaneModel as CalculationProfilePaneModel
     }
 }

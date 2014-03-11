@@ -38,7 +38,7 @@ environments {
             //   grant all on table p1rat.* to 'p1rat'@'localhost';
             // required for batch uploads:
             //   grant file on *.* to 'p1rat'@'localhost';
-            dbCreate = "update" // should always stay on update! use InitDatabase script to drop/create DB
+            dbCreate = "update"
             url = "jdbc:mysql://localhost/p1rat-application"
             driverClassName = "com.mysql.jdbc.Driver"
             dialect = "org.hibernate.dialect.MySQL5Dialect"

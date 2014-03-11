@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -28,12 +29,20 @@ class CalculationSettingsPaneModel extends SimulationSettingsPaneModel {
     }
 
     protected boolean validate() {
-        Parameterization parameterization = parameterizationVersions.selectedObject
+        Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
         if (parameterization == null) {
             return false
         }
         return periodCount != null && parameterization.valid
     }
 
+    @Override
+    void applyTemplate(SimulationProfile profile) {
+        throw new UnsupportedOperationException("simulation profiles are not supported for stochastic models")
+    }
 
+    @Override
+    SimulationProfile createTemplate(String name) {
+        throw new UnsupportedOperationException("simulation profiles are not supported for stochastic models")
+    }
 }

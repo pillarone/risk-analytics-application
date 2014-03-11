@@ -1,16 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
-
+import com.ulcjava.base.application.ULCCheckBox
+import com.ulcjava.base.application.ULCTextField
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
-import com.ulcjava.base.application.ULCCheckBox
-import com.ulcjava.base.application.ULCTextField
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
-
 /**
  * A IValueChangedListener which is used for the random seed check box and text field.
  * If the event is fired from the TextField the new value is written to the model.
@@ -22,7 +20,7 @@ class RandomSeedAction implements IValueChangedListener {
 
     private SimulationSettingsPaneModel model;
     private Integer oldRandomSeed
-    private UserPreferences userPreferences = UserPreferencesFactory.getUserPreferences()
+    private UserPreferences userPreferences = UserPreferencesFactory.userPreferences
     ULCTextField randomSeed
 
     public RandomSeedAction(SimulationSettingsPaneModel model) {
@@ -36,22 +34,22 @@ class RandomSeedAction implements IValueChangedListener {
     }
 
     void valueChanged(ValueChangedEvent event) {
-        handleEvent(event.getSource())
+        handleEvent(event.source)
     }
 
     private handleEvent(ULCCheckBox checkBox) {
-        if (!checkBox.isSelected()) {
+        if (checkBox.selected) {
+            model.randomSeed = getRandomSeed()
+            randomSeed.value = model.randomSeed
+        } else {
             LOG.info("User defined random seed disabled, setting to null.")
             oldRandomSeed = model.randomSeed
             model.randomSeed = null
-        } else {
-            model.randomSeed = getRandomSeed()
-            randomSeed?.setValue model.randomSeed
         }
     }
 
     private handleEvent(ULCTextField textField) {
-        Integer randomSeed = textField.getValue()
+        Integer randomSeed = textField.value as Integer
         if (randomSeed != null && randomSeed > 0) {
             model.randomSeed = randomSeed
             userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + randomSeed)

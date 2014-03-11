@@ -1,27 +1,24 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.ULCFrame
+import com.ulcjava.testframework.operator.*
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.testframework.operator.*
-import org.pillarone.riskanalytics.core.ModelDAO
-import groovy.mock.interceptor.StubFor
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
     SimulationSettingsPane pane
 
     protected void doStart() {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         ModellingItemFactory.clear()
 
         FileImportService.importModelsIfNeeded(["Core"])
@@ -36,7 +33,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         frame.name = "test"
 
         pane = new SimulationSettingsPane(new SimulationSettingsPaneModel(CoreModel))
-        frame.setContentPane(pane.content)
+        frame.contentPane = pane.content
         frame.visible = true
 
         //ART-588
@@ -48,7 +45,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
 
     public void stop() {
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
     }
 
     public void testRandomSeed() {
@@ -60,16 +57,16 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
 
         ULCTextFieldOperator randomSeed = new ULCTextFieldOperator(frame, new ComponentByNameChooser("randomSeed"))
         assertNotNull randomSeed
-        assertFalse randomSeed.isEnabled()
+        assertFalse randomSeed.enabled
 
         userDefinedSeed.clickMouse()
-        assertTrue randomSeed.isEnabled()
+        assertTrue randomSeed.enabled
 
         randomSeed.enterText("1234")
         assertEquals 1234, pane.model.randomSeed
 
         userDefinedSeed.clickMouse()
-        assertFalse randomSeed.isEnabled()
+        assertFalse randomSeed.enabled
         assertNull pane.model.randomSeed
 
         userDefinedSeed.clickMouse()
@@ -87,7 +84,7 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         assertNotNull versions
 
         names.selectItem("CoreAlternativeParameters")
-        assertEquals 1, versions.getItemCount()
+        assertEquals 1, versions.itemCount
 
         names.selectItem("CoreParameters")
         //todo it doesn't work on the cruise
@@ -104,13 +101,13 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         assertNotNull location
 
         output.selectItem("No output")
-        assertFalse location.isEnabled()
+        assertFalse location.enabled
 
         output.selectItem("File")
-        assertTrue location.isEnabled()
+        assertTrue location.enabled
     }
 
-    void _testGetSimulation() {
+    void testGetSimulation() {
         ULCFrameOperator frame = new ULCFrameOperator("test")
         assertNotNull frame
 
@@ -130,16 +127,14 @@ class SimulationSettingsPaneTests extends AbstractSimpleFunctionalTest {
         userDefinedSeed.clickMouse()
         ULCTextFieldOperator randomSeed = new ULCTextFieldOperator(frame, new ComponentByNameChooser("randomSeed"))
         randomSeed.enterText("1234")
-        modelStub.use {
-            Simulation simulation = pane.model.getSimulation()
-            assertEquals "Simulation", simulation.name
-            assertEquals("0.5", simulation.modelVersionNumber.toString()) //ART-588, make sure that the model version from Model.getModelVersion() is used, even when a 'higher' one exists ("1")
-            assertEquals "comment", simulation.comment
-            assertEquals 10, simulation.numberOfIterations
-            assertEquals "CoreMultiPeriodParameters", simulation.parameterization.name
-            assertEquals 2, simulation.periodCount
-            assertEquals 1234, simulation.randomSeed
-        }
-
+        Simulation simulation = pane.model.simulation
+        assertEquals "Simulation", simulation.name
+        assertEquals("1", simulation.modelVersionNumber.toString())
+        //ART-588, make sure that the model version from Model.getModelVersion() is used, even when a 'higher' one exists ("1")
+        assertEquals "comment", simulation.comment
+        assertEquals 10, simulation.numberOfIterations
+        assertEquals "CoreMultiPeriodParameters", simulation.parameterization.name
+        assertEquals 2, simulation.periodCount
+        assertEquals 1234, simulation.randomSeed
     }
 }
