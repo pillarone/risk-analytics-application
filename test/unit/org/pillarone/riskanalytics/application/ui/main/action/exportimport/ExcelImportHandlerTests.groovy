@@ -19,10 +19,13 @@ import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
 
 class ExcelImportHandlerTests {
     File exportFile
+    TimeZone oldOne
 
     @Before
     void setUp() throws Exception {
-        LocaleResources.setTestMode(true)
+        oldOne = TimeZone.default
+        TimeZone.default = TimeZone.getTimeZone("UTC")
+        LocaleResources.testMode = true
         ConstraintsFactory.registerConstraint(new ExampleResourceConstraints())
         exportFile = File.createTempFile('excel', '.xlsx')
         exportFile.bytes = new ExcelExportHandler(new ApplicationModel()).exportModel()
@@ -30,7 +33,8 @@ class ExcelImportHandlerTests {
 
     @After
     void tearDown() throws Exception {
-        LocaleResources.setTestMode(false)
+        TimeZone.default = oldOne
+        LocaleResources.testMode = false
     }
 
     @Test
@@ -378,8 +382,8 @@ class ExcelImportHandlerTests {
         XSSFSheet sheet = handler.workbook.getSheet('globalParameterComponent')
         XSSFRow dataRow = sheet.createRow(2)
         XSSFCell cell = dataRow.createCell(0)
-        cell.setCellType(Cell.CELL_TYPE_FORMULA)
-        cell.setCellFormula("DATE($year,$month,$day)")
+        cell.cellType = Cell.CELL_TYPE_FORMULA
+        cell.cellFormula = "DATE($year,$month,$day)"
         List<ImportResult> result = handler.validate(new ApplicationModel())
         assert 0 == result.size()
         DateTime date = (handler.modelInstance as ApplicationModel).globalParameterComponent.parmProjectionStartDate
@@ -510,7 +514,7 @@ class ExcelImportHandlerTests {
         handler.loadWorkbook(new FileInputStream(exportFile), "test.xlsx")
         XSSFSheet dynamicComponentSheet = handler.workbook.getSheet('dynamicComponent')
         XSSFRow dataRow = dynamicComponentSheet.createRow(2)
-        dataRow.createCell(1,Cell.CELL_TYPE_FORMULA).setCellFormula('COUNTIFS(A1,1)')
+        dataRow.createCell(1, Cell.CELL_TYPE_FORMULA).setCellFormula('COUNTIFS(A1,1)')
         def validate = handler.validate(new ApplicationModel())
         assert 2 == validate.size()
         assert "Formula not implemented: 'COUNTIFS'" == validate[0].message
