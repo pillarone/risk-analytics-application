@@ -29,6 +29,7 @@ class SaveSimulationProfileAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (profileNameDialog == null) {
             profileNameDialog = new ProfileNameDialog(UlcUtilities.getRootPane(simulationProfileActionsPane.content), { String name ->
+                //TODO give feedback
                 simulationProfileActionsPane.model.saveCurrentProfile(name)
             })
         }

@@ -7,7 +7,6 @@ import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
@@ -322,8 +321,8 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     SimulationProfile createTemplate(String name) {
         def profile = new SimulationProfile(name)
         profile.load()
+        profile.modelClass = modelClass
         profile.creationDate = new DateTime()
-        profile.creator = UserContext.currentUser
         profile.randomSeed = randomSeed
         profile.template = resultConfigurationVersions.selectedObject as ResultConfiguration
         profile.numberOfIterations = numberOfIterations
