@@ -36,7 +36,7 @@ class ResultSettingsView {
 
     private void initComponents() {
 
-        ULCBoxPane settings = boxLayout(getText('settings')) {ULCBoxPane box ->
+        ULCBoxPane settings = boxLayout(getText('settings')) { ULCBoxPane box ->
 
             ULCBoxPane content = new ULCBoxPane(3, 0)
             addLabels(content, getText('name') + ":", "$simulation.name", new ULCFiller())
@@ -46,11 +46,11 @@ class ResultSettingsView {
             addLabels(content, getText('modelLabel') + ":", "$simulation.modelClass.simpleName v${simulation.modelVersionNumber.toString()}", new ULCButton(new ExportModelItemAction(simulation)))
             addLabels(content, getText('structure') + ":", "$simulation.structure.name v${simulation.structure.versionNumber.toString()}", new ULCButton(new ExportStructureAction(simulation.structure)))
             ULCButton openParams = new ULCButton(getText('open'))
-            openParams.addActionListener([actionPerformed: {event -> openItem(simulation.parameterization) }] as IActionListener)
+            openParams.addActionListener([actionPerformed: { event -> openItem(simulation.parameterization) }] as IActionListener)
             String paramText = getText("parameterization") + ":"
             addLabels(content, paramText, "$simulation.parameterization.name v${simulation.parameterization.versionNumber.toString()}", openParams)
             ULCButton openTemplate = new ULCButton(getText('open'))
-            openTemplate.addActionListener([actionPerformed: {event -> openItem(simulation.template) }] as IActionListener)
+            openTemplate.addActionListener([actionPerformed: { event -> openItem(simulation.template) }] as IActionListener)
             addLabels(content, getText('template') + ":", "$simulation.template.name v${simulation.template.versionNumber.toString()}", openTemplate)
             if (!DeterministicModel.isAssignableFrom(simulation.modelClass)) {
                 addLabels(content, getText('randomSeed') + ":", "$simulation.randomSeed", new ULCFiller())
@@ -67,7 +67,8 @@ class ResultSettingsView {
 
         ULCBoxPane runtimeParameters = boxLayout("Runtime parameters") { ULCBoxPane box ->
             ULCBoxPane content = new ULCBoxPane(2, 0)
-            for (ParameterHolder parameter in simulation.runtimeParameters) {
+            def sorted = simulation.notDeletedParameterHolders.sort { ComponentUtils.getNormalizedName(it.path) }
+            for (ParameterHolder parameter in sorted) {
                 content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(ComponentUtils.getNormalizedName(parameter.path)))
                 content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(formatParameter(parameter.businessObject)))
             }
@@ -177,10 +178,10 @@ class ExportModelItemAction extends ResourceBasedAction {
 
         ULCWindow ancestor = UlcUtilities.getWindowAncestor(event.source)
         ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
+                onSuccess: { filePaths, fileNames ->
                     String selectedFile = filePaths[0]
                     trace("export model to $selectedFile")
-                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
+                    ClientContext.storeFile([prepareFile: { OutputStream stream ->
                         BufferedWriter bw
                         try {
                             bw = new BufferedWriter(new OutputStreamWriter(stream))
@@ -190,13 +191,13 @@ class ExportModelItemAction extends ResourceBasedAction {
                         } finally {
                             bw.close()
                         }
-                    }, onSuccess: {path, name ->
-                    }, onFailure: {reason, description ->
+                    }, onSuccess: { path, name ->
+                    }, onFailure: { reason, description ->
                         new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 
                 },
-                onFailure: {reason, description ->
+                onFailure: { reason, description ->
                 }] as IFileChooseHandler, config, ancestor)
     }
 
@@ -231,9 +232,9 @@ class ExportStructureAction extends ResourceBasedAction {
 
         ULCWindow ancestor = UlcUtilities.getWindowAncestor(event.source)
         ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
+                onSuccess: { filePaths, fileNames ->
                     String selectedFile = filePaths[0]
-                    ClientContext.storeFile([prepareFile: {OutputStream stream ->
+                    ClientContext.storeFile([prepareFile: { OutputStream stream ->
                         try {
                             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
                             writer.write(item.data, bw)
@@ -242,13 +243,13 @@ class ExportStructureAction extends ResourceBasedAction {
                         } finally {
                             stream.close()
                         }
-                    }, onSuccess: {path, name ->
-                    }, onFailure: {reason, description ->
+                    }, onSuccess: { path, name ->
+                    }, onFailure: { reason, description ->
                         new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 
                 },
-                onFailure: {reason, description ->
+                onFailure: { reason, description ->
                 }] as IFileChooseHandler, config, ancestor)
     }
 
