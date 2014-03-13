@@ -37,12 +37,12 @@ class CalculationSettingsPaneModel extends SimulationSettingsPaneModel {
     }
 
     @Override
-    void applyTemplate(SimulationProfile profile) {
-        throw new UnsupportedOperationException("simulation profiles are not supported for stochastic models")
+    void applyProfile(SimulationProfile profile) {
+        throw new UnsupportedOperationException("simulation profiles are not supported for deterministic models")
     }
 
     @Override
-    SimulationProfile createTemplate(String name) {
-        throw new UnsupportedOperationException("simulation profiles are not supported for stochastic models")
+    SimulationProfile createProfile(String name) {
+        throw new UnsupportedOperationException("simulation profiles are not supported for deterministic models")
     }
 }

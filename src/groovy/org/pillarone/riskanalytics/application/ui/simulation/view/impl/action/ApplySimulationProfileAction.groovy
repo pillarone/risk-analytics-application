@@ -19,7 +19,7 @@ class ApplySimulationProfileAction extends ResourceBasedAction {
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        SimulationProfile item = loadSelectedItem()
+        SimulationProfile item = actionsPane.model.loadSelectedProfile()
         if (!(item && item.id)) {
             new I18NAlert(UlcUtilities.getRootPane(actionsPane.content), 'ProfileNotExistent').show()
             return
@@ -27,13 +27,4 @@ class ApplySimulationProfileAction extends ResourceBasedAction {
         actionsPane.model.apply(item)
     }
 
-    private SimulationProfile loadSelectedItem() {
-        def selectedName = actionsPane.model.simulationProfiles.selectedItem as String
-        if (!selectedName) {
-            return null
-        }
-        SimulationProfile item = new SimulationProfile(selectedName)
-        item.load(true)
-        item
-    }
 }

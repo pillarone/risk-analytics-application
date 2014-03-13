@@ -318,11 +318,9 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         }
     }
 
-    SimulationProfile createTemplate(String name) {
-        def profile = new SimulationProfile(name)
+    SimulationProfile createProfile(String name) {
+        def profile = new SimulationProfile(name, modelClass)
         profile.load()
-        profile.modelClass = modelClass
-        profile.creationDate = new DateTime()
         profile.randomSeed = randomSeed
         profile.template = resultConfigurationVersions.selectedObject as ResultConfiguration
         profile.numberOfIterations = numberOfIterations
@@ -335,7 +333,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         profile
     }
 
-    void applyTemplate(SimulationProfile profile) {
+    void applyProfile(SimulationProfile profile) {
         setNumberOfIterations(profile.numberOfIterations)
         setRandomSeed(profile.randomSeed)
         resultConfigurationNames.selectedItem = profile.template.name

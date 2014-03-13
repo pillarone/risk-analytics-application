@@ -19,21 +19,9 @@ class DeleteSimulationProfileAction extends ResourceBasedAction {
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        SimulationProfile item = loadSelectedItem()
-        if (!(item && item.id)) {
+        SimulationProfile item = actionsPane.model.loadSelectedProfile()
+        if (!actionsPane.model.delete(item)) {
             new I18NAlert(UlcUtilities.getRootPane(actionsPane.content), 'ProfileNotExistent').show()
-            return
         }
-        actionsPane.model.delete(item)
-    }
-
-    private SimulationProfile loadSelectedItem() {
-        def selectedName = actionsPane.model.simulationProfiles.selectedItem as String
-        if (!selectedName) {
-            return null
-        }
-        SimulationProfile item = new SimulationProfile(selectedName)
-        item.load(true)
-        item
     }
 }

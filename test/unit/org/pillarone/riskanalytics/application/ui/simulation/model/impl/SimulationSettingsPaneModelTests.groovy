@@ -16,11 +16,11 @@ class SimulationSettingsPaneModelTests {
     void testCreateProfile() {
         mockDomain(SimulationProfileDAO)
         def model = new SimulationSettingsPaneModel(CoreModel)
-        assertModelFitsToProfile(model.createTemplate('new template'), model)
+        assertModelFitsToProfile(model.createProfile('new template'), model)
 
         model.numberOfIterations = 123
         model.randomSeed = 1234
-        assertModelFitsToProfile(model.createTemplate('new template'), model)
+        assertModelFitsToProfile(model.createProfile('new template'), model)
     }
 
     @Test(expected = IllegalStateException)
@@ -28,11 +28,11 @@ class SimulationSettingsPaneModelTests {
         def name = ResultConfigurationDAO.findByModelClassName(CoreModel.name).name
         ResultConfiguration template = new ResultConfiguration(name, CoreModel)
         template.load()
-        def profile = new SimulationProfile('name')
+        def profile = new SimulationProfile('name', CoreModel)
         profile.template = template
         def model = new SimulationSettingsPaneModel(CoreModel)
         //this should fail, because the runtimeParameters of this profile does not match the model
-        model.applyTemplate(profile)
+        model.applyProfile(profile)
     }
 
     private void assertModelFitsToProfile(SimulationProfile profile, SimulationSettingsPaneModel model) {
