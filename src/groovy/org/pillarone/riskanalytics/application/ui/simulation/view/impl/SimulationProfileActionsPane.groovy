@@ -42,7 +42,7 @@ class SimulationProfileActionsPane {
     }
 
     private void updateDeleteButtonEnablingState() {
-        deleteButton.enabled = model.isAllowed(model.simulationProfiles.selectedProfile)
+        deleteButton.enabled = model.isAllowedToDelete(model.simulationProfiles.selectedProfile)
     }
 
     ULCComponent getContent() {

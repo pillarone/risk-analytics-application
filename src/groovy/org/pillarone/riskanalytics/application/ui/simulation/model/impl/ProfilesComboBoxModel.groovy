@@ -20,7 +20,7 @@ class ProfilesComboBoxModel extends DefaultComboBoxModel {
         profilesMap.clear()
         SimulationProfileDAO.withCreatorOrForPublic(currentUser()).withModelClass(modelClass).list(order: 'name').each {
             def profile = new SimulationProfile(it.name, modelClass)
-            profile.forPublic = it.forPublic
+            profile.load()
             profilesMap[displayName(profile)] = profile
             addElement(profile)
         }

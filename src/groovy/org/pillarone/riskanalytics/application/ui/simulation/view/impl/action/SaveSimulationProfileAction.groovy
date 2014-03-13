@@ -128,9 +128,12 @@ class SaveSimulationProfileAction extends ResourceBasedAction {
         }
 
         boolean isAllowed() {
-            def currentUser = simulationProfileActionsPane.model.currentUser()
             def creator = SimulationProfile.getCreator(nameInput.text, modelClass)
-            currentUser?.username == creator?.username
+            if (!creator) {
+                return true
+            }
+            def currentUser = simulationProfileActionsPane.model.currentUser()
+            currentUser?.username == creator.username
         }
 
 

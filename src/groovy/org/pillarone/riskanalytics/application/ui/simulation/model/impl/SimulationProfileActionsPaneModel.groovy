@@ -17,7 +17,7 @@ class SimulationProfileActionsPaneModel {
 
     boolean saveCurrentProfile(String name) {
         def profile = simulationSettingsPaneModel.createProfile(name)
-        if (!isAllowed(profile)) {
+        if (!isAllowedToSave(profile)) {
             return false
         }
         def id = profile.save()
@@ -32,7 +32,7 @@ class SimulationProfileActionsPaneModel {
     }
 
     boolean delete(SimulationProfile profile) {
-        if (!isAllowed(profile)) {
+        if (!isAllowedToDelete(profile)) {
             return false
         }
         def id = profile.delete()
@@ -42,11 +42,24 @@ class SimulationProfileActionsPaneModel {
         id
     }
 
-    boolean isAllowed(SimulationProfile profile) {
+    boolean isAllowedToSave(SimulationProfile profile) {
         if (!profile) {
             return false
         }
-        profile.creator?.username == currentUser()?.username
+        if (!(profile.id && profile.creator)) {
+            return true
+        }
+        profile.creator.username == currentUser()?.username
+    }
+
+    boolean isAllowedToDelete(SimulationProfile profile) {
+        if (!profile || !profile.id) {
+            return false
+        }
+        if (!profile.creator) {
+            return true
+        }
+        profile.creator.username == currentUser()?.username
     }
 
     SimulationProfile loadSelectedProfile() {
