@@ -123,7 +123,7 @@ class SaveSimulationProfileAction extends ResourceBasedAction {
         }
 
         boolean isValid() {
-            def text = nameInput.text
+            String text = nameInput.text ?: ''
             !(text.empty || SimulationProfile.exists(text, modelClass))
         }
 
