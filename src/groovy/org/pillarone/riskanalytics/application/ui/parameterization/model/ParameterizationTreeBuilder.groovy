@@ -28,10 +28,6 @@ class ParameterizationTreeBuilder {
 
     public ParameterizationTreeBuilder(Model model, ModelStructure modelStructure, Parameterization parameterization) {
         init(model, modelStructure, parameterization)
-        item.allParameterHolders.each {
-            //TODO remove after fixing build on jenkins
-            println("parameter: ${it.path} removed: ${it.removed}")
-        }
         createComponentNodes()
     }
 
@@ -154,10 +150,6 @@ class ParameterizationTreeBuilder {
                 if (item.hasParameterAtPath(path)) {
                     componentNode.add(ParameterizationNodeFactory.getNode(path, item, model))
                 } else {
-                    item.allParameterHolders.each {
-                        //TODO remove after fixing build on jnekins
-                        println("parameter: ${it.path} removed: ${it.removed}")
-                    }
                     throw new IllegalArgumentException("No parameter found at $path")
                 }
             }

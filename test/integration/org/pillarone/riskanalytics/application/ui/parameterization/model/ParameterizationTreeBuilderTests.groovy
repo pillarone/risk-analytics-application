@@ -40,14 +40,19 @@ class ParameterizationTreeBuilderTests {
         Model model
 
         FileImportService.importModelsIfNeeded(['Application'])
-
         model = new ApplicationModel()
         model.init()
 
-        parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
+
+        ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
+        println("parameters from dao:")
+        name.parameters.each {
+            println("parameter: ${it.path}")
+        }
+        parameterization = ModellingItemFactory.getParameterization(name)
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
-        parameterization.load()
         structure.load()
+        parameterization.load()
 
         println("print all parameterholders of param: ${parameterization} :")
         parameterization.allParameterHolders.each {
