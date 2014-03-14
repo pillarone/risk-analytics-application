@@ -18,31 +18,42 @@ class SimulationProfileActionsPane {
     final SimulationProfileActionsPaneModel model
     private ULCBoxPane content
     private ULCButton deleteButton
+    private ULCComboBox profiles
+    private ULCButton applyButton
+    private ULCButton saveButton
 
     SimulationProfileActionsPane(SimulationProfileActionsPaneModel model) {
         this.model = model
+        createComponents()
         layout()
+        bind()
+        updateDeleteButtonEnablingState()
     }
 
-    def layout() {
+    protected void createComponents() {
         content = new ULCBoxPane(false)
-        ULCComboBox profiles = new ULCComboBox(model.simulationProfiles)
-        ULCButton applyButton = new ULCButton(new ApplySimulationProfileAction(this))
-        applyButton.enabler = profiles
-        ULCButton saveButton = new ULCButton(new SaveSimulationProfileAction(this))
+        profiles = new ULCComboBox(model.simulationProfiles)
+        applyButton = new ULCButton(new ApplySimulationProfileAction(this))
         deleteButton = new ULCButton(new DeleteSimulationProfileAction(this))
-        profiles.addActionListener({ ActionEvent event ->
-            updateDeleteButtonEnablingState()
-        } as IActionListener)
+        saveButton = new ULCButton(new SaveSimulationProfileAction(this))
+    }
+
+    protected void layout() {
         content.add(ULCBoxPane.BOX_EXPAND_TOP, profiles)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, applyButton)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, saveButton)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, deleteButton)
-        updateDeleteButtonEnablingState()
     }
 
-    private void updateDeleteButtonEnablingState() {
-        deleteButton.enabled = model.isAllowedToDelete(model.simulationProfiles.selectedProfile)
+    protected void bind() {
+        applyButton.enabler = profiles
+        profiles.addActionListener({ ActionEvent event ->
+            updateDeleteButtonEnablingState()
+        } as IActionListener)
+    }
+
+    protected void updateDeleteButtonEnablingState() {
+        deleteButton.enabled = model.currentAllowedToDelete
     }
 
     ULCComponent getContent() {

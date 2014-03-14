@@ -17,32 +17,50 @@ class SimulationProfileActionsPaneModel {
 
     boolean saveCurrentProfile(String name) {
         def profile = simulationSettingsPaneModel.createProfile(name)
-        if (!isAllowedToSave(profile)) {
+        if (isAllowedToSave(profile)) {
+            def id = profile.save()
+            if (id) {
+                simulationProfiles.addElement(profile)
+            }
+            return id
+        }
+        return false
+    }
+
+    boolean deleteCurrentProfile() {
+        if (currentAllowedToDelete) {
+            def id = selectedProfile.delete()
+            if (id) {
+                simulationProfiles.removeElement(selectedProfile)
+            }
+            return id
+        }
+        return false
+    }
+
+    boolean applyCurrentProfile() {
+        if (currentAllowedToApply) {
+            simulationSettingsPaneModel.applyProfile(selectedProfile)
+            return true
+        }
+        return false
+    }
+
+    boolean isCurrentAllowedToDelete() {
+        if (!selectedProfile || !selectedProfile.id) {
             return false
         }
-        def id = profile.save()
-        if (id) {
-            simulationProfiles.addElement(profile)
+        if (!selectedProfile.creator) {
+            return true
         }
-        id
+        selectedProfile.creator.username == currentUser()?.username
     }
 
-    void apply(SimulationProfile item) {
-        simulationSettingsPaneModel.applyProfile(item)
+    boolean isCurrentAllowedToApply() {
+        selectedProfile?.id
     }
 
-    boolean delete(SimulationProfile profile) {
-        if (!isAllowedToDelete(profile)) {
-            return false
-        }
-        def id = profile.delete()
-        if (id) {
-            simulationProfiles.removeElement(profile)
-        }
-        id
-    }
-
-    boolean isAllowedToSave(SimulationProfile profile) {
+    protected boolean isAllowedToSave(SimulationProfile profile) {
         if (!profile) {
             return false
         }
@@ -52,22 +70,8 @@ class SimulationProfileActionsPaneModel {
         profile.creator.username == currentUser()?.username
     }
 
-    boolean isAllowedToDelete(SimulationProfile profile) {
-        if (!profile || !profile.id) {
-            return false
-        }
-        if (!profile.creator) {
-            return true
-        }
-        profile.creator.username == currentUser()?.username
-    }
-
-    SimulationProfile loadSelectedProfile() {
-        def profile = simulationProfiles.selectedProfile
-        if (profile && !profile.loaded) {
-            profile.load()
-        }
-        profile
+    protected SimulationProfile getSelectedProfile() {
+        simulationProfiles.selectedProfile
     }
 
     Person currentUser() {

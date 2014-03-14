@@ -1,10 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
-
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
 import org.junit.After
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
@@ -13,16 +11,13 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.ComponentUtils
-import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 import static org.junit.Assert.*
 
-//locally this test succeeds but not on the build server. Have to figure it out why.
-@Ignore
 class ParameterizationTreeBuilderTests {
 
 
@@ -43,8 +38,7 @@ class ParameterizationTreeBuilderTests {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
+        FileImportService.importModelsIfNeeded(['Application'])
 
         model = new ApplicationModel()
         model.init()
@@ -89,8 +83,7 @@ class ParameterizationTreeBuilderTests {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
+        FileImportService.importModelsIfNeeded(['Application'])
 
         model = new ApplicationModel()
         model.init()
@@ -121,8 +114,7 @@ class ParameterizationTreeBuilderTests {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
+        FileImportService.importModelsIfNeeded(['Application'])
 
         model = new ApplicationModel()
         model.init()
