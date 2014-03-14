@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
+
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import models.application.ApplicationModel
 import org.junit.After
@@ -47,6 +48,12 @@ class ParameterizationTreeBuilderTests {
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         parameterization.load()
         structure.load()
+
+        println("print all parameterholders of param: ${parameterization} :")
+        parameterization.allParameterHolders.each {
+            //TODO remove after fixing build on jenkins
+            println("parameter: ${it.path} removed: ${it.removed}")
+        }
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def root = builder.root
