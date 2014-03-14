@@ -4,6 +4,7 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.DynamicComposedComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
+import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.components.DynamicComposedComponent
 import org.pillarone.riskanalytics.core.model.Model
@@ -12,7 +13,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 import java.lang.reflect.Field
-import org.pillarone.riskanalytics.application.ui.util.ComponentUtils
 
 class ParameterizationTreeBuilder {
 
@@ -23,18 +23,21 @@ class ParameterizationTreeBuilder {
     Parameterization item
 
 
-
     def ParameterizationTreeBuilder() {
     }
 
     public ParameterizationTreeBuilder(Model model, ModelStructure modelStructure, Parameterization parameterization) {
         init(model, modelStructure, parameterization)
+        item.allParameterHolders.each {
+            //TODO remove after fixing build on jenkins
+            println("parameter: ${it.path} removed: ${it.removed}")
+        }
         createComponentNodes()
     }
 
     protected void createComponentNodes() {
         model.injectComponentNames()
-        model.properties.each {key, value ->
+        model.properties.each { key, value ->
             if (value instanceof Component) {
                 createDynamicSubComponents(value, key)
                 buildComponentNode(key, value)
@@ -46,7 +49,7 @@ class ParameterizationTreeBuilder {
 
     private void createDynamicSubComponents(Component component, String componentPath) {
         if (component instanceof DynamicComposedComponent) {
-            def parameters = getItemsParameters(componentPath).collect {ParameterHolder param ->
+            def parameters = getItemsParameters(componentPath).collect { ParameterHolder param ->
                 param.path.substring(componentPath.length() + 1, param.path.indexOf(":", componentPath.length() + 1))
             }.unique()
             component.clear()
@@ -57,7 +60,7 @@ class ParameterizationTreeBuilder {
             }
         }
 
-        component.properties.each {String key, val ->
+        component.properties.each { String key, val ->
             if (key.startsWith("sub")) {
                 createDynamicSubComponents(val, "$componentPath:$key".toString())
             }
@@ -73,9 +76,9 @@ class ParameterizationTreeBuilder {
 
     private void buildComponentNodeHierachy() {
         if (!structure.isEmpty()) {
-            structure.company.each {line, value ->
+            structure.company.each { line, value ->
                 SimpleTableTreeNode lineNode = new SimpleTableTreeNode(line)
-                structure.company[line].components.each {component, propertyValue ->
+                structure.company[line].components.each { component, propertyValue ->
 
                     ComponentTableTreeNode componentNode = componentNodes[model[component]]
                     if (componentNode != null) {
@@ -102,7 +105,7 @@ class ParameterizationTreeBuilder {
     }
 
 
-     ITableTreeNode buildComponentNode(String propertyName, Component component) {
+    ITableTreeNode buildComponentNode(String propertyName, Component component) {
         if (!component.hasParameters()) {
             if (!(component instanceof DynamicComposedComponent)) {
                 return null
@@ -112,7 +115,7 @@ class ParameterizationTreeBuilder {
         ComponentTableTreeNode componentNode = createComponentNode(propertyName, component)
 
         def propertyKeys = TreeBuilderUtil.collectProperties(component, 'sub')
-        propertyKeys.each {key ->
+        propertyKeys.each { key ->
             if (key.startsWith("sub")) {
                 def subComponent = component[key]
                 if (subComponent.name == null) {
@@ -129,7 +132,7 @@ class ParameterizationTreeBuilder {
 
 
     protected void buildTree() {
-        model.properties.each {k, v ->
+        model.properties.each { k, v ->
             if (v instanceof Component) {
                 addParameterValueNodes(componentNodes[v])
             }
@@ -140,17 +143,21 @@ class ParameterizationTreeBuilder {
         if (componentNode == null) {
             return
         }
-
         def props = new TreeMap(new ParmComparator(TreeBuilderUtil.collectProperties(componentNode.component, 'parm')))
         props.putAll(componentNode.component.properties)
-        for (Map.Entry<String, Object> entry in props){
+        for (Map.Entry<String, Object> entry in props) {
             if (entry.key.startsWith('sub')) {
                 addParameterValueNodes(componentNodes[entry.value])
             } else if (entry.key.startsWith('parm')) {
                 String path = ComponentUtils.removeModelFromPath("${componentNode.path}:${entry.key}".toString(), model)
+
                 if (item.hasParameterAtPath(path)) {
                     componentNode.add(ParameterizationNodeFactory.getNode(path, item, model))
                 } else {
+                    item.allParameterHolders.each {
+                        //TODO remove after fixing build on jnekins
+                        println("parameter: ${it.path} removed: ${it.removed}")
+                    }
                     throw new IllegalArgumentException("No parameter found at $path")
                 }
             }
@@ -207,7 +214,7 @@ class ParameterizationTreeBuilder {
     }
 
     protected List getItemsParameters(String componentPath) {
-        List parameters = item.parameters.findAll {ParameterHolder p ->
+        List parameters = item.parameters.findAll { ParameterHolder p ->
             p.path.startsWith(componentPath)
         }
         return parameters
@@ -221,7 +228,6 @@ class CompareParameterizationTreeBuilder extends ParameterizationTreeBuilder {
     int minPeriod = -1
 
 
-
     public CompareParameterizationTreeBuilder(model, modelStructure, parameterization, parameterizations) {
         init(model, modelStructure, parameterization)
         this.parameterizations = parameterizations;
@@ -231,7 +237,6 @@ class CompareParameterizationTreeBuilder extends ParameterizationTreeBuilder {
     }
 
 
-
     protected void addParameterValueNodes(ComponentTableTreeNode componentNode) {
         if (componentNode == null) {
             return
@@ -239,12 +244,12 @@ class CompareParameterizationTreeBuilder extends ParameterizationTreeBuilder {
 
         def props = new TreeMap(new ParmComparator(TreeBuilderUtil.collectProperties(componentNode.component, 'parm')))
         props.putAll(componentNode.component.properties)
-        props.each {name, value ->
+        props.each { name, value ->
             if (name.startsWith('sub')) {
                 addParameterValueNodes(componentNodes[value])
             } else if (name.startsWith('parm')) {
                 String path = ComponentUtils.removeModelFromPath("${componentNode.path}:$name".toString(), model)
-                if (parameterizations.any {it.hasParameterAtPath(path) }) {
+                if (parameterizations.any { it.hasParameterAtPath(path) }) {
                     componentNode.add(ParameterizationNodeFactory.getCompareParameterizationTableTreeNode(path, parameterizations, model, parameterizations.size()))
                 }
             }
@@ -253,8 +258,8 @@ class CompareParameterizationTreeBuilder extends ParameterizationTreeBuilder {
 
     protected List getItemsParameters(String componentPath) {
         List resultList = []
-        parameterizations.each {Parameterization parameterization ->
-            List temp = parameterization.getParameters().findAll {ParameterHolder p ->
+        parameterizations.each { Parameterization parameterization ->
+            List temp = parameterization.getParameters().findAll { ParameterHolder p ->
                 p.path.startsWith(componentPath)
             }.toList()
             temp.each {
@@ -301,7 +306,7 @@ class TreeBuilderUtil {
         Class currentClass = component.class
         while (currentClass.name != Object.name) {
             List superProps = []
-            currentClass.declaredFields.each {Field field ->
+            currentClass.declaredFields.each { Field field ->
                 if (field.name.startsWith(key)) {
                     superProps << field.name
                 }
