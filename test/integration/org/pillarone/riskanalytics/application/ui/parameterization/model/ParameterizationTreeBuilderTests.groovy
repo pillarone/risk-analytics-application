@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 import static org.junit.Assert.*
 
@@ -43,22 +44,12 @@ class ParameterizationTreeBuilderTests {
         model = new ApplicationModel()
         model.init()
 
-
         ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
-        println("parameters from dao:")
-        name.parameters.each {
-            println("parameter: ${it.path}")
-        }
-        parameterization = ModellingItemFactory.getParameterization(name)
+        parameterization = new Parameterization(name.name, ApplicationModel)
+        parameterization.versionNumber = new VersionNumber(name.itemVersion)
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         structure.load()
         parameterization.load()
-
-        println("print all parameterholders of param: ${parameterization} :")
-        parameterization.allParameterHolders.each {
-            //TODO remove after fixing build on jenkins
-            println("parameter: ${it.path} removed: ${it.removed}")
-        }
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def root = builder.root
@@ -100,9 +91,11 @@ class ParameterizationTreeBuilderTests {
         model = new ApplicationModel()
         model.init()
 
-        parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
-        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
+        ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
+        parameterization = new Parameterization(name.name, ApplicationModel)
+        parameterization.versionNumber = new VersionNumber(name.itemVersion)
         parameterization.load()
+        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         structure.load()
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
@@ -131,9 +124,11 @@ class ParameterizationTreeBuilderTests {
         model = new ApplicationModel()
         model.init()
 
-        parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
-        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
+        ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
+        parameterization = new Parameterization(name.name, ApplicationModel)
+        parameterization.versionNumber = new VersionNumber(name.itemVersion)
         parameterization.load()
+        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         structure.load()
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
