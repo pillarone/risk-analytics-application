@@ -15,7 +15,7 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 class CalculationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     protected void doStart() {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
 
         FileImportService.importModelsIfNeeded(["DeterministicApplication"])
 
@@ -29,8 +29,8 @@ class CalculationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     void testEnableRun() {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        ULCButtonOperator run = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.run"))
-        ULCTextFieldOperator iterations = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("CalculationSettingsPane.periodCount"))
+        ULCButtonOperator run = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("${SimulationActionsPane.simpleName}.run"))
+        ULCTextFieldOperator iterations = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("${CalculationSettingsPane.simpleName}.periodCount"))
 
         assertFalse run.enabled
         iterations.typeText("123")
@@ -41,6 +41,6 @@ class CalculationConfigurationViewTests extends AbstractSimpleFunctionalTest {
     }
 
     void stop() {
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
     }
 }

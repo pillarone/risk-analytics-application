@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.util.ULCIcon
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -10,12 +9,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.Simulatio
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.core.model.StochasticModel
 
-/**
- * @author fouad.jaada@intuitive-collaboration.com
- */
 class SimulationUIItem extends ModellingUIItem {
 
     public SimulationUIItem(RiskAnalyticsMainModel model, Model simulationModel, Simulation simulation) {
@@ -29,11 +23,11 @@ class SimulationUIItem extends ModellingUIItem {
     }
 
     ULCContainer createDetailView() {
-        SimulationConfigurationView view = new SimulationConfigurationView(getViewModel())
+        SimulationConfigurationView view = new SimulationConfigurationView(viewModel)
         return view.content
     }
 
-    Object getViewModel() {
+    SimulationConfigurationModel getViewModel() {
         SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, mainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
@@ -44,15 +38,18 @@ class SimulationUIItem extends ModellingUIItem {
         return model
     }
 
-
     @Override
     ULCIcon getIcon() {
         return UIUtils.getIcon("results-active.png")
     }
 
+
     @Override
     boolean equals(Object obj) {
-        return createTitle().equals(obj.createTitle())
+        if (!obj instanceof SimulationUIItem) {
+            return false
+        }
+        return createTitle().equals((obj as SimulationUIItem).createTitle())
     }
 
     @Override
@@ -61,6 +58,4 @@ class SimulationUIItem extends ModellingUIItem {
         hcb.append(createTitle())
         return hcb.toHashCode()
     }
-
-
 }

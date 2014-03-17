@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import grails.util.Holders
+import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
@@ -14,25 +15,15 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.OutputStrateg
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationNameListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationVersionsListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.*
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationValidationListener
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.PostSimulationCalculationPaneModel
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.RuntimeParameterPaneModel
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.*
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.DBOutput
 import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-import org.springframework.jdbc.datasource.DelegatingDataSource
-import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy
-
-import javax.sql.DataSource
 
 /**
  * The view model of the SimulationSettingsPane.
@@ -41,9 +32,9 @@ import javax.sql.DataSource
  * It is also possible to register a ISimulationValidationListener, which will be notified when the simulation configuration changes from
  * an invalid (incomplete) to a valid state.
  */
-class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener {
+class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener, ISimulationProfileApplicable {
 
-    private static Log LOG = LogFactory.getLog(SimulationSettingsPaneModel)
+    private static final Log LOG = LogFactory.getLog(SimulationSettingsPaneModel)
 
     String simulationName
     String comment
@@ -59,7 +50,9 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     OutputStrategyComboBoxModel outputStrategies
 
     DateTime beginOfFirstPeriod
+    @Bindable
     Integer randomSeed
+    @Bindable
     Integer numberOfIterations
 
     RandomSeedAction randomSeedAction
@@ -110,7 +103,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      */
     protected Model getModelInstance() {
         if (modelInstance == null) {
-            modelInstance = modelClass.newInstance()
+            modelInstance = modelClass.newInstance() as Model
         }
         return modelInstance
     }
@@ -153,9 +146,9 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * @return a string representation of the currently selected output strategy (jdbc url, file path, etc)
      */
     String getResultLocation() {
-        ICollectorOutputStrategy outputStrategy = outputStrategies.getStrategy()
+        ICollectorOutputStrategy outputStrategy = outputStrategies.strategy
         if (outputStrategy instanceof DBOutput) {
-            return getDatabaseUrl()
+            return Holders.config.dataSource.url
         } else if (outputStrategy instanceof FileOutput) {
             return outputStrategy.resultLocation
         }
@@ -167,7 +160,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      */
     ULCSpinnerDateModel getBeginOfFirstPeriodSpinnerModel() {
         DateTime firstInYear = new DateTime().withDayOfYear(1)
-        firstInYear = new DateTime(firstInYear.getYear(), firstInYear.getMonthOfYear(), firstInYear.getDayOfMonth(), 0, 0, 0, 0)
+        firstInYear = new DateTime(firstInYear.year, firstInYear.monthOfYear, firstInYear.dayOfMonth, 0, 0, 0, 0)
         beginOfFirstPeriod = firstInYear
         return new ULCSpinnerDateModel(firstInYear.toDate(), null, null, Calendar.DAY_OF_MONTH)
     }
@@ -180,26 +173,15 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         resultLocation = new File(location)
     }
 
-    private String getDatabaseUrl() {
-        DataSource dataSource = Holders.grailsApplication.getMainContext().getBean("dataSource")
-        if (dataSource instanceof DelegatingDataSource) {
-            dataSource = dataSource.targetDataSource
-        }
-        if (dataSource instanceof LazyConnectionDataSourceProxy) {
-            dataSource = dataSource.targetDataSource
-        }
-        return dataSource.url
-    }
-
-    /**
-     * Creates a new Simulation based on the values saved in the model.
-     * If no simulation name is set the current date & time is used as simulation name.
-     * If no user defined seed is set, a random one will be calculated and used.
-     */
+/**
+ * Creates a new Simulation based on the values saved in the model.
+ * If no simulation name is set the current date & time is used as simulation name.
+ * If no user defined seed is set, a random one will be calculated and used.
+ */
     Simulation getSimulation() {
         Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
         //do not always load, because params could be open and modified ("save and run")
-        if (!parameterization.isLoaded()) {
+        if (!parameterization.loaded) {
             parameterization.load()
         }
 
@@ -213,7 +195,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
 
         simulation.parameterization = parameterization
         ResultConfiguration configuration = resultConfigurationVersions.selectedObject as ResultConfiguration
-        if (!configuration.isLoaded()) {
+        if (!configuration.loaded) {
             configuration.load()
         }
         simulation.template = configuration
@@ -245,8 +227,11 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * Setter for numberOfIterations, which also fires a validation event (because the iteration number must be set)
      */
     void setNumberOfIterations(Integer i) {
+        boolean changed = numberOfIterations != i
         numberOfIterations = i
-        notifyConfigurationChanged()
+        if (changed) {
+            notifyConfigurationChanged()
+        }
     }
 
     void addSimulationValidationListener(ISimulationValidationListener listener) {
@@ -266,7 +251,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
      * @return true if a valid simulation can be created from the current model values
      */
     protected boolean validate() {
-        Parameterization parameterization = parameterizationVersions.selectedObject
+        Parameterization parameterization = parameterizationVersions.selectedObject as Parameterization
         if (parameterization == null) {
             return false
         }
@@ -274,7 +259,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     }
 
     ICollectorOutputStrategy getOutputStrategy() {
-        ICollectorOutputStrategy outputStrategy = outputStrategies.getStrategy()
+        ICollectorOutputStrategy outputStrategy = outputStrategies.strategy
         if (outputStrategy instanceof DBOutput) {
             outputStrategy.batchInsert.reset()
         }
@@ -330,6 +315,51 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         c.call()
         if (current) {
             comboBoxModel.selectedItem = current
+        }
+    }
+
+    @Override
+    SimulationProfile createProfile(String name) {
+        def profile = new SimulationProfile(name, modelClass)
+        profile.load()
+        profile.randomSeed = randomSeed
+        profile.template = resultConfigurationVersions.selectedObject as ResultConfiguration
+        profile.numberOfIterations = numberOfIterations
+        profile.notDeletedParameterHolders.each {
+            profile.removeParameter(it)
+        }
+        for (ParameterHolder holder in parameterPaneModel.parameters) {
+            profile.addParameter(holder)
+        }
+        profile
+    }
+
+    @Override
+    void applyProfile(SimulationProfile profile) {
+        setNumberOfIterations(profile.numberOfIterations)
+        setRandomSeed(profile.randomSeed)
+        resultConfigurationNames.selectedItem = profile.template.name
+        resultConfigurationVersions.selectedObject = profile.template
+
+        sanityCheck(parameterPaneModel.runtimeParameters, profile)
+
+        parameterPaneModel.runtimeParameters.each { RuntimeParameterCollector.RuntimeParameterDescriptor descriptor ->
+            def holder = profile.getParameterHolder(descriptor.propertyName, 0)
+            descriptor.value = holder.businessObject
+        }
+    }
+
+    void sanityCheck(List<RuntimeParameterCollector.RuntimeParameterDescriptor> descriptors, SimulationProfile profile) {
+        Set holderNames = profile.runtimeParameters*.path as Set
+        Set descriptorNames = descriptors.propertyName as Set
+        if (holderNames != descriptorNames) {
+            throw new IllegalStateException("The simulationProfile $profile does not match the given runtimeDescriptors $descriptors")
+        }
+        descriptors.each {
+            def holder = profile.getParameterHolder(it.propertyName, 0)
+            if (!holder) {
+                throw new IllegalStateException("could not find holder for descriptor $it in profile $profile")
+            }
         }
     }
 }

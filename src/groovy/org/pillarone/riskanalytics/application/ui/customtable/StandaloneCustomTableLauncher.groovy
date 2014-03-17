@@ -34,19 +34,14 @@ class StandaloneCustomTableLauncher extends LocalContainerAdapter {
 class StandaloneSessionStateListener implements ISessionStateListener {
 
     void sessionEnded(UISession session) throws Exception {
-        println("PillarOne CustomTable application shutdown ... cleaning up")
         synchronized (this) {
             notifyAll()
         }
     }
 
     void sessionError(UISession session, Throwable reason) {
-        println("PillarOne CustomTable application error..." + reason.getMessage())
-
     }
 
     void sessionStarted(UISession session) throws Exception {
-        println("PillarOne CustomTable application started...")
-
     }
 }

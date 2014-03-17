@@ -3,13 +3,13 @@ package org.pillarone.riskanalytics.application.ui.simulation.model
 import com.ulcjava.base.application.DefaultComboBoxModel
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
 public class ResultConfigurationVersionsListModel extends DefaultComboBoxModel {
 
     protected Class modelClass
     protected String configurationName
     private Map templateObjects = [:]
-
 
 
     void load(Class modelClass, String name) {
@@ -39,7 +39,7 @@ public class ResultConfigurationVersionsListModel extends DefaultComboBoxModel {
             }
         }
         if (templates.size() > 0) {
-            templates = templates.sort {it.versionNumber}.reverse()
+            templates = templates.sort { it.versionNumber }.reverse()
             templates.each {
                 String paramName = "v${it.versionNumber.toString()}"
                 addElement paramName
@@ -54,6 +54,10 @@ public class ResultConfigurationVersionsListModel extends DefaultComboBoxModel {
         return templateObjects[getSelectedItem()]
     }
 
+    void setSelectedObject(ResultConfiguration template) {
+        def selectedVersion = templateObjects.find { key, value -> value == template }.key
+        selectedItem = selectedVersion
+    }
     /**
      * Utility method to get resource bundle entries for this class
      *

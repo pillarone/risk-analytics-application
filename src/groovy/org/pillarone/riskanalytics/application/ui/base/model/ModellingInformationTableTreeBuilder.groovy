@@ -662,7 +662,7 @@ class ModellingInformationTableTreeBuilder {
             node.add(templateNode)
             model.putValues(node)
         } catch (Exception ex) {
-            LOG.error "create simulation exception", ex
+            LOG.error "Exception creating SimulationNode", ex
         }
         return node
     }

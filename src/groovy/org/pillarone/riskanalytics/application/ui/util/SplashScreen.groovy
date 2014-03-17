@@ -79,7 +79,6 @@ class SplashScreen {
     }
 
     public void update(String newlabel) {
-        println newlabel
         fWaitLabel.setText newlabel
         fWaitLabel.repaint()
         fSplashWindow.getContentPane().repaint()

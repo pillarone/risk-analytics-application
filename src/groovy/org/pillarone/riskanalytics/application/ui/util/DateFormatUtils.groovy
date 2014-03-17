@@ -10,21 +10,23 @@ import org.joda.time.DateTime
 abstract class DateFormatUtils {
 
     //DateTimeFormatter is thread safe
+    public static final String PARAMETER_DISPLAY_FORMAT = "MMM dd, yyyy"
     private static DateTimeFormatter detailedFormatter
     private static DateTimeFormatter simpleFormatter
     private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
-    public static final String PARAMETER_DISPLAY_FORMAT = "MMM dd, yyyy"
+    private static final String DETAILED_FORMATTER_STRING = "dd.MM.yyyy, HH:mm z"
+    private static final String SIMPLE_FORMATTER_STRING = "dd.MM.yyyy"
 
     public static DateTimeFormatter getDetailedDateFormat() {
         if (detailedFormatter == null) {
-            detailedFormatter = getDateFormat("dd.MM.yyyy, HH:mm z")
+            detailedFormatter = getDateFormat(DETAILED_FORMATTER_STRING)
         }
         return detailedFormatter
     }
 
     public static DateTimeFormatter getSimpleDateFormat() {
         if (simpleFormatter == null) {
-            simpleFormatter = getDateFormat("dd.MM.yyyy")
+            simpleFormatter = getDateFormat(SIMPLE_FORMATTER_STRING)
         }
         return simpleFormatter
     }
@@ -32,7 +34,7 @@ abstract class DateFormatUtils {
     public static DateTimeFormatter getDateFormat(String formatString) {
         TimeZone timeZone = UserContext.userTimeZone
         if (timeZone == null) {
-            timeZone == TimeZone.getDefault()
+            timeZone == TimeZone.default
         }
         return DateTimeFormat.forPattern(formatString).withLocale(LocaleResources.locale).withZone(DateTimeZone.forTimeZone(timeZone))
     }
@@ -41,14 +43,14 @@ abstract class DateFormatUtils {
         if (date == null) {
             return ""
         }
-        return getDetailedDateFormat().print(date)
+        return detailedDateFormat.print(date)
     }
 
     public static String formatSimple(DateTime date) {
         if (date == null) {
             return ""
         }
-        return getSimpleDateFormat().print(date)
+        return simpleDateFormat.print(date)
     }
 
     public static List<String> getInputDateFormats() {

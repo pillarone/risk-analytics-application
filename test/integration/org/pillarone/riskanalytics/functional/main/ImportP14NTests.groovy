@@ -5,8 +5,9 @@ import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
+
+import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -14,32 +15,19 @@ import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 class ImportP14NTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
-        ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
+        ULCTableTreeOperator tree = selectionTableTreeRowHeader
 
         pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)
-        ULCTextFieldOperator pathField = fileChooserOperator.getPathField()
-        final String file = ImportP14NTests.getResource("CoreAlternativeParameters.groovy").getFile()
+        ULCTextFieldOperator pathField = fileChooserOperator.pathField
+        final String file = ImportP14NTests.getResource("CoreAlternativeParameters.groovy").file
         pathField.typeText(file)
-        ULCButtonOperator button = fileChooserOperator.getApproveButton()
+        ULCButtonOperator button = fileChooserOperator.approveButton
         assertNotNull(button)
         button.getFocus()
         button.clickMouse()
-
-        //TODO: does not run on jenkins
-//        println(tree.getChildCount(tree.findPath(["Core", "Parameterization"] as String[])))
-//        TreePath path = tree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
-//        assertNotNull(path)
-    }
-
-    @Override
-    protected void setUp() {
-        super.setUp() //TODO: IntegrationTestMixin does not work when this method does not exist
-    }
-
-    @Override
-    protected void tearDown() {
-        super.tearDown() //TODO: IntegrationTestMixin does not work when this method does not exist
+        TreePath path = tree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
+        assertNotNull(path)
     }
 }

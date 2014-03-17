@@ -19,27 +19,29 @@ class CalculationSettingsPane extends SimulationSettingsPane {
     private ULCTextField periodCount
 
     public CalculationSettingsPane(CalculationSettingsPaneModel model) {
-        this.model = model
-        initComponents()
-        layoutComponents()
-        attachListeners()
+        super(model)
+    }
+
+    @Override
+    CalculationSettingsPaneModel getModel() {
+        super.model as CalculationSettingsPaneModel
     }
 
     @Override
     protected initConfigProperties(ULCBoxPane innerPane) {
-        periodCount = new ULCTextField(name: "periodCount")
+        periodCount = new ULCTextField()
         periodCount.name = "CalculationSettingsPane.periodCount"
-        periodCount.dataType = DataTypeFactory.getIntegerDataType()
+        periodCount.dataType = DataTypeFactory.integerDataType
 
-        periodCount.addKeyListener([keyTyped: {e ->
+        periodCount.addKeyListener([keyTyped: { e ->
             def value = periodCount.value
             if (value && (value instanceof Number) && value < Integer.MAX_VALUE)
-                ((CalculationSettingsPaneModel) model).periodCount = value
+                model.periodCount = value
             else if (value) {
                 new I18NAlert("IterationNumberNotValid").show()
-                periodCount.setValue(((CalculationSettingsPaneModel) model).periodCount)
+                periodCount.value = ((CalculationSettingsPaneModel) model).periodCount
             } else {
-                ((CalculationSettingsPaneModel) model).periodCount = null
+                model.periodCount = null
             }
         }] as IKeyListener)
 

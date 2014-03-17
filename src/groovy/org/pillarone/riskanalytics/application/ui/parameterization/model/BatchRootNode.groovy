@@ -8,9 +8,7 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
-import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com

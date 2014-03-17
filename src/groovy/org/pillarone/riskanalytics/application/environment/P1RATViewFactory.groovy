@@ -35,7 +35,6 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     public ULCRootPane create(ApplicationContext applicationContext) {
         addTerminationListener()
 
-        LOG.info "Started session for user '${UserContext.currentUser?.username}'"
         // 20140107 in Chrome, on production, login as frahman and see the following kind of output in logfile:
         //
         //.. (jrichardson)- INFO  P1RATViewFactory Started session for user 'null'

@@ -39,7 +39,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
 
     protected void tearDown() {
         MockUserPreferences.INSTANCE.clearFakePreferences()
-        ModelRegistry.instance.listeners.clear() //TODO: find better solution
+        ModelRegistry.instance.listeners.clear()
         SimulationRun.withNewSession { def session ->
             AuditLog.list()*.delete()
             BatchRunSimulationRun.list()*.delete()
@@ -54,7 +54,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
             ModelDAO.list()*.delete()
             session.flush()
         }
-        CacheItemSearchService.getInstance().refresh()
+        CacheItemSearchService.instance.refresh()
         super.tearDown()
     }
 

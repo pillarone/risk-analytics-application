@@ -2,10 +2,16 @@ package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.tree.TreePath
 import groovy.transform.TypeChecked
+import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
+import org.pillarone.riskanalytics.application.ui.base.model.ResourceClassNode
+import org.pillarone.riskanalytics.application.ui.base.model.ResourceGroupNode
 import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
@@ -27,11 +33,30 @@ class TreeDoubleClickAction extends SelectionTreeAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        delegate(selectedItem, event)
+        def path = tree.selectedPath
+        if (isNodeWeWantToToggleOnDoubleClick(path.lastPathComponent)) {
+            toggle(path)
+        } else {
+            delegate(selectedItem, event)
+        }
+    }
+
+    boolean isNodeWeWantToToggleOnDoubleClick(Object node) {
+        [
+                ModelNode,
+                BatchRootNode,
+                ResourceGroupNode,
+                ItemGroupNode,
+                ResourceClassNode
+        ].any { Class clazz -> clazz.isInstance(node) }
     }
 
     protected void delegate(def item, ActionEvent event) {
 
+    }
+
+    def toggle(TreePath path) {
+        tree.isExpanded(path) ? tree.collapsePath(path) : tree.expandPath(path)
     }
 
     protected void delegate(ModellingItem item, ActionEvent event) {

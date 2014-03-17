@@ -4,9 +4,8 @@ import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
-import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
 class ResultConfigurationNode extends VersionedItemNode {
 

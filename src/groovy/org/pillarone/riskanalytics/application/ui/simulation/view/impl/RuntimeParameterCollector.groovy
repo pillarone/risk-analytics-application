@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
+import groovy.beans.Bindable
 import org.pillarone.riskanalytics.core.simulation.engine.actions.RuntimeParameterCollector as RPC
 
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -74,6 +75,7 @@ class RuntimeParameterCollector implements IModelVisitor {
 
         String propertyName
         Class typeClass
+        @Bindable
         def value
 
         @Override

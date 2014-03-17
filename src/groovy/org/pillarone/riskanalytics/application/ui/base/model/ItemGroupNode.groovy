@@ -8,13 +8,12 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
+import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.application.ui.main.action.*
 
 @CompileStatic
 class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {

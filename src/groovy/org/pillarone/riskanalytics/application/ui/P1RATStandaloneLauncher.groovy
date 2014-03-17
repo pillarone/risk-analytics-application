@@ -20,7 +20,7 @@ class P1RATStandaloneLauncher {
 
     static void start(ISessionStateListener customSessionStateListener) {
         P1RATStandaloneRunner runner = runApp()
-        UISession clientSession = runner.getClientSession()
+        UISession clientSession = runner.clientSession
 
         if (customSessionStateListener != null) {
             clientSession.addSessionStateListener(customSessionStateListener)
@@ -35,7 +35,7 @@ class P1RATStandaloneLauncher {
 
     private static P1RATStandaloneRunner runApp() {
         LogManager logManager = new SimpleLogManager()
-        LogManager.setLogManager(logManager)
+        LogManager.logManager = logManager
 
         UIManagerHelper.setLookAndFeel()
 
@@ -56,7 +56,7 @@ class StandaloneSessionStateListener implements ISessionStateListener {
     }
 
     void sessionError(UISession session, Throwable reason) {
-        println("PillarOne application error..." + reason.getMessage())
+        println("PillarOne application error..." + reason.message)
 
     }
 

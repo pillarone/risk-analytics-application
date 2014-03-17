@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.resultnavigator.categories
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.resolver.CategoryResolverFactory
 
 /**
@@ -22,27 +24,26 @@ import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.res
  * @author martin.melchior
  */
 class MapCategoriesBuilder extends BuilderSupport {
+    private static final Log LOG = LogFactory.getLog(MapCategoriesBuilder)
 
     /**
      * Convenience method to construct, from the given closure, a Map with category descriptors as key and
-      * ICategoryResolver as values.
+     * ICategoryResolver as values.
      * Throws an exception in case the expressions specified an in the closure are malformed or the key-words
      * are not known.
      * @param mappingClosure
      * @return
      */
-    public static Map<String,ICategoryResolver> getCategories(Closure mappingClosure) {
+    public static Map<String, ICategoryResolver> getCategories(Closure mappingClosure) {
         MappingEntry rootEntry = (MappingEntry) new MapCategoriesBuilder().invokeMethod("categories", mappingClosure)
         Map<String, ICategoryResolver> mapping = [:]
         for (MappingEntry entry : rootEntry.value) {
             String key = entry.name
             if (((ArrayList) entry.value).size() != 1) {
-                println "Invalid category specification found: category name ${key}."
                 throw new RuntimeException("Invalid category specification found: category name ${key}.")
             }
             Object value = ((MappingEntry) ((ArrayList) entry.value)[0]).value
             if (!(value instanceof ICategoryResolver)) {
-                println "Problem in resolving the mapping for category ${key}."
                 throw new RuntimeException("Problem in resolving the mapping for category ${key}.")
             }
             mapping[key] = (ICategoryResolver) value
@@ -56,14 +57,14 @@ class MapCategoriesBuilder extends BuilderSupport {
      * @param child
      */
     protected void setParent(Object parent, Object child) {
-        Object value = ((MappingEntry)parent).value
+        Object value = ((MappingEntry) parent).value
         if (value instanceof ICategoryResolver) {
-            ((ICategoryResolver)value).addChildResolver((ICategoryResolver) ((MappingEntry)child).value)
+            ((ICategoryResolver) value).addChildResolver((ICategoryResolver) ((MappingEntry) child).value)
         } else if (value) {
-            ((ArrayList)value) << child
+            ((ArrayList) value) << child
         }
         if (!value) {
-            ((MappingEntry)parent).value = [child]
+            ((MappingEntry) parent).value = [child]
         }
     }
 
@@ -79,8 +80,7 @@ class MapCategoriesBuilder extends BuilderSupport {
         } catch (Exception ex) {
 
         }
-        // println "New node with name ${name}."
-        return new MappingEntry(parent: getCurrent(), name: name, value:  resolver);
+        return new MappingEntry(parent: getCurrent(), name: name, value: resolver);
     }
 
     /**
@@ -91,7 +91,6 @@ class MapCategoriesBuilder extends BuilderSupport {
      */
     protected Object createNode(Object name, Object value) {
         ICategoryResolver resolver = CategoryResolverFactory.getCategoryMatcher((String) name, null)
-        // println "New node with name ${name}, value ${value.toString()}; parsed resolver ${resolver?.name}"
         return new MappingEntry(parent: getCurrent(), name: name, value: resolver);
     }
 
@@ -103,7 +102,6 @@ class MapCategoriesBuilder extends BuilderSupport {
      */
     protected Object createNode(Object name, Map attributes) {
         ICategoryResolver resolver = CategoryResolverFactory.getCategoryMatcher((String) name, attributes);
-        // println "New node with name ${name}, attributes ${attributes}; parsed resolver ${resolver?.name}"
         return new MappingEntry(parent: getCurrent(), name: name, value: resolver)
     }
 
@@ -116,7 +114,6 @@ class MapCategoriesBuilder extends BuilderSupport {
      */
     protected Object createNode(Object name, Map attributes, Object value) {
         ICategoryResolver resolver = CategoryResolverFactory.getCategoryMatcher((String) name, attributes);
-        // println "New node with name ${name}, attributes ${attributes}, value ${value}; parsed resolver ${resolver?.name}"
         return new MappingEntry(parent: getCurrent(), name: name, value: resolver);
     }
 }

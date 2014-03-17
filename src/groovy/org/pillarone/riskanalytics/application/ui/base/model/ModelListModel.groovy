@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
-
 import com.ulcjava.base.application.DefaultComboBoxModel
-import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 
@@ -9,7 +7,6 @@ import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 class ModelListModel extends DefaultComboBoxModel {
 
     private Map modelClasses
-    private List listDataListener
 
     public ModelListModel() {
         modelClasses = [:]
@@ -23,7 +20,7 @@ class ModelListModel extends DefaultComboBoxModel {
             addElement(clazz.simpleName)
             modelClasses[clazz.simpleName] = clazz
         }
-        super.setSelectedItem(getElementAt(0))
+        super.selectedItem = getElementAt(0)
     }
 
     void reload() {

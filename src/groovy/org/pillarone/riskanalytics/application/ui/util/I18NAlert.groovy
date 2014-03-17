@@ -56,7 +56,7 @@ public class I18NAlert extends ULCAlert {
 
     protected int getAlertType() {
         String alertType = bundle.getString(key + "." + "alertType")
-        int type = 0
+        int type
         switch (alertType) {
             case "ERROR":
                 type = ERROR_MESSAGE

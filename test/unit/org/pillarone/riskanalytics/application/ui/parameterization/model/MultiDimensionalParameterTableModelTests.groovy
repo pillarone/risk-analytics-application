@@ -230,14 +230,6 @@ class MultiDimensionalParameterTableModelTests extends GroovyTestCase {
         model = new MultiDimensionalParameterTableModel(new MatrixMultiDimensionalParameter([[1, 2, 3], [4, 5, 6], [7, 8, 9]], ['Row1', 'Row2', 'Row3'], ['Column1', 'Column2', 'Column3']), true)
         model.addColumnAt 1
 
-
-
-        for (int i = 0; i < model.getRowCount(); i++) {
-            for (int j = 0; j < model.columnCount; j++) {
-                println "assertTrue model.getValueAt($i, $j) == ${model.getValueAt(i, j)}"
-            }
-        }
-
         assertTrue model.getValueAt(0, 2) == "Column1"
         assertTrue model.getValueAt(0, 3) == "Column1"
         assertTrue model.getValueAt(0, 4) == "Column2"

@@ -12,11 +12,11 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.components.ComponentUtils
-import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 import static org.junit.Assert.*
 
@@ -25,55 +25,12 @@ class ParameterizationTreeBuilderTests {
 
     @Before
     void setUp() {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
     }
 
     @After
     void tearDown() {
-        LocaleResources.setTestMode(false)
-    }
-
-    @Test
-    void testTreeStructure() {
-
-        Parameterization parameterization
-        ModelStructure structure
-        Model model
-
-        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
-
-        model = new ApplicationModel()
-        model.init()
-
-        parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
-        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
-        parameterization.load()
-        structure.load()
-
-        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
-        def root = builder.root
-        assertNotNull root
-
-        assertEquals 5, root.childCount
-        def structureNode = root.getChildAt(0)
-        assertEquals ComponentUtils.getNormalizedName("hierarchyLevel"), structureNode.displayName
-
-        assertEquals 1, structureNode.childCount
-        def componentNode = structureNode.getChildAt(0)
-        assertEquals 1, componentNode.childCount
-
-        def parameterNode = componentNode.getChildAt(0)
-        assertEquals ComponentUtils.getNormalizedName("parmValue"), parameterNode.displayName
-        assertTrue parameterNode instanceof SimpleValueParameterizationTableTreeNode
-
-        def popNode = root.getChildAt(2).getChildAt(2)
-        assertEquals ComponentUtils.getNormalizedName("parmNestedMdp"), popNode.displayName
-        assertTrue popNode instanceof ParameterObjectParameterTableTreeNode
-        assertEquals 2, popNode.childCount
-
-        assertTrue popNode.getChildAt(0) instanceof ParameterizationClassifierTableTreeNode
-        assertTrue popNode.getChildAt(1) instanceof MultiDimensionalParameterizationTableTreeNode
+        LocaleResources.testMode = false
     }
 
     @Test
@@ -83,16 +40,16 @@ class ParameterizationTreeBuilderTests {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
-
+        FileImportService.importModelsIfNeeded(['Application'])
         model = new ApplicationModel()
         model.init()
 
-        parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
+        ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
+        parameterization = new Parameterization(name.name, ApplicationModel)
+        parameterization.versionNumber = new VersionNumber(name.itemVersion)
         structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
-        parameterization.load()
         structure.load()
+        parameterization.load()
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
         def root = builder.root
@@ -129,15 +86,16 @@ class ParameterizationTreeBuilderTests {
         ModelStructure structure
         Model model
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['Application'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
+        FileImportService.importModelsIfNeeded(['Application'])
 
         model = new ApplicationModel()
         model.init()
 
-        parameterization = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('ApplicationParameters'))
-        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
+        ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
+        parameterization = new Parameterization(name.name, ApplicationModel)
+        parameterization.versionNumber = new VersionNumber(name.itemVersion)
         parameterization.load()
+        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         structure.load()
 
         ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
@@ -152,5 +110,49 @@ class ParameterizationTreeBuilderTests {
 
         assertEquals 4, subComponentNode.childCount
         assertEquals "Nested", subComponentNode.displayName
+    }
+
+    @Test
+    void testTreeStructure() {
+
+        Parameterization parameterization
+        ModelStructure structure
+        Model model
+
+        FileImportService.importModelsIfNeeded(['Application'])
+
+        model = new ApplicationModel()
+        model.init()
+
+        ParameterizationDAO name = ParameterizationDAO.findByName('ApplicationParameters')
+        parameterization = new Parameterization(name.name, ApplicationModel)
+        parameterization.versionNumber = new VersionNumber(name.itemVersion)
+        parameterization.load()
+        structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
+        structure.load()
+
+        ParameterizationTreeBuilder builder = new ParameterizationTreeBuilder(model, structure, parameterization)
+        def root = builder.root
+        assertNotNull root
+
+        assertEquals 5, root.childCount
+        def structureNode = root.getChildAt(0)
+        assertEquals ComponentUtils.getNormalizedName("hierarchyLevel"), structureNode.displayName
+
+        assertEquals 1, structureNode.childCount
+        def componentNode = structureNode.getChildAt(0)
+        assertEquals 1, componentNode.childCount
+
+        def parameterNode = componentNode.getChildAt(0)
+        assertEquals ComponentUtils.getNormalizedName("parmValue"), parameterNode.displayName
+        assertTrue parameterNode instanceof SimpleValueParameterizationTableTreeNode
+
+        def popNode = root.getChildAt(2).getChildAt(2)
+        assertEquals ComponentUtils.getNormalizedName("parmNestedMdp"), popNode.displayName
+        assertTrue popNode instanceof ParameterObjectParameterTableTreeNode
+        assertEquals 2, popNode.childCount
+
+        assertTrue popNode.getChildAt(0) instanceof ParameterizationClassifierTableTreeNode
+        assertTrue popNode.getChildAt(1) instanceof MultiDimensionalParameterizationTableTreeNode
     }
 }

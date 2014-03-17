@@ -25,14 +25,4 @@ class CompareCriteriaUIItemTests extends AbstractCompareSimulationUIItemTests {
         assertEquals new Double(66.6), tableTreeOperator.getValueAt(7, 0)
 
     }
-
-    private void printValues(ULCTableTreeOperator tableTreeOperator, String name) {
-        println("-------------------begin ${name} ${tableTreeOperator.getColumnCount()}-----------------")
-        for (int row = 0; row < tableTreeOperator.getRowCount(); row++) {
-            for (int column = 0; column < tableTreeOperator.getColumnCount(); column++) {
-                println "tableTreeOperator.getValueAt(row,column) = ${row},${column},${tableTreeOperator.getValueAt(row, column)}"
-            }
-        }
-        println("-------------------end ${name}-----------------")
-    }
 }
