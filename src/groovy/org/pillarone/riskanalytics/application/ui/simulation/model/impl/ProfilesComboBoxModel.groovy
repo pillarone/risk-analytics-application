@@ -18,18 +18,22 @@ class ProfilesComboBoxModel extends DefaultComboBoxModel {
     void refreshProfiles() {
         removeAllElements()
         profilesMap.clear()
-        SimulationProfileDAO.withCreatorOrForPublic(currentUser()).withModelClass(modelClass).list(order: 'name').each {
+        findProfiles().each { addElement(it) }
+        selectedItem = null
+    }
+
+    protected List<SimulationProfile> findProfiles() {
+        SimulationProfileDAO.withCreatorOrForPublic(currentUser()).withModelClass(modelClass).list(order: 'name').collect {
             def profile = new SimulationProfile(it.name, modelClass)
             profile.load()
-            profilesMap[displayName(profile)] = profile
-            addElement(profile)
+            profile
         }
-        selectedItem = null
     }
 
     @Override
     void addElement(Object item) {
         SimulationProfile profile = item as SimulationProfile
+        checkModelClass(profile)
         String name = displayName(profile)
         if (getIndexOf(name) == -1) {
             super.addElement(name)
@@ -38,11 +42,16 @@ class ProfilesComboBoxModel extends DefaultComboBoxModel {
         }
     }
 
+    private void checkModelClass(SimulationProfile profile) {
+        if (profile.modelClass != modelClass) {
+            throw new IllegalStateException("profile $profile ahas wrong modelClass: ${profile.modelClass}! Expceted: $modelClass")
+        }
+    }
+
     @Override
     void removeElement(Object item) {
         String name = displayName(item as SimulationProfile)
         super.removeElement(name)
-
     }
 
     @Override
@@ -66,5 +75,4 @@ class ProfilesComboBoxModel extends DefaultComboBoxModel {
     String getSelectedProfileName() {
         selectedProfile?.name
     }
-
 }

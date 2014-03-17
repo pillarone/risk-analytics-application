@@ -32,7 +32,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
  * It is also possible to register a ISimulationValidationListener, which will be notified when the simulation configuration changes from
  * an invalid (incomplete) to a valid state.
  */
-class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener {
+class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener, ISimulationProfileApplicable {
 
     private static final Log LOG = LogFactory.getLog(SimulationSettingsPaneModel)
 
@@ -318,6 +318,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         }
     }
 
+    @Override
     SimulationProfile createProfile(String name) {
         def profile = new SimulationProfile(name, modelClass)
         profile.load()
@@ -333,6 +334,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         profile
     }
 
+    @Override
     void applyProfile(SimulationProfile profile) {
         setNumberOfIterations(profile.numberOfIterations)
         setRandomSeed(profile.randomSeed)

@@ -25,10 +25,10 @@ import org.springframework.transaction.TransactionStatus
 
 class ModellingItemFactory {
 
-    private static Log LOG = LogFactory.getLog(ModellingItemFactory)
+    private final static Log LOG = LogFactory.getLog(ModellingItemFactory)
 
     static Map getItemInstances() {
-        Map map = UserContext.getAttribute("itemInstances")
+        Map map = UserContext.getAttribute("itemInstances") as Map
         if (map == null) {
             map = [:]
             UserContext.setAttribute("itemInstances", map)
@@ -58,7 +58,7 @@ class ModellingItemFactory {
             ResourceDAO.findAllByResourceClassName(resourceClass.name, [sort: "name"]).collect {
                 getItem(it)
             }
-        }
+        } as List<Resource>
     }
 
     static List getNewestParameterizationsForModel(Class modelClass) {

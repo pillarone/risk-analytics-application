@@ -5,18 +5,22 @@ import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
 
 class SimulationProfileActionsPaneModel {
-    final ProfilesComboBoxModel simulationProfiles
+    ProfilesComboBoxModel simulationProfiles
     final Class modelClass
-    private final SimulationSettingsPaneModel simulationSettingsPaneModel
+    private final ISimulationProfileApplicable simulationProfileApplicable
 
-    SimulationProfileActionsPaneModel(SimulationSettingsPaneModel simulationSettingsPaneModel, Class modelClass) {
+    SimulationProfileActionsPaneModel(ISimulationProfileApplicable simulationProfileApplicable, Class modelClass) {
         this.modelClass = modelClass
-        this.simulationSettingsPaneModel = simulationSettingsPaneModel
-        simulationProfiles = new ProfilesComboBoxModel(modelClass)
+        this.simulationProfileApplicable = simulationProfileApplicable
+        simulationProfiles = createSimulationProfilesModel(modelClass)
+    }
+
+    protected ProfilesComboBoxModel createSimulationProfilesModel(Class modelClass) {
+        new ProfilesComboBoxModel(modelClass)
     }
 
     boolean saveCurrentProfile(String name) {
-        def profile = simulationSettingsPaneModel.createProfile(name)
+        def profile = simulationProfileApplicable.createProfile(name)
         if (isAllowedToSave(profile)) {
             def id = profile.save()
             if (id) {
@@ -40,7 +44,7 @@ class SimulationProfileActionsPaneModel {
 
     boolean applyCurrentProfile() {
         if (currentAllowedToApply) {
-            simulationSettingsPaneModel.applyProfile(selectedProfile)
+            simulationProfileApplicable.applyProfile(selectedProfile)
             return true
         }
         return false
@@ -76,5 +80,9 @@ class SimulationProfileActionsPaneModel {
 
     Person currentUser() {
         UserManagement.currentUser
+    }
+
+    String getSelectedProfileName() {
+        selectedProfile?.name
     }
 }

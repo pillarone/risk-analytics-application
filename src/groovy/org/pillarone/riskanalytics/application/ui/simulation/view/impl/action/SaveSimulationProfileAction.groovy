@@ -21,12 +21,8 @@ class SaveSimulationProfileAction extends ResourceBasedAction {
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        dialog.name = profileName
+        dialog.name = model.selectedProfileName
         dialog.show()
-    }
-
-    private String getProfileName() {
-        model.simulationProfiles.selectedProfileName
     }
 
     private SimulationProfileNameDialog getDialog() {
