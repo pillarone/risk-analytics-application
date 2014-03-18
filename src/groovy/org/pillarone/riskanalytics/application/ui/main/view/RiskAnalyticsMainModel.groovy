@@ -1,14 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.applicationframework.application.ApplicationContext
-import com.ulcjava.base.application.ULCPollingTimer
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.base.model.*
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
+import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
-import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
@@ -32,12 +31,11 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     def switchActions = []
     private List<IRiskAnalyticsModelListener> modelListeners = []
     private List<BatchTableListener> batchTableListeners = []
-    private List<IModelItemChangeListener> modelItemlisteners = []
+    private List<IModelItemChangeListener> modelItemListeners = []
     private List<INewSimulationListener> newSimulationListeners = []
     //selectedItem needs to be updated when tabs are changed etc.
     @Bindable AbstractUIItem currentItem
 
-    public static boolean deleteActionIsRunning = false
     static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
     ApplicationContext applicationContext
@@ -60,22 +58,16 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     void modelAdded(Class modelClass) {
-        navigationTableTreeModel.addNodeForItem(modelClass.newInstance())
+        navigationTableTreeModel.addNodeForItem(modelClass.newInstance() as Model)
     }
 
-    public void renameItem(AbstractUIItem item, String name) {
-        item.rename(name)
-    }
-
-
-    public void removeItems(Model selectedModel, ItemGroupNode itemGroupNode, List<AbstractUIItem> modellingItems) {
+    public void removeItems(Model selectedModel, List<AbstractUIItem> modellingItems) {
         closeItems(selectedModel, modellingItems)
-//        selectionTreeModel.removeAllGroupNodeChildren(itemGroupNode)
         try {
             for (AbstractUIItem item: modellingItems) {
                 item.remove()
                 item.delete()
-            }//for
+            }
         } catch (Exception ex) {
             LOG.error "Deleting Item Failed: ${ex}"
         }
@@ -112,15 +104,15 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
 
     public void addModelItemChangedListener(IModelItemChangeListener listener) {
-        modelItemlisteners << listener
+        modelItemListeners << listener
     }
 
     public void removeModelItemChangedListener(IModelItemChangeListener listener) {
-        modelItemlisteners.remove(listener)
+        modelItemListeners.remove(listener)
     }
 
     public void fireModelItemChanged() {
-        modelItemlisteners.each {IModelItemChangeListener listener -> listener.modelItemChanged()}
+        modelItemListeners.each {IModelItemChangeListener listener -> listener.modelItemChanged()}
     }
 
     public void addBatchTableListener(BatchTableListener batchTableListener) {
@@ -226,21 +218,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
         }
         return item
     }
-
-    public void startPollingTimer(PollingBatchSimulationAction pollingBatchSimulationAction) {
-        if (pollingBatchSimulationAction == null)
-            pollingBatchSimulationAction = new PollingBatchSimulationAction()
-        try {
-            pollingBatchSimulationAction.addSimulationListener this
-            ULCPollingTimer pollingBatchSimulationTimer = new ULCPollingTimer(2000, pollingBatchSimulationAction)
-            pollingBatchSimulationTimer.repeats = true
-            pollingBatchSimulationTimer.syncClientState = false
-            pollingBatchSimulationTimer.start()
-        } catch (NullPointerException ex) {
-            LOG.warn("startPollingTimer() caught and ignoring NPE", ex);
-        }
-    }
-
 
     public void simulationStart(Simulation simulation) {
     }

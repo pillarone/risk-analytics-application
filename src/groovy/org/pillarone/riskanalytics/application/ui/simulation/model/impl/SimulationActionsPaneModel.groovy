@@ -28,8 +28,8 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.SimulationState
-import org.pillarone.riskanalytics.core.simulation.engine.RunSimulationService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -40,9 +40,9 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 class SimulationActionsPaneModel implements IModelChangedListener {
 
-    protected Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
+    protected final static Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
 
-    protected SimulationHandler runner
+    SimulationHandler runner
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
@@ -114,9 +114,9 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     private void startSimulation() {
-        runner = RunSimulationService.service.runSimulationOnGrid(
-                new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy),
-                simulation.template)
+        runner = Holders.grailsApplication.mainContext.getBean('simulationQueueService', SimulationQueueService).offer(
+                new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy)
+        )
         notifySimulationStart()
     }
 
@@ -126,10 +126,6 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     int getProgress() {
         runner.progress
-    }
-
-    int getIterationsDone() {
-        runner.simulation.numberOfIterations
     }
 
     SimulationState getSimulationState() {

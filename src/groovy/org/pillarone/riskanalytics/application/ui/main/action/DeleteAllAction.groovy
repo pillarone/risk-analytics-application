@@ -28,7 +28,7 @@ abstract class DeleteAllAction extends SelectionTreeAction {
                 break
         }
         if (!usedInSimulation) {
-            model.removeItems(getSelectedModel(), getSelectedItemGroupNode(), items)
+            model.removeItems(getSelectedModel(), items)
         } else {
             ULCAlert alert = new I18NAlert("DeleteAllError")
             alert.show()
@@ -44,7 +44,7 @@ abstract class DeleteAllAction extends SelectionTreeAction {
                 break
         }
         if (!usedInSimulation) {
-            model.removeItems(getSelectedModel(), getSelectedItemGroupNode(), items)
+            model.removeItems(getSelectedModel(), items)
         } else {
             ULCAlert alert = new I18NAlert("DeleteAllError")
             alert.show()
@@ -52,7 +52,7 @@ abstract class DeleteAllAction extends SelectionTreeAction {
     }
 
     protected void deleteResults(List items) {
-        model.removeItems(getSelectedModel(), getSelectedItemGroupNode(), items)
+        model.removeItems(getSelectedModel(), items)
     }
 
     private boolean isInList(List<Simulation> simulations, Parameterization parameterization) {

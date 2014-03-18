@@ -4,10 +4,12 @@ import com.ulcjava.base.application.DefaultListModel
 import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
-
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
 import org.pillarone.riskanalytics.application.UserContext
+
+import static org.pillarone.riskanalytics.application.logging.model.LoggingManager.NO_USER
+import static org.pillarone.riskanalytics.application.logging.model.LoggingManager.USER_PROPERTY
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -15,7 +17,7 @@ import org.pillarone.riskanalytics.application.UserContext
 public class RealTimeLoggingModel {
 
     DefaultListModel listModel = new DefaultListModel()
-    List<LoggingEvent> pendingLoggingEvents
+    final List<LoggingEvent> pendingLoggingEvents
 
     private MyAppender appender
     private ULCPollingTimer timer
@@ -27,12 +29,12 @@ public class RealTimeLoggingModel {
 
     private void addPendingLoggingEvents() {
         synchronized (pendingLoggingEvents) {
-            LoggingManager manager = LoggingAppender.getInstance().getLoggingManager()
+            LoggingManager manager = LoggingAppender.instance.loggingManager
             List<String> messages = []
             for (int i = 0; i < pendingLoggingEvents.size(); i++) {
-                String userName = pendingLoggingEvents.get(i).getProperty(LoggingManager.USER_PROPERTY)
-                if (userName != null && (userName == LoggingManager.NO_USER || userName.equals(UserContext.getCurrentUser()?.getUsername()))) {
-                    messages << manager.layout.format(pendingLoggingEvents.get(i))
+                String userName = pendingLoggingEvents[i].getProperty(USER_PROPERTY)
+                if (userName != null && (userName == NO_USER || userName.equals(UserContext.currentUser?.username))) {
+                    messages << manager.layout.format(pendingLoggingEvents[i])
                 }
             }
             pendingLoggingEvents.clear()
@@ -52,7 +54,7 @@ public class RealTimeLoggingModel {
 
     public String getContent() {
         StringBuilder sb = new StringBuilder()
-        for (int i = 0; i < listModel.getSize(); i++) {
+        for (int i = 0; i < listModel.size; i++) {
             sb.append(listModel.getElementAt(i))
         }
         return sb.toString()
@@ -61,17 +63,16 @@ public class RealTimeLoggingModel {
     void start() {
         timer = new ULCPollingTimer(1000, [actionPerformed: { ActionEvent event ->
             addPendingLoggingEvents()
-
         }] as IActionListener)
         timer.syncClientState = false
+        LoggingAppender.instance.loggingManager.addAppender(appender)
         timer.start()
-        LoggingAppender.getInstance().getLoggingManager().addAppender(appender)
     }
 
     void stop() {
-        addPendingLoggingEvents()
-        LoggingAppender.getInstance().getLoggingManager().removeAppender(appender)
         timer.stop()
+        LoggingAppender.instance.loggingManager.removeAppender(appender)
+        addPendingLoggingEvents()
     }
 
     private class MyAppender extends AppenderSkeleton {
@@ -86,6 +87,5 @@ public class RealTimeLoggingModel {
         boolean requiresLayout() {
             return true
         }
-
     }
 }

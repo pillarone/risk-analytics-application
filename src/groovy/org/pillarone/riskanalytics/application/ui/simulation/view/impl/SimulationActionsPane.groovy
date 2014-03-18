@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import com.ulcjava.base.application.*
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
+import static org.pillarone.riskanalytics.core.simulation.SimulationState.*
 
 /**
  * A view which can be used to run & monitor a simulation (provided by an ISimulationProvider in the model).
@@ -55,7 +56,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         //The state of the UI is defined through the current simulation state.
         //There is a closure for each state, which will update the ui to that state.
         //after each polling timer event, the closure of the current simulation state is called
-        uiStates.put(SimulationState.NOT_RUNNING, {
+        uiStates.put(NOT_RUNNING, {
             startTimeInfo.text = "-"
             remainingTimeInfo.text = "-"
             estimatedEndTimeInfo.text = "-"
@@ -68,7 +69,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = false
         })
 
-        uiStates.put(SimulationState.INITIALIZING, {
+        uiStates.put(INITIALIZING, {
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = "-"
             estimatedEndTimeInfo.text = "-"
@@ -80,7 +81,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = false
         })
 
-        uiStates.put(SimulationState.RUNNING, {
+        uiStates.put(RUNNING, {
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = model.remainingTime
             estimatedEndTimeInfo.text = model.estimatedEndTime
@@ -93,7 +94,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = false
         })
 
-        uiStates.put(SimulationState.POST_SIMULATION_CALCULATIONS, {
+        uiStates.put(POST_SIMULATION_CALCULATIONS, {
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = model.remainingTime
             estimatedEndTimeInfo.text = model.estimatedEndTime
@@ -106,7 +107,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = false
         })
 
-        uiStates.put(SimulationState.SAVING_RESULTS, {
+        uiStates.put(SAVING_RESULTS, {
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = "-"
             estimatedEndTimeInfo.text = "-"
@@ -118,7 +119,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = false
         })
 
-        uiStates.put(SimulationState.FINISHED, {
+        uiStates.put(FINISHED, {
             timer.stop()
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = "-"
@@ -132,7 +133,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = true
         })
 
-        uiStates.put(SimulationState.CANCELED, {
+        uiStates.put(CANCELED, {
             timer.stop()
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = "-"
@@ -146,7 +147,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             openResults.enabled = false
         })
 
-        uiStates.put(SimulationState.ERROR, {
+        uiStates.put(ERROR, {
             timer.stop()
             startTimeInfo.text = model.simulationStartTime
             remainingTimeInfo.text = "-"
@@ -161,7 +162,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
         initComponents()
         layoutComponents()
-        updateUIState(SimulationState.NOT_RUNNING)
+        updateUIState(NOT_RUNNING)
     }
 
     void layoutComponents() {
@@ -234,22 +235,22 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
         availableBatchRuns.editable = true
         addToBatch = new ULCButton(model.addToBatchAction)
         batchMessage = new ULCLabel(model.batchMessage)
-        batchMessage.setForeground(Color.blue)
+        batchMessage.foreground = Color.blue
     }
 
     /**
      * is called when the polling timer event fires.
      */
     void actionPerformed(ActionEvent actionEvent) {
-        SimulationState simulationState = model.getSimulationState()
+        SimulationState simulationState = model.simulationState
         updateUIState(simulationState)
-        if (simulationState == SimulationState.FINISHED || simulationState == SimulationState.CANCELED || simulationState == SimulationState.ERROR) {
+        if (simulationState == FINISHED || simulationState == CANCELED || simulationState == ERROR) {
             model.notifySimulationStop()
         }
     }
 
     protected void updateUIState(SimulationState simulationState) {
-        if (LOG.isInfoEnabled() && simulationState != currentUISimulationState) {
+        if (LOG.infoEnabled && simulationState != currentUISimulationState) {
             LOG.info "Updating UI to ${simulationState.toString()}"
         }
         uiStates[simulationState].call()
@@ -258,8 +259,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
 
     void simulationEnd(Simulation simulation, Model model) {
         //the polling timer is stopped in the ui state closures to make sure that the last state is correctly applied
-
-        if (currentUISimulationState == SimulationState.ERROR) {
+        if (currentUISimulationState == ERROR) {
             ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", I18NUtilities.getExceptionText(this.model.errorMessage), "Ok")
             alert.show()
         }
@@ -282,7 +282,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
      */
     void simulationPropertyChanged(boolean isValid) {
         configurationValid = isValid
-        currentUISimulationState = SimulationState.NOT_RUNNING
+        currentUISimulationState = NOT_RUNNING
         updateUIState(currentUISimulationState)
     }
 

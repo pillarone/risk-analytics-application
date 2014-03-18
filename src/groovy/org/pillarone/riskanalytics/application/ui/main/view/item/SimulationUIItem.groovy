@@ -19,7 +19,6 @@ class SimulationUIItem extends ModellingUIItem {
     String createTitle() {
         if (((Simulation) item).start != null) return item.name
         return UIUtils.getText(SimulationUIItem.class, "simulation")
-
     }
 
     ULCContainer createDetailView() {
@@ -31,7 +30,6 @@ class SimulationUIItem extends ModellingUIItem {
         SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, mainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
-        model.actionsPaneModel.addSimulationListener(mainModel)
         mainModel.addModelChangedListener(model.settingsPaneModel)
         mainModel.addModelChangedListener(model.actionsPaneModel)
         mainModel.registerModel(this, model)
@@ -42,7 +40,6 @@ class SimulationUIItem extends ModellingUIItem {
     ULCIcon getIcon() {
         return UIUtils.getIcon("results-active.png")
     }
-
 
     @Override
     boolean equals(Object obj) {

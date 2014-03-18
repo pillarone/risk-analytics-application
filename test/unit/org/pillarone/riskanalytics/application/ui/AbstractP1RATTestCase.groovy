@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui
-
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFrame
@@ -11,7 +10,6 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchSimulationAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
@@ -25,19 +23,18 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.workflow.Status
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
 
-    private static Log LOG = LogFactory.getLog(AbstractP1RATTestCase)
+    private static final Log LOG = LogFactory.getLog(AbstractP1RATTestCase)
 
     ULCFrame frame
     ULCFrameOperator mainFrameOperator
 
     public void start() {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         frame = new ULCFrame()
         frame.title = "mainFrame"
         frame.name = "mainFrame"
@@ -95,8 +92,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
 
     protected RiskAnalyticsMainModel getMockRiskAnalyticsMainModel() {
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(getMockTreeModel(null))
-        mainModel.metaClass.startPollingTimer = { PollingBatchSimulationAction pollingBatchSimulationAction ->
-        }
+
         mainModel.metaClass.openItem = { Model pcModel, Parameterization item ->
             assertEquals pcModel.name, "Application"
             assertNotNull item
@@ -152,11 +148,11 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         Parameterization parameterization = new Parameterization("param" + index, ApplicationModel)
         parameterization.id = index
         Person person = new Person(username: "username" + index)
-        parameterization.setCreator(person)
-        parameterization.setCreationDate(new DateTime())
+        parameterization.creator = person
+        parameterization.creationDate = new DateTime()
         Person person2 = new Person(username: "modificator" + index)
-        parameterization.setLastUpdater(person2)
-        parameterization.setModificationDate(new DateTime())
+        parameterization.lastUpdater = person2
+        parameterization.modificationDate = new DateTime()
         parameterization.status = status
         parameterization.modelClass = ApplicationModel
         parameterization.loaded = true

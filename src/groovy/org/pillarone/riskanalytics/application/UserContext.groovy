@@ -11,19 +11,17 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest
 
 
 class UserContext {
-    private static final String SYSTEM_PROPERTY_STANDALONE_USERNAME = "standaloneUsername"
 
-    private static Map fallbackContext = [:]
-    static Log LOG = LogFactory.getLog(UserContext)
-
+    private static final Log LOG = LogFactory.getLog(UserContext)
+    private static final Map FALLBACK_CONTEXT = [:]
     public static final String USER_TIME_ZONE = "time_zone"
 
     public static void setAttribute(String key, Object value) {
         try {
             ApplicationContext.setAttribute key, value
         } catch (Exception e) {
-            LOG.warn('Using fallbackContext as ULC ApplicationContext threw:' + e.getMessage())
-            fallbackContext.put(key, value)
+            LOG.warn('Using FALLBACK_CONTEXT as ULC ApplicationContext threw:' + e.message)
+            FALLBACK_CONTEXT[key] = value
         }
     }
 
@@ -31,44 +29,39 @@ class UserContext {
         try {
             return ApplicationContext.getAttribute(key)
         } catch (Exception e) {
-            LOG.warn('Using fallbackContext as ULC ApplicationContext threw:' + e.getMessage())
-            return fallbackContext.get(key)
+            LOG.warn('Using FALLBACK_CONTEXT as ULC ApplicationContext threw:' + e.message)
+            return FALLBACK_CONTEXT[key]
         }
     }
 
     public static boolean hasCurrentUser() {
         try {
-            return getCurrentUser() != null
+            return currentUser != null
         } catch (Exception e) {
-            LOG.warn("getCurrentUser() threw:" + e.getMessage())
+            LOG.warn("getCurrentUser() threw:" + e.message)
             return false
         }
     }
 
     public static Person getCurrentUser() {
-        return UserManagement.getCurrentUser()
+        return UserManagement.currentUser
     }
 
     public static String getBaseUrl() {
         GrailsWebRequest grailsWebRequest = WebUtils.retrieveGrailsWebRequest()
-        String contextPath = grailsWebRequest.getCurrentRequest().contextPath
-        String requestURL = grailsWebRequest.getCurrentRequest().getRequestURL()
-        String uri = grailsWebRequest.getCurrentRequest().getRequestURI()
+        String contextPath = grailsWebRequest.currentRequest.contextPath
+        String requestURL = grailsWebRequest.currentRequest.requestURL
+        String uri = grailsWebRequest.currentRequest.requestURI
         return requestURL.substring(0, requestURL.indexOf(uri)) + contextPath
     }
 
-    public static void removeAttribute(String key) {
-        ApplicationContext.removeAttribute(key)
-        fallbackContext.remove(key)
-    }
-
     public static boolean isStandAlone() {
-        int type = ClientContext.getClientEnvironmentType()
+        int type = ClientContext.clientEnvironmentType
         return type != ClientContext.APPLET && type != ClientContext.JNLP
     }
 
     public static boolean isApplet() {
-        int type = ClientContext.getClientEnvironmentType()
+        int type = ClientContext.clientEnvironmentType
         return type == ClientContext.APPLET
     }
 

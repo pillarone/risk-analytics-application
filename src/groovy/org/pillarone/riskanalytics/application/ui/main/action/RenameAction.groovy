@@ -31,24 +31,24 @@ class RenameAction extends SelectionTreeAction {
         tree.invokeUI("startEditingAtPath", [adapter.getDescriptionForPath(tree.getSelectionPath())] as Object[])
         */
         boolean usedInSimulation = false
-        ModellingUIItem selectedItem = getSelectedUIItem()
+        ModellingUIItem selectedItem = selectedUIItem
         if (!(selectedItem instanceof ModellingUIItem)) return
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
-            selectedItem.item.setModelClass(getSelectedModel().class) //TODO: still necessary?
-            usedInSimulation = selectedItem.isUsedInSimulation()
+            selectedItem.item.setModelClass(selectedModel.class) //TODO: still necessary?
+            usedInSimulation = selectedItem.usedInSimulation
             if (!usedInSimulation) {
                 usedInSimulation = nameUsedInSimulation(selectedItem.item)
             }
         }
-        if (!usedInSimulation) {
+        if (usedInSimulation) {
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "RenamingLocked")
+            alert.show()
+        } else {
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)
             dialog.title = dialog.getText("renameTitle") + " " + selectedItem.name
 
-            dialog.okAction = { selectedItem.rename(dialog.nameInput.text)}//model.renameItem(selectedItem, dialog.nameInput.text) }
+            dialog.okAction = { selectedItem.rename(dialog.nameInput.text)}
             dialog.show()
-        } else {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "RenamingLocked")
-            alert.show()
         }
     }
 

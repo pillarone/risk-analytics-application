@@ -82,13 +82,12 @@ class SimulationSettingsPane implements ISimulationListener {
 
     void simulationEnd(Simulation simulation, Model notUsed) {
         enable()
-        model.simulationName = ""
-        simulationName.text = model.simulationName
+        simulationName.text = ''
     }
 
     void simulationStart(Simulation simulation) {
         disable()
-        simulationName.text = simulation.name
+        simulationName.text = model.simulation.name
     }
 
     protected void attachListeners() {

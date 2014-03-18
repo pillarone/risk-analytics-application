@@ -14,6 +14,5 @@ class SimulationQueuePaneTests extends AbstractP1RATTestCase {
 
 
     void testView() {
-        sleep(1000000)
     }
 }
