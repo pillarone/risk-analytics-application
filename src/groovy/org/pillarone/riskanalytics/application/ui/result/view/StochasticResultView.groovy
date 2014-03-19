@@ -1,34 +1,27 @@
 package org.pillarone.riskanalytics.application.ui.result.view
-
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.datatype.ULCNumberDataType
+import com.ulcjava.base.application.event.*
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import com.ulcjava.base.application.util.Dimension
+import grails.util.Holders
+import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
+import org.pillarone.riskanalytics.application.ui.customtable.view.TableView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.action.RemoveFunctionAction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.dataaccess.function.*
-import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
-import com.ulcjava.base.application.event.IValueChangedListener
-import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
-import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
-import com.ulcjava.base.application.event.IKeyListener
-import com.ulcjava.base.application.event.KeyEvent
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.base.application.event.IActionListener
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.customtable.view.TableView
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class StochasticResultView extends ResultView {
 
@@ -84,8 +77,8 @@ class StochasticResultView extends ResultView {
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), contentPane)
 
         boolean tableViewEnabled = false
-        if (ConfigurationHolder.config.containsKey("tableViewEnabled")) {
-            tableViewEnabled = ConfigurationHolder.config.tableViewEnabled
+        if (Holders.config.containsKey("tableViewEnabled")) {
+            tableViewEnabled = Holders.config.tableViewEnabled
         }
 
         if (tableViewEnabled) {

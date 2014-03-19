@@ -1,12 +1,10 @@
 package org.pillarone.riskanalytics.application.util;
 
-import org.codehaus.groovy.grails.commons.ApplicationHolder;
-import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor;
-import org.pillarone.riskanalytics.core.output.PdfFromSample;
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation;
-import org.pillarone.riskanalytics.core.output.SimulationRun;
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode;
 import org.pillarone.riskanalytics.core.dataaccess.PostSimulationCalculationAccessor;
+import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor;
+import org.pillarone.riskanalytics.core.output.PdfFromSample;
+import org.pillarone.riskanalytics.core.output.SimulationRun;
 import umontreal.iro.lecuyer.probdist.NormalDist;
 
 import java.math.BigDecimal;

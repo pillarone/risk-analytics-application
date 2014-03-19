@@ -1,8 +1,8 @@
 package org.pillarone.riskanalytics.application.fileimport
 
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.output.structure.DefaultResultStructureBuilder
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
@@ -22,7 +22,7 @@ class ResultStructureImportService extends FileImportService {
 
     public static void importDefaults() {
         List<Class> allModels = findAllModelClasses()
-        def modelFilter = ApplicationHolder.application.config?.models
+        def modelFilter = Holders.config?.models
         if (modelFilter.size() == 0) {
             modelFilter = allModels*.simpleName
         }

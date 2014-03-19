@@ -4,7 +4,6 @@ import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.result.view.SingleCollectorIterationNode
@@ -32,7 +31,7 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     int fromIteration = 1
 
     public SingleValueCollectorTableTreeModel(List nodes, SimulationRun simulationRun, boolean showPeriodLabel) {
-        this.nodes = nodes?.sort {SimpleTableTreeNode node -> node.path }
+        this.nodes = nodes?.sort { SimpleTableTreeNode node -> node.path }
         this.simulationRun = simulationRun
         this.periodCount = simulationRun?.periodCount
         singleValueResultsMap = [:]
@@ -101,20 +100,10 @@ class SingleValueCollectorTableTreeModel extends AbstractTableTreeModel {
     }
 
     public void setIterations() {
-        this.iterations = Math.min(iterations, getMaxIteration())
+        this.iterations = Math.min(iterations, maxIteration)
     }
 
     int getMaxIteration() {
         return simulationRun.iterations
     }
-
-    int getIterationsStep() {
-        int max = 100
-        try {
-            max = ApplicationHolder.application.config.singleValueResultMaxIterations
-        } catch (Exception ex) {}
-        return max
-    }
-
-
 }

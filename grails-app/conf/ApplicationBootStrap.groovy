@@ -1,18 +1,19 @@
 import grails.util.Environment
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
+import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
-import org.pillarone.riskanalytics.application.output.structure.StructureMapping
-import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 
 class ApplicationBootStrap {
 
     def quartzScheduler
     //TODO only injected to initialize the cache. Find a better place
     CacheItemSearchService cacheItemSearchService
+    GrailsApplication grailsApplication
 
     def init = { servletContext ->
 
@@ -20,7 +21,7 @@ class ApplicationBootStrap {
             return
         }
 
-        def modelFilter = ApplicationHolder.application.config?.models
+        def modelFilter = grailsApplication.config?.models
         List models = null
         if (modelFilter) {
             models = modelFilter.collect { it - "Model" }
