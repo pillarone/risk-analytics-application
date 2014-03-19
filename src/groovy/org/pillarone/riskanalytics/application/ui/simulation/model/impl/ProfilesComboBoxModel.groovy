@@ -35,11 +35,11 @@ class ProfilesComboBoxModel extends DefaultComboBoxModel {
         SimulationProfile profile = item as SimulationProfile
         checkModelClass(profile)
         String name = displayName(profile)
+        profilesMap[name] = profile
         if (getIndexOf(name) == -1) {
             super.addElement(name)
-            profilesMap[name] = profile
-            selectedItem = name
         }
+        selectedItem = name
     }
 
     private void checkModelClass(SimulationProfile profile) {

@@ -26,7 +26,7 @@ class SaveSimulationProfileAction extends ResourceBasedAction {
     }
 
     private SimulationProfileNameDialog getDialog() {
-        profileNameDialog ?: createProfileNameDialog()
+        profileNameDialog = profileNameDialog ?: createProfileNameDialog()
     }
 
     private SimulationProfileNameDialog createProfileNameDialog() {

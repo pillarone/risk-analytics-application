@@ -1,15 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCButton
-import com.ulcjava.base.application.ULCComboBox
-import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationProfileActionsPaneModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.ApplySimulationProfileAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.DeleteSimulationProfileAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.SaveSimulationProfileAction
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 import static org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationProfileActionsPaneModel.ProfileItem
 
@@ -35,7 +33,6 @@ class SimulationProfileActionsPane {
     }
 
     protected void createComponents() {
-        content = new ULCBoxPane(false)
         profiles = new ULCComboBox(model.simulationProfiles)
         profiles.name = PROFILES_COMBO_BOX
         applyButton = new ULCButton(new ApplySimulationProfileAction(this))
@@ -47,10 +44,12 @@ class SimulationProfileActionsPane {
     }
 
     protected void layout() {
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, profiles)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, applyButton)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, saveButton)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, deleteButton)
+        content = UIUtils.boxLayout("Simulation Profiles") { ULCBoxPane boxPane ->
+            boxPane.add(ULCBoxPane.BOX_EXPAND_TOP, profiles)
+            boxPane.add(ULCBoxPane.BOX_EXPAND_TOP, applyButton)
+            boxPane.add(ULCBoxPane.BOX_EXPAND_TOP, saveButton)
+            boxPane.add(ULCBoxPane.BOX_EXPAND_TOP, deleteButton)
+        }
     }
 
     protected void bind() {
