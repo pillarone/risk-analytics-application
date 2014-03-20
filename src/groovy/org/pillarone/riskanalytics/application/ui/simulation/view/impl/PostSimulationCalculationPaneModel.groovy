@@ -1,8 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import grails.util.Holders
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-
 
 class PostSimulationCalculationPaneModel {
 
@@ -17,7 +16,7 @@ class PostSimulationCalculationPaneModel {
     List<Double> pdf = []
 
     PostSimulationCalculationPaneModel() {
-        Map keyFigures = ApplicationHolder.application.config.keyFiguresToCalculate
+        Map keyFigures = Holders.config.keyFiguresToCalculate
         def stDev = keyFigures.get(PostSimulationCalculation.STDEV)
         if (stDev instanceof Boolean) {
             standardDeviation = stDev

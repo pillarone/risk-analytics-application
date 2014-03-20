@@ -3,19 +3,14 @@ package org.pillarone.riskanalytics.application.ui.util
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCRootPane
 import grails.util.Holders
+import org.apache.log4j.Logger
+import org.codehaus.groovy.runtime.StackTraceUtils
+import org.pillarone.riskanalytics.core.FileConstants
 import org.pillarone.riskanalytics.core.log.TraceLogManager
+import org.pillarone.riskanalytics.core.parameterization.ParameterizationError
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 import java.text.MessageFormat
-import org.apache.log4j.Logger
-import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.runtime.StackTraceUtils
-import org.pillarone.riskanalytics.core.parameterization.ParameterizationError
-import org.pillarone.riskanalytics.core.workflow.WorkflowException
-import org.pillarone.riskanalytics.application.ui.base.action.CopyPasteException
-import org.pillarone.riskanalytics.core.user.UserManagement
-import org.joda.time.DateTime
-import org.pillarone.riskanalytics.core.FileConstants
-
 import java.text.SimpleDateFormat
 
 /**

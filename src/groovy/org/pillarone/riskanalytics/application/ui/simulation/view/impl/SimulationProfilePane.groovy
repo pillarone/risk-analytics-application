@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCFiller
@@ -27,7 +26,6 @@ class SimulationProfilePane {
     protected void layout() {
         content = new ULCBoxPane(1, 2)
         ULCBoxPane holder = new ULCBoxPane(1, 2)
-        holder.border = BorderFactory.createTitledBorder("Simulation Profiles")
         holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, simulationProfileActionsPane.content)
         holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, simulationSettingsPane.content)
         content.add(ULCBoxPane.BOX_LEFT_TOP, holder)
