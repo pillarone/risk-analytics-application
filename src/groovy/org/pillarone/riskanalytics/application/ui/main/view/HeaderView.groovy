@@ -26,6 +26,8 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.security.LogoutService
 
+import javax.annotation.PostConstruct
+
 /**
  *  UI for the header of RiskAnalytics to show File menus and action buttons
  * for saving, refreshing and running a simulation
@@ -33,6 +35,7 @@ import org.pillarone.riskanalytics.core.security.LogoutService
  */
 @CompileStatic
 class HeaderView extends AbstractView {
+    private static final Log LOG = LogFactory.getLog(HeaderView.class)
 
     ULCBoxPane content
 
@@ -75,21 +78,15 @@ class HeaderView extends AbstractView {
     NavigationBarTopPane navigationBarTopPane
     ULCTableTree navigationTableTree
 
-    RiskAnalyticsMainModel model
+    RiskAnalyticsMainModel riskAnalyticsMainModel
     ModellingInformationTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
-
-    Log LOG = LogFactory.getLog(HeaderView.class)
-
-    public HeaderView(ULCTableTree navigationTableTree, RiskAnalyticsMainModel model) {
-        this.navigationTableTree = navigationTableTree
-        this.model = model
-        this.navigationTableTreeModel = model.navigationTableTreeModel
-        init()
-    }
+    SelectionTreeView selectionTreeView
 
     @Override
+    @PostConstruct
     void init() {
+        this.navigationTableTreeModel = riskAnalyticsMainModel.navigationTableTreeModel
         super.init()
         syncMenuBar()
     }
@@ -104,11 +101,11 @@ class HeaderView extends AbstractView {
         rightToolBar.floatable = false
         //init actions
         refreshAction = new RefreshAction(navigationTableTreeModel)
-        exportAllNewestVersionAction = new ExportAllAction(model, true)
-        exportAllAction = new ExportAllAction(model, false)
-        importAllAction = new ImportAllAction(model, "ImportAllParameterizations")
-        saveAction = new SaveAction(content, model)
-        runAction = new SimulationAction(navigationTableTree, model)
+        exportAllNewestVersionAction = new ExportAllAction(riskAnalyticsMainModel, true)
+        exportAllAction = new ExportAllAction(riskAnalyticsMainModel, false)
+        importAllAction = new ImportAllAction(riskAnalyticsMainModel, "ImportAllParameterizations")
+        saveAction = new SaveAction(content, riskAnalyticsMainModel)
+        runAction = new SimulationAction(selectionTreeView.selectionTree, riskAnalyticsMainModel)
 
         //init menu
         menuBar = new ULCMenuBar()
@@ -118,7 +115,7 @@ class HeaderView extends AbstractView {
         saveItem.icon = null
         saveItem.mnemonic = 'S' as char
         saveItem.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false)
-        saveAllItem = new ULCMenuItem(new SaveAllAction(model))
+        saveAllItem = new ULCMenuItem(new SaveAllAction(riskAnalyticsMainModel))
         refreshItem = new ULCMenuItem(refreshAction)
         runItem = new SimulationRunMenuItem(runAction)
         exportAllItemsNewstVersion = new ULCMenuItem(exportAllNewestVersionAction)
@@ -172,7 +169,7 @@ class HeaderView extends AbstractView {
 
     void layoutComponents() {
         fileMenu.add(runItem)
-        navigationTableTree?.addTreeSelectionListener(runItem)
+        selectionTreeView.selectionTree?.addTreeSelectionListener(runItem)
         fileMenu.add(refreshItem)
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)
@@ -242,11 +239,11 @@ class HeaderView extends AbstractView {
 
     //todo fja refactoring to IEnabler
     public boolean syncMenuBar() {
-        saveAction.enabled = saveAction.isEnabled()
-        if (model.currentItem) {
-            runAction.enabled = !((model.currentItem instanceof SimulationUIItem) || (model.currentItem instanceof BatchUIItem))
-            if (model.currentItem instanceof ParameterizationUIItem || model.currentItem instanceof ResultConfigurationUIItem) {
-                if (model.currentItem.isEditable()) {
+        saveAction.enabled = saveAction.enabled
+        if (riskAnalyticsMainModel.currentItem) {
+            runAction.enabled = !((riskAnalyticsMainModel.currentItem instanceof SimulationUIItem) || (riskAnalyticsMainModel.currentItem instanceof BatchUIItem))
+            if (riskAnalyticsMainModel.currentItem instanceof ParameterizationUIItem || riskAnalyticsMainModel.currentItem instanceof ResultConfigurationUIItem) {
+                if (riskAnalyticsMainModel.currentItem.editable) {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")
                 } else {
                     lockedLabel.icon = UIUtils.getIcon("locked-active.png")

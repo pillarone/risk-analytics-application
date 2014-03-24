@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -12,10 +11,8 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -127,7 +124,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
     }
 
 
-
     public void addItem(ModellingUIItem modellingUIItem, String name) {
         modellingUIItem.item.daoClass.withTransaction { status ->
             if (!modellingUIItem.isLoaded())
@@ -181,7 +177,9 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     @Override
     boolean equals(Object obj) {
-        if (!(obj instanceof ModellingUIItem)) return false
+        if (!(obj instanceof ModellingUIItem)) {
+            return false
+        }
         return item.equals(obj.item)
     }
 

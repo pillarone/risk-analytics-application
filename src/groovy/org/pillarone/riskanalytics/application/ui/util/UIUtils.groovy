@@ -195,7 +195,7 @@ class UIUtils {
     }
 
     public static ULCRootPane getRootPane() {
-        return UserContext.getAttribute(ROOT_PANE)
+        return UserContext.getAttribute(ROOT_PANE) as ULCRootPane
     }
 
     public static void setRootPane(ULCRootPane pane) {

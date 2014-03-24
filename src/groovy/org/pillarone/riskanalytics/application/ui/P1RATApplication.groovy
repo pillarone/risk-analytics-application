@@ -1,86 +1,84 @@
 package org.pillarone.riskanalytics.application.ui
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.applicationframework.application.Application
+import com.ulcjava.base.application.ApplicationContext
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.server.ULCSession
-import com.ulcjava.base.shared.IWindowConstants
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.main.action.ExitAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory
+
+import static com.ulcjava.base.shared.IWindowConstants.DO_NOTHING_ON_CLOSE
+import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_NAME
 //used for standalone
 class P1RATApplication extends Application {
 
-    private static Log LOG = LogFactory.getLog(P1RATApplication)
+    private static final Log LOG = LogFactory.getLog(P1RATApplication)
 
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
-    RiskAnalyticsMainModel mainModel
-    public static boolean CLOSE_WINDOW = false
-
+    RiskAnalyticsMainModel riskAnalyticsMainModel
+    RiskAnalyticsMainView riskAnalyticsMainView
     TraceLogManager traceLogManager
+    CacheItemEventQueueService cacheItemEventQueueService
 
     protected void startup() {
+        initializeInjection()
         ClientContext.sendMessage("hideSplash");
-        if (UserContext.isStandAlone()) {
+        if (UserContext.standAlone) {
             try {
-                UserContext.setUserTimeZone(TimeZone.getTimeZone(System.getProperty("user.timezone")))
+                UserContext.userTimeZone = TimeZone.getTimeZone(System.getProperty("user.timezone"))
             } catch (Exception e) {
                 LOG.error("Unable to determine user time zone - using UTC", e)
-                UserContext.setUserTimeZone(TimeZone.getTimeZone("UTC"))
+                UserContext.userTimeZone = TimeZone.getTimeZone("UTC")
             }
         }
-        traceLogManager = Holders.grailsApplication.mainContext.getBean(TraceLogManager)
         initMainView()
         traceLogManager.activateLogging()
     }
 
-    @Override
-    void stop(Throwable reason) {
-        ExceptionSafe.saveError(reason)
-        super.stop(reason)
+    private void initializeInjection() {
+        AutowireCapableBeanFactory factory = Holders.grailsApplication.mainContext.autowireCapableBeanFactory
+        factory.initializeBean(context, 'ulcApplicationContext')
+        factory.autowireBeanProperties(this, AUTOWIRE_BY_NAME, false)
     }
 
-    public void initMainView() {
+    private void initMainView() {
         //init RiskAnalyticsMainModel after login
-        mainModel = new RiskAnalyticsMainModel(applicationContext: getContext())
-        mainFrame.defaultCloseOperation = IWindowConstants.DO_NOTHING_ON_CLOSE
+        mainFrame.defaultCloseOperation = DO_NOTHING_ON_CLOSE
         mainFrame.size = new Dimension(1000, 750)
         mainFrame.minimumSize = new Dimension(800, 600)
 
         //If argument is null, the window is centered on the screen.
         mainFrame.locationRelativeTo = null
-        mainFrame.setIconImage(UIUtils.getIcon("application.png"))
+        mainFrame.iconImage = UIUtils.getIcon("application.png")
         ULCClipboard.install()
-        RiskAnalyticsMainView mainView = new RiskAnalyticsMainView(mainModel)
-        mainView.init()
-        mainFrame.contentPane.add(mainView.content)
-        mainFrame.menuBar = mainView.menuBar
-        UIUtils.setRootPane(mainFrame)
+        mainFrame.contentPane.add(riskAnalyticsMainView.content)
+        mainFrame.menuBar = riskAnalyticsMainView.menuBar
+        UIUtils.rootPane = mainFrame
         mainFrame.visible = true
         mainFrame.toFront()
-        mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; handleEvent(e) }] as IWindowListener)
-
-        ModelRegistry.instance.addListener(mainModel)
+        mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; windowClosing() }] as IWindowListener)
+        ModelRegistry.instance.addListener(riskAnalyticsMainModel)
     }
 
-    private void handleEvent(WindowEvent e) {
+    private void windowClosing() {
         def session = ULCSession.currentSession()
-        CacheItemEventQueueService.getInstance().unregisterAllConsumersForSession(session)
-        ModelRegistry.instance.removeListener(mainModel)
+        cacheItemEventQueueService.unregisterAllConsumersForSession(session)
+        ModelRegistry.instance.removeListener(riskAnalyticsMainModel)
         traceLogManager.deactivateLogging()
-        ExitAction.terminate()
+        ApplicationContext.terminate()
     }
 
 

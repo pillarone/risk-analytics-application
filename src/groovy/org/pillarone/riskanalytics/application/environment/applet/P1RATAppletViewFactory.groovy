@@ -10,6 +10,6 @@ import org.pillarone.riskanalytics.application.environment.P1RATViewFactory
 class P1RATAppletViewFactory extends P1RATViewFactory {
 
     protected ULCRootPane createRootPane() {
-        return ULCAppletPane.getInstance()
+        return ULCAppletPane.instance
     }
 }

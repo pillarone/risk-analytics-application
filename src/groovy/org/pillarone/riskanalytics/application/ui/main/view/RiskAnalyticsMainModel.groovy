@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.applicationframework.application.ApplicationContext
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
@@ -34,11 +35,12 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     private List<IModelItemChangeListener> modelItemListeners = []
     private List<INewSimulationListener> newSimulationListeners = []
     //selectedItem needs to be updated when tabs are changed etc.
-    @Bindable AbstractUIItem currentItem
+    @Bindable
+    AbstractUIItem currentItem
 
     static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
-    ApplicationContext applicationContext
+    ApplicationContext ulcApplicationContext
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
@@ -52,7 +54,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     void saveAllOpenItems() {
-        viewModelsInUse.keySet().each {AbstractUIItem item ->
+        viewModelsInUse.keySet().each { AbstractUIItem item ->
             item.save()
         }
     }
@@ -64,7 +66,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     public void removeItems(Model selectedModel, List<AbstractUIItem> modellingItems) {
         closeItems(selectedModel, modellingItems)
         try {
-            for (AbstractUIItem item: modellingItems) {
+            for (AbstractUIItem item : modellingItems) {
                 item.remove()
                 item.delete()
             }
@@ -76,14 +78,14 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     public AbstractModellingModel getViewModel(AbstractUIItem item) {
         if (viewModelsInUse.containsKey(item)) {
-            return viewModelsInUse[item]
+            return viewModelsInUse[item] as AbstractModellingModel
         }
-        return item.getViewModel()
+        return item.viewModel as AbstractModellingModel
     }
 
 
     public void openItem(Model model, AbstractUIItem item) {
-        if (!item.isLoaded())
+        if (!item.loaded)
             item.load()
         notifyOpenDetailView(model, item)
     }
@@ -95,13 +97,11 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
 
-
     private void closeItems(Model selectedModel, List<AbstractUIItem> items) {
-        for (AbstractUIItem item: items) {
+        for (AbstractUIItem item : items) {
             closeItem(selectedModel, item)
         }
     }
-
 
     public void addModelItemChangedListener(IModelItemChangeListener listener) {
         modelItemListeners << listener
@@ -112,7 +112,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     public void fireModelItemChanged() {
-        modelItemListeners.each {IModelItemChangeListener listener -> listener.modelItemChanged()}
+        modelItemListeners.each { IModelItemChangeListener listener -> listener.modelItemChanged() }
     }
 
     public void addBatchTableListener(BatchTableListener batchTableListener) {
@@ -120,15 +120,14 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     public void fireRowAdded(BatchRunSimulationRun addedRun) {
-        batchTableListeners.each {BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun)}
+        batchTableListeners.each { BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun) }
     }
 
-    public void fireRowDeleted(Object item) {
-        batchTableListeners.each {BatchTableListener batchTableListener ->
-            batchTableListener.fireRowDeleted(item.getSimulationRun())
+    public void fireRowDeleted(Simulation item) {
+        batchTableListeners.each { BatchTableListener batchTableListener ->
+            batchTableListener.fireRowDeleted(item.simulationRun)
         }
     }
-
 
     public void registerModel(AbstractUIItem item, def model) {
         viewModelsInUse[item] = model
@@ -150,7 +149,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
                 removeModelChangedListener(viewModel)
             }
         }
-
     }
 
     void addModelListener(IRiskAnalyticsModelListener listener) {
@@ -158,30 +156,34 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             modelListeners << listener
     }
 
-    void notifyOpenDetailView(Model model, Object item) {
-        modelListeners.each {IRiskAnalyticsModelListener listener ->
+    void notifyOpenDetailView(Model model, AbstractUIItem item) {
+        modelListeners.each { IRiskAnalyticsModelListener listener ->
             listener.openDetailView(model, item)
         }
     }
 
+    void notifyOpenDetailView(Model model, ModellingItem item) {
+        modelListeners.each { IRiskAnalyticsModelListener listener ->
+            listener.openDetailView(model, item)
+        }
+    }
 
     void notifyCloseDetailView(Model model, AbstractUIItem item) {
-        modelListeners.each {IRiskAnalyticsModelListener listener ->
+        modelListeners.each { IRiskAnalyticsModelListener listener ->
             listener.closeDetailView(model, item)
         }
     }
 
     void notifyChangedDetailView(Model model, AbstractUIItem item) {
         setCurrentItem(item)
-        modelListeners.each {IRiskAnalyticsModelListener listener ->
+        modelListeners.each { IRiskAnalyticsModelListener listener ->
             listener.changedDetailView(model, item)
         }
     }
 
     void notifyChangedWindowTitle(AbstractUIItem abstractUIItem) {
-
-        modelListeners.each {IRiskAnalyticsModelListener listener ->
-            listener.setWindowTitle(abstractUIItem)
+        modelListeners.each { IRiskAnalyticsModelListener listener ->
+            listener.windowTitle = abstractUIItem
         }
     }
 
@@ -194,12 +196,12 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
     }
 
     public void fireNewSimulation(Simulation simulation) {
-        newSimulationListeners.each {INewSimulationListener newSimulationListener ->
+        newSimulationListeners.each { INewSimulationListener newSimulationListener ->
             newSimulationListener.newSimulation(simulation)
         }
     }
 
-    public void setCurrentItem(def currentItem) {
+    public void setCurrentItem(AbstractUIItem currentItem) {
         this.currentItem = (currentItem instanceof BatchUIItem) ? null : currentItem
         switchActions.each {
             boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof ResultUIItem)
@@ -211,7 +213,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
 
     ModellingUIItem getAbstractUIItem(ModellingItem modellingItem) {
         ModellingUIItem item = null
-        viewModelsInUse.keySet().findAll {it instanceof ModellingUIItem}.each {ModellingUIItem openedUIItem ->
+        viewModelsInUse.keySet().findAll { it instanceof ModellingUIItem }.each { ModellingUIItem openedUIItem ->
             if (modellingItem.class == openedUIItem.item.class && modellingItem.id == openedUIItem.item.id) {
                 item = openedUIItem
             }
@@ -228,7 +230,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             //after simulation running, lock the used the used p14n
             try {
                 parameterization.addRemoveLockTag()
-            } catch (HibernateOptimisticLockingFailureException e) {
+            } catch (HibernateOptimisticLockingFailureException ignored) {
                 LOG.warn("Failed to add LOCK tag to parameterization ${parameterization}. Probably because it was already added by a concurrent simulation.")
                 //most likely because multiple users start a simulation with the same parameterization at the same time
             }
@@ -241,13 +243,13 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
      */
     public void addBatch(BatchRun newBatchRun) {
         navigationTableTreeModel.addNodeForItem(new BatchUIItem(this, newBatchRun))
-        viewModelsInUse.each {k, v ->
+        viewModelsInUse.each { k, v ->
             if (v instanceof BatchListener)
                 v.newBatchAdded(newBatchRun)
         }
     }
 
-    boolean isItemOpen(AbstractUIItem item){
+    boolean isItemOpen(AbstractUIItem item) {
         viewModelsInUse.containsKey(item)
     }
 

@@ -43,7 +43,7 @@ class SimulationUIItem extends ModellingUIItem {
 
     @Override
     boolean equals(Object obj) {
-        if (!obj instanceof SimulationUIItem) {
+        if (!(obj instanceof SimulationUIItem)) {
             return false
         }
         return createTitle().equals((obj as SimulationUIItem).createTitle())

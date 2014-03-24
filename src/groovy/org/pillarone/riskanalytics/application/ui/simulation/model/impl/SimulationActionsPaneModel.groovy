@@ -32,7 +32,6 @@ import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguratio
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.engine.grid.SimulationHandler
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
@@ -42,7 +41,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     protected final static Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
 
-    SimulationHandler runner
+    SimulationHandler handler
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
     private List<ISimulationListener> listeners = []
 
@@ -70,7 +69,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
         batchRunComboBoxModel = new ItemsComboBoxModel<BatchRun>(BatchRun.list())
         addToBatchAction = new AddToBatchAction(this)
-    }
+            }
 
     String getText(String key) {
         return UIUtils.getText(SimulationActionsPaneModel, key)
@@ -114,26 +113,26 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     private void startSimulation() {
-        runner = Holders.grailsApplication.mainContext.getBean('simulationQueueService', SimulationQueueService).offer(
+        handler = Holders.grailsApplication.mainContext.getBean('simulationQueueService', SimulationQueueService).offer(
                 new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy)
         )
         notifySimulationStart()
     }
 
     void cancelSimulation() {
-        runner.cancel()
+        handler.cancel()
     }
 
     int getProgress() {
-        runner.progress
+        handler.progress
     }
 
     SimulationState getSimulationState() {
-        runner.simulationState
+        handler.simulationState
     }
 
     String getEstimatedEndTime() {
-        DateTime estimatedSimulationEnd = runner.estimatedSimulationEnd
+        DateTime estimatedSimulationEnd = handler.estimatedSimulationEnd
         if (estimatedSimulationEnd != null) {
             return dateFormat.print(estimatedSimulationEnd)
         }
@@ -141,7 +140,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     String getSimulationStartTime() {
-        DateTime simulationStartTime = runner.simulation.start
+        DateTime simulationStartTime = handler.simulation.start
         if (simulationStartTime != null) {
             return dateFormat.print(simulationStartTime)
         }
@@ -149,15 +148,15 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     String getSimulationEndTime() {
-        DateTime estimatedSimulationEnd = runner.simulation.end
-        if (estimatedSimulationEnd != null) {
-            return dateFormat.print(estimatedSimulationEnd)
+        DateTime simulationEndTime = handler.simulation.end
+        if (simulationEndTime != null) {
+            return dateFormat.print(simulationEndTime)
         }
         return "-"
     }
 
     String getRemainingTime() {
-        DateTime end = runner.estimatedSimulationEnd
+        DateTime end = handler.estimatedSimulationEnd
         if (end != null) {
             use(TimeCategory) {
                 def duration = end.toDate() - new Date()
@@ -181,7 +180,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     void notifySimulationStop() {
-        this.simulation = runner.simulation
+        this.simulation = handler.simulation
         listeners*.simulationEnd(simulation, (Model) simulation.modelClass.newInstance())
     }
 
@@ -194,7 +193,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     String getErrorMessage() {
         HashSet<String> messages = new HashSet<String>();
-        for (Throwable simulationException : runner.simulationErrors) {
+        for (Throwable simulationException : handler.simulationErrors) {
             String exceptionMessage = simulationException.message
             if (exceptionMessage == null) {
                 exceptionMessage = simulationException.class.name

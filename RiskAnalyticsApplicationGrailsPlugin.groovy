@@ -1,13 +1,15 @@
-import org.codehaus.groovy.grails.orm.hibernate.HibernateEventListeners
-import org.pillarone.riskanalytics.application.example.constraint.CopyPasteConstraint
-import org.pillarone.riskanalytics.application.example.constraint.LinePercentage
-import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
+import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
+import org.pillarone.riskanalytics.application.ui.ULCScope
+import org.pillarone.riskanalytics.application.ui.main.view.*
+import org.springframework.beans.factory.config.CustomScopeConfigurer
+
+import static ULCScope.ULC_SCOPE
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
     def version = "1.9-SNAPSHOT"
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "2.2.1 > *"
+    def grailsVersion = "2.3.2 > *"
     // the other plugins this plugin depends on
     def dependsOn = [:]
     // resources that are excluded from plugin packaging
@@ -28,32 +30,35 @@ ULC view
 
     def groupId = "org.pillarone"
 
-    def doWithWebDescriptor = {xml ->
+    def doWithWebDescriptor = { xml ->
         // TODO Implement additions to web.xml (optional), this event occurs before
     }
 
     def doWithSpring = {
-        // 20140129 Removed cacheItemListener and hibernateEventListeners in favour of
-        // alternative configured in ra-core, which furthermore doesn't run on ULC thread.
-        // (During investigation with Matthias Ansorge into PMO-2679 Sim results not auto appearing.)
+        ulcScope(ULCScope)
+        customScopeConfigurer(CustomScopeConfigurer) {
+            Map<String, Object> scopeMap = new HashMap<String, Object>()
+            scopeMap[ULC_SCOPE] = ref('ulcScope')
+            scopes = scopeMap
+        }
+        Closure ulcScopeWired = { BeanConfiguration conf ->
+            conf.scope = ULC_SCOPE
+            conf.autowire = 'byName'
+        }
+        riskAnalyticsMainModel(RiskAnalyticsMainModel) { ulcScopeWired(it) }
+        riskAnalyticsMainView(RiskAnalyticsMainView) { ulcScopeWired(it) }
+        modelIndependentDetailView(ModelIndependentDetailView) { ulcScopeWired(it) }
+        selectionTreeView(SelectionTreeView) { ulcScopeWired(it) }
+        headerView(HeaderView) { ulcScopeWired(it) }
+        cardPaneManager(CardPaneManager) { ulcScopeWired(it) }
     }
 
-    def doWithDynamicMethods = {ctx ->
-        // TODO Implement registering dynamic methods to classes (optional)
-    }
+    def doWithDynamicMethods = { ctx -> }
 
-    def doWithApplicationContext = {applicationContext ->
+    def doWithApplicationContext = { applicationContext -> }
 
-    }
+    def onChange = { event -> }
 
-    def onChange = {event ->
-        // TODO Implement code that is executed when any artefact that this plugin is
-        // watching is modified and reloaded. The event contains: event.source,
-        // event.application, event.manager, event.ctx, and event.plugin.
-    }
-
-    def onConfigChange = {event ->
-        // TODO Implement code that is executed when the project configuration changes.
-        // The event is the same as for 'onChange'.
-    }
+    def onConfigChange = { event -> }
 }
+

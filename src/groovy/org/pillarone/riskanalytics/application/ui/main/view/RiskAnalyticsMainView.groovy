@@ -20,58 +20,48 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
 
+import javax.annotation.PostConstruct
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
 import static com.ulcjava.base.application.ULCComponent.WHEN_IN_FOCUSED_WINDOW
-import static com.ulcjava.base.application.ULCScrollPane.*
+import static com.ulcjava.base.application.ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+import static com.ulcjava.base.application.ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 import static com.ulcjava.base.application.ULCSplitPane.HORIZONTAL_SPLIT
 import static com.ulcjava.base.application.ULCSplitPane.VERTICAL_SPLIT
 import static com.ulcjava.base.application.event.KeyEvent.*
 import static com.ulcjava.base.shared.IDefaults.*
 
-class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
+class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
     private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
     public static final String DEFAULT_CARD_NAME = 'Main'
     public static final String CURRENT_ITEM_PROPERTY = 'currentItem'
-    ULCCardPane content
-    private ULCBoxPane treePane
-    private ULCCardPane modelPane
+    final ULCCardPane content = new ULCCardPane()
 
-    //header
-    private HeaderView headerView
-    //left view
-    private SelectionTreeView navigationView
-    //content
-    private CardPaneManager cardPaneManager
+    //all views and main model are autowired
+    CardPaneManager cardPaneManager
+    SelectionTreeView selectionTreeView
+    HeaderView headerView
+    ModelIndependentDetailView modelIndependentDetailView
+    RiskAnalyticsMainModel riskAnalyticsMainModel
 
-    //model independent area below the modelPane
-    private ModelIndependentDetailView modelIndependentDetailView
-
-    private RiskAnalyticsMainModel mainModel
     private ToggleSplitPaneAction navigationSplitPaneAction
     private ToggleSplitPaneAction modelIndependentSplitPaneAction
     private CommentsSwitchAction validationSplitPaneAction
 
-    RiskAnalyticsMainView(RiskAnalyticsMainModel mainModel) {
-        this.mainModel = mainModel
-    }
-
-    void initComponents() {
-        content = new ULCCardPane()
-        treePane = new ULCBoxPane(1, 1)
-        modelPane = new ULCCardPane()
-        cardPaneManager = new CardPaneManager(modelPane, mainModel)
-        navigationView = new SelectionTreeView(mainModel)
-        headerView = new HeaderView(navigationView.selectionTree, mainModel)
-        modelIndependentDetailView = new ModelIndependentDetailView()
+    @PostConstruct
+    void initialize() {
+        layoutComponents()
+        attachListeners()
     }
 
     void layoutComponents() {
+        ULCCardPane modelPane = cardPaneManager.cardPane
         modelPane.minimumSize = new Dimension(600, 600)
-        treePane.add(BOX_EXPAND_EXPAND, navigationView.content)
+        ULCBoxPane treePane = new ULCBoxPane(1, 1)
+        treePane.add(BOX_EXPAND_EXPAND, selectionTreeView.content)
         ULCSplitPane splitPane = new ULCSplitPane(HORIZONTAL_SPLIT)
         splitPane.oneTouchExpandable = true
         splitPane.resizeWeight = 1
@@ -96,11 +86,11 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(BOX_LEFT_TOP, navigationSwitchButton);
 
-        validationSplitPaneAction = new CommentsSwitchAction(mainModel, UIUtils.getText(this.class, "ValidationsAndComments"), false)
+        validationSplitPaneAction = new CommentsSwitchAction(riskAnalyticsMainModel, UIUtils.getText(this.class, "ValidationsAndComments"), false)
         ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
         validationSwitchButton.selected = false
         validationSwitchButton.enabled = false
-        mainModel.switchActions << validationSwitchButton
+        riskAnalyticsMainModel.switchActions << validationSwitchButton
         selectionSwitchPane.add(BOX_LEFT_TOP, validationSwitchButton);
 
         modelIndependentSplitPaneAction = new ToggleSplitPaneAction(splitBetweenModelPaneAndIndependentPane, UIUtils.getText(this.class, "ModelIndependent"), 1)
@@ -117,7 +107,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         content.addCard(DEFAULT_CARD_NAME, mainCard)
         headerView.addWindowMenuEntry(DEFAULT_CARD_NAME, content, true)
         WindowRegistry.allWindows.each { String key, ComponentCreator value ->
-            content.addCard(key, value.createComponent(mainModel.applicationContext))
+            content.addCard(key, value.createComponent(riskAnalyticsMainModel.ulcApplicationContext))
             headerView.addWindowMenuEntry(key, content, false)
         }
         headerView.windowMenu.addSeparator()
@@ -128,10 +118,10 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
         content.registerKeyboardAction(navigationSplitPaneAction, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         content.registerKeyboardAction(modelIndependentSplitPaneAction, KeyStroke.getKeyStroke(VK_Q, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
-        mainModel.addModelListener(this)
-        mainModel.addPropertyChangeListener(CURRENT_ITEM_PROPERTY, this)
+        riskAnalyticsMainModel.addModelListener(this)
+        riskAnalyticsMainModel.addPropertyChangeListener(CURRENT_ITEM_PROPERTY, this)
         headerView.navigationBarTopPane.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
-            navigationView.filterTree(filter)
+            selectionTreeView.filterTree(filter)
         }] as IFilterChangedListener)
     }
 
@@ -146,10 +136,10 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void openDetailView(Model model, ModellingItem item) {
-        AbstractUIItem abstractUIItem = TableTreeBuilderUtils.findUIItemForItem(navigationView.root, item)
+        AbstractUIItem abstractUIItem = TableTreeBuilderUtils.findUIItemForItem(selectionTreeView.root, item)
         if (!abstractUIItem) {
             LOG.error " AbstractUIItem (${item.name}) table tree node not found "
-            abstractUIItem = UIItemFactory.createItem(item, model, mainModel)
+            abstractUIItem = UIItemFactory.createItem(item, model, riskAnalyticsMainModel)
         }
         if (!abstractUIItem.loaded) abstractUIItem.load(true)
         openDetailView(model, abstractUIItem)
@@ -182,7 +172,7 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void itemChanged(ModellingItem item) {
-        if (item == mainModel?.currentItem?.item) {
+        if (item == riskAnalyticsMainModel?.currentItem?.item) {
             headerView.syncMenuBar()
         }
     }
@@ -191,10 +181,8 @@ class RiskAnalyticsMainView extends AbstractView implements IRiskAnalyticsModelL
     }
 
     void propertyChange(PropertyChangeEvent evt) {
-        if (evt.source == mainModel && evt.propertyName == CURRENT_ITEM_PROPERTY) {
+        if (evt.source == riskAnalyticsMainModel && evt.propertyName == CURRENT_ITEM_PROPERTY) {
             headerView.syncMenuBar()
         }
     }
-
-
 }

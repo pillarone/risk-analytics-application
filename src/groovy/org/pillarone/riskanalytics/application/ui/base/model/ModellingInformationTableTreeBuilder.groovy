@@ -677,7 +677,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private List<BatchRun> getAllBatchRuns() {
-        BatchRunner.getService().getAllBatchRuns()
+        BatchRunner.service.allBatchRuns
     }
 
     private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent, boolean notifyStructureChanged) {

@@ -43,7 +43,9 @@ abstract class ResultUIItem extends ModellingUIItem {
 
     @Override
     boolean equals(Object obj) {
-        if (!(obj instanceof ModellingUIItem)) return false
+        if (!(obj instanceof ModellingUIItem)) {
+            return false
+        }
         return item.modelClass == obj.item.modelClass && item.name == obj.item.name
     }
 

@@ -16,17 +16,12 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
 
 class CardPaneManager {
+    private static final Log LOG = LogFactory.getLog(CardPaneManager)
 
-    private ULCCardPane cardPane
+    ULCCardPane cardPane = new ULCCardPane()
     private Map<String, TabbedPaneManager> tabbedPaneManagers = [:]
-    private RiskAnalyticsMainModel mainModel
+    RiskAnalyticsMainModel riskAnalyticsMainModel
     public static final String NO_MODEL = "NO_MODEL"
-    Log LOG = LogFactory.getLog(CardPaneManager)
-
-    public CardPaneManager(ULCCardPane cardPane, RiskAnalyticsMainModel mainModel) {
-        this.cardPane = cardPane
-        this.mainModel = mainModel
-    }
 
     /**
      * Creates a new card for the given model.
@@ -37,11 +32,11 @@ class CardPaneManager {
     void addCard(Model selectedModel) {
         ULCTabbedPane modelCardContent = createDetachableTabbedPane(selectedModel)
         cardPane.addCard(getModelName(selectedModel), modelCardContent)
-        Closure closeAction = { event -> closeCard(selectedModel, modelCardContent, modelCardContent.getSelectedIndex()) }
+        Closure closeAction = { event -> closeCard(selectedModel, modelCardContent, modelCardContent.selectedIndex) }
 
         modelCardContent.registerKeyboardAction([actionPerformed: closeAction] as IActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_IN_FOCUSED_WINDOW)
         selectCard(selectedModel)
-        tabbedPaneManagers.put(getModelName(selectedModel), new TabbedPaneManager(modelCardContent))
+        tabbedPaneManagers[getModelName(selectedModel)] = new TabbedPaneManager(modelCardContent)
     }
 
 
@@ -62,7 +57,7 @@ class CardPaneManager {
     }
 
     ULCComponent getSelectedCard() {
-        return cardPane.getSelectedComponent()
+        return cardPane.selectedComponent
     }
 
     /**
@@ -74,17 +69,17 @@ class CardPaneManager {
         if (!selectCard(selectedModel)) {
             addCard(selectedModel)
         }
-        TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(selectedModel))
+        TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(selectedModel)]
         if (tabbedPaneManager.tabExists(item)) {
             tabbedPaneManager.selectTab(item)
         } else {
             tabbedPaneManager.addTab(item)
         }
-        mainModel.setCurrentItem(item)
+        riskAnalyticsMainModel.currentItem = item
     }
 
     public boolean contains(Model selectedModel) {
-        return (cardPane.getNames() as List).contains(getModelName(selectedModel))
+        return (cardPane.names as List).contains(getModelName(selectedModel))
     }
 
     private String getModelName(Model selectedModel) {
@@ -93,44 +88,39 @@ class CardPaneManager {
 
     private void closeCard(Model model, ULCTabbedPane modelCardContent, int closingIndex) {
         if (closingIndex == -1) return
-        TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(model))
+        TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(model)]
         AbstractUIItem abstractUIItem = tabbedPaneManager.getAbstractItem(modelCardContent.getComponentAt(closingIndex))
         if (!abstractUIItem) return
         tabbedPaneManager.closeTab(abstractUIItem)
 
-        if (modelCardContent && modelCardContent.getTabCount() == 0)
+        if (modelCardContent && modelCardContent.tabCount == 0)
             removeCard(model)
     }
 
     public ULCTabbedPane createDetachableTabbedPane(Model selectedModel) {
         ULCTabbedPane tabbedPane = new ULCDetachableTabbedPane(name: "DetachableTabbedPane")
-        tabbedPane.addTabListener([tabClosing: {TabEvent event ->
-            int closingIndex = event.getTabClosingIndex()
+        tabbedPane.addTabListener([tabClosing: { TabEvent event ->
+            int closingIndex = event.tabClosingIndex
             if (closingIndex < 0) closingIndex = 0
-            ULCCloseableTabbedPane modelCardContent = event.getClosableTabbedPane()
+            ULCCloseableTabbedPane modelCardContent = event.closableTabbedPane
             closeCard(selectedModel, modelCardContent, closingIndex)
         }] as ITabListener)
-        Closure syncCurrentItem = {e -> selectCurrentItemFromTab(selectedModel, e.source)}
+        Closure syncCurrentItem = { e -> selectCurrentItemFromTab(selectedModel, e.source) }
         tabbedPane.selectionChanged = syncCurrentItem
         tabbedPane.focusGained = syncCurrentItem
         return tabbedPane
     }
 
     public void selectCurrentItemFromTab(Model selectedModel, ULCCloseableTabbedPane modelCardContent) {
-        try {
-            TabbedPaneManager tabbedPaneManager = tabbedPaneManagers.get(getModelName(selectedModel))
-            if (tabbedPaneManager) {
-                AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.getSelectedComponent())
-                //mainModel.currentItem = (item instanceof BatchRun) ? null : item
-                mainModel.notifyChangedDetailView(selectedModel, item)
-            }
-        } catch (Exception ex) {
-            LOG.error "Error occured during set a current item ${ex}"
+        TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(selectedModel)]
+        if (tabbedPaneManager) {
+            AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.selectedComponent)
+            riskAnalyticsMainModel.notifyChangedDetailView(selectedModel, item)
         }
     }
 
-
     TabbedPaneManager getTabbedPaneManager(Model selectedModel) {
-        return tabbedPaneManagers.get(getModelName(selectedModel))
+        return tabbedPaneManagers[getModelName(selectedModel)]
     }
+
 }

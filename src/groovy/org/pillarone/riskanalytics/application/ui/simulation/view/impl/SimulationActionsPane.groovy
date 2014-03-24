@@ -264,7 +264,7 @@ class SimulationActionsPane implements IActionListener, ISimulationListener, ISi
             alert.show()
         }
         loggingView.model.stop()
-        this.model.runner = null
+        this.model.handler = null
     }
 
     void simulationStart(Simulation simulation) {

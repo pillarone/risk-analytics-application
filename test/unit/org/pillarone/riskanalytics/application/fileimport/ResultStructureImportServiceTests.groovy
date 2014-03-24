@@ -1,22 +1,29 @@
 package org.pillarone.riskanalytics.application.fileimport
 
+import grails.plugin.springsecurity.SpringSecurityService
+import grails.test.mixin.TestFor
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.core.user.Person
 
-class ResultStructureImportServiceTests extends GroovyTestCase {
-
-    ResultStructureImportService service = new ResultStructureImportService()
+@TestFor(ResultStructureImportService)
+class ResultStructureImportServiceTests {
 
     void testImport() {
+        defineBeans {
+            springSecurityService(TestSpringSecurityService)
+        }
+        mockDomain(StructureMapping)
+        mockDomain(ResultStructureDAO)
         int initialMappings = StructureMapping.count()
 
-        ResultStructureImportService.importDefaults()
+        service.importDefaults()
 
         List allDaos = ResultStructureDAO.list()
-        assertEquals allDaos.collect { it.modelClassName + " " + it.name}.toString(), 6, allDaos.size()
+        assertEquals allDaos.collect { it.modelClassName + " " + it.name }.toString(), 6, allDaos.size()
         assertTrue StructureMapping.count() > initialMappings
 
         ResultStructure resultStructure = new ResultStructure(ResultStructureImportService.DEFAULT_NAME, ApplicationModel)
@@ -49,5 +56,12 @@ class ResultStructureImportServiceTests extends GroovyTestCase {
         assertNotNull value
         assertEquals "Application:dynamicComponent:outValue1:value", value.resultPath
         assertEquals 0, value.childCount
+    }
+
+    static class TestSpringSecurityService extends SpringSecurityService {
+        @Override
+        Object getCurrentUser() {
+            new Person()
+        }
     }
 }

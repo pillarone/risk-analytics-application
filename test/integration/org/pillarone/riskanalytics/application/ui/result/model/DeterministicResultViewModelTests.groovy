@@ -28,15 +28,20 @@ class DeterministicResultViewModelTests {
     CollectorMapping collector1
     CollectorMapping collector2
 
+    ParameterizationImportService parameterizationImportService
+    ResultConfigurationImportService resultConfigurationImportService
+    ModelStructureImportService modelStructureImportService
+    ResultStructureImportService resultStructureImportService
+
     @Before
     void setUp() {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         ModellingItemFactory.clear()
 
-        new ParameterizationImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
-        new ModelStructureImportService().compareFilesAndWriteToDB(['DeterministicApplication'])
-        ResultStructureImportService.importDefaults()
+        parameterizationImportService.compareFilesAndWriteToDB(['DeterministicApplication'])
+        resultConfigurationImportService.compareFilesAndWriteToDB(['DeterministicApplication'])
+        modelStructureImportService.compareFilesAndWriteToDB(['DeterministicApplication'])
+        resultStructureImportService.importDefaults()
         simulationRun = new SimulationRun()
         simulationRun.name = "testRun"
         simulationRun.parameterization = ParameterizationDAO.findByName('DeterministicApplicationParameters')
@@ -77,7 +82,7 @@ class DeterministicResultViewModelTests {
 
     @After
     void tearDown() {
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
     }
 
     @Test

@@ -7,44 +7,37 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
-import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class RunSimulationTests extends AbstractFunctionalTestCase {
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
         super.setUp();
     }
 
-    public void testRunSimulation() {
-        ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
+    void testRunSimulation() {
+        ULCTableTreeOperator tableTree = selectionTableTreeRowHeader
         pushKeyOnPath(tableTree, tableTree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_F9, 0)
         ULCTextFieldOperator iterations = getTextFieldOperator("iterations")
         iterations.typeText("10")
-        getButtonOperator("${SimulationActionsPane.getSimpleName()}.run").clickMouse()
-        ULCButtonOperator resultButton = getButtonOperator("${SimulationActionsPane.getSimpleName()}.openResults")
-        wait({resultButton.isEnabled()}, 500, 5000)
-//        getButtonOperator("${SimulationActionsPane.getSimpleName()}.openResults").clickMouse()
+        getButtonOperator("${SimulationActionsPane.simpleName}.run").clickMouse()
+        ULCButtonOperator resultButton = getButtonOperator("${SimulationActionsPane.simpleName}.openResults")
+        wait({ resultButton.enabled }, 5000)
         //TODO finish test
     }
 
-    public wait(Closure condition, int millis, int timeoutMillis) {
+    private wait(Closure condition, int timeoutMillis) {
         long end = System.currentTimeMillis() + timeoutMillis
 
         while (!condition.call()) {
             if (System.currentTimeMillis() > end) {
                 return
             }
-            Thread.sleep(500)
+            sleep(500)
         }
     }
 
-    @Override
-    protected void tearDown() {
-        super.tearDown() //TODO: IntegrationTestMixin does not work when this method does not exist
-    }
 }

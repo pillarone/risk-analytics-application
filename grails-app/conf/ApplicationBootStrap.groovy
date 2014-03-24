@@ -14,6 +14,7 @@ class ApplicationBootStrap {
     //TODO only injected to initialize the cache. Find a better place
     CacheItemSearchService cacheItemSearchService
     GrailsApplication grailsApplication
+    ResultStructureImportService resultStructureImportService
 
     def init = { servletContext ->
 
@@ -34,8 +35,8 @@ class ApplicationBootStrap {
                 ResultStructureDAO.list()*.delete()
             }
 
-            new ResultStructureImportService().compareFilesAndWriteToDB(models)
-            ResultStructureImportService.importDefaults()
+            resultStructureImportService.compareFilesAndWriteToDB(models)
+            resultStructureImportService.importDefaults()
         }
         Tag.withTransaction { status ->
             if (!Tag.findByName(NewCommentView.POST_LOCKING)) {

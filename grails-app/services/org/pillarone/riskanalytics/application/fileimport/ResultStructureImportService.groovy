@@ -1,8 +1,6 @@
 package org.pillarone.riskanalytics.application.fileimport
 
-import grails.util.Holders
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.output.structure.DefaultResultStructureBuilder
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
@@ -14,26 +12,25 @@ import org.springframework.core.type.filter.AssignableTypeFilter
 
 class ResultStructureImportService extends FileImportService {
 
-    private static Log LOG = LogFactory.getLog(ResultStructureImportService)
-
-    public static final String DEFAULT_NAME = "Default"
+    static final String DEFAULT_NAME = "Default"
 
     protected ConfigObject currentConfigObject
+    GrailsApplication grailsApplication
 
-    public static void importDefaults() {
+    void importDefaults() {
         List<Class> allModels = findAllModelClasses()
-        def modelFilter = Holders.config?.models
+        def modelFilter = grailsApplication.config?.models
         if (modelFilter.size() == 0) {
             modelFilter = allModels*.simpleName
         }
-        LOG.info "All available model ${allModels*.simpleName}"
+        log.info "All available model ${allModels*.simpleName}"
         for (String modelClassName in modelFilter) {
-            Class modelClass = allModels.find { it.simpleName == modelClassName}
-            if(modelClass == null) {
+            Class modelClass = allModels.find { it.simpleName == modelClassName }
+            if (modelClass == null) {
                 throw new IllegalStateException("Model class ${modelClassName} does not exist. Check models property in Config.groovy")
             }
             if (ResultStructureDAO.countByModelClassNameAndNameLike(modelClass.name, DEFAULT_NAME) == 0) {
-                LOG.info "No default result structure found for model ${modelClass.simpleName} - importing default"
+                log.info "No default result structure found for model ${modelClass.simpleName} - importing default"
                 DefaultResultStructureBuilder.create(DEFAULT_NAME, modelClass).save()
             }
         }
@@ -42,18 +39,22 @@ class ResultStructureImportService extends FileImportService {
     private static List<Class> findAllModelClasses() {
         ClassPathScanner provider = new ClassPathScanner()
         provider.addIncludeFilter(new AssignableTypeFilter(Model))
-
-        return provider.findCandidateComponents("models")*.beanClassName.collect { getClass().getClassLoader().loadClass(it) }
+        return provider.findCandidateComponents("models")*.beanClassName.collect {
+            getClass().classLoader.loadClass(it)
+        }
     }
 
+    @Override
     Object getDaoClass() {
         ResultStructureDAO
     }
 
+    @Override
     String getFileSuffix() {
         "ResultTree"
     }
 
+    @Override
     String prepare(URL file, String itemName) {
         GroovyUtils.parseGroovyScript readFromURL(file), { ConfigObject config ->
             currentConfigObject = config
@@ -67,6 +68,7 @@ class ResultStructureImportService extends FileImportService {
         return name
     }
 
+    @Override
     protected boolean saveItemObject(String fileContent) {
         Closure mappings = currentConfigObject.mappings
 
@@ -74,22 +76,22 @@ class ResultStructureImportService extends FileImportService {
         resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mappings)
 
         if (!resultStructure.save()) {
-            LOG.error "Could not save result structure: ${resultStructure.dao.errors}"
+            log.error "Could not save result structure: ${resultStructure.dao.errors}"
             return false
         }
 
         return true
     }
 
+    @Override
     protected boolean lookUpItem(String itemName) {
-        String modelName = getModelClassName()
-        boolean status = getDaoClass().findByNameAndModelClassName(itemName, modelName) != null
+        String modelName = modelClassName
+        boolean status = daoClass.findByNameAndModelClassName(itemName, modelName) != null
         return status
     }
 
+    @Override
     String getModelClassName() {
-        return currentConfigObject.get("model").name
+        return currentConfigObject['model'].name
     }
-
-
 }

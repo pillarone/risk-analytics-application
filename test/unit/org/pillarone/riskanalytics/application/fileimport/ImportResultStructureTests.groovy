@@ -1,30 +1,34 @@
 package org.pillarone.riskanalytics.application.fileimport
 
+import grails.plugin.springsecurity.SpringSecurityService
+import grails.test.mixin.TestFor
 import models.application.ApplicationModel
 import org.junit.Test
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.application.output.structure.item.ResultNode
 import org.pillarone.riskanalytics.application.output.structure.item.ResultStructure
+import org.pillarone.riskanalytics.core.user.Person
 
 import static org.junit.Assert.assertEquals
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@TestFor(ResultStructureImportService)
 class ImportResultStructureTests {
-
-    ResultStructureImportService service = new ResultStructureImportService()
 
     @Test
     void testImport() {
+        defineBeans {
+            springSecurityService(TestSpringSecurityService)
+        }
+        mockDomain(StructureMapping)
+        mockDomain(ResultStructureDAO)
 
-        File paramFile = new File(getModelFolder(), "application/ApplicationDefaultResultTree.groovy")
+        File paramFile = new File(modelFolder, "application/ApplicationDefaultResultTree.groovy")
 
-        def count = ResultStructureDAO.count()
-
-//        assertTrue "import not successful", service.importFile(paramFile.toURI().toURL())
         service.importFile(paramFile.toURI().toURL())
-//        assertEquals count + 1, ResultStructureDAO.count()
 
         ResultStructure resultStructure = new ResultStructure(ResultStructureImportService.DEFAULT_NAME, ApplicationModel)
         resultStructure.load()
@@ -65,5 +69,11 @@ class ImportResultStructureTests {
         return new File(getClass().getResource("/models").toURI())
     }
 
+    static class TestSpringSecurityService extends SpringSecurityService {
+        @Override
+        Object getCurrentUser() {
+            new Person()
+        }
+    }
 
 }

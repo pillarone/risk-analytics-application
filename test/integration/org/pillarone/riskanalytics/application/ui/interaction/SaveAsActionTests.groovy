@@ -1,14 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.interaction
 
-import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.KeyEvent
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
-
-import javax.swing.tree.TreePath
+import com.ulcjava.testframework.operator.*
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
-import com.ulcjava.testframework.operator.*
+
+import javax.swing.tree.TreePath
 
 class SaveAsActionTests extends AbstractFunctionalTestCase {
 

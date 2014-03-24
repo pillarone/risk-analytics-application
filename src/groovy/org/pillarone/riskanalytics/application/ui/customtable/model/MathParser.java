@@ -4,25 +4,26 @@ package org.pillarone.riskanalytics.application.ui.customtable.model;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.nfunk.jep.Node;
-import org.nfunk.jep.function.PostfixMathCommand;
-import org.nfunk.jep.ParseException;
 import org.nfunk.jep.JEP;
+import org.nfunk.jep.Node;
+import org.nfunk.jep.ParseException;
+import org.nfunk.jep.function.PostfixMathCommand;
 import org.pillarone.riskanalytics.application.ui.customtable.GroovyHelperMethods;
 import org.pillarone.riskanalytics.application.ui.customtable.JavaHelperMethods;
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor;
-import org.pillarone.riskanalytics.core.model.Model;
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry;
-import org.pillarone.riskanalytics.core.output.*;
+import org.pillarone.riskanalytics.core.output.QuantilePerspective;
+import org.pillarone.riskanalytics.core.output.SimulationRun;
 import org.pillarone.riskanalytics.core.parameterization.AbstractMultiDimensionalParameter;
 import org.pillarone.riskanalytics.core.parameterization.IParameterObject;
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization;
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber;
-import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder;
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder;
 import org.pillarone.riskanalytics.core.simulation.item.parameter.StringParameterHolder;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  *

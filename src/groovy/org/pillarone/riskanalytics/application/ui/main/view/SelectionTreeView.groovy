@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
@@ -25,6 +26,9 @@ import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
 import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
+
+import javax.annotation.PostConstruct
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -33,22 +37,21 @@ class SelectionTreeView {
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
     CacheItemEventConsumer eventConsumer
-    RiskAnalyticsMainModel mainModel
+    RiskAnalyticsMainModel riskAnalyticsMainModel
     ModellingItemSelectionListener modellingItemSelectionListener
     ModellingInformationTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
 
-    public SelectionTreeView(RiskAnalyticsMainModel mainModel) {
-        this.mainModel = mainModel
-        this.navigationTableTreeModel = mainModel.navigationTableTreeModel
+    @PostConstruct
+    void initialize() {
+        this.navigationTableTreeModel = riskAnalyticsMainModel.navigationTableTreeModel
         initTree()
         initComponents()
         layoutComponents()
         attachListeners()
         treeSyncTimer.start()
     }
-
 
     protected void initComponents() {
         content = new ULCBoxPane()
@@ -60,7 +63,7 @@ class SelectionTreeView {
                     modellingItemSelectionListener.flushSelectionState()
 
                 }] as IActionListener)
-        treeSyncTimer.setSyncClientState(false)
+        treeSyncTimer.syncClientState = false
         eventConsumer = new CacheItemEventConsumer(ULCSession.currentSession(), treeSyncTimer)
         CacheItemEventQueueService.instance.register(eventConsumer)
     }
@@ -75,16 +78,16 @@ class SelectionTreeView {
 
     private void attachListeners() {
         ULCTableTree rowHeaderTableTree = tree.rowHeaderTableTree
-        TreeDoubleClickAction treeDoubleClickAction = new TreeDoubleClickAction(rowHeaderTableTree, mainModel)
+        TreeDoubleClickAction treeDoubleClickAction = new TreeDoubleClickAction(rowHeaderTableTree, riskAnalyticsMainModel)
         rowHeaderTableTree.addActionListener(treeDoubleClickAction)
-        rowHeaderTableTree.registerKeyboardAction(new DeleteAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new RenameAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new ImportAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new ExportItemAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new SimulationAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
-        rowHeaderTableTree.registerKeyboardAction(new NewBatchAction(rowHeaderTableTree, mainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new DeleteAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new RenameAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new ImportAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new ExportItemAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_E, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new SimulationAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new SaveAsAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new OpenBatchAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
+        rowHeaderTableTree.registerKeyboardAction(new NewBatchAction(rowHeaderTableTree, riskAnalyticsMainModel), KeyStroke.getKeyStroke(KeyEvent.VK_B, KeyEvent.CTRL_DOWN_MASK + KeyEvent.SHIFT_DOWN_MASK, true), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new TreeExpander(tree), KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0, false), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(new Collapser(tree), KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0, false), ULCComponent.WHEN_FOCUSED)
         rowHeaderTableTree.registerKeyboardAction(treeDoubleClickAction, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false), ULCComponent.WHEN_FOCUSED)
@@ -146,7 +149,7 @@ class SelectionTreeView {
     }
 
     public MainSelectionTableTreeCellRenderer getPopUpRenderer(ULCFixedColumnTableTree tree) {
-        MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree.rowHeaderTableTree, mainModel)
+        MainSelectionTableTreeCellRenderer renderer = new MainSelectionTableTreeCellRenderer(tree.rowHeaderTableTree, riskAnalyticsMainModel)
         return renderer
     }
 
