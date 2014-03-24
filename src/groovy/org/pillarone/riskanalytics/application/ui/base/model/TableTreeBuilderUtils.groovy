@@ -7,7 +7,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 

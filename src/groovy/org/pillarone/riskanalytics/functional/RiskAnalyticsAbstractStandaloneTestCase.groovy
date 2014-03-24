@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.functional
 
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -14,15 +12,14 @@ import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.workflow.AuditLog
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractStandaloneTestCase {
 
-    private static Log LOG = LogFactory.getLog(RiskAnalyticsAbstractStandaloneTestCase)
+    private static final Log LOG = LogFactory.getLog(RiskAnalyticsAbstractStandaloneTestCase)
 
-    protected void setUp() throws Exception {
+    void setUp() throws Exception {
         handleConfiguration()
         try {
             super.setUp()
@@ -32,7 +29,7 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
         }
     }
 
-    protected void tearDown() {
+    void tearDown() {
         MockUserPreferences.INSTANCE.clearFakePreferences()
         ModelRegistry.instance.listeners.clear() //TODO: find better solution
         Thread cleanUpThread = new Thread(

@@ -26,7 +26,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         P1RATApplication
     }
 
-    protected void setUp() {
+    void setUp() {
         FileImportService.importModelsIfNeeded(["Core"])
         CacheItemSearchService.getInstance().refresh()
         ModellingItemFactory.clear()
@@ -36,7 +36,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         super.setUp()
     }
 
-    protected void tearDown() {
+    void tearDown() {
         super.tearDown();
         removeTags()
         LocaleResources.setTestMode(false)

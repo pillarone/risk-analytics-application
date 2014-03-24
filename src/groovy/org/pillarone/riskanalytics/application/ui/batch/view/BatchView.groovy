@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
-
 import com.canoo.ulc.community.table.server.ULCFixedTable
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IListSelectionListener
@@ -17,8 +17,6 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 
 public class BatchView extends NewBatchView {
 
@@ -114,7 +112,7 @@ public class BatchView extends NewBatchView {
         runBatch.addActionListener([actionPerformed: {ActionEvent evt ->
             BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
             if (batchToRun && !batchToRun.executed) {
-                BatchRunService.getService().runBatch(batchToRun)
+                BatchRunService.service.runBatch(batchToRun)
             } else {
                 new I18NAlert("BatchAlreadyExecuted").show()
             }

@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.applicationframework.application.ApplicationContext
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
@@ -13,7 +12,6 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
-import org.pillarone.riskanalytics.application.ui.simulation.model.ISimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.BatchRun
@@ -21,11 +19,9 @@ import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.springframework.orm.hibernate3.HibernateOptimisticLockingFailureException
 
-class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimulationListener, IModelRegistryListener {
+class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModelRegistryListener {
 
     Map<AbstractUIItem, Object> viewModelsInUse
     ModellingInformationTableTreeModel navigationTableTreeModel
@@ -219,22 +215,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements ISimul
             }
         }
         return item
-    }
-
-    public void simulationStart(Simulation simulation) {
-    }
-
-    public void simulationEnd(Simulation simulation, Model model) {
-        if (simulation.end != null) {
-            Parameterization parameterization = simulation.parameterization
-            //after simulation running, lock the used the used p14n
-            try {
-                parameterization.addRemoveLockTag()
-            } catch (HibernateOptimisticLockingFailureException ignored) {
-                LOG.warn("Failed to add LOCK tag to parameterization ${parameterization}. Probably because it was already added by a concurrent simulation.")
-                //most likely because multiple users start a simulation with the same parameterization at the same time
-            }
-        }
     }
 
     /**

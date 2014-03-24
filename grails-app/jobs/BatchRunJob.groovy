@@ -1,4 +1,3 @@
-import grails.util.Holders
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 
 /**
@@ -6,7 +5,7 @@ import org.pillarone.riskanalytics.core.batch.BatchRunService
  */
 class BatchRunJob {
 
-    static BatchRunService batchRunService
+    BatchRunService batchRunService
 
     static triggers = {
         simple name: 'mySimpleTrigger', startDelay: 60000, repeatInterval: 10000
@@ -15,15 +14,10 @@ class BatchRunJob {
     def group = "BatchRunGroup"
 
     def execute() {
-        synchronized (this) {
-            getService().runBatches()
-        }
-
+        runBatches()
     }
 
-    public static BatchRunService getService() {
-        if (!batchRunService)
-            batchRunService = Holders.grailsApplication.getMainContext().getBean('batchRunService')
-        return batchRunService
+    private runBatches() {
+        batchRunService.findBatchRunsWhichShouldBeExecuted().each { batchRunService.runBatch(it) }
     }
 }

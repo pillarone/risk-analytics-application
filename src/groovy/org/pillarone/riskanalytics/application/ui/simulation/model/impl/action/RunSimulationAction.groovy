@@ -44,7 +44,7 @@ class RunSimulationAction extends ResourceBasedAction {
         Parameterization parameterization = model.simulation.parameterization
         ResultConfiguration configuration = model.simulation.template
 
-        if (SimulationRun?.findAllByNameAndModel(model.simulation.name, model.simulation.modelClass.name)?.find {(!it.toBeDeleted)} != null) {
+        if (SimulationRun.findAllByNameAndModel(model.simulation.name, model.simulation.modelClass.name)?.find {(!it.toBeDeleted)} != null) {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "DuplicateName")
             alert.show()
             return

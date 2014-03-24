@@ -1,34 +1,32 @@
 package org.pillarone.riskanalytics.functional.main.action.workflow
 
-import com.ulcjava.base.application.event.KeyEvent
-import javax.swing.tree.TreePath
-import org.netbeans.jemmy.drivers.scrolling.ScrollAdjuster
+import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
-import com.ulcjava.testframework.operator.*
+
+import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class DealLinkDialogTests extends AbstractFunctionalTestCase {
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         super.setUp();
 
     }
 
-    @Override protected void tearDown() {
-        LocaleResources.setTestMode(false)
+    void tearDown() {
+        LocaleResources.testMode = false
         super.tearDown()
     }
 
 
-
     public void testChooseDeal() {
-        ULCTableTreeOperator tableTree = getSelectionTableTreeRowHeader()
+        ULCTableTreeOperator tableTree = selectionTableTreeRowHeader
         TreePath parametrizationPath = tableTree.findPath(["Core", "Parameterization", "CoreAlternativeParameters"] as String[])
         assertNotNull "path not found", parametrizationPath
 

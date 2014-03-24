@@ -114,7 +114,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     private void startSimulation() {
         handler = Holders.grailsApplication.mainContext.getBean('simulationQueueService', SimulationQueueService).offer(
-                new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy)
+                new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy), 10
         )
         notifySimulationStart()
     }

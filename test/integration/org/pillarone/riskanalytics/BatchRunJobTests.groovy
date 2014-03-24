@@ -26,7 +26,7 @@ class BatchRunJobTests {
 
     @Test
     void testExecute() {
-        assertNotNull service.activeBatchRuns
-        assertEquals 1, service.activeBatchRuns.size()
+        assertNotNull service.findBatchRunsWhichShouldBeExecuted()
+        assertEquals 1, service.findBatchRunsWhichShouldBeExecuted().size()
     }
 }

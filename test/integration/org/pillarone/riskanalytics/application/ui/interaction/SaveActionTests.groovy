@@ -16,15 +16,14 @@ import javax.swing.tree.TreePath
 
 class SaveActionTests extends AbstractFunctionalTestCase {
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         super.setUp()
         new Tag(name: NewCommentView.VERSION_COMMENT, tagType: EnumTagType.COMMENT).save()
         new Tag(name: NewCommentView.REPORT, tagType: EnumTagType.COMMENT).save()
     }
 
-    @Override
-    protected void tearDown() {
+    void tearDown() {
         AuditLog.list().each {
             it.delete(flush: true)
         }

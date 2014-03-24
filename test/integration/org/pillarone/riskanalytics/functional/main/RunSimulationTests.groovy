@@ -18,6 +18,10 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
         super.setUp();
     }
 
+    void tearDown() {
+        super.tearDown()
+    }
+
     void testRunSimulation() {
         ULCTableTreeOperator tableTree = selectionTableTreeRowHeader
         pushKeyOnPath(tableTree, tableTree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_F9, 0)

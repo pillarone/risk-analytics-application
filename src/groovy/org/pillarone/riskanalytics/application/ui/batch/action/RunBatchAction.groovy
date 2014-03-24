@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeActio
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -18,13 +18,13 @@ public class RunBatchAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        def batchToRun = getSelectedItem()
+        def batchToRun = selectedItem as BatchRun
         if (batchToRun != null) {
             batchToRun = BatchRun.findByName(batchToRun.name)
-            if (!batchToRun.executed) {
-                BatchRunner.getService().runBatch(batchToRun)
-            } else {
+            if (batchToRun.executed) {
                 new I18NAlert("BatchAlreadyExecuted").show()
+            } else {
+                BatchRunService.service.runBatch(batchToRun)
             }
         }
     }

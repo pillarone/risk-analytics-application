@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.base.model
-
 import com.ulcjava.base.application.tabletree.*
 import com.ulcjava.base.application.tree.TreePath
 import grails.util.Holders
@@ -18,10 +17,10 @@ import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
 import org.pillarone.riskanalytics.core.simulation.item.*
 
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
@@ -677,7 +676,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private List<BatchRun> getAllBatchRuns() {
-        BatchRunner.service.allBatchRuns
+        BatchRun.listOrderByExecutionTime()
     }
 
     private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent, boolean notifyStructureChanged) {

@@ -26,12 +26,12 @@ import org.springframework.transaction.TransactionStatus
 class OpenBatchTests extends AbstractFunctionalTestCase {
     ParameterizationDAO parameterizationDAO
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         LocaleResources.setTestMode(true)
         SimulationRun run
-        BatchRunSimulationRun.withTransaction {TransactionStatus status ->
+        BatchRunSimulationRun.withTransaction { TransactionStatus status ->
             BatchRun batchRun = new BatchRun(name: "test", executionTime: new DateTime())
             batchRun.save(flush: true)
             parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion("CoreAlternativeParameters", "1")
@@ -56,7 +56,7 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         super.setUp()
     }
 
-    @Override protected void tearDown() {
+    void tearDown() {
         LocaleResources.setTestMode(false)
         super.tearDown()
     }
@@ -82,7 +82,7 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         assertEquals 0, tableOperator.getValueAt(0, 5)
         assertEquals "No output", tableOperator.getValueAt(0, 6)
         assertEquals "not running", tableOperator.getValueAt(0, 7)
-        ULCPopupMenuOperator popup= tableOperator.callPopupOnCell(0,1)
+        ULCPopupMenuOperator popup = tableOperator.callPopupOnCell(0, 1)
         popup.pushMenu('Open parameterization')
         assert parameterizationDAO.modelClassName == CoreModel.class.name
 

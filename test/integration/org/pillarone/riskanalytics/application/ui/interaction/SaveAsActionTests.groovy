@@ -10,13 +10,12 @@ import javax.swing.tree.TreePath
 class SaveAsActionTests extends AbstractFunctionalTestCase {
 
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         super.setUp()
     }
 
-    @Override
-    protected void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 

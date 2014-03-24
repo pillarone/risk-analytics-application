@@ -8,13 +8,12 @@ import com.ulcjava.testframework.operator.*
 
 class RenameActionTests extends AbstractFunctionalTestCase {
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         super.setUp()
     }
 
-    @Override
-    protected void tearDown() {
+    void tearDown() {
         super.tearDown()    //To change body of overridden methods use File | Settings | File Templates.
     }
 

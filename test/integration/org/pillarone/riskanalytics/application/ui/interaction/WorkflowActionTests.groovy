@@ -1,8 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.interaction
-
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.testframework.operator.*
-import org.netbeans.jemmy.operators.Operator
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
@@ -14,7 +12,7 @@ import javax.swing.tree.TreePath
 
 class WorkflowActionTests extends AbstractFunctionalTestCase {
 
-    protected void setUp() {
+    void setUp() {
         FileImportService.importModelsIfNeeded(["Application"])
         ModellingItemFactory.clear()
         LocaleResources.setTestMode(true)
@@ -24,7 +22,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         }
     }
 
-    protected void tearDown() {
+    void tearDown() {
         super.tearDown();
         LocaleResources.setTestMode(false)
     }

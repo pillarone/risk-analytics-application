@@ -1,25 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
-
-import javax.swing.tree.TreePath
+import com.ulcjava.testframework.operator.*
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
-import com.ulcjava.testframework.operator.*
-import com.ulcjava.base.application.event.KeyEvent
 
+import javax.swing.tree.TreePath
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class BatchViewTests extends AbstractFunctionalTestCase {
 
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         LocaleResources.setTestMode(true)
         super.setUp();
 
     }
 
-    @Override protected void tearDown() {
+    void tearDown() {
         LocaleResources.setTestMode(false)
         super.tearDown()
     }

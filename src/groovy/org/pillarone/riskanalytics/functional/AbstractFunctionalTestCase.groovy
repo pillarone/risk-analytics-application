@@ -1,17 +1,15 @@
 package org.pillarone.riskanalytics.functional
 
 import com.ulcjava.base.server.ApplicationConfiguration
-
+import com.ulcjava.testframework.operator.*
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
-import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
-import com.ulcjava.testframework.operator.*
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 
 import javax.swing.tree.TreePath
-import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -20,20 +18,14 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
 
     ULCFrameOperator mainFrameOperator
 
-    protected void setUp() {
+    void setUp() {
         ApplicationConfiguration.reset()
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
         ModelRegistry.instance.loadFromDatabase()
-        CacheItemSearchService.getInstance().refresh()
+        CacheItemSearchService.instance.refresh()
         super.setUp()
-    }
-
-    private void stubLocaleResource() {
-        LocaleResources.metaClass.getLocale = {
-            return new Locale("en")
-        }
     }
 
     @Override

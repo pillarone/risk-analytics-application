@@ -16,14 +16,14 @@ import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
  */
 class ExportParametrizationTests extends AbstractFunctionalTestCase {
     @Override
-    protected void setUp() {
+    void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
         CacheItemSearchService.instance.refresh()
         super.setUp()
     }
 
     @Override
-    protected void tearDown() {
+    void tearDown() {
         super.tearDown()
     }
 

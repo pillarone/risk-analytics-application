@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
-import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
-import org.pillarone.riskanalytics.core.output.batch.BatchRunner
+import org.pillarone.riskanalytics.core.batch.BatchRunService
 
 public class RunBatchSimulationAction extends BatchSimulationSelectionAction {
 
@@ -12,11 +10,8 @@ public class RunBatchSimulationAction extends BatchSimulationSelectionAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        BatchRunSimulationRun batchRunSimulationRun = BatchRunner.getService().getSimulationRun(model.batchRun, getSelectedSimulationRun())
-        BatchRunner.getService().runSimulation(batchRunSimulationRun)
+        BatchRunService.service.runBatchRunSimulation(model.batchRun, selectedSimulationRun)
     }
-
-
 }
 
 
