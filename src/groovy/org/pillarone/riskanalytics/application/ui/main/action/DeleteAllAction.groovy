@@ -4,8 +4,6 @@ import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -19,60 +17,41 @@ abstract class DeleteAllAction extends SelectionTreeAction {
         super("DeleteAll", tree, model)
     }
 
-    protected void deleteParameterizations(List items) {
-        boolean usedInSimulation = false
+    protected void deleteParameterizations(List<Parameterization> items) {
         //Parameterization
-        for (Parameterization parameterization: items) {
-            usedInSimulation = parameterization.isUsedInSimulation()
-            if (usedInSimulation == true)
-                break
+        boolean usedInSimulation = items.any { Parameterization parameterization ->
+            parameterization.usedInSimulation
         }
-        if (!usedInSimulation) {
-            model.removeItems(getSelectedModel(), items)
-        } else {
+        if (usedInSimulation) {
             ULCAlert alert = new I18NAlert("DeleteAllError")
             alert.show()
+        } else {
+            //TODO won't work anymore
+            model.removeItems(selectedModel, items)
         }
     }
 
-    protected void deleteResultConfigurations(List items) {
-        //ResultTemplate
-        boolean usedInSimulation = false
-        for (ResultConfiguration resultConfiguration: items) {
-            usedInSimulation = resultConfiguration.isUsedInSimulation()
-            if (usedInSimulation == true)
-                break
+    protected void deleteResultConfigurations(List<ResultConfiguration> items) {
+        boolean usedInSimulation = items.any { ResultConfiguration resultConfiguration ->
+            resultConfiguration.usedInSimulation
         }
-        if (!usedInSimulation) {
-            model.removeItems(getSelectedModel(), items)
-        } else {
+        if (usedInSimulation) {
             ULCAlert alert = new I18NAlert("DeleteAllError")
             alert.show()
+        } else {
+            //TODO won't work anymore
+            model.removeItems(selectedModel, items)
         }
     }
 
-    protected void deleteResults(List items) {
-        model.removeItems(getSelectedModel(), items)
-    }
-
-    private boolean isInList(List<Simulation> simulations, Parameterization parameterization) {
-        if (simulations == null || simulations.size() == 0) return false
-        def result = simulations.any {
-            it.parameterization == parameterization
-        }
-        return result
-    }
-
-
-    private void removeAllChildren(Model selectedModel, ModellingItem selectedItem) {
-        model.navigationTableTreeModel.removeAllNodeForItem(selectedItem)
-        model.fireModelChanged()
+    protected void deleteResults(List<Simulation> items) {
+        //TODO won't work anymore
+        model.removeItems(selectedModel, items)
     }
 
     @Override
     boolean isEnabled() {
+        //TODO remove code or fix and enable again
         return false
     }
-
-
 }

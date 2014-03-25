@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDia
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
@@ -53,7 +54,8 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
     protected Parameterization changeStatus(Parameterization item, Status toStatus) {
         Parameterization parameterization = service.changeStatus(item, toStatus)
         parameterization.save()
-        parameterization = (Parameterization) ModellingItemFactory.getItem(parameterization.dao, parameterization.modelClass)
+        ParameterizationDAO dao = parameterization.dao as ParameterizationDAO
+        parameterization = (Parameterization) ModellingItemFactory.getItem(dao)
         parameterization.load()
         return parameterization
     }

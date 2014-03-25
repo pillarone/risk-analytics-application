@@ -42,7 +42,7 @@ class SaveAction extends ResourceBasedAction {
 
 
     public void doActionPerformed(ActionEvent event) {
-        save(currentItem ? currentItem : model.currentItem)
+        save(currentItem ?: model.currentItem)
     }
 
     void save(AbstractUIItem abstractUIItem) {

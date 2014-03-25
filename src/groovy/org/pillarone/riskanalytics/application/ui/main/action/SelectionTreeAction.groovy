@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -8,6 +7,7 @@ import com.ulcjava.base.application.tree.TreePath
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
@@ -16,10 +16,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.reports.IReportableNode
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
     private static Log LOG = LogFactory.getLog(SelectionTreeAction)
@@ -40,8 +39,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     }
 
     private checkForIcon() {
-        if (getValue(IAction.SMALL_ICON) == null) {
-            putValue(IAction.SMALL_ICON, UIUtils.getIcon("clear.png"));
+        if (getValue(SMALL_ICON) == null) {
+            putValue(SMALL_ICON, UIUtils.getIcon("clear.png"));
         }
     }
 
@@ -61,7 +60,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         for (TreePath selectedPath in tree.selectedPaths) {
             DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
             AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
-            if(abstractUIItem != null) {
+            if (abstractUIItem != null) {
                 selectedObjects << abstractUIItem
             }
         }
@@ -72,7 +71,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {
             DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
-            if(itemNode instanceof IReportableNode) {
+            if (itemNode instanceof IReportableNode) {
                 selectedObjects << itemNode
             }
         }
@@ -159,19 +158,19 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         if (UserContext.isStandAlone()) return true
         try {
             List actionAllowedRoles = allowedRoles() //restricted actions supply this
-            if (!actionAllowedRoles || actionAllowedRoles.size() == 0){
+            if (!actionAllowedRoles || actionAllowedRoles.size() == 0) {
                 return true
             }
 
             String actionName = this.getClass().getSimpleName();
 
             Person user = UserManagement.getCurrentUser()
-            if( user == null ){
+            if (user == null) {
                 LOG.warn("User NULL - action ${actionName} denied.")
                 return false
             }
 
-            if( user.getAuthorities()*.authority.any { actionAllowedRoles.contains(it)} ){
+            if (user.getAuthorities()*.authority.any { actionAllowedRoles.contains(it) }) {
                 return true;
             }
 

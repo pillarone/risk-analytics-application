@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
-
 import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 @CompileStatic
 class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
@@ -11,10 +9,6 @@ class StandaloneTableTreeModel extends ModellingInformationTableTreeModel {
     static int CREATION_DATE = 2
     static int LAST_MODIFICATION_DATE = 3
     int columnCount = 4
-
-    public StandaloneTableTreeModel(RiskAnalyticsMainModel mainModel) {
-        super(mainModel)
-    }
 
     protected int getColumnIndex(int column) {
         switch (column) {

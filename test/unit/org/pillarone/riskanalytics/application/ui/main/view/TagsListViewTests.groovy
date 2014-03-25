@@ -1,10 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import com.ulcjava.base.application.ULCComponent
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import com.ulcjava.testframework.operator.ULCCheckBoxOperator
+import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,42 +21,39 @@ class TagsListViewTests extends AbstractP1RATTestCase {
         Thread.sleep(1000)
         ULCCheckBoxOperator box1 = getCheckBoxOperator("tag1")
         assertNotNull(box1)
-        assertTrue p1.getTags().contains(tag1)
-        assertTrue p1.getTags().contains(tag2)
-        assertTrue box1.isSelected()
+        assertTrue p1.tags.contains(tag1)
+        assertTrue p1.tags.contains(tag2)
+        assertTrue box1.selected
 
         ULCCheckBoxOperator box2 = getCheckBoxOperator("tag2")
         assertNotNull(box2)
-        assertTrue p2.getTags().contains(tag1)
-        assertFalse p2.getTags().contains(tag2)
-        assertTrue p1.getTags().contains(tag2)
-        assertTrue box2.isSelected()
+        assertTrue p2.tags.contains(tag1)
+        assertFalse p2.tags.contains(tag2)
+        assertTrue p1.tags.contains(tag2)
+        assertTrue box2.selected
         box2.clickMouse()
-        assertFalse p1.getTags().contains(tag2)
-        assertFalse p2.getTags().contains(tag2)
+        assertFalse p1.tags.contains(tag2)
+        assertFalse p2.tags.contains(tag2)
         box2.clickMouse()
-        assertTrue p1.getTags().contains(tag2)
-        assertTrue p2.getTags().contains(tag2)
+        assertTrue p1.tags.contains(tag2)
+        assertTrue p2.tags.contains(tag2)
 
         ULCCheckBoxOperator box3 = getCheckBoxOperator("tag3")
         assertNotNull(box3)
-        assertFalse box3.isSelected()
-
+        assertFalse box3.selected
     }
 
     @Override
     ULCComponent createContentPane() {
+        p1.tags = [tag1, tag2] as Set
+        p2.tags = [tag1] as Set
 
+        TagsListView tagsListView = new TagsListView([p1, p2])
+        tagsListView.metaClass.getAllTags = { -> [tag1, tag2, tag3] }
+        tagsListView.metaClass.getAllModellingItemTages = { -> [tag1, tag2] }
 
-        p1.setTags([tag1, tag2] as Set)
-        p2.setTags([tag1] as Set)
-
-        TagsListView tagesListView = new TagsListView([p1, p2])
-        tagesListView.metaClass.getAllTags = {-> [tag1, tag2, tag3]}
-        tagesListView.metaClass.getAllModellingItemTages = {-> [tag1, tag2]}
-
-        tagesListView.init()
-        return tagesListView.content
+        tagsListView.init()
+        return tagsListView.content
     }
 
 

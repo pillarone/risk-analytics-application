@@ -34,7 +34,7 @@ class AddToBatchAction extends RunSimulationAction {
                     batchRun.save()
                 }
                 trace("Batch run created: $newBatchRunName")
-                model.mainModel.addBatch(batchRun)
+                model.mainModel.fireBatchAdded(batchRun)
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
             trace("Adding simulation ${model.simulation.name} to batch with name $batchRun.name")

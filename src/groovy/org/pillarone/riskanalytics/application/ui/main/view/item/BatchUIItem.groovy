@@ -10,7 +10,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
@@ -65,12 +64,9 @@ class BatchUIItem extends AbstractUIItem {
         return StringUtils.isNotEmpty(batchName) && StringUtils.isNotBlank(batchName) && BatchRun.findByName(batchName) == null
     }
 
-    public void addBatchRun(BatchRun batchRun) {
-        if (!batchRun) return
-        navigationTableTreeModel.addNodeForItem(new BatchUIItem(mainModel,batchRun))
-        mainModel.viewModelsInUse.each {k, v ->
-            if (v instanceof BatchListener)
-                v.newBatchAdded(batchRun)
+    private void addBatchRun(BatchRun batchRun) {
+        if (batchRun) {
+            mainModel.fireBatchAdded(batchRun)
         }
     }
 
@@ -101,7 +97,7 @@ class BatchUIItem extends AbstractUIItem {
     }
 
     public void notifyItemSaved() {
-        itemChangeListeners.each {IModellingItemChangeListener listener ->
+        itemChangeListeners.each { IModellingItemChangeListener listener ->
             listener.itemSaved(null)
         }
     }
@@ -126,6 +122,6 @@ class BatchUIItem extends AbstractUIItem {
 
     @Override
     String getName() {
-        return batchRun ?  batchRun.name : ""
+        return batchRun ? batchRun.name : ""
     }
 }

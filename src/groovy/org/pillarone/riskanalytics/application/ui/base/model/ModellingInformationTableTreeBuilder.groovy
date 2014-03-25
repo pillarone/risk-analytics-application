@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
+
 import com.ulcjava.base.application.tabletree.*
 import com.ulcjava.base.application.tree.TreePath
 import grails.util.Holders
@@ -17,7 +18,6 @@ import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
@@ -33,11 +33,11 @@ class ModellingInformationTableTreeBuilder {
 
 
     final DefaultMutableTableTreeNode root
-    private final AbstractTableTreeModel model
+    private final ModellingInformationTableTreeModel model
     private final RiskAnalyticsMainModel mainModel
     private boolean resourceNodeVisible
 
-    public ModellingInformationTableTreeBuilder(AbstractTableTreeModel model, RiskAnalyticsMainModel mainModel) {
+    public ModellingInformationTableTreeBuilder(ModellingInformationTableTreeModel model, RiskAnalyticsMainModel mainModel) {
         this.model = model;
         this.mainModel = mainModel
         root = new DefaultMutableTableTreeNode("root")
@@ -240,7 +240,7 @@ class ModellingInformationTableTreeBuilder {
     private ITableTreeNode createItemNodes(List items) {
         List tree = []
         tree.addAll(items)
-        tree.sort { a, b -> b.versionNumber<=>a.versionNumber }
+        tree.sort { a, b -> b.versionNumber <=> a.versionNumber }
 
         IMutableTableTreeNode root = createNode(tree.first())
         tree.remove(tree.first())
@@ -668,7 +668,7 @@ class ModellingInformationTableTreeBuilder {
 
     private DefaultMutableTableTreeNode createBatchNode() {
         BatchRootNode batchesNode = new BatchRootNode("Batches", mainModel)
-        List<BatchRun> batchRuns = getAllBatchRuns()
+        List<BatchRun> batchRuns = allBatchRuns
         batchRuns?.each { BatchRun batchRun ->
             batchesNode.add(createNode(batchRun))
         }

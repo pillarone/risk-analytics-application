@@ -27,9 +27,9 @@ public class OpenItemAction extends BatchSimulationSelectionAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        SimulationRun run = getSelectedSimulationRun()
+        SimulationRun run = selectedSimulationRun
         Simulation simulation = new Simulation(run.name)
-        Class modelClass = getClass().getClassLoader().loadClass(run.model)
+        Class modelClass = getClass().classLoader.loadClass(run.model)
         simulation.modelClass = modelClass
         open(modelClass.newInstance(), simulation)
     }

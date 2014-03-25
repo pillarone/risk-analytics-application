@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
-
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.ServerSideCommand
 import com.ulcjava.testframework.operator.*

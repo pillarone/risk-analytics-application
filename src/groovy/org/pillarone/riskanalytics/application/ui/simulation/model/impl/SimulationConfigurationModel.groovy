@@ -1,11 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class SimulationConfigurationModel implements BatchListener, INewSimulationListener {
+class SimulationConfigurationModel implements IBatchListener, INewSimulationListener {
 
     SimulationProfilePaneModel simulationProfilePaneModel
     SimulationActionsPaneModel actionsPaneModel
@@ -27,10 +28,12 @@ class SimulationConfigurationModel implements BatchListener, INewSimulationListe
     }
 
     void newSimulation(Simulation simulation) {
-        if (simulation.parameterization)
+        if (simulation.parameterization)  {
             settingsPaneModel.selectedParameterization = simulation.parameterization
-        if (simulation.template)
+        }
+        if (simulation.template) {
             settingsPaneModel.selectedResultConfiguration = simulation.template
+        }
     }
 
     SimulationSettingsPaneModel getSettingsPaneModel() {
@@ -38,7 +41,5 @@ class SimulationConfigurationModel implements BatchListener, INewSimulationListe
     }
 }
 
-interface BatchListener {
-    void newBatchAdded(BatchRun batchRun)
-}
+
 

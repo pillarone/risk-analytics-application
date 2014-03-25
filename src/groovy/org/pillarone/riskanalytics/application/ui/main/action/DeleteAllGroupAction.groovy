@@ -26,25 +26,25 @@ class DeleteAllGroupAction extends DeleteAllAction {
 
     public void doActionPerformed(ActionEvent actionEvent) {
         ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), alertId)
-        alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel)}] as IWindowListener)
+        alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel) }] as IWindowListener)
         alert.show()
 
     }
 
     private void handleEvent(String value, String firstButtonValue) {
         if (value.equals(firstButtonValue)) {
-            Class itemClass = getSelectedItemGroupClass()
-            def modelClass = getSelectedModel().class
+            Class itemClass = selectedItemGroupClass
+            def modelClass = selectedModel.class
             switch (itemClass) {
                 case Parameterization:
                     deleteParameterizations(ModellingItemFactory.getNewestParameterizationsForModel(modelClass))
-                    break;
+                    break
                 case ResultConfiguration:
                     deleteResultConfigurations(ModellingItemFactory.getNewestResultConfigurationsForModel(modelClass))
-                    break;
+                    break
                 case Simulation:
                     deleteResults(ModellingItemFactory.getActiveSimulationsForModel(modelClass))
-                    break;
+                    break
             }
         }
     }

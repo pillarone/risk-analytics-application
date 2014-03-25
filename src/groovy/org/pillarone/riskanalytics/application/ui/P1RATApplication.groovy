@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui
+
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.applicationframework.application.Application
 import com.ulcjava.base.application.ApplicationContext
@@ -11,6 +12,7 @@ import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 
 import static com.ulcjava.base.shared.IWindowConstants.DO_NOTHING_ON_CLOSE
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_NAME
+
 //used for standalone
 class P1RATApplication extends Application {
 
@@ -30,6 +33,7 @@ class P1RATApplication extends Application {
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
     RiskAnalyticsMainModel riskAnalyticsMainModel
     RiskAnalyticsMainView riskAnalyticsMainView
+    ModellingInformationTableTreeModel navigationTableTreeModel
     TraceLogManager traceLogManager
     CacheItemEventQueueService cacheItemEventQueueService
 
@@ -70,13 +74,13 @@ class P1RATApplication extends Application {
         mainFrame.visible = true
         mainFrame.toFront()
         mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; windowClosing() }] as IWindowListener)
-        ModelRegistry.instance.addListener(riskAnalyticsMainModel)
+        ModelRegistry.instance.addListener(navigationTableTreeModel)
     }
 
     private void windowClosing() {
         def session = ULCSession.currentSession()
         cacheItemEventQueueService.unregisterAllConsumersForSession(session)
-        ModelRegistry.instance.removeListener(riskAnalyticsMainModel)
+        ModelRegistry.instance.removeListener(navigationTableTreeModel)
         traceLogManager.deactivateLogging()
         ApplicationContext.terminate()
     }

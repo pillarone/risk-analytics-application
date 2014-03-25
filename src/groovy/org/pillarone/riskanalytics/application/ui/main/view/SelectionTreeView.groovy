@@ -45,7 +45,7 @@ class SelectionTreeView {
 
     @PostConstruct
     void initialize() {
-        this.navigationTableTreeModel = riskAnalyticsMainModel.navigationTableTreeModel
+        println(riskAnalyticsMainModel)
         initTree()
         initComponents()
         layoutComponents()

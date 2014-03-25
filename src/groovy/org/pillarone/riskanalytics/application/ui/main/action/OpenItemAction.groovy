@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
@@ -9,11 +8,9 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -41,7 +38,7 @@ class OpenItemAction extends SelectionTreeAction {
             ModellingItem item = parameterizationUIItem.item
             item.dao.modelClassName = selectedModel.class.name
             synchronized (parameterizationUIItem) {
-                item.daoClass.withTransaction {status ->
+                item.daoClass.withTransaction { status ->
                     boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
                     if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
                         LOG.info("Opening parameterization ${parameterizationUIItem.nameAndVersion}")
@@ -83,13 +80,9 @@ class OpenItemAction extends SelectionTreeAction {
 
     // Do not load item in case it is already open. Otherwise the persistent state of this item gets loaded again. PMO-2383
     private void loadIfNotInUse(AbstractUIItem item) {
-        if (!item.mainModel.isItemOpen(item)){
+        if (!item.mainModel.isItemOpen(item)) {
             item.load()
         }
-    }
-
-    private void openItem(Model selectedModel, SimulationUIItem item) {
-        this.model.openItem(selectedModel, item)
     }
 
     private void showOpenItemDialog(Model selectedModel, def item) {

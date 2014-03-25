@@ -31,7 +31,6 @@ class NewBatchView extends AbstractView {
     ULCButton cancelButton
     final Dimension dimension = new Dimension(140, 20)
 
-
     RiskAnalyticsMainModel model
     BatchUIItem batchUIItem
 

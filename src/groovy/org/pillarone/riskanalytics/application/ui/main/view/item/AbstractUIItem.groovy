@@ -1,14 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
 import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -87,7 +86,6 @@ abstract class AbstractUIItem implements IUIItem {
     }
 
 
-
     public boolean isVersionable() {
         return false
     }
@@ -104,8 +102,8 @@ abstract class AbstractUIItem implements IUIItem {
         return true
     }
 
-    public AbstractTableTreeModel getNavigationTableTreeModel() {
-        return mainModel.navigationTableTreeModel
+    public ModellingInformationTableTreeModel getNavigationTableTreeModel() {
+        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel') as ModellingInformationTableTreeModel
     }
 
     public String getWindowTitle() {

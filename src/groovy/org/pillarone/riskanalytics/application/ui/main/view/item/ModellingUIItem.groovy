@@ -95,7 +95,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     void rename(String newName) {
         item.daoClass.withTransaction { status ->
-            if (!item.isLoaded())
+            if (!item.loaded)
                 item.load()
             ITableTreeNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item)
 

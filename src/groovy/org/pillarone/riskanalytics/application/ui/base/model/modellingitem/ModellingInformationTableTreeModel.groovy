@@ -1,12 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
@@ -17,9 +15,12 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
@@ -28,10 +29,11 @@ import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
+import javax.annotation.PostConstruct
+
 import static org.pillarone.riskanalytics.core.search.CacheItemEvent.EventType.*
 
-
-class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
+class ModellingInformationTableTreeModel extends AbstractTableTreeModel implements IModelRegistryListener, IBatchListener {
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> COLUMN_NAMES = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
@@ -42,7 +44,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
 
     ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
-    RiskAnalyticsMainModel mainModel
+    RiskAnalyticsMainModel riskAnalyticsMainModel
     Map columnValues = [:]
     int orderByColumn = -1
     boolean ascOrder
@@ -69,10 +71,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         builder.root
     }
 
-    ModellingInformationTableTreeModel(RiskAnalyticsMainModel mainModel) {
-        this.mainModel = mainModel
+    ModellingInformationTableTreeModel() {
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
-        builder = new ModellingInformationTableTreeBuilder(this, mainModel)
         if (logTreeStructureUpdates) {
             LOG.info("-D" + logTreeStructureUpdatesKey + " is true, will log tree structure updates");
         } else {
@@ -80,8 +80,19 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         }
     }
 
-    public void buildTreeNodes() {
+    @PostConstruct
+    void initialize() {
+        riskAnalyticsMainModel.addBatchListener(this)
+        builder = new ModellingInformationTableTreeBuilder(this, riskAnalyticsMainModel)
+        buildTreeNodes()
+    }
+
+    void buildTreeNodes() {
         builder.buildTreeNodes(filteredItems)
+    }
+
+    void modelAdded(Class modelClass) {
+        addNodeForItem(modelClass.newInstance() as Model)
     }
 
     public List<ModellingItem> getFilteredItems() {
@@ -96,16 +107,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
         builder.addNodeForItem(model)
     }
 
-    public void addNodeForItem(BatchUIItem item) {
-        builder.addNodeForItem(item)
-    }
-
-    public static ModellingInformationTableTreeModel getInstance(RiskAnalyticsMainModel mainModel) {
-        if (UserContext.hasCurrentUser()) {
-            return new ModellingInformationTableTreeModel(mainModel)
-        } else {
-            return new StandaloneTableTreeModel(mainModel)
-        }
+    @Override
+    void newBatchAdded(BatchRun batchRun) {
+        builder.addNodeForItem(new BatchUIItem(riskAnalyticsMainModel, batchRun))
     }
 
     public String getColumnName(int i) {
@@ -194,7 +198,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel {
             }
         }
         if (events) {
-            mainModel.fireModelChanged()
+            riskAnalyticsMainModel.fireModelChanged()
         }
     }
 

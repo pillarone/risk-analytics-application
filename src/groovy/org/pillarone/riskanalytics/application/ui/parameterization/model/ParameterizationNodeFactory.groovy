@@ -94,7 +94,7 @@ class ParameterizationNodeFactory {
                 p.classifierParameters.each {Map.Entry<String, ParameterHolder> entry ->
                     final StringClassKey key = new StringClassKey(name: entry.key, clazz: entry.value.class)
                     if (!parameterEntries.containsKey(key)) {
-                        parameterEntries.put(key, entry.key)
+                        parameterEntries[key] = entry.key
                     }
                 }
             }

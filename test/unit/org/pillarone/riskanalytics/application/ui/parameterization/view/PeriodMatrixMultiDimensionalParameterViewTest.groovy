@@ -45,8 +45,6 @@ class PeriodMatrixMultiDimensionalParameterViewTest extends AbstractP1RATTestCas
         return view.getContent()
     }
 
-
-
     void testSetNumberOfPeriods() {
         selectAllComponents(true)
         //Set number of periods and ensure parameter updates correctly

@@ -86,7 +86,6 @@ class HeaderView extends AbstractView {
     @Override
     @PostConstruct
     void init() {
-        this.navigationTableTreeModel = riskAnalyticsMainModel.navigationTableTreeModel
         super.init()
         syncMenuBar()
     }

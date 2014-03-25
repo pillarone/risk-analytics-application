@@ -1,32 +1,25 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.core.report.IReportModel
-import org.pillarone.riskanalytics.core.report.ReportFactory
-import com.ulcjava.base.shared.FileChooserConfig
-import com.ulcjava.base.application.ULCWindow
+import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.ClientContext
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import com.ulcjava.base.application.util.IFileStoreHandler
-import com.ulcjava.base.application.util.IFileChooseHandler
+import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.shared.FileChooserConfig
+import net.sf.jmimemagic.Magic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
-import org.pillarone.riskanalytics.core.report.IReportData
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.core.report.impl.ModellingItemReportData
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.report.impl.ReportDataCollection
-import org.pillarone.riskanalytics.core.report.UnsupportedReportParameterException
-import com.ulcjava.base.application.IAction
 import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFactory
-import net.sf.jmimemagic.Magic
-import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.reports.IReportableNode
-
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.report.IReportData
+import org.pillarone.riskanalytics.core.report.IReportModel
+import org.pillarone.riskanalytics.core.report.ReportFactory
+import org.pillarone.riskanalytics.core.report.UnsupportedReportParameterException
+import org.pillarone.riskanalytics.core.report.impl.ModellingItemReportData
+import org.pillarone.riskanalytics.core.report.impl.ReportDataCollection
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 public class CreateReportAction extends SelectionTreeAction {
 

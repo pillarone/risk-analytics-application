@@ -29,7 +29,8 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
         mockApplicationContext()
-        def view = new SelectionTreeView(riskAnalyticsMainModel: mockRiskAnalyticsMainModel)
+        def model = mockRiskAnalyticsMainModel
+        def view = new SelectionTreeView(riskAnalyticsMainModel: model, navigationTableTreeModel: getMockTreeModel(model))
         view.initialize()
         view.content;
     }

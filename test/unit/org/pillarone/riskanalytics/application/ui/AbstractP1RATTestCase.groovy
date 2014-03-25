@@ -9,6 +9,7 @@ import models.core.CoreModel
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -91,7 +92,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     abstract ULCComponent createContentPane()
 
     protected RiskAnalyticsMainModel getMockRiskAnalyticsMainModel() {
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(getMockTreeModel(null))
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
 
         mainModel.metaClass.openItem = { Model pcModel, Parameterization item ->
             assertEquals pcModel.name, "Application"
@@ -107,7 +108,8 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     }
 
     protected ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
-        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(mainModel)
+        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel)
+        treeModel.builder = new ModellingInformationTableTreeBuilder(treeModel, mainModel)
         treeModel.builder.metaClass.getAllModelClasses = { ->
             [ApplicationModel]
         }
@@ -115,8 +117,6 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         treeModel.builder.metaClass.getAllBatchRuns = { ->
             [new BatchRun(name: "test")]
         }
-
-
         treeModel.metaClass.getPendingEvents = { CacheItemEventConsumer consumer ->
             []
         }

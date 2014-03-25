@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.applicationframework.application.ApplicationContext
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
@@ -6,57 +7,58 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
+import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.BatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModelRegistryListener {
+import java.beans.PropertyChangeListener
+
+class RiskAnalyticsMainModel extends AbstractPresentationModel {
+
+    private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
     Map<AbstractUIItem, Object> viewModelsInUse
-    ModellingInformationTableTreeModel navigationTableTreeModel
     def switchActions = []
     private List<IRiskAnalyticsModelListener> modelListeners = []
     private List<BatchTableListener> batchTableListeners = []
     private List<IModelItemChangeListener> modelItemListeners = []
     private List<INewSimulationListener> newSimulationListeners = []
-    //selectedItem needs to be updated when tabs are changed etc.
+    private List<IBatchListener> batchListeners = []
+
     @Bindable
     AbstractUIItem currentItem
-
-    static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
     ApplicationContext ulcApplicationContext
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
-        navigationTableTreeModel = ModellingInformationTableTreeModel.getInstance(this)
-        navigationTableTreeModel.buildTreeNodes()
+        addPropertyChangeListener('currentItem', { def event ->
+            switchActions.each {
+                boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof ResultUIItem)
+                it.setEnabled(b)
+                it.selected = b
+            }
+            notifyChangedWindowTitle(currentItem)
+        } as PropertyChangeListener)
     }
 
-    public RiskAnalyticsMainModel(ModellingInformationTableTreeModel navigationTableTreeModel) {
-        viewModelsInUse = [:]
-        this.navigationTableTreeModel = navigationTableTreeModel
+    void setCurrentItem(AbstractUIItem currentItem) {
+        this.currentItem = (currentItem instanceof BatchUIItem) ? null : currentItem
     }
 
     void saveAllOpenItems() {
         viewModelsInUse.keySet().each { AbstractUIItem item ->
             item.save()
         }
-    }
-
-    void modelAdded(Class modelClass) {
-        navigationTableTreeModel.addNodeForItem(modelClass.newInstance() as Model)
     }
 
     public void removeItems(Model selectedModel, List<AbstractUIItem> modellingItems) {
@@ -72,7 +74,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
         fireModelChanged()
     }
 
-    public AbstractModellingModel getViewModel(AbstractUIItem item) {
+    AbstractModellingModel getViewModel(AbstractUIItem item) {
         if (viewModelsInUse.containsKey(item)) {
             return viewModelsInUse[item] as AbstractModellingModel
         }
@@ -80,13 +82,13 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
     }
 
 
-    public void openItem(Model model, AbstractUIItem item) {
+    void openItem(Model model, AbstractUIItem item) {
         if (!item.loaded)
             item.load()
         notifyOpenDetailView(model, item)
     }
 
-    public void closeItem(Model model, AbstractUIItem abstractUIItem) {
+    void closeItem(Model model, AbstractUIItem abstractUIItem) {
         notifyCloseDetailView(model, abstractUIItem)
         unregisterModel(abstractUIItem)
         abstractUIItem.removeAllModellingItemChangeListener()
@@ -99,36 +101,51 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
         }
     }
 
-    public void addModelItemChangedListener(IModelItemChangeListener listener) {
+    void addModelItemChangedListener(IModelItemChangeListener listener) {
         modelItemListeners << listener
     }
 
-    public void removeModelItemChangedListener(IModelItemChangeListener listener) {
+    void removeModelItemChangedListener(IModelItemChangeListener listener) {
         modelItemListeners.remove(listener)
     }
 
-    public void fireModelItemChanged() {
+    void fireModelItemChanged() {
         modelItemListeners.each { IModelItemChangeListener listener -> listener.modelItemChanged() }
     }
 
-    public void addBatchTableListener(BatchTableListener batchTableListener) {
+    void addBatchListener(IBatchListener listener) {
+        batchListeners << listener
+    }
+
+    void removeBatchListener(IBatchListener listener) {
+        batchListeners.remove(listener)
+    }
+
+    void fireBatchAdded(BatchRun batchRun) {
+        batchListeners.each { it.newBatchAdded(batchRun) }
+    }
+
+    void addBatchTableListener(BatchTableListener batchTableListener) {
         batchTableListeners << batchTableListener
     }
 
-    public void fireRowAdded(BatchRunSimulationRun addedRun) {
+    void fireRowAdded(BatchRunSimulationRun addedRun) {
         batchTableListeners.each { BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun) }
     }
 
-    public void fireRowDeleted(Simulation item) {
+    void fireRowDeleted(Simulation item) {
         batchTableListeners.each { BatchTableListener batchTableListener ->
             batchTableListener.fireRowDeleted(item.simulationRun)
         }
     }
 
-    public void registerModel(AbstractUIItem item, def model) {
+    void registerModel(AbstractUIItem item, def model) {
         viewModelsInUse[item] = model
         if (model instanceof IModelChangedListener) {
             addModelChangedListener(model)
+        }
+        if (model instanceof IBatchListener) {
+            addBatchListener(model)
         }
     }
 
@@ -136,7 +153,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
         def viewModel = viewModelsInUse.remove(item)
         if (viewModel != null) {
             if (viewModel instanceof SimulationConfigurationModel) {
-                viewModel.actionsPaneModel.removeSimulationListener(this)
                 removeModelChangedListener(viewModel.settingsPaneModel)
                 removeModelChangedListener(viewModel.actionsPaneModel)
                 removeNewSimulationListener(viewModel)
@@ -144,12 +160,16 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
             if (viewModel instanceof IModelChangedListener) {
                 removeModelChangedListener(viewModel)
             }
+            if (viewModel instanceof IBatchListener) {
+                removeBatchListener(viewModel)
+            }
         }
     }
 
     void addModelListener(IRiskAnalyticsModelListener listener) {
-        if (!modelListeners.contains(listener))
+        if (!modelListeners.contains(listener)) {
             modelListeners << listener
+        }
     }
 
     void notifyOpenDetailView(Model model, AbstractUIItem item) {
@@ -183,28 +203,18 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
         }
     }
 
-    public void addNewSimulationListener(INewSimulationListener newSimulationListener) {
+    void addNewSimulationListener(INewSimulationListener newSimulationListener) {
         newSimulationListeners << newSimulationListener
     }
 
-    public void removeNewSimulationListener(INewSimulationListener newSimulationListener) {
+    void removeNewSimulationListener(INewSimulationListener newSimulationListener) {
         newSimulationListeners.remove(newSimulationListener)
     }
 
-    public void fireNewSimulation(Simulation simulation) {
+    void fireNewSimulation(Simulation simulation) {
         newSimulationListeners.each { INewSimulationListener newSimulationListener ->
             newSimulationListener.newSimulation(simulation)
         }
-    }
-
-    public void setCurrentItem(AbstractUIItem currentItem) {
-        this.currentItem = (currentItem instanceof BatchUIItem) ? null : currentItem
-        switchActions.each {
-            boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof ResultUIItem)
-            it.setEnabled(b)
-            it.selected = b
-        }
-        notifyChangedWindowTitle(currentItem)
     }
 
     ModellingUIItem getAbstractUIItem(ModellingItem modellingItem) {
@@ -215,18 +225,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel implements IModel
             }
         }
         return item
-    }
-
-    /**
-     * insert new batch node to the mainTree, created by editing a new simulation
-     * @param newBatchRun
-     */
-    public void addBatch(BatchRun newBatchRun) {
-        navigationTableTreeModel.addNodeForItem(new BatchUIItem(this, newBatchRun))
-        viewModelsInUse.each { k, v ->
-            if (v instanceof BatchListener)
-                v.newBatchAdded(newBatchRun)
-        }
     }
 
     boolean isItemOpen(AbstractUIItem item) {

@@ -27,7 +27,7 @@ class ModellingItemFactory {
 
     private final static Log LOG = LogFactory.getLog(ModellingItemFactory)
 
-    static Map getItemInstances() {
+    protected static Map getItemInstances() {
         Map map = UserContext.getAttribute("itemInstances") as Map
         if (map == null) {
             map = [:]
@@ -36,21 +36,27 @@ class ModellingItemFactory {
         map
     }
 
+    protected static <T> T getItemInstance(String key) {
+        itemInstances[key] as T
+    }
+
     static Parameterization getParameterization(ParameterizationDAO dao) {
-        getItem(dao)
+        ParameterizationDAO.withTransaction {
+            dao.attach()
+            getItem(dao)
+        }
     }
 
     static ModelItem getModelItem(ModelDAO dao) {
         getItem(dao)
     }
 
-    static List getParameterizationsForModel(Class modelClass) {
+    static List<Parameterization> getParameterizationsForModel(Class modelClass) {
         ParameterizationDAO.withTransaction { status ->
             ParameterizationDAO.findAllByModelClassName(modelClass.name, [sort: "name"]).collect {
                 getItem(it, modelClass)
             }
         }
-
     }
 
     static List<Resource> getResources(Class resourceClass) {
@@ -58,60 +64,63 @@ class ModellingItemFactory {
             ResourceDAO.findAllByResourceClassName(resourceClass.name, [sort: "name"]).collect {
                 getItem(it)
             }
-        } as List<Resource>
+        }
     }
 
-    static List getNewestParameterizationsForModel(Class modelClass) {
-        def result = []
-        def criteria = ParameterizationDAO.createCriteria()
-        def parameterizationNames = criteria.list {
-            eq('modelClassName', modelClass.name)
-            projections {
-                distinct('name')
-            }
-        }
-
-        parameterizationNames.each {
-            String name = it
-            criteria = ParameterizationDAO.createCriteria()
-            def parameterizations = criteria.list {
+    static List<Parameterization> getNewestParameterizationsForModel(Class modelClass) {
+        ParameterizationDAO.withTransaction {
+            List<ParameterizationDAO> result = []
+            def criteria = ParameterizationDAO.createCriteria()
+            def parameterizationNames = criteria.list {
                 eq('modelClassName', modelClass.name)
-                eq('name', name)
-                order("itemVersion", "desc")
-            }
-            if (parameterizations.size() > 0)
-                result << parameterizations.get(0)
-        }
-        result.collect { getItem(it, modelClass) }
-    }
-
-    static List getNewestResultConfigurationsForModel(Class modelClass) {
-        def result = []
-        def criteria = ResultConfigurationDAO.createCriteria()
-        def templateNames = criteria.list {
-            eq('modelClassName', modelClass.name)
-            projections {
-                distinct('name')
-            }
-        }
-
-        templateNames.each {
-            String name = it
-            criteria = ResultConfigurationDAO.createCriteria()
-            def highestVesion = criteria.list {
-                eq('modelClassName', modelClass.name)
-                eq('name', name)
                 projections {
-                    max('itemVersion')
+                    distinct('name')
                 }
             }
-            result << ResultConfigurationDAO.findByNameAndItemVersion(name, highestVesion[0])
+            parameterizationNames.each {
+                String name = it
+                criteria = ParameterizationDAO.createCriteria()
+                List<ParameterizationDAO> parameterizations = criteria.list {
+                    eq('modelClassName', modelClass.name)
+                    eq('name', name)
+                    order("itemVersion", "desc")
+                }
+                if (parameterizations.size() > 0) {
+                    result << parameterizations[0]
+                }
+            }
+            result.collect { getItem(it, modelClass) }
         }
-        result.collect { getItem(it) }
+    }
+
+    static List<ResultConfiguration> getNewestResultConfigurationsForModel(Class modelClass) {
+        ResultConfigurationDAO.withTransaction {
+            List<ResultConfigurationDAO> result = []
+            def criteria = ResultConfigurationDAO.createCriteria()
+            def templateNames = criteria.list {
+                eq('modelClassName', modelClass.name)
+                projections {
+                    distinct('name')
+                }
+            }
+            templateNames.each {
+                String name = it
+                criteria = ResultConfigurationDAO.createCriteria()
+                def highestVersion = criteria.list {
+                    eq('modelClassName', modelClass.name)
+                    eq('name', name)
+                    projections {
+                        max('itemVersion')
+                    }
+                }
+                result << ResultConfigurationDAO.findByNameAndItemVersion(name, highestVersion[0])
+            }
+            result.collect { getItem(it) }
+        }
+
     }
 
     static ModellingItem createItem(String name, ConfigObject data, Class itemClass, boolean forceImport) {
-
         ModellingItem item
 
         if (itemClass == Parameterization) {
@@ -153,25 +162,26 @@ class ModellingItemFactory {
         }
         item.creator = UserManagement.currentUser
         def id = item.save()
-        itemInstances[key(itemClass, id)] = item
-
+        itemInstances[key(itemClass, id as Long)] = item
         item
     }
 
-    static ModellingItem createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
-        def item
+    static Parameterization createParameterization(String name, ConfigObject data, Class itemClass, VersionNumber versionNumber) {
         ParameterizationDAO.withTransaction { TransactionStatus status ->
-            item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
+            Parameterization item = ParameterizationHelper.createParameterizationFromConfigObject(data, name)
             item.versionNumber = versionNumber
             item.creator = UserManagement.currentUser
             def id = item.save()
-            itemInstances[key(itemClass, id)] = item
+            itemInstances[key(itemClass, id as Long)] = item
+            item
         }
-        return item
     }
 
     static ResultConfiguration getResultConfiguration(ResultConfigurationDAO dao) {
-        return getItem(dao)
+        ResultConfigurationDAO.withTransaction {
+            dao.attach()
+            getItem(dao)
+        }
     }
 
     static List getResultConfigurationsForModel(Class modelClass) {
@@ -183,29 +193,39 @@ class ModellingItemFactory {
     }
 
     static List getResultStructuresForModel(Class modelClass) {
-        ResultStructureDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it)
+        ResultStructureDAO.withTransaction {
+            ResultStructureDAO.findAllByModelClassName(modelClass.name).collect {
+                getItem(it)
+            }
         }
     }
 
     static List<CustomTable> getCustomTablesForModel(Class modelClass) {
-        CustomTableDAO.findAllByModelClassName(modelClass.name).collect {
-            getItem(it)
+        CustomTableDAO.withTransaction {
+            CustomTableDAO.findAllByModelClassName(modelClass.name).collect {
+                getItem(it)
+            }
         }
     }
 
     static ModelStructure getModelStructure(ModelStructureDAO dao) {
-        getItem(dao)
+        ModelStructureDAO.withTransaction {
+            dao.attach()
+            getItem(dao)
+        }
     }
 
     static Simulation getSimulation(SimulationRun run) {
-        getItem(run)
+        SimulationRun.withTransaction {
+            run.attach()
+            getItem(run)
+        }
     }
 
     /**
      * @return all SimulationRuns for this model with toBeDeleted==false
      */
-    static List getActiveSimulationsForModel(Class modelClass) {
+    static List<Simulation> getActiveSimulationsForModel(Class modelClass) {
         SimulationRun.withTransaction {
             SimulationRun.findAllByModel(modelClass.name).
                     findAll { SimulationRun run ->
@@ -230,27 +250,24 @@ class ModellingItemFactory {
 
     static ModellingItem copyItem(ModellingItem oldItem, String newName) {
         ModellingItem newItem = oldItem.class.newInstance([newName] as Object[])
-
         oldItem.load()
         if (oldItem.data != null) {
             newItem.data = oldItem.data.merge(new ConfigObject())
         }
         def newId = newItem.save()
         newItem.load()
-        itemInstances[key(newItem.class, newId)] = newItem
+        itemInstances[key(newItem.class, newId as Long)] = newItem
         return newItem
     }
 
     static ModellingItem copyItem(Parameterization oldItem, String newName) {
         Parameterization newItem = new Parameterization(newName)
-
         List newParameters = ParameterizationHelper.copyParameters(oldItem.parameters)
         newParameters.each {
             newItem.addParameter(it)
         }
         List comments = oldItem?.comments?.collect { it.clone() }
         comments?.each { newItem.addComment(it) }
-
         newItem.periodCount = oldItem.periodCount
         newItem.periodLabels = oldItem.periodLabels
         newItem.modelClass = oldItem.modelClass
@@ -262,7 +279,6 @@ class ModellingItemFactory {
 
     static ModellingItem copyItem(Resource oldItem, String newName) {
         Resource newItem = new Resource(newName, oldItem.modelClass)
-
         List newParameters = ParameterizationHelper.copyParameters(oldItem.parameterHolders)
         newParameters.each {
             newItem.addParameter(it)
@@ -278,7 +294,6 @@ class ModellingItemFactory {
 
     static ModellingItem copyItem(ResultConfiguration oldItem, String newName) {
         ResultConfiguration newItem = copy(oldItem, newName)
-
         def newId = newItem.save()
         newItem.load()
         itemInstances[key(newItem.class, newId)] = newItem
@@ -312,7 +327,6 @@ class ModellingItemFactory {
 
     static ModellingItem incrementVersion(Parameterization item) {
         Parameterization newItem = new Parameterization(item.name)
-
         List newParameters = ParameterizationHelper.copyParameters(item.parameters)
         newParameters.each {
             newItem.addParameter(it)
@@ -339,7 +353,6 @@ class ModellingItemFactory {
 
     static ModellingItem incrementVersion(Resource item) {
         Resource newItem = new Resource(item.name, item.modelClass)
-
         List newParameters = ParameterizationHelper.copyParameters(item.parameterHolders)
         newParameters.each {
             newItem.addParameter(it)
@@ -413,10 +426,10 @@ class ModellingItemFactory {
         item
     }
 
-    private static ModellingItem getItem(ResourceDAO dao) {
-        Resource item = itemInstances[key(Resource, dao.id)]
+    private static Resource getItem(ResourceDAO dao) {
+        Resource item = itemInstances[key(Resource, dao.id)] as Resource
         if (!item) {
-            item = new Resource(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.resourceClassName))
+            item = new Resource(dao.name, ModellingItemFactory.classLoader.loadClass(dao.resourceClassName))
             item.versionNumber = new VersionNumber(dao.itemVersion)
             item.valid = dao.valid
             item.status = dao.status
@@ -426,26 +439,25 @@ class ModellingItemFactory {
             item.lastUpdater = dao.lastUpdater
             if (item.lastUpdater)
                 item.lastUpdater.username = dao.lastUpdater.username
-            item.creationDate = dao.getCreationDate()
-            item.modificationDate = dao.getModificationDate()
+            item.creationDate = dao.creationDate
+            item.modificationDate = dao.modificationDate
             item.tags = dao.tags*.tag
             itemInstances[key(Resource, dao.id)] = item
         }
         item
     }
 
-    private static ModellingItem getItem(CustomTableDAO dao) {
-        CustomTable item = itemInstances[key(CustomTable, dao.id)]
+    private static CustomTable getItem(CustomTableDAO dao) {
+        CustomTable item = itemInstances[key(CustomTable, dao.id)] as CustomTable
         if (!item) {
-            item = new CustomTable(dao.name, ModellingItemFactory.getClassLoader().loadClass(dao.modelClassName))
-
+            item = new CustomTable(dao.name, ModellingItemFactory.classLoader.loadClass(dao.modelClassName))
             itemInstances[key(CustomTable, dao.id)] = item
         }
         item
     }
 
-    private static ModellingItem getItem(ParameterizationDAO dao, Class modelClass = null) {
-        Parameterization item = itemInstances[key(Parameterization, dao.id)]
+    private static Parameterization getItem(ParameterizationDAO dao, Class modelClass = null) {
+        Parameterization item = itemInstances[key(Parameterization, dao.id)] as Parameterization
         if (!item) {
             item = new Parameterization(dao.name)
             itemInstances[key(Parameterization, dao.id)] = item
@@ -464,41 +476,35 @@ class ModellingItemFactory {
             item.lastUpdater = dao.lastUpdater
             if (item.lastUpdater)
                 item.lastUpdater.username = dao.lastUpdater.username
-            item.creationDate = dao.getCreationDate()
-            item.modificationDate = dao.getModificationDate()
-            try {
-                item.tags = dao.tags*.tag
-            } catch (Exception ex) {
-            }
+            item.creationDate = dao.creationDate
+            item.modificationDate = dao.modificationDate
+            item.tags = dao.tags*.tag
         }
         item
     }
 
     private static Simulation getItem(SimulationRun run) {
         String key = key(SimulationRun, run.id)
-        Simulation simulation = itemInstances[key]
+        Simulation simulation = itemInstances[key] as Simulation
         if (!simulation) {
             simulation = new Simulation(run.name)
             itemInstances[key] = simulation
         }
-        simulation.modelClass = ModellingItemFactory.getClassLoader().loadClass(run.model)
+        simulation.modelClass = ModellingItemFactory.classLoader.loadClass(run.model)
         simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
         simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
         simulation.creationDate = run.startTime
-        simulation.modificationDate = run.getModificationDate()
+        simulation.modificationDate = run.modificationDate
         simulation.periodCount = run.periodCount
         simulation.numberOfIterations = run.iterations
         simulation.comment = run.comment
         simulation.creator = run.creator
-        try {
-            simulation.tags = run.tags*.tag
-        } catch (Exception ex) {
-        }
+        simulation.tags = run.tags*.tag
         return simulation
     }
 
-    private static ModellingItem getItem(ModelDAO dao) {
-        ModelItem item = itemInstances[key(ModelItem, dao.id)]
+    private static ModelItem getItem(ModelDAO dao) {
+        ModelItem item = getItemInstance(key(ModelItem, dao.id))
         if (!item) {
             item = new ModelItem(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
@@ -507,8 +513,8 @@ class ModellingItemFactory {
         item
     }
 
-    private static ModellingItem getItem(ResultConfigurationDAO dao, Class modelClass = null) {
-        ResultConfiguration item = itemInstances[key(ResultConfiguration, dao.id)]
+    private static ResultConfiguration getItem(ResultConfigurationDAO dao, Class modelClass = null) {
+        ResultConfiguration item = getItemInstance(key(ResultConfiguration, dao.id))
         if (!item) {
             item = new ResultConfiguration(dao.name)
             itemInstances[key(ResultConfiguration, dao.id)] = item
@@ -518,19 +524,21 @@ class ModellingItemFactory {
         if (modelClass != null) {
             item.modelClass = modelClass
             item.creator = dao.creator
-            if (item.creator)
+            if (item.creator) {
                 item.creator.username = dao.creator.username
+            }
             item.lastUpdater = dao.lastUpdater
-            if (item.lastUpdater)
+            if (item.lastUpdater) {
                 item.lastUpdater.username = dao.lastUpdater.username
-            item.creationDate = dao.getCreationDate()
-            item.modificationDate = dao.getModificationDate()
+            }
+            item.creationDate = dao.creationDate
+            item.modificationDate = dao.modificationDate
         }
         item
     }
 
-    private static ModellingItem getItem(ModelStructureDAO dao) {
-        ModelStructure item = itemInstances[key(ModelStructure, dao.id)]
+    private static ModelStructure getItem(ModelStructureDAO dao) {
+        ModelStructure item = getItemInstance(key(ModelStructure, dao.id))
         if (!item) {
             item = new ModelStructure(dao.name)
             item.versionNumber = new VersionNumber(dao.itemVersion)
@@ -546,17 +554,6 @@ class ModellingItemFactory {
     static void remove(ModellingItem item) {
         itemInstances.remove(key(item.class, item.id))
     }
-
-    public static void put(ParameterizationDAO dao, Class modelClass = null) {
-        Parameterization item = new Parameterization(dao.name)
-        item.versionNumber = new VersionNumber(dao.itemVersion)
-        // PMO-645 set valid  for parameterization check
-        item.valid = dao.valid
-        if (modelClass != null)
-            item.modelClass = modelClass
-        itemInstances[key(Parameterization, dao.id)] = item
-    }
-
 
     static void clear() {
         itemInstances.clear()

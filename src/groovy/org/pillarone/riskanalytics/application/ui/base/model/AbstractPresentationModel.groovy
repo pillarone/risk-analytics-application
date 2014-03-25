@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class AbstractPresentationModel {
 
-    Set listeners = new HashSet()
+    Set<IModelChangedListener> listeners = new HashSet()
 
     void addModelChangedListener(IModelChangedListener listener) {
         listeners << listener
@@ -17,22 +17,22 @@ class AbstractPresentationModel {
     }
 
     void fireModelChanged() {
-        listeners.each {IModelChangedListener listener -> listener.modelChanged()}
+        listeners.each { it.modelChanged() }
     }
 
     static List loadPeriodLabels(SimulationRun simulationRun, boolean showPeriodLabels) {
         List periodLabels = []
         if (showPeriodLabels) {
-            SimulationRun.withTransaction {status ->
+            SimulationRun.withTransaction { status ->
                 SimulationRun run = SimulationRun.get(simulationRun.id) as SimulationRun
                 Parameterization parameterization = ModellingItemFactory.getParameterization(run?.parameterization)
                 parameterization.load(false)
-                simulationRun.periodCount.times {int index ->
+                simulationRun.periodCount.times { int index ->
                     periodLabels << parameterization.getPeriodLabel(index)
                 }
             }
         } else {
-            simulationRun?.periodCount?.times {int index ->
+            simulationRun?.periodCount?.times { int index ->
                 periodLabels << "P" + index
             }
         }

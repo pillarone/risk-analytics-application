@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
-
 import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
@@ -9,7 +8,6 @@ import org.joda.time.DateTime
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -68,8 +66,8 @@ class ModellingInformationTableTreeModelTests {
         newParameterization('Parametrization X', '11')
         CacheItemSearchService.instance.refresh()
         mainModel = new RiskAnalyticsMainModel()
-        model = new ModellingInformationTableTreeModel(mainModel)
-        model.buildTreeNodes()
+        model = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel)
+        model.initialize()
         eventConsumer = new CacheItemEventConsumer(session, 'consumer')
         model.queueService.register(eventConsumer)
         modelListener = new TestModelListener()
@@ -129,6 +127,7 @@ class ModellingInformationTableTreeModelTests {
         assertEquals '1.4.1', v141Node.abstractUIItem.item.versionNumber.toString()
     }
 
+    @Test
     void testUpdateTreeStructure() {
         ParameterizationDAO.withNewSession {
             ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
@@ -191,8 +190,7 @@ class ModellingInformationTableTreeModelTests {
     void testBatch() {
         BatchRun run = new BatchRun()
         run.name = 'testBatch'
-        BatchUIItem batchUIItem = new BatchUIItem(mainModel, run)
-        model.addNodeForItem(batchUIItem)
+        model.newBatchAdded(run)
         IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
         assertEquals(1, batchNode.childCount)
         assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0), 0))
@@ -217,23 +215,6 @@ class ModellingInformationTableTreeModelTests {
 
         assertNotSame(oldModelNode, newModelNode)
         assertNotSame(oldParamsNode, newParamsNode)
-    }
-
-    @Test
-    void testReturnedInstance() {
-        UserContext.metaClass.static.hasCurrentUser = { ->
-            true
-        }
-        ModellingInformationTableTreeModel model = ModellingInformationTableTreeModel.getInstance(mainModel)
-        assertTrue(model instanceof ModellingInformationTableTreeModel)
-        assertFalse(model instanceof StandaloneTableTreeModel)
-        UserContext.metaClass.static.hasCurrentUser = { ->
-            false
-        }
-        assertEquals(8, model.columnCount)
-        model = ModellingInformationTableTreeModel.getInstance(mainModel)
-        assertTrue(model instanceof StandaloneTableTreeModel)
-        assertEquals(4, model.columnCount)
     }
 
     @Test
@@ -320,6 +301,7 @@ class ModellingInformationTableTreeModelTests {
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
 
+    @Test
     void testItemInstanceIdentity() {
         newParameterization('Parametrization X', '12')
         ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '12')

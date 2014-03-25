@@ -1,5 +1,6 @@
 import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
 import org.pillarone.riskanalytics.application.ui.ULCScope
+import org.pillarone.riskanalytics.application.ui.base.model.UserDependentNavigationTreeModelFactory
 import org.pillarone.riskanalytics.application.ui.main.view.*
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueViewModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
@@ -55,6 +56,8 @@ ULC view
         cardPaneManager(CardPaneManager) { ulcScopeWired(it) }
         simulationQueueViewModel(SimulationQueueViewModel) { ulcScopeWired(it) }
         simulationQueueView(SimulationQueueView) { ulcScopeWired(it) }
+        userDependentNavigationTreeModelFactory(UserDependentNavigationTreeModelFactory)
+        navigationTableTreeModel(userDependentNavigationTreeModelFactory: 'createModel') { ulcScopeWired(it) }
     }
 
     def doWithDynamicMethods = { ctx -> }

@@ -15,7 +15,7 @@ class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
 
     @Override
     ULCComponent createContentPane() {
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel(null)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         cardPaneManager = new CardPaneManager(riskAnalyticsMainModel: mainModel)
         def content = new ULCBoxPane()
         content.add(cardPaneManager.cardPane)
