@@ -6,7 +6,7 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
 
     private List<T> backedList
 
-    private List<ISimulationOrderChangedListener> listeners;
+    private List<IOrderChangedListener> listeners;
 
     @Override
     int getRowCount() {
@@ -18,11 +18,11 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
         listeners = []
     }
 
-    void addOrderChangedListener(ISimulationOrderChangedListener listener) {
+    void addOrderChangedListener(IOrderChangedListener listener) {
         listeners.add(listener)
     }
 
-    void removedOrderChangedListener(ISimulationOrderChangedListener listener) {
+    void removedOrderChangedListener(IOrderChangedListener listener) {
         listeners.remove(listener)
     }
 
@@ -49,7 +49,7 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
         return true
     }
 
-    private List<ISimulationOrderChangedListener> fireSortedEvent(SortedEvent<T> event) {
+    private List<IOrderChangedListener> fireSortedEvent(SortedEvent<T> event) {
         listeners.each { it.orderChanged(event) }
     }
 
@@ -60,5 +60,9 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
 
     List<T> getBackedList() {
         return backedList
+    }
+
+    interface IOrderChangedListener {
+        void orderChanged(SortedEvent event)
     }
 }

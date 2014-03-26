@@ -1,12 +1,13 @@
 import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
-import org.pillarone.riskanalytics.application.ui.ULCScope
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.UserDependentNavigationTreeModelFactory
 import org.pillarone.riskanalytics.application.ui.main.view.*
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueEventService
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueViewModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
 import org.springframework.beans.factory.config.CustomScopeConfigurer
 
-import static ULCScope.ULC_SCOPE
+import static UlcSessionScope.ULC_SESSION_SCOPE
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
@@ -38,16 +39,17 @@ ULC view
     }
 
     def doWithSpring = {
-        ulcScope(ULCScope)
+        ulcSessionScope(UlcSessionScope)
         customScopeConfigurer(CustomScopeConfigurer) {
             Map<String, Object> scopeMap = new HashMap<String, Object>()
-            scopeMap[ULC_SCOPE] = ref('ulcScope')
+            scopeMap[ULC_SESSION_SCOPE] = ref('ulcSessionScope')
             scopes = scopeMap
         }
         Closure ulcScopeWired = { BeanConfiguration conf ->
-            conf.scope = ULC_SCOPE
+            conf.scope = ULC_SESSION_SCOPE
             conf.autowire = 'byName'
         }
+        simulationQueueEventService(SimulationQueueEventService) { ulcScopeWired(it) }
         riskAnalyticsMainModel(RiskAnalyticsMainModel) { ulcScopeWired(it) }
         riskAnalyticsMainView(RiskAnalyticsMainView) { ulcScopeWired(it) }
         modelIndependentDetailView(ModelIndependentDetailView) { ulcScopeWired(it) }

@@ -12,4 +12,5 @@ class P1RATAppletViewFactory extends P1RATViewFactory {
     protected ULCRootPane createRootPane() {
         return ULCAppletPane.instance
     }
+
 }

@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.environment
 
 import com.canoo.ulc.community.locale.server.ULCClientTimeZoneSetter
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.BorderFactory
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCRootPane
@@ -17,13 +18,13 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
-import com.ulcjava.applicationframework.application.ApplicationContext
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 
 import static com.ulcjava.base.shared.IDefaults.BOX_EXPAND_EXPAND
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_NAME
@@ -91,6 +92,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     abstract protected ULCRootPane createRootPane()
 
     void stop() {
+        UlcSessionScope.destroy()
         cacheItemEventQueueService.unregisterAllConsumersForSession(ULCSession.currentSession())
         traceLogManager.deactivateLogging()
     }

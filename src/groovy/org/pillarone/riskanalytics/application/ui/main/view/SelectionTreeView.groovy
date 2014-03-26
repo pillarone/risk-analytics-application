@@ -45,7 +45,6 @@ class SelectionTreeView {
 
     @PostConstruct
     void initialize() {
-        println(riskAnalyticsMainModel)
         initTree()
         initComponents()
         layoutComponents()

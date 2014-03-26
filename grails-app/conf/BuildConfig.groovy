@@ -33,7 +33,7 @@ grails.project.dependency.resolution = {
         runtime ":release:3.0.1", {
             excludes "groovy"
         }
-        runtime ":quartz:0.4.2"
+        runtime ":quartz:1.0.1"
         runtime ":spring-security-core:2.0-RC2"
 
         compile "com.canoo:ulc:${ulcVersion}"
@@ -50,7 +50,9 @@ grails.project.dependency.resolution = {
 
     dependencies {
         runtime "mysql:mysql-connector-java:5.1.20"
-        compile(group: 'com.canoo.ulc.ext.ULCMigLayout', name: 'ULCMigLayout-client', version: "1.0") { transitive = false }
+        compile(group: 'com.canoo.ulc.ext.ULCMigLayout', name: 'ULCMigLayout-client', version: "1.0") {
+            transitive = false
+        }
         compile group: 'com.miglayout', name: 'miglayout', version: "3.7.3.1"
 
         //required for ulc tests

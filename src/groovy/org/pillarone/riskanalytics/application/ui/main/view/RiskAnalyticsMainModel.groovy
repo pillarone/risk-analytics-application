@@ -20,6 +20,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
+import javax.annotation.PreDestroy
 import java.beans.PropertyChangeListener
 
 class RiskAnalyticsMainModel extends AbstractPresentationModel {

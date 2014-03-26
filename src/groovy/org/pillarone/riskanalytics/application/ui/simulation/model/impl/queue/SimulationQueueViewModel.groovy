@@ -1,64 +1,33 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
-import com.ulcjava.base.application.table.ITableModel
-import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.engine.*
 
 import javax.annotation.PostConstruct
 
 class SimulationQueueViewModel {
-    SimulationQueueService simulationQueueService
-    ITableModel queueTableModel
+    SimulationQueueEventService simulationQueueEventService
+    SimulationRuntimeService simulationRuntimeService
+    SimulationQueueTableModel queueTableModel
 
     @PostConstruct
     void initialize() {
-        queueTableModel = new SimulationQueueTableModel(queueItems)
+        queueTableModel = new SimulationQueueTableModel(simulationRuntimeService.queued)
     }
 
-    private List<IQueueItem> getQueueItems() {
-        simulationQueueService.sortedQueueEntries.collect {
-            new IQueueItem() {
-                @Override
-                Simulation getSimulation() {
-                    it.simulationConfiguration.simulation
-                }
-
-                @Override
-                String getBatchRun() {
-                    ""
-                }
-
-                @Override
-                String getP14n() {
-                    simulation.parameterization.toString()
-                }
-
-                @Override
-                String getResultConfiguration() {
-                    simulation.template?.toString()
-                }
-
-                @Override
-                Integer getIterations() {
-                    simulation.numberOfIterations
-                }
-
-                @Override
-                Integer getPriority() {
-                    it.priority
-                }
-
-                @Override
-                String getAddedBy() {
-                    ""
-                }
-
-                @Override
-                String getConfiguredAt() {
-                    ""
-                }
+    void update() {
+        List<SimulationRuntimeInfoEvent> events = simulationQueueEventService.poll()
+        events.each { SimulationRuntimeInfoEvent event ->
+            switch (event.class) {
+                case (AddSimulationRuntimeInfoEvent):
+                    AddSimulationRuntimeInfoEvent addEvent = event as AddSimulationRuntimeInfoEvent
+                    queueTableModel.addItem(event.info, addEvent.index)
+                    break;
+                case (DeleteSimulationRuntimeInfoEvent):
+                    queueTableModel.removeItem(event.info.id)
+                    break;
+                case (ChangeSimulationRuntimeInfoEvent):
+                    queueTableModel.itemChanged(event.info)
             }
-
         }
     }
 }

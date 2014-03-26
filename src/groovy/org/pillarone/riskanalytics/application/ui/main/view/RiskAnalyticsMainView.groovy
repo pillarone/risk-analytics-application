@@ -76,7 +76,6 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         splitBetweenModelPaneAndIndependentPane.bottomComponent = modelIndependentDetailView.content
         splitBetweenModelPaneAndIndependentPane.oneTouchExpandable = true
         splitBetweenModelPaneAndIndependentPane.resizeWeight = 1
-        splitBetweenModelPaneAndIndependentPane.dividerLocationAnimationEnabled
         splitBetweenModelPaneAndIndependentPane.dividerSize = 10
         splitPane.rightComponent = splitBetweenModelPaneAndIndependentPane
 

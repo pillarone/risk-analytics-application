@@ -52,6 +52,18 @@ class P1RATApplication extends Application {
         traceLogManager.activateLogging()
     }
 
+    @Override
+    void stop() {
+        UlcSessionScope.destroy()
+        super.stop()
+    }
+
+    @Override
+    void stop(Throwable reason) {
+        UlcSessionScope.destroy()
+        super.stop(reason)
+    }
+
     private void initializeInjection() {
         AutowireCapableBeanFactory factory = Holders.grailsApplication.mainContext.autowireCapableBeanFactory
         factory.initializeBean(context, 'ulcApplicationContext')
