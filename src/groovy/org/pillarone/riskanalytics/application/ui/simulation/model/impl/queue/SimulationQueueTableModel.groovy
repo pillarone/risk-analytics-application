@@ -18,7 +18,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     @Override
     int getColumnCount() {
-        return 8
+        return 9
     }
 
     @Override
@@ -73,7 +73,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
     void itemChanged(SimulationRuntimeInfo info) {
         def index = queueItems.indexOf(info)
         //only update cells which can change:
-        fireTableCellUpdated(index, 6)
         fireTableCellUpdated(index, 7)
+        fireTableCellUpdated(index, 8)
     }
 }
