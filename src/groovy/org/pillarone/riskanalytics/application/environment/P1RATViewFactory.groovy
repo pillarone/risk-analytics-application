@@ -74,7 +74,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     private void addTerminationListener() {
         ApplicationContext.addRoundTripListener([roundTripDidStart: { def event -> },
                 roundTripWillEnd: { RoundTripEvent event ->
-                    if (!loggedIn) {
+                    if (!springSecurityService.loggedIn) {
                         terminate()
                     }
                 }
@@ -83,10 +83,6 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     private void terminate() {
         com.ulcjava.base.application.ApplicationContext.terminate()
-    }
-
-    private boolean isLoggedIn() {
-        springSecurityService.loggedIn
     }
 
     abstract protected ULCRootPane createRootPane()
