@@ -9,9 +9,9 @@
     <property name="resources.prod.dir" value="src/java" />
     <property name="webapp.lib.dir" value="web-app/lib" />
 
-    <property name="GRAILS_JVM_OPTS" value="-Xmx1024m -XX:MaxPermSize=512m -Duser.language='en'" />
+    <property name="GRAILS_JVM_OPTS" value="-Xmx2g -XX:MaxPermSize=512m -Duser.language='en'" />
 
-    <get src="https://github.com/pillarone/risk-analytics-core/raw/master/scripts/build.xml" dest="_build.xml" skipexisting="true" />
+    <get src="https://raw.githubusercontent.com/pillarone/risk-analytics-core/master/scripts/build.xml" dest="_build.xml" skipexisting="true" ignoreerrors="true"/>
 
     <copy tofile="_build.xml" overwrite="true" failonerror="false">
         <fileset dir=".." includes="local-plugins/${app.name}-master/risk-analytics-core*/scripts/build.xml" />
