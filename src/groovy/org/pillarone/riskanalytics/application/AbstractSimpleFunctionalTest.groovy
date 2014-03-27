@@ -1,20 +1,15 @@
 package org.pillarone.riskanalytics.application
-
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
-import org.pillarone.riskanalytics.core.search.CacheItemSearchService
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.ModelStructureDAO
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.ModelDAO
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.application.util.prefs.impl.MockUserPreferences
+import org.pillarone.riskanalytics.core.*
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.output.SingleValueResult
+import org.pillarone.riskanalytics.core.user.Person
 import org.pillarone.riskanalytics.core.workflow.AuditLog
 
 abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTestCase {
@@ -54,7 +49,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
             ModelDAO.list()*.delete()
             session.flush()
         }
-        CacheItemSearchService.instance.refresh()
+        Holders.grailsApplication.mainContext.cacheItemSearchService.refresh()
         super.tearDown()
     }
 

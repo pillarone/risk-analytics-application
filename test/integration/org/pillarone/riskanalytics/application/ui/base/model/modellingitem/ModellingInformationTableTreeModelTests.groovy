@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
+
 import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
@@ -13,17 +14,18 @@ import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListen
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.example.model.EmptyModel
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -33,16 +35,17 @@ import static org.junit.Assert.*
 
 class ModellingInformationTableTreeModelTests {
 
-    ModellingInformationTableTreeModel model
-    RiskAnalyticsMainModel mainModel
-    def session = new Object()
-    CacheItemEventConsumer eventConsumer
+    private ModellingInformationTableTreeModel model
+    private RiskAnalyticsMainModel mainModel
     private TestModelListener modelListener
+
+    CacheItemSearchService cacheItemSearchService
+    CacheItemHibernateListener cacheItemListener
 
     @Before
     void setUp() {
-        CacheItemSearchService.instance.cleanUp()
-        CacheItemSearchService.instance.init()
+        cacheItemSearchService.cleanUp()
+        cacheItemSearchService.init()
 
         ModellingItemFactory.clear()
         LocaleResources.testMode = true
@@ -64,12 +67,12 @@ class ModellingInformationTableTreeModelTests {
         newParameterization('Parametrization X', '9')
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
-        CacheItemSearchService.instance.refresh()
+        cacheItemSearchService.refresh()
         mainModel = new RiskAnalyticsMainModel()
-        model = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel)
+        CacheItemEventQueue queue = new CacheItemEventQueue(cacheItemListener: cacheItemListener)
+        queue.init()
+        model = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeModelQueue: queue)
         model.initialize()
-        eventConsumer = new CacheItemEventConsumer(session, 'consumer')
-        model.queueService.register(eventConsumer)
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
     }
@@ -86,7 +89,6 @@ class ModellingInformationTableTreeModelTests {
     @After
     void tearDown() {
         LocaleResources.testMode = false
-        model.queueService.unregisterAllConsumersForSession(session)
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
     }
@@ -135,7 +137,7 @@ class ModellingInformationTableTreeModelTests {
         }
         TestModelChangedListener listener = new TestModelChangedListener()
         mainModel.addModelChangedListener(listener)
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assertTrue(listener.changeCalled)
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
@@ -151,14 +153,14 @@ class ModellingInformationTableTreeModelTests {
             parameterizationDAO.status = Status.IN_REVIEW
             parameterizationDAO.save(flush: true)
         }
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
 
         ParameterizationDAO.withNewSession {
             ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion('Parametrization X', '12')
             parameterizationDAO.delete(flush: true)
         }
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assertEquals(2, paramsNode.childCount)
         def v11Node = paramsNode.getChildAt(1)
         assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
@@ -172,7 +174,7 @@ class ModellingInformationTableTreeModelTests {
             run.model = 'models.application.ApplicationModel'
             run.save(flush: true)
         }
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assertEquals(1, resultsNode.childCount)
 
     }
@@ -235,7 +237,7 @@ class ModellingInformationTableTreeModelTests {
             run.save(flush: true)
         }
 
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         // expect one nodeStructure changed on simulation node
         assert 1 == modelListener.nodeStructureChangedEvents.size()
         modelListener.reset()
@@ -252,7 +254,7 @@ class ModellingInformationTableTreeModelTests {
             run.save(flush: true)
         }
 
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assert 1 == modelListener.nodeInsertedEvents.size()
         modelListener.reset()
 
@@ -261,7 +263,7 @@ class ModellingInformationTableTreeModelTests {
             parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
             parameterizationDAO.save(flush: true)
         }
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assert 3 == modelListener.nodeChangedEvents.size()
 
         //assert that tree contains the simulation nodes and the child nodes.
@@ -296,7 +298,7 @@ class ModellingInformationTableTreeModelTests {
             ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
             parameterizationDAO.save(flush: true)
         }
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
@@ -305,7 +307,7 @@ class ModellingInformationTableTreeModelTests {
     void testItemInstanceIdentity() {
         newParameterization('Parametrization X', '12')
         ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '12')
-        model.updateTreeStructure(eventConsumer)
+        model.updateTreeStructure()
         IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
         ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v12') as ParameterizationNode
         assertNotNull(paramsNode)

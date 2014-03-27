@@ -1,25 +1,23 @@
 package org.pillarone.riskanalytics.functional.main
-
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.testframework.operator.ULCButtonOperator
 import com.ulcjava.testframework.operator.ULCFileChooserOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import com.ulcjava.testframework.operator.ULCTextFieldOperator
-import org.pillarone.riskanalytics.core.search.CacheItemSearchService
-
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
+import javax.swing.tree.TreePath
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ExportParametrizationTests extends AbstractFunctionalTestCase {
+
     @Override
     void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
-        CacheItemSearchService.instance.refresh()
         super.setUp()
+        cacheItemSearchService.refresh()
     }
 
     @Override
@@ -35,7 +33,7 @@ class ExportParametrizationTests extends AbstractFunctionalTestCase {
 
         ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
         int coreRow = tree.getRowForPath(tree.findPath(['Core'] as String[]))
-        int coreParamRow = tree.getRowForPath(tree.findPath(['Core','Parameterization'] as String[]))
+        int coreParamRow = tree.getRowForPath(tree.findPath(['Core', 'Parameterization'] as String[]))
         TreePath parametrizationPath = tree.findPath(["Core", "Parameterization", parameterizationName] as String[])
         assertNotNull "path not found", parametrizationPath
 

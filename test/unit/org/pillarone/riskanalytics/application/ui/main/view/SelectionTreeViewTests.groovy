@@ -6,19 +6,11 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.testframework.operator.ULCMenuItemOperator
 import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import grails.util.Holders
-import org.codehaus.groovy.grails.commons.DefaultGrailsApplication
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.codehaus.groovy.grails.support.MockApplicationContext
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
-import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
-import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
-import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.springframework.context.ApplicationContext
 
 import javax.swing.tree.TreePath
 
@@ -28,21 +20,10 @@ import javax.swing.tree.TreePath
 class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
-        mockApplicationContext()
         def model = mockRiskAnalyticsMainModel
         def view = new SelectionTreeView(riskAnalyticsMainModel: model, navigationTableTreeModel: getMockTreeModel(model))
         view.initialize()
         view.content;
-    }
-
-    private void mockApplicationContext() {
-        ApplicationContext mainContext = new MockApplicationContext()
-        mainContext.registerMockBean("cacheItemSearchService", new CacheItemSearchService())
-        def cacheItemEventQueueService = new CacheItemEventQueueService(cacheItemListener: new CacheItemHibernateListener())
-        cacheItemEventQueueService.init()
-        mainContext.registerMockBean("cacheItemEventQueueService", cacheItemEventQueueService)
-        GrailsApplication application = new DefaultGrailsApplication(mainContext: mainContext)
-        Holders.grailsApplication = application
     }
 
     @Override

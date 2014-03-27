@@ -1,21 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.testframework.operator.*
+import grails.util.Holders
 import org.hibernate.Session
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
-import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
 import javax.swing.tree.TreePath
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -28,7 +25,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
     void setUp() {
         FileImportService.importModelsIfNeeded(["Core"])
-        CacheItemSearchService.getInstance().refresh()
+        Holders.grailsApplication.mainContext.cacheItemSearchService.refresh()
         ModellingItemFactory.clear()
         LocaleResources.setTestMode(true)
         removeTags()

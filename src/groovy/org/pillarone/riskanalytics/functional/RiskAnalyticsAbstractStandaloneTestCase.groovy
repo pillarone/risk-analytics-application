@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.functional
-
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory

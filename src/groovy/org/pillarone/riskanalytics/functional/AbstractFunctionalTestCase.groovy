@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.functional
 
 import com.ulcjava.base.server.ApplicationConfiguration
 import com.ulcjava.testframework.operator.*
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.core.fileimport.ModelFileImportService
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -17,14 +18,16 @@ import javax.swing.tree.TreePath
 class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase {
 
     ULCFrameOperator mainFrameOperator
+    CacheItemSearchService cacheItemSearchService
 
     void setUp() {
+        cacheItemSearchService = Holders.grailsApplication.mainContext.cacheItemSearchService
         ApplicationConfiguration.reset()
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         new ModelStructureImportService().compareFilesAndWriteToDB(["Core"])
         new ModelFileImportService().compareFilesAndWriteToDB(["Core"])
         ModelRegistry.instance.loadFromDatabase()
-        CacheItemSearchService.instance.refresh()
+        cacheItemSearchService.refresh()
         super.setUp()
     }
 

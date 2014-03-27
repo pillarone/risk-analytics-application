@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
@@ -13,7 +12,6 @@ import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
-import com.ulcjava.base.server.ULCSession
 import com.ulcjava.base.shared.IDefaults
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
@@ -24,11 +22,8 @@ import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
-import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
 
 import javax.annotation.PostConstruct
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -36,7 +31,6 @@ class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
-    CacheItemEventConsumer eventConsumer
     RiskAnalyticsMainModel riskAnalyticsMainModel
     ModellingItemSelectionListener modellingItemSelectionListener
     ModellingInformationTableTreeModel navigationTableTreeModel
@@ -58,13 +52,11 @@ class SelectionTreeView {
         treeSyncTimer = new ULCPollingTimer(2000, [
                 actionPerformed: { evt ->
                     modellingItemSelectionListener.rememberSelectionState()
-                    navigationTableTreeModel.updateTreeStructure(eventConsumer)
+                    navigationTableTreeModel.updateTreeStructure()
                     modellingItemSelectionListener.flushSelectionState()
 
                 }] as IActionListener)
         treeSyncTimer.syncClientState = false
-        eventConsumer = new CacheItemEventConsumer(ULCSession.currentSession(), treeSyncTimer)
-        CacheItemEventQueueService.instance.register(eventConsumer)
     }
 
     private void layoutComponents() {

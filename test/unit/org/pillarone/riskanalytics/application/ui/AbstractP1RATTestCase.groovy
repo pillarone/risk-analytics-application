@@ -12,12 +12,13 @@ import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.example.parameter.ExampleResourceConstraints
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
 import org.pillarone.riskanalytics.core.parameterization.ConstraintsFactory
-import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -108,7 +109,9 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
     }
 
     protected ModellingInformationTableTreeModel getMockTreeModel(RiskAnalyticsMainModel mainModel) {
-        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel)
+        CacheItemEventQueue queue = new CacheItemEventQueue(cacheItemListener: new CacheItemHibernateListener())
+        queue.init()
+        ModellingInformationTableTreeModel treeModel = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel, navigationTableTreeModelQueue: queue)
         treeModel.builder = new ModellingInformationTableTreeBuilder(treeModel, mainModel)
         treeModel.builder.metaClass.getAllModelClasses = { ->
             [ApplicationModel]
@@ -117,7 +120,7 @@ abstract class AbstractP1RATTestCase extends AbstractSimpleStandaloneTestCase {
         treeModel.builder.metaClass.getAllBatchRuns = { ->
             [new BatchRun(name: "test")]
         }
-        treeModel.metaClass.getPendingEvents = { CacheItemEventConsumer consumer ->
+        treeModel.metaClass.getPendingEvents = { Object consumer ->
             []
         }
         treeModel.metaClass.getFilteredItems = { ->

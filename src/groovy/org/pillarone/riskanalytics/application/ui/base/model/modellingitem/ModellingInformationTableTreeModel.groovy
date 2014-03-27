@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
+
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -15,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
 import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -23,8 +25,6 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
-import org.pillarone.riskanalytics.core.search.CacheItemEventConsumer
-import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -37,12 +37,9 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
 
     static List<String> COLUMN_NAMES = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
-    @Lazy
-    CacheItemEventQueueService queueService = CacheItemEventQueueService.instance
-    @Lazy
-    CacheItemSearchService searchService = CacheItemSearchService.instance
-
-    ModellingInformationTableTreeBuilder builder
+    CacheItemEventQueue navigationTableTreeModelQueue
+    CacheItemSearchService cacheItemSearchService
+    protected ModellingInformationTableTreeBuilder builder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
     RiskAnalyticsMainModel riskAnalyticsMainModel
     Map columnValues = [:]
@@ -96,7 +93,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     }
 
     public List<ModellingItem> getFilteredItems() {
-        ModellingItemFactory.getOrCreateModellingItems(searchService.search(currentFilter.toQuery()))
+        ModellingItemFactory.getOrCreateModellingItems(cacheItemSearchService.search(currentFilter.toQuery()))
     }
 
     Object getValueAt(Object node, int i) {
@@ -180,10 +177,10 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     private addColumnValue(def item, def node, int column, Object value) {
     }
 
-    public void updateTreeStructure(CacheItemEventConsumer consumer) {
+    public void updateTreeStructure() {
         //only update tree for items which are accepted by the current filter.
         //for deleted elements we also have to update the tree, because the items for deletion are not fully mapped, so it could be that the filter does not work correctly.
-        def events = getPendingEvents(consumer)
+        def events = getPendingEvents()
         eachNotFilteredOrDeleted(events) { ItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ADDED:
@@ -218,8 +215,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
         }
     }
 
-    public List<ItemEvent> getPendingEvents(CacheItemEventConsumer consumer) {
-        queueService.pollCacheItemEvents(consumer).collect { CacheItemEvent event ->
+    public List<ItemEvent> getPendingEvents() {
+        navigationTableTreeModelQueue.pollCacheItemEvents().collect { CacheItemEvent event ->
             ModellingItem modellingItem
             if (event.eventType == REMOVED) {
                 modellingItem = ModellingItemFactory.getOrCreateModellingItem(event.item)
@@ -249,7 +246,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     }
 
     private void refreshService() {
-        searchService.refresh()
+        cacheItemSearchService.refresh()
         ModellingItemFactory.clear()
     }
 

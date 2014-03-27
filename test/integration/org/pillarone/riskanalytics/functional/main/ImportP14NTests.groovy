@@ -16,7 +16,6 @@ class ImportP14NTests extends AbstractFunctionalTestCase {
 
     public void testImportParametrization() {
         ULCTableTreeOperator tree = selectionTableTreeRowHeader
-
         pushKeyOnPath(tree, tree.findPath(["Core", "Parameterization"] as String[]), KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK)
         ULCFileChooserOperator fileChooserOperator = ULCFileChooserOperator.findULCFileChooser()
         assertNotNull(fileChooserOperator)

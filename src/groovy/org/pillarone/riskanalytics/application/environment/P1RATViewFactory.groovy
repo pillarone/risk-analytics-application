@@ -9,7 +9,6 @@ import com.ulcjava.base.application.ULCRootPane
 import com.ulcjava.base.application.event.IRoundTripListener
 import com.ulcjava.base.application.event.RoundTripEvent
 import com.ulcjava.base.application.util.BorderedComponentUtilities
-import com.ulcjava.base.server.ULCSession
 import com.ulcjava.container.grails.UlcViewFactory
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.util.Holders
@@ -23,8 +22,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainVie
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
-import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 
 import static com.ulcjava.base.shared.IDefaults.BOX_EXPAND_EXPAND
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_NAME
@@ -38,10 +35,9 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     TraceLogManager traceLogManager
     RiskAnalyticsMainView riskAnalyticsMainView
     SpringSecurityService springSecurityService
-    CacheItemEventQueueService cacheItemEventQueueService
 
     public ULCRootPane create(ApplicationContext applicationContext) {
-        initializeInjection(applicationContext)
+        initializeInjection()
         addTerminationListener()
         String username = UserContext.currentUser?.username;
         LOG.info "Started session for user '${username}'"
@@ -65,10 +61,8 @@ abstract class P1RATViewFactory implements UlcViewFactory {
         return frame
     }
 
-    private void initializeInjection(ApplicationContext context) {
-        AutowireCapableBeanFactory factory = Holders.grailsApplication.mainContext.autowireCapableBeanFactory
-        factory.initializeBean(context, 'ulcApplicationContext')
-        factory.autowireBeanProperties(this, AUTOWIRE_BY_NAME, false);
+    private void initializeInjection() {
+        Holders.grailsApplication.mainContext.autowireCapableBeanFactory.autowireBeanProperties(this, AUTOWIRE_BY_NAME, false)
     }
 
     private void addTerminationListener() {
@@ -89,7 +83,6 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     void stop() {
         UlcSessionScope.destroy()
-        cacheItemEventQueueService.unregisterAllConsumersForSession(ULCSession.currentSession())
         traceLogManager.deactivateLogging()
     }
 

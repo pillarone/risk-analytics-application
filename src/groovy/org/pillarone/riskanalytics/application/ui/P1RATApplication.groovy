@@ -7,7 +7,6 @@ import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.Dimension
-import com.ulcjava.base.server.ULCSession
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -18,9 +17,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainVie
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
-import org.pillarone.riskanalytics.core.search.CacheItemEventQueueService
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory
 
 import static com.ulcjava.base.shared.IWindowConstants.DO_NOTHING_ON_CLOSE
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_NAME
@@ -35,7 +32,6 @@ class P1RATApplication extends Application {
     RiskAnalyticsMainView riskAnalyticsMainView
     ModellingInformationTableTreeModel navigationTableTreeModel
     TraceLogManager traceLogManager
-    CacheItemEventQueueService cacheItemEventQueueService
 
     protected void startup() {
         initializeInjection()
@@ -65,9 +61,7 @@ class P1RATApplication extends Application {
     }
 
     private void initializeInjection() {
-        AutowireCapableBeanFactory factory = Holders.grailsApplication.mainContext.autowireCapableBeanFactory
-        factory.initializeBean(context, 'ulcApplicationContext')
-        factory.autowireBeanProperties(this, AUTOWIRE_BY_NAME, false)
+        Holders.grailsApplication.mainContext.autowireCapableBeanFactory.autowireBeanProperties(this, AUTOWIRE_BY_NAME, false)
     }
 
     private void initMainView() {
@@ -90,12 +84,8 @@ class P1RATApplication extends Application {
     }
 
     private void windowClosing() {
-        def session = ULCSession.currentSession()
-        cacheItemEventQueueService.unregisterAllConsumersForSession(session)
         ModelRegistry.instance.removeListener(navigationTableTreeModel)
         traceLogManager.deactivateLogging()
         ApplicationContext.terminate()
     }
-
-
 }

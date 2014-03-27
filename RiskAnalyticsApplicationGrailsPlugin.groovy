@@ -1,7 +1,10 @@
+import com.ulcjava.applicationframework.application.ApplicationContext
 import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.UserDependentNavigationTreeModelFactory
 import org.pillarone.riskanalytics.application.ui.main.view.*
+import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
+import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueEventService
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueViewModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
@@ -59,7 +62,9 @@ ULC view
         simulationQueueViewModel(SimulationQueueViewModel) { ulcScopeWired(it) }
         simulationQueueView(SimulationQueueView) { ulcScopeWired(it) }
         userDependentNavigationTreeModelFactory(UserDependentNavigationTreeModelFactory)
+        ulcApplicationContext(ApplicationContext) { ulcScopeWired(it) }
         navigationTableTreeModel(userDependentNavigationTreeModelFactory: 'createModel') { ulcScopeWired(it) }
+        navigationTableTreeModelQueue(CacheItemEventQueue) { ulcScopeWired(it) }
     }
 
     def doWithDynamicMethods = { ctx -> }

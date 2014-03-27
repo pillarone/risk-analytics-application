@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui
 
-import com.ulcjava.base.application.ApplicationContext
+import com.ulcjava.applicationframework.application.Application
+import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.server.ULCSession
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.config.Scope
@@ -9,6 +10,7 @@ class UlcSessionScope implements Scope {
 
     public static final String ULC_SESSION_SCOPE = 'ulcSessionScope'
     public static final String CALL_BACK_MAP = 'callBackMap'
+    public static final String ULC_APPLICATION_CONTEXT = 'ulcApplicationContext'
 
     @Override
     Object get(String name, ObjectFactory<?> objectFactory) {
@@ -49,10 +51,11 @@ class UlcSessionScope implements Scope {
         destructionCallbackMap.values().each { it.run() }
     }
 
-    private static Map<String, Object> getScopeMap() {
+    static Map<String, Object> getScopeMap() {
         Map<String, Object> scopeMap = ApplicationContext.getAttribute(ULC_SESSION_SCOPE) as Map
         if (scopeMap == null) {
             scopeMap = [:]
+            scopeMap[ULC_APPLICATION_CONTEXT] = currentApplicationContext
             ApplicationContext.setAttribute(ULC_SESSION_SCOPE, scopeMap)
         }
         scopeMap
@@ -65,5 +68,9 @@ class UlcSessionScope implements Scope {
             ApplicationContext.setAttribute(CALL_BACK_MAP, callBackMap)
         }
         callBackMap
+    }
+
+    private static ApplicationContext getCurrentApplicationContext() {
+        (ULCSession.currentSession().application as Application).context
     }
 }
