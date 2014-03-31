@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
@@ -56,6 +57,8 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     ModelIndependentDetailView modelIndependentDetailView
     @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
+    @Resource(name = 'ulcApplicationContext')
+    ApplicationContext applicationContext
 
     private ToggleSplitPaneAction navigationSplitPaneAction
     private ToggleSplitPaneAction modelIndependentSplitPaneAction
@@ -116,7 +119,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         content.addCard(DEFAULT_CARD_NAME, mainCard)
         headerView.addWindowMenuEntry(DEFAULT_CARD_NAME, content, true)
         WindowRegistry.allWindows.each { String key, ComponentCreator value ->
-            content.addCard(key, value.createComponent(riskAnalyticsMainModel.ulcApplicationContext))
+            content.addCard(key, value.createComponent(applicationContext))
             headerView.addWindowMenuEntry(key, content, false)
         }
         headerView.windowMenu.addSeparator()
