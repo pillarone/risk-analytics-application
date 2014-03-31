@@ -196,7 +196,11 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     @Override
     String toString() {
-        return "Selected paths: ${tree?.selectedPaths}"
+        int num = 0;
+        if( tree != null && tree.selectedPaths != null ){
+            num = tree.selectedPaths.length;
+        }
+        return "Selected paths ($num): ${tree?.selectedPaths}"
     }
 }
 
