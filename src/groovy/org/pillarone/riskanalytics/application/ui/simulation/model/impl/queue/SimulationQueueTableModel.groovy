@@ -2,14 +2,15 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import com.ulcjava.base.application.table.AbstractTableModel
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
+@Scope('ulcSessionScope')
+@Component
 class SimulationQueueTableModel extends AbstractTableModel {
 
-    private List<SimulationRuntimeInfo> queueItems = []
+    private final List<SimulationRuntimeInfo> queueItems = []
 
-    SimulationQueueTableModel(List<SimulationRuntimeInfo> infos) {
-        this.queueItems.addAll(infos)
-    }
 
     @Override
     int getRowCount() {
@@ -56,12 +57,18 @@ class SimulationQueueTableModel extends AbstractTableModel {
         }
     }
 
-    void addItem(SimulationRuntimeInfo item, int index) {
+    void setQueueItems(List<SimulationRuntimeInfo> queueItems) {
+        this.queueItems.clear()
+        this.queueItems.addAll(queueItems)
+        fireTableDataChanged()
+    }
+
+    void itemAdded(SimulationRuntimeInfo item, int index) {
         queueItems.add(index, item)
         fireTableRowsInserted(index, index)
     }
 
-    void removeItem(UUID id) {
+    void itemRemoved(UUID id) {
         def item = queueItems.find { it.id == id }
         if (item) {
             def index = queueItems.indexOf(item)
@@ -72,8 +79,10 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     void itemChanged(SimulationRuntimeInfo info) {
         def index = queueItems.indexOf(info)
-        //only update cells which can change:
-        fireTableCellUpdated(index, 7)
-        fireTableCellUpdated(index, 8)
+        if (index != -1) {
+            //only update cells which can change:
+            fireTableCellUpdated(index, 7)
+            fireTableCellUpdated(index, 8)
+        }
     }
 }

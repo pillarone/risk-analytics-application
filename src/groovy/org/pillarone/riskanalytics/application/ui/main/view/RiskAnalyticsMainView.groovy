@@ -19,8 +19,11 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.Resource
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
@@ -32,19 +35,26 @@ import static com.ulcjava.base.application.ULCSplitPane.VERTICAL_SPLIT
 import static com.ulcjava.base.application.event.KeyEvent.*
 import static com.ulcjava.base.shared.IDefaults.*
 
+@Scope('ulcSessionScope')
+@Component
 class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 
     private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
-    public static final String DEFAULT_CARD_NAME = 'Main'
-    public static final String CURRENT_ITEM_PROPERTY = 'currentItem'
+    static final String DEFAULT_CARD_NAME = 'Main'
+    static final String CURRENT_ITEM_PROPERTY = 'currentItem'
     final ULCCardPane content = new ULCCardPane()
 
     //all views and main model are autowired
+    @Resource
     CardPaneManager cardPaneManager
+    @Resource
     SelectionTreeView selectionTreeView
+    @Resource
     HeaderView headerView
+    @Resource
     ModelIndependentDetailView modelIndependentDetailView
+    @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
 
     private ToggleSplitPaneAction navigationSplitPaneAction

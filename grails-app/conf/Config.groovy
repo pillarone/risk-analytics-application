@@ -31,6 +31,7 @@ grails.doc.images = new File('src/docs/images')
 
 // enabled native2ascii conversion of i18n properties files
 grails.enable.native2ascii = true
+grails.spring.bean.packages = ['org.pillarone']
 
 maxIterations = 100000
 keyFiguresToCalculate = null
@@ -74,7 +75,7 @@ log4j = {
     ]
 
     def debugPackages = [
-            'org.pillarone.riskanalytics.core.fileimport'
+            'org.pillarone.riskanalytics.core.fileimport',
     ]
 
     info(

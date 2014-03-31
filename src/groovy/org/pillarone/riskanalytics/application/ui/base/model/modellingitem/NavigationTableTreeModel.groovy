@@ -8,7 +8,6 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingInformationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -17,30 +16,39 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
 import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
-import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
+import javax.annotation.Resource
 
 import static org.pillarone.riskanalytics.core.search.CacheItemEvent.EventType.*
 
-class ModellingInformationTableTreeModel extends AbstractTableTreeModel implements IModelRegistryListener, IBatchListener {
-    protected static Log LOG = LogFactory.getLog(ModellingInformationTableTreeModel)
+@Scope('ulcSessionScope')
+@Component
+class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableTreeModelWithValues {
+    protected static final Log LOG = LogFactory.getLog(NavigationTableTreeModel)
 
-    static List<String> COLUMN_NAMES = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
+    static
+    final List<String> COLUMN_NAMES = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
+    @Resource
     CacheItemEventQueue navigationTableTreeModelQueue
+    @Autowired
     CacheItemSearchService cacheItemSearchService
-    protected ModellingInformationTableTreeBuilder builder
+    @Resource
+    NavigationTableTreeBuilder navigationTableTreeBuilder
     private ModellingTableTreeColumn enumModellingTableTreeColumn
+    @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
     Map columnValues = [:]
     int orderByColumn = -1
@@ -59,16 +67,11 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
 
     FilterDefinition currentFilter = new FilterDefinition()
 
-    private static String logTreeStructureUpdatesKey = "ModellingInformationTableTreeModel.logTreeStructureUpdates";
+    private static String logTreeStructureUpdatesKey = "NavigationTableTreeModel.logTreeStructureUpdates";
     private
     static boolean logTreeStructureUpdates = Boolean.valueOf(System.getProperty(logTreeStructureUpdatesKey, "false"));
 
-    @Override
-    ITableTreeNode getRoot() {
-        builder.root
-    }
-
-    ModellingInformationTableTreeModel() {
+    NavigationTableTreeModel() {
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
         if (logTreeStructureUpdates) {
             LOG.info("-D" + logTreeStructureUpdatesKey + " is true, will log tree structure updates");
@@ -79,20 +82,21 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
 
     @PostConstruct
     void initialize() {
-        riskAnalyticsMainModel.addBatchListener(this)
-        builder = new ModellingInformationTableTreeBuilder(this, riskAnalyticsMainModel)
-        buildTreeNodes()
+        navigationTableTreeBuilder.registerTableTreeModel(this)
+        navigationTableTreeBuilder.buildTreeNodes(filteredItems)
     }
 
-    void buildTreeNodes() {
-        builder.buildTreeNodes(filteredItems)
+    @PreDestroy
+    void destroy() {
+        navigationTableTreeBuilder.unregisterTableTreeModel()
     }
 
-    void modelAdded(Class modelClass) {
-        addNodeForItem(modelClass.newInstance() as Model)
+    @Override
+    ITableTreeNode getRoot() {
+        navigationTableTreeBuilder.root
     }
 
-    public List<ModellingItem> getFilteredItems() {
+    List<ModellingItem> getFilteredItems() {
         ModellingItemFactory.getOrCreateModellingItems(cacheItemSearchService.search(currentFilter.toQuery()))
     }
 
@@ -101,20 +105,15 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     }
 
     public def addNodeForItem(Model model) {
-        builder.addNodeForItem(model)
-    }
-
-    @Override
-    void newBatchAdded(BatchRun batchRun) {
-        builder.addNodeForItem(new BatchUIItem(riskAnalyticsMainModel, batchRun))
+        navigationTableTreeBuilder.addNodeForItem(model)
     }
 
     public String getColumnName(int i) {
-        return UIUtils.getText(ModellingInformationTableTreeModel.class, COLUMN_NAMES[getColumnIndex(i)])
+        return UIUtils.getText(NavigationTableTreeModel.class, COLUMN_NAMES[getColumnIndex(i)])
     }
 
     public String getColumnFilterName(int i) {
-        return UIUtils.getText(ModellingInformationTableTreeModel.class, COLUMN_NAMES[i])
+        return UIUtils.getText(NavigationTableTreeModel.class, COLUMN_NAMES[i])
     }
 
     protected int getColumnIndex(int column) {
@@ -153,7 +152,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
         getColumnValue(node, columnIndex)
     }
 
-    public void putValues(ItemNode node) {
+    @Override
+    void putValues(ItemNode node) {
         for (int column = 0; column < COLUMN_NAMES.size(); column++) {
             addColumnValue(node.abstractUIItem.item, node, column, getValue(node, column))
         }
@@ -184,13 +184,13 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
         eachNotFilteredOrDeleted(events) { ItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ADDED:
-                    builder.addNodeForItem(itemEvent.modellingItem)
+                    navigationTableTreeBuilder.addNodeForItem(itemEvent.modellingItem)
                     break;
                 case REMOVED:
-                    builder.removeNodeForItem(itemEvent.modellingItem)
+                    navigationTableTreeBuilder.removeNodeForItem(itemEvent.modellingItem)
                     break;
                 case UPDATED:
-                    builder.itemChanged(itemEvent.modellingItem)
+                    navigationTableTreeBuilder.itemChanged(itemEvent.modellingItem)
                     break;
             }
         }
@@ -233,14 +233,14 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     }
 
     public void removeNodeForItem(BatchUIItem batchUIItem) {
-        builder.removeNodeForItem batchUIItem
+        navigationTableTreeBuilder.removeNodeForItem batchUIItem
     }
 
     public void refresh() {
         ExceptionSafe.protect {
             refreshService()
-            builder.removeAll()
-            buildTreeNodes()
+            navigationTableTreeBuilder.removeAll()
+            navigationTableTreeBuilder.buildTreeNodes()
             nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
         }
     }
@@ -253,7 +253,7 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     public void order(int column, boolean asc) {
         orderByColumn = column
         ascOrder = asc
-        builder.order(getComparator(column, asc))
+        navigationTableTreeBuilder.order(getComparator(column, asc))
     }
 
     private Comparator getComparator(int column, boolean ascOrder) {
@@ -263,8 +263,8 @@ class ModellingInformationTableTreeModel extends AbstractTableTreeModel implemen
     void filterTree(FilterDefinition filterDefinition) {
         LOG.debug("Apply filter definition start.")
         currentFilter = filterDefinition
-        builder.removeNodesForItems(builder.modellingItems)
-        builder.addNodesForItems(filteredItems)
+        navigationTableTreeBuilder.removeNodesForItems(navigationTableTreeBuilder.modellingItems)
+        navigationTableTreeBuilder.addNodesForItems(filteredItems)
         LOG.debug("Apply filter definition done.")
     }
 

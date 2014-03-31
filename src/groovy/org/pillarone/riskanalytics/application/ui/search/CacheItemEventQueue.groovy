@@ -4,12 +4,18 @@ import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
 import org.pillarone.riskanalytics.core.modellingitem.CacheItemListener
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
+@Scope('ulcSessionScope')
+@Component
 class CacheItemEventQueue {
 
+    @Autowired
     CacheItemHibernateListener cacheItemListener
     private List<CacheItemEvent> queue
     private CacheItemListener listener

@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.StandaloneTableTreeModel
 import org.springframework.beans.BeansException
 import org.springframework.beans.factory.BeanFactory
@@ -22,10 +22,10 @@ class UserDependentNavigationTreeModelFactory implements BeanFactoryAware {
         this.beanFactory = beanFactory
     }
 
-    ModellingInformationTableTreeModel createModel() {
-        ModellingInformationTableTreeModel model
+    NavigationTableTreeModel createModel() {
+        NavigationTableTreeModel model
         if (UserContext.hasCurrentUser()) {
-            model = new ModellingInformationTableTreeModel()
+            model = new NavigationTableTreeModel()
         } else {
             model = new StandaloneTableTreeModel()
         }

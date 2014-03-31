@@ -16,24 +16,32 @@ import com.ulcjava.base.shared.IDefaults
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.Resource
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+@Scope('ulcSessionScope')
+@Component
 class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     ULCPollingTimer treeSyncTimer
+    @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
     ModellingItemSelectionListener modellingItemSelectionListener
-    ModellingInformationTableTreeModel navigationTableTreeModel
+    @Resource
+    NavigationTableTreeModel navigationTableTreeModel
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
 
@@ -154,9 +162,9 @@ class SelectionTreeView {
 
     private IColumnDescriptor getDescriptor(int columnIndex) {
         switch (columnIndex) {
-            case ModellingInformationTableTreeModel.TAGS:
+            case NavigationTableTreeModel.TAGS:
                 return new IColumnDescriptor.TagColumnDescriptor()
-            case ModellingInformationTableTreeModel.STATE:
+            case NavigationTableTreeModel.STATE:
                 return new IColumnDescriptor.StateColumnDescriptor()
         }
 

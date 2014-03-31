@@ -14,7 +14,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
@@ -25,8 +25,11 @@ import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.security.LogoutService
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.Resource
 
 /**
  *  UI for the header of RiskAnalytics to show File menus and action buttons
@@ -34,6 +37,8 @@ import javax.annotation.PostConstruct
  * @author fouad.jaada@intuitive-collaboration.com
  */
 @CompileStatic
+@Scope('ulcSessionScope')
+@Component
 class HeaderView extends AbstractView {
     private static final Log LOG = LogFactory.getLog(HeaderView.class)
 
@@ -78,9 +83,12 @@ class HeaderView extends AbstractView {
     NavigationBarTopPane navigationBarTopPane
     ULCTableTree navigationTableTree
 
+    @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
-    ModellingInformationTableTreeModel navigationTableTreeModel
+    @Resource
+    NavigationTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
+    @Resource
     SelectionTreeView selectionTreeView
 
     @Override

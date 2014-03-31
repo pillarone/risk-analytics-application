@@ -11,7 +11,7 @@ import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -30,7 +30,7 @@ class P1RATApplication extends Application {
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
     RiskAnalyticsMainModel riskAnalyticsMainModel
     RiskAnalyticsMainView riskAnalyticsMainView
-    ModellingInformationTableTreeModel navigationTableTreeModel
+    NavigationTableTreeModel navigationTableTreeModel
     TraceLogManager traceLogManager
 
     protected void startup() {
@@ -80,11 +80,11 @@ class P1RATApplication extends Application {
         mainFrame.visible = true
         mainFrame.toFront()
         mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; windowClosing() }] as IWindowListener)
-        ModelRegistry.instance.addListener(navigationTableTreeModel)
+        ModelRegistry.instance.addListener(navigationTableTreeModel.navigationTableTreeBuilder)
     }
 
     private void windowClosing() {
-        ModelRegistry.instance.removeListener(navigationTableTreeModel)
+        ModelRegistry.instance.removeListener(navigationTableTreeModel.navigationTableTreeBuilder)
         traceLogManager.deactivateLogging()
         ApplicationContext.terminate()
     }

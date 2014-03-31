@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.util
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource
 import net.sf.jasperreports.renderers.JCommonDrawableRenderer
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -44,14 +44,14 @@ class ReportUtils {
     static JRBeanCollectionDataSource getItemInfo(Parameterization parameterization) {
         Collection currentValues = new ArrayList<PropertyValuePairBean>()
         //todo using of map instead of bean
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Name"), value: parameterization.name + " v" + parameterization.versionNumber.toString())
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "Name"), value: parameterization.name + " v" + parameterization.versionNumber.toString())
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "Model"), value: parameterization.modelClass.simpleName)
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "State"), value: parameterization.status)
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Tags"), value: parameterization?.tags?.join(","))
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Owner"), value: (parameterization.creator ? parameterization.creator.username : ""))
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Created"), value: DateFormatUtils.formatDetailed(parameterization.creationDate))
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "LastUpdateBy"), value: (parameterization.lastUpdater ? parameterization.lastUpdater.username : ""))
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "LastModification"), value: parameterization.modificationDate ? DateFormatUtils.formatDetailed(parameterization.modificationDate) : "")
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "State"), value: parameterization.status)
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "Tags"), value: parameterization?.tags?.join(","))
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "Owner"), value: (parameterization.creator ? parameterization.creator.username : ""))
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "Created"), value: DateFormatUtils.formatDetailed(parameterization.creationDate))
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "LastUpdateBy"), value: (parameterization.lastUpdater ? parameterization.lastUpdater.username : ""))
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "LastModification"), value: parameterization.modificationDate ? DateFormatUtils.formatDetailed(parameterization.modificationDate) : "")
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);
         return jrBeanCollectionDataSource
     }
@@ -66,7 +66,7 @@ class ReportUtils {
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "NumberOfPeriods"), value: simulation.periodCount)
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "NumberOfIterations"), value: simulation.numberOfIterations)
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(ResultSettingsView.class, "randomSeed"), value: simulation.randomSeed)
-        currentValues << new PropertyValuePairBean(property: UIUtils.getText(ModellingInformationTableTreeModel.class, "Owner"), value: simulation.creator ? simulation.creator.username : "")
+        currentValues << new PropertyValuePairBean(property: UIUtils.getText(NavigationTableTreeModel.class, "Owner"), value: simulation.creator ? simulation.creator.username : "")
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "StartTime"), value: DateFormatUtils.formatDetailed(simulation.start))
         currentValues << new PropertyValuePairBean(property: UIUtils.getText(SimulationConfigurationView.class, "EndTime"), value: DateFormatUtils.formatDetailed(simulation.end))
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(currentValues);

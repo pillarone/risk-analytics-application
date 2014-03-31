@@ -33,9 +33,9 @@ import org.pillarone.riskanalytics.core.workflow.Status
 
 import static org.junit.Assert.*
 
-class ModellingInformationTableTreeModelTests {
+class NavigationTableTreeModelTests {
 
-    private ModellingInformationTableTreeModel model
+    private NavigationTableTreeModel model
     private RiskAnalyticsMainModel mainModel
     private TestModelListener modelListener
 
@@ -71,7 +71,9 @@ class ModellingInformationTableTreeModelTests {
         mainModel = new RiskAnalyticsMainModel()
         CacheItemEventQueue queue = new CacheItemEventQueue(cacheItemListener: cacheItemListener)
         queue.init()
-        model = new ModellingInformationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeModelQueue: queue)
+        NavigationTableTreeBuilder builder = new NavigationTableTreeBuilder(riskAnalyticsMainModel: mainModel)
+        builder.initialize()
+        model = new NavigationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeModelQueue: queue, navigationTableTreeBuilder: builder)
         model.initialize()
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
@@ -192,7 +194,7 @@ class ModellingInformationTableTreeModelTests {
     void testBatch() {
         BatchRun run = new BatchRun()
         run.name = 'testBatch'
-        model.newBatchAdded(run)
+        model.navigationTableTreeBuilder.newBatchAdded(run)
         IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
         assertEquals(1, batchNode.childCount)
         assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0), 0))

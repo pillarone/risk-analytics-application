@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.applicationframework.application.ApplicationContext
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -19,10 +18,13 @@ import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
-import javax.annotation.PreDestroy
 import java.beans.PropertyChangeListener
 
+@Scope('ulcSessionScope')
+@Component
 class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
     private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
@@ -37,8 +39,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
     @Bindable
     AbstractUIItem currentItem
-
-    ApplicationContext ulcApplicationContext
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]

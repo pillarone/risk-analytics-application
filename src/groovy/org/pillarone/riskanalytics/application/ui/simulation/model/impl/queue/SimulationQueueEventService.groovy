@@ -3,12 +3,18 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoEvent
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
+@Scope('ulcSessionScope')
+@Component
 class SimulationQueueEventService {
 
+    @Autowired
     SimulationRuntimeService simulationRuntimeService
     private MySimulationRuntimeEventListener runtimeEventListener
     private final List<SimulationRuntimeInfoEvent> events = []

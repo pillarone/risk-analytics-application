@@ -3,7 +3,7 @@ import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
 import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
@@ -102,8 +102,8 @@ abstract class AbstractUIItem implements IUIItem {
         return true
     }
 
-    public ModellingInformationTableTreeModel getNavigationTableTreeModel() {
-        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel') as ModellingInformationTableTreeModel
+    public NavigationTableTreeModel getNavigationTableTreeModel() {
+        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel') as NavigationTableTreeModel
     }
 
     public String getWindowTitle() {

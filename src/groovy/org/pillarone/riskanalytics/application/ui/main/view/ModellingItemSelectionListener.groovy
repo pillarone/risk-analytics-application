@@ -1,10 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
-import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-import com.ulcjava.base.application.tabletree.ITableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.server.ULCTableTreeModelAdapter

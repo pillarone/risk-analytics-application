@@ -1,17 +1,26 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import org.pillarone.riskanalytics.core.simulation.engine.*
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.Resource
 
+@Scope('ulcSessionScope')
+@Component
 class SimulationQueueViewModel {
+    @Resource
     SimulationQueueEventService simulationQueueEventService
+    @Autowired
     SimulationRuntimeService simulationRuntimeService
-    SimulationQueueTableModel queueTableModel
+    @Resource
+    SimulationQueueTableModel simulationQueueTableModel
 
     @PostConstruct
     void initialize() {
-        queueTableModel = new SimulationQueueTableModel(simulationRuntimeService.queued)
+        simulationQueueTableModel.queueItems = simulationRuntimeService.queued
     }
 
     void update() {
@@ -20,13 +29,15 @@ class SimulationQueueViewModel {
             switch (event.class) {
                 case (AddSimulationRuntimeInfoEvent):
                     AddSimulationRuntimeInfoEvent addEvent = event as AddSimulationRuntimeInfoEvent
-                    queueTableModel.addItem(event.info, addEvent.index)
-                    break;
+                    simulationQueueTableModel.itemAdded(event.info, addEvent.index)
+                    break
                 case (DeleteSimulationRuntimeInfoEvent):
-                    queueTableModel.removeItem(event.info.id)
-                    break;
+                    simulationQueueTableModel.itemRemoved(event.info.id)
+                    break
                 case (ChangeSimulationRuntimeInfoEvent):
-                    queueTableModel.itemChanged(event.info)
+                    simulationQueueTableModel.itemChanged(event.info)
+                    break
+                default: return
             }
         }
     }

@@ -1,38 +1,63 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.testframework.operator.ULCMenuItemOperator
 import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
+import models.application.ApplicationModel
+import models.core.CoreModel
+import org.joda.time.DateTime
+import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeBuilder
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.util.LocaleResources
+import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.workflow.Status
 
 import javax.swing.tree.TreePath
 
-/**
- * @author fouad.jaada@intuitive-collaboration.com
- */
-class SelectionTreeViewTests extends AbstractP1RATTestCase {
+@TestMixin(GrailsUnitTestMixin)
+@Mixin(P1UnitTestMixin)
+class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
+
+    @Override
+    void start() {
+        LocaleResources.testMode = true
+        inTestFrame(createContentPane())
+    }
 
     ULCComponent createContentPane() {
-        def model = mockRiskAnalyticsMainModel
-        def view = new SelectionTreeView(riskAnalyticsMainModel: model, navigationTableTreeModel: getMockTreeModel(model))
+        NavigationTableTreeBuilder builder = new NavigationTableTreeBuilder()
+        builder.metaClass.getAllModelClasses = { -> [ApplicationModel] }
+        builder.metaClass.getAllBatchRuns = { -> [new BatchRun(name: "test")] }
+        def tableTreeModel = new TestNavigationTableTreeModel(navigationTableTreeBuilder: builder)
+        tableTreeModel.initialize()
+        def view = new SelectionTreeView(riskAnalyticsMainModel: new RiskAnalyticsMainModel(), navigationTableTreeModel: tableTreeModel)
         view.initialize()
         view.content;
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void setUp() throws Exception {
+        super.setUp()
+    }
+
+    @Override
+    void tearDown() {
         super.tearDown()
+        LocaleResources.testMode = false
         PopupMenuRegistry.clear()
     }
 
-    public void testOpenItem() {
+    void testOpenItem() {
 
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
@@ -48,7 +73,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assertNotNull openItem
     }
 
-    public void testExportItem() {
+    void testExportItem() {
 
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
@@ -65,7 +90,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         exportItem.clickMouse()
     }
 
-    public void testRenameItem() {
+    void testRenameItem() {
 
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
@@ -81,7 +106,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assertNotNull renameItem
     }
 
-    public void testRun() {
+    void testRun() {
 
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
@@ -91,7 +116,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
 
     }
 
-    public void testSaveAsAction() {
+    void testSaveAsAction() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
@@ -107,7 +132,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         saveAs.clickMouse()
     }
 
-    public void testCreateNewVersion() {
+    void testCreateNewVersion() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0
         componentTree.doExpandRow 1
@@ -122,7 +147,7 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         assertNotNull newVersion
     }
 
-    public void testNewBatch() {
+    void testNewBatch() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         TreePath batchPath = componentTree.findPath(["Batches"] as String[])
 
@@ -200,6 +225,49 @@ class SelectionTreeViewTests extends AbstractP1RATTestCase {
         @Override
         ULCMenuItem createComponent(ULCTableTree tree) {
             return new ULCMenuItem(name)
+        }
+    }
+
+    static class TestNavigationTableTreeModel extends NavigationTableTreeModel {
+
+        @Override
+        List getPendingEvents() {
+            []
+        }
+
+        @Override
+        List<ModellingItem> getFilteredItems() {
+            Parameterization parameterization1 = createStubParameterization(1, Status.NONE)
+            Parameterization parameterization2 = createStubParameterization(2, Status.DATA_ENTRY)
+            parameterization2.versionNumber = new VersionNumber("R1")
+            Parameterization parameterization3 = createStubParameterization(3, Status.IN_REVIEW)
+            ResultConfiguration resultConfiguration = new ResultConfiguration("result1")
+            resultConfiguration.modelClass = ApplicationModel
+            Simulation simulation = new Simulation("simulation1")
+            simulation.parameterization = new Parameterization("param1")
+            simulation.parameterization.modelClass = CoreModel
+            simulation.template = new ResultConfiguration("result1")
+            simulation.template.modelClass = CoreModel
+            simulation.id = 1
+            simulation.end = new DateTime()
+            simulation.modelClass = ApplicationModel
+            simulation.metaClass.getSize = { Class SimulationClass -> 0 }
+            [parameterization1, parameterization2, parameterization3, resultConfiguration, simulation]
+        }
+
+        Parameterization createStubParameterization(int index, Status status) {
+            Parameterization parameterization = new Parameterization("param" + index, ApplicationModel)
+            parameterization.id = index
+            Person person = new Person(username: "username" + index)
+            parameterization.creator = person
+            parameterization.creationDate = new DateTime()
+            Person person2 = new Person(username: "modificator" + index)
+            parameterization.lastUpdater = person2
+            parameterization.modificationDate = new DateTime()
+            parameterization.status = status
+            parameterization.modelClass = ApplicationModel
+            parameterization.loaded = true
+            return parameterization
         }
     }
 }

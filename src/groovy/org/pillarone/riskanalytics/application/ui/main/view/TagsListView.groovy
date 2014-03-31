@@ -17,9 +17,8 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTa
 class TagsListView extends AbstractView {
 
     public ULCBoxPane content
-    public List<Tag> itemTages
+    public List<Tag> itemTags
     private List<ULCCheckBox> tagsCheckBoxes
-    private ModellingItem modellingItem
     private List<ModellingItem> modellingItems
     List<Tag> allTags
 
@@ -44,14 +43,14 @@ class TagsListView extends AbstractView {
     @Override
     protected void initComponents() {
         allTags = getAllTags()
-        itemTages = getAllModellingItemTages()
+        itemTags = getAllModellingItemTages()
 
         tagsCheckBoxes = new ArrayList<ULCCheckBox>()
         allTags.each {Tag tag ->
             ULCCheckBox checkBox = new ULCCheckBox(tag.name)
             checkBox.name = tag.name
             setLookAndFeel(checkBox, tag)
-            checkBox.setSelected(itemTages.contains(tag))
+            checkBox.setSelected(itemTags.contains(tag))
             checkBox.addValueChangedListener([valueChanged: {ValueChangedEvent valueChangedEvent ->
                 ULCCheckBox box = (ULCCheckBox) valueChangedEvent.source
                 Tag newTag = allTags.find {it.name == box.getText() }
@@ -97,7 +96,7 @@ class TagsListView extends AbstractView {
     }
 
     private void addTagToItem(Tag tag) {
-        if (!itemTages.contains(tag)) itemTages << tag
+        if (!itemTags.contains(tag)) itemTags << tag
         for (ModellingItem modellingItem: modellingItems) {
             if (!modellingItem.getTags().contains(tag)) {
                 modellingItem.getTags().add(tag)
@@ -107,7 +106,7 @@ class TagsListView extends AbstractView {
     }
 
     private void removeTag(Tag tag) {
-        itemTages.remove(tag)
+        itemTags.remove(tag)
         for (ModellingItem modellingItem: modellingItems) {
             if (modellingItem.getTags().contains(tag)) {
                 modellingItem.getTags().remove(tag)

@@ -14,12 +14,19 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
+import javax.annotation.Resource
+
+@Scope('ulcSessionScope')
+@Component
 class CardPaneManager {
     private static final Log LOG = LogFactory.getLog(CardPaneManager)
 
     ULCCardPane cardPane = new ULCCardPane()
     private Map<String, TabbedPaneManager> tabbedPaneManagers = [:]
+    @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
     public static final String NO_MODEL = "NO_MODEL"
 

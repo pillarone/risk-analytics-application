@@ -5,7 +5,7 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeRowSorterAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
@@ -26,7 +26,7 @@ abstract class SelectionTreeHeaderDialog {
     protected ULCButton cancelButton
     protected ULCTableTree tableTree
 
-    ModellingInformationTableTreeModel model
+    NavigationTableTreeModel model
 
     protected IColumnDescriptor columnDescriptor
 
@@ -34,7 +34,7 @@ abstract class SelectionTreeHeaderDialog {
 
     public SelectionTreeHeaderDialog(ULCTableTree tree, int columnIndex, IColumnDescriptor columnDescriptor) {
         this.tableTree = tree
-        this.model = (ModellingInformationTableTreeModel) tableTree.model
+        this.model = (NavigationTableTreeModel) tableTree.model
         this.parent = UlcUtilities.getWindowAncestor(tableTree)
         this.columnIndex = columnIndex
         this.columnDescriptor = columnDescriptor

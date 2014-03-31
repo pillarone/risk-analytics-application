@@ -1,9 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import org.apache.commons.lang.ObjectUtils
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -147,14 +146,14 @@ public class ModellingTableTreeColumn {
     private Map getInstances() {
         if (!instances) {
             instances = [:]
-            instances[ModellingInformationTableTreeModel.NAME] = new NameColumn()
-            instances[ModellingInformationTableTreeModel.STATE] = new StateColumn()
-            instances[ModellingInformationTableTreeModel.TAGS] = new TagsColumn()
-            instances[ModellingInformationTableTreeModel.TRANSACTION_NAME] = new TransactionColumn()
-            instances[ModellingInformationTableTreeModel.OWNER] = new OwnerColumn()
-            instances[ModellingInformationTableTreeModel.LAST_UPDATER] = new LastUpdateColumn()
-            instances[ModellingInformationTableTreeModel.CREATION_DATE] = new CreationDateColumn()
-            instances[ModellingInformationTableTreeModel.LAST_MODIFICATION_DATE] = new LastModificationDateColumn()
+            instances[NavigationTableTreeModel.NAME] = new NameColumn()
+            instances[NavigationTableTreeModel.STATE] = new StateColumn()
+            instances[NavigationTableTreeModel.TAGS] = new TagsColumn()
+            instances[NavigationTableTreeModel.TRANSACTION_NAME] = new TransactionColumn()
+            instances[NavigationTableTreeModel.OWNER] = new OwnerColumn()
+            instances[NavigationTableTreeModel.LAST_UPDATER] = new LastUpdateColumn()
+            instances[NavigationTableTreeModel.CREATION_DATE] = new CreationDateColumn()
+            instances[NavigationTableTreeModel.LAST_MODIFICATION_DATE] = new LastModificationDateColumn()
 
         }
         return instances

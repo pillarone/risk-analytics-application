@@ -1,15 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.testframework.operator.ULCCheckBoxOperator
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
+import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-/**
- * @author fouad.jaada@intuitive-collaboration.com
- */
-class TagsListViewTests extends AbstractP1RATTestCase {
+@TestMixin(GrailsUnitTestMixin)
+@Mixin(P1UnitTestMixin)
+class TagsListViewTests extends AbstractSimpleStandaloneTestCase {
     Parameterization p1 = new Parameterization("p1")
     Parameterization p2 = new Parameterization("p2")
 
@@ -17,8 +18,7 @@ class TagsListViewTests extends AbstractP1RATTestCase {
     Tag tag2 = new Tag(name: "tag2")
     Tag tag3 = new Tag(name: "tag3")
 
-    public void testView() {
-        Thread.sleep(1000)
+    void testView() {
         ULCCheckBoxOperator box1 = getCheckBoxOperator("tag1")
         assertNotNull(box1)
         assertTrue p1.tags.contains(tag1)
@@ -44,17 +44,13 @@ class TagsListViewTests extends AbstractP1RATTestCase {
     }
 
     @Override
-    ULCComponent createContentPane() {
+    void start() {
         p1.tags = [tag1, tag2] as Set
         p2.tags = [tag1] as Set
-
         TagsListView tagsListView = new TagsListView([p1, p2])
         tagsListView.metaClass.getAllTags = { -> [tag1, tag2, tag3] }
         tagsListView.metaClass.getAllModellingItemTages = { -> [tag1, tag2] }
-
         tagsListView.init()
-        return tagsListView.content
+        inTestFrame(tagsListView.content)
     }
-
-
 }

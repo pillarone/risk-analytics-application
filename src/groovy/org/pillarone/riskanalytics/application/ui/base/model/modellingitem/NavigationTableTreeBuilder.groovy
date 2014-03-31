@@ -1,12 +1,19 @@
-package org.pillarone.riskanalytics.application.ui.base.model
+package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
 
-import com.ulcjava.base.application.tabletree.*
+import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
+import org.pillarone.riskanalytics.application.ui.base.model.ResourceClassNode
+import org.pillarone.riskanalytics.application.ui.base.model.ResourceGroupNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
@@ -16,38 +23,55 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Workflo
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
+import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.simulation.item.*
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
+
+import javax.annotation.PostConstruct
 
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
-class ModellingInformationTableTreeBuilder {
+@Scope('ulcSessionScope')
+@Component
+class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListener {
     static final int PARAMETERIZATION_NODE_INDEX = 0
     static final int RESULT_CONFIGURATION_NODE_INDEX = 1
     static final int SIMULATION_NODE_INDEX = 2
-    static Log LOG = LogFactory.getLog(ModellingInformationTableTreeBuilder)
-
-
+    static Log LOG = LogFactory.getLog(NavigationTableTreeBuilder)
+    @javax.annotation.Resource
+    RiskAnalyticsMainModel riskAnalyticsMainModel
     final DefaultMutableTableTreeNode root
-    private final ModellingInformationTableTreeModel model
-    private final RiskAnalyticsMainModel mainModel
+    private ITableTreeModelWithValues tableTreeModelWithValues
     private boolean resourceNodeVisible
 
-    public ModellingInformationTableTreeBuilder(ModellingInformationTableTreeModel model, RiskAnalyticsMainModel mainModel) {
-        this.model = model;
-        this.mainModel = mainModel
+    public NavigationTableTreeBuilder() {
         root = new DefaultMutableTableTreeNode("root")
     }
 
-    public buildTreeNodes(List<ModellingItem> modellingItems) {
+    @PostConstruct
+    void initialize() {
+        riskAnalyticsMainModel.addBatchListener(this)
+    }
+
+    void registerTableTreeModel(ITableTreeModelWithValues tableTreeModel) {
+        this.tableTreeModelWithValues = tableTreeModel
+    }
+
+    void unregisterTableTreeModel() {
+        this.tableTreeModelWithValues = null
+    }
+
+    void buildTreeNodes(List<ModellingItem> modellingItems) {
         buildResourcesNodes(modellingItems)
         buildBatchNodes()
         buildModelNodes(modellingItems)
-
     }
 
     public List<ModellingItem> getModellingItems() {
@@ -126,7 +150,7 @@ class ModellingInformationTableTreeBuilder {
             ResourceGroupNode resourceGroupNode = new ResourceGroupNode("Resources")
             resourceClasses.each { Class resourceClass ->
 
-                ResourceClassNode resourceNode = new ResourceClassNode(UIUtils.getText(ModellingInformationTableTreeModel.class, resourceClass.simpleName), resourceClass, mainModel)
+                ResourceClassNode resourceNode = new ResourceClassNode(UIUtils.getText(NavigationTableTreeModel.class, resourceClass.simpleName), resourceClass, riskAnalyticsMainModel)
                 List<ModellingItem> resourceItems = items.findAll { ModellingItem item -> item instanceof Resource && item.modelClass == resourceClass }
                 getItemMap(resourceItems, false).values().each {
                     resourceNode.add(createItemNodes(it))
@@ -207,10 +231,10 @@ class ModellingInformationTableTreeBuilder {
         }
 
         if (modelNode == null) {
-            modelNode = new ModelNode(new ModelUIItem(mainModel, model))
-            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(ModellingInformationTableTreeModel.class, "Parameterization"), Parameterization, mainModel)
-            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(ModellingInformationTableTreeModel.class, "ResultTemplates"), ResultConfiguration, mainModel)
-            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(ModellingInformationTableTreeModel.class, "Results"), Simulation, mainModel)
+            modelNode = new ModelNode(new ModelUIItem(riskAnalyticsMainModel, model))
+            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Parameterization"), Parameterization, riskAnalyticsMainModel)
+            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "ResultTemplates"), ResultConfiguration, riskAnalyticsMainModel)
+            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Results"), Simulation, riskAnalyticsMainModel)
             modelNode.add(parameterizationsNode)
             modelNode.add(resultConfigurationsNode)
             modelNode.add(simulationsNode)
@@ -279,21 +303,32 @@ class ModellingInformationTableTreeBuilder {
                     nodes << node
                 }
                 parameterizationGroupNode.removeAllChildren()
-                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
+                tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
                 nodes.sort(comparator)
                 nodes.each {
                     parameterizationGroupNode.add(it)
                 }
-                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
+                tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
             }
         }
+    }
+
+
+    @Override
+    void newBatchAdded(BatchRun batchRun) {
+        addNodeForItem(new BatchUIItem(riskAnalyticsMainModel, batchRun))
+    }
+
+    @Override
+    void modelAdded(Class modelClass) {
+        addNodeForItem(modelClass.newInstance() as Model)
     }
 
     public DefaultMutableTableTreeNode addNodeForItem(Model model, boolean notifyStructureChanged = true) {
         createModelNode(model)
         if (notifyStructureChanged) {
             //TODO (db) check with Michi about the node structure changed'. Maybe we could use NodesWhereInserted, but somehow the index screws up.
-            this.model.nodeStructureChanged(new TreePath(root))
+            this.tableTreeModelWithValues.nodeStructureChanged(new TreePath(root))
         }
         return root
     }
@@ -314,7 +349,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged = true) {
-        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, mainModel)
+        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, riskAnalyticsMainModel)
         addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
@@ -387,8 +422,8 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private void updateValues(ItemNode itemNode) {
-        model.putValues(itemNode)
-        model?.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
+        tableTreeModelWithValues.putValues(itemNode)
+        tableTreeModelWithValues.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(itemNode) as Object[]))
     }
 
     private void itemNodeChanged(ITableTreeNode itemGroupNode, Simulation item) {
@@ -407,7 +442,7 @@ class ModellingInformationTableTreeBuilder {
 
     public void removeAllGroupNodeChildren(ItemGroupNode groupNode) {
         groupNode.removeAllChildren()
-        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
+        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(groupNode) as Object[]))
     }
 
     public void removeNodeForItem(ModellingUIItem modellingUIItem) {
@@ -427,7 +462,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     public void removeNodeForItem(ModellingItem modellingItem) {
-        removeNodeForItem(UIItemFactory.createItem(modellingItem, null, mainModel))
+        removeNodeForItem(UIItemFactory.createItem(modellingItem, null, riskAnalyticsMainModel))
     }
 
     public void addNodesForItems(List<ModellingItem> items) {
@@ -439,7 +474,7 @@ class ModellingInformationTableTreeBuilder {
             }
         }
         parentNodes.each {
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
+            tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
         }
 
     }
@@ -459,7 +494,7 @@ class ModellingInformationTableTreeBuilder {
 
         }
         parentNodes.each {
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
+            tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[]))
         }
     }
 
@@ -510,7 +545,7 @@ class ModellingInformationTableTreeBuilder {
         int childIndex = parent.getIndex(itemNode)
         parent.remove(childIndex)
         if (notifyStructureChanged) {
-            model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+            tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
         }
         return parent
     }
@@ -549,7 +584,7 @@ class ModellingInformationTableTreeBuilder {
                     node.insert(newNode, i)
                     if (notifyStructureChanged) {
                         //TODO (db) check with Michi about the node structure changed'. Maybe we could use NodesWhereInserted, but somehow the index screws up.
-                        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
+                        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
                     }
                     return
                 }
@@ -596,7 +631,7 @@ class ModellingInformationTableTreeBuilder {
                     newItemNode.leaf = true
                     childNode.add(newItemNode)
                     if (notifyStructureChanged) {
-                        model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
+                        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(childNode) as Object[]))
                     }
                 } else {
                     insertSubversionItemNode(childNode, newItemNode, notifyStructureChanged)
@@ -610,32 +645,32 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createNode(Parameterization item) {
-        return createNode(new ParameterizationUIItem(mainModel, item.modelClass?.newInstance(), item))
+        return createNode(new ParameterizationUIItem(riskAnalyticsMainModel, item.modelClass?.newInstance(), item))
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
         ParameterizationNode node = new WorkflowParameterizationNode(parameterizationUIItem)
-        model.putValues(node)
+        tableTreeModelWithValues.putValues(node)
         return node
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfiguration item) {
-        return createNode(new ResultConfigurationUIItem(mainModel, item.modelClass?.newInstance(), item))
+        return createNode(new ResultConfigurationUIItem(riskAnalyticsMainModel, item.modelClass?.newInstance(), item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
         ResultConfigurationNode node = new ResultConfigurationNode(resultConfigurationUIItem)
-        model.putValues(node)
+        tableTreeModelWithValues.putValues(node)
         return node
     }
 
     private DefaultMutableTableTreeNode createNode(Resource item) {
-        return createNode(new ResourceUIItem(mainModel, null, item))
+        return createNode(new ResourceUIItem(riskAnalyticsMainModel, null, item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResourceUIItem item) {
         ResourceNode node = new ResourceNode(item)
-        model.putValues(node)
+        tableTreeModelWithValues.putValues(node)
         return node
     }
 
@@ -644,14 +679,14 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createNode(BatchRun batchRun) {
-        return new BatchRunNode(new BatchUIItem(mainModel, batchRun))
+        return new BatchRunNode(new BatchUIItem(riskAnalyticsMainModel, batchRun))
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
         SimulationNode node = null
         Model selectedModelInstance = item.modelClass?.newInstance()
         try {
-            node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, mainModel))
+            node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, riskAnalyticsMainModel))
             DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
             paramsNode.leaf = true
             DefaultMutableTableTreeNode templateNode = createNode(item.template)
@@ -659,7 +694,7 @@ class ModellingInformationTableTreeBuilder {
 
             node.add(paramsNode)
             node.add(templateNode)
-            model.putValues(node)
+            tableTreeModelWithValues.putValues(node)
         } catch (Exception ex) {
             LOG.error "Exception creating SimulationNode", ex
         }
@@ -667,7 +702,7 @@ class ModellingInformationTableTreeBuilder {
     }
 
     private DefaultMutableTableTreeNode createBatchNode() {
-        BatchRootNode batchesNode = new BatchRootNode("Batches", mainModel)
+        BatchRootNode batchesNode = new BatchRootNode("Batches", riskAnalyticsMainModel)
         List<BatchRun> batchRuns = allBatchRuns
         batchRuns?.each { BatchRun batchRun ->
             batchesNode.add(createNode(batchRun))
@@ -692,9 +727,9 @@ class ModellingInformationTableTreeBuilder {
         LOG.debug("Node ${newNode} added at index $newIndex to parent: $parent")
         if (notifyStructureChanged) {
             if (parent.childCount == 1) {
-                model.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
+                tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]))
             } else {
-                model.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
+                tableTreeModelWithValues.nodesWereInserted(new TreePath(DefaultTableTreeModel.getPathToRoot(parent) as Object[]), [newIndex] as int[])
             }
         }
     }

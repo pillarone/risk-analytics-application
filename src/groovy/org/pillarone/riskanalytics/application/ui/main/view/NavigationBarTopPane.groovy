@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -8,30 +7,26 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
 import groovy.transform.CompileStatic
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
-import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.ModellingInformationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.action.TextFieldFocusListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 @CompileStatic
 class NavigationBarTopPane {
-    ULCToolBar toolBar
-    ULCToggleButton myStuffButton
-    ULCToggleButton assignedToMeButton
-    ULCTextField searchTextField
-    ULCButton clearButton
-    ModellingInformationTableTreeModel tableTreeModel
-    Log LOG = LogFactory.getLog(NavigationBarTopPane)
+    private ULCToolBar toolBar
+    private ULCToggleButton myStuffButton
+    private ULCToggleButton assignedToMeButton
+    private ULCTextField searchTextField
+    private ULCButton clearButton
+    NavigationTableTreeModel tableTreeModel
 
     private List<IFilterChangedListener> filterChangedListeners = []
 
-    public NavigationBarTopPane(ULCToolBar toolBar, ModellingInformationTableTreeModel tableTreeModel) {
+    public NavigationBarTopPane(ULCToolBar toolBar, NavigationTableTreeModel tableTreeModel) {
         this.toolBar = toolBar
         this.tableTreeModel = tableTreeModel
     }
