@@ -26,9 +26,9 @@ class SimulationProfilePane {
     protected void layout() {
         content = new ULCBoxPane(1, 2)
         ULCBoxPane holder = new ULCBoxPane(1, 2)
-        holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, simulationProfileActionsPane.content)
-        holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, simulationSettingsPane.content)
-        content.add(ULCBoxPane.BOX_LEFT_TOP, holder)
+        holder.add(ULCBoxPane.BOX_EXPAND_TOP, simulationProfileActionsPane.content)
+        holder.add(ULCBoxPane.BOX_EXPAND_TOP, simulationSettingsPane.content)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, holder)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 

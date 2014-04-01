@@ -24,7 +24,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
-import static org.pillarone.riskanalytics.application.ui.util.UIUtils.boxLayout
+import static com.ulcjava.base.shared.IDefaults.BOX_EXPAND_EXPAND
+import static com.ulcjava.base.shared.IDefaults.BOX_LEFT_EXPAND
 import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAround
 
 /**
@@ -126,11 +127,10 @@ class SimulationSettingsPane implements ISimulationListener {
         simulationName.preferredSize = new Dimension(150, 20)
         simulationName.name = "simulationName"
 
-        comment = new ULCTextArea(model.comment, 4, 20)
+        comment = new ULCTextArea(model.comment, 2, 20)
         comment.lineWrap = true
         comment.wrapStyleWord = true
         comment.name = "comment"
-
 
         modelComboBox = new ULCComboBox(model.models)
         modelComboBox.enabled = false
@@ -171,44 +171,46 @@ class SimulationSettingsPane implements ISimulationListener {
     }
 
     protected void layoutComponents() {
-        content = boxLayout(model.getText(SIMULATION_SETTINGS_KEY)) { ULCBoxPane pane ->
-            ULCBoxPane innerPane = new ULCBoxPane(3, 0)
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(SIMULATION_NAME_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(simulationName, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        content = new ULCBoxPane()
+        content.border = BorderFactory.createTitledBorder(model.getText(SIMULATION_SETTINGS_KEY))
+        ULCBoxPane innerPane = new ULCBoxPane(3, 0)
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(model.getText(SIMULATION_COMMENT_KEY) + ":"))
-            innerPane.add(2, ULCBoxPane.BOX_EXPAND_EXPAND, spaceAround(comment, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(model.getText(SIMULATION_NAME_KEY) + ":"))
+        innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(simulationName, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(MODEL_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(modelComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            innerPane.add(new ULCFiller())
+        innerPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(model.getText(SIMULATION_COMMENT_KEY) + ":"))
+        innerPane.add(2, ULCBoxPane.BOX_EXPAND_TOP, spaceAround(comment, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(PARAMETERIZATION_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(parametrizationNamesComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(parameterizationVersionsComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(model.getText(MODEL_KEY) + ":"))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(modelComboBox, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
+        innerPane.add(new ULCFiller())
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RESULT_CONFIGURATION_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultConfigurationNamesComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(resultConfigurationVersionsComboBox, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(model.getText(PARAMETERIZATION_KEY) + ":"))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(parametrizationNamesComboBox, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(parameterizationVersionsComboBox, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(OUTPUT_STRATEGY_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(outputStrategy, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            innerPane.add(new ULCFiller())
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RESULT_CONFIGURATION_KEY) + ":"))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultConfigurationNamesComboBox, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(resultConfigurationVersionsComboBox, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
 
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RESULT_LOCATION_KEY) + ":"))
-            innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultLocation, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(changeLocationButton, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(OUTPUT_STRATEGY_KEY) + ":"))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(outputStrategy, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
+        innerPane.add(new ULCFiller())
 
-            initConfigProperties(innerPane)
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RESULT_LOCATION_KEY) + ":"))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(resultLocation, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(changeLocationButton, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
 
-            pane.add(ULCBoxPane.BOX_EXPAND_EXPAND, innerPane)
+        initConfigProperties(innerPane)
 
-            if (model.requiresStartDate()) {
-                innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
-                innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-            }
+        if (model.requiresStartDate()) {
+            innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(BEGIN_OF_FIRST_PERIOD_KEY) + ":"))
+            innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(beginOfFirstPeriod, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
         }
+        innerPane.add(BOX_EXPAND_EXPAND, ULCFiller.createGlue())
+        spaceAround(innerPane, 5, 5, 5, 5)
+        content.add(BOX_LEFT_EXPAND, innerPane)
     }
 
     protected initConfigProperties(ULCBoxPane innerPane) {
@@ -269,11 +271,11 @@ class SimulationSettingsPane implements ISimulationListener {
         }] as IKeyListener)
 
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(RANDOM_SEED_KEY) + ":"))
-        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
-        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(userDefinedRandomSeed, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
+        innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(randomSeed, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
 
         innerPane.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(model.getText(ITERATIONS_KEY) + ":"))
-        innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0, ULCBoxPane.BOX_EXPAND_EXPAND))
+        innerPane.add(2, ULCBoxPane.BOX_EXPAND_CENTER, spaceAround(numberOfIterations, 5, 10, 0, 0, BOX_EXPAND_EXPAND))
     }
 
     /**

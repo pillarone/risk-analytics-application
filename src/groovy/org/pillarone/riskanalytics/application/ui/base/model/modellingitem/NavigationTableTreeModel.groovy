@@ -180,7 +180,7 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     public void updateTreeStructure() {
         //only update tree for items which are accepted by the current filter.
         //for deleted elements we also have to update the tree, because the items for deletion are not fully mapped, so it could be that the filter does not work correctly.
-        def events = getPendingEvents()
+        def events = pendingEvents
         eachNotFilteredOrDeleted(events) { ItemEvent itemEvent ->
             switch (itemEvent.eventType) {
                 case ADDED:

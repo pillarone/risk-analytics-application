@@ -1,18 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.ULCTabbedPane
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import com.ulcjava.base.application.ULCAlert
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
-import com.ulcjava.base.application.UlcUtilities
-import com.ulcjava.base.application.event.WindowEvent
-import com.ulcjava.base.application.event.IWindowListener
-import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
-import com.ulcjava.base.application.ULCFrame
-import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IWindowListener
+import com.ulcjava.base.application.event.WindowEvent
+import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 class TabbedPaneManager {
 
@@ -35,19 +29,20 @@ class TabbedPaneManager {
      */
     public void addTab(AbstractUIItem item) {
         ULCContainer view = item.createDetailView()
-        tabbedPane.addTab(item.createTitle(), item.getIcon(), view)
+        def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+        tabbedPane.addTab(item.createTitle(), item.icon, wrapped)
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
-        tabManager.put(item, view)
+        tabManager[item] = wrapped
         item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, tabbedPane, item)
-        tabbedPane.setToolTipTextAt(tabIndex, item.getToolTip())
+        tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
     }
 
     public void closeTab(AbstractUIItem abstractUIItem) {
-        if (abstractUIItem.isChanged()) {
+        if (abstractUIItem.changed) {
             boolean closeTab = true
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tabManager.get(abstractUIItem)), "itemChanged")
-            alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tabManager[abstractUIItem]), "itemChanged")
+            alert.addWindowListener([windowClosing: { WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
                     SaveAction saveAction = new SaveAction(tabbedPane, abstractUIItem.mainModel, abstractUIItem)
@@ -107,7 +102,7 @@ class TabbedPaneManager {
 
     AbstractUIItem getAbstractItem(ULCComponent component) {
         AbstractUIItem abstractUIItem = null
-        tabManager.each {k, v ->
+        tabManager.each { k, v ->
             if (v == component)
                 abstractUIItem = k
         }

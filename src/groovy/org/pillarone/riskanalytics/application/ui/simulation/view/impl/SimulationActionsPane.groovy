@@ -23,7 +23,7 @@ import static org.pillarone.riskanalytics.core.simulation.SimulationState.*
  */
 class SimulationActionsPane implements IActionListener, ISimulationListener, ISimulationValidationListener {
 
-    private static Log LOG = LogFactory.getLog(SimulationActionsPane)
+    private static final Log LOG = LogFactory.getLog(SimulationActionsPane)
 
     ULCTabbedPane content
     SimulationState currentUISimulationState

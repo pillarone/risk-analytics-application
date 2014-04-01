@@ -11,7 +11,6 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     private final List<SimulationRuntimeInfo> queueItems = []
 
-
     @Override
     int getRowCount() {
         queueItems.size()

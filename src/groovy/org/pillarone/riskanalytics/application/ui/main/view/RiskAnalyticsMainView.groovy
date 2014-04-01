@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.util.Dimension
@@ -29,8 +28,6 @@ import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
 import static com.ulcjava.base.application.ULCComponent.WHEN_IN_FOCUSED_WINDOW
-import static com.ulcjava.base.application.ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-import static com.ulcjava.base.application.ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED
 import static com.ulcjava.base.application.ULCSplitPane.HORIZONTAL_SPLIT
 import static com.ulcjava.base.application.ULCSplitPane.VERTICAL_SPLIT
 import static com.ulcjava.base.application.event.KeyEvent.*
@@ -80,16 +77,14 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         splitPane.resizeWeight = 1
         splitPane.dividerLocation = 200
         splitPane.dividerSize = 10
-
         splitPane.leftComponent = treePane
         ULCSplitPane splitBetweenModelPaneAndIndependentPane = new ULCSplitPane(VERTICAL_SPLIT)
-        ULCScrollPane scrollPane = new ULCScrollPane(modelPane, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER)
-
-        splitBetweenModelPaneAndIndependentPane.topComponent = scrollPane
+//        ULCScrollPane scrollPane = new ULCScrollPane(modelPane, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER)
+        splitBetweenModelPaneAndIndependentPane.topComponent = modelPane
         splitBetweenModelPaneAndIndependentPane.bottomComponent = modelIndependentDetailView.content
         splitBetweenModelPaneAndIndependentPane.oneTouchExpandable = true
-        splitBetweenModelPaneAndIndependentPane.resizeWeight = 1
         splitBetweenModelPaneAndIndependentPane.dividerSize = 10
+        splitBetweenModelPaneAndIndependentPane.dividerLocation = 500
         splitPane.rightComponent = splitBetweenModelPaneAndIndependentPane
 
         ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)
@@ -174,7 +169,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         headerView.modelAdded(model, cardPaneManager)
     }
 
-    public void setWindowTitle(AbstractUIItem abstractUIItem) {
+    void setWindowTitle(AbstractUIItem abstractUIItem) {
         ULCFrame window = UlcUtilities.getWindowAncestor(this.content) as ULCFrame
         window.title = "Risk Analytics - ${abstractUIItem ? abstractUIItem.windowTitle : ''}"
     }

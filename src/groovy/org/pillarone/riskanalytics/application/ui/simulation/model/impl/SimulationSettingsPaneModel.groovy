@@ -1,11 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
-
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import grails.util.Holders
 import groovy.beans.Bindable
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
@@ -24,7 +21,6 @@ import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-
 /**
  * The view model of the SimulationSettingsPane.
  * It is possible to retrieve a Simulation and ICollectorOutputStrategy object from the model (created from the current values).
@@ -33,8 +29,6 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
  * an invalid (incomplete) to a valid state.
  */
 class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener, ISimulationProfileApplicable {
-
-    private static final Log LOG = LogFactory.getLog(SimulationSettingsPaneModel)
 
     String simulationName
     String comment

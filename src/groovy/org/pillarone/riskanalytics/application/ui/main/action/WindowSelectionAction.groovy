@@ -1,19 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
+import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.application.ui.main.view.CardPaneManager
-import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import org.pillarone.riskanalytics.core.model.Model
 
 class WindowSelectionAction extends ExceptionSafeAction {
 
-    RiskAnalyticsMainView mainView
-    Model model
+    private final Model model
     private CardPaneManager cardPaneManager
 
-    def WindowSelectionAction(Model model, CardPaneManager cardPaneManager) {
+    WindowSelectionAction(Model model, CardPaneManager cardPaneManager) {
         super(getMenuName(model));
         this.model = model
         this.cardPaneManager = cardPaneManager
@@ -21,9 +19,9 @@ class WindowSelectionAction extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
         cardPaneManager.selectCard(model)
-        ULCCloseableTabbedPane selectedPane = cardPaneManager.getSelectedCard() as ULCCloseableTabbedPane
+        ULCCloseableTabbedPane selectedPane = cardPaneManager.selectedCard as ULCCloseableTabbedPane
         cardPaneManager.selectCurrentItemFromTab(model, selectedPane)
-        trace("Select model ${model?.name} and selected Pane: $selectedPane")
+        trace("Select model ${model?.name} and pane: $selectedPane")
     }
 
     static String getMenuName(Model model) {

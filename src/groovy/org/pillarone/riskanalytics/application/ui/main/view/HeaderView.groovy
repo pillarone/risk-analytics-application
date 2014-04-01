@@ -147,31 +147,31 @@ class HeaderView extends AbstractView {
         //init buttons
         saveButton = new ULCButton(saveAction)
         saveButton.text = null
-        saveButton.setMargin(new Insets(3, 3, 3, 3));
-        saveButton.setBorderPainted(false);
+        saveButton.margin = new Insets(3, 3, 3, 3);
+        saveButton.borderPainted = false;
 
         refreshButton = new ULCButton(refreshAction)
         refreshButton.name = "refresh"
         refreshButton.text = null
         refreshButton.toolTipText = "Refresh"
-        refreshButton.setMargin(new Insets(3, 3, 3, 3));
-        refreshButton.setBorderPainted(false);
+        refreshButton.margin = new Insets(3, 3, 3, 3);
+        refreshButton.borderPainted = false;
 
         runButton = new ULCButton(runAction)
         runButton.text = null
-        runButton.setMargin(new Insets(3, 3, 3, 3));
-        runButton.setBorderPainted(false);
+        runButton.margin = new Insets(3, 3, 3, 3);
+        runButton.borderPainted = false;
         //init labels
         lockedLabel = new ULCLabel()
         lockedLabel.text = null
         lockedLabel.icon = UIUtils.getIcon("locked-active.png")
 
-        userInfoComboBoxModel = new DefaultComboBoxModel([UIUtils.getUserInfo(), UIUtils.getText(HeaderView.class, "Logout")])
+        userInfoComboBoxModel = new DefaultComboBoxModel([UIUtils.userInfo, UIUtils.getText(HeaderView.class, "Logout")])
         userInfoComboBox = new ULCComboBox(userInfoComboBoxModel)
-        userInfoComboBox.setOpaque(false)
-        userInfoComboBox.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1))
-        userInfoComboBox.setMinimumSize(new Dimension(120, 20))
-        userInfoComboBox.setVisible(UserContext.isApplet())
+        userInfoComboBox.opaque = false
+        userInfoComboBox.border = BorderFactory.createLineBorder(Color.lightGray, 1)
+        userInfoComboBox.minimumSize = new Dimension(120, 20)
+        userInfoComboBox.visible = UserContext.applet
     }
 
     void layoutComponents() {
@@ -181,7 +181,7 @@ class HeaderView extends AbstractView {
         fileMenu.add(saveItem)
         fileMenu.add(saveAllItem)
         fileMenu.addSeparator()
-        if (UserContext.isStandAlone()) {
+        if (UserContext.standAlone) {
             fileMenu.add(exportAllItemsNewstVersion)
             fileMenu.add(exportAllItems)
             fileMenu.add(importAllItems)
@@ -229,11 +229,11 @@ class HeaderView extends AbstractView {
 
     void attachListeners() {
         userInfoComboBox.addActionListener([actionPerformed: { ActionEvent evt ->
-            if (userInfoComboBoxModel.getSelectedItem() == UIUtils.getText(HeaderView.class, "Logout")) {
+            if (userInfoComboBoxModel.selectedItem == UIUtils.getText(HeaderView.class, "Logout")) {
                 String url = null
                 try {
                     Holders.grailsApplication.mainContext.getBean('logoutService', LogoutService).logout(false)
-                    url = UserContext.getBaseUrl() + "/logout"
+                    url = UserContext.baseUrl + "/logout"
                     ClientContext.showDocument(url, "_self")
                 } catch (Exception ex) {
                     LOG.error("Logout error by calling $url : $ex")
@@ -262,25 +262,21 @@ class HeaderView extends AbstractView {
             runAction.enabled = false
             lockedLabel?.icon = UIUtils.getIcon("clear.png")
         }
-
     }
 
     void modelAdded(Model model, CardPaneManager cardPaneManager) {
         String name = WindowSelectionAction.getMenuName(model)
         if (windowMenus[name]) return
         ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new WindowSelectionAction(model, cardPaneManager))
-        item.setGroup(windowMenuItemGroup)
+        item.group = windowMenuItemGroup
         windowMenu.add(item)
         windowMenus[name] = item
-
     }
 
     void addWindowMenuEntry(String title, ULCCardPane cardPane, boolean selected) {
         ULCCheckBoxMenuItem item = new ULCCheckBoxMenuItem(new MainCardSelectionAction(title, cardPane))
         item.selected = selected
-        item.setGroup(extensionMenuItemGroup)
+        item.group = extensionMenuItemGroup
         windowMenu.add(item)
     }
-
-
 }
