@@ -17,13 +17,18 @@ class SimulationQueueView {
 
     @Resource
     SimulationQueueViewModel simulationQueueViewModel
+    @Resource
+    QueueContextMenu queueContextMenu
+
     private ULCScrollPane content
+    ULCTable queueTable
 
     @PostConstruct
     void initialize() {
         content = new ULCScrollPane()
-        ULCTable queueTable = new ULCTable(simulationQueueViewModel.simulationQueueTableModel)
+        queueTable = new ULCTable(simulationQueueViewModel.simulationQueueTableModel)
         content.add(queueTable)
+        queueTable.componentPopupMenu = queueContextMenu
     }
 
     ULCComponent getContent() {

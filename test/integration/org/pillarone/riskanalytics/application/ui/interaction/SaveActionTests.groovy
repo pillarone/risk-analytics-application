@@ -54,6 +54,7 @@ class SaveActionTests extends AbstractFunctionalTestCase {
         assertNotNull "path not found", pathForRename
 
         selectionTableTreeRowHeader.doExpandPath(pathForRename.parentPath)
+        sleep(1000)
         int row = selectionTableTreeRowHeader.getRowForPath(pathForRename)
 
         runSimulation(selectionTableTreeRowHeader, row)

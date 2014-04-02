@@ -19,6 +19,8 @@ class SimulationQueueViewModel {
     SimulationRuntimeService simulationRuntimeService
     @Resource
     SimulationQueueTableModel simulationQueueTableModel
+    @Autowired
+    SimulationQueueService simulationQueueService
 
     private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
 
@@ -31,6 +33,11 @@ class SimulationQueueViewModel {
     @PreDestroy
     void unregister() {
         ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
+    }
+
+    void cancelAt(int index) {
+        SimulationRuntimeInfo info = simulationQueueTableModel.getInfoAt(index)
+        simulationQueueService.cancel(info.id)
     }
 
     private class MyInfoListener implements ISimulationRuntimeInfoListener {

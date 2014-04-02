@@ -15,16 +15,15 @@ class ModellingItemSelectionListener extends ULCTableTreeModelAdapter {
     private ULCFixedColumnTableTree tree
 
     ModellingItemSelectionListener(ULCFixedColumnTableTree tree) {
-        super(tree.getRowHeaderTableTree().model)
+        super(tree.rowHeaderTableTree.model)
         this.tree = tree
     }
 
     void rememberSelectionState() {
         syncSelection = true
         scrollPosition = tree.verticalScrollBar.position
-        selectedRow = tree.getRowHeaderTableTree().selectedRows?.toList()?.min()
-        selectedPath = tree.getRowHeaderTableTree().selectedPath
-
+        selectedRow = tree.rowHeaderTableTree.selectedRows?.toList()?.min()
+        selectedPath = tree.rowHeaderTableTree.selectedPath
     }
 
     void flushSelectionState() {

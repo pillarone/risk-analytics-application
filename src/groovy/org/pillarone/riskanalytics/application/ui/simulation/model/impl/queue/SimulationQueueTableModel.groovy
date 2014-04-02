@@ -22,6 +22,10 @@ class SimulationQueueTableModel extends AbstractTableModel {
         return 9
     }
 
+    SimulationRuntimeInfo getInfoAt(int index) {
+        queueItems[index]
+    }
+
     @Override
     String getColumnName(int column) {
         //TODO define the exact columns and move to resource bundle
