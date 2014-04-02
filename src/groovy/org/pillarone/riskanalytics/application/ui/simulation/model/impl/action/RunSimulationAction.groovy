@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
 
 import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
@@ -44,8 +45,10 @@ class RunSimulationAction extends ResourceBasedAction {
         Parameterization parameterization = model.simulation.parameterization
         ResultConfiguration configuration = model.simulation.template
 
-        if (SimulationRun.findAllByNameAndModel(model.simulation.name, model.simulation.modelClass.name)?.find {(!it.toBeDeleted)} != null) {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "DuplicateName")
+        if (SimulationRun.findAllByNameAndModel(model.simulation.name, model.simulation.modelClass.name)?.find {
+            (!it.toBeDeleted)
+        } != null) {
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source as ULCComponent), "DuplicateName")
             alert.show()
             return
         }
@@ -54,14 +57,14 @@ class RunSimulationAction extends ResourceBasedAction {
             if (isUsedInSimulation(parameterization) || isUsedInSimulation(configuration)) {
                 //unsaved used item
                 ULCAlert alert = new I18NAlert("UnsavedUsedItem")
-                alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+                alert.addWindowListener([windowClosing: { WindowEvent windowEvent ->
                     handler.handleUnsavedUsedItem(windowEvent, alert, event.source)
                 }] as IWindowListener)
                 alert.show()
             } else {
                 //unsaved unused item
-                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "UnsavedChanged")
-                alert.addWindowListener([windowClosing: {WindowEvent windowEvent ->
+                ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source as ULCComponent), "UnsavedChanged")
+                alert.addWindowListener([windowClosing: { WindowEvent windowEvent ->
                     handler.handleUnsavedItem(windowEvent, alert)
                 }] as IWindowListener)
                 alert.show()
@@ -74,7 +77,7 @@ class RunSimulationAction extends ResourceBasedAction {
     }
 
     private boolean isUsedInSimulation(ModellingItem item) {
-        return item.changed && item.isUsedInSimulation()
+        return item.changed && item.usedInSimulation
     }
 
 }

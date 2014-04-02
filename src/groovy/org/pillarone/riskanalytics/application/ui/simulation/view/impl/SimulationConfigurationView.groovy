@@ -16,9 +16,6 @@ class SimulationConfigurationView {
     SimulationActionsPane actionsPane
     SimulationConfigurationModel model
 
-    public SimulationConfigurationView() {
-    }
-
     public SimulationConfigurationView(SimulationConfigurationModel model) {
         this.model = model
         initComponents()

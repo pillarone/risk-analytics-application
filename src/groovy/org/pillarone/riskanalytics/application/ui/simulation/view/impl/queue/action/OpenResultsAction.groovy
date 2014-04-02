@@ -5,6 +5,7 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -12,21 +13,31 @@ import javax.annotation.Resource
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
-class CancelSimulationAction extends ResourceBasedAction {
+class OpenResultsAction extends ResourceBasedAction {
 
     @Resource
     GrailsApplication grailsApplication
 
-    CancelSimulationAction() {
-        super('CancelSimulation')
+    OpenResultsAction() {
+        super("OpenResults");
     }
 
-    SimulationQueueView getSimulationQueueView() {
+    void doActionPerformed(ActionEvent event) {
+        trace("Open result for simulation: ${selectedInfo?.simulation}")
+        simulationQueueView.simulationQueueViewModel.openResultAt(simulationQueueView.selectedRow)
+    }
+
+    private SimulationQueueView getSimulationQueueView() {
         grailsApplication.mainContext.getBean('simulationQueueView', SimulationQueueView)
     }
 
+    private SimulationRuntimeInfo getSelectedInfo() {
+        simulationQueueView.simulationQueueViewModel.getSimulationRuntimeInfoAt(simulationQueueView.selectedRow)
+    }
+
     @Override
-    void doActionPerformed(ActionEvent event) {
-        simulationQueueView.simulationQueueViewModel.cancelAt(simulationQueueView.selectedRow)
+    boolean isEnabled() {
+        return super.isEnabled()
+//        (selectedInfo?.simulationState == SimulationState.FINISHED) && super.enabled
     }
 }

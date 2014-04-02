@@ -1,7 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.*
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -21,6 +25,8 @@ class SimulationQueueViewModel {
     SimulationQueueTableModel simulationQueueTableModel
     @Autowired
     SimulationQueueService simulationQueueService
+    @Resource
+    RiskAnalyticsMainModel riskAnalyticsMainModel
 
     private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
 
@@ -36,8 +42,27 @@ class SimulationQueueViewModel {
     }
 
     void cancelAt(int index) {
-        SimulationRuntimeInfo info = simulationQueueTableModel.getInfoAt(index)
-        simulationQueueService.cancel(info.id)
+        if (index != -1) {
+            SimulationRuntimeInfo info = simulationQueueTableModel.getInfoAt(index)
+            simulationQueueService.cancel(info.id)
+        }
+    }
+
+    void openResultAt(int index) {
+        if (index != -1) {
+            SimulationRuntimeInfo info = simulationQueueTableModel.getInfoAt(index)
+            if (info.simulationState == SimulationState.FINISHED) {
+                Simulation simulation = info.simulation
+                if (!simulation.loaded) {
+                    simulation.load()
+                }
+                riskAnalyticsMainModel.notifyOpenDetailView((Model) simulation.modelClass.newInstance(), simulation)
+            }
+        }
+    }
+
+    SimulationRuntimeInfo getSimulationRuntimeInfoAt(int index) {
+        index != -1 ? simulationQueueTableModel.getInfoAt(index) : null
     }
 
     private class MyInfoListener implements ISimulationRuntimeInfoListener {

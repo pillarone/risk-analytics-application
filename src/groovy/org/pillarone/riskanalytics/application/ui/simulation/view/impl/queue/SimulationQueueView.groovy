@@ -21,7 +21,7 @@ class SimulationQueueView {
     QueueContextMenu queueContextMenu
 
     private ULCScrollPane content
-    ULCTable queueTable
+    private ULCTable queueTable
 
     @PostConstruct
     void initialize() {
@@ -33,5 +33,9 @@ class SimulationQueueView {
 
     ULCComponent getContent() {
         content
+    }
+
+    int getSelectedRow() {
+        queueTable.selectedRow
     }
 }

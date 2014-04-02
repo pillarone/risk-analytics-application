@@ -46,6 +46,4 @@ class AddToBatchAction extends RunSimulationAction {
             model.notifySimulationToBatchAdded(UIUtils.getText(this.class, "error"), null)
         }
     }
-
-
 }
