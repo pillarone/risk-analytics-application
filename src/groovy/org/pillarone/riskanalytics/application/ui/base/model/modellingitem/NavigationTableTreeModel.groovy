@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
-
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -7,6 +6,7 @@ import com.ulcjava.base.application.tree.TreePath
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -34,7 +34,7 @@ import javax.annotation.Resource
 
 import static org.pillarone.riskanalytics.core.search.CacheItemEvent.EventType.*
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableTreeModelWithValues {
     protected static final Log LOG = LogFactory.getLog(NavigationTableTreeModel)

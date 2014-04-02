@@ -13,6 +13,7 @@ import com.ulcjava.base.application.tree.TreePath
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.KeyStroke
 import com.ulcjava.base.shared.IDefaults
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.action.Collapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
@@ -31,7 +32,7 @@ import javax.annotation.Resource
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class SelectionTreeView {
     ULCFixedColumnTableTree tree

@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.search
 
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
 import org.pillarone.riskanalytics.core.modellingitem.CacheItemListener
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class CacheItemEventQueue {
 

@@ -1,42 +1,33 @@
 package org.pillarone.riskanalytics.application.ui.base.model
 
-import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
+import grails.util.Holders
 import groovy.transform.CompileStatic
+import org.apache.commons.lang.builder.HashCodeBuilder
+import org.pillarone.riskanalytics.application.ui.PollingSupport
+import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import org.apache.commons.lang.builder.HashCodeBuilder
-import org.pillarone.riskanalytics.application.ui.parameterization.model.AbstractCommentableItemTableTreeModel
 
 @CompileStatic
 abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeModel {
-    ULCPollingTimer timer
     Map cellValues = [:]
     PollingAction pollingAction
     ExecutorService service
     LinkedBlockingQueue queue
+    PollingSupport pollingSupport
 
     protected AsynchronTableTreeModel() {
         pollingAction = new PollingAction(this)
-
         queue = new LinkedBlockingQueue<Runnable>()
         service = new ThreadPoolExecutor(1, 3, 0L, TimeUnit.MILLISECONDS, queue)
-    }
-
-    ULCPollingTimer getPollingTimer() {
-        if (!timer) {
-            timer = new ULCPollingTimer(1000, pollingAction)
-            timer.repeats = true
-            timer.syncClientState = false
-        }
-        return timer
     }
 
     public final Object getValueAt(Object node, int column) {
@@ -48,10 +39,7 @@ abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeM
                     pollingAction.addNode(identifier)
                 }
                 service.submit(callback)
-
-                if (!pollingTimer.running) {
-                    pollingTimer.start()
-                }
+                startPolling()
                 return "..."
             } else {
                 cellValues[identifier] = getAsynchronValue(node, column)
@@ -72,6 +60,21 @@ abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeM
 
     void clearCache() {
         cellValues.clear()
+    }
+
+    private PollingSupport getPollingSupport() {
+        if (!pollingSupport) {
+            pollingSupport = Holders.grailsApplication.mainContext.getBean('pollingSupport1000', PollingSupport)
+        }
+        pollingSupport
+    }
+
+    void startPolling() {
+        getPollingSupport().addActionListener(pollingAction)
+    }
+
+    void stopPolling() {
+        getPollingSupport().removeActionListener(pollingAction)
     }
 }
 
@@ -95,7 +98,7 @@ class PollingAction implements IActionListener {
             requestedNodes.remove(it)
         }
         if (!model.hasPendingRequests()) {
-            model.pollingTimer.stop()
+            model.stopPolling()
         }
     }
 
@@ -112,8 +115,10 @@ class NodeIdentifier {
     int columnIndex
 
     public boolean equals(Object obj) {
-        if (!obj instanceof NodeIdentifier) {return false}
-        return ((NodeIdentifier)obj).node == node && ((NodeIdentifier)obj).columnName == columnName
+        if (!obj instanceof NodeIdentifier) {
+            return false
+        }
+        return ((NodeIdentifier) obj).node == node && ((NodeIdentifier) obj).columnName == columnName
     }
 
     public int hashCode() {

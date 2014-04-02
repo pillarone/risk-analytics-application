@@ -1,19 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
-
-import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.table.AbstractTableModel
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
+import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchRunAction
-
+import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
-import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
-import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 
 public class BatchDataTableModel extends AbstractTableModel implements BatchTableListener {
     List<String> columnHeaders
@@ -21,12 +17,11 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     List<BatchRunSimulationRun> batchRunSimulationRuns = []
     BatchRun batchRun
     SimulationRun selectedRun
-    ULCPollingTimer pollingBatchRunTimer
     PollingBatchRunAction pollingBatchRunAction
     List<IRiskAnalyticsModelListener> riskAnalyticsModelListeners
+    PollingSupport pollingSupport
 
-    private final String SIMULATION_STATUS_COLUMN = UIUtils.getText(this.class, "SimulationStatus")
-    Log LOG = LogFactory.getLog(BatchDataTableModel)
+    private static final String SIMULATION_STATUS_COLUMN = UIUtils.getText(this.class, "SimulationStatus")
 
     public BatchDataTableModel(BatchRun batchRun) {
         this.tableValues = new ArrayList<List<String>>()
@@ -35,15 +30,13 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         riskAnalyticsModelListeners = []
     }
 
-
-
-
     public void init() {
+        pollingSupport = Holders.grailsApplication.mainContext.getBean('pollingSupport2000', PollingSupport)
         initTableHeader()
         BatchRun.withTransaction {
             batchRun = BatchRun.findByName(batchRun.name)
             batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])
-            batchRunSimulationRuns.eachWithIndex {BatchRunSimulationRun brSr, int index ->
+            batchRunSimulationRuns.eachWithIndex { BatchRunSimulationRun brSr, int index ->
                 tableValues << toList(brSr)
             }
         }
@@ -99,7 +92,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
 
     public int getRowIndex(SimulationRun simulationRun) {
         int index = 0;
-        for (BatchRunSimulationRun batchRunSimulationRun: batchRunSimulationRuns) {
+        for (BatchRunSimulationRun batchRunSimulationRun : batchRunSimulationRuns) {
             if (batchRunSimulationRun.simulationRun.id == simulationRun.id)
                 return index
             index++
@@ -108,7 +101,7 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     }
 
     public SimulationRun getSimulationRunAt(int rowIndex) {
-        return batchRunSimulationRuns.get(rowIndex).simulationRun
+        return batchRunSimulationRuns[rowIndex].simulationRun
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -127,10 +120,10 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
 
     public void fireTableRowsUpdated(BatchRunSimulationRun batchRunSimulationRun) {
         List<Integer> rows = []
-        batchRunSimulationRuns.eachWithIndex {BatchRunSimulationRun brsr, int index ->
+        batchRunSimulationRuns.eachWithIndex { BatchRunSimulationRun brsr, int index ->
             if (batchRunSimulationRun.simulationRun.name == brsr.simulationRun.name) {
                 rows << index
-                this.tableValues.get(index).set(getColumnIndex(SIMULATION_STATUS_COLUMN), UIUtils.getText(this.class, batchRunSimulationRun.simulationState.toString()))
+                this.tableValues[index][getColumnIndex(SIMULATION_STATUS_COLUMN)] = UIUtils.getText(this.class, batchRunSimulationRun.simulationState.toString())
             }
         }
         rows.each {
@@ -160,41 +153,32 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     }
 
     public void firePriorityChanged(int rowIndex, int step) {
-        int to = (rowIndex + step >= 0 && rowIndex + step < getRowCount()) ? rowIndex + step : rowIndex
+        int to = (rowIndex + step >= 0 && rowIndex + step < rowCount) ? rowIndex + step : rowIndex
         Collections.swap(tableValues, rowIndex, to)
         Collections.swap(batchRunSimulationRuns, rowIndex, to)
         fireTableRowsUpdated Math.min(rowIndex, to), Math.max(rowIndex, to)
     }
 
     private void startPollingTimer() {
-        if (!isAllExecuted()) {
-            if (!pollingBatchRunTimer) {
-                pollingBatchRunTimer = new ULCPollingTimer(2000, pollingBatchRunAction)
-                pollingBatchRunTimer.repeats = true
-                pollingBatchRunTimer.syncClientState = false
-            }
-            if (!pollingBatchRunTimer.isRunning()) {
-                LOG.info " starting pollingTimer"
-                pollingBatchRunTimer.start()
-            }
+        if (!allExecuted) {
+            pollingSupport.addActionListener(pollingBatchRunAction)
         }
     }
 
     public void stopPollingTimer() {
-        if (isAllExecuted() && pollingBatchRunTimer.isRunning()) {
-            LOG.info " stopping pollingTimer"
-            pollingBatchRunTimer.stop()
+        if (allExecuted) {
+            pollingSupport.removeActionListener(pollingBatchRunAction)
         }
     }
 
     public void openDetailView(Model model, Object item) {
-        riskAnalyticsModelListeners.each {IRiskAnalyticsModelListener riskAnalyticsModelListener ->
+        riskAnalyticsModelListeners.each { IRiskAnalyticsModelListener riskAnalyticsModelListener ->
             riskAnalyticsModelListener.openDetailView model, item
         }
     }
 
     private boolean isAllExecuted() {
-        for (BatchRunSimulationRun batchRunSimulationRun: batchRunSimulationRuns) {
+        for (BatchRunSimulationRun batchRunSimulationRun : batchRunSimulationRuns) {
             if (batchRunSimulationRun.simulationState != SimulationState.FINISHED && batchRunSimulationRun.simulationState != SimulationState.ERROR)
                 return false
         }

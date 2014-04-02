@@ -2,15 +2,19 @@ package org.pillarone.riskanalytics.application.ui
 
 import com.ulcjava.applicationframework.application.Application
 import com.ulcjava.applicationframework.application.ApplicationContext
+import com.ulcjava.base.application.IApplication
 import com.ulcjava.base.server.ULCSession
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.config.Scope
 
 class UlcSessionScope implements Scope {
 
-    public static final String ULC_SESSION_SCOPE = 'ulcSessionScope'
-    public static final String CALL_BACK_MAP = 'callBackMap'
-    public static final String ULC_APPLICATION_CONTEXT = 'ulcApplicationContext'
+    private static final Log LOG = LogFactory.getLog(UlcSessionScope)
+    public static final String ULC_SESSION_SCOPE = 'ulcSession'
+    private static final String CALL_BACK_MAP = 'callBackMap'
+    private static final String ULC_APPLICATION_CONTEXT = 'ulcApplicationContext'
 
     @Override
     Object get(String name, ObjectFactory<?> objectFactory) {
@@ -51,7 +55,7 @@ class UlcSessionScope implements Scope {
         destructionCallbackMap.values().each { it.run() }
     }
 
-    static Map<String, Object> getScopeMap() {
+    private static Map<String, Object> getScopeMap() {
         Map<String, Object> scopeMap = ApplicationContext.getAttribute(ULC_SESSION_SCOPE) as Map
         if (scopeMap == null) {
             scopeMap = [:]
@@ -71,6 +75,11 @@ class UlcSessionScope implements Scope {
     }
 
     private static ApplicationContext getCurrentApplicationContext() {
-        (ULCSession.currentSession().application as Application).context
+        IApplication application = ULCSession.currentSession().application
+        if (application instanceof Application) {
+            return application.context
+        }
+        LOG.warn('cannot get current application context')
+        null
     }
 }

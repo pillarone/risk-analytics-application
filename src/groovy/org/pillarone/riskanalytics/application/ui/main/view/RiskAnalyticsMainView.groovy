@@ -5,6 +5,7 @@ import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
@@ -33,7 +34,7 @@ import static com.ulcjava.base.application.ULCSplitPane.VERTICAL_SPLIT
 import static com.ulcjava.base.application.event.KeyEvent.*
 import static com.ulcjava.base.shared.IDefaults.*
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
 

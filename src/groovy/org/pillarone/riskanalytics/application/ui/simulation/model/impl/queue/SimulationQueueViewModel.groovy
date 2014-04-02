@@ -1,31 +1,45 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.core.simulation.engine.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 import javax.annotation.Resource
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class SimulationQueueViewModel {
     @Resource
-    SimulationQueueEventService simulationQueueEventService
+    UlcSimulationRuntimeService ulcSimulationRuntimeService
     @Autowired
     SimulationRuntimeService simulationRuntimeService
     @Resource
     SimulationQueueTableModel simulationQueueTableModel
 
+    private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
+
     @PostConstruct
     void initialize() {
+        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
         simulationQueueTableModel.queueItems = simulationRuntimeService.queued
     }
 
-    void update() {
-        List<SimulationRuntimeInfoEvent> events = simulationQueueEventService.poll()
-        events.each { SimulationRuntimeInfoEvent event ->
+    @PreDestroy
+    void unregister() {
+        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
+    }
+
+    private class MyInfoListener implements ISimulationRuntimeInfoListener {
+        @Override
+        void onEvent(SimulationRuntimeInfoEvent event) {
+            update(event)
+        }
+
+        private void update(SimulationRuntimeInfoEvent event) {
             switch (event.class) {
                 case (AddSimulationRuntimeInfoEvent):
                     AddSimulationRuntimeInfoEvent addEvent = event as AddSimulationRuntimeInfoEvent

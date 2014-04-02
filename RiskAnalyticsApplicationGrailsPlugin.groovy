@@ -1,5 +1,6 @@
 import com.ulcjava.applicationframework.application.ApplicationContext
 import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
+import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.UserDependentNavigationTreeModelFactory
 import org.springframework.beans.factory.config.CustomScopeConfigurer
@@ -49,6 +50,14 @@ ULC view
         userDependentNavigationTreeModelFactory(UserDependentNavigationTreeModelFactory)
         ulcApplicationContext(ApplicationContext) { ulcScopeWired(it) }
         navigationTableTreeModel(userDependentNavigationTreeModelFactory: 'createModel') { ulcScopeWired(it) }
+        pollingSupport2000(PollingSupport) {
+            delay = 2000
+            ulcScopeWired(it)
+        }
+        pollingSupport1000(PollingSupport) {
+            delay = 1000
+            ulcScopeWired(it)
+        }
     }
 
     def doWithDynamicMethods = { ctx -> }

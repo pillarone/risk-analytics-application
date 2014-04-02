@@ -27,19 +27,18 @@ public class BatchView extends NewBatchView {
     ULCButton saveButton
 
 
-    public BatchView(RiskAnalyticsMainModel model, BatchRun batchRun) {
+    private BatchView(RiskAnalyticsMainModel model, BatchRun batchRun) {
         this.model = model
         this.batchRun = batchRun
         this.batchDataTableModel = new BatchDataTableModel(batchRun)
     }
 
-    public BatchView(BatchUIItem batchUIItem) {
+    BatchView(BatchUIItem batchUIItem) {
         this(batchUIItem.mainModel, batchUIItem.batchRun)
         this.batchUIItem = batchUIItem
-
     }
 
-    public void init() {
+    void init() {
         batchDataTableModel.init()
         super.init()
 

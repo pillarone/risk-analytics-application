@@ -14,6 +14,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -37,7 +38,7 @@ import javax.annotation.Resource
  * @author fouad.jaada@intuitive-collaboration.com
  */
 @CompileStatic
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class HeaderView extends AbstractView {
     private static final Log LOG = LogFactory.getLog(HeaderView.class)

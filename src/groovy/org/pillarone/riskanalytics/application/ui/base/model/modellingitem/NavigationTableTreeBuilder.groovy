@@ -9,6 +9,7 @@ import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
@@ -38,7 +39,7 @@ import javax.annotation.PostConstruct
 
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListener {
     static final int PARAMETERIZATION_NODE_INDEX = 0

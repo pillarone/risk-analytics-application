@@ -12,6 +12,7 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.Scope
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.Resource
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class CardPaneManager {
     private static final Log LOG = LogFactory.getLog(CardPaneManager)

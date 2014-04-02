@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Component
 
 import java.beans.PropertyChangeListener
 
-@Scope('ulcSessionScope')
+@Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
