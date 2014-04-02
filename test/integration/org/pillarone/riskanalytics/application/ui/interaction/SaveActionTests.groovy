@@ -95,6 +95,7 @@ class SaveActionTests extends AbstractFunctionalTestCase {
         ULCPopupMenuOperator popUpMenu = tree.callPopupOnCell(row, 0)
         assertNotNull popUpMenu
         popUpMenu.pushMenu('Open')
+        sleep(1000)
         popUpMenu = tree.callPopupOnCell(row, 0)
         popUpMenu.pushMenu('Run simulation ...')
         ULCTextFieldOperator numberOfIterationsTextField = getTextFieldOperator('iterations')
