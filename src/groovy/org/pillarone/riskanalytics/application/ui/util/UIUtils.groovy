@@ -158,7 +158,11 @@ class UIUtils {
         try {
             str = LocaleResources.getString(objClass.simpleName + "." + key)
         } catch (MissingResourceException e) {
-            LOG.warn("I18n property not found: ${objClass.simpleName + "." + key}")
+            // eg Lookup of NavigationTableTreeModel.Parameterization not found in
+            // org.pillarone.riskanalytics.application.applicationResources.applicationResources.properties
+            // Can add NavigationTableTreeModel.Parameterization=Parameterization to avoid log entry
+            //
+            LOG.info("I18n property not found: ${objClass.simpleName + "." + key} - defaulting to $key")
         }
         if (argsValue) {
             argsValue.eachWithIndex { String value, int index ->
