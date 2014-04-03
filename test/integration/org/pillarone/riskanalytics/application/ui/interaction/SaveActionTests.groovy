@@ -44,23 +44,23 @@ class SaveActionTests extends AbstractFunctionalTestCase {
         assertStatus('CoreParameters', '2', Status.NONE)
     }
 
-    void testSaveParameterization_withWorkflow() {
-        ParameterizationDAO.withNewSession {
-            ParameterizationDAO dao = ParameterizationDAO.find('CoreParameters', CoreModel.class.name, '1')
-            dao.status = Status.DATA_ENTRY
-            dao.save(flush: true)
-        }
-        TreePath pathForRename = selectionTableTreeRowHeader.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
-        assertNotNull "path not found", pathForRename
-
-        selectionTableTreeRowHeader.doExpandPath(pathForRename.parentPath)
-        int row = selectionTableTreeRowHeader.getRowForPath(pathForRename)
-
-        runSimulation(selectionTableTreeRowHeader, row)
-        addCommentAndSave(mainFrameOperator)
-        handleNewVersionDialog()
-        assertStatus('CoreParameters', '2', Status.DATA_ENTRY)
-    }
+//    void testSaveParameterization_withWorkflow() {
+//        ParameterizationDAO.withNewSession {
+//            ParameterizationDAO dao = ParameterizationDAO.find('CoreParameters', CoreModel.class.name, '1')
+//            dao.status = Status.DATA_ENTRY
+//            dao.save(flush: true)
+//        }
+//        TreePath pathForRename = selectionTableTreeRowHeader.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
+//        assertNotNull "path not found", pathForRename
+//
+//        selectionTableTreeRowHeader.doExpandPath(pathForRename.parentPath)
+//        int row = selectionTableTreeRowHeader.getRowForPath(pathForRename)
+//
+//        runSimulation(selectionTableTreeRowHeader, row)
+//        addCommentAndSave(mainFrameOperator)
+//        handleNewVersionDialog()
+//        assertStatus('CoreParameters', '2', Status.DATA_ENTRY)
+//    }
 
     private void handleNewVersionDialog() {
         ULCDialogOperator dialog = ULCDialogOperator.findULCDialog('Item already used', true, true)

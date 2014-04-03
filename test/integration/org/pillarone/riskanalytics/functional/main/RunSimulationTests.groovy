@@ -31,9 +31,10 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
         ULCTextFieldOperator iterations = getTextFieldOperator("iterations")
         iterations.typeText("10")
         getButtonOperator("${SimulationActionsPane.simpleName}.run").clickMouse()
-        sleep(1000)
+        sleep(2000)
         def queued = simulationRuntimeService.queued
-        assert queued.find {
+        def finshed = simulationRuntimeService.finished
+        assert (queued + finshed).find {
             it.simulation.modelClass == CoreModel && it.iterations == 10
         }
     }
