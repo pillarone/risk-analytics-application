@@ -67,15 +67,15 @@ class SimulationQueueTableModel extends AbstractTableModel {
         fireTableDataChanged()
     }
 
-    void itemAdded(SimulationRuntimeInfo item, int index) {
-        queueItems.add(index, item)
-        fireTableRowsInserted(index, index)
+    void itemAdded(SimulationRuntimeInfo item) {
+        queueItems.add(item)
+        queueItems.sort()
+        fireTableDataChanged()
     }
 
-    void itemRemoved(UUID id) {
-        def item = queueItems.find { it.id == id }
-        if (item) {
-            def index = queueItems.indexOf(item)
+    void itemRemoved(SimulationRuntimeInfo info) {
+        def index = queueItems.indexOf(info)
+        if (index != -1) {
             queueItems.remove(index)
             fireTableRowsDeleted(index, index)
         }

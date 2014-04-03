@@ -1,12 +1,13 @@
 package org.pillarone.riskanalytics.application.reports
 
+import com.ulcjava.testframework.operator.*
 import com.ulcjava.testframework.standalone.AbstractStandaloneTestCase
-import javax.swing.tree.TreePath
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
-import com.ulcjava.testframework.operator.*
+
+import javax.swing.tree.TreePath
 
 public class ReportTests extends AbstractStandaloneTestCase {
 

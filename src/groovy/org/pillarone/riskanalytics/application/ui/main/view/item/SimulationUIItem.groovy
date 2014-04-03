@@ -31,7 +31,7 @@ class SimulationUIItem extends ModellingUIItem {
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
         mainModel.addModelChangedListener(model.settingsPaneModel)
-        mainModel.addModelChangedListener(model.actionsPaneModel)
+        mainModel.addModelChangedListener(model.simulationProfilePaneModel.simulationActionsPaneModel)
         mainModel.registerModel(this, model)
         return model
     }

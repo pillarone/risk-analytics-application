@@ -156,7 +156,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         if (viewModel != null) {
             if (viewModel instanceof SimulationConfigurationModel) {
                 removeModelChangedListener(viewModel.settingsPaneModel)
-                removeModelChangedListener(viewModel.actionsPaneModel)
+                removeModelChangedListener(viewModel.simulationProfilePaneModel.simulationActionsPaneModel)
                 removeNewSimulationListener(viewModel)
             }
             if (viewModel instanceof IModelChangedListener) {

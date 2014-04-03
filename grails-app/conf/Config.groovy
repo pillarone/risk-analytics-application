@@ -2,7 +2,7 @@ import org.pillarone.riskanalytics.core.output.batch.results.MysqlBulkInsert
 import org.pillarone.riskanalytics.core.output.batch.results.SQLServerBulkInsert
 import org.pillarone.riskanalytics.core.output.batch.calculations.MysqlCalculationsBulkInsert
 import grails.plugin.springsecurity.SecurityConfigType
-import org.pillarone.riskanalytics.application.logging.model.LoggingAppender
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.LoggingAppender
 import org.pillarone.riskanalytics.core.example.component.ExampleResource
 import org.pillarone.riskanalytics.application.example.resource.ApplicationResource
 import org.pillarone.riskanalytics.core.simulation.engine.grid.mapping.OneNodeStrategy

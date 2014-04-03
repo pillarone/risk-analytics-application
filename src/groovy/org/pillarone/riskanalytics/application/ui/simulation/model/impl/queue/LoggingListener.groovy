@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.logging.model
+package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import org.apache.log4j.spi.LoggingEvent
 

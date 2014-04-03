@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
 
+import com.ulcjava.base.application.BorderFactory
+import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCScrollPane
 import com.ulcjava.base.application.ULCTable
@@ -19,16 +21,21 @@ class SimulationQueueView {
     SimulationQueueViewModel simulationQueueViewModel
     @Resource
     QueueContextMenu queueContextMenu
+    @Resource
+    SimulationInfoPane simulationInfoPane
 
-    private ULCScrollPane content
+    private ULCBoxPane content
     private ULCTable queueTable
 
     @PostConstruct
     void initialize() {
-        content = new ULCScrollPane()
+        this.content = new ULCBoxPane(1, 2)
         queueTable = new ULCTable(simulationQueueViewModel.simulationQueueTableModel)
-        content.add(queueTable)
         queueTable.componentPopupMenu = queueContextMenu
+        def infoContent = simulationInfoPane.content
+        infoContent.border = BorderFactory.createTitledBorder("Simulation Information")
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, infoContent)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCScrollPane(queueTable))
     }
 
     ULCComponent getContent() {

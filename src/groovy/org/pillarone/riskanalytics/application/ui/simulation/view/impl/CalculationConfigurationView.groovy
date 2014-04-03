@@ -16,7 +16,6 @@ class CalculationConfigurationView extends SimulationConfigurationView {
     @Override
     protected void initComponents() {
         simulationProfilePane = new CalculationProfilePane(model.simulationProfilePaneModel)
-        actionsPane = new SimulationActionsPane(model.actionsPaneModel)
     }
 
     @Override

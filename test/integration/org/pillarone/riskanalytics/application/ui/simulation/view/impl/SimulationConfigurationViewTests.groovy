@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     protected void doStart() {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
 
         FileImportService.importModelsIfNeeded(["Core"])
 
@@ -29,7 +29,7 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
     void testEnableRun() {
         ULCFrameOperator frameOperator = new ULCFrameOperator("test")
-        ULCButtonOperator run = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("${SimulationActionsPane.getSimpleName()}.run"))
+        ULCButtonOperator run = new ULCButtonOperator(frameOperator, new ComponentByNameChooser("${SimulationActionsPane.simpleName}.run"))
         ULCTextFieldOperator iterations = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("iterations"))
         ULCTextFieldOperator name = new ULCTextFieldOperator(frameOperator, new ComponentByNameChooser("simulationName"))
 

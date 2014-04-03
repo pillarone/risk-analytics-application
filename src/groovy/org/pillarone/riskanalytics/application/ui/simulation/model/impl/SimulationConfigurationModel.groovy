@@ -9,26 +9,23 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class SimulationConfigurationModel implements IBatchListener, INewSimulationListener {
 
     SimulationProfilePaneModel simulationProfilePaneModel
-    SimulationActionsPaneModel actionsPaneModel
-
 
     public SimulationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
         initSubModels(modelClass, mainModel)
     }
 
     protected initSubModels(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass)
+        simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass, mainModel)
         mainModel.addNewSimulationListener(this)
         //Use the setting pane model as ISimulationProvider for the actions pane model
-        actionsPaneModel = new SimulationActionsPaneModel(settingsPaneModel, mainModel)
     }
 
     void newBatchAdded(BatchRun batchRun) {
-        actionsPaneModel.newBatchAdded(batchRun)
+        simulationProfilePaneModel.simulationActionsPaneModel.newBatchAdded(batchRun)
     }
 
     void newSimulation(Simulation simulation) {
-        if (simulation.parameterization)  {
+        if (simulation.parameterization) {
             settingsPaneModel.selectedParameterization = simulation.parameterization
         }
         if (simulation.template) {

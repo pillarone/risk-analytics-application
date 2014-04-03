@@ -9,6 +9,8 @@ class SimulationProfilePane {
 
     SimulationProfilePaneModel model
     SimulationSettingsPane simulationSettingsPane
+    SimulationActionsPane newSimulationActionPane
+
     private SimulationProfileActionsPane simulationProfileActionsPane
     protected ULCBoxPane content
 
@@ -16,20 +18,25 @@ class SimulationProfilePane {
         this.model = simulationProfilePaneModel
         initComponents()
         layout()
+        attachListeners()
     }
 
     protected initComponents() {
         simulationProfileActionsPane = new SimulationProfileActionsPane(model.simulationProfilePaneActionsModel)
         simulationSettingsPane = new SimulationSettingsPane(model.settingsPaneModel)
+        newSimulationActionPane = new SimulationActionsPane(model.simulationActionsPaneModel)
+    }
+
+    protected attachListeners() {
+        model.settingsPaneModel.addSimulationValidationListener(newSimulationActionPane)
     }
 
     protected void layout() {
-        content = new ULCBoxPane(1, 2)
-        ULCBoxPane holder = new ULCBoxPane(1, 2)
-        holder.add(ULCBoxPane.BOX_EXPAND_TOP, simulationProfileActionsPane.content)
-        holder.add(ULCBoxPane.BOX_EXPAND_TOP, simulationSettingsPane.content)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, holder)
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        content = new ULCBoxPane(1, 0)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, simulationProfileActionsPane.content)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, newSimulationActionPane.content)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, simulationSettingsPane.content)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, ULCFiller.createGlue())
     }
 
     ULCComponent getContent() {

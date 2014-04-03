@@ -2,7 +2,9 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
-import org.pillarone.riskanalytics.core.simulation.engine.*
+import org.pillarone.riskanalytics.core.simulation.engine.QueueEntry
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
 
 import static java.util.UUID.randomUUID
 
@@ -17,10 +19,9 @@ class SimulationQueueViewModelTests {
         SimulationRuntimeInfo deleteInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
         SimulationRuntimeInfo changeInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
 
-        def addEvent = new AddSimulationRuntimeInfoEvent(index: 1, info: addInfo)
-        def deleteEvent = new DeleteSimulationRuntimeInfoEvent(info: deleteInfo)
-        def changeEvent = new ChangeSimulationRuntimeInfoEvent(info: changeInfo)
-
+        tableModelControl.demand.itemChanged(3..3) { SimulationRuntimeInfo info ->
+            assert changeInfo.is(info)
+        }
         tableModelControl.demand.itemAdded { SimulationRuntimeInfo info, int index ->
             assert addInfo.is(info)
             assert 1 == index
@@ -28,16 +29,17 @@ class SimulationQueueViewModelTests {
         tableModelControl.demand.itemRemoved { UUID id ->
             assert deleteInfo.id == id
         }
-        tableModelControl.demand.itemChanged { SimulationRuntimeInfo info ->
-            assert changeInfo.is(info)
-        }
+
         SimulationQueueViewModel subject = new SimulationQueueViewModel(
                 simulationQueueTableModel: tableModelControl.createMock()
         )
 
-        subject.infoListener.onEvent(addEvent)
-        subject.infoListener.onEvent(deleteEvent)
-        subject.infoListener.onEvent(changeEvent)
+        subject.infoListener.starting(changeInfo)
+        subject.infoListener.changed(changeInfo)
+        subject.infoListener.finished(changeInfo)
+
+        subject.infoListener.offered(addInfo)
+        subject.infoListener.removed(deleteInfo)
     }
 
     void testInitialize() {

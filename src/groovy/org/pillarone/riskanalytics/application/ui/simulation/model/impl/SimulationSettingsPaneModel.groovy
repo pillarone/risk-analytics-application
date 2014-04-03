@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
+
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import grails.util.Holders
@@ -21,6 +22,7 @@ import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+
 /**
  * The view model of the SimulationSettingsPane.
  * It is possible to retrieve a Simulation and ICollectorOutputStrategy object from the model (created from the current values).
@@ -276,6 +278,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         }
     }
 
+    //TODO register to CacheService to be informed about changes
     void modelChanged() {
         doWithoutListening(parameterizationNames) {
             parameterizationNames.reload()

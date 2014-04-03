@@ -13,9 +13,8 @@ class CalculationConfigurationModel extends SimulationConfigurationModel {
 
     @Override
     protected initSubModels(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        simulationProfilePaneModel = new CalculationProfilePaneModel(modelClass)
+        simulationProfilePaneModel = new CalculationProfilePaneModel(modelClass, mainModel)
         //Use the setting pane model as ISimulationProvider for the actions pane model
-        actionsPaneModel = new SimulationActionsPaneModel(settingsPaneModel, mainModel)
     }
 
     @Override

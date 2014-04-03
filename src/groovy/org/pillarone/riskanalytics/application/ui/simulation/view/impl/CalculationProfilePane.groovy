@@ -13,12 +13,14 @@ public class CalculationProfilePane extends SimulationProfilePane {
     @Override
     protected initComponents() {
         simulationSettingsPane = new CalculationSettingsPane(model.settingsPaneModel)
+        newSimulationActionPane = new SimulationActionsPane(model.simulationActionsPaneModel)
     }
 
     @Override
     protected void layout() {
         content = new ULCBoxPane(1, 2)
         ULCBoxPane holder = new ULCBoxPane(1, 2)
+        holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, newSimulationActionPane.content)
         holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, simulationSettingsPane.content)
         content.add(ULCBoxPane.BOX_LEFT_TOP, holder)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())

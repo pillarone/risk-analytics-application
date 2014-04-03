@@ -4,7 +4,10 @@ import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.SimulationState
-import org.pillarone.riskanalytics.core.simulation.engine.*
+import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
@@ -66,25 +69,35 @@ class SimulationQueueViewModel {
     }
 
     private class MyInfoListener implements ISimulationRuntimeInfoListener {
+
         @Override
-        void onEvent(SimulationRuntimeInfoEvent event) {
-            update(event)
+        void starting(SimulationRuntimeInfo info) {
+            simulationQueueTableModel.itemChanged(info)
+
         }
 
-        private void update(SimulationRuntimeInfoEvent event) {
-            switch (event.class) {
-                case (AddSimulationRuntimeInfoEvent):
-                    AddSimulationRuntimeInfoEvent addEvent = event as AddSimulationRuntimeInfoEvent
-                    simulationQueueTableModel.itemAdded(event.info, addEvent.index)
-                    break
-                case (DeleteSimulationRuntimeInfoEvent):
-                    simulationQueueTableModel.itemRemoved(event.info.id)
-                    break
-                case (ChangeSimulationRuntimeInfoEvent):
-                    simulationQueueTableModel.itemChanged(event.info)
-                    break
-                default: return
-            }
+        @Override
+        void finished(SimulationRuntimeInfo info) {
+            simulationQueueTableModel.itemChanged(info)
+
+        }
+
+        @Override
+        void removed(SimulationRuntimeInfo info) {
+            simulationQueueTableModel.itemRemoved(info)
+
+        }
+
+        @Override
+        void offered(SimulationRuntimeInfo info) {
+            simulationQueueTableModel.itemAdded(info)
+
+        }
+
+        @Override
+        void changed(SimulationRuntimeInfo info) {
+            simulationQueueTableModel.itemChanged(info)
+
         }
     }
 }

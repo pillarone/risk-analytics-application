@@ -13,32 +13,21 @@ class SimulationConfigurationView {
     ULCBoxPane content
 
     SimulationProfilePane simulationProfilePane
-    SimulationActionsPane actionsPane
     SimulationConfigurationModel model
 
     public SimulationConfigurationView(SimulationConfigurationModel model) {
         this.model = model
         initComponents()
-        attachListeners(model)
         layoutComponents()
-    }
-
-    private void attachListeners(SimulationConfigurationModel model) {
-        //to make sure the action pane knows when it's safe to start a simulation
-        model.simulationProfilePaneModel.settingsPaneModel.addSimulationValidationListener(actionsPane)
-        //used for enabling/disabling the settings pane
-        model.actionsPaneModel.addSimulationListener(simulationProfilePane.simulationSettingsPane)
     }
 
     protected void initComponents() {
         simulationProfilePane = new SimulationProfilePane(model.simulationProfilePaneModel)
-        actionsPane = new SimulationActionsPane(model.actionsPaneModel)
     }
 
     void layoutComponents() {
-        ULCBoxPane holder = new ULCBoxPane(1, 2)
+        ULCBoxPane holder = new ULCBoxPane(1, 3)
         holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, simulationProfilePane.content)
-        holder.add(ULCBoxPane.BOX_EXPAND_EXPAND, actionsPane.content)
         content = new ULCBoxPane(1, 2)
         content.add(ULCBoxPane.BOX_LEFT_TOP, holder)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
