@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 @Component
 class SimulationQueueTableModel extends AbstractTableModel {
 
-    private final List<SimulationRuntimeInfo> queueItems = []
+    protected final List<SimulationRuntimeInfo> queueItems = []
 
     @Override
     int getRowCount() {
@@ -19,7 +19,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     @Override
     int getColumnCount() {
-        return 9
+        return 8
     }
 
     SimulationRuntimeInfo getInfoAt(int index) {
@@ -38,7 +38,6 @@ class SimulationQueueTableModel extends AbstractTableModel {
             case 5: return 'Configured At'
             case 6: return 'Configured By'
             case 7: return 'State'
-            case 8: return 'Progress'
             default: throw new IllegalStateException("wrong column index: $column")
         }
     }
@@ -56,7 +55,6 @@ class SimulationQueueTableModel extends AbstractTableModel {
             case 5: return item.configuredAt.toString()
             case 6: return item.offeredBy?.username
             case 7: return item.simulationState.toString()
-            case 8: return item.progress.toString() + "%"
             default: throw new IllegalStateException("wrong column index: $column")
         }
     }

@@ -1,10 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
 
-import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCScrollPane
-import com.ulcjava.base.application.ULCTable
+import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueViewModel
 import org.springframework.context.annotation.Scope

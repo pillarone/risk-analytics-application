@@ -19,14 +19,14 @@ class SimulationQueueViewModelTests {
         SimulationRuntimeInfo deleteInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
         SimulationRuntimeInfo changeInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
 
-        tableModelControl.demand.itemChanged(3..3) { SimulationRuntimeInfo info ->
+        tableModelControl.demand.itemChanged(2..2) { SimulationRuntimeInfo info ->
             assert changeInfo.is(info)
         }
         tableModelControl.demand.itemAdded { SimulationRuntimeInfo info, int index ->
             assert addInfo.is(info)
             assert 1 == index
         }
-        tableModelControl.demand.itemRemoved { UUID id ->
+        tableModelControl.demand.itemRemoved(2..2) { UUID id ->
             assert deleteInfo.id == id
         }
 
@@ -36,9 +36,10 @@ class SimulationQueueViewModelTests {
 
         subject.infoListener.starting(changeInfo)
         subject.infoListener.changed(changeInfo)
-        subject.infoListener.finished(changeInfo)
 
         subject.infoListener.offered(addInfo)
+
+        subject.infoListener.finished(deleteInfo)
         subject.infoListener.removed(deleteInfo)
     }
 
