@@ -22,7 +22,7 @@ class UlcSimulationRuntimeService {
 
     @Autowired
     SimulationRuntimeService simulationRuntimeService
-    @Resource(name = 'pollingSupport1000')
+    @Resource(name = 'pollingSupport2000')
     PollingSupport pollingSupport
     private MySimulationRuntimeEventListener runtimeEventListener
     private IActionListener pollingListener

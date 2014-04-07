@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.testframework.operator.*
 import grails.util.Holders
 import org.hibernate.Session
@@ -8,11 +9,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.functional.RiskAnalyticsAbstractStandaloneTestCase
 
 import javax.swing.tree.TreePath
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -27,7 +30,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         FileImportService.importModelsIfNeeded(["Core"])
         Holders.grailsApplication.mainContext.cacheItemSearchService.refresh()
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         removeTags()
         initTags()
         super.setUp()
@@ -36,7 +39,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
     void tearDown() {
         super.tearDown();
         removeTags()
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
         BatchUIItem
     }
 
@@ -100,7 +103,6 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
             ULCPopupMenuOperator popUpMenu = tableTree.callPopupOnCell(row, 0)
             assertNotNull popUpMenu
             popUpMenu.pushMenu("Tags")
-//        Thread.sleep 1000
 
             ULCDialogOperator addTagDialog = new ULCDialogOperator(frame, new ComponentByNameChooser('AddTagDialog'))
             assertNotNull addTagDialog
@@ -113,7 +115,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
 
             ULCButtonOperator applyButton = new ULCButtonOperator(addTagDialog, new ComponentByNameChooser('apply'))
             assertNotNull applyButton
-//
+
             applyButton.getFocus()
             applyButton.clickMouse()
             session.flush()
@@ -121,8 +123,7 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
         Tag.withNewSession { Session session ->
             ParameterizationDAO parameterization = ParameterizationDAO.findByName("CoreAlternativeParameters")
             assertNotNull parameterization
-            //todo save changed data in database doesn't work correctly in cruise
-            //            assertEquals 1, parameterization.tags.size()
+            assertEquals 1, parameterization.tags.size()
         }
 
     }
@@ -135,7 +136,10 @@ class AddTagDialogTests extends RiskAnalyticsAbstractStandaloneTestCase {
     }
 
     private void removeTags() {
-        Tag.findAll().each { it.delete(flush: true) }
+        Tag.withNewSession { def session ->
+            ParameterizationTag.list().each { it.delete(flush: true) }
+            def tags = Tag.list().findAll { it.name != Tag.LOCKED_TAG }
+            tags.each { it.delete(flush: true) }
+        }
     }
-
 }

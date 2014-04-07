@@ -6,6 +6,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.P1RATApplication
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
 import javax.swing.tree.TreePath
@@ -14,8 +15,9 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
 
     void setUp() {
         FileImportService.importModelsIfNeeded(["Application"])
+        CacheItemSearchService.instance.refresh()
         ModellingItemFactory.clear()
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
         super.setUp()
         UserContext.metaClass.static.hasCurrentUser = { ->
             true
@@ -24,7 +26,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
 
     void tearDown() {
         super.tearDown();
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
     }
 
     protected Class getApplicationClass() {
@@ -50,11 +52,13 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         commentTextArea.enterText('test')
         new ULCButtonOperator(newVersion, new ComponentByNameChooser('okButton')).clickMouse()
         sleep(2000)
+
         itemTree.selectRow(3)
         popupMenu = itemTree.callPopupOnCell(applicationModelRow + 3, 0)
         ULCMenuItemOperator sendToReview = new ULCMenuItemOperator(popupMenu, "Send to reviewer")
         sendToReview.clickMouse()
         sleep(2000)
+
         popupMenu = itemTree.callPopupOnCell(applicationModelRow + 3, 0)
         ULCMenuItemOperator sendToProduction = new ULCMenuItemOperator(popupMenu, "Send to production")
         sendToProduction.clickMouse()
@@ -74,11 +78,9 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         popupMenu = itemTree.callPopupOnCell(applicationModelRow + 3, 0)
         ULCMenuItemOperator delete = new ULCMenuItemOperator(popupMenu, "Delete")
         delete.clickMouse()
-        sleep(2000)
         ULCDialogOperator deleteConfirm = new ULCDialogOperator(new ComponentByNameChooser('AlertDialog'))
         ULCButtonOperator okButton = new ULCButtonOperator(deleteConfirm, new ComponentByNameChooser('AlertDialog.ok'))
         okButton.clickMouse()
-        sleep(2000)
 
         //V2 removed from the tree.
         row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR1'] as String[]))
@@ -116,7 +118,6 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         popupMenu = itemTree.callPopupOnCell(applicationModelRow + 3, 0)
         ULCMenuItemOperator createNewVersion = new ULCMenuItemOperator(popupMenu, "Create new version")
         createNewVersion.clickMouse()
-        sleep(2000)
         newVersion = new ULCDialogOperator(new ComponentByNameChooser('renameDialog'))
         commentTextArea = new ULCTextAreaOperator(newVersion, new ComponentByNameChooser('commentTextArea'))
         commentTextArea.enterText('test')
@@ -127,12 +128,10 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         int row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR2'] as String[]))
         assert applicationModelRow + 3 == row
         itemTree.pushKey(KeyEvent.VK_DELETE, 0)
-        sleep(2000)
 
         ULCDialogOperator deleteConfirm = new ULCDialogOperator(new ComponentByNameChooser('AlertDialog'))
         ULCButtonOperator okButton = new ULCButtonOperator(deleteConfirm, new ComponentByNameChooser('AlertDialog.ok'))
         okButton.clickMouse()
-        sleep(2000)
 
         //V2 removed from the tree.
         row = itemTree.getRowForPath(itemTree.findPath(['0=Application', 'Parameterization', 'Connection failed - contact support. vR1'] as String[]))

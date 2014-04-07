@@ -22,7 +22,6 @@ abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeM
     PollingAction pollingAction
     ExecutorService service
     LinkedBlockingQueue queue
-    PollingSupport pollingSupport
 
     protected AsynchronTableTreeModel() {
         pollingAction = new PollingAction(this)
@@ -63,18 +62,15 @@ abstract class AsynchronTableTreeModel extends AbstractCommentableItemTableTreeM
     }
 
     private PollingSupport getPollingSupport() {
-        if (!pollingSupport) {
-            pollingSupport = Holders.grailsApplication.mainContext.getBean('pollingSupport1000', PollingSupport)
-        }
-        pollingSupport
+        Holders.grailsApplication.mainContext.getBean('pollingSupport1000', PollingSupport)
     }
 
     void startPolling() {
-        getPollingSupport().addActionListener(pollingAction)
+        pollingSupport.addActionListener(pollingAction)
     }
 
     void stopPolling() {
-        getPollingSupport().removeActionListener(pollingAction)
+        pollingSupport.removeActionListener(pollingAction)
     }
 }
 
@@ -127,6 +123,4 @@ class NodeIdentifier {
         hcb.append(columnName)
         return hcb.toHashCode()
     }
-
-
 }

@@ -87,7 +87,7 @@ class CompareSimulationsCriteriaView {
         spinnerLabel = new ULCLabel(getText(this.class, "interval"))
         rendererTreeButton = new ULCButton(getText(this.class, "update"))
 
-        model.item.eachWithIndex {Simulation it, i ->
+        model.item.eachWithIndex { Simulation it, i ->
             ULCCheckBox checkBox = new SimulationCheckBox(it)
             simulationCheckBoxes.add(checkBox)
         }
@@ -131,14 +131,14 @@ class CompareSimulationsCriteriaView {
     }
 
     private void attachListeners() {
-        simulationsComboBox.addActionListener([actionPerformed: {ActionEvent evt ->
-            Collections.swap(simulationCheckBoxes, 0, simulationCheckBoxes.indexOf(simulationCheckBoxes.find {SimulationCheckBox cb -> cb.simulation == evt.source.model.selectedObject }))
+        simulationsComboBox.addActionListener([actionPerformed: { ActionEvent evt ->
+            Collections.swap(simulationCheckBoxes, 0, simulationCheckBoxes.indexOf(simulationCheckBoxes.find { SimulationCheckBox cb -> cb.simulation == evt.source.model.selectedObject }))
             initCheckBoxes(checkBoxPane)
             model.setReferenceSimulation(simulationsComboBox.model.selectedObject)
         }] as IActionListener)
 
-        simulationCheckBoxes.each {SimulationCheckBox cb ->
-            cb.addValueChangedListener([valueChanged: {ValueChangedEvent evt ->
+        simulationCheckBoxes.each { SimulationCheckBox cb ->
+            cb.addValueChangedListener([valueChanged: { ValueChangedEvent evt ->
                 SimulationCheckBox source = evt.getSource()
                 boolean value = source.selected
                 value ? model.addSimulation(source.simulation) : model.removeSimulation(source.simulation)
@@ -151,22 +151,22 @@ class CompareSimulationsCriteriaView {
         frAbsolute.action = new ToggleKeyFigureAction(new FractionAbsoluteFunction(), new DefaultToggleValueProvider(frAbsolute), model, tree.viewPortTableTree)
         frPercentage.action = new ToggleKeyFigureAction(new FractionPercentageFunction(), new DefaultToggleValueProvider(frPercentage), model, tree.viewPortTableTree)
 
-        compareParameterizations.addActionListener([actionPerformed: {event ->
+        compareParameterizations.addActionListener([actionPerformed: { event ->
             ArrayList parameters = ParameterizationUtilities.getParameters(model.treeModel.simulations)
             CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(compareSimulationTreeView.mainModel, model.model, parameters)
             compareSimulationTreeView.mainModel.notifyOpenDetailView(model.model, compareParameterizationUIItem)
         }] as IActionListener)
 
         //ColumnOrderAction
-        byPeriod.addValueChangedListener([valueChanged: {ValueChangedEvent event -> model.orderByKeyfigure = !event.source.isSelected()}] as IValueChangedListener)
-        byKeyFigure.addValueChangedListener([valueChanged: {ValueChangedEvent event -> model.orderByKeyfigure = event.source.isSelected()}] as IValueChangedListener)
+        byPeriod.addValueChangedListener([valueChanged: { ValueChangedEvent event -> model.orderByKeyfigure = !event.source.isSelected() }] as IValueChangedListener)
+        byKeyFigure.addValueChangedListener([valueChanged: { ValueChangedEvent event -> model.orderByKeyfigure = event.source.isSelected() }] as IValueChangedListener)
 
-        Closure updateAction = {event -> setInterval()}
+        Closure updateAction = { event -> setInterval() }
         KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false);
         devPercentage.registerKeyboardAction([actionPerformed: updateAction] as IActionListener, enter, ULCComponent.WHEN_IN_FOCUSED_WINDOW);
         rendererTreeButton.addActionListener([actionPerformed: updateAction] as IActionListener)
 
-        minSpinner.addValueChangedListener([valueChanged: {evt ->
+        minSpinner.addValueChangedListener([valueChanged: { evt ->
             if (minSpinner.value > maxSpinner.value) {
                 maxSpinner.value = minSpinner.value
             }
@@ -221,7 +221,7 @@ class CompareSimulationsCriteriaView {
 
     private void initCheckBoxes(ULCBoxPane pane) {
         pane.removeAll()
-        simulationCheckBoxes.eachWithIndex {SimulationCheckBox it, int i ->
+        simulationCheckBoxes.eachWithIndex { SimulationCheckBox it, int i ->
             it.setText(getNamePrefix(i) + it.simulation.name)
             Color color = UIUtils.toULCColor(SeriesColor.seriesColorList[i])
             it.setBackground(color)
@@ -234,7 +234,7 @@ class CompareSimulationsCriteriaView {
 
     private void updateCompareCheckBoxes() {
         boolean atLeatOneSelected = false
-        simulationCheckBoxes.eachWithIndex {SimulationCheckBox it, int i ->
+        simulationCheckBoxes.eachWithIndex { SimulationCheckBox it, int i ->
             if (i > 0 && it.isSelected()) {
                 atLeatOneSelected = true
             }
@@ -287,8 +287,18 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
     }
 
     void addItem(T item) {
-        addElement(item.name)
+        super.addElement(item.name)
         items << item
+    }
+
+    @Override
+    void addElement(Object item) {
+        throw new UnsupportedOperationException("use addItem instead")
+    }
+
+    @Override
+    void removeElement(Object item) {
+        throw new UnsupportedOperationException("use removeItem instead")
     }
 
     void removeItem(T item) {
@@ -296,6 +306,17 @@ class ItemsComboBoxModel<T> extends DefaultComboBoxModel {
         items.remove(item)
     }
 
+    @Override
+    void removeElementAt(int index) {
+        items.remove(index)
+        super.removeElementAt(index)
+    }
+
+    @Override
+    void removeAllElements() {
+        items.clear()
+        super.removeAllElements()
+    }
 
     @Override
     void setSelectedItem(Object object) {

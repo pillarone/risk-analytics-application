@@ -8,7 +8,6 @@ import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
@@ -27,7 +26,7 @@ abstract class AbstractResultUIItemTests extends AbstractSimulationUIItemTest {
 
         init()
 
-        SimulationRun run1 = createResults("run1", 1)
+        createResults("run1", 1)
 
         Simulation simulation1 = new Simulation("run1")
         simulation1.load()

@@ -14,12 +14,12 @@ class RenameActionTests extends AbstractFunctionalTestCase {
     }
 
     void tearDown() {
-        super.tearDown()    //To change body of overridden methods use File | Settings | File Templates.
+        super.tearDown()
     }
 
     void testRenameParameter() {
-        ULCFrameOperator frame = getMainFrameOperator()
-        ULCTableTreeOperator tree = getSelectionTableTreeRowHeader()
+        ULCFrameOperator frame = mainFrameOperator
+        ULCTableTreeOperator tree = selectionTableTreeRowHeader
 
         TreePath pathForRename = tree.findPath(["Core", "Parameterization", "CoreParameters"] as String[])
         TreePath parameterizationNodePath = tree.findPath(["Core", "Parameterization"] as String[])

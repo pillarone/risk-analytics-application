@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
+import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerNumberModel
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
@@ -114,9 +115,19 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     //TODO in future BatchRuns will be ModellingItems and we can be informed about changes
     void modelChanged() {
-        batchRunComboBoxModel.removeAllElements()
-        for (BatchRun run in BatchRun.list()) {
-            batchRunComboBoxModel.addItem(run)
+        doWithRestoredSelection(batchRunComboBoxModel) {
+            batchRunComboBoxModel.removeAllElements()
+            for (BatchRun run in BatchRun.list()) {
+                batchRunComboBoxModel.addItem(run)
+            }
+        }
+    }
+
+    private doWithRestoredSelection(DefaultComboBoxModel comboBoxModel, Closure c) {
+        def current = comboBoxModel.selectedItem
+        c.call()
+        if (current) {
+            comboBoxModel.selectedItem = current
         }
     }
 }

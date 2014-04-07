@@ -19,17 +19,20 @@ class ParameterizationPopupMenu extends AbstractParameterNodePopupMenu {
     }
 
     protected boolean hasRenameAction() { return true; }
-    protected boolean hasCreateNewMajorVersionAction() { return true; }
+
+    protected boolean hasCreateNewMajorVersionAction() { return true }
+
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
         if (UserContext.hasCurrentUser()) {
-            Boolean transactionsEnabled = (Boolean) Holders.grailsApplication.getConfig().getProperty("transactionsEnabled");
-            if (transactionsEnabled != null && transactionsEnabled) {
-                add(new ULCMenuItem(new ChooseDealAction(tree, node.getAbstractUIItem().mainModel)));
-                add(new ULCMenuItem(new StartWorkflowAction(tree, node.getAbstractUIItem().mainModel)));
-                return true;
+            Boolean transactionsEnabled = (Boolean) Holders.grailsApplication.config.getProperty("transactionsEnabled");
+            if (transactionsEnabled) {
+                add(new ULCMenuItem(new ChooseDealAction(tree, node.abstractUIItem.mainModel)))
+                add(new ULCMenuItem(new StartWorkflowAction(tree, node.abstractUIItem.mainModel)))
+                return true
             }
         }
-        return false;
+        return false
     }
-    protected boolean hasDeleteAction() { return true; }
+
+    protected boolean hasDeleteAction() { return true }
 }
