@@ -1,11 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
 
+import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsPaneModel
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
-import com.ulcjava.base.application.ULCTextField
 import org.pillarone.riskanalytics.core.output.FileOutput
+import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 
 /**
  * Action which is used when the output strategy selection is changed.

@@ -11,6 +11,9 @@ import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeList
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
+import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
@@ -22,6 +25,9 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
+import javax.annotation.Resource
 import java.beans.PropertyChangeListener
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
@@ -37,9 +43,14 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
     private List<IModelItemChangeListener> modelItemListeners = []
     private List<INewSimulationListener> newSimulationListeners = []
     private List<IBatchListener> batchListeners = []
+    private List<IModellingItemEventListener> modellingItemEventListeners = []
 
     @Bindable
     AbstractUIItem currentItem
+
+    @Resource
+    ModellingItemCache modellingItemCache
+    private final MyModelItemEventListener listener = new MyModelItemEventListener()
 
     public RiskAnalyticsMainModel() {
         viewModelsInUse = [:]
@@ -51,6 +62,16 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
             }
             notifyChangedWindowTitle(currentItem)
         } as PropertyChangeListener)
+    }
+
+    @PostConstruct
+    void initialize() {
+        modellingItemCache.addItemEventListener(listener)
+    }
+
+    @PreDestroy
+    void unregister() {
+        modellingItemCache.removeItemEventListener(listener)
     }
 
     void setCurrentItem(AbstractUIItem currentItem) {
@@ -123,6 +144,18 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         batchListeners.remove(listener)
     }
 
+    void addModellingItemEventListener(IModellingItemEventListener listener) {
+        modellingItemEventListeners << listener
+    }
+
+    void removeModellingItemEventListener(IModellingItemEventListener listener) {
+        modellingItemEventListeners.remove(listener)
+    }
+
+    void fireModelItemEvent(ModellingItemEvent modellingItemEvent) {
+        modellingItemEventListeners.each { it.onEvent(modellingItemEvent) }
+    }
+
     void fireBatchAdded(BatchRun batchRun) {
         batchListeners.each { it.newBatchAdded(batchRun) }
     }
@@ -143,6 +176,12 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
     void registerModel(AbstractUIItem item, def model) {
         viewModelsInUse[item] = model
+        if (model instanceof SimulationConfigurationModel) {
+            //TODO the viewModel itself should implement the interfaces. Then this could be generic
+            addModelChangedListener(model.simulationProfilePaneModel.simulationActionsPaneModel)
+            addModellingItemEventListener(model.settingsPaneModel)
+            addNewSimulationListener(model)
+        }
         if (model instanceof IModelChangedListener) {
             addModelChangedListener(model)
         }
@@ -155,8 +194,9 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         def viewModel = viewModelsInUse.remove(item)
         if (viewModel != null) {
             if (viewModel instanceof SimulationConfigurationModel) {
-                removeModelChangedListener(viewModel.settingsPaneModel)
+                //TODO the viewModel itself should implement the interfaces. Then this could be generic
                 removeModelChangedListener(viewModel.simulationProfilePaneModel.simulationActionsPaneModel)
+                removeModellingItemEventListener(viewModel.settingsPaneModel)
                 removeNewSimulationListener(viewModel)
             }
             if (viewModel instanceof IModelChangedListener) {
@@ -233,4 +273,10 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         viewModelsInUse.containsKey(item)
     }
 
+    private class MyModelItemEventListener implements IModellingItemEventListener {
+        @Override
+        void onEvent(ModellingItemEvent event) {
+            fireModelItemEvent(event)
+        }
+    }
 }

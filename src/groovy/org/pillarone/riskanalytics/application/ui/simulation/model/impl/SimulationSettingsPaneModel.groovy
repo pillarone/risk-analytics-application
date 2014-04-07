@@ -1,14 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
-
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import grails.util.Holders
 import groovy.beans.Bindable
 import org.joda.time.DateTime
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
+import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.OutputStrategyComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationNameListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationVersionsListModel
@@ -22,7 +22,6 @@ import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
-
 /**
  * The view model of the SimulationSettingsPane.
  * It is possible to retrieve a Simulation and ICollectorOutputStrategy object from the model (created from the current values).
@@ -30,7 +29,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
  * It is also possible to register a ISimulationValidationListener, which will be notified when the simulation configuration changes from
  * an invalid (incomplete) to a valid state.
  */
-class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedListener, ISimulationProfileApplicable {
+class SimulationSettingsPaneModel implements ISimulationProvider, ISimulationProfileApplicable, IModellingItemEventListener {
 
     String simulationName
     String comment
@@ -278,31 +277,25 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
         }
     }
 
-    //TODO register to CacheService to be informed about changes
-    void modelChanged() {
-        doWithoutListening(parameterizationNames) {
-            parameterizationNames.reload()
-        }
-        doWithoutListening(parameterizationVersions) {
-            parameterizationVersions.reload(parameterizationNames.selectedItem as String)
-        }
-        doWithoutListening(resultConfigurationNames) {
-            resultConfigurationNames.reload()
-        }
-        doWithoutListening(resultConfigurationVersions) {
-            resultConfigurationVersions.reload(resultConfigurationNames.selectedItem as String)
-        }
-    }
-
-    private void doWithoutListening(DefaultComboBoxModel comboBoxModel, Closure c) {
-        doWithRestoredSelection(comboBoxModel) {
-            def listeners = comboBoxModel.listDataListeners
-            listeners.each {
-                comboBoxModel.removeListDataListener(it)
+    @Override
+    void onEvent(ModellingItemEvent event) {
+        def eventClass = event.modellingItem.modelClass
+        if (eventClass == modelClass) {
+            if (event.modellingItem instanceof Parameterization) {
+                doWithRestoredSelection(parameterizationNames) {
+                    parameterizationNames.reload()
+                }
+                doWithRestoredSelection(parameterizationVersions) {
+                    parameterizationVersions.reload(parameterizationNames.selectedItem as String)
+                }
             }
-            c.call()
-            listeners.each {
-                comboBoxModel.addListDataListener(it)
+            if (event.modellingItem instanceof ResultConfiguration) {
+                doWithRestoredSelection(resultConfigurationNames) {
+                    resultConfigurationNames.reload()
+                }
+                doWithRestoredSelection(resultConfigurationVersions) {
+                    resultConfigurationVersions.reload(resultConfigurationNames.selectedItem as String)
+                }
             }
         }
     }
