@@ -176,20 +176,24 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     }
 
     void updateTreeStructure(ModellingItemEvent event) {
-        //only update tree for items which are accepted by the current filter.
-        //for deleted elements we also have to update the tree, because the items for deletion are not fully mapped, so it could be that the filter does not work correctly.
-        if (event.eventType == REMOVED || isAcceptedByCurrentFilter(event.cacheItem)) {
-            switch (event.eventType) {
-                case ADDED:
+        //only add nodes for items which are accepted by the current filter.
+        //remove all nodes which are not accepted
+        switch (event.eventType) {
+            case ADDED:
+                if (isAcceptedByCurrentFilter(event.cacheItem)) {
                     navigationTableTreeBuilder.addNodeForItem(event.modellingItem)
-                    break;
-                case REMOVED:
-                    navigationTableTreeBuilder.removeNodeForItem(event.modellingItem)
-                    break;
-                case UPDATED:
+                }
+                break
+            case UPDATED:
+                if (isAcceptedByCurrentFilter(event.cacheItem)) {
                     navigationTableTreeBuilder.itemChanged(event.modellingItem)
-                    break;
-            }
+                } else {
+                    navigationTableTreeBuilder.removeNodeForItem(event.modellingItem)
+                }
+                break
+            case REMOVED:
+                navigationTableTreeBuilder.removeNodeForItem(event.modellingItem)
+                break
         }
     }
 
