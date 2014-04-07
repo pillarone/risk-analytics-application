@@ -26,7 +26,8 @@ class UlcSimulationRuntimeService {
     PollingSupport pollingSupport
     private MySimulationRuntimeEventListener runtimeEventListener
     private IActionListener pollingListener
-    private final List<SimulationRuntimeInfoEvent> events = []
+    private List<SimulationRuntimeInfoEvent> events = []
+    private final Object eventsLock = new Object()
     @Delegate
     private final SimulationRuntimeInfoEventSupport eventSupport = new SimulationRuntimeInfoEventSupport()
 
@@ -44,60 +45,70 @@ class UlcSimulationRuntimeService {
         simulationRuntimeService.removeSimulationRuntimeInfoListener(runtimeEventListener)
     }
 
+
     private void fireEvents() {
-        synchronized (events) {
-            events.each { SimulationRuntimeInfoEvent event ->
-                SimulationRuntimeInfo info = event.info
-                switch (event.type) {
-                    case SimulationRuntimeInfoEvent.TYPE.OFFERED:
-                        offered(info)
-                        break
-                    case SimulationRuntimeInfoEvent.TYPE.STARTING:
-                        starting(info)
-                        break
-                    case SimulationRuntimeInfoEvent.TYPE.FINISHED:
-                        finished(info)
-                        break
-                    case SimulationRuntimeInfoEvent.TYPE.REMOVED:
-                        removed(info)
-                        break
-                    case SimulationRuntimeInfoEvent.TYPE.CHANGED:
-                        changed(info)
-                        break
-                }
+        List currentEvents
+        synchronized (eventsLock) {
+            currentEvents = events
+            events = []
+        }
+        currentEvents.each { SimulationRuntimeInfoEvent event ->
+            SimulationRuntimeInfo info = event.info
+            switch (event.type) {
+                case SimulationRuntimeInfoEvent.TYPE.OFFERED:
+                    offered(info)
+                    break
+                case SimulationRuntimeInfoEvent.TYPE.STARTING:
+                    starting(info)
+                    break
+                case SimulationRuntimeInfoEvent.TYPE.FINISHED:
+                    finished(info)
+                    break
+                case SimulationRuntimeInfoEvent.TYPE.REMOVED:
+                    removed(info)
+                    break
+                case SimulationRuntimeInfoEvent.TYPE.CHANGED:
+                    changed(info)
+                    break
             }
-            events.clear()
         }
     }
 
     private class MySimulationRuntimeEventListener implements ISimulationRuntimeInfoListener {
         @Override
         void starting(SimulationRuntimeInfo info) {
-            events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.STARTING, info: info)
+            synchronized (eventsLock) {
+                events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.STARTING, info: info)
+            }
         }
 
         @Override
         void finished(SimulationRuntimeInfo info) {
-            events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.FINISHED, info: info)
+            synchronized (eventsLock) {
+                events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.FINISHED, info: info)
+            }
 
         }
 
         @Override
         void removed(SimulationRuntimeInfo info) {
-            events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.REMOVED, info: info)
-
+            synchronized (eventsLock) {
+                events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.REMOVED, info: info)
+            }
         }
 
         @Override
         void offered(SimulationRuntimeInfo info) {
-            events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.OFFERED, info: info)
-
+            synchronized (eventsLock) {
+                events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.OFFERED, info: info)
+            }
         }
 
         @Override
         void changed(SimulationRuntimeInfo info) {
-            events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.CHANGED, info: info)
-
+            synchronized (eventsLock) {
+                events << new SimulationRuntimeInfoEvent(type: SimulationRuntimeInfoEvent.TYPE.CHANGED, info: info)
+            }
         }
     }
 
@@ -115,4 +126,5 @@ class UlcSimulationRuntimeService {
         SimulationRuntimeInfo info
         TYPE type
     }
+
 }

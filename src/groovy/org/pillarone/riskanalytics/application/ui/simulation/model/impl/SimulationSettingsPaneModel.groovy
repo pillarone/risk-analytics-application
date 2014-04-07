@@ -58,7 +58,7 @@ class SimulationSettingsPaneModel implements ISimulationProvider, IModelChangedL
     ChangeResultLocationAction changeResultLocationAction
 
     File resultLocation
-    Class modelClass
+    final Class modelClass
     Model modelInstance
 
     RuntimeParameterPaneModel parameterPaneModel

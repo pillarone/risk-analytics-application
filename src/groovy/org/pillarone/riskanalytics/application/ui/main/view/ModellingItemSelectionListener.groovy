@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -36,7 +37,9 @@ class ModellingItemSelectionListener extends ULCTableTreeModelAdapter {
 
     @Override
     void tableTreeNodesInserted(TableTreeModelEvent event) {
-        if (!syncSelection) return
+        if (!syncSelection) {
+            return
+        }
         List<TreePath> treePaths = []
         event.children.each { ITableTreeNode node ->
             if (isSelectionInvalid(selectedPath)) {
@@ -44,30 +47,36 @@ class ModellingItemSelectionListener extends ULCTableTreeModelAdapter {
             }
         }
         if (treePaths) {
-            tree.getRowHeaderTableTree().setPathSelection(treePaths.toArray() as TreePath[])
+            tree.rowHeaderTableTree.setPathSelection(treePaths.toArray() as TreePath[])
         }
-        tree.verticalScrollBar.setPosition(scrollPosition)
+        tree.verticalScrollBar.position = scrollPosition
     }
 
     @Override
     void tableTreeNodeStructureChanged(TableTreeModelEvent event) {
-        if (!syncSelection) return
+        if (!syncSelection) {
+            return
+        }
         if (isSelectionInvalid(selectedPath)) {
             if (event.treePath.lastPathComponent.childCount == 0) {
-                tree.getRowHeaderTableTree().setPathSelection(event.treePath)
-            } else if (tree.getRowHeaderTableTree().getPathForRow(selectedRow).lastPathComponent instanceof ItemNode) {
-                tree.getRowHeaderTableTree().setRowSelection(selectedRow)
+                tree.rowHeaderTableTree.pathSelection = event.treePath
+            } else if (tree.rowHeaderTableTree.getPathForRow(selectedRow).lastPathComponent instanceof ItemNode) {
+                tree.rowHeaderTableTree.rowSelection = selectedRow
             } else {
-                tree.getRowHeaderTableTree().setPathSelection(event.treePath)
+                tree.rowHeaderTableTree.pathSelection = event.treePath
             }
         } else {
-            tree.getRowHeaderTableTree().setPathSelection(selectedPath)
+            if (selectedPath) {
+                tree.rowHeaderTableTree.pathSelection = selectedPath
+            } else {
+                tree.rowHeaderTableTree.clearSelection()
+            }
         }
-        tree.verticalScrollBar.setPosition(scrollPosition)
+        tree.verticalScrollBar.position = scrollPosition
     }
 
     @Override
     void tableTreeNodesRemoved(TableTreeModelEvent event) {
-        super.tableTreeNodesRemoved(event)    //To change body of overridden methods use File | Settings | File Templates.
+        super.tableTreeNodesRemoved(event)
     }
 }

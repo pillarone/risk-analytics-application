@@ -48,8 +48,8 @@ ULC view
             conf.autowire = 'byName'
         }
         userDependentNavigationTreeModelFactory(UserDependentNavigationTreeModelFactory)
-        ulcApplicationContext(ApplicationContext) { ulcScopeWired(it) }
         navigationTableTreeModel(userDependentNavigationTreeModelFactory: 'createModel') { ulcScopeWired(it) }
+        ulcApplicationContext(ApplicationContext) { ulcScopeWired(it) }
         pollingSupport2000(PollingSupport) {
             delay = 2000
             ulcScopeWired(it)

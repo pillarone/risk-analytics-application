@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
+
 import com.ulcjava.base.application.tabletree.AbstractTableTreeModel
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -15,12 +16,11 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
-import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
-import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -41,8 +41,6 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
 
     static
     final List<String> COLUMN_NAMES = ["Name", "State", "Tags", "TransactionName", "Owner", "LastUpdateBy", "Created", "LastModification"]
-    @Resource
-    CacheItemEventQueue navigationTableTreeModelQueue
     @Autowired
     CacheItemSearchService cacheItemSearchService
     @Resource
@@ -177,58 +175,27 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     private addColumnValue(def item, def node, int column, Object value) {
     }
 
-    public void updateTreeStructure() {
+    void updateTreeStructure(ModellingItemEvent event) {
         //only update tree for items which are accepted by the current filter.
         //for deleted elements we also have to update the tree, because the items for deletion are not fully mapped, so it could be that the filter does not work correctly.
-        def events = pendingEvents
-        eachNotFilteredOrDeleted(events) { ItemEvent itemEvent ->
-            switch (itemEvent.eventType) {
+        if (event.eventType == REMOVED || isAcceptedByCurrentFilter(event.cacheItem)) {
+            switch (event.eventType) {
                 case ADDED:
-                    navigationTableTreeBuilder.addNodeForItem(itemEvent.modellingItem)
+                    navigationTableTreeBuilder.addNodeForItem(event.modellingItem)
                     break;
                 case REMOVED:
-                    navigationTableTreeBuilder.removeNodeForItem(itemEvent.modellingItem)
+                    navigationTableTreeBuilder.removeNodeForItem(event.modellingItem)
                     break;
                 case UPDATED:
-                    navigationTableTreeBuilder.itemChanged(itemEvent.modellingItem)
+                    navigationTableTreeBuilder.itemChanged(event.modellingItem)
                     break;
             }
         }
-        if (events) {
-            riskAnalyticsMainModel.fireModelChanged()
-        }
-    }
-
-
-    private eachNotFilteredOrDeleted(List<ItemEvent> events, Closure c) {
-        events.each {
-            if (it.eventType == REMOVED || isAcceptedByCurrentFilter(it.cacheItem)) {
-                c.call(it)
-            }
-        }
-
     }
 
     boolean isAcceptedByCurrentFilter(CacheItem item) {
         return currentFilter.toQuery().every {
             it.accept(item)
-        }
-    }
-
-    public List<ItemEvent> getPendingEvents() {
-        navigationTableTreeModelQueue.pollCacheItemEvents().collect { CacheItemEvent event ->
-            ModellingItem modellingItem
-            if (event.eventType == REMOVED) {
-                modellingItem = ModellingItemFactory.getOrCreateModellingItem(event.item)
-                ModellingItemFactory.remove(modellingItem)
-            } else {
-                modellingItem = ModellingItemFactory.updateOrCreateModellingItem(event.item)
-            }
-            new ItemEvent(
-                    cacheItem: event.item,
-                    modellingItem: modellingItem,
-                    eventType: event.eventType
-            )
         }
     }
 
@@ -266,16 +233,5 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
         navigationTableTreeBuilder.removeNodesForItems(navigationTableTreeBuilder.modellingItems)
         navigationTableTreeBuilder.addNodesForItems(filteredItems)
         LOG.debug("Apply filter definition done.")
-    }
-
-    static class ItemEvent {
-        CacheItem cacheItem
-        ModellingItem modellingItem
-        CacheItemEvent.EventType eventType
-
-        @Override
-        String toString() {
-            return "$cacheItem $eventType"
-        }
     }
 }

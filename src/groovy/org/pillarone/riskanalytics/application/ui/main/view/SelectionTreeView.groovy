@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
-import com.ulcjava.base.application.ULCPollingTimer
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -23,12 +22,15 @@ import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAction
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
+import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 import javax.annotation.Resource
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -37,12 +39,16 @@ import javax.annotation.Resource
 class SelectionTreeView {
     ULCFixedColumnTableTree tree
     ULCBoxPane content
-    ULCPollingTimer treeSyncTimer
     @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
     ModellingItemSelectionListener modellingItemSelectionListener
     @Resource
     NavigationTableTreeModel navigationTableTreeModel
+    @Resource
+    ModellingItemCache modellingItemCache
+
+    private IModellingItemEventListener updateListener
+
     final static int TREE_FIRST_COLUMN_WIDTH = 240
     boolean ascOrder = true
 
@@ -52,20 +58,29 @@ class SelectionTreeView {
         initComponents()
         layoutComponents()
         attachListeners()
-        treeSyncTimer.start()
+        updateListener = new IModellingItemEventListener() {
+            @Override
+            void onEvent(ModellingItemEvent event) {
+                onItemEvent(event)
+            }
+        }
+        modellingItemCache.addItemEventListener(updateListener)
+    }
+
+    @PreDestroy
+    void unregister() {
+        modellingItemCache.removeItemEventListener(updateListener)
     }
 
     protected void initComponents() {
         content = new ULCBoxPane()
         content.name = "treeViewContent"
-        treeSyncTimer = new ULCPollingTimer(2000, [
-                actionPerformed: { evt ->
-                    modellingItemSelectionListener.rememberSelectionState()
-                    navigationTableTreeModel.updateTreeStructure()
-                    modellingItemSelectionListener.flushSelectionState()
+    }
 
-                }] as IActionListener)
-        treeSyncTimer.syncClientState = false
+    private void onItemEvent(ModellingItemEvent event) {
+        modellingItemSelectionListener.rememberSelectionState()
+        navigationTableTreeModel.updateTreeStructure(event)
+        modellingItemSelectionListener.flushSelectionState()
     }
 
     private void layoutComponents() {

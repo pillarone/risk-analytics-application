@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
 
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
@@ -10,18 +11,21 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.search.CacheItemEventQueue
+import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.search.UlcCacheItemEventHandler
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.example.model.EmptyModel
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
-import org.pillarone.riskanalytics.core.modellingitem.CacheItemHibernateListener
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
@@ -38,9 +42,9 @@ class NavigationTableTreeModelTests {
     private NavigationTableTreeModel model
     private RiskAnalyticsMainModel mainModel
     private TestModelListener modelListener
+    private TestPollingSupport testPollingSupport
 
     CacheItemSearchService cacheItemSearchService
-    CacheItemHibernateListener cacheItemListener
 
     @Before
     void setUp() {
@@ -69,14 +73,21 @@ class NavigationTableTreeModelTests {
         newParameterization('Parametrization X', '11')
         cacheItemSearchService.refresh()
         mainModel = new RiskAnalyticsMainModel()
-        CacheItemEventQueue queue = new CacheItemEventQueue(cacheItemListener: cacheItemListener)
-        queue.init()
         NavigationTableTreeBuilder builder = new NavigationTableTreeBuilder(riskAnalyticsMainModel: mainModel)
         builder.initialize()
-        model = new NavigationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeModelQueue: queue, navigationTableTreeBuilder: builder)
+        model = new NavigationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeBuilder: builder)
         model.initialize()
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
+
+        testPollingSupport = new TestPollingSupport()
+        UlcCacheItemEventHandler queue = new UlcCacheItemEventHandler(cacheItemSearchService: cacheItemSearchService, pollingSupport: testPollingSupport)
+        queue.init()
+        ModellingItemCache modellingItemCache  = new ModellingItemCache(ulcCacheItemEventHandler: queue)
+        modellingItemCache.initialize()
+        modellingItemCache.addItemEventListener([onEvent: { ModellingItemEvent event ->
+            model.updateTreeStructure(event)
+        }] as IModellingItemEventListener)
     }
 
 
@@ -137,10 +148,7 @@ class NavigationTableTreeModelTests {
             ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'models.application.ApplicationModel', periodCount: 1, status: Status.NONE)
             parameterizationDAO.save(flush: true)
         }
-        TestModelChangedListener listener = new TestModelChangedListener()
-        mainModel.addModelChangedListener(listener)
-        model.updateTreeStructure()
-        assertTrue(listener.changeCalled)
+        testPollingSupport.poll()
         IMutableTableTreeNode modelNode = model.root.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
@@ -155,14 +163,14 @@ class NavigationTableTreeModelTests {
             parameterizationDAO.status = Status.IN_REVIEW
             parameterizationDAO.save(flush: true)
         }
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         assertEquals(Status.IN_REVIEW.displayName, model.getValueAt(v12Node, 1))
 
         ParameterizationDAO.withNewSession {
             ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion('Parametrization X', '12')
             parameterizationDAO.delete(flush: true)
         }
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         assertEquals(2, paramsNode.childCount)
         def v11Node = paramsNode.getChildAt(1)
         assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
@@ -176,7 +184,7 @@ class NavigationTableTreeModelTests {
             run.model = 'models.application.ApplicationModel'
             run.save(flush: true)
         }
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         assertEquals(1, resultsNode.childCount)
 
     }
@@ -239,7 +247,7 @@ class NavigationTableTreeModelTests {
             run.save(flush: true)
         }
 
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         // expect one nodeStructure changed on simulation node
         assert 1 == modelListener.nodeStructureChangedEvents.size()
         modelListener.reset()
@@ -255,8 +263,7 @@ class NavigationTableTreeModelTests {
             run.model = 'models.application.ApplicationModel'
             run.save(flush: true)
         }
-
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         assert 1 == modelListener.nodeInsertedEvents.size()
         modelListener.reset()
 
@@ -265,7 +272,7 @@ class NavigationTableTreeModelTests {
             parameterizationDAO.addToTags(new ParameterizationTag(parameterizationDAO: parameterizationDAO, tag: Tag.list()[0]))
             parameterizationDAO.save(flush: true)
         }
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         assert 3 == modelListener.nodeChangedEvents.size()
 
         //assert that tree contains the simulation nodes and the child nodes.
@@ -300,7 +307,7 @@ class NavigationTableTreeModelTests {
             ParameterizationDAO parameterizationDAO = new ParameterizationDAO(name: 'Parametrization X', itemVersion: '12', modelClassName: 'java.lang.Object', periodCount: 1, status: Status.NONE)
             parameterizationDAO.save(flush: true)
         }
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         assert 0 == modelListener.nodeChangedEvents.size()
         assert 0 == modelListener.nodeStructureChangedEvents.size()
     }
@@ -309,7 +316,7 @@ class NavigationTableTreeModelTests {
     void testItemInstanceIdentity() {
         newParameterization('Parametrization X', '12')
         ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndModelClassNameAndItemVersion('Parametrization X', 'models.application.ApplicationModel', '12')
-        model.updateTreeStructure()
+        testPollingSupport.poll()
         IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
         ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v12') as ParameterizationNode
         assertNotNull(paramsNode)
@@ -366,5 +373,25 @@ class TestModelChangedListener implements IModelChangedListener {
     @Override
     void modelChanged() {
         changeCalled = true
+    }
+}
+
+class TestPollingSupport extends PollingSupport {
+    private final List<IActionListener> listeners = []
+
+    @Override
+    void addActionListener(IActionListener listener) {
+        listeners.add(listener)
+    }
+
+    @Override
+    void removeActionListener(IActionListener listener) {
+        listeners.remove(listener)
+    }
+
+    void poll() {
+        listeners.each {
+            it.actionPerformed(null)
+        }
     }
 }
