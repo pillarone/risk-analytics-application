@@ -49,8 +49,6 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
         groupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultResultConfigurationAction(tree, mainModel)))
-        groupNodePopUpMenu.addSeparator()
-        groupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllResultTemplates")))
         return groupNodePopUpMenu
     }
 
@@ -58,8 +56,6 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         ULCPopupMenu simulationGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.isStandAlone())
             simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
-        simulationGroupNodePopUpMenu.addSeparator()
-        simulationGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllSimulations")))
         return simulationGroupNodePopUpMenu
     }
 
@@ -76,10 +72,8 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, mainModel)))
         parameterGroupNodePopUpMenu.addSeparator()
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new DeleteAllGroupAction(tree, mainModel, "DeleteAllParameters")))
-        parameterGroupNodePopUpMenu.addSeparator()
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel,'ImportFromExcel')))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportParameterizationExcelAction(tree, mainModel,'ExportToExcel')))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel, 'ImportFromExcel')))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportParameterizationExcelAction(tree, mainModel, 'ExportToExcel')))
         return parameterGroupNodePopUpMenu
     }
 
