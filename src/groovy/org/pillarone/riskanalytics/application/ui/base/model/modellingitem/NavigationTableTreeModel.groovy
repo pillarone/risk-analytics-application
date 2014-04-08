@@ -65,17 +65,10 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
 
     FilterDefinition currentFilter = new FilterDefinition()
 
-    private static String logTreeStructureUpdatesKey = "NavigationTableTreeModel.logTreeStructureUpdates";
-    private
-    static boolean logTreeStructureUpdates = Boolean.valueOf(System.getProperty(logTreeStructureUpdatesKey, "false"));
+//    private static String logTreeStructureUpdatesKey = "NavigationTableTreeModel.logTreeStructureUpdates";
 
     NavigationTableTreeModel() {
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
-        if (logTreeStructureUpdates) {
-            LOG.info("-D" + logTreeStructureUpdatesKey + " is true, will log tree structure updates");
-        } else {
-            LOG.info("-D" + logTreeStructureUpdatesKey + " not true, will NOT log tree structure updates");
-        }
     }
 
     @PostConstruct
