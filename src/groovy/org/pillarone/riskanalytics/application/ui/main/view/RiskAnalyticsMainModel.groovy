@@ -84,7 +84,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         }
     }
 
-    public void removeItems(Model selectedModel, List<AbstractUIItem> modellingItems) {
+    void removeItems(Model selectedModel, List<AbstractUIItem> modellingItems) {
         closeItems(selectedModel, modellingItems)
         try {
             for (AbstractUIItem item : modellingItems) {

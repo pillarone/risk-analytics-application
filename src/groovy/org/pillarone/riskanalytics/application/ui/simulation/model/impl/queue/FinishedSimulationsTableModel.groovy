@@ -11,8 +11,8 @@ class FinishedSimulationsTableModel extends SimulationQueueTableModel {
 
     @Override
     void itemAdded(SimulationRuntimeInfo item) {
-        int index = queueItems.size()
-        queueItems.add(item)
+        int index = infos.size()
+        infos.add(item)
         fireTableRowsInserted(index, index)
     }
 }

@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import com.ulcjava.base.application.table.AbstractTableModel
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -10,11 +11,33 @@ import org.springframework.stereotype.Component
 @Component
 class SimulationQueueTableModel extends AbstractTableModel {
 
-    protected final List<SimulationRuntimeInfo> queueItems = []
+    private static final Map<Integer, String> COLUMN_NAME_KEYS = [
+            0: 'simulation',
+            1: 'p14n',
+            2: 'template',
+            3: 'iterations',
+            4: 'priority',
+            5: 'configuredAt',
+            6: 'configuredBy',
+            7: 'simulationState'
+    ] as Map<Integer, String>
+
+    private static final Map<Integer, Closure<String>> COLUMN_VALUE_FACTORIES = [
+            0: { SimulationRuntimeInfo info -> info.simulation.nameAndVersion },
+            1: { SimulationRuntimeInfo info -> info.parameterization.nameAndVersion },
+            2: { SimulationRuntimeInfo info -> info.resultConfiguration.nameAndVersion },
+            3: { SimulationRuntimeInfo info -> info.iterations?.toString() },
+            4: { SimulationRuntimeInfo info -> info.priority?.toString() },
+            5: { SimulationRuntimeInfo info -> info.configuredAt.toString() },
+            6: { SimulationRuntimeInfo info -> info.offeredBy?.username },
+            7: { SimulationRuntimeInfo info -> info.simulationState.toString() }
+    ]
+
+    protected final List<SimulationRuntimeInfo> infos = []
 
     @Override
     int getRowCount() {
-        queueItems.size()
+        infos.size()
     }
 
     @Override
@@ -23,68 +46,48 @@ class SimulationQueueTableModel extends AbstractTableModel {
     }
 
     SimulationRuntimeInfo getInfoAt(int index) {
-        queueItems[index]
+        infos[index]
     }
 
     @Override
     String getColumnName(int column) {
-        //TODO define the exact columns and move to resource bundle
-        switch (column) {
-            case 0: return 'Simulation'
-            case 1: return 'P14n'
-            case 2: return 'Template'
-            case 3: return 'Iterations'
-            case 4: return 'Priority'
-            case 5: return 'Configured At'
-            case 6: return 'Configured By'
-            case 7: return 'State'
-            default: throw new IllegalStateException("wrong column index: $column")
-        }
+        getText(COLUMN_NAME_KEYS[column])
+    }
+
+    private String getText(String key) {
+        UIUtils.getText(SimulationQueueTableModel, key)
     }
 
     @Override
     String getValueAt(int row, int column) {
-        //TODO register proper DataTypes on the cells
-        SimulationRuntimeInfo item = queueItems[row]
-        switch (column) {
-            case 0: return item.simulation.nameAndVersion
-            case 1: return item.parameterization.nameAndVersion
-            case 2: return item.resultConfiguration.nameAndVersion
-            case 3: return item.iterations?.toString()
-            case 4: return item.priority?.toString()
-            case 5: return item.configuredAt.toString()
-            case 6: return item.offeredBy?.username
-            case 7: return item.simulationState.toString()
-            default: throw new IllegalStateException("wrong column index: $column")
-        }
+        COLUMN_VALUE_FACTORIES[column].call(infos[row])
     }
 
     void setQueueItems(List<SimulationRuntimeInfo> queueItems) {
-        this.queueItems.clear()
-        this.queueItems.addAll(queueItems)
+        this.infos.clear()
+        this.infos.addAll(queueItems)
         fireTableDataChanged()
     }
 
     void itemAdded(SimulationRuntimeInfo item) {
-        queueItems.add(item)
-        queueItems.sort()
+        infos.add(item)
+        infos.sort()
         fireTableDataChanged()
     }
 
     void itemRemoved(SimulationRuntimeInfo info) {
-        def index = queueItems.indexOf(info)
+        def index = infos.indexOf(info)
         if (index != -1) {
-            queueItems.remove(index)
+            infos.remove(index)
             fireTableRowsDeleted(index, index)
         }
     }
 
     void itemChanged(SimulationRuntimeInfo info) {
-        def index = queueItems.indexOf(info)
+        def index = infos.indexOf(info)
         if (index != -1) {
-            //only update cells which can change:
+            //only update cell which can change:
             fireTableCellUpdated(index, 7)
-            fireTableCellUpdated(index, 8)
         }
     }
 }
