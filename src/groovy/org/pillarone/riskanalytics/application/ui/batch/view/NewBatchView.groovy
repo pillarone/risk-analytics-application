@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -12,8 +13,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -34,14 +33,11 @@ class NewBatchView extends AbstractView {
     RiskAnalyticsMainModel model
     BatchUIItem batchUIItem
 
-    public NewBatchView() {
-    }
-
-    public NewBatchView(RiskAnalyticsMainModel model) {
+    NewBatchView(RiskAnalyticsMainModel model) {
         this.model = model
     }
 
-    public NewBatchView(BatchUIItem batchUIItem) {
+    NewBatchView(BatchUIItem batchUIItem) {
         this.batchUIItem = batchUIItem
     }
 
@@ -75,7 +71,7 @@ class NewBatchView extends AbstractView {
     }
 
     public void attachListeners() {
-        addButton.addActionListener([actionPerformed: {ActionEvent evt ->
+        addButton.addActionListener([actionPerformed: { ActionEvent evt ->
             batchUIItem.createNewBatch((ULCComponent) evt.source, mapToDao())
             notifyItemSaved()
         }] as IActionListener)
@@ -90,7 +86,7 @@ class NewBatchView extends AbstractView {
     }
 
     protected ULCBoxPane getParameterSectionPane() {
-        ULCBoxPane parameterSection = boxLayout(UIUtils.getText(NewBatchView.class, "BatchConfig") + ":") {ULCBoxPane box ->
+        ULCBoxPane parameterSection = boxLayout(UIUtils.getText(NewBatchView.class, "BatchConfig") + ":") { ULCBoxPane box ->
             ULCBoxPane content = new ULCBoxPane(3, 3)
 
             content.add(ULCBoxPane.BOX_LEFT_CENTER, batchNameLabel)
@@ -140,7 +136,7 @@ class NewBatchView extends AbstractView {
 
     protected BatchRun mapToDao() {
         BatchRun newBatchRun = new BatchRun(name: batchNameTextField.getValue(), comment: comment.getValue())
-        java.util.Date date = executionTimeSpinner.getValue()
+        Date date = executionTimeSpinner.value
         newBatchRun.setExecutionTime(new DateTime(date.getTime()))
         return newBatchRun
     }

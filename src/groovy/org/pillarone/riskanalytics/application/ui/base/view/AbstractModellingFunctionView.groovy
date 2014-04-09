@@ -2,35 +2,25 @@ package org.pillarone.riskanalytics.application.ui.base.view
 
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.dataaccess.function.IFunction
-import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.view.IFunctionListener
-
-/**
- * Created by IntelliJ IDEA.
- * User: fja
- * Date: 05-Nov-2009
- * Time: 17:30:17
- * To change this template use File | Settings | File Templates.
- */
 
 @CompileStatic
 abstract public class AbstractModellingFunctionView extends AbstractModellingTreeView implements IFunctionListener {
 
-    public AbstractModellingFunctionView(model, RiskAnalyticsMainModel mainModel) {
+    AbstractModellingFunctionView(model, RiskAnalyticsMainModel mainModel) {
         super(model, mainModel)
     }
 
-    public void refreshNodes() {
+    void refreshNodes() {
         removeColumns()
         addColumns()
         nodeChanged()
     }
 
-    public void functionAdded(IFunction function) {
+    void functionAdded(IFunction function) {
     }
 
-    public void functionRemoved(IFunction function) {
+    void functionRemoved(IFunction function) {
     }
-
 }

@@ -34,7 +34,7 @@ class UIItemUtils {
         if (isUsedInRunningSimulation(item)) return false
         try {
             SimulationRun.withTransaction {TransactionStatus status ->
-                List<SimulationRun> simulationRuns = item.getSimulations();
+                List<SimulationRun> simulationRuns = item.simulations;
                 //check if at least one simulation is running
                 List<SimulationRun> runsToBeRemoved = []
                 for (SimulationRun simulationRun: simulationRuns) {

@@ -105,7 +105,7 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     @Override
     List<SimulationRun> getSimulations() {
-        return item.getSimulations()
+        return item.simulations
     }
 
     public boolean newVersionAllowed() {

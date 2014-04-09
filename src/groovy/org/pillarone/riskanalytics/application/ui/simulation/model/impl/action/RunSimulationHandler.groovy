@@ -94,7 +94,7 @@ class RunSimulationHandler {
      * @return
      */
     private boolean isRunning(ModellingItem item) {
-        List<SimulationRun> simulationRuns = item.getSimulations();
+        List<SimulationRun> simulationRuns = item.simulations;
         //check if at least one simulation is running
         for (SimulationRun simulationRun: simulationRuns) {
             if (!simulationRun.endTime) return true

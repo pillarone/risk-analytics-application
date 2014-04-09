@@ -53,7 +53,7 @@ class DeterministicResultView extends ResultView {
 
     protected void addToolBarElements(ULCToolBar toolbar) {
         toolbar.addSeparator()
-        addPrecisionFunctions(toolbar)
+        addPrecisionFunctions()
     }
 
 }

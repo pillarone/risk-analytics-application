@@ -5,9 +5,9 @@ import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
-import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
@@ -17,10 +17,13 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
+import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
+
+import static com.ulcjava.base.application.ULCComponent.WHEN_FOCUSED
+import static com.ulcjava.base.application.tree.ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION
+import static com.ulcjava.base.shared.IDefaults.BOX_EXPAND_CENTER
 
 class ResultView extends AbstractModellingFunctionView implements NavigationListener {
 
@@ -35,30 +38,34 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
     }
 
     @Override
+    AbstractResultViewModel getModel() {
+        super.model as AbstractResultViewModel
+    }
+
+    @Override
     protected void preViewCreationInitialization() {
         super.preViewCreationInitialization()
         tabbedPane = new ULCDetachableTabbedPane()
-        tabbedPane.addTabListener([tabClosing: {TabEvent event -> event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())}] as ITabListener)
+        tabbedPane.addTabListener([tabClosing: { TabEvent event -> event.closableTabbedPane.closeCloseableTab(event.tabClosingIndex) }] as ITabListener)
     }
 
     protected void initTree() {
 
         int treeWidth = UIUtils.calculateTreeWidth(model.treeModel.root)
-
         tree = new ULCFixedColumnTableTree(model.treeModel, 1, ([treeWidth] + ([100] * (model.treeModel.columnCount - 1))) as int[], true, false)
         tree.viewPortTableTree.name = "resultDescriptorTreeContent"
         tree.rowHeaderTableTree.name = "resultDescriptorTreeRowHeader"
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = getText("NameColumnHeader")
-        tree.setCellSelectionEnabled true
+        tree.cellSelectionEnabled = true
 
-        tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
-            it.setCellRenderer(new ResultViewTableTreeNodeCellRenderer(this, -1))
-            it.setHeaderRenderer(new CenteredHeaderRenderer())
+        tree.rowHeaderTableTree.columnModel.columns.each { ULCTableTreeColumn it ->
+            it.cellRenderer = new ResultViewTableTreeNodeCellRenderer(this, -1)
+            it.headerRenderer = new CenteredHeaderRenderer()
         }
 
-        tree.rowHeaderTableTree.selectionModel.setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION)
+        tree.rowHeaderTableTree.selectionModel.selectionMode = DISCONTIGUOUS_TREE_SELECTION
         tree.rowHeaderView.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK))
-        tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), ULCComponent.WHEN_FOCUSED)
+        tree.rowHeaderView.registerKeyboardAction(ctrlaction, KeyStroke.getKeyStroke(KeyEvent.VK_A, KeyEvent.CTRL_DOWN_MASK), WHEN_FOCUSED)
         commentAndErrorView.tableTree = tree
     }
 
@@ -68,7 +75,7 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
         super.initComponents()
     }
 
-    protected void addPrecisionFunctions(ULCToolBar toolbar) {
+    protected void addPrecisionFunctions() {
         selectionToolbar.addSeparator()
         selectionToolbar.add new ULCButton(new PrecisionAction(model, -1, "reducePrecision"))
         selectionToolbar.add new ULCButton(new PrecisionAction(model, +1, "increasePrecision"))
@@ -77,7 +84,7 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
     public ULCBoxPane createSelectionPane() {
         selectView = new ULCComboBox(model.selectionViewModel)
         selectView.name = "selectView"
-        selectView.setPreferredSize(new Dimension(300, 20))
+        selectView.preferredSize = new Dimension(300, 20)
         selectView.addActionListener(new ApplySelectionAction(model, this))
 
         filterSelection = new ULCComboBox()
@@ -86,25 +93,24 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
         model.nodeNames.each {
             filterSelection.addItem it
         }
-
         filterLabel = new ULCLabel(UIUtils.getIcon("filter-active.png"))
 
         ULCBoxPane filters = new ULCBoxPane(3, 1)
-        filters.add(ULCBoxPane.BOX_EXPAND_CENTER, selectView)
+        filters.add(BOX_EXPAND_CENTER, selectView)
         filters.add(filterLabel)
         filters.add(filterSelection)
         return filters
     }
 
     public void showHiddenComments() {
-        if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1)
+        if ((NO_DIVIDER - splitPane.dividerLocationRelative) < 0.1)
             splitPane.setDividerLocation(DIVIDER)
         else
             splitPane.setDividerLocation(NO_DIVIDER)
     }
 
     public void showComments() {
-        if ((NO_DIVIDER - splitPane.getDividerLocationRelative()) < 0.1) {
+        if ((NO_DIVIDER - splitPane.dividerLocationRelative) < 0.1) {
             splitPane.setDividerLocation(DIVIDER)
         }
     }
@@ -122,5 +128,4 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
     protected String getText(String key) {
         return LocaleResources.getString("ResultView." + key);
     }
-
 }

@@ -121,7 +121,7 @@ class StochasticResultView extends ResultView {
 
         addIntegerFunctions(toolbar)
 
-        addPrecisionFunctions(selectionToolbar)
+        addPrecisionFunctions()
 
     }
 

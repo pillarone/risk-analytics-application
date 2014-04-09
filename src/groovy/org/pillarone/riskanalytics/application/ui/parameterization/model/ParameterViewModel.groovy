@@ -4,9 +4,6 @@ import com.ulcjava.base.application.tabletree.ITableTreeModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
-import org.pillarone.riskanalytics.core.components.Component
-import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
 
 class ParameterViewModel extends AbstractParametrizedViewModel {
 
@@ -15,14 +12,14 @@ class ParameterViewModel extends AbstractParametrizedViewModel {
     }
 
     protected ITableTreeModel buildTree() {
-        ParameterizationTableTreeModel model = super.buildTree()
+        ParameterizationTableTreeModel model = super.buildTree() as ParameterizationTableTreeModel
         model.simulationModel = this.model
         return model
     }
 
     @Override
     protected AbstractParametrizedTableTreeModel createTableTreeModel(Object builder) {
-        return new ParameterizationTableTreeModel(builder)
+        return new ParameterizationTableTreeModel(builder as ParameterizationTreeBuilder)
     }
 
     @Override
@@ -32,6 +29,10 @@ class ParameterViewModel extends AbstractParametrizedViewModel {
         return builder
     }
 
+    @Override
+    Parameterization getItem() {
+        super.@item as Parameterization
+    }
 }
 
 

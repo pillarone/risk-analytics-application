@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
+
 import com.canoo.ulc.community.table.server.ULCFixedTable
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
@@ -26,9 +27,8 @@ public class BatchView extends NewBatchView {
     ULCButton runBatch
     ULCButton saveButton
 
-
     private BatchView(RiskAnalyticsMainModel model, BatchRun batchRun) {
-        this.model = model
+        super(model)
         this.batchRun = batchRun
         this.batchDataTableModel = new BatchDataTableModel(batchRun)
     }
@@ -52,8 +52,6 @@ public class BatchView extends NewBatchView {
     }
 
 
-
-
     public void layoutComponents() {
         ULCBoxPane parameterSection = getParameterSectionPane()
         content.add(ULCBoxPane.BOX_LEFT_TOP, parameterSection)
@@ -70,7 +68,7 @@ public class BatchView extends NewBatchView {
         batches = new ULCFixedTable(batchDataTableModel)
         batches.name = "batchesTable"
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun, mainModel: model)
-        batches.getColumnModel().getColumns().each {ULCTableColumn column ->
+        batches.getColumnModel().getColumns().each { ULCTableColumn column ->
             column.setHeaderRenderer(new BatchTableHeaderRenderer())
             column.setCellRenderer(batchTableRenderer)
         }
@@ -78,7 +76,7 @@ public class BatchView extends NewBatchView {
         batches.setShowHorizontalLines(true)
 
         batches.setAutoResizeMode(ULCTable.AUTO_RESIZE_ALL_COLUMNS);
-        batches.selectionModel.addListSelectionListener([valueChanged: {ListSelectionEvent event ->
+        batches.selectionModel.addListSelectionListener([valueChanged: { ListSelectionEvent event ->
             ULCListSelectionModel source = (ULCListSelectionModel) event.getSource()
             int index = source.getMinSelectionIndex()
             batchDataTableModel.selectedRun = (index >= 0) ? batchDataTableModel.getSimulationRunAt(index) : null
@@ -108,7 +106,7 @@ public class BatchView extends NewBatchView {
     }
 
     public void attachListeners() {
-        runBatch.addActionListener([actionPerformed: {ActionEvent evt ->
+        runBatch.addActionListener([actionPerformed: { ActionEvent evt ->
             BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
             if (batchToRun && !batchToRun.executed) {
                 BatchRunService.service.runBatch(batchToRun)
@@ -117,7 +115,7 @@ public class BatchView extends NewBatchView {
             }
         }] as IActionListener)
 
-        saveButton.addActionListener([actionPerformed: {ActionEvent evt ->
+        saveButton.addActionListener([actionPerformed: { ActionEvent evt ->
             String newName = batchNameTextField.getValue()
             String oldName = batchDataTableModel.batchRun.name
             if (oldName.equals(newName) || validate(newName)) {
@@ -145,15 +143,9 @@ public class BatchView extends NewBatchView {
         batchDataTableModel.addRiskAnalyticsModelListener riskAnalyticsModelListener
     }
 
-    static AbstractView getView(RiskAnalyticsMainModel model, BatchRun batchRun) {
-        return batchRun ? new BatchView(model, batchRun) : new NewBatchView(model)
-    }
-
     static AbstractView getView(BatchUIItem batchUIItem) {
         return batchUIItem.batchRun ? new BatchView(batchUIItem) : new NewBatchView(batchUIItem)
     }
-
-
 }
 
 
