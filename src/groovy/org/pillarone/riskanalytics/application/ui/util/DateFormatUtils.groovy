@@ -14,7 +14,8 @@ abstract class DateFormatUtils {
     private static DateTimeFormatter detailedFormatter
     private static DateTimeFormatter simpleFormatter
     private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
-    private static final String DETAILED_FORMATTER_STRING = "dd.MM.yyyy, HH:mm z"
+//  private static final String DETAILED_FORMATTER_STRING = "dd.MM.yyyy, HH:mm z"
+    private static final String DETAILED_FORMATTER_STRING = System.getProperty("DateFormatUtils.DETAILED_FORMATTER_STRING","dd.MM.yyyy, HH:mm z")
     private static final String SIMPLE_FORMATTER_STRING = "dd.MM.yyyy"
 
     public static DateTimeFormatter getDetailedDateFormat() {

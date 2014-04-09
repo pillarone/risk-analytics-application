@@ -25,7 +25,6 @@ public class ModellingTableTreeColumn {
     protected static Log LOG = LogFactory.getLog(ModellingTableTreeColumn)
 
     List<TransactionInfo> transactionInfos
-    DateTimeFormatter simpleDateFormat = DateTimeFormat.forPattern("dd.MM.yyyy, HH:mm")
     Map instances
 
     class NameColumn extends ModellingTableTreeColumn {
