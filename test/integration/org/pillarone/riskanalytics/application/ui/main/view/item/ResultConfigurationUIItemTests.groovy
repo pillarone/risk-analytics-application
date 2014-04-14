@@ -33,8 +33,7 @@ class ResultConfigurationUIItemTests extends AbstractSimpleFunctionalTest {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
-        configuration = new ResultConfiguration("Application")
-        configuration.modelClass = ApplicationModel
+        configuration = new ResultConfiguration("Application", ApplicationModel)
         configuration.load()
 
         structure = new ModelStructure("ApplicationStructure")

@@ -458,8 +458,7 @@ class CompareTableTreeModelTests {
         Parameterization parameterization = new Parameterization("CoreParameters", CoreModel)
         parameterization.load()
         simulation.parameterization = parameterization
-        ResultConfiguration resultConfiguration = new ResultConfiguration("CoreResultConfiguration")
-        resultConfiguration.modelClass = CoreModel
+        ResultConfiguration resultConfiguration = new ResultConfiguration("CoreResultConfiguration", CoreModel)
         resultConfiguration.load()
         simulation.template = resultConfiguration
         simulation.save()

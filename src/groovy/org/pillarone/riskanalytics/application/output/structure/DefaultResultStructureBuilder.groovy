@@ -17,8 +17,7 @@ class DefaultResultStructureBuilder {
         ResultNode node = new ResultNode(modelClass.simpleName - "Model", null)
         collectPaths(model, node)
 
-        ResultStructure resultStructure = new ResultStructure(name)
-        resultStructure.modelClass = modelClass
+        ResultStructure resultStructure = new ResultStructure(name, modelClass)
         resultStructure.rootNode = node
         return resultStructure
     }

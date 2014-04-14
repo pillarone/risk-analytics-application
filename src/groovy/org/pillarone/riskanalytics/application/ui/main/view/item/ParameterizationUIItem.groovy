@@ -2,8 +2,6 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
@@ -24,9 +22,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
  */
 class ParameterizationUIItem extends ModellingUIItem {
 
-    private static Log LOG = LogFactory.getLog(ParameterizationUIItem)
-
-    public ParameterizationUIItem(RiskAnalyticsMainModel model, Model simulationModel, Parameterization parameterization) {
+    ParameterizationUIItem(RiskAnalyticsMainModel model, Model simulationModel, Parameterization parameterization) {
         super(model, simulationModel, parameterization)
     }
 
@@ -71,7 +67,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     @Override
     public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
         ModellingUIItem newItem = null
-        Closure okAction = {String commentText ->
+        Closure okAction = { String commentText ->
             if (!this.isLoaded()) {
                 this.load()
             }
@@ -83,7 +79,6 @@ class ParameterizationUIItem extends ModellingUIItem {
 
         return newItem
     }
-
 
 
     public ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
@@ -135,12 +130,11 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     @Override
     boolean isEditable() {
-        return item.isEditable()
+        return item.editable
     }
 
     @Override
     String toString() {
         return item.toString()
     }
-
 }

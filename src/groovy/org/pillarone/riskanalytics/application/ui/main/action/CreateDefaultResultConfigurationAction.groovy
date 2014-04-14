@@ -37,8 +37,7 @@ class CreateDefaultResultConfigurationAction extends SelectionTreeAction {
             } else {
                 try {
 
-                    ResultConfiguration resultConfiguration = new ResultConfiguration(dialog.nameInput.text)
-                    resultConfiguration.modelClass = getSelectedModel().class
+                    ResultConfiguration resultConfiguration = new ResultConfiguration(dialog.nameInput.text, getSelectedModel().class)
                     resultConfiguration.save()
 
                     dialog.hide()
@@ -61,7 +60,7 @@ class CreateDefaultResultConfigurationAction extends SelectionTreeAction {
     boolean validate(String name) {
         if (!name) return false
         def seps = ["/", "//", File.separator]
-        if (seps.any {name.indexOf(it) != -1}) return false
+        if (seps.any { name.indexOf(it) != -1 }) return false
         return true
     }
 

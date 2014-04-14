@@ -15,7 +15,7 @@ class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
         assertEquals 0, listModel.size
 
         StubFor factoryStub = new StubFor(ModellingItemFactory)
-        factoryStub.demand.getResultConfigurationsForModel {Class model -> [new ResultConfiguration('CoreResultConfiguration'), new ResultConfiguration('name')]}
+        factoryStub.demand.getResultConfigurationsForModel { Class model -> [new ResultConfiguration('CoreResultConfiguration', CoreModel), new ResultConfiguration('name', CoreModel)] }
 
         factoryStub.use {
             listModel.load(CoreModel, 'CoreResultConfiguration')
@@ -29,13 +29,13 @@ class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
         ResultConfigurationVersionsListModel listModel = new ResultConfigurationVersionsListModel()
         assertEquals 0, listModel.size
 
-        ResultConfiguration template = new ResultConfiguration('CoreResultConfiguration')
+        ResultConfiguration template = new ResultConfiguration('CoreResultConfiguration', CoreModel)
         template.versionNumber = new VersionNumber('2')
-        ResultConfiguration template2 = new ResultConfiguration('CoreResultConfiguration')
+        ResultConfiguration template2 = new ResultConfiguration('CoreResultConfiguration', CoreModel)
         template2.versionNumber = new VersionNumber('1')
 
         StubFor factoryStub = new StubFor(ModellingItemFactory)
-        factoryStub.demand.getResultConfigurationsForModel {Class model -> [template, template2]}
+        factoryStub.demand.getResultConfigurationsForModel { Class model -> [template, template2] }
 
         factoryStub.use {
             listModel.load(CoreModel, 'CoreResultConfiguration')
@@ -50,10 +50,10 @@ class ResultConfigurationVersionsListModelTests extends GroovyTestCase {
         ResultConfigurationVersionsListModel listModel = new ResultConfigurationVersionsListModel()
         assertEquals 0, listModel.size
 
-        ResultConfiguration template = new ResultConfiguration('CoreResultConfiguration')
+        ResultConfiguration template = new ResultConfiguration('CoreResultConfiguration', CoreModel)
 
         StubFor factoryStub = new StubFor(ModellingItemFactory)
-        factoryStub.demand.getResultConfigurationsForModel {Class model -> [template]}
+        factoryStub.demand.getResultConfigurationsForModel { Class model -> [template] }
 
         factoryStub.use {
             listModel.load(CoreModel, 'CoreResultConfiguration')

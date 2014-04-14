@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.resultconfiguration.model
 
+import models.core.CoreModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.ui.base.model.ComponentTableTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
@@ -66,7 +67,7 @@ class ResultConfigurationTableTreeNodeTests extends GroovyTestCase {
         ComponentTableTreeNode component = new ComponentTableTreeNode(null, null, "component")
         root.add(component)
 
-        ResultConfiguration configuration = new ResultConfiguration("config")
+        ResultConfiguration configuration = new ResultConfiguration("config", CoreModel)
 
         collector = new PacketCollector(path: "root:component:outValue", mode: CollectingModeFactory.getStrategy(SingleValueCollectingModeStrategy.IDENTIFIER))
         configuration.collectors << collector

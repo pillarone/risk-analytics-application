@@ -33,8 +33,7 @@ class ResultConfigurationTreeBuilderTests {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
-        ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
-        configuration.modelClass = ApplicationModel
+        ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration", ApplicationModel)
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("ApplicationStructure")
         modelStructure.load()
@@ -59,8 +58,7 @@ class ResultConfigurationTreeBuilderTests {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Core'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Core'])
 
-        ResultConfiguration configuration = new ResultConfiguration("CoreResultConfiguration")
-        configuration.modelClass = ApplicationModel
+        ResultConfiguration configuration = new ResultConfiguration("CoreResultConfiguration", ApplicationModel)
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("CoreStructure")
         modelStructure.load()
@@ -81,8 +79,7 @@ class ResultConfigurationTreeBuilderTests {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
-        ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
-        configuration.modelClass = ApplicationModel
+        ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration", ApplicationModel)
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("ApplicationStructure")
         modelStructure.load()
@@ -109,8 +106,7 @@ class ResultConfigurationTreeBuilderTests {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(['Application'])
         new ModelStructureImportService().compareFilesAndWriteToDB(['Application'])
 
-        ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration")
-        configuration.modelClass = ApplicationModel
+        ResultConfiguration configuration = new ResultConfiguration("ApplicationResultConfiguration", ApplicationModel)
         configuration.load()
         ModelStructure modelStructure = new ModelStructure("ApplicationStructure")
         modelStructure.load()

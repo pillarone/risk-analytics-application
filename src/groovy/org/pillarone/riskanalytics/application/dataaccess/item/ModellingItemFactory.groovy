@@ -187,7 +187,7 @@ class ModellingItemFactory {
     static List getResultConfigurationsForModel(Class modelClass) {
         ResultConfigurationDAO.withTransaction { status ->
             ResultConfigurationDAO.findAllByModelClassName(modelClass.name, [sort: "name"]).collect {
-                getItem(it, modelClass)
+                getItem(it)
             }
         }
     }
@@ -301,13 +301,12 @@ class ModellingItemFactory {
     }
 
     private static ResultConfiguration copy(ResultConfiguration oldItem, String newName) {
-        ResultConfiguration newItem = new ResultConfiguration(newName)
+        ResultConfiguration newItem = new ResultConfiguration(newName, oldItem.modelClass)
 
         for (PacketCollector collector in oldItem.collectors) {
             newItem.collectors << new PacketCollector(path: collector.path, mode: collector.mode)
         }
         newItem.comment = oldItem.comment
-        newItem.modelClass = oldItem.modelClass
         return newItem
     }
 
@@ -492,7 +491,7 @@ class ModellingItemFactory {
         }
         simulation.modelClass = ModellingItemFactory.classLoader.loadClass(run.model)
         simulation.parameterization = getItem(run.parameterization, simulation.modelClass)
-        simulation.template = getItem(run.resultConfiguration, simulation.modelClass)
+        simulation.template = getItem(run.resultConfiguration)
         simulation.creationDate = run.startTime
         simulation.modificationDate = run.modificationDate
         simulation.periodCount = run.periodCount
@@ -513,27 +512,23 @@ class ModellingItemFactory {
         item
     }
 
-    private static ResultConfiguration getItem(ResultConfigurationDAO dao, Class modelClass = null) {
+    private static ResultConfiguration getItem(ResultConfigurationDAO dao) {
         ResultConfiguration item = getItemInstance(key(ResultConfiguration, dao.id))
         if (!item) {
-            item = new ResultConfiguration(dao.name)
+            item = new ResultConfiguration(dao.name, Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName))
             itemInstances[key(ResultConfiguration, dao.id)] = item
         }
-        item.modelClass = Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName)
         item.versionNumber = new VersionNumber(dao.itemVersion)
-        if (modelClass != null) {
-            item.modelClass = modelClass
-            item.creator = dao.creator
-            if (item.creator) {
-                item.creator.username = dao.creator.username
-            }
-            item.lastUpdater = dao.lastUpdater
-            if (item.lastUpdater) {
-                item.lastUpdater.username = dao.lastUpdater.username
-            }
-            item.creationDate = dao.creationDate
-            item.modificationDate = dao.modificationDate
+        item.creator = dao.creator
+        if (item.creator) {
+            item.creator.username = dao.creator.username
         }
+        item.lastUpdater = dao.lastUpdater
+        if (item.lastUpdater) {
+            item.lastUpdater.username = dao.lastUpdater.username
+        }
+        item.creationDate = dao.creationDate
+        item.modificationDate = dao.modificationDate
         item
     }
 

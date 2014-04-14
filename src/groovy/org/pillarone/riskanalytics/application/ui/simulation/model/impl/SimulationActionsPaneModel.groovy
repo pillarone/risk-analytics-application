@@ -42,6 +42,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     AddToBatchAction addToBatchAction
 
     ISimulationProvider simulationProvider
+    RiskAnalyticsMainModel mainModel
 
     @Bindable
     String batchMessage

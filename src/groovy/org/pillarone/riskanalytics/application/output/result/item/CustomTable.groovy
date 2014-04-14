@@ -1,24 +1,22 @@
 package org.pillarone.riskanalytics.application.output.result.item
 
-import org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.output.CustomTableDAO
 import org.pillarone.riskanalytics.application.output.CustomTableEntry
 import org.pillarone.riskanalytics.application.output.CustomTableEntryPair
 import org.pillarone.riskanalytics.application.ui.customtable.model.DataCellElement
-import org.pillarone.riskanalytics.core.output.PathMapping
-import org.pillarone.riskanalytics.core.output.FieldMapping
-import org.pillarone.riskanalytics.core.output.CollectorMapping
-import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMappingRegistry
 import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMapping
-import org.pillarone.riskanalytics.core.output.SimulationRun
-import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.application.ui.resultnavigator.categories.CategoryMappingRegistry
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.output.CollectorMapping
+import org.pillarone.riskanalytics.core.output.FieldMapping
+import org.pillarone.riskanalytics.core.output.PathMapping
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.user.UserManagement
-import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 
+import static org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement.*
 
 class CustomTable extends ModellingItem {
 
@@ -28,7 +26,6 @@ class CustomTable extends ModellingItem {
     List<List> tableData
 
     Parameterization parameterization
-
 
     CustomTable(String name, Class modelClass) {
         super(name)
@@ -104,12 +101,12 @@ class CustomTable extends ModellingItem {
                     for (CustomTableEntryPair pair in entry.pairs) {
                         element.addCategoryValue(pair.entryKey, pair.entryValue)
                     }
-                    element.addCategoryValue(OutputElement.PATH, element.path)
-                    element.addCategoryValue(OutputElement.FIELD, element.field)
-                    element.addCategoryValue(OutputElement.COLLECTOR, element.collector)
-                    element.addCategoryValue(OutputElement.PERIOD, element.period.toString())
-                    element.addCategoryValue(OutputElement.STATISTICS, entry.keyFigure)
-                    element.addCategoryValue(OutputElement.STATISTICS_PARAMETER, entry.keyFigureParameter.toString())
+                    element.addCategoryValue(PATH, element.path)
+                    element.addCategoryValue(FIELD, element.field)
+                    element.addCategoryValue(COLLECTOR, element.collector)
+                    element.addCategoryValue(PERIOD, element.period.toString())
+                    element.addCategoryValue(STATISTICS, entry.keyFigure)
+                    element.addCategoryValue(STATISTICS_PARAMETER, entry.keyFigureParameter.toString())
                     elements << element
                     rowData << element
                 }

@@ -646,7 +646,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(Parameterization item) {
-        return createNode(new ParameterizationUIItem(riskAnalyticsMainModel, item.modelClass?.newInstance(), item))
+        return createNode(new ParameterizationUIItem(riskAnalyticsMainModel, item.modelClass?.newInstance() as Model, item))
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {

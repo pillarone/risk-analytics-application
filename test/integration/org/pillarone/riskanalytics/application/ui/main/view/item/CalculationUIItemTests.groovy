@@ -38,9 +38,8 @@ class CalculationUIItemTests extends AbstractUIItemTest {
         model.init()
 
         Simulation simulation = new Simulation("Simulation")
-        simulation.modelClass = CoreModel
         simulation.parameterization = new Parameterization("DeterministicApplicationParameters")
-        simulation.template = new ResultConfiguration("DeterministicApplicationResultConfiguration")
+        simulation.template = new ResultConfiguration("DeterministicApplicationResultConfiguration", CoreModel)
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         CalculationUIItem uiItem = new CalculationUIItem(mainModel, model, simulation)

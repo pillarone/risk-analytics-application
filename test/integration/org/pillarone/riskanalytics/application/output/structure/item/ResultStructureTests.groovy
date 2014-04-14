@@ -14,8 +14,7 @@ class ResultStructureTests {
         int structureCount = ResultStructureDAO.count()
         int mappingCount = StructureMapping.count()
 
-        ResultStructure resultStructure = new ResultStructure("TEST")
-        resultStructure.modelClass = ApplicationModel
+        ResultStructure resultStructure = new ResultStructure("TEST", ApplicationModel)
 
         ResultNode root = new ResultNode("root", null)
         ResultNode level1 = new ResultNode("a", "path:a")
@@ -35,20 +34,20 @@ class ResultStructureTests {
         assertEquals ApplicationModel.name, resultStructureDAO.modelClassName
         assertEquals 4, resultStructureDAO.structureMappings.size()
 
-        StructureMapping rootMapping = resultStructureDAO.structureMappings.find { it.name == "root"}
+        StructureMapping rootMapping = resultStructureDAO.structureMappings.find { it.name == "root" }
         assertNull rootMapping.resultPath
         assertNull rootMapping.parent
 
-        StructureMapping a = resultStructureDAO.structureMappings.find { it.name == "a"}
+        StructureMapping a = resultStructureDAO.structureMappings.find { it.name == "a" }
         assertEquals "path:a", a.resultPath
         assertSame rootMapping, a.parent
 
-        StructureMapping x = resultStructureDAO.structureMappings.find { it.name == "x"}
+        StructureMapping x = resultStructureDAO.structureMappings.find { it.name == "x" }
         assertEquals "path:x", x.resultPath
         assertEquals 0, x.orderWithinLevel
         assertSame a, x.parent
 
-        StructureMapping y = resultStructureDAO.structureMappings.find { it.name == "y"}
+        StructureMapping y = resultStructureDAO.structureMappings.find { it.name == "y" }
         assertEquals "path:y", y.resultPath
         assertEquals 1, y.orderWithinLevel
         assertSame a, y.parent
@@ -56,8 +55,7 @@ class ResultStructureTests {
 
     @Test
     void testLoad() {
-        ResultStructure resultStructure = new ResultStructure("TEST")
-        resultStructure.modelClass = ApplicationModel
+        ResultStructure resultStructure = new ResultStructure("TEST", ApplicationModel)
 
         ResultNode root = new ResultNode("root", null)
         ResultNode level1 = new ResultNode("a", "path:a")
@@ -67,7 +65,7 @@ class ResultStructureTests {
         resultStructure.rootNode = root
         resultStructure.save()
 
-        ResultStructure resultStructure2 = new ResultStructure("TEST")
+        ResultStructure resultStructure2 = new ResultStructure("TEST", ApplicationModel)
         resultStructure2.load()
 
         assertEquals ApplicationModel, resultStructure2.modelClass

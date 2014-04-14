@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -13,34 +14,35 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class ModellingUIItem extends AbstractUIItem {
     ModellingItem item
 
-    public ModellingUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ModellingItem item) {
+    ModellingUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ModellingItem item) {
         super(mainModel, simulationModel)
         this.item = item
     }
 
     @Override
-    public boolean isLoaded() {
-        return ((ModellingItem) item).isLoaded()
+    boolean isLoaded() {
+        return item.loaded
     }
 
     @Override
-    public void load(boolean completeLoad) {
-        ((ModellingItem) item).load(completeLoad)
+    void load(boolean completeLoad) {
+        item.load(completeLoad)
     }
 
     @Override
-    public void unload() {
-        ((ModellingItem) item).unload()
+    void unload() {
+        item.unload()
     }
 
-    public boolean isUsedInSimulation() {
-        return ((ModellingItem) item).isUsedInSimulation()
+    boolean isUsedInSimulation() {
+        return item.usedInSimulation
     }
 
     @Override
@@ -51,14 +53,14 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return title
     }
 
-    public boolean deleteDependingResults(Model model) {
+    boolean deleteDependingResults(Model model) {
         return UIItemUtils.deleteDependingResults(mainModel, model, this)
     }
 
-    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
+    ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         ModellingItem modellingItem = null
         item.daoClass.withTransaction { status ->
-            if (!item.isLoaded())
+            if (!item.loaded)
                 item.load()
             modellingItem = ModellingItemFactory.incrementVersion(item)
         }
@@ -70,12 +72,8 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return modellingUIItem
     }
 
-    ModellingItem getItem() {
-        return item
-    }
-
     @Override
-    public boolean remove() {
+    boolean remove() {
         if (ModellingItemFactory.delete(item)) {
             closeItem()
             return true
@@ -124,22 +122,22 @@ abstract class ModellingUIItem extends AbstractUIItem {
     }
 
 
-    public void addItem(ModellingUIItem modellingUIItem, String name) {
+    void addItem(ModellingUIItem modellingUIItem, String name) {
         modellingUIItem.item.daoClass.withTransaction { status ->
-            if (!modellingUIItem.isLoaded())
+            if (!modellingUIItem.loaded)
                 modellingUIItem.load()
             ModellingItem newItem = ModellingItemFactory.copyItem(modellingUIItem.item, name)
             newItem.id = null
             mainModel.fireModelChanged()
-            Model modelInstance = modellingUIItem.model
+            modellingUIItem.model
             if (!(newItem instanceof Resource)) { //re-create model (PMO-1961) - do nothing if it's a resource
-                modelInstance = newItem?.modelClass?.newInstance() as Model
+                Model modelInstance = newItem?.modelClass?.newInstance() as Model
                 modelInstance?.init()
             }
         }
     }
 
-    public void importItem() {
+    void importItem() {
         mainModel.fireModelChanged()
     }
 
@@ -149,7 +147,7 @@ abstract class ModellingUIItem extends AbstractUIItem {
     }
 
     @Override
-    public void addModellingItemChangeListener(IModellingItemChangeListener listener) {
+    void addModellingItemChangeListener(IModellingItemChangeListener listener) {
         item.addModellingItemChangeListener(listener)
     }
 
@@ -167,13 +165,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return item.nameAndVersion
     }
 
-    public Model getModel() {
-        if (!this.@model) {
-            this.model = item.modelClass.newInstance() as Model
-            this.model.init()
-        }
-        return this.@model
-    }
 
     @Override
     boolean equals(Object obj) {
@@ -194,5 +185,14 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     String toString() {
         item?.name
+    }
+
+    @Override
+    Model getModel() {
+        if (!super.model) {
+            model = item.modelClass.newInstance() as Model
+            model.init()
+        }
+        return super.model
     }
 }

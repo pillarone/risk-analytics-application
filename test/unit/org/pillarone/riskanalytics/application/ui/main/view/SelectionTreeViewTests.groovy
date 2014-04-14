@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
@@ -245,13 +246,11 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
             Parameterization parameterization2 = createStubParameterization(2, Status.DATA_ENTRY)
             parameterization2.versionNumber = new VersionNumber("R1")
             Parameterization parameterization3 = createStubParameterization(3, Status.IN_REVIEW)
-            ResultConfiguration resultConfiguration = new ResultConfiguration("result1")
-            resultConfiguration.modelClass = ApplicationModel
+            ResultConfiguration resultConfiguration = new ResultConfiguration("result1", ApplicationModel)
             Simulation simulation = new Simulation("simulation1")
             simulation.parameterization = new Parameterization("param1")
             simulation.parameterization.modelClass = CoreModel
-            simulation.template = new ResultConfiguration("result1")
-            simulation.template.modelClass = CoreModel
+            simulation.template = new ResultConfiguration("result1", CoreModel)
             simulation.id = 1
             simulation.end = new DateTime()
             simulation.modelClass = ApplicationModel

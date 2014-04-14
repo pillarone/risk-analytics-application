@@ -3,23 +3,18 @@ package org.pillarone.riskanalytics.application.output.structure.item
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
+import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import org.pillarone.riskanalytics.application.output.structure.StructureMapping
 
 class ResultStructure extends ModellingItem {
 
-    VersionNumber versionNumber
     ResultNode rootNode
 
-    public ResultStructure(String name) {
-        super(name);
-        versionNumber = new VersionNumber("1")
-    }
-
-    public ResultStructure(String name, Class modelClass) {
-        this(name);
+    ResultStructure(String name, Class modelClass) {
+        super(name)
         this.modelClass = modelClass
+        versionNumber = new VersionNumber("1")
     }
 
     protected Object createDao() {
@@ -58,14 +53,14 @@ class ResultStructure extends ModellingItem {
         ResultStructureDAO resultStructureDAO = dao as ResultStructureDAO
 
         name = resultStructureDAO.name
-        modelClass = getClass().getClassLoader().loadClass(resultStructureDAO.modelClassName)
+        modelClass = getClass().classLoader.loadClass(resultStructureDAO.modelClassName)
 
         Set<StructureMapping> mappings = resultStructureDAO.structureMappings
         StructureMapping root = mappings.find { it.parent == null }
         rootNode = new ResultNode(root.name, root.resultPath)
         Multimap<StructureMapping, StructureMapping> allMappings = ArrayListMultimap.create()
-        for(StructureMapping mapping in mappings) {
-            if(mapping.parent != null) {
+        for (StructureMapping mapping in mappings) {
+            if (mapping.parent != null) {
                 allMappings.put(mapping.parent, mapping)
             }
         }
@@ -81,7 +76,7 @@ class ResultStructure extends ModellingItem {
         }
     }
 
-    protected Object loadFromDB() {
+    protected ResultStructureDAO loadFromDB() {
         def criteria = ResultStructureDAO.createCriteria()
         return criteria.get {
             eq("name", name)
@@ -91,6 +86,4 @@ class ResultStructure extends ModellingItem {
             }
         }
     }
-
-
 }

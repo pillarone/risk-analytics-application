@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
@@ -8,56 +9,48 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 @CompileStatic
 abstract class AbstractUIItem implements IUIItem {
 
-    public RiskAnalyticsMainModel mainModel
-    public Model model
+    Model model
+    RiskAnalyticsMainModel mainModel
 
-    public AbstractUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel) {
+    AbstractUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel) {
         this.mainModel = mainModel
         this.model = simulationModel
     }
 
+    void rename(String newName) {}
 
-    public void rename(String newName) {
-    }
+    void save() {}
 
-    public void save() {
-    }
-
-
-    public boolean remove() {
+    boolean remove() {
         return false
     }
 
-    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
+    ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         return null
     }
 
-
-    public void close() {
+    void close() {
         mainModel.closeItem(model, this)
     }
 
-    public boolean isEditable() {
+    boolean isEditable() {
         return false
     }
 
-
-    public boolean isLoaded() {
+    boolean isLoaded() {
         return false
     }
 
-    public void load(boolean completeLoad = true) {
-    }
+    void load(boolean completeLoad = true) {}
 
-    void unload() {
-
-    }
+    void unload() {}
 
     List<SimulationRun> getSimulations() {
         return []
@@ -69,44 +62,43 @@ abstract class AbstractUIItem implements IUIItem {
 
     abstract public String createTitle()
 
-    public String getToolTip() {
+    String getToolTip() {
         return ""
     }
 
-    public ULCIcon getIcon() {
+    ULCIcon getIcon() {
         return UIUtils.getIcon("clear.png")
     }
 
-    public String getName() {
+    String getName() {
         ""
     }
 
-    public String getNameAndVersion() {
-        getName()
+    String getNameAndVersion() {
+        name
     }
 
-
-    public boolean isVersionable() {
+    boolean isVersionable() {
         return false
     }
 
-    public boolean isChangeable() {
+    boolean isChangeable() {
         return false
     }
 
-    public boolean isChanged() {
+    boolean isChanged() {
         return false
     }
 
-    public boolean isDeletable() {
+    boolean isDeletable() {
         return true
     }
 
-    public NavigationTableTreeModel getNavigationTableTreeModel() {
+    NavigationTableTreeModel getNavigationTableTreeModel() {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel') as NavigationTableTreeModel
     }
 
-    public String getWindowTitle() {
+    String getWindowTitle() {
         String windowTitle = model ? model.name : ""
         windowTitle += " " + createTitle()
         return windowTitle

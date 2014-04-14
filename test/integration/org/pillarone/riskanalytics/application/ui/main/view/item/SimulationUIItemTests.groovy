@@ -43,7 +43,7 @@ class SimulationUIItemTests extends AbstractUIItemTest {
         Simulation simulation = new Simulation("Simulation")
         simulation.modelClass = CoreModel
         simulation.parameterization = new Parameterization("CoreParameters")
-        simulation.template = new ResultConfiguration("CoreResultConfiguration")
+        simulation.template = new ResultConfiguration("CoreResultConfiguration", CoreModel)
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         SimulationUIItem uiItem = new SimulationUIItem(mainModel, model, simulation)

@@ -17,7 +17,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
     Simulation simulation
     Model model
-    
+
     protected void setUp() {
         super.setUp();
 
@@ -26,7 +26,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         simulation = new Simulation('sim')
         simulation.parameterization = new Parameterization('p14n')
         simulation.periodCount = 3
-        simulation.start = new DateTime(2012,1,1,0,0,0,0)
+        simulation.start = new DateTime(2012, 1, 1, 0, 0, 0, 0)
         simulation.modelClass = ApplicationModel.class
         model = new ApplicationModel()
     }
@@ -65,21 +65,21 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         ICollectingModeStrategy single = CollectingModeFactory.getStrategy(SingleValueCollectingModeStrategy.IDENTIFIER)
 
         Map allPaths = [
-                "Model:linesOfBusiness:subFire:outClaimsNet:ultimate": aggregated,
-                "Model:linesOfBusiness:subFire:outClaimsGross:ultimate": aggregated,
-                "Model:linesOfBusiness:subFire:outUnderwritingNet:premium": aggregated,
-                "Model:linesOfBusiness:subFire:outUnderwritingGross:premium": aggregated,
+                "Model:linesOfBusiness:subFire:outClaimsNet:ultimate"        : aggregated,
+                "Model:linesOfBusiness:subFire:outClaimsGross:ultimate"      : aggregated,
+                "Model:linesOfBusiness:subFire:outUnderwritingNet:premium"   : aggregated,
+                "Model:linesOfBusiness:subFire:outUnderwritingGross:premium" : aggregated,
 
-                "Model:linesOfBusiness:outTotalNet:figureX": single,
-                "Model:linesOfBusiness:outTotalNet:figureY": single,
+                "Model:linesOfBusiness:outTotalNet:figureX"                  : single,
+                "Model:linesOfBusiness:outTotalNet:figureY"                  : single,
 
-                "Model:linesOfBusiness:subFlood:outClaimsNet:ultimate": aggregated,
-                "Model:linesOfBusiness:subFlood:outClaimsGross:ultimate": aggregated,
-                "Model:linesOfBusiness:subFlood:outUnderwritingNet:premium": aggregated,
+                "Model:linesOfBusiness:subFlood:outClaimsNet:ultimate"       : aggregated,
+                "Model:linesOfBusiness:subFlood:outClaimsGross:ultimate"     : aggregated,
+                "Model:linesOfBusiness:subFlood:outUnderwritingNet:premium"  : aggregated,
                 "Model:linesOfBusiness:subFlood:outUnderwritingGross:premium": aggregated,
         ]
 
-        ResultStructure resultStructure = new ResultStructure("name")
+        ResultStructure resultStructure = new ResultStructure("name", null)
         resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mapping)
 
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, model, resultStructure, simulation)
@@ -146,15 +146,15 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         ICollectingModeStrategy aggregated = CollectingModeFactory.getStrategy(AggregatedCollectingModeStrategy.IDENTIFIER)
 
         Map allPaths = [
-                "Model:contracts:subContractA:outTotal:ultimate": aggregated,
+                "Model:contracts:subContractA:outTotal:ultimate"                           : aggregated,
 
-                "Model:contracts:subContractA:claimsGenerators:subFire:outClaims:ultimate": aggregated,
+                "Model:contracts:subContractA:claimsGenerators:subFire:outClaims:ultimate" : aggregated,
                 "Model:contracts:subContractA:claimsGenerators:subFlood:outClaims:ultimate": aggregated,
-                "Model:contracts:subContractB:claimsGenerators:subFire:outClaims:ultimate": aggregated,
+                "Model:contracts:subContractB:claimsGenerators:subFire:outClaims:ultimate" : aggregated,
                 "Model:contracts:subContractB:claimsGenerators:subFlood:outClaims:ultimate": aggregated,
         ]
 
-        ResultStructure resultStructure = new ResultStructure("name")
+        ResultStructure resultStructure = new ResultStructure("name", null)
         resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mapping)
 
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, model, resultStructure, simulation)
@@ -195,11 +195,11 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
 
         Map allPaths = [
 
-                "Model:contracts:subContractA:claimsGenerators:subFire:outClaims:ultimate": aggregated,
+                "Model:contracts:subContractA:claimsGenerators:subFire:outClaims:ultimate" : aggregated,
                 "Model:contracts:subContractB:claimsGenerators:subFlood:outClaims:ultimate": aggregated,
         ]
 
-        ResultStructure resultStructure = new ResultStructure("name")
+        ResultStructure resultStructure = new ResultStructure("name", null)
         resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mapping)
 
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, model, resultStructure, simulation)
@@ -240,7 +240,7 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         assertTrue new ResultStructureTreeBuilder.NodeReplacement(path: path, wildcard: "[%claimsGenerator%]").compareTo(new ResultStructureTreeBuilder.NodeReplacement(path: path2, wildcard: "[%lineOfBusiness%]")) < 0
         assertTrue new ResultStructureTreeBuilder.NodeReplacement(path: path2, wildcard: "[%contract%]").compareTo(new ResultStructureTreeBuilder.NodeReplacement(path: path, wildcard: "[%lineOfBusiness%]")) < 0
     }
-    
+
     void testReplacementPeriod() {
         //multiple result path per level (test wildcard replacing - should only happen once per level)
         //mapping larger than allPaths (tests if unnecessary nodes are removed)
@@ -265,21 +265,21 @@ class ResultStructureTreeBuilderTests extends GroovyTestCase {
         ICollectingModeStrategy single = CollectingModeFactory.getStrategy(SingleValueCollectingModeStrategy.IDENTIFIER)
 
         Map allPaths = [
-                "Model:linesOfBusiness:subFire:outClaimsNet:ultimate": aggregated,
-                "Model:linesOfBusiness:subFire:outClaimsGross:ultimate": aggregated,
-                "Model:linesOfBusiness:subFire:outUnderwritingNet:premium": aggregated,
-                "Model:linesOfBusiness:subFire:outUnderwritingGross:premium": aggregated,
+                "Model:linesOfBusiness:subFire:outClaimsNet:ultimate"        : aggregated,
+                "Model:linesOfBusiness:subFire:outClaimsGross:ultimate"      : aggregated,
+                "Model:linesOfBusiness:subFire:outUnderwritingNet:premium"   : aggregated,
+                "Model:linesOfBusiness:subFire:outUnderwritingGross:premium" : aggregated,
 
-                "Model:linesOfBusiness:outTotalNet:figureX": single,
-                "Model:linesOfBusiness:outTotalNet:figureY": single,
+                "Model:linesOfBusiness:outTotalNet:figureX"                  : single,
+                "Model:linesOfBusiness:outTotalNet:figureY"                  : single,
 
-                "Model:linesOfBusiness:subFlood:outClaimsNet:ultimate": aggregated,
-                "Model:linesOfBusiness:subFlood:outClaimsGross:ultimate": aggregated,
-                "Model:linesOfBusiness:subFlood:outUnderwritingNet:premium": aggregated,
+                "Model:linesOfBusiness:subFlood:outClaimsNet:ultimate"       : aggregated,
+                "Model:linesOfBusiness:subFlood:outClaimsGross:ultimate"     : aggregated,
+                "Model:linesOfBusiness:subFlood:outUnderwritingNet:premium"  : aggregated,
                 "Model:linesOfBusiness:subFlood:outUnderwritingGross:premium": aggregated,
         ]
 
-        ResultStructure resultStructure = new ResultStructure("name")
+        ResultStructure resultStructure = new ResultStructure("name", null)
         resultStructure.rootNode = TreeBuildingClosureDelegate.createStructureTree(mapping)
 
         ResultStructureTreeBuilder treeBuilder = new ResultStructureTreeBuilder(allPaths, model, resultStructure, simulation)
