@@ -294,19 +294,23 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     public void order(Comparator comparator) {
+        // Model nodes are direct children of root node
+        // But Batches and Resources nodes (non-Model nodes) are direct children of root
+        //
         root.childCount.times { childIndex ->
-            def modelNode = root.getChildAt(childIndex)
-            if (modelNode instanceof ModelNode) {
-                DefaultMutableTableTreeNode parameterizationGroupNode = modelNode.getChildAt(PARAMETERIZATION_NODE_INDEX) as DefaultMutableTableTreeNode
-                List<ParameterizationNode> nodes = []
+            def topLevelNode = root.getChildAt(childIndex)
+            if (topLevelNode instanceof ModelNode) {
+                DefaultMutableTableTreeNode parameterizationGroupNode = topLevelNode.getChildAt(PARAMETERIZATION_NODE_INDEX) as DefaultMutableTableTreeNode
+
+                List<ParameterizationNode> paramNodes = []
                 parameterizationGroupNode.childCount.times { int nodeIndex ->
                     ParameterizationNode node = parameterizationGroupNode.getChildAt(nodeIndex) as ParameterizationNode
-                    nodes << node
+                    paramNodes << node
                 }
                 parameterizationGroupNode.removeAllChildren()
                 tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
-                nodes.sort(comparator)
-                nodes.each {
+                paramNodes.sort(comparator)
+                paramNodes.each {
                     parameterizationGroupNode.add(it)
                 }
                 tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
