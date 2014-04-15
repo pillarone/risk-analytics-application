@@ -301,22 +301,47 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
             def topLevelNode = root.getChildAt(childIndex)
             if (topLevelNode instanceof ModelNode) {
                 DefaultMutableTableTreeNode parameterizationGroupNode = topLevelNode.getChildAt(PARAMETERIZATION_NODE_INDEX) as DefaultMutableTableTreeNode
+                orderParameterizations(comparator,parameterizationGroupNode)
 
-                List<ParameterizationNode> paramNodes = []
-                parameterizationGroupNode.childCount.times { int nodeIndex ->
-                    ParameterizationNode node = parameterizationGroupNode.getChildAt(nodeIndex) as ParameterizationNode
-                    paramNodes << node
-                }
-                parameterizationGroupNode.removeAllChildren()
-                tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
-                paramNodes.sort(comparator)
-                paramNodes.each {
-                    parameterizationGroupNode.add(it)
-                }
-                tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
+                DefaultMutableTableTreeNode simulationGroupNode = topLevelNode.getChildAt(SIMULATION_NODE_INDEX) as DefaultMutableTableTreeNode
+                orderSimulations(comparator,simulationGroupNode)
             }
         }
     }
+
+    //TODO Ask Matthias if we really need to be invoking nodeStructureChanged() twice each time ???
+    //
+    void orderParameterizations( Comparator comparator, DefaultMutableTableTreeNode parameterizationGroupNode ){
+        List<ParameterizationNode> paramNodes = []
+        parameterizationGroupNode.childCount.times { int nodeIndex ->
+            ParameterizationNode node = parameterizationGroupNode.getChildAt(nodeIndex) as ParameterizationNode
+            paramNodes << node
+        }
+        parameterizationGroupNode.removeAllChildren()
+        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
+        paramNodes.sort(comparator)
+        paramNodes.each {
+            parameterizationGroupNode.add(it)
+        }
+        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
+    }
+
+    void orderSimulations( Comparator comparator, DefaultMutableTableTreeNode simulationGroupNode ){
+        List<SimulationNode> simNodes = []
+        simulationGroupNode.childCount.times { int nodeIndex ->
+            SimulationNode node = simulationGroupNode.getChildAt(nodeIndex) as SimulationNode
+            simNodes << node
+        }
+        simulationGroupNode.removeAllChildren()
+        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(simulationGroupNode) as Object[]))
+        simNodes.sort(comparator)
+        simNodes.each {
+            simulationGroupNode.add(it)
+        }
+        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(simulationGroupNode) as Object[]))
+    }
+
+
 
 
     @Override
