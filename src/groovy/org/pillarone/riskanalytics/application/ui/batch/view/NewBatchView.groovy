@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
-
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
@@ -7,13 +6,11 @@ import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
-import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -135,10 +132,7 @@ class NewBatchView extends AbstractView {
     }
 
     protected BatchRun mapToDao() {
-        BatchRun newBatchRun = new BatchRun(name: batchNameTextField.getValue(), comment: comment.getValue())
-        Date date = executionTimeSpinner.value
-        newBatchRun.setExecutionTime(new DateTime(date.getTime()))
-        return newBatchRun
+        return new BatchRun(name: batchNameTextField.getValue(), comment: comment.getValue())
     }
 
 

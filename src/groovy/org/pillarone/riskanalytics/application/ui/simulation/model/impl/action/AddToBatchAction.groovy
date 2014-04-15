@@ -1,14 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
-import org.pillarone.riskanalytics.core.output.batch.OutputStrategyFactory
-import org.joda.time.DateTime
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class AddToBatchAction extends RunSimulationAction {
 
@@ -33,7 +32,7 @@ class AddToBatchAction extends RunSimulationAction {
                 String newBatchRunName = model.batchRunComboBoxModel.selectedItem
                 if (!newBatchRunName || "" == newBatchRunName)
                     newBatchRunName = "${new DateTime()}"
-                batchRun = new BatchRun(name: newBatchRunName, executionTime: new DateTime())
+                batchRun = new BatchRun(name: newBatchRunName)
                 BatchRun.withTransaction {
                     batchRun.save()
                 }
@@ -42,13 +41,13 @@ class AddToBatchAction extends RunSimulationAction {
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
             trace("Adding simulation ${model.simulation.name} to batch with name $batchRun.name")
-            BatchRunSimulationRun batchRunSimulationRun = BatchRunService.service.createBatchRunSimulationRun(batchRun, model.simulation, OutputStrategyFactory.getEnum(model.outputStrategy.class))
-            def count = BatchRunSimulationRun.countByBatchRun(batchRun).toString()
-            String message = UIUtils.getText(this.class, "succes", [model.simulation.name, count])
+            Simulation simulation = model.simulation
+            int count = BatchRunService.service.createBatchRunSimulationRun(batchRun, simulation)
+            String message = UIUtils.getText(this.class, 'success', [model.simulation.name, count.toString()])
             model.batchMessage = message
-            mainModel.fireRowAdded(batchRunSimulationRun)
+            mainModel.fireRowAdded(simulation.simulationRun)
         } catch (Exception ignored) {
-            model.batchMessage = UIUtils.getText(this.class, "error")
+            model.batchMessage = UIUtils.getText(this.class, 'error')
         }
     }
 }

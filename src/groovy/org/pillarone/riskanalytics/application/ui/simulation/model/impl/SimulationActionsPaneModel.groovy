@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
-
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerNumberModel
 import com.ulcjava.base.application.event.IWindowListener
@@ -22,7 +21,6 @@ import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
@@ -97,7 +95,7 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     }
 
     private void startSimulation() {
-        SimulationConfiguration configuration = new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy)
+        SimulationConfiguration configuration = new SimulationConfiguration(simulation, outputStrategy)
         int priority = priorityModel.value as int
         simulationQueueService.offer(configuration, priority)
     }

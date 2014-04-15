@@ -71,7 +71,7 @@ class TestActionPaneModel extends SimulationActionsPaneModel {
 
     void runSimulation() {
         handler = MockSimulationRunner.createRunner()
-        RunSimulationService.getService().runSimulation(handler, new SimulationConfiguration(simulation: simulation, outputStrategy: outputStrategy))
+        RunSimulationService.getService().runSimulation(handler, new SimulationConfiguration(simulation))
     }
 
 

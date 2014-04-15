@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -18,8 +17,8 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListene
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.annotation.Scope
@@ -164,7 +163,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         batchTableListeners << batchTableListener
     }
 
-    void fireRowAdded(BatchRunSimulationRun addedRun) {
+    void fireRowAdded(SimulationRun addedRun) {
         batchTableListeners.each { BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun) }
     }
 

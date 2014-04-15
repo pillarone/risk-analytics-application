@@ -35,7 +35,6 @@ public abstract class RiskAnalyticsAbstractStandaloneTestCase extends AbstractSt
                 [run: {
                     SimulationRun.withTransaction {
                         AuditLog.list()*.delete()
-                        BatchRunSimulationRun.list()*.delete()
                         BatchRun.list()*.delete()
                         PostSimulationCalculation.list()*.delete()
                         SingleValueResult.list()*.delete()

@@ -1,11 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import models.core.CoreModel
-import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
@@ -28,8 +26,8 @@ class BatchUIItemTests extends AbstractUIItemTest {
         LocaleResources.testMode = true
         SimulationRun run
         BatchRun batchRun = null
-        BatchRunSimulationRun.withTransaction {TransactionStatus status ->
-            batchRun = new BatchRun(name: "test", executionTime: new DateTime())
+        BatchRun.withTransaction { TransactionStatus status ->
+            batchRun = new BatchRun(name: "test")
             batchRun.save(flush: true)
             ParameterizationDAO dao = ParameterizationDAO.list()[0]
             ResultConfigurationDAO configurationDAO = ResultConfigurationDAO.list()[0]
@@ -40,15 +38,11 @@ class BatchUIItemTests extends AbstractUIItemTest {
             run.periodCount = 2
             run.iterations = 5
             run.randomSeed = 0
+            run.strategy = OutputStrategy.NO_OUTPUT
+            run.simulationState = SimulationState.NOT_RUNNING
             run.save(flush: true)
-
-            BatchRunSimulationRun batchRunSimulationRun = new BatchRunSimulationRun()
-            batchRunSimulationRun.batchRun = BatchRun.findByName(batchRun.name)//batchRun
-            batchRunSimulationRun.simulationRun = SimulationRun.findByName(run.name)
-            batchRunSimulationRun.priority = 0
-            batchRunSimulationRun.strategy = OutputStrategy.NO_OUTPUT
-            batchRunSimulationRun.simulationState = SimulationState.NOT_RUNNING
-            batchRunSimulationRun.save(flush: true)
+            batchRun.addToSimulationRuns(run)
+            batchRun.save(flush: true)
         }
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         BatchUIItem batchUIItem = new BatchUIItem(mainModel, batchRun)

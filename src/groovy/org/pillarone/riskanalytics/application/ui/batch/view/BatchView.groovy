@@ -48,7 +48,7 @@ public class BatchView extends NewBatchView {
         super.initComponents()
         batchNameTextField.setText(batchRun.name)
         comment.setText(batchRun.comment)
-        executionTimeSpinner.setValue(batchRun.executionTime.toDate())
+        executionTimeSpinner.setValue(new Date())
     }
 
 
@@ -123,7 +123,6 @@ public class BatchView extends NewBatchView {
                     BatchRun batch = BatchRun.findByName(oldName)
                     if (batch) {
                         batch.name = newName
-                        batch.executionTime = new DateTime(executionTimeSpinner.getValue().getTime())
                         batch.comment = comment.getText()
                         batch.save()
                         if (!batch.name.equals(oldName)) {

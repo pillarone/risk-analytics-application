@@ -1,21 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
-
 import models.core.CoreModel
-import org.joda.time.DateTime
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.OutputStrategy
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 
 import static org.junit.Assert.assertEquals
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -35,7 +30,7 @@ class BatchDataTableModelTests {
     public void testModel() {
         BatchDataTableModel model = new BatchDataTableModel(new BatchRun(name: "test"))
         model.metaClass.init = {->
-            BatchRunSimulationRun batchRunSimulationRun = getBatchRunSimulationRun(model)
+            SimulationRun batchRunSimulationRun = getBatchRunSimulationRun(model)
             model.tableValues << model.toList(batchRunSimulationRun)
         }
         model.init()
@@ -51,9 +46,9 @@ class BatchDataTableModelTests {
         assertEquals 1234, model.getValueAt(0, 5)
     }
 
-    BatchRunSimulationRun getBatchRunSimulationRun(BatchDataTableModel model) {
+    SimulationRun getBatchRunSimulationRun(BatchDataTableModel model) {
 
-        BatchRun batchRun = new BatchRun(name: "test", executionTime: new DateTime())
+        BatchRun batchRun = new BatchRun(name: "test")
 //        batchRun.save(flush: true)
         ParameterizationDAO dao = new ParameterizationDAO(name: "ParameterizationDAO")
         dao.itemVersion = "1.1"
@@ -66,14 +61,11 @@ class BatchDataTableModelTests {
         run.periodCount = 2
         run.iterations = 5
         run.randomSeed = 1234
+        run.simulationState = SimulationState.NOT_RUNNING
 //        run.save(flush: true)
 
-        BatchRunSimulationRun batchRunSimulationRun = new BatchRunSimulationRun()
-        batchRunSimulationRun.batchRun = batchRun
-        batchRunSimulationRun.simulationRun = run
-        batchRunSimulationRun.priority = 0
-        batchRunSimulationRun.strategy = OutputStrategy.NO_OUTPUT
-        batchRunSimulationRun.simulationState = SimulationState.NOT_RUNNING
-        return batchRunSimulationRun
+        batchRun.addToSimulationRuns(run)
+
+        return run
     }
 }

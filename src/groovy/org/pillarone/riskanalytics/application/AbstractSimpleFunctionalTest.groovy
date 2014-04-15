@@ -37,7 +37,6 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
         ModelRegistry.instance.listeners.clear()
         SimulationRun.withNewSession { def session ->
             AuditLog.list()*.delete()
-            BatchRunSimulationRun.list()*.delete()
             BatchRun.list()*.delete()
             PostSimulationCalculation.list()*.delete()
             SingleValueResult.list()*.delete()

@@ -11,7 +11,6 @@ import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -50,7 +49,8 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
         if (batchRun == null) {
             throw new IllegalStateException("Failed to lookup batch run in DB. Please report to development")
         }
-        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.simulationRun
+
+        List<SimulationRun> batchRunSimulationRuns = batchRun.simulationRuns
 
         List<String> modelNames = batchRunSimulationRuns*.model.unique()
         if (batchRun.executed) {
@@ -72,7 +72,7 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
         if (batchRun == null) {
             throw new IllegalStateException("Failed to lookup batch run in DB. Please report to development")
         }
-        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.simulationRun
+        List<SimulationRun> batchRunSimulationRuns = batchRun.simulationRuns
         List<Simulation> simulationList = new ArrayList<Simulation>()
         for (SimulationRun run in batchRunSimulationRuns) {
             Simulation simulation = new Simulation(run.name)

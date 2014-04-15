@@ -10,7 +10,7 @@ public class RunBatchSimulationAction extends BatchSimulationSelectionAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        BatchRunService.service.runBatchRunSimulation(model.batchRun, selectedSimulationRun)
+        BatchRunService.service.runBatchRunSimulation(selectedSimulationRun)
     }
 }
 

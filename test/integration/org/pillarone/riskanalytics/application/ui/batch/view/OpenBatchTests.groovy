@@ -4,12 +4,9 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.testframework.operator.ULCPopupMenuOperator
 import com.ulcjava.testframework.operator.ULCTableOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
-import javax.swing.tree.TreePath
 import models.core.CoreModel
-import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.BatchRunSimulationRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
@@ -19,6 +16,8 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 import org.springframework.transaction.TransactionStatus
+
+import javax.swing.tree.TreePath
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -31,8 +30,8 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
         new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
         LocaleResources.setTestMode(true)
         SimulationRun run
-        BatchRunSimulationRun.withTransaction { TransactionStatus status ->
-            BatchRun batchRun = new BatchRun(name: "test", executionTime: new DateTime())
+        BatchRun.withTransaction { TransactionStatus status ->
+            BatchRun batchRun = new BatchRun(name: "test")
             batchRun.save(flush: true)
             parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion("CoreAlternativeParameters", "1")
             ResultConfigurationDAO configurationDAO = ResultConfigurationDAO.findByNameAndItemVersion("CoreResultConfiguration", "1")
@@ -43,15 +42,11 @@ class OpenBatchTests extends AbstractFunctionalTestCase {
             run.periodCount = 2
             run.iterations = 5
             run.randomSeed = 0
+            run.simulationState = SimulationState.NOT_RUNNING
+            run.strategy = OutputStrategy.NO_OUTPUT
             run.save(flush: true)
-
-            BatchRunSimulationRun batchRunSimulationRun = new BatchRunSimulationRun()
-            batchRunSimulationRun.batchRun = BatchRun.findByName(batchRun.name)//batchRun
-            batchRunSimulationRun.simulationRun = SimulationRun.findByName(run.name)
-            batchRunSimulationRun.priority = 0
-            batchRunSimulationRun.strategy = OutputStrategy.NO_OUTPUT
-            batchRunSimulationRun.simulationState = SimulationState.NOT_RUNNING
-            batchRunSimulationRun.save(flush: true)
+            batchRun.addToSimulationRuns(run)
+            batchRun.save(flush: true)
         }
         super.setUp()
     }

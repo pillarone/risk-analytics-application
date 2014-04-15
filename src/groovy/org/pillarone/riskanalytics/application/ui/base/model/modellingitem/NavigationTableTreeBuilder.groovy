@@ -701,7 +701,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private List<BatchRun> getAllBatchRuns() {
-        BatchRun.listOrderByExecutionTime()
+        BatchRun.listOrderByName()
     }
 
     private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent, boolean notifyStructureChanged) {
