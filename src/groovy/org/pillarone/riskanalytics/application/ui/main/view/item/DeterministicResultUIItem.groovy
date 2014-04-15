@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultVie
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class DeterministicResultUIItem extends ResultUIItem {
+class DeterministicResultUIItem extends SimulationResultUIItem {
 
     public DeterministicResultUIItem(RiskAnalyticsMainModel model, DeterministicModel simulationModel, Simulation simulation) {
         super(model, simulationModel, simulation)

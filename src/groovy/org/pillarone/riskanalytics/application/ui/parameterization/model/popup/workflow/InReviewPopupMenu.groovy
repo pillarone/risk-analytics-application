@@ -19,10 +19,10 @@ class InReviewPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
 
     @Override
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
-        SendToProductionMenuItem sendToProductionMenuItem = new SendToProductionMenuItem(new SendToProductionAction(tree, node.getAbstractUIItem().mainModel));
+        SendToProductionMenuItem sendToProductionMenuItem = new SendToProductionMenuItem(new SendToProductionAction(tree, node.getItemNodeUIItem().mainModel));
         add(sendToProductionMenuItem);
         tree.addTreeSelectionListener(sendToProductionMenuItem);
-        add(new ULCMenuItem(new RejectWorkflowAction(tree, node.getAbstractUIItem().mainModel)));
+        add(new ULCMenuItem(new RejectWorkflowAction(tree, node.getItemNodeUIItem().mainModel)));
         return true;
     }
 

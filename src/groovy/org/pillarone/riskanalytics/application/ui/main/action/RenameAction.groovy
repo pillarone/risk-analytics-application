@@ -9,6 +9,7 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ItemNodeUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -31,7 +32,7 @@ class RenameAction extends SelectionTreeAction {
         tree.invokeUI("startEditingAtPath", [adapter.getDescriptionForPath(tree.getSelectionPath())] as Object[])
         */
         boolean usedInSimulation = false
-        ModellingUIItem selectedItem = selectedUIItem
+        ItemNodeUIItem selectedItem = selectedUIItem
         if (!(selectedItem instanceof ModellingUIItem)) return
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
             selectedItem.item.setModelClass(selectedModel.class) //TODO: still necessary?

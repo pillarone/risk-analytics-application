@@ -1,21 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
+import com.ulcjava.testframework.operator.ComponentByNameChooser
+import com.ulcjava.testframework.operator.ULCButtonOperator
+import com.ulcjava.testframework.operator.ULCFrameOperator
+import com.ulcjava.testframework.operator.ULCToggleButtonOperator
 import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.output.*
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCToggleButtonOperator
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCButtonOperator
+import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultTransferObject
 import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultWriter
-import org.pillarone.riskanalytics.core.simulation.engine.grid.output.ResultDescriptor
+
+import static org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy.IDENTIFIER
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
+abstract class AbstractSimulationSettingsUIItemTest extends AbstractUIItemTest {
 
     PathMapping path1
     PathMapping path2
@@ -32,10 +34,10 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
         writeResult new SingleValueResult(simulationRun: run, path: path1, collector: collector1, field: field, period: 0, iteration: 2, value: 500)
         writeResult new SingleValueResult(simulationRun: run, path: path2, collector: collector1, field: field, period: 0, iteration: 2, value: 1)
 
-        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 11.1 * index).save()
-        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 22.2 * index).save()
-        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 33.3 * index).save()
-        junit.framework.Assert.assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 44.4 * index).save()
+        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 11.1 * index).save()
+        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path1, field: field, period: 0, result: 22.2 * index).save()
+        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 33.3 * index).save()
+        assertNotNull new PostSimulationCalculation(run: run, keyFigure: PostSimulationCalculation.MEAN, collector: collector1, path: path2, field: field, period: 0, result: 44.4 * index).save()
 
 
         return run
@@ -72,15 +74,15 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
             field = new FieldMapping(fieldName: 'value').save()
         }
 
-        collector1 = CollectorMapping.findByCollectorName(AggregatedCollectingModeStrategy.IDENTIFIER)
+        collector1 = CollectorMapping.findByCollectorName(IDENTIFIER)
         if (collector1 == null) {
-            collector1 = new CollectorMapping(collectorName: AggregatedCollectingModeStrategy.IDENTIFIER).save()
+            collector1 = new CollectorMapping(collectorName: IDENTIFIER).save()
         }
     }
 
     protected void addResultFunction(ULCFrameOperator frameOperator, String buttonName) {
         ULCButtonOperator buttonOperator = new ULCButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
-        junit.framework.Assert.assertNotNull buttonOperator
+        assertNotNull buttonOperator
 
         buttonOperator.getFocus()
 
@@ -91,7 +93,7 @@ abstract class AbstractSimulationUIItemTest extends AbstractUIItemTest {
 
     protected void addFunction(ULCFrameOperator frameOperator, String buttonName) {
         ULCToggleButtonOperator toggleButtonOperator = new ULCToggleButtonOperator(frameOperator, new ComponentByNameChooser(buttonName))
-        junit.framework.Assert.assertNotNull toggleButtonOperator
+        assertNotNull toggleButtonOperator
 
         toggleButtonOperator.getFocus()
 

@@ -8,13 +8,12 @@ import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
+import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.core.workflow.Status
-import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
-import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -76,7 +75,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private ULCPopupMenu getPopupMenu(SimulationNode node) {
-        getOrCreatePopuMenu(simulationPopupMenus, node, node.abstractUIItem.model.modelClass)
+        getOrCreatePopuMenu(simulationPopupMenus, node, node.itemNodeUIItem.model.modelClass)
     }
 
     private ULCPopupMenu getPopupMenu(ItemGroupNode node) {
@@ -87,16 +86,12 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         getOrCreatePopuMenu(batchRunPopupMenus, node, node.class)
     }
 
-    private ULCPopupMenu getPopupMenu(WorkflowParameterizationNode node) {
+    private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
         getOrCreatePopuMenu(workflowMenus, node, node.status)
     }
 
     private ULCPopupMenu getPopupMenu(ResourceNode node) {
         getOrCreatePopuMenu(resourceWorkflowMenus, node, node.status)
-    }
-
-    private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
-        getOrCreatePopuMenu(paramNodePopupMenus, node, node.parameterization.modelClass)
     }
 
     // frahman - this seems the code that precooks a single exemplar popup menu per class of target.

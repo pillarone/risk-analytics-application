@@ -10,7 +10,6 @@ import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportServ
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.testframework.operator.ULCToggleButtonOperator
 import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCCheckBoxOperator
@@ -20,7 +19,7 @@ import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulations
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractCompareSimulationUIItemTests extends AbstractSimulationUIItemTest {
+abstract class AbstractCompareSimulationUIItemTests extends AbstractSimulationSettingsUIItemTest {
 
     @Override
     AbstractUIItem createUIItem() {
@@ -60,7 +59,7 @@ abstract class AbstractCompareSimulationUIItemTests extends AbstractSimulationUI
     }
 
     public void changeSelection(ULCFrameOperator frameOperator, int index) {
-        String name = "${CompareSimulationsCriteriaView.class.getSimpleName()}.simulationComboBox"
+        String name = "${CompareSimulationsCriteriaView.class.simpleName}.simulationComboBox"
         ULCComboBoxOperator comboBoxOperator = new ULCComboBoxOperator(frameOperator, new ComponentByNameChooser(name))
 
         assertNotNull comboBoxOperator

@@ -19,7 +19,7 @@ class TableTreeBuilderUtils {
         return findModelNode(root, item.modelClass.name)
     }
 
-    public static ModelNode findModelNode(DefaultMutableTableTreeNode root, AbstractUIItem abstractUIItem) {
+    public static ModelNode findModelNode(DefaultMutableTableTreeNode root, ModellingUIItem abstractUIItem) {
         return findModelNode(root, abstractUIItem.item.modelClass.name)
     }
 
@@ -28,7 +28,7 @@ class TableTreeBuilderUtils {
         for (int i = 0; i < root.childCount && modelNode == null; i++) {
             def candidate = root.getChildAt(i)
             if (candidate instanceof ModelNode) { //could be batch root node
-                if (candidate.abstractUIItem.item.getClass().name.equals(modelClassName)) {
+                if (candidate.itemNodeUIItem.itemClass.name.equals(modelClassName)) {
                     modelNode = candidate
                 }
             }
@@ -115,11 +115,11 @@ class TableTreeBuilderUtils {
     }
 
     private static isEqual(ModellingItem item, ItemNode node) {
-        item.equals(node.abstractUIItem.item)
+        item.equals(node.itemNodeUIItem.item)
     }
 
     private static isEqual(BatchUIItem item, BatchRunNode node) {
-        item.equals(node.abstractUIItem)
+        item.equals(node.itemNodeUIItem)
     }
 
     static List<ITableTreeNode> findAllNodesForItem(ITableTreeNode node, Object item) {
@@ -136,13 +136,15 @@ class TableTreeBuilderUtils {
         return allNodes
     }
 
-    public static AbstractUIItem findUIItemForItem(ITableTreeNode root, Object item) {
+    public static AbstractUIItem findUIItemForItem(ITableTreeNode root, ModellingItem item) {
         ModelNode modelNode1 = findModelNode(root, item)
         if (modelNode1) {
             ItemGroupNode itemGroupNode = findGroupNode(item, modelNode1)
             if (itemGroupNode) {
                 ITableTreeNode node = findNodeForItem(itemGroupNode, item)
-                if (node) return node.abstractUIItem
+                if (node) {
+                    return node.itemNodeUIItem
+                }
             }
         }
         return null

@@ -4,7 +4,6 @@ import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import grails.util.Holders
-import org.apache.commons.lang.BooleanUtils
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
@@ -20,8 +19,8 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
     public AbstractParameterNodePopupMenu(ULCTableTree tree, ParameterizationNode node) {
         super();
-        final RiskAnalyticsMainModel mainModel = node.getAbstractUIItem().mainModel
-        setName("parameterNodePopUpMenu");
+        final RiskAnalyticsMainModel mainModel = node.itemNodeUIItem.mainModel
+        name = "parameterNodePopUpMenu";
         add(new ULCMenuItem(new OpenItemAction(tree, mainModel)));
         add(new ULCMenuItem(new SimulationAction(tree, mainModel)));
 
@@ -38,7 +37,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
 
         add(new ULCMenuItem(new TagsAction(tree, mainModel)));
 
-        Boolean b = ((Boolean) Holders.grailsApplication?.getConfig()?.getProperty("useSetFilterToSelectionPopupMenu")) ?: Boolean.FALSE;
+        Boolean b = ((Boolean) Holders.grailsApplication?.config?.getProperty("useSetFilterToSelectionPopupMenu")) ?: Boolean.FALSE;
         if (b) {
             add(new ULCMenuItem(new SetFilterToSelection(tree, mainModel)));
         }
@@ -47,7 +46,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         add(new ULCMenuItem(new SaveAsAction(tree, mainModel)));
         if (hasCreateNewMajorVersionAction()) add(new ULCMenuItem(new CreateNewMajorVersion(tree, mainModel)));
         add(new ULCMenuItem(new ExportItemAction(tree, mainModel)));
-        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel,'ImportFromExcelAdditional')));
+        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel, 'ImportFromExcelAdditional')));
         addSeparator();
 
         //Concrete subclasses add menus appropriate to current state.
@@ -55,7 +54,8 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         //(Like a 'statemachine' encoded in class diagram, fixed at compile time)
         boolean separatorNeeded = addMenuItemsForWorkflowState(tree, node);
 
-        node.addReportMenus(this, tree, separatorNeeded); //reach here on first opening of Parameterizations subtree in gui, hits 4 times for different pns.
+        node.addReportMenus(this, tree, separatorNeeded);
+        //reach here on first opening of Parameterizations subtree in gui, hits 4 times for different pns.
         if (hasDeleteAction()) {
             addSeparator();
             add(new ULCMenuItem(new DeleteAction(tree, mainModel)));
@@ -63,7 +63,9 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
     }
 
     protected abstract boolean hasRenameAction();
+
     protected abstract boolean hasCreateNewMajorVersionAction();
+
     protected abstract boolean hasDeleteAction();
 
     /**

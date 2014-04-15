@@ -2,7 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -15,7 +15,9 @@ import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
-import org.pillarone.riskanalytics.core.workflow.Status
+
+import static org.pillarone.riskanalytics.core.workflow.Status.DATA_ENTRY
+import static org.pillarone.riskanalytics.core.workflow.Status.NONE
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -28,26 +30,25 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     @Override
     void close() {
-        ParameterViewModel viewModel = mainModel.viewModelsInUse[this]
+        ParameterViewModel viewModel = mainModel.viewModelsInUse[this] as ParameterViewModel
         Parameterization parameterization = item
         parameterization.removeListener(viewModel)
         super.close()
     }
 
     ULCContainer createDetailView() {
-        ParameterView view = new ParameterView(getViewModel(), mainModel)
+        ParameterView view = new ParameterView(viewModel, mainModel)
         return view.content
     }
 
-    AbstractModellingModel getViewModel() {
+    ParameterViewModel getViewModel() {
         Parameterization parameterization = (Parameterization) item
-        Model simulationModel = this.model.class.newInstance() //PMO-2471
+        Model simulationModel = this.model.class.newInstance() as Model//PMO-2471
         simulationModel.init()
         simulationModel.injectComponentNames()
         ParameterViewModel model = new ParameterViewModel(simulationModel, parameterization, ModelStructure.getStructureForModel(this.model.class))
         model.mainModel = mainModel
         mainModel.registerModel(this, model)
-
         parameterization.addListener(model)
         return model
     }
@@ -56,7 +57,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     void save() {
         ModellingUIItem modellingUIItem = mainModel.getAbstractUIItem(item)
         if (modellingUIItem) {
-            AbstractModellingModel viewModel = mainModel.getViewModel(modellingUIItem)
+            ParameterViewModel viewModel = mainModel.getViewModel(modellingUIItem) as ParameterViewModel
             if (viewModel != null) {
                 viewModel.removeInvisibleComments()
             }
@@ -65,10 +66,9 @@ class ParameterizationUIItem extends ModellingUIItem {
     }
 
     @Override
-    public ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
-        ModellingUIItem newItem = null
+    ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
         Closure okAction = { String commentText ->
-            if (!this.isLoaded()) {
+            if (!this.loaded) {
                 this.load()
             }
             createNewVersion(this.model, commentText, false)
@@ -76,13 +76,12 @@ class ParameterizationUIItem extends ModellingUIItem {
 
         NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
         versionCommentDialog.show()
-
-        return newItem
+        return null
     }
 
 
-    public ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
-        ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false)
+    ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
+        ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false) as ParameterizationUIItem
         VersionNumber newVersion = newItem.item.versionNumber
         addComment(selectedModel, newItem, "v${newVersion}: ${commentText}", openNewVersion)
         return newItem
@@ -91,7 +90,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     private void addComment(Model selectedModel, ParameterizationUIItem uiItem, String commentText, boolean openNewVersion) {
         if (commentText) {
             Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
-            ((Parameterization) uiItem.item).addTaggedComment(commentText, versionTag)
+            uiItem.item.addTaggedComment(commentText, versionTag)
             uiItem.item.save()
         }
         if (openNewVersion)
@@ -104,7 +103,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     }
 
     public boolean newVersionAllowed() {
-        return ((Parameterization) item).newVersionAllowed()
+        return item.newVersionAllowed()
     }
 
     @Override
@@ -125,7 +124,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     @Override
     boolean isDeletable() {
         Parameterization parameterization = item as Parameterization
-        return parameterization.status == Status.NONE || parameterization.status == Status.DATA_ENTRY
+        return parameterization.status == NONE || parameterization.status == DATA_ENTRY
     }
 
     @Override
@@ -136,5 +135,11 @@ class ParameterizationUIItem extends ModellingUIItem {
     @Override
     String toString() {
         return item.toString()
+    }
+
+    @Override
+    @CompileStatic
+    Parameterization getItem() {
+        super.getItem() as Parameterization
     }
 }

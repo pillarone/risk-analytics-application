@@ -8,14 +8,14 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class CalculationUIItem extends SimulationUIItem {
+class CalculationSettingsUIItem extends SimulationSettingsUIItem {
 
-    public CalculationUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, Simulation simulation) {
+    CalculationSettingsUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, Simulation simulation) {
         super(mainModel, simulationModel, simulation)
     }
 
     String createTitle() {
-        return UIUtils.getText(SimulationUIItem.class, "calculation")
+        return UIUtils.getText(SimulationSettingsUIItem.class, "calculation")
     }
 
     ULCContainer createDetailView() {

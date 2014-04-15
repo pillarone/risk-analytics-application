@@ -56,7 +56,7 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         viewModelsInUse = [:]
         addPropertyChangeListener('currentItem', { def event ->
             switchActions.each {
-                boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof ResultUIItem)
+                boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof SimulationResultUIItem)
                 it.setEnabled(b)
                 it.selected = b
             }

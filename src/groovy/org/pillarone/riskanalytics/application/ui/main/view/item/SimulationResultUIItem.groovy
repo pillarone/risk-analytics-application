@@ -16,9 +16,9 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class ResultUIItem extends ModellingUIItem {
+abstract class SimulationResultUIItem extends ModellingUIItem {
 
-    public ResultUIItem(RiskAnalyticsMainModel model, Model simulationModel, Simulation simulation) {
+    SimulationResultUIItem(RiskAnalyticsMainModel model, Model simulationModel, Simulation simulation) {
         super(model, simulationModel, simulation)
     }
 

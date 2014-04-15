@@ -103,6 +103,4 @@ abstract class AbstractUIItem implements IUIItem {
         windowTitle += " " + createTitle()
         return windowTitle
     }
-
-
 }

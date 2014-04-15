@@ -5,7 +5,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResultUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -30,7 +30,7 @@ class CommentsSwitchAction extends AbstractAction {
 
     @Override
     boolean isEnabled() {
-        return (model.currentItem instanceof ParameterizationUIItem) || (model.currentItem instanceof ResultUIItem)
+        return (model.currentItem instanceof ParameterizationUIItem) || (model.currentItem instanceof SimulationResultUIItem)
     }
 
 

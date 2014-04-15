@@ -20,7 +20,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationSettingsUIItem
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
 import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsViewDialog
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -249,7 +249,7 @@ class HeaderView extends AbstractView {
     public boolean syncMenuBar() {
         saveAction.enabled = saveAction.enabled
         if (riskAnalyticsMainModel.currentItem) {
-            runAction.enabled = !((riskAnalyticsMainModel.currentItem instanceof SimulationUIItem) || (riskAnalyticsMainModel.currentItem instanceof BatchUIItem))
+            runAction.enabled = !((riskAnalyticsMainModel.currentItem instanceof SimulationSettingsUIItem) || (riskAnalyticsMainModel.currentItem instanceof BatchUIItem))
             if (riskAnalyticsMainModel.currentItem instanceof ParameterizationUIItem || riskAnalyticsMainModel.currentItem instanceof ResultConfigurationUIItem) {
                 if (riskAnalyticsMainModel.currentItem.editable) {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")

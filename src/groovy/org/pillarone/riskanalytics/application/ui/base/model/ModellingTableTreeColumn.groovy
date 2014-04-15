@@ -1,18 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.base.model
-
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.remoting.TransactionInfo
 import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
-import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.joda.time.format.DateTimeFormat
-import org.joda.time.format.DateTimeFormatter
-
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -31,7 +27,7 @@ public class ModellingTableTreeColumn {
 
         @Override
         Object getValue(ModellingItem modellingItem) {
-            return modellingItem.getNameAndVersion()
+            return modellingItem.nameAndVersion
         }
 
         @Override
@@ -44,8 +40,9 @@ public class ModellingTableTreeColumn {
 
         @Override
         Object getValue(ModellingItem modellingItem) {
-            if (modellingItem instanceof Parameterization)
+            if (modellingItem instanceof Parameterization) {
                 return modellingItem?.status?.getDisplayName()
+            }
             return ""
         }
     }
@@ -54,8 +51,9 @@ public class ModellingTableTreeColumn {
 
         @Override
         Object getValue(ModellingItem modellingItem) {
-            if (!(modellingItem instanceof ResultConfiguration))
+            if (!(modellingItem instanceof ResultConfiguration)) {
                 return modellingItem?.tags?.join(",")
+            }
             return ""
         }
 

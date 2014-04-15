@@ -1,9 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-
 //classes implementing this interface need to be created for all item-"views" (modelling items, batch runs, comparisons etc.)
 interface IUIItem {
 
@@ -43,8 +40,6 @@ interface IUIItem {
 
     void unload()
 
-    Object getItem()
-
     String getName()
 
     String getNameAndVersion()
@@ -60,10 +55,6 @@ interface IUIItem {
     boolean isChanged()
 
     boolean isDeletable()
-
-    void removeAllModellingItemChangeListener()
-
-    void addModellingItemChangeListener(IModellingItemChangeListener listener)
 
     String getWindowTitle()
 

@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
@@ -16,7 +15,7 @@ import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.util.LocaleResources
@@ -204,7 +203,7 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
     }
 
     public void testCheckForAdditionalMenuItems() {
-        PopupMenuRegistry.register(WorkflowParameterizationNode, new TestMenuItemCreator(name: 'ParamItem'))
+        PopupMenuRegistry.register(ParameterizationNode, new TestMenuItemCreator(name: 'ParamItem'))
         PopupMenuRegistry.register(ItemGroupNode, Parameterization, new TestMenuItemCreator(name: 'ParamGroup'))
         PopupMenuRegistry.register(ItemGroupNode, Simulation, new TestMenuItemCreator(name: 'SimGroup'))
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")

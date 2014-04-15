@@ -1,12 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.ULCContainer
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
-class ModelUIItem extends AbstractUIItem {
+class ModelUIItem extends ItemNodeUIItem {
 
     ModelUIItem(RiskAnalyticsMainModel mainModel, Model model) {
         super(mainModel, model)
@@ -24,16 +23,23 @@ class ModelUIItem extends AbstractUIItem {
         return null  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    String getName() {
+        return model.name
+    }
+
+    @Override
+    VersionNumber getVersionNumber() {
+        return Model.getModelVersion(model.modelClass)
+    }
+
+    @Override
+    Class getItemClass() {
+        return model.class
+    }
+
+    @Override
     Model getItem() {
         return model
     }
-
-    void removeAllModellingItemChangeListener() {
-        // intentionally blank (probably?)
-    }
-
-    void addModellingItemChangeListener(IModellingItemChangeListener listener) {
-        // intentionally blank (probably?)
-    }
-
 }

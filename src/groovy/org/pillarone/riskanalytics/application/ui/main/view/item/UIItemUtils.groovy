@@ -50,7 +50,7 @@ class UIItemUtils {
                 simulationRuns.removeAll(runsToBeRemoved)
                 for (SimulationRun simulationRun: simulationRuns) {
                     Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
-                    SimulationUIItem simulationUIItem = new SimulationUIItem(mainModel, model, simulation)
+                    SimulationSettingsUIItem simulationUIItem = new SimulationSettingsUIItem(mainModel, model, simulation)
                     simulationUIItem.remove()
                 }
                 Tag postLocking = Tag.findByNameAndTagType(NewCommentView.POST_LOCKING, EnumTagType.COMMENT)

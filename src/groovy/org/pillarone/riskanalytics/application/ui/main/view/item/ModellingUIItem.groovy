@@ -1,25 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
-import com.ulcjava.base.application.tabletree.ITableTreeNode
+import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Resource
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class ModellingUIItem extends AbstractUIItem {
-    ModellingItem item
+abstract class ModellingUIItem extends ItemNodeUIItem {
+    private final ModellingItem item
 
     ModellingUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ModellingItem item) {
         super(mainModel, simulationModel)
@@ -60,8 +58,9 @@ abstract class ModellingUIItem extends AbstractUIItem {
     ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         ModellingItem modellingItem = null
         item.daoClass.withTransaction { status ->
-            if (!item.loaded)
+            if (!item.loaded) {
                 item.load()
+            }
             modellingItem = ModellingItemFactory.incrementVersion(item)
         }
         mainModel.fireModelChanged()
@@ -93,10 +92,10 @@ abstract class ModellingUIItem extends AbstractUIItem {
     @Override
     void rename(String newName) {
         item.daoClass.withTransaction { status ->
-            if (!item.loaded)
+            if (!item.loaded) {
                 item.load()
-            ITableTreeNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item)
-
+            }
+            VersionedItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item) as VersionedItemNode
             itemNode.userObject = newName
 
             renameAllChildren(itemNode, name)
@@ -104,11 +103,13 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
     }
 
-    private void renameAllChildren(ITableTreeNode itemNode, String name) {
-        if (((ItemNode) itemNode).abstractUIItem instanceof ResultUIItem) return
+    private void renameAllChildren(VersionedItemNode itemNode, String name) {
+        if (itemNode.itemNodeUIItem instanceof SimulationResultUIItem) {
+            return
+        }
         itemNode.childCount.times {
             ItemNode childNode = itemNode.getChildAt(it) as ItemNode
-            ((ModellingUIItem) childNode.abstractUIItem).rename(name)
+            childNode.itemNodeUIItem.rename(name)
         }
     }
 
@@ -141,12 +142,10 @@ abstract class ModellingUIItem extends AbstractUIItem {
         mainModel.fireModelChanged()
     }
 
-    @Override
     void removeAllModellingItemChangeListener() {
         item.removeAllModellingItemChangeListener()
     }
 
-    @Override
     void addModellingItemChangeListener(IModellingItemChangeListener listener) {
         item.addModellingItemChangeListener(listener)
     }
@@ -194,5 +193,21 @@ abstract class ModellingUIItem extends AbstractUIItem {
             model.init()
         }
         return super.model
+    }
+
+    @Override
+    VersionNumber getVersionNumber() {
+        return item.versionNumber
+    }
+
+    @Override
+    Class getItemClass() {
+        return item.class
+    }
+
+    @Override
+    @CompileStatic
+    ModellingItem getItem() {
+        return item
     }
 }

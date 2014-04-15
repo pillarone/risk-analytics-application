@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ItemNodeUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -46,20 +47,19 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     Object getSelectedItem() {
         DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
-        return itemNode instanceof ItemNode ? itemNode.abstractUIItem.item : null
+        return itemNode instanceof ItemNode ? itemNode.itemNodeUIItem.item : null
     }
 
-    AbstractUIItem getSelectedUIItem() {
-        DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
-        AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
-        return abstractUIItem
+    ItemNodeUIItem getSelectedUIItem() {
+        DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent as DefaultMutableTableTreeNode
+        return itemNode instanceof ItemNode ? itemNode.itemNodeUIItem : null
     }
 
     List<AbstractUIItem> getSelectedUIItems() {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {
             DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
-            AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.abstractUIItem : null
+            AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.itemNodeUIItem : null
             if (abstractUIItem != null) {
                 selectedObjects << abstractUIItem
             }
@@ -78,10 +78,10 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedObjects
     }
 
-    List getSelectedObjects(Class itemClass) {
+    List<ItemNode> getSelectedObjects(Class itemClass) {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {
-            for (Object node in selectedPath.getPath()) {
+            for (Object node in selectedPath.path) {
                 if (node instanceof ItemGroupNode) {
                     if (node.itemClass == itemClass && selectedPath?.lastPathComponent != null) {
                         Object lastNode = selectedPath.lastPathComponent
@@ -121,20 +121,23 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     // TODO This code is begging to be simplified.
     Model getSelectedModel(DefaultMutableTableTreeNode itemNode) {
-        if (itemNode == null) return null
-        DefaultMutableTableTreeNode modelNode = null
-        while (modelNode == null && itemNode?.parent) {
-            if (itemNode instanceof ModelNode) {
-                modelNode = itemNode
+        if (itemNode == null) {
+            return null
+        }
+        ModelNode modelNode = null
+        def parent = itemNode
+        while (modelNode == null && parent?.parent) {
+            if (parent instanceof ModelNode) {
+                modelNode = parent
             } else {
-                itemNode = itemNode?.parent
+                parent = parent?.parent
             }
         }
-        return modelNode?.abstractUIItem?.item
+        return modelNode?.itemNodeUIItem?.item
     }
 
     Class getSelectedItemGroupClass() {
-        return getSelectedItemGroupNode().itemClass
+        return selectedItemGroupNode.itemClass
     }
 
     ItemGroupNode getSelectedItemGroupNode() {
@@ -197,7 +200,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     @Override
     String toString() {
         int num = 0;
-        if( tree != null && tree.selectedPaths != null ){
+        if (tree != null && tree.selectedPaths != null) {
             num = tree.selectedPaths.length;
         }
         return "Selected paths ($num): ${tree?.selectedPaths}"

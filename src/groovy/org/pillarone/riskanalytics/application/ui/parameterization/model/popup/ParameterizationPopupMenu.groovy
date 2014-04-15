@@ -26,8 +26,8 @@ class ParameterizationPopupMenu extends AbstractParameterNodePopupMenu {
         if (UserContext.hasCurrentUser()) {
             Boolean transactionsEnabled = (Boolean) Holders.grailsApplication.config.getProperty("transactionsEnabled");
             if (transactionsEnabled) {
-                add(new ULCMenuItem(new ChooseDealAction(tree, node.abstractUIItem.mainModel)))
-                add(new ULCMenuItem(new StartWorkflowAction(tree, node.abstractUIItem.mainModel)))
+                add(new ULCMenuItem(new ChooseDealAction(tree, node.itemNodeUIItem.mainModel)))
+                add(new ULCMenuItem(new StartWorkflowAction(tree, node.itemNodeUIItem.mainModel)))
                 return true
             }
         }

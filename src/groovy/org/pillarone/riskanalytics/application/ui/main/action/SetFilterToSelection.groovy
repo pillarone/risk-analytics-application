@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.main.action
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.main.view.NavigationBarTopPane
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import org.pillarone.riskanalytics.core.search.AllFieldsFilter
@@ -36,7 +35,7 @@ class SetFilterToSelection extends SelectionTreeAction {
             if (sb.length() > 0) {
                 sb.append(AllFieldsFilter.OR_SEPARATOR)
             }
-            sb.append(node.getAbstractUIItem().getNameAndVersion())
+            sb.append(node.getItemNodeUIItem().getNameAndVersion())
         }
         ULCClipboard.getClipboard().content = sb.toString()
     }

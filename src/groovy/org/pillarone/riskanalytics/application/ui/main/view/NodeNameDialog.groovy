@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResultUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
@@ -80,7 +80,7 @@ class NodeNameDialog {
         cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
     }
 
-    protected boolean isUnique(ResultUIItem simulationUIItem) {
+    protected boolean isUnique(SimulationResultUIItem simulationUIItem) {
         simulationUIItem.item.template.daoClass.findByNameAndModelClassName(nameInput.text, simulationUIItem.item.modelClass.name) == null
     }
 

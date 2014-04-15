@@ -17,7 +17,7 @@ class InProductionPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
 
     @Override
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
-        add(new ULCMenuItem(new CreateNewWorkflowVersionAction(tree, node.getAbstractUIItem().mainModel)));
+        add(new ULCMenuItem(new CreateNewWorkflowVersionAction(tree, node.getItemNodeUIItem().mainModel)));
         return true;
     }
 

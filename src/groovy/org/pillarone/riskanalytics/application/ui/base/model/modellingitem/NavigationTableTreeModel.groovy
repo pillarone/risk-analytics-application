@@ -128,7 +128,7 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     }
 
     private Object getValue(ItemNode node, int columnIndex) {
-        return enumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(node.abstractUIItem.item)
+        return enumModellingTableTreeColumn.getEnumModellingTableTreeColumnFor(columnIndex).getValue(node.itemNodeUIItem.item)
     }
 
     private Object getValue(def node, int columnIndex) {
@@ -146,7 +146,7 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     @Override
     void putValues(ItemNode node) {
         for (int column = 0; column < COLUMN_NAMES.size(); column++) {
-            addColumnValue(node.abstractUIItem.item, node, column, getValue(node, column))
+            addColumnValue(node.itemNodeUIItem.item, node, column, getValue(node, column))
         }
     }
 

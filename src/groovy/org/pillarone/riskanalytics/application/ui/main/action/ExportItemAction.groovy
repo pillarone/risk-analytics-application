@@ -24,7 +24,7 @@ class ExportItemAction extends ExportAction {
 
     public void doActionPerformed(ActionEvent event) {
         List selectedItems = getAllSelectedObjects()?.collect {ItemNode itemNode ->
-            itemNode.abstractUIItem.item
+            itemNode.itemNodeUIItem.item
         }
         doAction(selectedItems)
     }

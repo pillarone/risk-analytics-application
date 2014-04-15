@@ -127,19 +127,19 @@ class NavigationTableTreeModelTests {
         def v11Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v11Node.name
 
-        assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
+        assertEquals '11', v11Node.itemNodeUIItem.item.versionNumber.toString()
         assertEquals 10, v11Node.childCount
 
         def v1Node = v11Node.getChildAt(9)
-        assertEquals '1', v1Node.abstractUIItem.item.versionNumber.toString()
+        assertEquals '1', v1Node.itemNodeUIItem.item.versionNumber.toString()
         assertEquals 3, v1Node.childCount
 
         def v14Node = v1Node.getChildAt(0)
-        assertEquals '1.4', v14Node.abstractUIItem.item.versionNumber.toString()
+        assertEquals '1.4', v14Node.itemNodeUIItem.item.versionNumber.toString()
         assertEquals 1, v14Node.childCount
 
         def v141Node = v14Node.getChildAt(0)
-        assertEquals '1.4.1', v141Node.abstractUIItem.item.versionNumber.toString()
+        assertEquals '1.4.1', v141Node.itemNodeUIItem.item.versionNumber.toString()
     }
 
     @Test
@@ -156,7 +156,7 @@ class NavigationTableTreeModelTests {
         def v12Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v12Node.name
 
-        assertEquals '12', v12Node.abstractUIItem.item.versionNumber.toString()
+        assertEquals '12', v12Node.itemNodeUIItem.item.versionNumber.toString()
 
         ParameterizationDAO.withNewSession {
             ParameterizationDAO parameterizationDAO = ParameterizationDAO.findByNameAndItemVersion('Parametrization X', '12')
@@ -173,7 +173,7 @@ class NavigationTableTreeModelTests {
         testPollingSupport.poll()
         assertEquals(2, paramsNode.childCount)
         def v11Node = paramsNode.getChildAt(1)
-        assertEquals '11', v11Node.abstractUIItem.item.versionNumber.toString()
+        assertEquals '11', v11Node.itemNodeUIItem.item.versionNumber.toString()
         SimulationRun.withNewSession {
             SimulationRun run = new SimulationRun()
             run.parameterization = ParameterizationDAO.list()[0]
@@ -233,7 +233,7 @@ class NavigationTableTreeModelTests {
     void testUpdateP14nNodes() {
         IMutableTableTreeNode modelNode = getNodeByName(model.root, 'Application') as IMutableTableTreeNode
         ParameterizationNode paramsNode = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
-        ModellingItem paramsItem = paramsNode.abstractUIItem.item
+        ModellingItem paramsItem = paramsNode.itemNodeUIItem.item
 
         SimulationRun.withNewSession {
             SimulationRun run = new SimulationRun()
@@ -277,7 +277,7 @@ class NavigationTableTreeModelTests {
 
         //assert that tree contains the simulation nodes and the child nodes.
         ParameterizationNode paramsNode2 = getNodeByName(modelNode.getChildAt(0), 'Parametrization X v11') as ParameterizationNode
-        assert paramsItem.is(paramsNode2.abstractUIItem.item)
+        assert paramsItem.is(paramsNode2.itemNodeUIItem.item)
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
         assert 2 == resultsNode.childCount
         ParameterizationNode simulationParamsNode1 = resultsNode.getChildAt(0).getChildAt(0) as ParameterizationNode
@@ -322,7 +322,7 @@ class NavigationTableTreeModelTests {
         assertNotNull(paramsNode)
         assertNotNull(ModellingItemFactory.getItemInstances()[ModellingItemFactory.key(Parameterization, parameterizationDAO.id)])
         Parameterization cachedItem = ModellingItemFactory.getParameterization(parameterizationDAO)
-        assertTrue(cachedItem.is(paramsNode.abstractUIItem.item))
+        assertTrue(cachedItem.is(paramsNode.itemNodeUIItem.item))
     }
 }
 

@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
@@ -11,8 +10,6 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -30,7 +27,7 @@ class CompareSimulationUIItem extends AbstractUIItem {
     }
 
     ULCContainer createDetailView() {
-        CompareSimulationsView view = new CompareSimulationsView(getViewModel(), mainModel)
+        CompareSimulationsView view = new CompareSimulationsView(viewModel as CompareSimulationsViewModel, mainModel)
         return view.content
     }
 
@@ -38,10 +35,6 @@ class CompareSimulationUIItem extends AbstractUIItem {
         CompareSimulationsViewModel model
         model = new CompareSimulationsViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), simulations)
         return model
-    }
-
-    Object getItem() {
-        return simulations
     }
 
     @Override
@@ -56,8 +49,8 @@ class CompareSimulationUIItem extends AbstractUIItem {
 
     @Override
     void load(boolean completeLoad) {
-        simulations.each {Simulation simulation ->
-            if (!simulation.isLoaded())
+        simulations.each { Simulation simulation ->
+            if (!simulation.loaded)
                 simulation.load(true)
         }
     }
@@ -67,20 +60,8 @@ class CompareSimulationUIItem extends AbstractUIItem {
         return TabbedPaneManagerHelper.getToolTip(simulations)
     }
 
-
-
     @Override
     ULCIcon getIcon() {
         return UIUtils.getIcon("results-active.png")
     }
-
-
-    void removeAllModellingItemChangeListener() {
-        // intentionally blank (probably?)
-    }
-
-    void addModellingItemChangeListener(IModellingItemChangeListener listener) {
-        // intentionally blank (probably?)
-    }
-
 }

@@ -10,17 +10,12 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
-import org.pillarone.riskanalytics.application.ui.base.model.ResourceClassNode
-import org.pillarone.riskanalytics.application.ui.base.model.ResourceGroupNode
+import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.WorkflowParameterizationNode
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
@@ -83,7 +78,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     protected void internalGetModellingItems(ITableTreeNode currentNode, List<ModellingItem> list) {
         if (currentNode instanceof ItemNode) {
-            Object item = currentNode.abstractUIItem.item
+            Object item = currentNode.itemNodeUIItem.item
             if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration)) {
                 list << item
             }
@@ -113,7 +108,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     }
 
-    private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode, List<ModellingItem> simulations) {
+    private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode, List<Simulation> simulations) {
         simulationsNode.leaf = simulations?.size() == 0
         simulations?.each {
             try {
@@ -561,7 +556,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     private createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem, boolean notifyStructureChanged) {
         boolean parameterNameFound = false
         for (int i = 0; i < node.childCount; i++) {
-            if (isMatchingParent(node.getChildAt(i).abstractUIItem, modellingUIItem)) {
+            if (isMatchingParent(node.getChildAt(i).itemNodeUIItem, modellingUIItem)) {
                 parameterNameFound = true
                 DefaultMutableTableTreeNode newNode = createNode(modellingUIItem)
                 DefaultMutableTableTreeNode childNode = node.getChildAt(i) as DefaultMutableTableTreeNode
@@ -577,7 +572,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
                     childNode.removeAllChildren()
                     childNode.leaf = true
                     node.remove(i)
-                    if (childNode.abstractUIItem.isVersionable() && childNode.abstractUIItem.item.versionNumber.level == 1) {
+                    if (childNode.itemNodeUIItem.isVersionable() && childNode.itemNodeUIItem.item.versionNumber.level == 1) {
                         newNode.insert(childNode, 0)
                     } else {
                         insertSubversionItemNode(newNode, childNode, notifyStructureChanged)
@@ -626,8 +621,8 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     private void insertSubversionItemNode(DefaultMutableTableTreeNode node, DefaultMutableTableTreeNode newItemNode, boolean notifyStructureChanged) {
         node.childCount.times {
             DefaultMutableTableTreeNode childNode = node.getChildAt(it)
-            if (newItemNode.abstractUIItem.isVersionable() && newItemNode.abstractUIItem.item.versionNumber.toString().startsWith(childNode.abstractUIItem.item.versionNumber.toString())) {
-                if (newItemNode.abstractUIItem.item.versionNumber.isDirectChildVersionOf(childNode.abstractUIItem.item.versionNumber)) {
+            if (newItemNode.itemNodeUIItem.isVersionable() && newItemNode.itemNodeUIItem.item.versionNumber.toString().startsWith(childNode.itemNodeUIItem.item.versionNumber.toString())) {
+                if (newItemNode.itemNodeUIItem.item.versionNumber.isDirectChildVersionOf(childNode.itemNodeUIItem.item.versionNumber)) {
                     childNode.leaf = false
                     newItemNode.leaf = true
                     childNode.add(newItemNode)
@@ -650,7 +645,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
-        ParameterizationNode node = new WorkflowParameterizationNode(parameterizationUIItem)
+        ParameterizationNode node = new ParameterizationNode(parameterizationUIItem)
         tableTreeModelWithValues.putValues(node)
         return node
     }
@@ -684,21 +679,15 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
-        SimulationNode node = null
-        Model selectedModelInstance = item.modelClass?.newInstance()
-        try {
-            node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, riskAnalyticsMainModel))
-            DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
-            paramsNode.leaf = true
-            DefaultMutableTableTreeNode templateNode = createNode(item.template)
-            templateNode.leaf = true
-
-            node.add(paramsNode)
-            node.add(templateNode)
-            tableTreeModelWithValues.putValues(node)
-        } catch (Exception ex) {
-            LOG.error "Exception creating SimulationNode", ex
-        }
+        Model selectedModelInstance = item.modelClass?.newInstance() as Model
+        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, riskAnalyticsMainModel))
+        DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
+        paramsNode.leaf = true
+        DefaultMutableTableTreeNode templateNode = createNode(item.template)
+        templateNode.leaf = true
+        node.add(paramsNode)
+        node.add(templateNode)
+        tableTreeModelWithValues.putValues(node)
         return node
     }
 

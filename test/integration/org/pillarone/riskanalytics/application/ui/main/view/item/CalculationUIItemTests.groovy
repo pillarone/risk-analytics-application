@@ -42,7 +42,7 @@ class CalculationUIItemTests extends AbstractUIItemTest {
         simulation.template = new ResultConfiguration("DeterministicApplicationResultConfiguration", CoreModel)
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        CalculationUIItem uiItem = new CalculationUIItem(mainModel, model, simulation)
+        CalculationSettingsUIItem uiItem = new CalculationSettingsUIItem(mainModel, model, simulation)
         return uiItem
     }
 

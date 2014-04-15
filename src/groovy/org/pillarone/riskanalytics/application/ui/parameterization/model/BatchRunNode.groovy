@@ -3,23 +3,18 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
+import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
-import org.pillarone.riskanalytics.application.reports.IReportableNode
-import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
-
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
-
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.BatchRunSimulationRun
+import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 /**
  * @author fouad jaada
@@ -36,11 +31,11 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
     public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = "batchesNodePopUpMenu"
-        batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, abstractUIItem.mainModel)))
-        batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, abstractUIItem.mainModel)))
-        batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, abstractUIItem.mainModel)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, itemNodeUIItem.mainModel)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, itemNodeUIItem.mainModel)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, itemNodeUIItem.mainModel)))
         batchesNodePopUpMenu.addSeparator()
-        batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, itemNodeUIItem.mainModel)))
         addReportMenus(batchesNodePopUpMenu, tree, true)
         return batchesNodePopUpMenu
     }
@@ -51,15 +46,15 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
      */
     List<Class> modelsToReportOn() {
         List<Class> classes = new ArrayList<Class>()
-        BatchRun batchRun = BatchRun.findByName( abstractUIItem.name )
-        if(batchRun == null){
+        BatchRun batchRun = BatchRun.findByName(itemNodeUIItem.name)
+        if (batchRun == null) {
             throw new IllegalStateException("Failed to lookup batch run in DB. Please report to development")
         }
-        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.getSimulationRun()
+        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.simulationRun
 
         List<String> modelNames = batchRunSimulationRuns*.model.unique()
         if (batchRun.executed) {
-            ModelRegistry modelRegistry = ModelRegistry.getInstance()
+            ModelRegistry modelRegistry = ModelRegistry.instance
             for (String model in modelNames) {
                 classes << modelRegistry.getModelClass(model)
             }
@@ -72,19 +67,23 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
      *
      * @return List of Simulations to report on.
      */
-    List<ModellingItem> modellingItemsForReport() {
-
-        BatchRun batchRun = BatchRun.findByName( abstractUIItem.name )
-        if(batchRun == null){
+    List<Simulation> modellingItemsForReport() {
+        BatchRun batchRun = BatchRun.findByName(itemNodeUIItem.name)
+        if (batchRun == null) {
             throw new IllegalStateException("Failed to lookup batch run in DB. Please report to development")
         }
-        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.getSimulationRun()
-        ArrayList<ModellingItem> simulationList = new ArrayList<ModellingItem>()
+        List<SimulationRun> batchRunSimulationRuns = BatchRunSimulationRun.findAllByBatchRun(batchRun, [sort: "priority", order: "asc"])*.simulationRun
+        List<Simulation> simulationList = new ArrayList<Simulation>()
         for (SimulationRun run in batchRunSimulationRuns) {
             Simulation simulation = new Simulation(run.name)
             simulationList << simulation
         }
         return simulationList
+    }
+
+    @Override
+    BatchUIItem getItemNodeUIItem() {
+        super.itemNodeUIItem as BatchUIItem
     }
 }
 

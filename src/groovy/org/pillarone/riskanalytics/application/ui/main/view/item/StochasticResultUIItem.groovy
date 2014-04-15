@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class StochasticResultUIItem extends ResultUIItem {
+class StochasticResultUIItem extends SimulationResultUIItem {
 
 
     public StochasticResultUIItem(RiskAnalyticsMainModel model, Model simulationModel, Simulation simulation) {

@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.user.UserManagement
 
+import static com.google.common.base.Preconditions.checkNotNull
 import static org.pillarone.riskanalytics.application.ui.resultnavigator.model.OutputElement.*
 
 class CustomTable extends ModellingItem {
@@ -29,7 +30,7 @@ class CustomTable extends ModellingItem {
 
     CustomTable(String name, Class modelClass) {
         super(name)
-        this.modelClass = modelClass
+        this.modelClass = checkNotNull(modelClass)
     }
 
     @Override

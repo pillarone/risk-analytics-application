@@ -13,7 +13,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractResultUIItemTests extends AbstractSimulationUIItemTest {
+abstract class AbstractResultUIItemTests extends AbstractSimulationSettingsUIItemTest {
 
     @Override
     AbstractUIItem createUIItem() {

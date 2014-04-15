@@ -20,12 +20,12 @@ class CompareParameterizationsAction extends SelectionTreeAction {
 
 // TODO begging to be simplified (probably needs to be fixed)
     public void doActionPerformed(ActionEvent event) {
-        List<ParameterizationNode> elements = getSelectedObjects(Parameterization.class)
+        List<ParameterizationNode> elements = getSelectedObjects(Parameterization.class) as List<ParameterizationNode>
         validate(elements)
         Model simulationModel = getSelectedModel(elements[0])
         simulationModel.init() // using it immediately before a null check ?!
         if (simulationModel != null && elements[0] != null) {
-            List items = elements*.abstractUIItem.item
+            List<Parameterization> items = elements*.itemNodeUIItem.item as List<Parameterization>
             CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, simulationModel, items)
             model.openItem(simulationModel, uiItem)
         }
@@ -35,8 +35,8 @@ class CompareParameterizationsAction extends SelectionTreeAction {
     //Added IllegalStateException to ExceptionSafe so the message appears in the alert
     //(instead of some mysterious runtime problem with a hint to user that logfile has more info)
     //(esp useless when user has no access to logs)
-    private void validate(List elements) {
-        if (elements.size() < 2){
+    private void validate(List<ParameterizationNode> elements) {
+        if (elements.size() < 2) {
             throw new IllegalStateException("Pls select two or more parameterizations to compare (and tell developers how you managed to get this error!)")
         }
         Model model = getSelectedModel(elements[0])
@@ -49,13 +49,9 @@ class CompareParameterizationsAction extends SelectionTreeAction {
 
     // I think this is the 'right' way to do this
     public boolean isEnabled() {
-
-        if(getSelectedObjects(Parameterization.class).size()<2){
+        if (getSelectedObjects(Parameterization.class).size() < 2) {
             return false;
         }
-
-        return super.isEnabled() //generic checks like user roles
+        return super.enabled //generic checks like user roles
     }
-
-
 }

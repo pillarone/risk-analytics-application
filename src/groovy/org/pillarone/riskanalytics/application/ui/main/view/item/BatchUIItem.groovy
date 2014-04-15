@@ -15,11 +15,12 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class BatchUIItem extends AbstractUIItem {
+class BatchUIItem extends ItemNodeUIItem {
 
     BatchRun batchRun
     List<IModellingItemChangeListener> itemChangeListeners = []
@@ -42,10 +43,6 @@ class BatchUIItem extends AbstractUIItem {
 
     AbstractModellingModel getViewModel() {
         return null
-    }
-
-    Object getItem() {
-        return batchRun
     }
 
     void createNewBatch(ULCComponent parent, BatchRun newBatch) {
@@ -83,7 +80,6 @@ class BatchUIItem extends AbstractUIItem {
         Holders.grailsApplication.mainContext.getBean(BatchRunService)
     }
 
-    @Override
     public void addModellingItemChangeListener(IModellingItemChangeListener listener) {
         itemChangeListeners << listener
     }
@@ -117,11 +113,26 @@ class BatchUIItem extends AbstractUIItem {
 
     @Override
     String getWindowTitle() {
-        return "Batches " + super.getWindowTitle()
+        return "Batches " + super.windowTitle
     }
 
     @Override
     String getName() {
         return batchRun ? batchRun.name : ""
+    }
+
+    @Override
+    VersionNumber getVersionNumber() {
+        return null
+    }
+
+    @Override
+    Class getItemClass() {
+        return BatchRun
+    }
+
+    @Override
+    Object getItem() {
+        return batchRun
     }
 }

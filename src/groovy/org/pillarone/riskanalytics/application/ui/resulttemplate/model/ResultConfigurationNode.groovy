@@ -17,15 +17,15 @@ class ResultConfigurationNode extends VersionedItemNode {
     public ULCPopupMenu getPopupMenu( ULCTableTree tree) {
         ULCPopupMenu resultConfigurationNodePopUpMenu = new ULCPopupMenu()
         resultConfigurationNodePopUpMenu.name = "resultConfigurationNodePopUpMenu"
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, abstractUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, itemNodeUIItem.mainModel)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, abstractUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, abstractUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, abstractUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, itemNodeUIItem.mainModel)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, itemNodeUIItem.mainModel)))
         return resultConfigurationNodePopUpMenu
 
     }

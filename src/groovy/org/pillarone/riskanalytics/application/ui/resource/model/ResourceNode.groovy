@@ -17,33 +17,36 @@ class ResourceNode extends VersionedItemNode {
         super(abstractUIItem, false)
     }
 
+    @Override
+    ResourceUIItem getAbstractUIItem() {
+        super.itemNodeUIItem as ResourceUIItem
+    }
+
     public Status getStatus() {
-        abstractUIItem.item.status
+        this.itemNodeUIItem.item.status
     }
 
     @Override
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu parameterNodePopUpMenu = new ULCPopupMenu()
         parameterNodePopUpMenu.name = "resourceNodePopUpMenu"
-        parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, abstractUIItem.mainModel)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, this.itemNodeUIItem.mainModel)))
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, abstractUIItem.mainModel)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, this.itemNodeUIItem.mainModel)))
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, abstractUIItem.mainModel)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, abstractUIItem.mainModel)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, abstractUIItem.mainModel)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, this.itemNodeUIItem.mainModel)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, this.itemNodeUIItem.mainModel)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, this.itemNodeUIItem.mainModel)))
         if (UserContext.hasCurrentUser()) {
-            def transactionsEnabled = Holders.grailsApplication.getConfig().getProperty("transactionsEnabled")
+            def transactionsEnabled = Holders.grailsApplication.config.getProperty("transactionsEnabled")
             if (transactionsEnabled != null && transactionsEnabled) {
                 parameterNodePopUpMenu.addSeparator()
-                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, abstractUIItem.mainModel)))
-                parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, abstractUIItem.mainModel)))
+                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, this.itemNodeUIItem.mainModel)))
+                parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, this.itemNodeUIItem.mainModel)))
             }
         }
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, abstractUIItem.mainModel)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, this.itemNodeUIItem.mainModel)))
         return parameterNodePopUpMenu
     }
-
-
 }
