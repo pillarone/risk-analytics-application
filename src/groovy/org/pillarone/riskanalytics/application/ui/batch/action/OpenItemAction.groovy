@@ -5,7 +5,6 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableMode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -27,11 +26,7 @@ public class OpenItemAction extends BatchSimulationSelectionAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        SimulationRun run = selectedSimulationRun
-        Simulation simulation = new Simulation(run.name)
-        Class modelClass = getClass().classLoader.loadClass(run.model)
-        simulation.modelClass = modelClass
-        open(modelClass.newInstance(), simulation)
+        open(selectedSimulationRun.modelClass.newInstance() as Model, selectedSimulationRun)
     }
 
     private void open(Model itemModel, Simulation simulation) {

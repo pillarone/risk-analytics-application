@@ -3,20 +3,18 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.event.ITreeSelectionListener
 import com.ulcjava.base.application.event.TreeSelectionEvent
+import org.pillarone.riskanalytics.application.ui.main.action.CompareParameterizationsAction
 
-/**
- * @author fouad.jaada@intuitive-collaboration.com
- */
 class CompareParameterizationMenuItem extends ULCMenuItem implements ITreeSelectionListener {
-    def compareParameterizationsAction
+    CompareParameterizationsAction compareParameterizationsAction
 
-    public CompareParameterizationMenuItem(compareParameterizationsAction) {
+    CompareParameterizationMenuItem(CompareParameterizationsAction compareParameterizationsAction) {
         super(compareParameterizationsAction)
         this.compareParameterizationsAction = compareParameterizationsAction
     }
 
-    public void valueChanged(TreeSelectionEvent treeSelectionEvent) {
-        setEnabled(compareParameterizationsAction.isEnabled())
+    void valueChanged(TreeSelectionEvent treeSelectionEvent) {
+        enabled = compareParameterizationsAction.enabled
     }
 
 }

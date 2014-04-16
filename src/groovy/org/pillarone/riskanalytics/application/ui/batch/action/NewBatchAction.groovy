@@ -6,19 +6,21 @@ import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.core.simulation.item.Batch
+
+import static org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem.NEWBATCH
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 @CompileStatic
-public class NewBatchAction extends SelectionTreeAction {
+class NewBatchAction extends SelectionTreeAction {
 
-    public NewBatchAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+    NewBatchAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("NewBatch", tree, model)
     }
 
-    public void doActionPerformed(ActionEvent event) {
-        this.model.openItem(null, new BatchUIItem(model,  null))
+    void doActionPerformed(ActionEvent event) {
+        this.model.openItem(null, new BatchUIItem(model, new Batch(NEWBATCH)))
     }
-
 }

@@ -6,6 +6,7 @@ import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 class TabbedPaneManager {
@@ -34,7 +35,9 @@ class TabbedPaneManager {
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
         tabManager[item] = wrapped
-        item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, tabbedPane, item)
+        if (item instanceof ModellingUIItem) {
+            item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, tabbedPane, item)
+        }
         tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
     }
 
@@ -86,12 +89,13 @@ class TabbedPaneManager {
      * @param item
      */
     public void removeTab(AbstractUIItem item) {
-        ULCComponent component = tabManager.get(item)
+        ULCComponent component = tabManager[item]
         if (component) {
-            if (tabbedPane.indexOfComponent(component) >= 0)
+            if (tabbedPane.indexOfComponent(component) >= 0) {
                 tabbedPane.remove(component)
-            else
+            } else {
                 dependentFramesManager.closeTab(item)
+            }
             tabManager.remove(item)
         }
     }

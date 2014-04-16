@@ -12,7 +12,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModellingTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
@@ -139,7 +139,7 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
         return columnIndex == 0 ? node.getValueAt(columnIndex) : null
     }
 
-    private Object getValue(BatchRunNode node, int columnIndex) {
+    private Object getValue(BatchNode node, int columnIndex) {
         getColumnValue(node, columnIndex)
     }
 
@@ -151,8 +151,9 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     }
 
     private addColumnValue(Parameterization parameterization, ParameterizationNode node, int column, Object value) {
-        if (columnValues[parameterization] == null)
+        if (columnValues[parameterization] == null) {
             columnValues[parameterization] = new Object[COLUMN_NAMES.size()]
+        }
         columnValues[parameterization][column] = value
         node.values[column] = value
     }
@@ -162,6 +163,10 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     }
 
     private addColumnValue(def item, ResultConfigurationNode node, int column, Object value) {
+        node.values[column] = value
+    }
+
+    private addColumnValue(def item, BatchNode node, int column, Object value) {
         node.values[column] = value
     }
 

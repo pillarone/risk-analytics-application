@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.util.Dimension
@@ -14,6 +15,7 @@ import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchActi
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
@@ -80,7 +82,6 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         splitPane.dividerSize = 10
         splitPane.leftComponent = treePane
         ULCSplitPane splitBetweenModelPaneAndIndependentPane = new ULCSplitPane(VERTICAL_SPLIT)
-//        ULCScrollPane scrollPane = new ULCScrollPane(modelPane, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER)
         splitBetweenModelPaneAndIndependentPane.topComponent = modelPane
         splitBetweenModelPaneAndIndependentPane.bottomComponent = modelIndependentDetailView.content
         splitBetweenModelPaneAndIndependentPane.oneTouchExpandable = true
@@ -134,7 +135,9 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     }
 
     void openDetailView(Model model, AbstractUIItem item) {
-        item.addModellingItemChangeListener(this)
+        if (item instanceof ModellingUIItem) {
+            item.addModellingItemChangeListener(this)
+        }
         cardPaneManager.openItem(model, item)
         //todo notify Enabler instead of syncMenuBar
         headerView.syncMenuBar()
@@ -149,7 +152,9 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
             LOG.error " AbstractUIItem (${item.name}) table tree node not found "
             abstractUIItem = UIItemFactory.createItem(item, model, riskAnalyticsMainModel)
         }
-        if (!abstractUIItem.loaded) abstractUIItem.load(true)
+        if (!abstractUIItem.loaded) {
+            abstractUIItem.load(true)
+        }
         openDetailView(model, abstractUIItem)
     }
 

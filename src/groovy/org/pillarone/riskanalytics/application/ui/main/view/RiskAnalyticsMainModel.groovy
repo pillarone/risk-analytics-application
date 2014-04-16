@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -18,7 +19,6 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulatio
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.annotation.Scope
@@ -105,15 +105,18 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
 
     void openItem(Model model, AbstractUIItem item) {
-        if (!item.loaded)
+        if (!item.loaded) {
             item.load()
+        }
         notifyOpenDetailView(model, item)
     }
 
     void closeItem(Model model, AbstractUIItem abstractUIItem) {
         notifyCloseDetailView(model, abstractUIItem)
         unregisterModel(abstractUIItem)
-        abstractUIItem.removeAllModellingItemChangeListener()
+        if (abstractUIItem instanceof ModellingUIItem) {
+            abstractUIItem.removeAllModellingItemChangeListener()
+        }
     }
 
 
@@ -163,13 +166,13 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         batchTableListeners << batchTableListener
     }
 
-    void fireRowAdded(SimulationRun addedRun) {
+    void fireRowAdded(Simulation addedRun) {
         batchTableListeners.each { BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun) }
     }
 
     void fireRowDeleted(Simulation item) {
         batchTableListeners.each { BatchTableListener batchTableListener ->
-            batchTableListener.fireRowDeleted(item.simulationRun)
+            batchTableListener.fireRowDeleted(item)
         }
     }
 

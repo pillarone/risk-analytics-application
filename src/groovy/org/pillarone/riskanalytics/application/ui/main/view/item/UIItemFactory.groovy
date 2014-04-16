@@ -17,11 +17,13 @@ class UIItemFactory {
             case Parameterization.class: return new ParameterizationUIItem(mainModel, model, (Parameterization) modellingItem)
             case Resource.class: return new ResourceUIItem(mainModel, model, (Resource) modellingItem)
             case ResultConfiguration.class: return new ResultConfigurationUIItem(mainModel, model, (ResultConfiguration) modellingItem)
+            case Batch.class: return new BatchUIItem(mainModel, (Batch) modellingItem)
             default: throw new IllegalArgumentException("${modellingItem.class.simpleName} not yet supported")
         }
     }
 
-    public static SimulationResultUIItem createItem(Simulation simulation, Model model, RiskAnalyticsMainModel mainModel) {
+    public
+    static SimulationResultUIItem createItem(Simulation simulation, Model model, RiskAnalyticsMainModel mainModel) {
         if (DeterministicModel.class.isAssignableFrom(simulation.modelClass)) {
             return new DeterministicResultUIItem(mainModel, (DeterministicModel) model, simulation)
         } else if (StochasticModel.class.isAssignableFrom(simulation.modelClass)) {

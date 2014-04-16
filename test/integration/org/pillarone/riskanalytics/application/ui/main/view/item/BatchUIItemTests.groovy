@@ -5,12 +5,12 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
+import org.pillarone.riskanalytics.core.fileimport.FileImportService
 import org.pillarone.riskanalytics.core.output.OutputStrategy
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.springframework.transaction.TransactionStatus
 
 /**
@@ -21,8 +21,8 @@ class BatchUIItemTests extends AbstractUIItemTest {
 
     @Override
     AbstractUIItem createUIItem() {
-        new ParameterizationImportService().compareFilesAndWriteToDB(["Core"])
-        new ResultConfigurationImportService().compareFilesAndWriteToDB(["Core"])
+        FileImportService.importModelsIfNeeded(["Core"])
+
         LocaleResources.testMode = true
         SimulationRun run
         BatchRun batchRun = null
@@ -44,9 +44,10 @@ class BatchUIItemTests extends AbstractUIItemTest {
             batchRun.addToSimulationRuns(run)
             batchRun.save(flush: true)
         }
+        Batch batch = new Batch(batchRun.name)
+        batch.load()
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        BatchUIItem batchUIItem = new BatchUIItem(mainModel, batchRun)
-        return batchUIItem
+        new BatchUIItem(mainModel, batch)
     }
 
 
@@ -64,6 +65,4 @@ class BatchUIItemTests extends AbstractUIItemTest {
         //        assertEquals "No output", tableOperator.getValueAt(0, 6)
         //        assertEquals "not running", tableOperator.getValueAt(0, 7)
     }
-
-
 }

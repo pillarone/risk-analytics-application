@@ -10,18 +10,18 @@ import org.apache.log4j.PatternLayout
 import org.pillarone.riskanalytics.core.log.TraceAppender
 
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
-grails.mime.types = [html: ['text/html', 'application/xhtml+xml'],
-        xml: ['text/xml', 'application/xml'],
-        text: 'text-plain',
-        js: 'text/javascript',
-        rss: 'application/rss+xml',
-        atom: 'application/atom+xml',
-        css: 'text/css',
-        csv: 'text/csv',
-        all: '*/*',
-        json: ['application/json', 'text/json'],
-        form: 'application/x-www-form-urlencoded',
-        multipartForm: 'multipart/form-data'
+grails.mime.types = [html         : ['text/html', 'application/xhtml+xml'],
+                     xml          : ['text/xml', 'application/xml'],
+                     text         : 'text-plain',
+                     js           : 'text/javascript',
+                     rss          : 'application/rss+xml',
+                     atom         : 'application/atom+xml',
+                     css          : 'text/css',
+                     csv          : 'text/csv',
+                     all          : '*/*',
+                     json         : ['application/json', 'text/json'],
+                     form         : 'application/x-www-form-urlencoded',
+                     multipartForm: 'multipart/form-data'
 ]
 // The default codec used to encode data with ${}
 grails.views.default.codec = "none" // none, html, base64
@@ -55,8 +55,8 @@ log4j = {
 
         console name: 'stdout', layout: pattern(conversionPattern: layoutPattern)
 
-        LoggingAppender loggingAppender = LoggingAppender.getInstance()
-        loggingAppender.setName('application')
+        LoggingAppender loggingAppender = LoggingAppender.instance
+        loggingAppender.name = 'application'
         loggingAppender.loggingManager.layout = "[%d{HH:mm:ss,SSS}] - %c{1} %m%n"
         appender loggingAppender
 
@@ -77,6 +77,8 @@ log4j = {
     def debugPackages = [
             'org.pillarone.riskanalytics.core.fileimport',
     ]
+
+
 
     info(
             traceAppender: infoPackages,
@@ -106,14 +108,14 @@ environments {
         includedResources = [ExampleResource, ApplicationResource]
         ExceptionSafeOut = System.out
         keyFiguresToCalculate = [
-                'stdev': true,
-                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'var': [99, 99.5],
-                'tvar': [99, 99.5],
-                'pdf': 200,
+                'stdev'                   : true,
+                'percentile'              : [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var'                     : [99, 99.5],
+                'tvar'                    : [99, 99.5],
+                'pdf'                     : 200,
                 'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'varProfitFunction': [99, 99.5],
-                'tvarProfitFunction': [99, 99.5]
+                'varProfitFunction'       : [99, 99.5],
+                'tvarProfitFunction'      : [99, 99.5]
         ]
     }
     mysql {
@@ -122,28 +124,28 @@ environments {
         includedResources = [ExampleResource, ApplicationResource]
         ExceptionSafeOut = System.out
         keyFiguresToCalculate = [
-                'stdev': true,
-                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'var': [99, 99.5],
-                'tvar': [99, 99.5],
-                'pdf': 200,
+                'stdev'                   : true,
+                'percentile'              : [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var'                     : [99, 99.5],
+                'tvar'                    : [99, 99.5],
+                'pdf'                     : 200,
                 'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'varProfitFunction': [99, 99.5],
-                'tvarProfitFunction': [99, 99.5]
+                'varProfitFunction'       : [99, 99.5],
+                'tvarProfitFunction'      : [99, 99.5]
         ]
     }
     test {
         ExceptionSafeOut = System.out
         includedResources = [ExampleResource]
         keyFiguresToCalculate = [
-                'stdev': true,
-                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'var': [99, 99.5],
-                'tvar': [99, 99.5],
-                'pdf': 200,
+                'stdev'                   : true,
+                'percentile'              : [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var'                     : [99, 99.5],
+                'tvar'                    : [99, 99.5],
+                'pdf'                     : 200,
                 'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'varProfitFunction': [99, 99.5],
-                'tvarProfitFunction': [99, 99.5]
+                'varProfitFunction'       : [99, 99.5],
+                'tvarProfitFunction'      : [99, 99.5]
         ]
         nodeMappingStrategy = OneNodeStrategy
         log4j = {
@@ -182,14 +184,14 @@ environments {
         resultBulkInsert = SQLServerBulkInsert
         calculationBulkInsert = SQLServerCalculationBulkInsert
         keyFiguresToCalculate = [
-                'stdev': true,
-                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'var': [99, 99.5],
-                'tvar': [99, 99.5],
-                'pdf': 200,
+                'stdev'                   : true,
+                'percentile'              : [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var'                     : [99, 99.5],
+                'tvar'                    : [99, 99.5],
+                'pdf'                     : 200,
                 'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'varProfitFunction': [99, 99.5],
-                'tvarProfitFunction': [99, 99.5]
+                'varProfitFunction'       : [99, 99.5],
+                'tvarProfitFunction'      : [99, 99.5]
         ]
         log4j = {
             info 'org.pillarone.riskanalytics'
@@ -200,14 +202,14 @@ environments {
         maxIterations = 10000
         models = ["CoreModel", 'ApplicationModel']
         keyFiguresToCalculate = [
-                'stdev': true,
-                'percentile': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'var': [99, 99.5],
-                'tvar': [99, 99.5],
-                'pdf': 200,
+                'stdev'                   : true,
+                'percentile'              : [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
+                'var'                     : [99, 99.5],
+                'tvar'                    : [99, 99.5],
+                'pdf'                     : 200,
                 'percentileProfitFunction': [0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0],
-                'varProfitFunction': [99, 99.5],
-                'tvarProfitFunction': [99, 99.5]
+                'varProfitFunction'       : [99, 99.5],
+                'tvarProfitFunction'      : [99, 99.5]
         ]
     }
 }
@@ -225,16 +227,16 @@ grails {
             }
             securityConfigType = SecurityConfigType.InterceptUrlMap
             interceptUrlMap = [
-                    '/login/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/css/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/js/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/images/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/**/*.jar': ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/login/**'            : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/css/**'           : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/js/**'            : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/images/**'        : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/**/*.jar'            : ['IS_AUTHENTICATED_ANONYMOUSLY'],
                     '/ulcserverendpoint/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/css/**': ['IS_AUTHENTICATED_ANONYMOUSLY'],
-                    '/person/**': ['ROLE_ADMIN'],
-                    '/authority/**': ['ROLE_ADMIN'],
-                    '/**': ['IS_AUTHENTICATED_REMEMBERED'],
+                    '/css/**'              : ['IS_AUTHENTICATED_ANONYMOUSLY'],
+                    '/person/**'           : ['ROLE_ADMIN'],
+                    '/authority/**'        : ['ROLE_ADMIN'],
+                    '/**'                  : ['IS_AUTHENTICATED_REMEMBERED'],
             ]
 
         }

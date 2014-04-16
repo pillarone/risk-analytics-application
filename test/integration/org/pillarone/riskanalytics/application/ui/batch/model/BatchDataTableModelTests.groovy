@@ -1,16 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
+
 import models.core.CoreModel
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
-import org.pillarone.riskanalytics.core.ParameterizationDAO
-import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.core.simulation.item.*
 
 import static org.junit.Assert.assertEquals
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -18,19 +17,19 @@ class BatchDataTableModelTests {
 
     @Before
     void setUp() throws Exception {
-        LocaleResources.setTestMode(true)
+        LocaleResources.testMode = true
     }
 
     @After
     void tearDown() throws Exception {
-        LocaleResources.setTestMode(false)
+        LocaleResources.testMode = false
     }
 
     @Test
     public void testModel() {
-        BatchDataTableModel model = new BatchDataTableModel(new BatchRun(name: "test"))
-        model.metaClass.init = {->
-            SimulationRun batchRunSimulationRun = getBatchRunSimulationRun(model)
+        BatchDataTableModel model = new BatchDataTableModel(new Batch("test"))
+        model.metaClass.init = { ->
+            Simulation batchRunSimulationRun = simulation
             model.tableValues << model.toList(batchRunSimulationRun)
         }
         model.init()
@@ -46,26 +45,17 @@ class BatchDataTableModelTests {
         assertEquals 1234, model.getValueAt(0, 5)
     }
 
-    SimulationRun getBatchRunSimulationRun(BatchDataTableModel model) {
-
-        BatchRun batchRun = new BatchRun(name: "test")
-//        batchRun.save(flush: true)
-        ParameterizationDAO dao = new ParameterizationDAO(name: "ParameterizationDAO")
-        dao.itemVersion = "1.1"
-        ResultConfigurationDAO configurationDAO = new ResultConfigurationDAO(name: "ResultConfigurationDAO")
-        configurationDAO.itemVersion = "2.0"
-        SimulationRun run = new SimulationRun(name: "run")
-        run.parameterization = dao
-        run.resultConfiguration = configurationDAO
-        run.model = CoreModel.name
+    Simulation getSimulation() {
+        Simulation run = new Simulation("run")
+        run.parameterization = new Parameterization('ParameterizationDAO')
+        run.parameterization.versionNumber = new VersionNumber('1.1')
+        run.template = new ResultConfiguration('ResultConfigurationDAO', CoreModel)
+        run.template.versionNumber = new VersionNumber('2.0')
+        run.modelClass = CoreModel
         run.periodCount = 2
-        run.iterations = 5
+        run.numberOfIterations = 5
         run.randomSeed = 1234
         run.simulationState = SimulationState.NOT_RUNNING
-//        run.save(flush: true)
-
-        batchRun.addToSimulationRuns(run)
-
         return run
     }
 }

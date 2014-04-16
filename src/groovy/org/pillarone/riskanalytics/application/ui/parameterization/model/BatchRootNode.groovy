@@ -43,5 +43,8 @@ class BatchRootNode extends DefaultMutableTableTreeNode implements INavigationTr
         return ""
     }
 
-
+    @Override
+    Class getItemClass() {
+        return null
+    }
 }

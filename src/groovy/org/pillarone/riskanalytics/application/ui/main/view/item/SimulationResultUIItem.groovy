@@ -56,6 +56,4 @@ abstract class SimulationResultUIItem extends ModellingUIItem {
         hcb.append(item.modelClass.name)
         return hcb.toHashCode()
     }
-
-
 }

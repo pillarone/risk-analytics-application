@@ -5,8 +5,8 @@ import com.ulcjava.base.application.tabletree.ITableTreeNode
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
@@ -28,7 +28,7 @@ class TableTreeBuilderUtils {
         for (int i = 0; i < root.childCount && modelNode == null; i++) {
             def candidate = root.getChildAt(i)
             if (candidate instanceof ModelNode) { //could be batch root node
-                if (candidate.itemNodeUIItem.itemClass.name.equals(modelClassName)) {
+                if (candidate.itemClass.name.equals(modelClassName)) {
                     modelNode = candidate
                 }
             }
@@ -58,9 +58,9 @@ class TableTreeBuilderUtils {
     public static ItemGroupNode findGroupNode(Class itemClass, ModelNode modelNode) {
         DefaultMutableTableTreeNode groupNode = null
         for (int i = 0; i < modelNode.childCount && groupNode == null; i++) {
-            ITableTreeNode childNode = modelNode.getChildAt(i)
+            INavigationTreeNode childNode = modelNode.getChildAt(i) as INavigationTreeNode
             if (childNode.itemClass == itemClass) {
-                groupNode = childNode
+                groupNode = childNode as DefaultMutableTableTreeNode
             }
         }
         groupNode
@@ -118,7 +118,7 @@ class TableTreeBuilderUtils {
         item.equals(node.itemNodeUIItem.item)
     }
 
-    private static isEqual(BatchUIItem item, BatchRunNode node) {
+    private static isEqual(BatchUIItem item, BatchNode node) {
         item.equals(node.itemNodeUIItem)
     }
 
@@ -141,7 +141,7 @@ class TableTreeBuilderUtils {
         if (modelNode1) {
             ItemGroupNode itemGroupNode = findGroupNode(item, modelNode1)
             if (itemGroupNode) {
-                ITableTreeNode node = findNodeForItem(itemGroupNode, item)
+                ItemNode node = findNodeForItem(itemGroupNode, item)
                 if (node) {
                     return node.itemNodeUIItem
                 }

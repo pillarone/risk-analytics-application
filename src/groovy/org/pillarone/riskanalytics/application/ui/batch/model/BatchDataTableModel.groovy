@@ -6,9 +6,9 @@ import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.batch.action.PollingBatchRunAction
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.Batch
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 import static org.pillarone.riskanalytics.core.simulation.SimulationState.ERROR
 import static org.pillarone.riskanalytics.core.simulation.SimulationState.FINISHED
@@ -16,44 +16,40 @@ import static org.pillarone.riskanalytics.core.simulation.SimulationState.FINISH
 public class BatchDataTableModel extends AbstractTableModel implements BatchTableListener {
     List<String> columnHeaders
     List<List<String>> tableValues
-    BatchRun batchRun
-    SimulationRun selectedRun
+    Batch batch
+    Simulation selectedRun
     PollingBatchRunAction pollingBatchRunAction
     List<IRiskAnalyticsModelListener> riskAnalyticsModelListeners
     PollingSupport pollingSupport
 
     private static final String SIMULATION_STATUS_COLUMN = UIUtils.getText(this.class, "SimulationStatus")
 
-    public BatchDataTableModel(BatchRun batchRun) {
+    public BatchDataTableModel(Batch batch) {
         this.tableValues = new ArrayList<List<String>>()
         columnHeaders = []
-        this.batchRun = batchRun
+        this.batch = batch
         riskAnalyticsModelListeners = []
     }
 
     public void init() {
         pollingSupport = Holders.grailsApplication.mainContext.getBean('pollingSupport2000', PollingSupport)
         initTableHeader()
-        BatchRun.withTransaction {
-            batchRun = BatchRun.findByName(batchRun.name)
-            batchRun.simulationRuns.eachWithIndex { SimulationRun brSr, int index ->
-                tableValues << toList(brSr)
-            }
+        batch.simulations.eachWithIndex { Simulation simulation, int index ->
+            tableValues << toList(simulation)
         }
         startPolling()
     }
 
-    protected List toList(SimulationRun simulationRun) {
+    protected List toList(Simulation simulation) {
         List list = new ArrayList()
-        list << simulationRun.name
-        int ptIndex = simulationRun.model.lastIndexOf(".")
-        list << ((ptIndex > 0) ? simulationRun.model.substring(ptIndex + 1) : simulationRun.model)
-        list << simulationRun?.parameterization?.name + " v" + simulationRun?.parameterization?.itemVersion
-        list << simulationRun?.resultConfiguration?.name + " v" + simulationRun?.resultConfiguration?.itemVersion
-        list << simulationRun.periodCount + "/" + simulationRun.iterations
-        list << simulationRun.randomSeed
-        list << UIUtils.getText(this.class, simulationRun.strategy.toString())
-        list << UIUtils.getText(this.class, simulationRun.simulationState.toString())
+        list << simulation.name
+        list << simulation.modelClass.simpleName
+        list << simulation.parameterization?.name + " v" + simulation.parameterization.versionNumber.toString()
+        list << simulation.template?.name + " v" + simulation.template.versionNumber.toString()
+        list << simulation.periodCount + "/" + simulation.numberOfIterations
+        list << simulation.randomSeed
+        list << UIUtils.getText(this.class, simulation.strategy.toString())
+        list << UIUtils.getText(this.class, simulation.simulationState.toString())
         return list
     }
 
@@ -90,12 +86,12 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         tableValues[row][column] = value
     }
 
-    public int getRowIndex(SimulationRun simulationRun) {
-        batchRun.simulationRuns.indexOf(simulationRun)
+    public int getRowIndex(Simulation simulation) {
+        batch.simulations.indexOf(simulation)
     }
 
-    public SimulationRun getSimulationRunAt(int rowIndex) {
-        batchRun.simulationRuns[rowIndex]
+    public Simulation getSimulationAt(int rowIndex) {
+        batch.simulations[rowIndex]
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -112,39 +108,40 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
         this.columnHeaders << SIMULATION_STATUS_COLUMN
     }
 
-    public void fireTableRowsUpdated(SimulationRun simulationRun) {
-        def index = getRowIndex(simulationRun)
+    public void fireTableRowsUpdated(Simulation simulation) {
+        def index = getRowIndex(simulation)
         if (index != -1) {
-            this.tableValues[index][getColumnIndex(SIMULATION_STATUS_COLUMN)] = UIUtils.getText(this.class, simulationRun.simulationState.toString())
+            this.tableValues[index][getColumnIndex(SIMULATION_STATUS_COLUMN)] = UIUtils.getText(this.class, simulation.simulationState.toString())
             fireTableRowsUpdated index, index
         }
     }
 
-    public void fireRowAdded(SimulationRun simulationRun) {
-        if (simulationRun.batchRun?.id == batchRun.id) {
-            batchRun.simulationRuns << simulationRun
-            tableValues << toList(simulationRun)
+    public void fireRowAdded(Simulation simulation) {
+        //TODO
+        if (simulation.batchId == batch.id) {
+            batch.simulations << simulation
+            tableValues << toList(simulation)
             int index = tableValues.size() - 1
             fireTableRowsInserted(index, index);
             startPollingTimer()
         }
     }
 
-    public void fireRowDeleted(SimulationRun run) {
+    public void fireRowDeleted(Simulation run) {
         int rowIndex = getRowIndex(run)
         if (rowIndex >= 0) fireRowDeleted(rowIndex)
     }
 
     public void fireRowDeleted(int rowIndex) {
         tableValues.remove(rowIndex)
-        batchRun.simulationRuns.remove(rowIndex)
+        batch.simulations.remove(rowIndex)
         fireTableRowsDeleted rowIndex, rowIndex
     }
 
     public void firePriorityChanged(int rowIndex, int step) {
         int to = (rowIndex + step >= 0 && rowIndex + step < rowCount) ? rowIndex + step : rowIndex
         Collections.swap(tableValues, rowIndex, to)
-        Collections.swap(batchRun.simulationRuns, rowIndex, to)
+        Collections.swap(batch.simulations, rowIndex, to)
         fireTableRowsUpdated Math.min(rowIndex, to), Math.max(rowIndex, to)
     }
 
@@ -168,8 +165,8 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
     }
 
     private boolean isAllExecuted() {
-        batchRun.simulationRuns.every { SimulationRun simulationRun ->
-            simulationRun.simulationState == FINISHED || simulationRun.simulationState == ERROR
+        batch.simulations.every { Simulation simulation ->
+            simulation.simulationState == FINISHED || simulation.simulationState == ERROR
         }
     }
 
@@ -189,11 +186,11 @@ public class BatchDataTableModel extends AbstractTableModel implements BatchTabl
 
 interface BatchTableListener {
 
-    void fireRowAdded(SimulationRun batchRun)
+    void fireRowAdded(Simulation batchRun)
 
     void fireRowDeleted(int rowIndex)
 
-    void fireRowDeleted(SimulationRun run)
+    void fireRowDeleted(Simulation run)
 
     void firePriorityChanged(int rowIndex, int step)
 }

@@ -9,7 +9,7 @@ import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Font
 import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
@@ -82,7 +82,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         getOrCreatePopuMenu(popupMenus, node, node.itemClass)
     }
 
-    private ULCPopupMenu getPopupMenu(BatchRunNode node) {
+    private ULCPopupMenu getPopupMenu(BatchNode node) {
         getOrCreatePopuMenu(batchRunPopupMenus, node, node.class)
     }
 

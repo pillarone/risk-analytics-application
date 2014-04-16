@@ -31,6 +31,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
+import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
@@ -83,7 +84,7 @@ class NavigationTableTreeModelTests {
         testPollingSupport = new TestPollingSupport()
         UlcCacheItemEventHandler queue = new UlcCacheItemEventHandler(cacheItemSearchService: cacheItemSearchService, pollingSupport: testPollingSupport)
         queue.init()
-        ModellingItemCache modellingItemCache  = new ModellingItemCache(ulcCacheItemEventHandler: queue)
+        ModellingItemCache modellingItemCache = new ModellingItemCache(ulcCacheItemEventHandler: queue)
         modellingItemCache.initialize()
         modellingItemCache.addItemEventListener([onEvent: { ModellingItemEvent event ->
             model.updateTreeStructure(event)
@@ -206,7 +207,7 @@ class NavigationTableTreeModelTests {
         IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
         assertEquals(1, batchNode.childCount)
         assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0), 0))
-        model.removeNodeForItem(new BatchUIItem(mainModel, run))
+        model.removeNodeForItem(new BatchUIItem(mainModel, new Batch(run.name)))
         assertEquals(0, batchNode.childCount)
     }
 

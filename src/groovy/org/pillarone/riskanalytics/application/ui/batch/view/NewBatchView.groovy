@@ -44,13 +44,13 @@ class NewBatchView extends AbstractView {
         batchNameLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Name"))
         batchNameTextField = new ULCTextField()
         batchNameTextField.name = "batchNameTextField"
-        batchNameTextField.setPreferredSize(new Dimension(145, 20))
+        batchNameTextField.preferredSize = new Dimension(145, 20)
         executionTimeLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "ExecutionTime"))
         ULCSpinnerDateModel dateSpinnerModel = new ULCSpinnerDateModel()
         executionTimeSpinner = new ULCSpinner(dateSpinnerModel)
         executionTimeSpinner.name = "executionTimeSpinner"
-        executionTimeSpinner.setPreferredSize(new Dimension(145, 20))
-        executionTimeSpinner.setEditor(new ULCDateEditor(executionTimeSpinner, FastDateFormat.getDateTimeInstance(FastDateFormat.SHORT, FastDateFormat.SHORT, UIUtils.getClientLocale()).pattern))
+        executionTimeSpinner.preferredSize = new Dimension(145, 20)
+        executionTimeSpinner.editor = new ULCDateEditor(executionTimeSpinner, FastDateFormat.getDateTimeInstance(FastDateFormat.SHORT, FastDateFormat.SHORT, UIUtils.getClientLocale()).pattern)
 
         commentLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Comment"))
         comment = new ULCTextArea(4, 50)
@@ -61,9 +61,9 @@ class NewBatchView extends AbstractView {
     }
 
     public void layoutComponents() {
-        ULCBoxPane parameterSection = getParameterSectionPane()
+        ULCBoxPane parameterSection = parameterSectionPane
         content.add(ULCBoxPane.BOX_LEFT_TOP, parameterSection)
-        content.add(ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
+        content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
@@ -79,7 +79,7 @@ class NewBatchView extends AbstractView {
     }
 
     protected void notifyItemSaved() {
-        batchUIItem.notifyItemSaved()
+        batchUIItem.item.notifyItemChanged()
     }
 
     protected ULCBoxPane getParameterSectionPane() {
@@ -104,7 +104,7 @@ class NewBatchView extends AbstractView {
         addButton = new ULCButton(UIUtils.getText(NewBatchView.class, "Add"))
         addButton.name = "addButton"
 
-        addButton.setPreferredSize(dimension)
+        addButton.preferredSize = dimension
 
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
 
@@ -132,7 +132,7 @@ class NewBatchView extends AbstractView {
     }
 
     protected BatchRun mapToDao() {
-        return new BatchRun(name: batchNameTextField.getValue(), comment: comment.getValue())
+        return new BatchRun(name: batchNameTextField.value, comment: comment.value)
     }
 
 

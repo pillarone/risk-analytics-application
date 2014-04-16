@@ -8,7 +8,6 @@ import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
-import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
@@ -18,23 +17,24 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.batch.BatchRunService
+import org.pillarone.riskanalytics.core.simulation.item.Batch
 
 public class BatchView extends NewBatchView {
 
     ULCTable batches
-    BatchRun batchRun
+    Batch batch
     BatchDataTableModel batchDataTableModel
     ULCButton runBatch
     ULCButton saveButton
 
-    private BatchView(RiskAnalyticsMainModel model, BatchRun batchRun) {
+    private BatchView(RiskAnalyticsMainModel model, Batch batch) {
         super(model)
-        this.batchRun = batchRun
-        this.batchDataTableModel = new BatchDataTableModel(batchRun)
+        this.batch = batch
+        this.batchDataTableModel = new BatchDataTableModel(batch)
     }
 
     BatchView(BatchUIItem batchUIItem) {
-        this(batchUIItem.mainModel, batchUIItem.batchRun)
+        this(batchUIItem.mainModel, batchUIItem.item)
         this.batchUIItem = batchUIItem
     }
 
@@ -46,18 +46,20 @@ public class BatchView extends NewBatchView {
 
     public void initComponents() {
         super.initComponents()
-        batchNameTextField.setText(batchRun.name)
-        comment.setText(batchRun.comment)
-        executionTimeSpinner.setValue(new Date())
+        batchNameTextField.text = batch.name
+        batchNameTextField.enabled = false
+        comment.text = batch.comment
+        executionTimeSpinner.value = new Date()
     }
 
 
     public void layoutComponents() {
-        ULCBoxPane parameterSection = getParameterSectionPane()
+        ULCBoxPane parameterSection = parameterSectionPane
         content.add(ULCBoxPane.BOX_LEFT_TOP, parameterSection)
-        if (batchDataTableModel.getRowCount() > 0)
+        if (batchDataTableModel.rowCount > 0) {
             content.add(ULCBoxPane.BOX_EXPAND_TOP, spaceAround(createDomainList(), 5, 0, 0, 0))
-        content.add(ULCBoxPane.BOX_LEFT_TOP, getButtonsPane())
+        }
+        content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
@@ -67,34 +69,34 @@ public class BatchView extends NewBatchView {
         //use FixedULCTable instead of ULCTable
         batches = new ULCFixedTable(batchDataTableModel)
         batches.name = "batchesTable"
-        BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchRun: batchRun, mainModel: model)
-        batches.getColumnModel().getColumns().each { ULCTableColumn column ->
-            column.setHeaderRenderer(new BatchTableHeaderRenderer())
-            column.setCellRenderer(batchTableRenderer)
+        BatchTableRenderer batchTableRenderer = new BatchTableRenderer(mainModel: model)
+        batches.columnModel.columns.each { ULCTableColumn column ->
+            column.headerRenderer = new BatchTableHeaderRenderer()
+            column.cellRenderer = batchTableRenderer
         }
-        batches.setSelectionMode(ULCListSelectionModel.SINGLE_SELECTION)
-        batches.setShowHorizontalLines(true)
+        batches.selectionMode = ULCListSelectionModel.SINGLE_SELECTION
+        batches.showHorizontalLines = true
 
-        batches.setAutoResizeMode(ULCTable.AUTO_RESIZE_ALL_COLUMNS);
+        batches.autoResizeMode = ULCTable.AUTO_RESIZE_ALL_COLUMNS;
         batches.selectionModel.addListSelectionListener([valueChanged: { ListSelectionEvent event ->
-            ULCListSelectionModel source = (ULCListSelectionModel) event.getSource()
-            int index = source.getMinSelectionIndex()
-            batchDataTableModel.selectedRun = (index >= 0) ? batchDataTableModel.getSimulationRunAt(index) : null
+            ULCListSelectionModel source = (ULCListSelectionModel) event.source
+            int index = source.minSelectionIndex
+            batchDataTableModel.selectedRun = (index >= 0) ? batchDataTableModel.getSimulationAt(index) : null
         }] as IListSelectionListener)
         ULCScrollPane scrollPane = new ULCScrollPane(batches)
-        scrollPane.setPreferredSize(new Dimension(500, 350));
-        scrollPane.setMinimumSize(new Dimension(500, 150));
-        scrollPane.setVerticalScrollBarPolicy(ULCScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.preferredSize = new Dimension(500, 350);
+        scrollPane.minimumSize = new Dimension(500, 150);
+        scrollPane.verticalScrollBarPolicy = ULCScrollPane.VERTICAL_SCROLLBAR_ALWAYS;
         return scrollPane
     }
 
     public ULCBoxPane getButtonsPane() {
         saveButton = new ULCButton(UIUtils.getText(this.class, "Save"))
-        saveButton.setPreferredSize(dimension)
+        saveButton.preferredSize = dimension
 
         runBatch = new ULCButton(UIUtils.getText(this.class, "RunBatch"))
-        runBatch.setPreferredSize(dimension)
-        runBatch.setEnabled(batchDataTableModel.getRowCount() > 0)
+        runBatch.preferredSize = dimension
+        runBatch.enabled = batchDataTableModel.rowCount > 0
 
 
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
@@ -107,23 +109,23 @@ public class BatchView extends NewBatchView {
 
     public void attachListeners() {
         runBatch.addActionListener([actionPerformed: { ActionEvent evt ->
-            BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batchRun.name)
+            BatchRun batchToRun = BatchRun.findByName(batchDataTableModel.batch.name)
             if (batchToRun && !batchToRun.executed) {
-                BatchRunService.service.runBatch(batchToRun)
+                BatchRunService.service.runBatch(batchDataTableModel.batch)
             } else {
                 new I18NAlert("BatchAlreadyExecuted").show()
             }
         }] as IActionListener)
 
         saveButton.addActionListener([actionPerformed: { ActionEvent evt ->
-            String newName = batchNameTextField.getValue()
-            String oldName = batchDataTableModel.batchRun.name
+            String newName = batchNameTextField.value
+            String oldName = batchDataTableModel.batch.name
             if (oldName.equals(newName) || validate(newName)) {
                 BatchRun.withTransaction {
                     BatchRun batch = BatchRun.findByName(oldName)
                     if (batch) {
                         batch.name = newName
-                        batch.comment = comment.getText()
+                        batch.comment = comment.text
                         batch.save()
                         if (!batch.name.equals(oldName)) {
                             notifyItemSaved()
@@ -143,7 +145,7 @@ public class BatchView extends NewBatchView {
     }
 
     static AbstractView getView(BatchUIItem batchUIItem) {
-        return batchUIItem.batchRun ? new BatchView(batchUIItem) : new NewBatchView(batchUIItem)
+        return (batchUIItem.item.name == BatchUIItem.NEWBATCH) ? new NewBatchView(batchUIItem) : new BatchView(batchUIItem)
     }
 }
 

@@ -18,7 +18,7 @@ public class OpenBatchAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        model.openItem(null, getSelectedUIItem())
+        model.openItem(null, selectedUIItem)
     }
 
 }

@@ -12,6 +12,10 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 
 @CompileStatic
 class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
+    @Override
+    Class getItemClass() {
+        return null
+    }
 
     String name
     Class resourceClass

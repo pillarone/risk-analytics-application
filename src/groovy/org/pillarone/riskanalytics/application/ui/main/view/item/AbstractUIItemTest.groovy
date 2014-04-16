@@ -10,18 +10,18 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
  */
 abstract class AbstractUIItemTest extends AbstractSimpleFunctionalTest {
 
-    @Override protected void doStart() {
+    @Override
+    protected void doStart() {
         ULCFrame frame = new ULCFrame("test")
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
         AbstractUIItem item = createUIItem()
-        frame.setContentPane(item.createDetailView())
+        frame.contentPane = item.createDetailView()
         ULCClipboard.install()
-        UIUtils.setRootPane(frame)
+        UIUtils.rootPane = frame
         frame.visible = true
     }
 
     abstract AbstractUIItem createUIItem()
-
 }

@@ -34,4 +34,9 @@ class ResourceGroupNode extends DefaultMutableTableTreeNode implements  INavigat
     String getToolTip() {
         return ""
     }
+
+    @Override
+    Class getItemClass() {
+        return null
+    }
 }

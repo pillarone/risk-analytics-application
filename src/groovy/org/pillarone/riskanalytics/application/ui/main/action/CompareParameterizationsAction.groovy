@@ -48,10 +48,10 @@ class CompareParameterizationsAction extends SelectionTreeAction {
     }
 
     // I think this is the 'right' way to do this
-    public boolean isEnabled() {
+    boolean isEnabled() {
         if (getSelectedObjects(Parameterization.class).size() < 2) {
-            return false;
+            return false
         }
-        return super.enabled //generic checks like user roles
+        return super.isEnabled()//generic checks like user roles
     }
 }

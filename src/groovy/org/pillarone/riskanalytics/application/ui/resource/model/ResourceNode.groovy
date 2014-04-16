@@ -4,26 +4,28 @@ import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import grails.util.Holders
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.UserContext
-import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.pillarone.riskanalytics.core.workflow.Status
 
-class ResourceNode extends VersionedItemNode {
+@CompileStatic
+class ResourceNode extends ModellingItemNode {
 
     ResourceNode(ResourceUIItem abstractUIItem) {
         super(abstractUIItem, false)
     }
 
     @Override
-    ResourceUIItem getAbstractUIItem() {
-        super.itemNodeUIItem as ResourceUIItem
+    ResourceUIItem getItemNodeUIItem() {
+        return super.getItemNodeUIItem() as ResourceUIItem
     }
 
-    public Status getStatus() {
-        this.itemNodeUIItem.item.status
+    Status getStatus() {
+        itemNodeUIItem.item.status
     }
 
     @Override

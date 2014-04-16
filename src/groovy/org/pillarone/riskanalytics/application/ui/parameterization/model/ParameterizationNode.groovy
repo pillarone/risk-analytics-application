@@ -4,8 +4,7 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.util.Font
 import org.pillarone.riskanalytics.application.reports.IReportableNode
-import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.ParameterizationPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.DataEntryPopupMenu
@@ -18,25 +17,25 @@ import org.pillarone.riskanalytics.core.workflow.Status
 
 import static org.pillarone.riskanalytics.core.workflow.Status.*
 
-public class ParameterizationNode extends VersionedItemNode implements IReportableNode {
+class ParameterizationNode extends ModellingItemNode implements IReportableNode {
 
-    private Map<String, ULCPopupMenu> statusToMenuMap;
+    private Map<String, ULCPopupMenu> statusToMenuMap
 
-    public ParameterizationNode(ParameterizationUIItem parameterizationUIItem) {
-        super(parameterizationUIItem, false);
+    ParameterizationNode(ParameterizationUIItem parameterizationUIItem) {
+        super(parameterizationUIItem, false)
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+    ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         if (statusToMenuMap == null) {
             statusToMenuMap = new HashMap<String, ULCPopupMenu>()
         }
-        ULCPopupMenu ulcPopupMenu = statusToMenuMap.get(status.displayName)
+        ULCPopupMenu ulcPopupMenu = statusToMenuMap[status.displayName]
         if (ulcPopupMenu == null) {
             ulcPopupMenu = createPopupForStatus(status, tree)
-            statusToMenuMap.put(status.displayName, ulcPopupMenu)
+            statusToMenuMap[status.displayName] = ulcPopupMenu
         }
-        return ulcPopupMenu;
+        return ulcPopupMenu
     }
 
     private ULCPopupMenu createPopupForStatus(Status status, ULCTableTree tree) {
@@ -56,33 +55,33 @@ public class ParameterizationNode extends VersionedItemNode implements IReportab
         }
     }
 
-    public boolean isValid() {
-        return parameterization.valid;
+    boolean isValid() {
+        parameterization.valid;
     }
 
-    public Status getStatus() {
-        return parameterization.status
+    Status getStatus() {
+        parameterization.status
     }
 
-    public Parameterization getParameterization() {
-        return ((Parameterization) itemNodeUIItem.item)
-    }
-
-    @Override
-    public Font getFont(String fontName, int fontSize) {
-        return new Font(fontName, !isValid() ? Font.ITALIC : Font.PLAIN, fontSize)
+    Parameterization getParameterization() {
+        itemNodeUIItem.item as Parameterization
     }
 
     @Override
-    public String getToolTip() {
-        return getParameterization().getStatus() == NONE ? String.valueOf("") : getParameterization().getStatus().getDisplayName();
+    Font getFont(String fontName, int fontSize) {
+        new Font(fontName, valid ? Font.PLAIN : Font.ITALIC, fontSize)
+    }
+
+    @Override
+    String getToolTip() {
+        parameterization.status == NONE ? String.valueOf("") : parameterization.status.displayName;
     }
 
     List<Class> modelsToReportOn() {
-        return [itemNodeUIItem.model.getClass()]
+        [itemNodeUIItem.model.class]
     }
 
     List<ModellingItem> modellingItemsForReport() {
-        return [((ModellingItem) ((ModellingUIItem) itemNodeUIItem).item)]
+        [itemNodeUIItem.item]
     }
 }

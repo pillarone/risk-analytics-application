@@ -133,7 +133,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
                 parent = parent?.parent
             }
         }
-        return modelNode?.itemNodeUIItem?.item
+        return modelNode?.model
     }
 
     Class getSelectedItemGroupClass() {

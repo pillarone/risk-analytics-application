@@ -1,10 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
-
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
-import org.pillarone.riskanalytics.core.output.SimulationRun
-
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -16,7 +14,7 @@ abstract class BatchSimulationSelectionAction extends ResourceBasedAction {
         super(actionName);
     }
 
-    SimulationRun getSelectedSimulationRun() {
+    Simulation getSelectedSimulationRun() {
         return model?.selectedRun
     }
 

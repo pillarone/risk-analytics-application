@@ -1,16 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.view.OpenItemDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -62,6 +61,11 @@ class OpenItemAction extends SelectionTreeAction {
         }
     }
 
+    private void openItem(BatchUIItem item) {
+        item.load()
+        this.model.openItem(null, item)
+    }
+
     private void openItem(AbstractUIItem item) {
         Model selectedModel = getSelectedModel()
         if (selectedModel != null) {
@@ -70,10 +74,10 @@ class OpenItemAction extends SelectionTreeAction {
             if (item instanceof ModellingUIItem) {
                 usedInSimulation = item.isUsedInSimulation()
             }
-            if (!usedInSimulation) {
-                this.model.openItem(selectedModel, item)
-            } else {
+            if (usedInSimulation) {
                 showOpenItemDialog(selectedModel, item)
+            } else {
+                this.model.openItem(selectedModel, item)
             }
         }
     }

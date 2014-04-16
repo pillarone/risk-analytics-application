@@ -23,8 +23,8 @@ import org.pillarone.riskanalytics.application.ui.batch.action.TreeDoubleClickAc
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 

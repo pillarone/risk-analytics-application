@@ -33,7 +33,9 @@ class RenameAction extends SelectionTreeAction {
         */
         boolean usedInSimulation = false
         ItemNodeUIItem selectedItem = selectedUIItem
-        if (!(selectedItem instanceof ModellingUIItem)) return
+        if (!(selectedItem instanceof ModellingUIItem)) {
+            return
+        }
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
             selectedItem.item.setModelClass(selectedModel.class) //TODO: still necessary?
             usedInSimulation = selectedItem.usedInSimulation
@@ -48,7 +50,7 @@ class RenameAction extends SelectionTreeAction {
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)
             dialog.title = dialog.getText("renameTitle") + " " + selectedItem.name
 
-            dialog.okAction = { selectedItem.rename(dialog.nameInput.text)}
+            dialog.okAction = { selectedItem.rename(dialog.nameInput.text) }
             dialog.show()
         }
     }

@@ -5,8 +5,8 @@ import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
-import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
@@ -95,7 +95,7 @@ abstract class ModellingUIItem extends ItemNodeUIItem {
             if (!item.loaded) {
                 item.load()
             }
-            VersionedItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item) as VersionedItemNode
+            ModellingItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item) as ModellingItemNode
             itemNode.userObject = newName
 
             renameAllChildren(itemNode, name)
@@ -103,7 +103,7 @@ abstract class ModellingUIItem extends ItemNodeUIItem {
         }
     }
 
-    private void renameAllChildren(VersionedItemNode itemNode, String name) {
+    private void renameAllChildren(ModellingItemNode itemNode, String name) {
         if (itemNode.itemNodeUIItem instanceof SimulationResultUIItem) {
             return
         }

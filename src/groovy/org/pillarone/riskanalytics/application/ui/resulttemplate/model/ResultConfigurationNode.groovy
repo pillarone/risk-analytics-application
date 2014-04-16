@@ -3,18 +3,20 @@ package org.pillarone.riskanalytics.application.ui.resulttemplate.model
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.base.model.VersionedItemNode
+import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
-class ResultConfigurationNode extends VersionedItemNode {
+@CompileStatic
+class ResultConfigurationNode extends ModellingItemNode {
 
-    public ResultConfigurationNode(ResultConfigurationUIItem resultConfigurationUIItem) {
+    ResultConfigurationNode(ResultConfigurationUIItem resultConfigurationUIItem) {
         super(resultConfigurationUIItem, false)
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu( ULCTableTree tree) {
+    ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu resultConfigurationNodePopUpMenu = new ULCPopupMenu()
         resultConfigurationNodePopUpMenu.name = "resultConfigurationNodePopUpMenu"
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, itemNodeUIItem.mainModel)))
@@ -27,6 +29,5 @@ class ResultConfigurationNode extends VersionedItemNode {
         resultConfigurationNodePopUpMenu.addSeparator()
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, itemNodeUIItem.mainModel)))
         return resultConfigurationNodePopUpMenu
-
     }
 }

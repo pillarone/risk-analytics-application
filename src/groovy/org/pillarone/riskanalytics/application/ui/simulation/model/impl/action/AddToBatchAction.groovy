@@ -37,7 +37,6 @@ class AddToBatchAction extends RunSimulationAction {
                     batchRun.save()
                 }
                 trace("Batch run created: $newBatchRunName")
-                mainModel.fireBatchAdded(batchRun)
                 model.batchRunComboBoxModel.addItem(batchRun)
             }
             trace("Adding simulation ${model.simulation.name} to batch with name $batchRun.name")
@@ -45,7 +44,7 @@ class AddToBatchAction extends RunSimulationAction {
             int count = BatchRunService.service.createBatchRunSimulationRun(batchRun, simulation)
             String message = UIUtils.getText(this.class, 'success', [model.simulation.name, count.toString()])
             model.batchMessage = message
-            mainModel.fireRowAdded(simulation.simulationRun)
+            mainModel.fireRowAdded(simulation)
         } catch (Exception ignored) {
             model.batchMessage = UIUtils.getText(this.class, 'error')
         }

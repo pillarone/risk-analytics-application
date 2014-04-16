@@ -1,13 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ResourceDAO
 
 class NodeNameDialog {
@@ -62,7 +64,7 @@ class NodeNameDialog {
     }
 
     private void attachListeners() {
-        IActionListener action = [actionPerformed: {e ->
+        IActionListener action = [actionPerformed: { e ->
             if (!modellingUIItem.isLoaded()) {
                 modellingUIItem.load()
             }
@@ -77,7 +79,7 @@ class NodeNameDialog {
 
         nameInput.addActionListener(action)
         okButton.addActionListener(action)
-        cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: { e -> hide() }] as IActionListener)
     }
 
     protected boolean isUnique(SimulationResultUIItem simulationUIItem) {
@@ -90,6 +92,10 @@ class NodeNameDialog {
 
     protected boolean isUnique(ResourceUIItem resource) {
         ResourceDAO.findByNameAndResourceClassName(nameInput.text, resource.item.modelClass.name) == null
+    }
+
+    protected boolean isUnique(BatchUIItem resource) {
+        BatchRun.findByName(nameInput.text) == null
     }
 
     public void show() {

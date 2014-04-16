@@ -1,12 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.batch.action
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.core.batch.BatchRunInfoService
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -23,13 +25,13 @@ class PollingBatchRunAction implements IActionListener {
 
     void actionPerformed(ActionEvent actionEvent) {
         try {
-            batchDataTableModel.batchRun.simulationRuns.findAll { SimulationRun simulationRun ->
-                simulationRun.simulationState != SimulationState.FINISHED && simulationRun.simulationState != SimulationState.ERROR
-            }.each { SimulationRun simulationRun->
-                SimulationState newState = batchRunInfoService.getSimulationState(simulationRun)
-                if (newState && newState != simulationRun.simulationState) {
-                    simulationRun.simulationState = newState
-                    batchDataTableModel.fireTableRowsUpdated(simulationRun)
+            batchDataTableModel.batch.simulations.findAll { Simulation simulation ->
+                simulation.simulationState != SimulationState.FINISHED && simulation.simulationState != SimulationState.ERROR
+            }.each { Simulation simulation ->
+                SimulationState newState = batchRunInfoService.getSimulationState(simulation)
+                if (newState && newState != simulation.simulationState) {
+                    simulation.simulationState = newState
+                    batchDataTableModel.fireTableRowsUpdated(simulation)
                 }
             }
             batchDataTableModel.stopPollingTimer()

@@ -4,11 +4,12 @@ import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.reports.IReportableNode
-import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
+import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
@@ -20,20 +21,21 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  * @author simon parten
  */
 
-public class BatchRunNode extends ItemNode implements IReportableNode {
+class BatchNode extends ModellingItemNode implements IReportableNode {
 
-    public BatchRunNode(BatchUIItem batchUIItem) {
-        super(batchUIItem, true, true)
+    BatchNode(BatchUIItem batchUIItem) {
+        super(batchUIItem, true)
     }
 
     @Override
-    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+    ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = "batchesNodePopUpMenu"
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, itemNodeUIItem.mainModel)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, itemNodeUIItem.mainModel)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, itemNodeUIItem.mainModel)))
         batchesNodePopUpMenu.addSeparator()
+        batchesNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, itemNodeUIItem.mainModel)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, itemNodeUIItem.mainModel)))
         addReportMenus(batchesNodePopUpMenu, tree, true)
         return batchesNodePopUpMenu
@@ -79,11 +81,6 @@ public class BatchRunNode extends ItemNode implements IReportableNode {
             simulationList << simulation
         }
         return simulationList
-    }
-
-    @Override
-    BatchUIItem getItemNodeUIItem() {
-        super.itemNodeUIItem as BatchUIItem
     }
 }
 

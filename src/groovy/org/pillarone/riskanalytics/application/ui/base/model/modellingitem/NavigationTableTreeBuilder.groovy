@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRunNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
@@ -66,28 +66,29 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     void buildTreeNodes(List<ModellingItem> modellingItems) {
         buildResourcesNodes(modellingItems)
-        buildBatchNodes()
+        buildBatchNodes(modellingItems)
         buildModelNodes(modellingItems)
     }
 
     public List<ModellingItem> getModellingItems() {
-        List<ModellingItem> result = []
-        internalGetModellingItems(root, result)
-        return result
+        return internalGetModellingItems(root, [])
     }
 
-    protected void internalGetModellingItems(ITableTreeNode currentNode, List<ModellingItem> list) {
+    protected List<ModellingItem> internalGetModellingItems(ITableTreeNode currentNode, List<ModellingItem> list) {
         if (currentNode instanceof ItemNode) {
             Object item = currentNode.itemNodeUIItem.item
-            if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration)) {
-                list << item
+            if ((item instanceof ParametrizedItem) || (item instanceof ResultConfiguration) || (item instanceof Batch)) {
+                list << (item as ModellingItem)
             }
-            if (item instanceof Simulation) return
+            if (item instanceof Simulation) {
+                return
+            }
         }
 
         for (int i = 0; i < currentNode.childCount; i++) {
             internalGetModellingItems(currentNode.getChildAt(i), list)
         }
+        return list
     }
 
     private buildModelNodes(List<ModellingItem> items) {
@@ -110,13 +111,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode, List<Simulation> simulations) {
         simulationsNode.leaf = simulations?.size() == 0
-        simulations?.each {
-            try {
-                simulationsNode.add(createNode(it))
-            } catch (Throwable t) {
-                LOG.error "Could not create node for ${it.toString()}", t
-            }
-        }
+        simulations.each { simulationsNode.add(createNode(it)) }
     }
 
     private addToNode(DefaultMutableTableTreeNode node, List<ModellingItem> items) {
@@ -135,8 +130,8 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         items.sort { a, b -> a.name.compareToIgnoreCase(b.name) }
     }
 
-    private buildBatchNodes() {
-        root.add(createBatchNode())
+    private buildBatchNodes(List<ModellingItem> items) {
+        root.add(createBatchNode(items))
     }
 
     private buildResourcesNodes(List<ModellingItem> items) {
@@ -227,7 +222,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         }
 
         if (modelNode == null) {
-            modelNode = new ModelNode(new ModelUIItem(riskAnalyticsMainModel, model))
+            modelNode = new ModelNode(model)
             DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Parameterization"), Parameterization, riskAnalyticsMainModel)
             DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "ResultTemplates"), ResultConfiguration, riskAnalyticsMainModel)
             DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Results"), Simulation, riskAnalyticsMainModel)
@@ -312,7 +307,10 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     @Override
     void newBatchAdded(BatchRun batchRun) {
-        addNodeForItem(new BatchUIItem(riskAnalyticsMainModel, batchRun))
+        //TODO
+        Batch batch = new Batch(batchRun.name)
+        batch.load()
+        addNodeForItem(new BatchUIItem(riskAnalyticsMainModel, batch), true)
     }
 
     @Override
@@ -349,7 +347,13 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
-    public DefaultMutableTableTreeNode addNodeForItem(BatchUIItem batchRun, boolean notifyStructureChanged = true) {
+    DefaultMutableTableTreeNode addNodeForItem(BatchUIItem batchRun, boolean notifyStructureChanged = true) {
+        ITableTreeNode groupNode = findBatchRootNode(root)
+        insertNodeInto(createNode(batchRun), groupNode, notifyStructureChanged)
+        return groupNode
+    }
+
+    private DefaultMutableTableTreeNode addNodeForUIItem(BatchUIItem batchRun, boolean notifyStructureChanged) {
         ITableTreeNode groupNode = findBatchRootNode(root)
         insertNodeInto(createNode(batchRun), groupNode, notifyStructureChanged)
         return groupNode
@@ -385,6 +389,11 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
             LOG.debug("GroupNode $itemGroupNode")
             itemNodeChanged(itemGroupNode, item)
         }
+    }
+
+    public void itemChanged(Batch item) {
+        BatchRootNode batchRootNode = findBatchRootNode(root)
+        itemNodeChanged(batchRootNode, item)
     }
 
     public void itemChanged(Parameterization item) {
@@ -501,6 +510,10 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     private ITableTreeNode internalFindGroupNode(Resource item) {
         return findResourceItemGroupNode(findResourceGroupNode(root), item.modelClass)
+    }
+
+    private ITableTreeNode internalFindGroupNode(Batch item) {
+        findBatchRootNode(root)
     }
 
     public void removeNodeForItem(ResourceUIItem modellingUIItem) {
@@ -671,11 +684,11 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(BatchUIItem batchUIItem) {
-        return new BatchRunNode(batchUIItem)
+        return new BatchNode(batchUIItem)
     }
 
-    private DefaultMutableTableTreeNode createNode(BatchRun batchRun) {
-        return new BatchRunNode(new BatchUIItem(riskAnalyticsMainModel, batchRun))
+    private DefaultMutableTableTreeNode createNode(Batch batch) {
+        return new BatchNode(new BatchUIItem(riskAnalyticsMainModel, batch))
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
@@ -691,17 +704,13 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         return node
     }
 
-    private DefaultMutableTableTreeNode createBatchNode() {
+    private DefaultMutableTableTreeNode createBatchNode(List<ModellingItem> items) {
         BatchRootNode batchesNode = new BatchRootNode("Batches", riskAnalyticsMainModel)
-        List<BatchRun> batchRuns = allBatchRuns
-        batchRuns?.each { BatchRun batchRun ->
-            batchesNode.add(createNode(batchRun))
+        List<Batch> batches = items.findAll { it instanceof Batch } as List<Batch>
+        batches.each { Batch batch ->
+            batchesNode.add(createNode(batch))
         }
         return batchesNode
-    }
-
-    private List<BatchRun> getAllBatchRuns() {
-        BatchRun.listOrderByName()
     }
 
     private void insertNodeInto(DefaultMutableTableTreeNode newNode, DefaultMutableTableTreeNode parent, boolean notifyStructureChanged) {

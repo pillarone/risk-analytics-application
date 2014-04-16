@@ -20,4 +20,5 @@ public interface INavigationTreeNode {
 
     public String getToolTip()
 
+    Class getItemClass()
 }

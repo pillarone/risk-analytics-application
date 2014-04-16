@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
+
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
@@ -14,20 +15,20 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
-    ItemNodeUIItem itemNodeUIItem
-    boolean renameable
-    Map values = [:]
+    private final ItemNodeUIItem itemNodeUIItem
+    private final Map values = [:]
 
-    public ItemNode(ItemNodeUIItem itemNodeUIItem, boolean leaf = true, boolean renameable = true) {
-        super([itemNodeUIItem?.name] as Object[])
+    ItemNode(ItemNodeUIItem itemNodeUIItem, name, boolean leaf) {
+        super([name] as Object[], leaf)
         this.itemNodeUIItem = itemNodeUIItem;
-        this.renameable = renameable
     }
 
-    public ItemNode(ItemNodeUIItem itemNodeUIItem, name, boolean leaf, boolean renameable) {
-        super([name] as Object[])
-        this.itemNodeUIItem = itemNodeUIItem;
-        this.renameable = renameable
+    Map getValues() {
+        return values
+    }
+
+    ItemNodeUIItem getItemNodeUIItem() {
+        return itemNodeUIItem
     }
 
     VersionNumber getVersionNumber() {
@@ -38,35 +39,36 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         return itemNodeUIItem.itemClass
     }
 
-    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+    ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         return null
     }
 
-    public ULCIcon getIcon() {
+    ULCIcon getIcon() {
         return null
     }
 
-    public Font getFont(String fontName, int fontSize) {
+    Font getFont(String fontName, int fontSize) {
         return new Font(fontName, Font.PLAIN, fontSize)
     }
 
-    public String getToolTip() {
+    String getToolTip() {
         return ""
     }
 
-    public String getName() {
+    String getName() {
         return itemNodeUIItem.name
     }
     // Definitely called on first click to open Batches subtree in the left pane of GUI..
     // and for some bad reason, the reporting menu is never regenerated on a per-batch-node basis afterwards.
     // (ah, that reason is, the menus are cached in MainSelectionTableTreeCellRenderer)
-    public void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
+    void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
 
         if (!(this instanceof IReportableNode)) {
             throw new RiskAnalyticsInconsistencyException(this.toString() + """ asked for report menu; but NOT reportable item. Please report to development. """)
         }
 
-        List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn() // Returns empty list as 'Bjorns First Batch' happened to be empty.
+        List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
+        // Returns empty list as 'Bjorns First Batch' happened to be empty.
         List<IReportModel> reports = new ArrayList<IReportModel>()
         reports.addAll(ReportRegistry.getReportModel(modelsToDisplay)) //TODO rename method to getReportModels and test.
         if (!reports.empty) { //Fails here consequently
