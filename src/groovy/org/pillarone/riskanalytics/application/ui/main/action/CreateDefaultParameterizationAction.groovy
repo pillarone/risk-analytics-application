@@ -50,7 +50,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     }
                     dialog.hide()
 
-                    ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(model, null, param)
+                    ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, param)
                     model.fireModelChanged()
                     parameterizationUIItem.load(true)
                     model.notifyOpenDetailView(simulationModel, parameterizationUIItem)

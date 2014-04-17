@@ -1,9 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
+
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.ULCSpinner.ULCDateEditor
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
+import grails.util.Holders
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.time.FastDateFormat
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
@@ -11,6 +13,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.BatchRun
+import org.pillarone.riskanalytics.core.simulation.item.Batch
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -27,18 +31,17 @@ class NewBatchView extends AbstractView {
     ULCButton cancelButton
     final Dimension dimension = new Dimension(140, 20)
 
-    RiskAnalyticsMainModel model
     BatchUIItem batchUIItem
-
-    NewBatchView(RiskAnalyticsMainModel model) {
-        this.model = model
-    }
 
     NewBatchView(BatchUIItem batchUIItem) {
         this.batchUIItem = batchUIItem
     }
 
-    public void initComponents() {
+    RiskAnalyticsMainModel getModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+    }
+
+    void initComponents() {
         content = new ULCBoxPane(1, 3, 5, 5)
 
         batchNameLabel = new ULCLabel(UIUtils.getText(NewBatchView.class, "Name"))
@@ -60,16 +63,16 @@ class NewBatchView extends AbstractView {
 
     }
 
-    public void layoutComponents() {
+    void layoutComponents() {
         ULCBoxPane parameterSection = parameterSectionPane
         content.add(ULCBoxPane.BOX_LEFT_TOP, parameterSection)
         content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
     }
 
-    public void attachListeners() {
+    void attachListeners() {
         addButton.addActionListener([actionPerformed: { ActionEvent evt ->
-            batchUIItem.createNewBatch((ULCComponent) evt.source, mapToDao())
+            batchUIItem.createNewBatch((ULCComponent) evt.source, createBatch())
             notifyItemSaved()
         }] as IActionListener)
     }
@@ -131,8 +134,10 @@ class NewBatchView extends AbstractView {
         return deco
     }
 
-    protected BatchRun mapToDao() {
-        return new BatchRun(name: batchNameTextField.value, comment: comment.value)
+    protected Batch createBatch() {
+        Batch batch = new Batch(batchNameTextField.value as String)
+        batch.comment = comment.value as String
+        return batch
     }
 
 

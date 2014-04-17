@@ -43,7 +43,7 @@ abstract class AbstractCompareSimulationUIItemTests extends AbstractSimulationSe
         Model model = new ApplicationModel()
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        CompareSimulationUIItem uiItem = new CompareSimulationUIItem(mainModel, model, [simulation1, simulation2])
+        CompareSimulationUIItem uiItem = new CompareSimulationUIItem(model, [simulation1, simulation2])
         return uiItem
     }
 

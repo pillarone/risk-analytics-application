@@ -153,7 +153,7 @@ class CompareSimulationsCriteriaView {
 
         compareParameterizations.addActionListener([actionPerformed: { event ->
             ArrayList parameters = ParameterizationUtilities.getParameters(model.treeModel.simulations)
-            CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(compareSimulationTreeView.mainModel, model.model, parameters)
+            CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(model.model, parameters)
             compareSimulationTreeView.mainModel.notifyOpenDetailView(model.model, compareParameterizationUIItem)
         }] as IActionListener)
 

@@ -11,7 +11,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class CalculationSettingsUIItem extends SimulationSettingsUIItem {
 
     CalculationSettingsUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, Simulation simulation) {
-        super(mainModel, simulationModel, simulation)
+        super(simulationModel, simulation)
     }
 
     String createTitle() {
@@ -24,10 +24,10 @@ class CalculationSettingsUIItem extends SimulationSettingsUIItem {
     }
 
     CalculationConfigurationModel getViewModel() {
-        CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, mainModel)
+        CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
-        mainModel.registerModel(this, model)
+        riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
 }

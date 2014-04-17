@@ -43,7 +43,7 @@ class SimulationAction extends SelectionTreeAction {
 
     SimulationSettingsUIItem getUIItemByModel(Model selectedModel, Simulation simulation) {
         if (selectedModel instanceof StochasticModel) {
-            return new SimulationSettingsUIItem(model, selectedModel, simulation)
+            return new SimulationSettingsUIItem(selectedModel, simulation)
         } else {
             return new CalculationSettingsUIItem(model, selectedModel, simulation)
         }

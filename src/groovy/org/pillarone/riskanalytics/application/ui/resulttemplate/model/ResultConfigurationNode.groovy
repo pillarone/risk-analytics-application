@@ -4,12 +4,14 @@ import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
 @CompileStatic
-class ResultConfigurationNode extends ModellingItemNode {
+class ResultConfigurationNode extends ItemNode {
+
+    static final String RESULT_CONFIGURATION_NODE_POP_UP_MENU = "resultConfigurationNodePopUpMenu"
 
     ResultConfigurationNode(ResultConfigurationUIItem resultConfigurationUIItem) {
         super(resultConfigurationUIItem, false)
@@ -18,16 +20,16 @@ class ResultConfigurationNode extends ModellingItemNode {
     @Override
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu resultConfigurationNodePopUpMenu = new ULCPopupMenu()
-        resultConfigurationNodePopUpMenu.name = "resultConfigurationNodePopUpMenu"
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, itemNodeUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.name = RESULT_CONFIGURATION_NODE_POP_UP_MENU
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, itemNodeUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, itemNodeUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, itemNodeUIItem.mainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, itemNodeUIItem.mainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
         return resultConfigurationNodePopUpMenu
     }
 }

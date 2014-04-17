@@ -11,7 +11,6 @@ import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchDataTableModel
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -27,15 +26,10 @@ public class BatchView extends NewBatchView {
     ULCButton runBatch
     ULCButton saveButton
 
-    private BatchView(RiskAnalyticsMainModel model, Batch batch) {
-        super(model)
-        this.batch = batch
-        this.batchDataTableModel = new BatchDataTableModel(batch)
-    }
-
     BatchView(BatchUIItem batchUIItem) {
-        this(batchUIItem.mainModel, batchUIItem.item)
-        this.batchUIItem = batchUIItem
+        super(batchUIItem)
+        this.batch = batchUIItem.item
+        this.batchDataTableModel = new BatchDataTableModel(batch)
     }
 
     void init() {
@@ -100,7 +94,6 @@ public class BatchView extends NewBatchView {
 
 
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
-
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(runBatch, 0, 8, 0, 8))
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(saveButton, 0, 8, 0, 8))
         buttonPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
@@ -120,17 +113,11 @@ public class BatchView extends NewBatchView {
         saveButton.addActionListener([actionPerformed: { ActionEvent evt ->
             String newName = batchNameTextField.value
             String oldName = batchDataTableModel.batch.name
-            if (oldName.equals(newName) || validate(newName)) {
+            if (oldName.equals(newName)) {
                 BatchRun.withTransaction {
-                    BatchRun batch = BatchRun.findByName(oldName)
-                    if (batch) {
-                        batch.name = newName
-                        batch.comment = comment.text
-                        batch.save()
-                        if (!batch.name.equals(oldName)) {
-                            notifyItemSaved()
-                        }
-                    }
+                    Batch batch = batchDataTableModel.batch
+                    batch.comment = comment.text
+                    batch.save()
                 }
             } else {
                 new I18NAlert("BatchNotValidName").show()
@@ -145,7 +132,11 @@ public class BatchView extends NewBatchView {
     }
 
     static AbstractView getView(BatchUIItem batchUIItem) {
-        return (batchUIItem.item.name == BatchUIItem.NEWBATCH) ? new NewBatchView(batchUIItem) : new BatchView(batchUIItem)
+        if (batchUIItem.newBatch) {
+            return new NewBatchView(batchUIItem)
+        } else {
+            return new BatchView(batchUIItem)
+        }
     }
 }
 

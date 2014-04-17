@@ -22,18 +22,12 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
     ParameterizationTreeBuilder builder
     Model simulationModel
     ITableTreeNode root
-
-    private List valueChangedListeners = []
     Boolean readOnly = false
     Map nonValidValues = [:]
     int minPeriod = -1
     List differentsNode = []
 
-
-    public CompareParameterizationTableTreeModel() {
-    }
-
-    public CompareParameterizationTableTreeModel(ParameterizationTreeBuilder builder, List<Parameterization> parameterizations) {
+    CompareParameterizationTableTreeModel(ParameterizationTreeBuilder builder, List<Parameterization> parameterizations) {
         this.parameterizations = parameterizations
         this.builder = builder
         this.root = builder.root
@@ -79,7 +73,7 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
     public boolean isDifferent(Object node) {
         if (node instanceof CompareParameterizationTableTreeNode) {
             return internalIsDifferent(node.parameterizationTableTreeNode, node)
-        } else if(node instanceof CompareParameterizationClassifierTableTreeNode) {
+        } else if (node instanceof CompareParameterizationClassifierTableTreeNode) {
             return internalIsDifferent(node)
         }
         return false
@@ -121,12 +115,12 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         boolean different = false
         for (int i = 1; i < getColumnCount(); i += getParameterizationsSize()) {
             MultiDimensionalParameterHolder parameterHolder = compareNode.getParameterHolder(i)
-            if(parameterHolder == null) return true
+            if (parameterHolder == null) return true
             AbstractMultiDimensionalParameter multiDimensionalParameter = parameterHolder.getBusinessObject()
             List<List> values = multiDimensionalParameter.values
             for (int j = 1; j < 2 || j < getParameterizationsSize(); j++) {
                 MultiDimensionalParameterHolder currentParameterHolder = compareNode.getParameterHolder(i + j)
-                if(currentParameterHolder == null) return true
+                if (currentParameterHolder == null) return true
                 AbstractMultiDimensionalParameter currentMultiDimensionalParameter = currentParameterHolder.businessObject
                 List<List> currentValues = currentMultiDimensionalParameter.values
 
@@ -163,7 +157,7 @@ public class CompareParameterizationTableTreeModel extends AbstractTableTreeMode
         } else {
             value = node.getValueAt(i)
         }
-        if(value != null && !(value instanceof Number || value instanceof Date)) {
+        if (value != null && !(value instanceof Number || value instanceof Date)) {
             value = value.toString()
         }
         return value
@@ -198,7 +192,7 @@ class ParameterizationUtilities {
 
     public static int getMinPeriod(List<Parameterization> parameterizations) {
         int minPeriod = parameterizations.get(0).periodCount
-        for (Parameterization p: parameterizations) {
+        for (Parameterization p : parameterizations) {
             if (p.periodCount < minPeriod)
                 minPeriod = p.periodCount
         }
@@ -207,10 +201,10 @@ class ParameterizationUtilities {
 
     public static boolean isParameterObjectParameter(String path, List<ParametrizedItem> items) {
         boolean result = false
-        for(ParametrizedItem item in items) {
+        for (ParametrizedItem item in items) {
             try {
                 ParameterHolder parameterHolder = item.getParameterHoldersForFirstPeriod(path)
-                if(parameterHolder instanceof ParameterObjectParameterHolder) {
+                if (parameterHolder instanceof ParameterObjectParameterHolder) {
                     result = true
                 }
             } catch (ParameterNotFoundException e) {
@@ -222,7 +216,7 @@ class ParameterizationUtilities {
 
     public static List getParameters(List<Simulation> simulations) {
         List parameters = []
-        simulations.each {Simulation simulation ->
+        simulations.each { Simulation simulation ->
             Parameterization parameterization = simulation.parameterization
             parameterization.load()
             parameters << parameterization

@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
@@ -51,6 +52,10 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
 
     @Override
     protected void setUp() throws Exception {
+        initGrailsApplication()
+        defineBeans {
+            riskAnalyticsMainModel(RiskAnalyticsMainModel)
+        }
         super.setUp()
     }
 

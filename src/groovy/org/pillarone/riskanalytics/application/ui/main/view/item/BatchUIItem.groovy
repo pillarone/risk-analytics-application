@@ -9,6 +9,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.AbstractView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -21,14 +22,37 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 class BatchUIItem extends ModellingUIItem {
 
-    public static final String NEWBATCH = "newbatch"
+    private static final String NEWBATCH = 'newbatch'
 
-    BatchUIItem(RiskAnalyticsMainModel mainModel, Batch batch) {
-        super(mainModel, null, Preconditions.checkNotNull(batch))
+    @Override
+    NavigationTableTreeModel getNavigationTableTreeModel() {
+        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
+    }
+
+    @Override
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+    }
+
+    BatchRunService getBatchRunService() {
+        Holders.grailsApplication.mainContext.getBean('batchRunService', BatchRunService)
+    }
+
+    BatchUIItem(Batch batch) {
+        super(Preconditions.checkNotNull(batch))
+    }
+
+    BatchUIItem() {
+        super(new Batch(NEWBATCH))
+    }
+
+
+    boolean isNewBatch() {
+        item.name == NEWBATCH
     }
 
     String createTitle() {
-        return (item.name == NEWBATCH) ? UIUtils.getText(BatchUIItem.class, NEWBATCH) : item.name
+        return newBatch ? UIUtils.getText(BatchUIItem.class, NEWBATCH) : item.name
     }
 
     ULCContainer createDetailView() {
@@ -41,15 +65,12 @@ class BatchUIItem extends ModellingUIItem {
         return null
     }
 
-    void createNewBatch(ULCComponent parent, BatchRun newBatch) {
+    void createNewBatch(ULCComponent parent, Batch newBatch) {
         if (validate(newBatch.name)) {
-            BatchRun.withTransaction {
-                newBatch.save()
-            }
+            newBatch.save()
         } else {
             new I18NAlert(UlcUtilities.getWindowAncestor(parent), "BatchNotValidName").show()
         }
-
     }
 
     protected boolean validate(String batchName) {
@@ -57,14 +78,10 @@ class BatchUIItem extends ModellingUIItem {
     }
 
     boolean remove() {
-        if (batchRunService.deleteBatchRun(item)) {
+        if (batchRunService.deleteBatch(item)) {
             return true
         }
         return false
-    }
-
-    private BatchRunService getBatchRunService() {
-        Holders.grailsApplication.mainContext.getBean(BatchRunService)
     }
 
     @Override

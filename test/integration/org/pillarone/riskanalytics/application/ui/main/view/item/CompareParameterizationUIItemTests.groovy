@@ -39,7 +39,7 @@ class CompareParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         parameterization2.load()
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(mainModel, model, [parameterization1, parameterization2])
+        CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, [parameterization1, parameterization2])
 
         ULCFrame frame = new ULCFrame("test")
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE

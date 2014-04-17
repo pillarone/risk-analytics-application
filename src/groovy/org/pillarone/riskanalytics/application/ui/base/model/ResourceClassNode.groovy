@@ -12,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 
 @CompileStatic
 class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
+
     @Override
     Class getItemClass() {
         return null
@@ -39,7 +40,6 @@ class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigati
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu menu = new ULCPopupMenu()
         menu.add(new ULCMenuItem(new CreateDefaultResourceAction(tree, mainModel)))
-
         return menu
     }
 

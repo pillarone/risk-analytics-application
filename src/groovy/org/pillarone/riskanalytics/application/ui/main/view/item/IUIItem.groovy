@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+
 //classes implementing this interface need to be created for all item-"views" (modelling items, batch runs, comparisons etc.)
 interface IUIItem {
 
@@ -24,15 +26,9 @@ interface IUIItem {
      */
     void close()
 
-    /**
-     * @param newName
-     */
-    void rename(String newName)
-
     void save()
 
     boolean remove()
-
 
     boolean isEditable()
 
@@ -49,8 +45,6 @@ interface IUIItem {
     ULCIcon getIcon()
 
     boolean isVersionable()
-
-    boolean isChangeable()
 
     boolean isChanged()
 

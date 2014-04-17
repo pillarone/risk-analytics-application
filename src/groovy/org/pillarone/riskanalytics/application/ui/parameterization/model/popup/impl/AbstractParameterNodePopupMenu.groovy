@@ -19,34 +19,33 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
     public AbstractParameterNodePopupMenu(ULCTableTree tree, ParameterizationNode node) {
         super();
-        final RiskAnalyticsMainModel mainModel = node.itemNodeUIItem.mainModel
         name = "parameterNodePopUpMenu";
-        add(new ULCMenuItem(new OpenItemAction(tree, mainModel)));
-        add(new ULCMenuItem(new SimulationAction(tree, mainModel)));
+        add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)));
+        add(new ULCMenuItem(new SimulationAction(tree, riskAnalyticsMainModel)));
 
         //External link
-        OpenExternalMenuItem openTx = new OpenExternalMenuItem(new OpenTransactionLinkAction(tree, mainModel))
+        OpenExternalMenuItem openTx = new OpenExternalMenuItem(new OpenTransactionLinkAction(tree, riskAnalyticsMainModel))
         tree.addTreeSelectionListener(openTx)
         add(openTx)
 
         addSeparator();
 
-        CompareParameterizationMenuItem compPns = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, mainModel));
+        CompareParameterizationMenuItem compPns = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, riskAnalyticsMainModel));
         tree.addTreeSelectionListener(compPns);
         add(compPns);
 
-        add(new ULCMenuItem(new TagsAction(tree, mainModel)));
+        add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)));
 
         Boolean b = ((Boolean) Holders.grailsApplication?.config?.getProperty("useSetFilterToSelectionPopupMenu")) ?: Boolean.FALSE;
         if (b) {
-            add(new ULCMenuItem(new SetFilterToSelection(tree, mainModel)));
+            add(new ULCMenuItem(new SetFilterToSelection(tree, riskAnalyticsMainModel)));
         }
         addSeparator();
-        if (hasRenameAction()) add(new ULCMenuItem(new RenameAction(tree, mainModel)));
-        add(new ULCMenuItem(new SaveAsAction(tree, mainModel)));
-        if (hasCreateNewMajorVersionAction()) add(new ULCMenuItem(new CreateNewMajorVersion(tree, mainModel)));
-        add(new ULCMenuItem(new ExportItemAction(tree, mainModel)));
-        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel, 'ImportFromExcelAdditional')));
+        if (hasRenameAction()) add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)));
+        add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)));
+        if (hasCreateNewMajorVersionAction()) add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)));
+        add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)));
+        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, riskAnalyticsMainModel, 'ImportFromExcelAdditional')));
         addSeparator();
 
         //Concrete subclasses add menus appropriate to current state.
@@ -58,8 +57,12 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         //reach here on first opening of Parameterizations subtree in gui, hits 4 times for different pns.
         if (hasDeleteAction()) {
             addSeparator();
-            add(new ULCMenuItem(new DeleteAction(tree, mainModel)));
+            add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)));
         }
+    }
+
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     protected abstract boolean hasRenameAction();

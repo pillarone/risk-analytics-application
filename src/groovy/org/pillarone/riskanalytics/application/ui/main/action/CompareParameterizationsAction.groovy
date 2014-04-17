@@ -26,7 +26,7 @@ class CompareParameterizationsAction extends SelectionTreeAction {
         simulationModel.init() // using it immediately before a null check ?!
         if (simulationModel != null && elements[0] != null) {
             List<Parameterization> items = elements*.itemNodeUIItem.item as List<Parameterization>
-            CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, simulationModel, items)
+            CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(simulationModel, items)
             model.openItem(simulationModel, uiItem)
         }
     }

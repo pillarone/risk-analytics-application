@@ -1,74 +1,60 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.*
-
+import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class ModellingUIItem extends ItemNodeUIItem {
+abstract class ModellingUIItem extends AbstractUIItem {
     private final ModellingItem item
 
-    ModellingUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ModellingItem item) {
-        super(mainModel, simulationModel)
+    ModellingUIItem(ModellingItem item) {
         this.item = item
     }
 
-    @Override
+    abstract NavigationTableTreeModel getNavigationTableTreeModel()
+
     boolean isLoaded() {
         return item.loaded
     }
 
-    @Override
     void load(boolean completeLoad) {
         item.load(completeLoad)
     }
 
-    @Override
     void unload() {
         item.unload()
+    }
+
+    abstract RiskAnalyticsMainModel getRiskAnalyticsMainModel()
+
+    void close() {
+        riskAnalyticsMainModel.closeItem(null, this)
     }
 
     boolean isUsedInSimulation() {
         return item.usedInSimulation
     }
 
-    @Override
+
     String createTitle() {
-        String title = "$item.name v${item.versionNumber.toString()}".toString()
-        if (item.changed)
+        String title = item.nameAndVersion
+        if (item.changed) {
             title += MarkItemAsUnsavedListener.UNSAVED_MARK
+        }
         return title
-    }
-
-    boolean deleteDependingResults(Model model) {
-        return UIItemUtils.deleteDependingResults(mainModel, model, this)
-    }
-
-    ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
-        ModellingItem modellingItem = null
-        item.daoClass.withTransaction { status ->
-            if (!item.loaded) {
-                item.load()
-            }
-            modellingItem = ModellingItemFactory.incrementVersion(item)
-        }
-        mainModel.fireModelChanged()
-        AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, selectedModel, mainModel)
-        if (openNewVersion) {
-            mainModel.openItem(selectedModel, modellingUIItem)
-        }
-        return modellingUIItem
     }
 
     @Override
@@ -81,29 +67,30 @@ abstract class ModellingUIItem extends ItemNodeUIItem {
     }
 
     void closeItem() {
-        ModellingUIItem openedItem = mainModel.getAbstractUIItem(item)
-        if (openedItem)
-            mainModel.closeItem(model, openedItem)
+        ModellingUIItem openedItem = riskAnalyticsMainModel.getAbstractUIItem(item)
+        if (openedItem) {
+            close()
+        }
         ModellingItemFactory.remove(item)
-        mainModel.fireModelChanged()
-        if (item instanceof Simulation) mainModel.fireRowDeleted(item)
-    }
-
-    @Override
-    void rename(String newName) {
-        item.daoClass.withTransaction { status ->
-            if (!item.loaded) {
-                item.load()
-            }
-            ModellingItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item) as ModellingItemNode
-            itemNode.userObject = newName
-
-            renameAllChildren(itemNode, name)
-            mainModel.fireModelChanged()
+        riskAnalyticsMainModel.fireModelChanged()
+        if (item instanceof Simulation) {
+            riskAnalyticsMainModel.fireRowDeleted(item)
         }
     }
 
-    private void renameAllChildren(ModellingItemNode itemNode, String name) {
+    void rename(String newName) {
+        SimulationRun.withTransaction { status ->
+            if (!item.loaded) {
+                item.load()
+            }
+            ItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item) as ItemNode
+            itemNode.userObject = newName
+            renameAllChildren(itemNode, name)
+            riskAnalyticsMainModel.fireModelChanged()
+        }
+    }
+
+    private void renameAllChildren(ItemNode itemNode, String name) {
         if (itemNode.itemNodeUIItem instanceof SimulationResultUIItem) {
             return
         }
@@ -118,28 +105,25 @@ abstract class ModellingUIItem extends ItemNodeUIItem {
         ExceptionSafe.protect {
             item.save()
         }
-        mainModel.fireModelChanged()
-        mainModel.fireModelItemChanged()
+        riskAnalyticsMainModel.fireModelChanged()
+        riskAnalyticsMainModel.fireModelItemChanged()
     }
 
 
-    void addItem(ModellingUIItem modellingUIItem, String name) {
+    ModellingItem addItem(ModellingUIItem modellingUIItem, String name) {
         modellingUIItem.item.daoClass.withTransaction { status ->
-            if (!modellingUIItem.loaded)
+            if (!modellingUIItem.loaded) {
                 modellingUIItem.load()
+            }
             ModellingItem newItem = ModellingItemFactory.copyItem(modellingUIItem.item, name)
             newItem.id = null
-            mainModel.fireModelChanged()
-            modellingUIItem.model
-            if (!(newItem instanceof Resource)) { //re-create model (PMO-1961) - do nothing if it's a resource
-                Model modelInstance = newItem?.modelClass?.newInstance() as Model
-                modelInstance?.init()
-            }
+            riskAnalyticsMainModel.fireModelChanged()
+            newItem
         }
     }
 
     void importItem() {
-        mainModel.fireModelChanged()
+        riskAnalyticsMainModel.fireModelChanged()
     }
 
     void removeAllModellingItemChangeListener() {
@@ -186,28 +170,21 @@ abstract class ModellingUIItem extends ItemNodeUIItem {
         item?.name
     }
 
-    @Override
-    Model getModel() {
-        if (!super.model) {
-            model = item.modelClass.newInstance() as Model
-            model.init()
-        }
-        return super.model
-    }
 
-    @Override
     VersionNumber getVersionNumber() {
         return item.versionNumber
     }
 
-    @Override
     Class getItemClass() {
         return item.class
     }
 
-    @Override
     @CompileStatic
     ModellingItem getItem() {
         return item
+    }
+
+    String getWindowTitle() {
+        createTitle()
     }
 }

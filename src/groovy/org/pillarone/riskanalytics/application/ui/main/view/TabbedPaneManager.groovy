@@ -4,6 +4,7 @@ import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
@@ -41,6 +42,10 @@ class TabbedPaneManager {
         tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
     }
 
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+    }
+
     public void closeTab(AbstractUIItem abstractUIItem) {
         if (abstractUIItem.changed) {
             boolean closeTab = true
@@ -48,7 +53,7 @@ class TabbedPaneManager {
             alert.addWindowListener([windowClosing: { WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
-                    SaveAction saveAction = new SaveAction(tabbedPane, abstractUIItem.mainModel, abstractUIItem)
+                    SaveAction saveAction = new SaveAction(tabbedPane, riskAnalyticsMainModel, abstractUIItem)
                     saveAction.doActionPerformed(new ActionEvent(this, "save"))
                 } else if (value.equals(alert.thirdButtonLabel)) {
                     closeTab = false

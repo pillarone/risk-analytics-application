@@ -53,7 +53,7 @@ class SaveAlreadyUsedParameterizationTests extends AbstractSimpleFunctionalTest 
 
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         parameterViewModel.mainModel = new RiskAnalyticsMainModel()
-        parameterViewModel.mainModel.currentItem = new ParameterizationUIItem(parameterViewModel.mainModel, new CoreModel(), parameterization)
+        parameterViewModel.mainModel.currentItem = new ParameterizationUIItem(new CoreModel(), parameterization)
 
         ULCBoxPane content = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel()).content
         IActionListener saveAction = content.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false))

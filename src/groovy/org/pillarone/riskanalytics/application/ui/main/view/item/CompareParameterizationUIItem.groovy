@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
@@ -10,16 +12,22 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CompareParameterizationUIItem extends AbstractUIItem {
 
     private List<Parameterization> parameterizations
+    private final Model model
 
-    public CompareParameterizationUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, List<Parameterization> parameterizations) {
-        super(mainModel, simulationModel)
+    CompareParameterizationUIItem(Model model, List<Parameterization> parameterizations) {
+        this.model = model
         this.parameterizations = parameterizations
+    }
+
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     String createTitle() {
@@ -27,12 +35,12 @@ class CompareParameterizationUIItem extends AbstractUIItem {
     }
 
     ULCContainer createDetailView() {
-        CompareParameterizationsView view = new CompareParameterizationsView(viewModel as CompareParameterViewModel, mainModel)
+        CompareParameterizationsView view = new CompareParameterizationsView(viewModel as CompareParameterViewModel, riskAnalyticsMainModel)
         return view.content
     }
 
     AbstractModellingModel getViewModel() {
-        CompareParameterViewModel model = new CompareParameterViewModel(model, parameterizations, ModelStructure.getStructureForModel(this.model.class))
+        CompareParameterViewModel model = new CompareParameterViewModel(model, parameterizations, ModelStructure.getStructureForModel(model.class))
         return model
     }
 
@@ -65,5 +73,11 @@ class CompareParameterizationUIItem extends AbstractUIItem {
     @Override
     ULCIcon getIcon() {
         return UIUtils.getIcon("parametrization-active.png")
+    }
+
+    String getWindowTitle() {
+        String windowTitle = model ? model.name : ""
+        windowTitle += " " + createTitle()
+        return windowTitle
     }
 }

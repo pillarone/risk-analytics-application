@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
@@ -10,16 +12,26 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CompareSimulationUIItem extends AbstractUIItem {
 
     List<Simulation> simulations
+    private final Model model
 
-    public CompareSimulationUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, List<Simulation> simulations) {
-        super(mainModel, simulationModel)
+    CompareSimulationUIItem(Model model, List<Simulation> simulations) {
+        this.model = model
         this.simulations = simulations
+    }
+
+    void close() {
+        riskAnalyticsMainModel.closeItem(model, this)
+    }
+
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     String createTitle() {
@@ -27,7 +39,7 @@ class CompareSimulationUIItem extends AbstractUIItem {
     }
 
     ULCContainer createDetailView() {
-        CompareSimulationsView view = new CompareSimulationsView(viewModel as CompareSimulationsViewModel, mainModel)
+        CompareSimulationsView view = new CompareSimulationsView(viewModel as CompareSimulationsViewModel, riskAnalyticsMainModel)
         return view.content
     }
 
@@ -63,5 +75,11 @@ class CompareSimulationUIItem extends AbstractUIItem {
     @Override
     ULCIcon getIcon() {
         return UIUtils.getIcon("results-active.png")
+    }
+
+    String getWindowTitle() {
+        String windowTitle = model ? model.name : ""
+        windowTitle += " " + createTitle()
+        return windowTitle
     }
 }

@@ -3,8 +3,9 @@ package org.pillarone.riskanalytics.application.ui.result.model
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.CompareSimulationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
@@ -12,7 +13,8 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResul
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
-class SimulationNode extends ModellingItemNode implements IReportableNode {
+@CompileStatic
+class SimulationNode extends ItemNode implements IReportableNode {
     //checkBox selected simulations
     boolean display = true
     // flag for hidden/display simulations
@@ -22,20 +24,25 @@ class SimulationNode extends ModellingItemNode implements IReportableNode {
         super(simulationUIItem, false)
     }
 
+    @Override
+    SimulationResultUIItem getItemNodeUIItem() {
+        return super.itemNodeUIItem as SimulationResultUIItem
+    }
+
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu simulationNodePopUpMenu = new ULCPopupMenu()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, itemNodeUIItem.mainModel)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, itemNodeUIItem.mainModel)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree, itemNodeUIItem.mainModel)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, itemNodeUIItem.mainModel)))
-        ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, itemNodeUIItem.mainModel))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree, riskAnalyticsMainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
+        ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, riskAnalyticsMainModel))
         tree.addTreeSelectionListener(compareSimulationMenuItem)
         simulationNodePopUpMenu.add(compareSimulationMenuItem)
         simulationNodePopUpMenu.addSeparator()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, itemNodeUIItem.mainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)))
         addReportMenus(simulationNodePopUpMenu, tree, true)
         simulationNodePopUpMenu.addSeparator()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, itemNodeUIItem.mainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
         return simulationNodePopUpMenu
     }
 

@@ -2,8 +2,10 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
@@ -11,10 +13,20 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class SimulationSettingsUIItem extends ModellingUIItem {
+class SimulationSettingsUIItem extends ModellingUiItemWithModel {
 
-    public SimulationSettingsUIItem(RiskAnalyticsMainModel model, Model simulationModel, Simulation simulation) {
-        super(model, simulationModel, simulation)
+    SimulationSettingsUIItem(Model model, Simulation simulation) {
+        super(model, simulation)
+    }
+
+    @Override
+    NavigationTableTreeModel getNavigationTableTreeModel() {
+        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
+    }
+
+    @Override
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     String createTitle() {
@@ -28,10 +40,10 @@ class SimulationSettingsUIItem extends ModellingUIItem {
     }
 
     SimulationConfigurationModel getViewModel() {
-        SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, mainModel)
+        SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
-        mainModel.registerModel(this, model)
+        riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
 

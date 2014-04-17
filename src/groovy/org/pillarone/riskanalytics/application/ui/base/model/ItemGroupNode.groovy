@@ -23,17 +23,17 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
     final String toolTip = ''
     final String name = ''
 
-    public ItemGroupNode(String name, Class itemClass) {
+    ItemGroupNode(String name, Class itemClass) {
         super([name] as Object[])
         this.itemClass = itemClass
     }
 
-    public ItemGroupNode(String name, Class itemClass, RiskAnalyticsMainModel mainModel) {
+    ItemGroupNode(String name, Class itemClass, RiskAnalyticsMainModel mainModel) {
         this(name, itemClass)
         this.mainModel = mainModel
     }
 
-    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+    ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         switch (itemClass) {
             case Simulation: return getSimulationGroupNodePopUpMenu(tree)
             case ResultConfiguration: return getGroupNodePopUpMenu(tree)
@@ -43,8 +43,9 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
 
     private ULCPopupMenu getGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu groupNodePopUpMenu = new ULCPopupMenu()
-        if (UserContext.isStandAlone())
+        if (UserContext.standAlone) {
             groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', true)))
+        }
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, false)))
         groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, true)))
         groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
@@ -54,21 +55,23 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
 
     private ULCPopupMenu getSimulationGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu simulationGroupNodePopUpMenu = new ULCPopupMenu()
-        if (UserContext.isStandAlone())
+        if (UserContext.standAlone) {
             simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
+        }
         return simulationGroupNodePopUpMenu
     }
 
     private ULCPopupMenu getParameterGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu parameterGroupNodePopUpMenu = new ULCPopupMenu()
-        if (UserContext.isStandAlone()) {
+        if (UserContext.standAlone) {
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', true)))
         }
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, false)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, true)))
-        if (UserContext.isStandAlone())
+        if (UserContext.standAlone) {
             parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, mainModel, "importAllFromDir")))
+        }
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
         parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, mainModel)))
         parameterGroupNodePopUpMenu.addSeparator()
@@ -77,7 +80,7 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         return parameterGroupNodePopUpMenu
     }
 
-    public ULCIcon getIcon() {
+    ULCIcon getIcon() {
         switch (itemClass) {
             case Simulation: return UIUtils.getIcon("results-active.png")
             case ResultConfiguration: return UIUtils.getIcon("resulttemplate-active.png")
@@ -86,7 +89,7 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
         return null
     }
 
-    public Font getFont(String fontName, int fontSize) {
+    Font getFont(String fontName, int fontSize) {
         return new Font(fontName, Font.PLAIN, fontSize)
     }
 }

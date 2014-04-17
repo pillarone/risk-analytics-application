@@ -84,15 +84,15 @@ class OpenItemAction extends SelectionTreeAction {
 
     // Do not load item in case it is already open. Otherwise the persistent state of this item gets loaded again. PMO-2383
     private void loadIfNotInUse(AbstractUIItem item) {
-        if (!item.mainModel.isItemOpen(item)) {
+        if (!model.isItemOpen(item)) {
             item.load()
         }
     }
 
-    private void showOpenItemDialog(Model selectedModel, def item) {
+    private void showOpenItemDialog(Model selectedModel, ModellingUIItem item) {
         OpenItemDialog openItemDialog = new OpenItemDialog(tree, selectedModel, model, item)
         openItemDialog.init()
-        openItemDialog.setVisible(true)
+        openItemDialog.visible = true
     }
 
 }

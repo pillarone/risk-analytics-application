@@ -48,7 +48,7 @@ class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(mainModel, model, parameterization)
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(model, parameterization)
         frame.setContentPane(parameterizationUIItem.createDetailView())
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

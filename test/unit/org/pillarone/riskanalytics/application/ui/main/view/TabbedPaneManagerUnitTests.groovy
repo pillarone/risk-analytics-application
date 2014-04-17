@@ -58,7 +58,7 @@ class TabbedPaneManagerUnitTests extends AbstractP1RATTestCase {
     static class TestUIItem extends BatchUIItem {
 
         TestUIItem(String name) {
-            super(new RiskAnalyticsMainModel(), new Batch(name))
+            super(new Batch(name))
         }
 
         @Override

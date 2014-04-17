@@ -43,7 +43,7 @@ class ResultConfigurationUIItemTests extends AbstractSimpleFunctionalTest {
         model.init()
 
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        ResultConfigurationUIItem uiItem = new ResultConfigurationUIItem(mainModel, model, configuration)
+        ResultConfigurationUIItem uiItem = new ResultConfigurationUIItem(model, configuration)
         frame.contentPane = uiItem.createDetailView()
         frame.visible = true
     }

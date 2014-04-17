@@ -17,7 +17,7 @@ class DataEntryPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
 
     @Override
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
-        add(new ULCMenuItem(new SendToReviewAction(tree, node.getItemNodeUIItem().mainModel)));
+        add(new ULCMenuItem(new SendToReviewAction(tree, riskAnalyticsMainModel)));
         return true;
     }
 

@@ -2,7 +2,9 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
 import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
@@ -15,22 +17,32 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ResultConfigurationUIItem extends ModellingUIItem {
+class ResultConfigurationUIItem extends ModellingUiItemWithModel {
 
-    ResultConfigurationUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, ResultConfiguration resultConfiguration) {
-        super(mainModel, simulationModel, resultConfiguration)
+    ResultConfigurationUIItem(Model model, ResultConfiguration resultConfiguration) {
+        super(model, resultConfiguration)
+    }
+
+    @Override
+    NavigationTableTreeModel getNavigationTableTreeModel() {
+        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
+    }
+
+    @Override
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     ULCContainer createDetailView() {
-        ResultConfigurationView view = new ResultConfigurationView(viewModel, mainModel)
-        mainModel.addModelItemChangedListener(view)
+        ResultConfigurationView view = new ResultConfigurationView(viewModel, riskAnalyticsMainModel)
+        riskAnalyticsMainModel.addModelItemChangedListener(view)
         return view.content
     }
 
     ResultConfigurationViewModel getViewModel() {
         ResultConfigurationViewModel model = new ResultConfigurationViewModel(this.model, (ResultConfiguration) item, ModelStructure.getStructureForModel(this.model.class))
-        model.mainModel = mainModel
-        mainModel.registerModel(this, model)
+        model.mainModel = riskAnalyticsMainModel
+        riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
 
@@ -46,11 +58,6 @@ class ResultConfigurationUIItem extends ModellingUIItem {
 
     @Override
     boolean isVersionable() {
-        return true
-    }
-
-    @Override
-    boolean isChangeable() {
         return true
     }
 

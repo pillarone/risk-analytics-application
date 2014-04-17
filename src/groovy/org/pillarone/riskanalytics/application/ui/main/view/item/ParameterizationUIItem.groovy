@@ -2,7 +2,9 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
 import groovy.transform.CompileStatic
+import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -22,22 +24,32 @@ import static org.pillarone.riskanalytics.core.workflow.Status.NONE
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ParameterizationUIItem extends ModellingUIItem {
+class ParameterizationUIItem extends ModellingUiItemWithModel {
 
-    ParameterizationUIItem(RiskAnalyticsMainModel model, Model simulationModel, Parameterization parameterization) {
-        super(model, simulationModel, parameterization)
+    ParameterizationUIItem(Model model, Parameterization parameterization) {
+        super(model, parameterization)
+    }
+
+    @Override
+    NavigationTableTreeModel getNavigationTableTreeModel() {
+        Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
+    }
+
+    @Override
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     @Override
     void close() {
-        ParameterViewModel viewModel = mainModel.viewModelsInUse[this] as ParameterViewModel
+        ParameterViewModel viewModel = riskAnalyticsMainModel.viewModelsInUse[this] as ParameterViewModel
         Parameterization parameterization = item
         parameterization.removeListener(viewModel)
         super.close()
     }
 
     ULCContainer createDetailView() {
-        ParameterView view = new ParameterView(viewModel, mainModel)
+        ParameterView view = new ParameterView(viewModel, riskAnalyticsMainModel)
         return view.content
     }
 
@@ -47,17 +59,17 @@ class ParameterizationUIItem extends ModellingUIItem {
         simulationModel.init()
         simulationModel.injectComponentNames()
         ParameterViewModel model = new ParameterViewModel(simulationModel, parameterization, ModelStructure.getStructureForModel(this.model.class))
-        model.mainModel = mainModel
-        mainModel.registerModel(this, model)
+        model.mainModel = riskAnalyticsMainModel
+        riskAnalyticsMainModel.registerModel(this, model)
         parameterization.addListener(model)
         return model
     }
 
     @Override
     void save() {
-        ModellingUIItem modellingUIItem = mainModel.getAbstractUIItem(item)
+        ModellingUIItem modellingUIItem = riskAnalyticsMainModel.getAbstractUIItem(item)
         if (modellingUIItem) {
-            ParameterViewModel viewModel = mainModel.getViewModel(modellingUIItem) as ParameterViewModel
+            ParameterViewModel viewModel = riskAnalyticsMainModel.getViewModel(modellingUIItem) as ParameterViewModel
             if (viewModel != null) {
                 viewModel.removeInvisibleComments()
             }
@@ -66,7 +78,7 @@ class ParameterizationUIItem extends ModellingUIItem {
     }
 
     @Override
-    ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion) {
+    ModellingUIItem createNewVersion(Model model, boolean openNewVersion) {
         Closure okAction = { String commentText ->
             if (!this.loaded) {
                 this.load()
@@ -93,8 +105,9 @@ class ParameterizationUIItem extends ModellingUIItem {
             uiItem.item.addTaggedComment(commentText, versionTag)
             uiItem.item.save()
         }
-        if (openNewVersion)
-            mainModel.openItem(selectedModel, uiItem)
+        if (openNewVersion) {
+            riskAnalyticsMainModel.openItem(selectedModel, uiItem)
+        }
     }
 
     @Override
@@ -113,11 +126,6 @@ class ParameterizationUIItem extends ModellingUIItem {
 
     @Override
     boolean isVersionable() {
-        return true
-    }
-
-    @Override
-    boolean isChangeable() {
         return true
     }
 

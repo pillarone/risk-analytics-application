@@ -14,7 +14,7 @@ class CommentsSwitchAction extends AbstractAction {
     boolean comment
     RiskAnalyticsMainModel model
 
-    public CommentsSwitchAction(model, text, comment) {
+    public CommentsSwitchAction(RiskAnalyticsMainModel model, String text, String comment) {
         super(text);
         this.model = model
         this.comment = comment;

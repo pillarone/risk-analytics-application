@@ -5,6 +5,8 @@ import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
+import com.ulcjava.base.development.DevelopmentRunnerContainerServices
+import com.ulcjava.base.server.ULCSession
 import models.application.ApplicationModel
 import org.joda.time.DateTime
 import org.junit.After
@@ -13,6 +15,7 @@ import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -47,8 +50,11 @@ class NavigationTableTreeModelTests {
 
     CacheItemSearchService cacheItemSearchService
 
+    private ULCSession currentSession = new ULCSession('', new DevelopmentRunnerContainerServices())
+
     @Before
     void setUp() {
+        new ULCSession.DefaultCurrentSessionRegistry().currentSession = currentSession
         cacheItemSearchService.cleanUp()
         cacheItemSearchService.init()
 
@@ -105,6 +111,7 @@ class NavigationTableTreeModelTests {
         LocaleResources.testMode = false
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
+        new ULCSession.DefaultCurrentSessionRegistry().currentSession = null
     }
 
     @Test
@@ -125,21 +132,21 @@ class NavigationTableTreeModelTests {
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
 
         assertEquals 2, paramsNode.childCount
-        def v11Node = paramsNode.getChildAt(1)
+        ItemNode v11Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v11Node.name
 
         assertEquals '11', v11Node.itemNodeUIItem.item.versionNumber.toString()
         assertEquals 10, v11Node.childCount
 
-        def v1Node = v11Node.getChildAt(9)
+        ItemNode v1Node = v11Node.getChildAt(9)
         assertEquals '1', v1Node.itemNodeUIItem.item.versionNumber.toString()
         assertEquals 3, v1Node.childCount
 
-        def v14Node = v1Node.getChildAt(0)
+        ItemNode v14Node = v1Node.getChildAt(0)
         assertEquals '1.4', v14Node.itemNodeUIItem.item.versionNumber.toString()
         assertEquals 1, v14Node.childCount
 
-        def v141Node = v14Node.getChildAt(0)
+        ItemNode v141Node = v14Node.getChildAt(0)
         assertEquals '1.4.1', v141Node.itemNodeUIItem.item.versionNumber.toString()
     }
 
@@ -154,7 +161,7 @@ class NavigationTableTreeModelTests {
         IMutableTableTreeNode paramsNode = modelNode.getChildAt(0) as IMutableTableTreeNode
         IMutableTableTreeNode resultsNode = modelNode.getChildAt(2) as IMutableTableTreeNode
         assertEquals 2, paramsNode.childCount
-        def v12Node = paramsNode.getChildAt(1)
+        ItemNode v12Node = paramsNode.getChildAt(1)
         assertEquals 'Parametrization X', v12Node.name
 
         assertEquals '12', v12Node.itemNodeUIItem.item.versionNumber.toString()
@@ -207,7 +214,7 @@ class NavigationTableTreeModelTests {
         IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
         assertEquals(1, batchNode.childCount)
         assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0), 0))
-        model.removeNodeForItem(new BatchUIItem(mainModel, new Batch(run.name)))
+        model.removeNodeForItem(new BatchUIItem(new Batch(run.name)))
         assertEquals(0, batchNode.childCount)
     }
 
@@ -367,16 +374,7 @@ class TestModelListener implements ITableTreeModelListener {
         nodeChangedEvents << event
     }
 }
-
-class TestModelChangedListener implements IModelChangedListener {
-    boolean changeCalled
-
-    @Override
-    void modelChanged() {
-        changeCalled = true
-    }
-}
-
+A
 class TestPollingSupport extends PollingSupport {
     private final List<IActionListener> listeners = []
 

@@ -28,7 +28,7 @@ class CompareSimulationsAction extends SelectionTreeAction {
             selectedModel.init()
             if (selectedModel != null) {
                 List<Simulation> items = elements*.itemNodeUIItem.item as List<Simulation>
-                CompareSimulationUIItem uiItem = new CompareSimulationUIItem(model, selectedModel, items)
+                CompareSimulationUIItem uiItem = new CompareSimulationUIItem(selectedModel, items)
                 model.openItem(selectedModel, uiItem)
             }
         } catch (IllegalArgumentException ex) {

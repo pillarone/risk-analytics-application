@@ -3,8 +3,9 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.util.Font
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
-import org.pillarone.riskanalytics.application.ui.base.model.ModellingItemNode
+import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.ParameterizationPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.DataEntryPopupMenu
@@ -12,12 +13,12 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.w
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.InReviewPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.RejectedPopupMenu
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 
 import static org.pillarone.riskanalytics.core.workflow.Status.*
 
-class ParameterizationNode extends ModellingItemNode implements IReportableNode {
+@CompileStatic
+class ParameterizationNode extends ItemNode implements IReportableNode {
 
     private Map<String, ULCPopupMenu> statusToMenuMap
 
@@ -56,15 +57,11 @@ class ParameterizationNode extends ModellingItemNode implements IReportableNode 
     }
 
     boolean isValid() {
-        parameterization.valid;
+        itemNodeUIItem.item.valid;
     }
 
     Status getStatus() {
-        parameterization.status
-    }
-
-    Parameterization getParameterization() {
-        itemNodeUIItem.item as Parameterization
+        itemNodeUIItem.item.status
     }
 
     @Override
@@ -74,7 +71,7 @@ class ParameterizationNode extends ModellingItemNode implements IReportableNode 
 
     @Override
     String getToolTip() {
-        parameterization.status == NONE ? String.valueOf("") : parameterization.status.displayName;
+        itemNodeUIItem.item.nameAndVersion
     }
 
     List<Class> modelsToReportOn() {
@@ -83,5 +80,10 @@ class ParameterizationNode extends ModellingItemNode implements IReportableNode 
 
     List<ModellingItem> modellingItemsForReport() {
         [itemNodeUIItem.item]
+    }
+
+    @Override
+    ParameterizationUIItem getItemNodeUIItem() {
+        return super.itemNodeUIItem as ParameterizationUIItem
     }
 }

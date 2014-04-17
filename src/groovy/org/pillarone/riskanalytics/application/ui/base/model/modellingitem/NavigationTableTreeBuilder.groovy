@@ -310,7 +310,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         //TODO
         Batch batch = new Batch(batchRun.name)
         batch.load()
-        addNodeForItem(new BatchUIItem(riskAnalyticsMainModel, batch), true)
+        addNodeForItem(new BatchUIItem(batch), true)
     }
 
     @Override
@@ -343,7 +343,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged = true) {
-        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null, riskAnalyticsMainModel)
+        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null)
         addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
@@ -467,7 +467,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     public void removeNodeForItem(ModellingItem modellingItem) {
-        removeNodeForItem(UIItemFactory.createItem(modellingItem, null, riskAnalyticsMainModel))
+        removeNodeForItem(UIItemFactory.createItem(modellingItem, null))
     }
 
     public void addNodesForItems(List<ModellingItem> items) {
@@ -574,7 +574,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
                 DefaultMutableTableTreeNode newNode = createNode(modellingUIItem)
                 DefaultMutableTableTreeNode childNode = node.getChildAt(i) as DefaultMutableTableTreeNode
                 LOG.debug("Item with previous version already in tree. ${childNode}")
-                if (modellingUIItem.isVersionable() && modellingUIItem.item.versionNumber.level > 1) {
+                if (modellingUIItem.versionable && modellingUIItem.item.versionNumber.level > 1) {
                     insertSubversionItemNode(childNode, newNode, notifyStructureChanged)
                 } else {
                     def children = []
@@ -654,7 +654,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(Parameterization item) {
-        return createNode(new ParameterizationUIItem(riskAnalyticsMainModel, item.modelClass?.newInstance() as Model, item))
+        return createNode(new ParameterizationUIItem(item.modelClass?.newInstance() as Model, item))
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
@@ -664,7 +664,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfiguration item) {
-        return createNode(new ResultConfigurationUIItem(riskAnalyticsMainModel, item.modelClass?.newInstance(), item))
+        return createNode(new ResultConfigurationUIItem(item.modelClass?.newInstance() as Model, item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
@@ -674,7 +674,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(Resource item) {
-        return createNode(new ResourceUIItem(riskAnalyticsMainModel, null, item))
+        return createNode(new ResourceUIItem(item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResourceUIItem item) {
@@ -684,16 +684,18 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(BatchUIItem batchUIItem) {
-        return new BatchNode(batchUIItem)
+        BatchNode node = new BatchNode(batchUIItem)
+        tableTreeModelWithValues.putValues(node)
+        return node
     }
 
     private DefaultMutableTableTreeNode createNode(Batch batch) {
-        return new BatchNode(new BatchUIItem(riskAnalyticsMainModel, batch))
+        return new BatchNode(new BatchUIItem(batch))
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
         Model selectedModelInstance = item.modelClass?.newInstance() as Model
-        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance, riskAnalyticsMainModel))
+        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance))
         DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
         paramsNode.leaf = true
         DefaultMutableTableTreeNode templateNode = createNode(item.template)

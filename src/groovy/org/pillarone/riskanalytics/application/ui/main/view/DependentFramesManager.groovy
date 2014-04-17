@@ -18,33 +18,33 @@ class DependentFramesManager {
         this.tabbedPane = tabbedPane
     }
 
-    public void selectTab(AbstractUIItem abstractUIItem) {
-        tabbedPane.dependentFrames.each {ULCFrame frame ->
+    void selectTab(AbstractUIItem abstractUIItem) {
+        tabbedPane.dependentFrames.each { ULCFrame frame ->
             if (removeUnsavedMark(frame.title).equals(removeUnsavedMark(abstractUIItem.createTitle()))) {
-                ULCCloseableTabbedPane tp = (ULCCloseableTabbedPane) frame.getContentPane().getComponents()[0]
-                tp.setSelectedIndex(0)
+                ULCCloseableTabbedPane tp = (ULCCloseableTabbedPane) frame.contentPane.components[0]
+                tp.selectedIndex = 0
                 frame.toFront()
             }
 
         }
     }
 
-    public void closeTab(AbstractUIItem abstractUIItem) {
-        tabbedPane.dependentFrames.each {ULCFrame frame ->
+    void closeTab(AbstractUIItem abstractUIItem) {
+        tabbedPane.dependentFrames.each { ULCFrame frame ->
             if (removeUnsavedMark(frame.title).equals(removeUnsavedMark(abstractUIItem.createTitle()))) {
-                ULCCloseableTabbedPane tp = (ULCCloseableTabbedPane) frame.getContentPane().getComponents()[0]
+                ULCCloseableTabbedPane tp = (ULCCloseableTabbedPane) frame.contentPane.components[0]
                 tp.closeCloseableTab(0)
                 frame.dispose()
             }
         }
     }
 
-    public void updateTabbedPaneTitle(AbstractUIItem abstractUIItem) {
-        tabbedPane.dependentFrames.each {ULCFrame frame ->
+    void updateTabbedPaneTitle(AbstractUIItem abstractUIItem) {
+        tabbedPane.dependentFrames.each { ULCFrame frame ->
             String newTitle = abstractUIItem.createTitle()
             if (removeUnsavedMark(frame.title).equals(removeUnsavedMark(newTitle))) {
-                frame.setTitle(newTitle)
-                ULCCloseableTabbedPane tp = (ULCCloseableTabbedPane) frame.getContentPane().getComponents()[0]
+                frame.title = newTitle
+                ULCCloseableTabbedPane tp = (ULCCloseableTabbedPane) frame.contentPane.components[0]
                 tp.setTitleAt(0, newTitle)
             }
         }

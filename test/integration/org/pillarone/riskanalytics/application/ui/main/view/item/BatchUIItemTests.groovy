@@ -47,7 +47,7 @@ class BatchUIItemTests extends AbstractUIItemTest {
         Batch batch = new Batch(batchRun.name)
         batch.load()
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        new BatchUIItem(mainModel, batch)
+        new BatchUIItem(batch)
     }
 
 

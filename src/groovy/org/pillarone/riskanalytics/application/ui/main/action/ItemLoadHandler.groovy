@@ -68,7 +68,7 @@ class ItemLoadHandler implements IFileLoadHandler {
                                     newItem = ModellingItemFactory.createItem(itemName, data, node ? node.itemClass : Parameterization.class, forceImport)
 
                                 if (newItem != null) {
-                                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(newItem, parentNodeModel, importAction.model)
+                                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(newItem, parentNodeModel)
                                     modellingUIItem.importItem()
                                 } else {
                                     ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(importAction.tree), "lastVersionError")

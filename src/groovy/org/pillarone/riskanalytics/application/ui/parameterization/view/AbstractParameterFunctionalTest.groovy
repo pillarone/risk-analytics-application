@@ -48,7 +48,7 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
         parameterizationId = parameterization.dao.id
 
         mainModel = new RiskAnalyticsMainModel()
-        ModellingUIItem uiItem = UIItemFactory.createItem(parameterization, model, mainModel)
+        ModellingUIItem uiItem = UIItemFactory.createItem(parameterization, model)
 
         ModelStructure structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationWithoutHierarchyStructure'))
         structure.load()

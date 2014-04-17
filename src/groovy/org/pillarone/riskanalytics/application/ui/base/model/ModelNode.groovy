@@ -5,10 +5,12 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.model.Model
 
 import static com.ulcjava.base.application.util.Font.PLAIN
 
+@CompileStatic
 class ModelNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
     private final Model model
@@ -47,8 +49,8 @@ class ModelNode extends DefaultMutableTableTreeNode implements INavigationTreeNo
         return ''
     }
 
+    @Override
     Class getItemClass() {
         model.class
     }
-
 }

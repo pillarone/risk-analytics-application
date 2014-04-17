@@ -11,7 +11,6 @@ import org.pillarone.riskanalytics.core.ParameterizationDAO
 
 import org.pillarone.riskanalytics.core.parameterization.ParameterizationHelper
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.base.model.ResourceClassNode
 import org.pillarone.riskanalytics.core.ResourceDAO
 import org.pillarone.riskanalytics.core.simulation.item.Resource
@@ -51,7 +50,7 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
                     }
                     dialog.hide()
 
-                    ResourceUIItem resourceUIItem = new ResourceUIItem(model, null, resource)
+                    ResourceUIItem resourceUIItem = new ResourceUIItem(resource)
                     model.fireModelChanged()
                     resourceUIItem.load(true)
                     model.notifyOpenDetailView(null, resourceUIItem)

@@ -6,40 +6,39 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.INavigationTreeNode
 import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
-/**
- * @author fouad.jaada@intuitive-collaboration.com
- */
+@CompileStatic
 class BatchRootNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
-    RiskAnalyticsMainModel mainModel
+    private final RiskAnalyticsMainModel mainModel
 
-    public BatchRootNode(String name, RiskAnalyticsMainModel mainModel) {
-        super([name] as Object[]);
+    BatchRootNode(String name, RiskAnalyticsMainModel mainModel) {
+        super([name] as Object[], false)
         this.mainModel = mainModel
     }
 
-    public ULCPopupMenu getPopupMenu(ULCTableTree tree) {
+    ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu batchesRootNodePopUpMenu = new ULCPopupMenu()
         batchesRootNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, mainModel)))
         return batchesRootNodePopUpMenu
     }
 
-    public ULCIcon getIcon() {
+    ULCIcon getIcon() {
         return null
     }
 
-    public Font getFont(String fontName, int fontSize) {
+    Font getFont(String fontName, int fontSize) {
         return new Font(fontName, Font.PLAIN, fontSize)
     }
 
-    public String getToolTip() {
+    String getToolTip() {
         return ""
     }
 
-    public String getName() {
+    String getName() {
         return ""
     }
 

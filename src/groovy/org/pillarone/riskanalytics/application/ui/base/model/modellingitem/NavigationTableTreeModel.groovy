@@ -139,10 +139,6 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
         return columnIndex == 0 ? node.getValueAt(columnIndex) : null
     }
 
-    private Object getValue(BatchNode node, int columnIndex) {
-        getColumnValue(node, columnIndex)
-    }
-
     @Override
     void putValues(ItemNode node) {
         for (int column = 0; column < COLUMN_NAMES.size(); column++) {

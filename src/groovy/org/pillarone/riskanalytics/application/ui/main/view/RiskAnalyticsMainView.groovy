@@ -150,7 +150,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         AbstractUIItem abstractUIItem = TableTreeBuilderUtils.findUIItemForItem(selectionTreeView.root, item)
         if (!abstractUIItem) {
             LOG.error " AbstractUIItem (${item.name}) table tree node not found "
-            abstractUIItem = UIItemFactory.createItem(item, model, riskAnalyticsMainModel)
+            abstractUIItem = UIItemFactory.createItem(item, model)
         }
         if (!abstractUIItem.loaded) {
             abstractUIItem.load(true)

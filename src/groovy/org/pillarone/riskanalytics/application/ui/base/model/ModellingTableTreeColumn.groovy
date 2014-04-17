@@ -1,14 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.base.model
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.remoting.TransactionInfo
 import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Resource
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -16,9 +18,9 @@ public class ModellingTableTreeColumn {
     //Can disable optimisation by setting -DskipNameLookupForNegativeDealIds=false
     //
     private static boolean skipNameLookupForNegativeDealIds =
-        System.getProperty("skipNameLookupForNegativeDealIds","true").equalsIgnoreCase("true");
+            System.getProperty("skipNameLookupForNegativeDealIds", "true").equalsIgnoreCase("true");
 
-    protected static Log LOG = LogFactory.getLog(ModellingTableTreeColumn)
+    private static final Log LOG = LogFactory.getLog(ModellingTableTreeColumn)
 
     List<TransactionInfo> transactionInfos
     Map instances
@@ -28,11 +30,6 @@ public class ModellingTableTreeColumn {
         @Override
         Object getValue(ModellingItem modellingItem) {
             return modellingItem.nameAndVersion
-        }
-
-        @Override
-        Object getValue(Model model) {
-            return model.name
         }
     }
 
@@ -49,14 +46,21 @@ public class ModellingTableTreeColumn {
 
     class TagsColumn extends ModellingTableTreeColumn {
 
-        @Override
         Object getValue(ModellingItem modellingItem) {
-            if (!(modellingItem instanceof ResultConfiguration)) {
-                return modellingItem?.tags?.join(",")
-            }
-            return ""
+            return ''
         }
 
+        Object getValue(Resource resource) {
+            return resource.tags.join(",")
+        }
+
+        Object getValue(Parameterization parameterization) {
+            return parameterization.tags.join(",")
+        }
+
+        Object getValue(Simulation simulation) {
+            return simulation.tags.join(",")
+        }
     }
 
     class TransactionColumn extends ModellingTableTreeColumn {
@@ -107,20 +111,16 @@ public class ModellingTableTreeColumn {
         return null
     }
 
-    Object getValue(Model model) {
-        return null
-    }
-
-    public ModellingTableTreeColumn getEnumModellingTableTreeColumnFor(int desired) {
+    ModellingTableTreeColumn getEnumModellingTableTreeColumnFor(int desired) {
         getInstances().get(desired)
     }
 
     private String getTransactionName(Long dealId) {
-        if(dealId == null){
+        if (dealId == null) {
             LOG.warn("getTransactionName() called with null dealId")
             return ""
         }
-        if(skipNameLookupForNegativeDealIds && dealId.longValue() < 0){
+        if (skipNameLookupForNegativeDealIds && dealId.longValue() < 0) {
             return ""
         }
         try {
@@ -129,13 +129,13 @@ public class ModellingTableTreeColumn {
                 transactionInfos = RemotingUtils.allTransactions
             }
             //Note: Potential optimisation: A (dealId -> TransactionInfo) lookup table
-            TransactionInfo transactionInfo = transactionInfos.find {it.dealId == dealId}
-            if (transactionInfo){
+            TransactionInfo transactionInfo = transactionInfos.find { it.dealId == dealId }
+            if (transactionInfo) {
                 return transactionInfo.getName()
             }
         } catch (Exception ex) {
-            LOG.warn("Exception looking up transaction for dealId:"+dealId,ex)
-            return ""+dealId
+            LOG.warn("Exception looking up transaction for dealId:" + dealId, ex)
+            return "" + dealId
         }
         return ""
     }

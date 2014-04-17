@@ -5,21 +5,25 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
+import grails.util.Holders
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.main.view.CreateReportsMenu
-import org.pillarone.riskanalytics.application.ui.main.view.item.ItemNodeUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 import org.pillarone.riskanalytics.core.report.IReportModel
 import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
+@CompileStatic
 class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
-    private final ItemNodeUIItem itemNodeUIItem
+    private final ModellingUIItem itemNodeUIItem
     private final Map values = [:]
 
-    ItemNode(ItemNodeUIItem itemNodeUIItem, name, boolean leaf) {
-        super([name] as Object[], leaf)
+    ItemNode(ModellingUIItem itemNodeUIItem, boolean leaf) {
+        super([itemNodeUIItem.nameAndVersion] as Object[], leaf)
         this.itemNodeUIItem = itemNodeUIItem;
     }
 
@@ -27,7 +31,7 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         return values
     }
 
-    ItemNodeUIItem getItemNodeUIItem() {
+    ModellingUIItem getItemNodeUIItem() {
         return itemNodeUIItem
     }
 
@@ -72,10 +76,27 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         List<IReportModel> reports = new ArrayList<IReportModel>()
         reports.addAll(ReportRegistry.getReportModel(modelsToDisplay)) //TODO rename method to getReportModels and test.
         if (!reports.empty) { //Fails here consequently
-            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, itemNodeUIItem.mainModel, simulationNodePopUpMenu)
+            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, riskAnalyticsMainModel, simulationNodePopUpMenu)
             reportsMenu.visible = true
             if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
             simulationNodePopUpMenu.add(reportsMenu)
         }
+    }
+
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+    }
+
+    String getUserObject() {
+        itemNodeUIItem.nameAndVersion
+    }
+
+    void setUserObject(String userObject) {
+        itemNodeUIItem.item.rename(userObject)
+        setValueAt(itemNodeUIItem.nameAndVersion, 0)
+    }
+
+    String toString() {
+        userObject
     }
 }
