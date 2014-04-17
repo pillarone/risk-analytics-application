@@ -1,15 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractUIItem implements IUIItem {
-
-    void save() {}
+abstract class AbstractUIItem {
 
     boolean remove() {
         return false
@@ -27,11 +27,12 @@ abstract class AbstractUIItem implements IUIItem {
         return false
     }
 
+
     void load(boolean completeLoad = true) {}
 
     void unload() {}
 
-    List<SimulationRun> getSimulations() {
+    List<Simulation> getSimulations() {
         return []
     }
 
@@ -40,6 +41,10 @@ abstract class AbstractUIItem implements IUIItem {
     abstract Object getViewModel()
 
     abstract String createTitle()
+
+    abstract void close()
+
+    abstract String getWindowTitle()
 
     String getToolTip() {
         return ""

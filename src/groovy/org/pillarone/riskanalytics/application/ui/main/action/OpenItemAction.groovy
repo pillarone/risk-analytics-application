@@ -52,12 +52,12 @@ class OpenItemAction extends SelectionTreeAction {
     }
 
     private void openItem(ResourceUIItem item) {
-        boolean usedInSimulation = item.isUsedInSimulation()
-        if (!usedInSimulation) {
+        boolean usedInSimulation = item.usedInSimulation
+        if (usedInSimulation) {
+            showOpenItemDialog(null, item)
+        } else {
             item.load()
             this.model.openItem(null, item)
-        } else {
-            showOpenItemDialog(null, item)
         }
     }
 

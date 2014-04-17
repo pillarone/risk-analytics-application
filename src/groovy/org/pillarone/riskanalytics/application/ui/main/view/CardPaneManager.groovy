@@ -38,7 +38,7 @@ class CardPaneManager {
      * @param model
      */
     void addCard(Model selectedModel) {
-        ULCTabbedPane modelCardContent = createDetachableTabbedPane(selectedModel)
+        ULCDetachableTabbedPane modelCardContent = createDetachableTabbedPane(selectedModel)
         cardPane.addCard(getModelName(selectedModel), modelCardContent)
         Closure closeAction = { event -> closeCard(selectedModel, modelCardContent, modelCardContent.selectedIndex) }
 
@@ -97,15 +97,13 @@ class CardPaneManager {
     private void closeCard(Model model, ULCTabbedPane modelCardContent, int closingIndex) {
         if (closingIndex == -1) return
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(model)]
-        AbstractUIItem abstractUIItem = tabbedPaneManager.getAbstractItem(modelCardContent.getComponentAt(closingIndex))
-        if (!abstractUIItem) return
-        tabbedPaneManager.closeTab(abstractUIItem)
-
-        if (modelCardContent && modelCardContent.tabCount == 0)
+        tabbedPaneManager.closeTab(modelCardContent.getComponentAt(closingIndex))
+        if (modelCardContent && modelCardContent.tabCount == 0) {
             removeCard(model)
+        }
     }
 
-    public ULCTabbedPane createDetachableTabbedPane(Model selectedModel) {
+    public ULCDetachableTabbedPane createDetachableTabbedPane(Model selectedModel) {
         ULCTabbedPane tabbedPane = new ULCDetachableTabbedPane(name: "DetachableTabbedPane")
         tabbedPane.addTabListener([tabClosing: { TabEvent event ->
             int closingIndex = event.tabClosingIndex

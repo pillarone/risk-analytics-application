@@ -16,7 +16,6 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
@@ -43,25 +42,26 @@ class DeleteAction extends SelectionTreeAction {
                 iterator.remove()
             }
         }
-        if (!selectedItems) return
+        if (!selectedItems) {
+            return
+        }
         AlertDialog dialog = new AlertDialog(tree, selectedItems, UIUtils.getText(DeleteAction, "warningTitle"), UIUtils.getText(DeleteAction, "warningMessage", [getNames(selectedItems)]), okAction)
         dialog.init()
         dialog.show()
     }
 
     protected void removeItem(ModellingUIItem selectedItem) {
-        boolean usedInSimulation = selectedItem.isUsedInSimulation()
-        Model selectedModel = getSelectedModel()
-        if (!usedInSimulation) {
+        boolean usedInSimulation = selectedItem.usedInSimulation
+        if (usedInSimulation) {
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
+            alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, selectedItem) }] as IWindowListener)
+            alert.show()
+        } else {
             if (!selectedItem.remove()) {
                 ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Error", "Error removing selected item. See log files for details.", "Ok")
                 alert.messageType = ULCAlert.ERROR_MESSAGE
                 alert.show()
             }
-        } else {
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteUsedItem")
-            alert.addWindowListener([windowClosing: {WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, selectedModel, selectedItem)}] as IWindowListener)
-            alert.show()
         }
     }
 
@@ -81,13 +81,14 @@ class DeleteAction extends SelectionTreeAction {
         }
     }
 
-    private void handleEvent(String value, String firstButtonValue, Model selectedModel, ModellingUIItem item) {
+    private void handleEvent(String value, String firstButtonValue, ModellingUIItem item) {
         synchronized (item) {
             if (value.equals(firstButtonValue)) {
-                if (item.deleteDependingResults(selectedModel))
+                if (item.deleteDependingResults()) {
                     removeItem(item)
-                else
+                } else {
                     new I18NAlert(UlcUtilities.getWindowAncestor(tree), "DeleteAllDependentRunsError").show()
+                }
             }
         }
     }

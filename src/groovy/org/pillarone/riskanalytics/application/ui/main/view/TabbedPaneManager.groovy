@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
@@ -12,13 +13,13 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 
 class TabbedPaneManager {
 
-    private ULCTabbedPane tabbedPane
+    private ULCDetachableTabbedPane tabbedPane
     private DependentFramesManager dependentFramesManager
     private Map<AbstractUIItem, ULCComponent> tabManager = [:]
 
     //keep a map of open items to avoid to compare titles to find the tabs
 
-    TabbedPaneManager(ULCTabbedPane tabbedPane) {
+    TabbedPaneManager(ULCDetachableTabbedPane tabbedPane) {
         this.tabbedPane = tabbedPane
         this.dependentFramesManager = new DependentFramesManager(this.tabbedPane)
     }
@@ -29,7 +30,7 @@ class TabbedPaneManager {
      * A TabbedPaneManager needs to be created here as well.
      * @param model
      */
-    public void addTab(AbstractUIItem item) {
+    void addTab(AbstractUIItem item) {
         ULCContainer view = item.createDetailView()
         def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
         tabbedPane.addTab(item.createTitle(), item.icon, wrapped)
@@ -37,7 +38,7 @@ class TabbedPaneManager {
         tabbedPane.selectedIndex = tabIndex
         tabManager[item] = wrapped
         if (item instanceof ModellingUIItem) {
-            item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, tabbedPane, item)
+            item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, item)
         }
         tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
     }
@@ -46,7 +47,14 @@ class TabbedPaneManager {
         Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
-    public void closeTab(AbstractUIItem abstractUIItem) {
+    void closeTab(ULCComponent component) {
+        AbstractUIItem item = getAbstractItem(component)
+        if (item) {
+            closeTabForItem(item)
+        }
+    }
+
+    private void closeTabForItem(AbstractUIItem abstractUIItem) {
         if (abstractUIItem.changed) {
             boolean closeTab = true
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tabManager[abstractUIItem]), "itemChanged")
@@ -80,10 +88,10 @@ class TabbedPaneManager {
      * Opens and selects the card for the given model
      * @param model the model to open
      */
-    public void selectTab(AbstractUIItem item) {
-        ULCComponent component = tabManager.get(item)
+    void selectTab(AbstractUIItem item) {
+        ULCComponent component = tabManager[item]
         if (tabbedPane.indexOfComponent(component) >= 0) {
-            tabbedPane.setSelectedComponent(component)
+            tabbedPane.selectedComponent = component
         } else {
             dependentFramesManager.selectTab(item)
         }
@@ -93,7 +101,7 @@ class TabbedPaneManager {
      * Removes a tab from the Tabbed Pane for the given item
      * @param item
      */
-    public void removeTab(AbstractUIItem item) {
+    void removeTab(AbstractUIItem item) {
         ULCComponent component = tabManager[item]
         if (component) {
             if (tabbedPane.indexOfComponent(component) >= 0) {
@@ -105,7 +113,7 @@ class TabbedPaneManager {
         }
     }
 
-    public boolean tabExists(AbstractUIItem abstractUIItem) {
+    boolean tabExists(AbstractUIItem abstractUIItem) {
         return tabManager.containsKey(abstractUIItem)
     }
 
@@ -118,8 +126,8 @@ class TabbedPaneManager {
         return abstractUIItem
     }
 
-    public void updateTabbedPaneTitle(ULCTabbedPane tabbedPane, AbstractUIItem abstractUIItem) {
-        ULCComponent component = tabManager.get(abstractUIItem)
+    void updateTabbedPaneTitle(AbstractUIItem abstractUIItem) {
+        ULCComponent component = tabManager[abstractUIItem]
         if (component) {
             int tabIndex = tabbedPane.indexOfComponent(component)
             if (tabIndex >= 0)

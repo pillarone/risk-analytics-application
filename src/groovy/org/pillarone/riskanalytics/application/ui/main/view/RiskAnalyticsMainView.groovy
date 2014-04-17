@@ -95,7 +95,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(BOX_LEFT_TOP, navigationSwitchButton);
 
-        validationSplitPaneAction = new CommentsSwitchAction(riskAnalyticsMainModel, UIUtils.getText(this.class, "ValidationsAndComments"), false)
+        validationSplitPaneAction = new CommentsSwitchAction(riskAnalyticsMainModel, UIUtils.getText(this.class, "ValidationsAndComments"))
         ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
         validationSwitchButton.selected = false
         validationSwitchButton.enabled = false
@@ -185,7 +185,8 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     }
 
     void itemChanged(ModellingItem item) {
-        if (item == riskAnalyticsMainModel?.currentItem?.item) {
+        AbstractUIItem currentItem = riskAnalyticsMainModel?.currentItem
+        if (currentItem && (currentItem instanceof ModellingUIItem) && currentItem.item == item) {
             headerView.syncMenuBar()
         }
     }

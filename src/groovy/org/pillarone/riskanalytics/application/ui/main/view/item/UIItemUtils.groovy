@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.Comment
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.springframework.transaction.TransactionStatus
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -23,28 +24,29 @@ class UIItemUtils {
     private static final Log LOG = LogFactory.getLog(UIItemUtils)
 
     public
-    static boolean deleteDependingResults(RiskAnalyticsMainModel mainModel, Model model, ModellingUIItem modellingUIItem) {
-        return deleteDependingResults(mainModel, model, modellingUIItem.item)
+    static boolean deleteDependingResults(Model model, ModellingUIItem modellingUIItem) {
+        return deleteDependingResults(model, modellingUIItem.item)
     }
 
-    public static boolean deleteDependingResults(RiskAnalyticsMainModel mainModel, Model model, ModellingItem item) {
+    public static boolean deleteDependingResults(Model model, ModellingItem item) {
         if (isUsedInRunningSimulation(item)) {
             return false
         }
         try {
             SimulationRun.withTransaction { TransactionStatus status ->
-                List<SimulationRun> simulationRuns = item.simulations;
+                List<Simulation> simulations = item.simulations.collect {
+                    ModellingItemFactory.getOrCreate(it)
+                }
                 //check if at least one simulation is running
-                List<SimulationRun> runsToBeRemoved = []
-                for (SimulationRun simulationRun : simulationRuns) {
-                    if (!simulationRun.endTime) {
+                List<Simulation> runsToBeRemoved = []
+                for (Simulation simulationRun : simulations) {
+                    if (!simulationRun.end) {
                         simulationRun.delete()
                         runsToBeRemoved << simulationRun
                     }
                 }
-                simulationRuns.removeAll(runsToBeRemoved)
-                for (SimulationRun simulationRun : simulationRuns) {
-                    Simulation simulation = ModellingItemFactory.getSimulation(simulationRun)
+                simulations.removeAll(runsToBeRemoved)
+                for (Simulation simulation : simulations) {
                     SimulationSettingsUIItem simulationUIItem = new SimulationSettingsUIItem(model, simulation)
                     simulationUIItem.remove()
                 }
@@ -59,15 +61,15 @@ class UIItemUtils {
         return true
     }
 
-    public static boolean isUsedInRunningSimulation(ModellingItem item) {
+    static boolean isUsedInRunningSimulation(ModellingItem item) {
         boolean usedInRunningSimulation = false
-        List<SimulationRun> simulationRuns = item.simulations
-        for (SimulationRun simulationRun : simulationRuns) {
-            if (!simulationRun.endTime) {
-                if (!simulationRun.batchRun) {
-                    usedInRunningSimulation = true
-                    break
-                }
+        List<Simulation> simulations = item.simulations.collect {
+            ModellingItemFactory.getOrCreate(it)
+        }
+        for (Simulation simulation : simulations) {
+            if (!(simulation.end || simulation.batchId)) {
+                usedInRunningSimulation = true
+                break
             }
         }
         return usedInRunningSimulation
@@ -77,7 +79,7 @@ class UIItemUtils {
         parameterization.comments.each { Comment comment ->
             if (comment.tags.contains(tag)) {
                 comment.removeTag(tag)
-                parameterization.setChanged(true)
+                parameterization.changed = true
             }
         }
         if (parameterization.changed) parameterization.save()

@@ -73,10 +73,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
         modellingItemCache.removeItemEventListener(listener)
     }
 
-    void setCurrentItem(AbstractUIItem currentItem) {
-        this.currentItem = (currentItem instanceof BatchUIItem) ? null : currentItem
-    }
-
     void saveAllOpenItems() {
         viewModelsInUse.keySet().each { AbstractUIItem item ->
             item.save()

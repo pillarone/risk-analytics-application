@@ -1,41 +1,32 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
-import com.ulcjava.base.application.ULCTabbedPane
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
 class MarkItemAsUnsavedListener implements IModellingItemChangeListener {
-    private ULCTabbedPane tabbedPane
-    static String UNSAVED_MARK = " *"
+    static final String UNSAVED_MARK = " *"
     private TabbedPaneManager tabbedPaneManager
-    private AbstractUIItem abstractUIItem
+    private ModellingUIItem modellingUIItem
 
-    public MarkItemAsUnsavedListener(TabbedPaneManager tabbedPaneManager, ULCTabbedPane tabbedPane, AbstractUIItem abstractUIItem) {
+    MarkItemAsUnsavedListener(TabbedPaneManager tabbedPaneManager, ModellingUIItem modellingUIItem) {
         this.tabbedPaneManager = tabbedPaneManager
-        this.tabbedPane = tabbedPane
-        this.abstractUIItem = abstractUIItem
+        this.modellingUIItem = modellingUIItem
     }
 
-    public void itemChanged(ModellingItem modellingItem) {
-        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
+    void itemChanged(ModellingItem modellingItem) {
+        tabbedPaneManager.updateTabbedPaneTitle(modellingUIItem)
     }
 
-    public void itemSaved(ModellingItem modellingItem) {
-        update(abstractUIItem)
+    void itemSaved(ModellingItem modellingItem) {
+        tabbedPaneManager.updateTabbedPaneTitle(modellingUIItem)
     }
 
-    public void update(AbstractUIItem abstractUIItem) {
-        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, abstractUIItem)
-    }
 
-    public void update(BatchUIItem batchUIItem) {
-        tabbedPaneManager.updateTabbedPaneTitle(tabbedPane, batchUIItem)
-    }
-
-    public static String removeUnsavedMark(String title) {
-        if (title.endsWith(UNSAVED_MARK)) return title.substring(0, title.indexOf(UNSAVED_MARK))
+    static String removeUnsavedMark(String title) {
+        if (title.endsWith(UNSAVED_MARK)) {
+            return title.substring(0, title.indexOf(UNSAVED_MARK))
+        }
         return title
     }
 

@@ -122,7 +122,7 @@ abstract class AbstractCommentableItemModel extends AbstractModellingModel {
         navigationListeners.remove(listener)
     }
 
-    void navigationSelected(boolean comment) {
+    void navigationSelected() {
         navigationListeners.each {NavigationListener listener ->
             listener.showHiddenComments()
         }

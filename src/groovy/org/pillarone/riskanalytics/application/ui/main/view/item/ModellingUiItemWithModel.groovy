@@ -37,6 +37,11 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         return null
     }
 
+    @Override
+    boolean deleteDependingResults() {
+        return UIItemUtils.deleteDependingResults(model, this)
+    }
+
     Model getModel() {
         if (!model) {
             model = item.modelClass.newInstance() as Model
@@ -49,9 +54,6 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         riskAnalyticsMainModel.closeItem(model, this)
     }
 
-    boolean deleteDependingResults(Model model) {
-        return UIItemUtils.deleteDependingResults(riskAnalyticsMainModel, model, this)
-    }
 
     ModellingUIItem createNewVersion(Model model, boolean openNewVersion = true) {
         ModellingItem modellingItem = null

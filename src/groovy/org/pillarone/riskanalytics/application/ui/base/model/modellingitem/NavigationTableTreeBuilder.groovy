@@ -643,7 +643,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         node.add(newNode)
     }
 
-    private boolean isMatchingParent(IUIItem currentItem, IUIItem itemToAdd) {
+    private boolean isMatchingParent(AbstractUIItem currentItem, AbstractUIItem itemToAdd) {
         return currentItem.name == itemToAdd.name
     }
 

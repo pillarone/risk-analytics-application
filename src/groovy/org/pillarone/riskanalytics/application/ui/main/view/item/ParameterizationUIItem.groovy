@@ -12,10 +12,10 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 import static org.pillarone.riskanalytics.core.workflow.Status.DATA_ENTRY
@@ -111,7 +111,7 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
     }
 
     @Override
-    List<SimulationRun> getSimulations() {
+    List<Simulation> getSimulations() {
         return item.simulations
     }
 

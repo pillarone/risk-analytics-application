@@ -591,4 +591,15 @@ class ModellingItemFactory {
         itemInstances[key] = target
         target
     }
+
+    static <T extends ModellingItem> T getOrCreate(T source) {
+        def key = key(source.class, source.id)
+        def object = itemInstances[key]
+        if (!object) {
+            object = source
+            source.load()
+            itemInstances[key] = object
+        }
+        return object
+    }
 }

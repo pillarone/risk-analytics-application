@@ -36,7 +36,7 @@ class OpenItemDialog {
     private ULCButton cancelButton
     private Dimension buttonDimension = new Dimension(160, 20)
 
-    Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
+    Closure closeAction = { event -> dialog.visible = false; dialog.dispose() }
 
 
     public OpenItemDialog(ULCTableTree tree, Model model, RiskAnalyticsMainModel mainModel, ModellingUIItem modellingUIItem) {
@@ -73,8 +73,8 @@ class OpenItemDialog {
 
     private void layoutComponents() {
         int columns = 4
-        if(isWorkflowItem()) columns--
-        if(item instanceof Resource) columns--
+        if (isWorkflowItem()) columns--
+        if (item instanceof Resource) columns--
         ULCBoxPane content = new ULCBoxPane(rows: 1, columns: columns)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         if (!isWorkflowItem()) {
@@ -94,36 +94,36 @@ class OpenItemDialog {
 
     private void attachListeners() {
         createCopyButton.addActionListener(new CreateNewMajorVersion(modellingUIItem))
-        createCopyButton.addActionListener([actionPerformed: {ActionEvent event ->
+        createCopyButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
         }] as IActionListener)
 
-        readOnlyButton.addActionListener([actionPerformed: {ActionEvent event ->
+        readOnlyButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
-            if (!modellingUIItem.isLoaded())
+            if (!modellingUIItem.loaded)
                 modellingUIItem.load()
             LOG.info("Opening ${modellingUIItem.nameAndVersion} read-only.")
             mainModel.notifyOpenDetailView(model, modellingUIItem)
         }] as IActionListener)
 
-        deleteDependingResultsButton.addActionListener([actionPerformed: {ActionEvent event ->
+        deleteDependingResultsButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
             LOG.info("Deleting depending results of ${modellingUIItem.nameAndVersion}")
-            if (modellingUIItem.deleteDependingResults(model)) {
+            if (modellingUIItem.deleteDependingResults()) {
                 mainModel.openItem(model, modellingUIItem)
             } else {
                 new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
             }
         }] as IActionListener)
 
-        cancelButton.addActionListener([actionPerformed: {ActionEvent event ->
+        cancelButton.addActionListener([actionPerformed: { ActionEvent event ->
             LOG.info("Open item action cancelled")
             closeAction.call()
         }] as IActionListener)
     }
 
     public void setVisible(boolean visible) {
-        dialog.setVisible(visible)
+        dialog.visible = visible
     }
 
     private boolean isWorkflowItem() {

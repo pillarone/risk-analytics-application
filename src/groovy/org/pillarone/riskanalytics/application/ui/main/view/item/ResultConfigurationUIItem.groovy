@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
@@ -10,10 +9,9 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -47,7 +45,7 @@ class ResultConfigurationUIItem extends ModellingUiItemWithModel {
     }
 
     @Override
-    List<SimulationRun> getSimulations() {
+    List<Simulation> getSimulations() {
         return item.simulations
     }
 

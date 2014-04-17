@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.WindowEvent
+import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
@@ -13,6 +14,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.transaction.TransactionStatus
 
 /**
@@ -94,29 +96,33 @@ class RunSimulationHandler {
      * @return
      */
     private boolean isRunning(ModellingItem item) {
-        List<SimulationRun> simulationRuns = item.simulations;
+        List<Simulation> simulations = item.simulations.collect {
+            ModellingItemFactory.getOrCreate(it)
+        }
         //check if at least one simulation is running
-        for (SimulationRun simulationRun: simulationRuns) {
-            if (!simulationRun.endTime) return true
+        for (Simulation simulation : simulations) {
+            if (!simulation.end) {
+                return true
+            }
         }
         return false
     }
 
     protected boolean deleteDependingResultsAndSave(Model itemModel, List<ModellingItem> items) {
         boolean status = true
-        for (ModellingItem item: items) {
+        for (ModellingItem item : items) {
             if (item.changed && isRunning(item))
                 status = true
         }
         if (!status) return status
-        SimulationRun.withTransaction {TransactionStatus transactionStatus ->
-            for (ModellingItem item: items) {
+        SimulationRun.withTransaction { TransactionStatus transactionStatus ->
+            for (ModellingItem item : items) {
                 if (item.changed && status) {
-                    status = UIItemUtils.deleteDependingResults(model.mainModel, itemModel, item)
+                    status = UIItemUtils.deleteDependingResults(itemModel, item)
                 }
             }
             if (status) {
-                for (ModellingItem item: items) {
+                for (ModellingItem item : items) {
                     if (item.changed) item.save()
                 }
             }
@@ -133,12 +139,13 @@ class RunSimulationHandler {
      */
     protected List<ModellingItem> createNewVersion(Model itemModel, List<ModellingItem> items) {
         List<ModellingItem> newItems = []
-        SimulationRun.withTransaction {TransactionStatus transactionStatus ->
-            for (ModellingItem item: items) {
+        SimulationRun.withTransaction { TransactionStatus transactionStatus ->
+            for (ModellingItem item : items) {
                 if (item.changed) {
                     item.load()
                     ModellingUIItem modellingUIItem = model.mainModel.getAbstractUIItem(item)
-                    if (modellingUIItem instanceof ParameterizationUIItem) { //TODO: find a way to show new version comment dialog
+                    if (modellingUIItem instanceof ParameterizationUIItem) {
+                        //TODO: find a way to show new version comment dialog
                         newItems << modellingUIItem.createNewVersion(itemModel, "", false).item
                     } else {
                         newItems << modellingUIItem.createNewVersion(itemModel, false).item

@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -14,6 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeList
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -48,6 +50,9 @@ abstract class ModellingUIItem extends AbstractUIItem {
         return item.usedInSimulation
     }
 
+    boolean deleteDependingResults() {
+        true
+    }
 
     String createTitle() {
         String title = item.nameAndVersion
@@ -100,7 +105,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
     }
 
-    @Override
     void save() {
         ExceptionSafe.protect {
             item.save()
