@@ -84,7 +84,6 @@ class AbstractFunctionalTestCase extends RiskAnalyticsAbstractStandaloneTestCase
     }
 
     protected pushKeyOnPath(ULCTableTreeOperator tree, TreePath path, int key, int mask) {
-
         int row = tree.getRowForPath(path)
         tree.selectCell(row, 0)
         tree.pushKey(key, mask)
