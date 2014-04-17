@@ -10,13 +10,13 @@ import org.joda.time.DateTime
 abstract class DateFormatUtils {
 
     //DateTimeFormatter is thread safe
-    public static final String PARAMETER_DISPLAY_FORMAT = "MMM dd, yyyy"
+    public static final String PARAMETER_DISPLAY_FORMAT = System.getProperty("DateFormatUtils.PARAMETER_DISPLAY_FORMAT","MMM dd, yyyy")
     private static DateTimeFormatter detailedFormatter
     private static DateTimeFormatter simpleFormatter
     private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
-//  private static final String DETAILED_FORMATTER_STRING = "dd.MM.yyyy, HH:mm z"
-    private static final String DETAILED_FORMATTER_STRING = System.getProperty("DateFormatUtils.DETAILED_FORMATTER_STRING","dd.MM.yyyy, HH:mm z")
-    private static final String SIMPLE_FORMATTER_STRING = "dd.MM.yyyy"
+    //PMO-2746 was "dd.MM.yyyy, HH:mm z" which broke ordering of date columns
+    private static final String DETAILED_FORMATTER_STRING = System.getProperty("DateFormatUtils.DETAILED_FORMATTER_STRING","yyyy.MM.dd, HH:mm z")
+    private static final String SIMPLE_FORMATTER_STRING   = System.getProperty("DateFormatUtils.SIMPLE_FORMATTER_STRING","dd.MM.yyyy")
 
     public static DateTimeFormatter getDetailedDateFormat() {
         if (detailedFormatter == null) {
