@@ -14,7 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.PollingSupport
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
@@ -374,7 +373,7 @@ class TestModelListener implements ITableTreeModelListener {
         nodeChangedEvents << event
     }
 }
-A
+
 class TestPollingSupport extends PollingSupport {
     private final List<IActionListener> listeners = []
 
