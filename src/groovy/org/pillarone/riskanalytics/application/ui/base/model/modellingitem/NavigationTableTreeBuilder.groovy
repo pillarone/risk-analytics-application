@@ -111,7 +111,13 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     private addSimulationsToNode(DefaultMutableTableTreeNode simulationsNode, List<Simulation> simulations) {
         simulationsNode.leaf = simulations?.size() == 0
-        simulations.each { simulationsNode.add(createNode(it)) }
+        simulations.each {
+            if (!(it.parameterization && it.simulations)) {
+                LOG.error("simulation ${it.dump()} has no parameterization or no template")
+                return
+            }
+            simulationsNode.add(createNode(it))
+        }
     }
 
     private addToNode(DefaultMutableTableTreeNode node, List<ModellingItem> items) {
@@ -330,8 +336,6 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         }
         tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(simulationGroupNode) as Object[]))
     }
-
-
 
 
     @Override
@@ -723,12 +727,6 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
-        if (!item.parameterization) {
-            throw new IllegalStateException("could not add simulation $item with name ${item.name} becasue the related parametrization was null")
-        }
-        if (!item.template) {
-            throw new IllegalStateException("could not add simulation $item with name ${item.name} becasue the related template was null")
-        }
         Model selectedModelInstance = item.modelClass?.newInstance() as Model
         SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance))
         DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
