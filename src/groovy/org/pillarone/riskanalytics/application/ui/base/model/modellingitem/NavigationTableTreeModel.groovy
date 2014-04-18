@@ -205,7 +205,7 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
         ExceptionSafe.protect {
             refreshService()
             navigationTableTreeBuilder.removeAll()
-            navigationTableTreeBuilder.buildTreeNodes()
+            navigationTableTreeBuilder.buildTreeNodes(filteredItems)
             nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(root) as Object[]))
         }
     }

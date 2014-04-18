@@ -291,17 +291,17 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
             def topLevelNode = root.getChildAt(childIndex)
             if (topLevelNode instanceof ModelNode) {
                 DefaultMutableTableTreeNode parameterizationGroupNode = topLevelNode.getChildAt(PARAMETERIZATION_NODE_INDEX) as DefaultMutableTableTreeNode
-                orderParameterizations(comparator,parameterizationGroupNode)
+                orderParameterizations(comparator, parameterizationGroupNode)
 
                 DefaultMutableTableTreeNode simulationGroupNode = topLevelNode.getChildAt(SIMULATION_NODE_INDEX) as DefaultMutableTableTreeNode
-                orderSimulations(comparator,simulationGroupNode)
+                orderSimulations(comparator, simulationGroupNode)
             }
         }
     }
 
     //TODO Ask Matthias if we really need to be invoking nodeStructureChanged() twice each time ???
     //
-    void orderParameterizations( Comparator comparator, DefaultMutableTableTreeNode parameterizationGroupNode ){
+    void orderParameterizations(Comparator comparator, DefaultMutableTableTreeNode parameterizationGroupNode) {
         List<ParameterizationNode> paramNodes = []
         parameterizationGroupNode.childCount.times { int nodeIndex ->
             ParameterizationNode node = parameterizationGroupNode.getChildAt(nodeIndex) as ParameterizationNode
@@ -316,7 +316,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
     }
 
-    void orderSimulations( Comparator comparator, DefaultMutableTableTreeNode simulationGroupNode ){
+    void orderSimulations(Comparator comparator, DefaultMutableTableTreeNode simulationGroupNode) {
         List<SimulationNode> simNodes = []
         simulationGroupNode.childCount.times { int nodeIndex ->
             SimulationNode node = simulationGroupNode.getChildAt(nodeIndex) as SimulationNode
@@ -723,6 +723,12 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     }
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
+        if (!item.parameterization) {
+            throw new IllegalStateException("could not add simulation $item with name ${item.name} becasue the related parametrization was null")
+        }
+        if (!item.template) {
+            throw new IllegalStateException("could not add simulation $item with name ${item.name} becasue the related template was null")
+        }
         Model selectedModelInstance = item.modelClass?.newInstance() as Model
         SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance))
         DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
