@@ -113,8 +113,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         simulationsNode.leaf = simulations?.size() == 0
         simulations.each {
             if (!(it.parameterization && it.template)) {
-                LOG.error("simulation ${it.dump()} has no parameterization or no template")
-                return
+                throw new IllegalStateException("simulation ${it.dump()} must have a parameterization and a result template")
             }
             simulationsNode.add(createNode(it))
         }
