@@ -47,7 +47,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)));
         add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, riskAnalyticsMainModel, 'ImportFromExcelAdditional')));
         addSeparator();
-
+        add(new ULCMenuItem(new CreateBatchAction(tree, riskAnalyticsMainModel)))
         //Concrete subclasses add menus appropriate to current state.
         //Eg the InReviewPopupMenu adds menu items for send to production and reject workflow.
         //(Like a 'statemachine' encoded in class diagram, fixed at compile time)

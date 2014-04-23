@@ -34,16 +34,15 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
 
         //add from items to the to index
         fromItems.reverseEach {
-            backedList.add(target, it)
+            backedList.add((target != -1) ? target : backedList.size(), it)
         }
 
         //removed placeholder items
         backedList.removeAll([null])
-
         //TODO fire some kind of sort event
         //TODO fire more specific
         fireTableDataChanged()
-        int[] newIndices = fromItems.collect { backedList.indexOf(it) }.toArray(new int[fromItems.size()])
+        int[] newIndices = fromItems.collect { backedList.indexOf(it) }.toArray(new int[fromItems.size()]) as int[]
         def event = new SortedEvent<T>(sources, newIndices, fromItems.toArray() as T[])
         fireSortedEvent(event)
         return true

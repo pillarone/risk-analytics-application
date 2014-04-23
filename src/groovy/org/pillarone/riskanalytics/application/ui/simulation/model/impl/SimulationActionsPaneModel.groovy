@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
+
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerNumberModel
 import com.ulcjava.base.application.event.IWindowListener
@@ -10,7 +11,6 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.AddToBatchAction
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.RunSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -21,6 +21,7 @@ import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
@@ -37,7 +38,6 @@ class SimulationActionsPaneModel implements IModelChangedListener {
     RunSimulationAction runSimulationAction
 
     ItemsComboBoxModel<BatchRun> batchRunComboBoxModel
-    AddToBatchAction addToBatchAction
 
     ISimulationProvider simulationProvider
     RiskAnalyticsMainModel mainModel
@@ -49,7 +49,6 @@ class SimulationActionsPaneModel implements IModelChangedListener {
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)
         batchRunComboBoxModel = new ItemsComboBoxModel<BatchRun>(BatchRun.list())
-        addToBatchAction = new AddToBatchAction(this, mainModel)
         priorityModel = new ULCSpinnerNumberModel(5, 0, 10, 1)
     }
 

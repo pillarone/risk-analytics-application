@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-public interface IRiskAnalyticsModelListener {
+interface IRiskAnalyticsModelListener {
 
     void openDetailView(Model model, AbstractUIItem item)
 

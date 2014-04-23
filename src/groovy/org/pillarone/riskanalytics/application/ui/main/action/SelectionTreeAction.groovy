@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -26,7 +27,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     ULCTableTree tree
     RiskAnalyticsMainModel model
 
-    def SelectionTreeAction(name, tree, RiskAnalyticsMainModel model) {
+    def SelectionTreeAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
         super(name);
         this.tree = tree;
         this.model = model
@@ -98,7 +99,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     List getAllSelectedObjects() {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {
-            for (Object node in selectedPath.getPath()) {
+            for (Object node in selectedPath.path) {
                 if (node instanceof ItemGroupNode) {
                     if (selectedPath?.lastPathComponent != null) {
                         Object lastNode = selectedPath.lastPathComponent
@@ -157,7 +158,9 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     }
 
     final boolean accessAllowed() {
-        if (UserContext.isStandAlone()) return true
+        if (UserContext.standAlone) {
+            return true
+        }
         try {
             List actionAllowedRoles = allowedRoles() //restricted actions supply this
             if (!actionAllowedRoles || actionAllowedRoles.size() == 0) {

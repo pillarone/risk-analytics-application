@@ -67,7 +67,7 @@ class UIItemUtils {
             ModellingItemFactory.getOrCreate(it)
         }
         for (Simulation simulation : simulations) {
-            if (!(simulation.end || simulation.batchId)) {
+            if (!(simulation.end || simulation.batch)) {
                 usedInRunningSimulation = true
                 break
             }

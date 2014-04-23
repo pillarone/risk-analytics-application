@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application
+
 import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.output.structure.ResultStructureDAO
@@ -46,6 +47,7 @@ abstract class AbstractSimpleFunctionalTest extends AbstractSimpleStandaloneTest
             ParameterizationDAO.list()*.delete()
             ModelStructureDAO.list()*.delete()
             ModelDAO.list()*.delete()
+            SimulationProfileDAO.list()*.delete()
             session.flush()
         }
         Holders.grailsApplication.mainContext.cacheItemSearchService.refresh()

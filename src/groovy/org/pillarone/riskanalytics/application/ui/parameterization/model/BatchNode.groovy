@@ -1,12 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
-
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-import org.pillarone.riskanalytics.application.ui.batch.action.NewBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
@@ -14,7 +12,6 @@ import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad jaada
  * @author simon parten
@@ -33,7 +30,6 @@ class BatchNode extends ItemNode implements IReportableNode {
         ULCPopupMenu batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = BATCHES_NODE_POP_UP_MENU
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, riskAnalyticsMainModel)))
-        batchesNodePopUpMenu.add(new ULCMenuItem(new NewBatchAction(tree, riskAnalyticsMainModel)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, riskAnalyticsMainModel)))
         batchesNodePopUpMenu.addSeparator()
         batchesNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))

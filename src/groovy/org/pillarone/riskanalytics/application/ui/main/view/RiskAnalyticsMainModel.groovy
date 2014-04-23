@@ -8,9 +8,11 @@ import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingMo
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractPresentationModel
 import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
-import org.pillarone.riskanalytics.application.ui.batch.model.BatchTableListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
-import org.pillarone.riskanalytics.application.ui.main.view.item.*
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
@@ -38,7 +40,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
     Map<AbstractUIItem, Object> viewModelsInUse
     def switchActions = []
     private List<IRiskAnalyticsModelListener> modelListeners = []
-    private List<BatchTableListener> batchTableListeners = []
     private List<IModelItemChangeListener> modelItemListeners = []
     private List<INewSimulationListener> newSimulationListeners = []
     private List<IBatchListener> batchListeners = []
@@ -156,20 +157,6 @@ class RiskAnalyticsMainModel extends AbstractPresentationModel {
 
     void fireBatchAdded(BatchRun batchRun) {
         batchListeners.each { it.newBatchAdded(batchRun) }
-    }
-
-    void addBatchTableListener(BatchTableListener batchTableListener) {
-        batchTableListeners << batchTableListener
-    }
-
-    void fireRowAdded(Simulation addedRun) {
-        batchTableListeners.each { BatchTableListener batchTableListener -> batchTableListener.fireRowAdded(addedRun) }
-    }
-
-    void fireRowDeleted(Simulation item) {
-        batchTableListeners.each { BatchTableListener batchTableListener ->
-            batchTableListener.fireRowDeleted(item)
-        }
     }
 
     void registerModel(AbstractUIItem item, def model) {

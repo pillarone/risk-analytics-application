@@ -17,9 +17,6 @@ class SimulationActionsPane implements ISimulationValidationListener {
     private ULCSpinner prioritySpinner
     private ULCBoxPane content
     private ULCLabel priorityLabel
-
-    private ULCComboBox availableBatchRuns
-    private ULCButton addToBatch
     private ULCLabel batchMessage
 
     private final SimulationActionsPaneModel model
@@ -46,9 +43,6 @@ class SimulationActionsPane implements ISimulationValidationListener {
         runButton.name = "${SimulationActionsPane.simpleName}.run"
         prioritySpinner = new ULCSpinner(model.priorityModel)
         priorityLabel = new ULCLabel('Priority')
-        availableBatchRuns = new ULCComboBox(model.batchRunComboBoxModel)
-        availableBatchRuns.editable = true
-        addToBatch = new ULCButton(model.addToBatchAction)
         batchMessage = new ULCLabel(model.batchMessage)
         batchMessage.foreground = Color.blue
     }
@@ -60,14 +54,7 @@ class SimulationActionsPane implements ISimulationValidationListener {
         runPane.add(BOX_LEFT_CENTER, prioritySpinner)
         runPane.add(BOX_EXPAND_CENTER, runButton)
         runPane.border = BorderFactory.createTitledBorder(UIUtils.getText(SimulationActionsPane.class, "RunSimulation"))
-
-        ULCBoxPane batchPane = new ULCBoxPane(2, 1)
-        batchPane.add(BOX_LEFT_CENTER, UIUtils.spaceAround(availableBatchRuns, 0, 5, 0, 0))
-        batchPane.add(BOX_EXPAND_CENTER, addToBatch)
-        batchPane.border = BorderFactory.createTitledBorder(UIUtils.getText(SimulationActionsPane.class, "AddToBatch"))
-
         content.add(BOX_EXPAND_CENTER, runPane)
-        content.add(BOX_EXPAND_CENTER, batchPane)
         content.add(2, BOX_EXPAND_CENTER, batchMessage)
     }
 
@@ -79,6 +66,5 @@ class SimulationActionsPane implements ISimulationValidationListener {
     void simulationPropertyChanged(boolean isValid) {
         configurationValid = isValid
         runButton.enabled = isValid
-        addToBatch.enabled = isValid
     }
 }

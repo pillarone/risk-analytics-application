@@ -13,24 +13,26 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     private static final Map<Integer, String> COLUMN_NAME_KEYS = [
             0: 'simulation',
-            1: 'p14n',
-            2: 'template',
-            3: 'iterations',
-            4: 'priority',
-            5: 'configuredAt',
-            6: 'configuredBy',
-            7: 'simulationState'
+            1: 'batch',
+            2: 'p14n',
+            3: 'template',
+            4: 'iterations',
+            5: 'priority',
+            6: 'configuredAt',
+            7: 'configuredBy',
+            8: 'simulationState'
     ] as Map<Integer, String>
 
     private static final Map<Integer, Closure<String>> COLUMN_VALUE_FACTORIES = [
             0: { SimulationRuntimeInfo info -> info.simulation.nameAndVersion },
-            1: { SimulationRuntimeInfo info -> info.parameterization.nameAndVersion },
-            2: { SimulationRuntimeInfo info -> info.resultConfiguration.nameAndVersion },
-            3: { SimulationRuntimeInfo info -> info.iterations?.toString() },
-            4: { SimulationRuntimeInfo info -> info.priority?.toString() },
-            5: { SimulationRuntimeInfo info -> info.configuredAt.toString() },
-            6: { SimulationRuntimeInfo info -> info.offeredBy?.username },
-            7: { SimulationRuntimeInfo info -> info.simulationState.toString() }
+            1: { SimulationRuntimeInfo info -> info.simulation.batch?.name },
+            2: { SimulationRuntimeInfo info -> info.parameterization.nameAndVersion },
+            3: { SimulationRuntimeInfo info -> info.resultConfiguration.nameAndVersion },
+            4: { SimulationRuntimeInfo info -> info.iterations?.toString() },
+            5: { SimulationRuntimeInfo info -> info.priority?.toString() },
+            6: { SimulationRuntimeInfo info -> info.configuredAt.toString() },
+            7: { SimulationRuntimeInfo info -> info.offeredBy?.username },
+            8: { SimulationRuntimeInfo info -> info.simulationState.toString() }
     ]
 
     protected final List<SimulationRuntimeInfo> infos = []
@@ -42,7 +44,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     @Override
     int getColumnCount() {
-        return 8
+        COLUMN_NAME_KEYS.size()
     }
 
     SimulationRuntimeInfo getInfoAt(int index) {

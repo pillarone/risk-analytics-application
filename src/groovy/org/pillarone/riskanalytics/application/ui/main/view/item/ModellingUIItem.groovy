@@ -78,9 +78,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         }
         ModellingItemFactory.remove(item)
         riskAnalyticsMainModel.fireModelChanged()
-        if (item instanceof Simulation) {
-            riskAnalyticsMainModel.fireRowDeleted(item)
-        }
     }
 
     void rename(String newName) {

@@ -34,7 +34,7 @@ class SortableTable extends ULCTable implements SortableTableModel.IOrderChanged
         boolean importData(ULCComponent targetComponent, Transferable transferable) {
             DnDTableData dragged = transferable.getTransferData(DRAG_FLAVOR) as DnDTableData
             DnDTableData dropped = transferable.getTransferData(DROP_FLAVOR) as DnDTableData
-            model.moveFromTo(dragged.selectedRows, dropped.selectedRows[0])
+            getModel().moveFromTo(dragged.selectedRows, dropped.selectedRows[0])
         }
 
         @Override

@@ -156,18 +156,6 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
         assertNotNull newVersion
     }
 
-    void testNewBatch() {
-        ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
-        TreePath batchPath = componentTree.findPath(["Batches"] as String[])
-
-        ULCPopupMenuOperator popupMenuOperator = componentTree.callPopupOnCell(componentTree.getRowForPath(batchPath), 0)
-
-        assertNotNull popupMenuOperator
-
-        ULCMenuItemOperator openBatch = new ULCMenuItemOperator(popupMenuOperator, "New")
-        assertNotNull openBatch
-    }
-
     public void testOpenResult() {
         ULCTableTreeOperator componentTree = getTableTreeOperatorByName("selectionTreeRowHeader")
         componentTree.doExpandRow 0

@@ -1,5 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
-
+package org.pillarone.riskanalytics.application.ui.main.action
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tree.TreePath
@@ -8,8 +7,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.base.model.ResourceClassNode
 import org.pillarone.riskanalytics.application.ui.base.model.ResourceGroupNode
-import org.pillarone.riskanalytics.application.ui.main.action.OpenItemAction
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
