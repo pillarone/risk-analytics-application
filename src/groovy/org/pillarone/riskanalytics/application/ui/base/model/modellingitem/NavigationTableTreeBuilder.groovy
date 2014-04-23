@@ -483,17 +483,15 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     public void removeNodeForItem(ModellingUIItem modellingUIItem) {
         ModelNode modelNode = findModelNode(root, modellingUIItem)
-        LOG.debug("Removing node from modelNode: $modelNode")
         if (modelNode) {
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
             def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
-            if (!itemNode) {
-                LOG.warn("Unable to remove item $modellingUIItem.item from tree as it could not be found.")
-            } else {
+            if (itemNode) {
                 removeItemNode(itemNode, true)
                 modellingUIItem.closeItem()
             }
-
+        } else {
+            LOG.warn("ModelNode not found for ModellingUIItem: $modellingUIItem")
         }
     }
 
