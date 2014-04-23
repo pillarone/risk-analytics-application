@@ -334,7 +334,8 @@ class SimulationSettingsPane implements ISimulationListener {
         if (runtimeParameterPane.model.hasRuntimeParameters()) {
             tabbedPane.addTab("Runtime parameters", runtimeParameterPane.content)
         }
-        tabbedPane.addTab("Post simulation calculations", new ULCScrollPane(postSimulationCalculationPane.content))
+        //TODO ma: temporarily commented out. Have to fix layout and then reactivate it again.
+//        tabbedPane.addTab("Post simulation calculations", new ULCScrollPane(postSimulationCalculationPane.content))
         return tabbedPane
     }
 

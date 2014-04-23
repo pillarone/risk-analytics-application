@@ -57,7 +57,9 @@ class BatchesView {
         batches.showHorizontalLines = true
         content = new ULCBoxPane(1, 3, 5, 5)
         content.add(ULCBoxPane.BOX_LEFT_TOP, configurationPane)
-        content.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCScrollPane(batches))
+        ULCScrollPane batchesPane = new ULCScrollPane(batches)
+        batchesPane.preferredSize = new Dimension(600,300)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, batchesPane)
         content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         attachListener()

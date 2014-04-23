@@ -48,7 +48,7 @@ class SimulationActionsPane implements ISimulationValidationListener {
     }
 
     private void layout() {
-        content = new ULCBoxPane(2, 2)
+        content = new ULCBoxPane(1, 2)
         ULCBoxPane runPane = new ULCBoxPane(3, 1)
         runPane.add(BOX_LEFT_CENTER, priorityLabel)
         runPane.add(BOX_LEFT_CENTER, prioritySpinner)

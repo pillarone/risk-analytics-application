@@ -61,7 +61,6 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     ApplicationContext applicationContext
 
     private ToggleSplitPaneAction navigationSplitPaneAction
-    private ToggleSplitPaneAction modelIndependentSplitPaneAction
     private CommentsSwitchAction validationSplitPaneAction
 
     @PostConstruct
@@ -72,7 +71,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
 
     void layoutComponents() {
         ULCCardPane modelPane = cardPaneManager.cardPane
-        modelPane.minimumSize = new Dimension(600, 600)
+        modelPane.preferredSize = new Dimension(600, 600)
         ULCBoxPane treePane = new ULCBoxPane(1, 1)
         treePane.add(BOX_EXPAND_EXPAND, selectionTreeView.content)
         ULCSplitPane splitPane = new ULCSplitPane(HORIZONTAL_SPLIT)
@@ -102,11 +101,6 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         riskAnalyticsMainModel.switchActions << validationSwitchButton
         selectionSwitchPane.add(BOX_LEFT_TOP, validationSwitchButton);
 
-        modelIndependentSplitPaneAction = new ToggleSplitPaneAction(splitBetweenModelPaneAndIndependentPane, UIUtils.getText(this.class, "ModelIndependent"), 1)
-        ULCVerticalToggleButton modelIndependentSwitchButton = new ULCVerticalToggleButton(modelIndependentSplitPaneAction)
-        modelIndependentSwitchButton.selected = false
-        selectionSwitchPane.add(BOX_LEFT_TOP, modelIndependentSwitchButton);
-
         ULCBoxPane mainCard = new ULCBoxPane(2, 0)
 
         mainCard.add(2, BOX_EXPAND_TOP, headerView.content)
@@ -126,7 +120,6 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     void attachListeners() {
         content.registerKeyboardAction(navigationSplitPaneAction, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
-        content.registerKeyboardAction(modelIndependentSplitPaneAction, KeyStroke.getKeyStroke(VK_Q, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         riskAnalyticsMainModel.addModelListener(this)
         riskAnalyticsMainModel.addPropertyChangeListener(CURRENT_ITEM_PROPERTY, this)
         headerView.navigationBarTopPane.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
