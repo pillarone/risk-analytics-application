@@ -216,6 +216,7 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     }
 
     public void order(int column, boolean asc) {
+        LOG.info("Ordering on column: $column, ascending: $asc")
         orderByColumn = column
         ascOrder = asc
         navigationTableTreeBuilder.order(getComparator(column, asc))
