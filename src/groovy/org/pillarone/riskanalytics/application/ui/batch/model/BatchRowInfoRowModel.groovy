@@ -5,7 +5,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.Ab
 
 class BatchRowInfoRowModel extends AbstractTableRowModel<BatchRowInfo> {
 
-    final static int SIZE = COLUMN_NAMES.size()
+    final static int SIZE = 6
 
     static final Map<Integer, String> COLUMN_NAMES = [
             0: 'Name',
