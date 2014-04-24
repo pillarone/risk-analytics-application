@@ -305,16 +305,14 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         }
     }
 
-    //TODO Ask Matthias if we really need to be invoking nodeStructureChanged() twice each time ???
-    //
-    void orderParameterizations(Comparator comparator, DefaultMutableTableTreeNode parameterizationGroupNode) {
+    private void orderParameterizations(Comparator comparator, DefaultMutableTableTreeNode parameterizationGroupNode) {
         List<ParameterizationNode> paramNodes = []
         parameterizationGroupNode.childCount.times { int nodeIndex ->
             ParameterizationNode node = parameterizationGroupNode.getChildAt(nodeIndex) as ParameterizationNode
             paramNodes << node
         }
         parameterizationGroupNode.removeAllChildren()
-        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
+//        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
         paramNodes.sort(comparator)
         paramNodes.each {
             parameterizationGroupNode.add(it)
@@ -322,14 +320,14 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(parameterizationGroupNode) as Object[]))
     }
 
-    void orderSimulations(Comparator comparator, DefaultMutableTableTreeNode simulationGroupNode) {
+    private void orderSimulations(Comparator comparator, DefaultMutableTableTreeNode simulationGroupNode) {
         List<SimulationNode> simNodes = []
         simulationGroupNode.childCount.times { int nodeIndex ->
             SimulationNode node = simulationGroupNode.getChildAt(nodeIndex) as SimulationNode
             simNodes << node
         }
         simulationGroupNode.removeAllChildren()
-        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(simulationGroupNode) as Object[]))
+//        tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(simulationGroupNode) as Object[]))
         simNodes.sort(comparator)
         simNodes.each {
             simulationGroupNode.add(it)
@@ -485,17 +483,15 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     public void removeNodeForItem(ModellingUIItem modellingUIItem) {
         ModelNode modelNode = findModelNode(root, modellingUIItem)
-        LOG.debug("Removing node from modelNode: $modelNode")
         if (modelNode) {
             ITableTreeNode groupNode = findGroupNode(modellingUIItem, modelNode)
             def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
-            if (!itemNode) {
-                LOG.warn("Unable to remove item $modellingUIItem.item from tree as it could not be found.")
-            } else {
+            if (itemNode) {
                 removeItemNode(itemNode, true)
                 modellingUIItem.closeItem()
             }
-
+        } else {
+            LOG.warn("ModelNode not found for ModellingUIItem: $modellingUIItem")
         }
     }
 
@@ -527,8 +523,9 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
             }
             if (!node) {
                 LOG.debug("No node found for modelling item $it")
+            } else {
+                parentNodes.add(removeItemNode(node, false))
             }
-            parentNodes.add(removeItemNode(node, false))
 
         }
         parentNodes.each {
@@ -552,9 +549,9 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     public void removeNodeForItem(ResourceUIItem modellingUIItem) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
         ITableTreeNode itemNode = findNodeForItem(itemGroupNode, modellingUIItem.item)
-        if (!itemNode) return
-
-        removeItemNode(itemNode, true)
+        if(itemNode){
+            removeItemNode(itemNode, true)
+        }
     }
 
     private DefaultMutableTableTreeNode removeItemNode(DefaultMutableTableTreeNode itemNode, boolean notifyStructureChanged) {
@@ -596,7 +593,9 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     public void removeNodeForItem(BatchUIItem batchUIItem) {
         ITableTreeNode groupNode = findBatchRootNode(root)
         ITableTreeNode itemNode = findNodeForItem(groupNode, batchUIItem)
-        removeNodeFromParent(itemNode, true)
+        if(itemNode){
+            removeNodeFromParent(itemNode, true)
+        }
     }
 
     private createAndInsertItemNode(DefaultMutableTableTreeNode node, ModellingUIItem modellingUIItem, boolean notifyStructureChanged) {
