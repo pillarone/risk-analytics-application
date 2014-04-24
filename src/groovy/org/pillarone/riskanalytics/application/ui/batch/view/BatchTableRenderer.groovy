@@ -5,16 +5,27 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import com.ulcjava.base.application.table.DefaultTableHeaderCellRenderer
+import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfoRowModel
+import org.pillarone.riskanalytics.application.ui.batch.model.SimulationParameterizationTableModel
 
 class BatchTableRenderer extends DefaultTableCellRenderer {
     private ULCPopupMenu nodePopup
+    private final SimulationParameterizationTableModel simulationParameterizationTableModel
 
-    IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
-        IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
+    BatchTableRenderer(SimulationParameterizationTableModel simulationParameterizationTableModel) {
+        this.simulationParameterizationTableModel = simulationParameterizationTableModel
+    }
+
+    IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int row) {
+        IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, row)
         toolTipText = String.valueOf(value)
         componentPopupMenu = getNodePopUp(table)
         horizontalAlignment = LEFT
         return component
+    }
+
+    private BatchRowInfoRowModel getModelAt(int row) {
+        simulationParameterizationTableModel.backedList[row]
     }
 
     private ULCPopupMenu getNodePopUp(ULCTable table) {
@@ -23,8 +34,6 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
         }
         return nodePopup
     }
-
-
 }
 
 class BatchTableHeaderRenderer extends DefaultTableHeaderCellRenderer {

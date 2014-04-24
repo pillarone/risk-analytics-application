@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
-import com.google.common.base.Preconditions
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import org.codehaus.groovy.grails.commons.GrailsApplication
@@ -22,8 +21,6 @@ class BatchViewModel {
     @Resource
     GrailsApplication grailsApplication
 
-    private boolean valid = true
-
     @Resource
     SimulationParameterizationTableModel simulationParameterizationTableModel
 
@@ -40,18 +37,14 @@ class BatchViewModel {
     }
 
     void setBatch(Batch batch) {
-        this.batch = Preconditions.checkNotNull(batch)
+        this.batch = batch
         simulationParameterizationTableModel.batch = batch
-        simulationProfileNamesComboBoxModel.selectedItem = batch.simulationProfileName
-        validate()
+        simulationProfileNamesComboBoxModel.selectedItem = batch?.simulationProfileName
     }
 
     void save() {
         if (batch) {
-            batch.simulationProfileName = simulationProfileNamesComboBoxModel.selectedItem
-            batch.parameterizations = simulationParameterizationTableModel.batchRowInfos.parameterization
             batch.save()
-            validate()
         }
     }
 
@@ -59,25 +52,17 @@ class BatchViewModel {
         if (batch) {
             batch.simulationProfileName = profileName
             simulationParameterizationTableModel.simulationProfileNameChanged()
-            validate()
+            batch.changed = true
         }
     }
 
-    private boolean validate() {
-        valid = simulationParameterizationTableModel.batchRowInfos.every { it.valid }
-    }
-
     boolean getValid() {
-        return valid
+        return simulationParameterizationTableModel.batchRowInfos.every { it.valid }
     }
 
     void run() {
         if (batch) {
             batchRunService.runBatch(batch)
         }
-
-        //TODO lock ui, because batch is now executed
     }
-
-
 }

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class SimulationQueueTableModel extends AbstractTableModel {
 
-    protected final List<SimulationColumnModel> columnModels = []
+    protected final List<SimulationRowModel> columnModels = []
 
     @Override
     int getRowCount() {
@@ -20,7 +20,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     @Override
     int getColumnCount() {
-        SimulationColumnModel.COLUMN_COUNT
+        SimulationRowModel.COLUMN_COUNT
     }
 
     SimulationRuntimeInfo getInfoAt(int index) {
@@ -29,7 +29,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     @Override
     String getColumnName(int column) {
-        getText(SimulationColumnModel.COLUMN_NAME_KEYS[column])
+        getText(SimulationRowModel.COLUMN_NAME_KEYS[column])
     }
 
     private String getText(String key) {
@@ -44,13 +44,13 @@ class SimulationQueueTableModel extends AbstractTableModel {
     void setInfos(List<SimulationRuntimeInfo> infos) {
         this.columnModels.clear()
         infos.eachWithIndex { SimulationRuntimeInfo info, int row ->
-            this.columnModels << new SimulationColumnModel(row, this, info)
+            this.columnModels << new SimulationRowModel(row, this, info)
         }
         fireTableDataChanged()
     }
 
     void itemAdded(SimulationRuntimeInfo item) {
-        columnModels.add(new SimulationColumnModel(columnModels.size(), this, item))
+        columnModels.add(new SimulationRowModel(columnModels.size(), this, item))
         sortColumnModels()
         fireTableDataChanged()
     }
@@ -61,7 +61,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
     }
 
     void itemRemoved(SimulationRuntimeInfo info) {
-        SimulationColumnModel columnModel = columnModels.find { SimulationColumnModel model -> model.object == info }
+        SimulationRowModel columnModel = columnModels.find { SimulationRowModel model -> model.object == info }
         if (columnModel) {
             int index = columnModels.indexOf(columnModel)
             columnModels.remove(columnModel)
@@ -71,13 +71,13 @@ class SimulationQueueTableModel extends AbstractTableModel {
     }
 
     private void assignRowsToColumnModels() {
-        columnModels.eachWithIndex { SimulationColumnModel columnModel, int row ->
+        columnModels.eachWithIndex { SimulationRowModel columnModel, int row ->
             columnModel.row = row
         }
     }
 
     void itemChanged(SimulationRuntimeInfo info) {
-        SimulationColumnModel columnModel = columnModels.find { SimulationColumnModel model -> model.object == info }
+        SimulationRowModel columnModel = columnModels.find { SimulationRowModel model -> model.object == info }
         if (columnModel) {
             columnModel.setObject(info)
         }

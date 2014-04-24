@@ -7,9 +7,15 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
+import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SortableTable
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.Batch
+import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -37,15 +43,35 @@ class BatchView {
     @Resource
     BatchViewModel batchViewModel
 
+    @Resource
+    ModellingItemCache modellingItemCache
+
+    private MyBatchListener myBatchListener
+
     void setBatch(Batch batch) {
         this.batch = batch
+        batch.addModellingItemChangeListener(new ValidationListener())
         batchViewModel.batch = batch
+        updateEnablingState()
+        if (!batch || batch.executed) {
+            lock()
+        }
+    }
+
+    private void lock() {
+        //TODO lock sortable list
+        batches.enabled = false
+        runBatch.enabled = false
+        saveButton.enabled = false
+        simulationProfilesComboBox.enabled = false
     }
 
     @PostConstruct
     void initialize() {
+        myBatchListener = new MyBatchListener()
+        modellingItemCache.addItemEventListener(myBatchListener)
         batches = new SortableTable(batchViewModel.simulationParameterizationTableModel)
-        BatchTableRenderer batchTableRenderer = new BatchTableRenderer()
+        BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchViewModel.simulationParameterizationTableModel)
         batches.columnModel.columns.each { ULCTableColumn column ->
             column.headerRenderer = new BatchTableHeaderRenderer()
             column.cellRenderer = batchTableRenderer
@@ -62,13 +88,18 @@ class BatchView {
     }
 
     void destroy() {
+        modellingItemCache.removeItemEventListener(myBatchListener)
+        myBatchListener = null
         batchViewModel.destroy()
+    }
+
+    Batch getBatch() {
+        return batch
     }
 
     private void attachListener() {
         saveButton.addActionListener([actionPerformed: { ActionEvent event ->
             batchViewModel.save()
-            runBatch.enabled = batchViewModel.valid
         }] as IActionListener)
         runBatch.addActionListener([actionPerformed: { ActionEvent event ->
             batchViewModel.save()
@@ -78,8 +109,6 @@ class BatchView {
             String newSimulationProfileName = simulationProfilesComboBox.selectedItem as String
             if (batch && batch.simulationProfileName != newSimulationProfileName) {
                 batchViewModel.profileNameChanged(newSimulationProfileName)
-                runBatch.enabled = batchViewModel.valid
-                batch.changed = true
             }
         }] as IActionListener)
     }
@@ -88,9 +117,9 @@ class BatchView {
         final Dimension dimension = new Dimension(140, 20)
         saveButton = new ULCButton(UIUtils.getText(this.class, "Save"))
         saveButton.preferredSize = dimension
+        saveButton.enabled = false
         runBatch = new ULCButton(UIUtils.getText(this.class, "RunBatch"))
         runBatch.preferredSize = dimension
-        runBatch.enabled = batchViewModel.valid
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(runBatch, 0, 8, 0, 8))
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(saveButton, 0, 8, 0, 8))
@@ -113,11 +142,48 @@ class BatchView {
         return parameterSection
     }
 
+    private void updateEnablingState() {
+        runBatch.enabled = batchViewModel.valid
+    }
+
     ULCContainer getContent() {
         content
     }
 
     BatchViewModel getBatchViewModel() {
         return batchViewModel
+    }
+
+    private class ValidationListener implements IModellingItemChangeListener {
+        @Override
+        void itemChanged(ModellingItem item) {
+            saveButton.enabled = true
+            updateEnablingState()
+        }
+
+        @Override
+        void itemSaved(ModellingItem item) {
+            saveButton.enabled = false
+            updateEnablingState()
+        }
+    }
+
+    private class MyBatchListener implements IModellingItemEventListener {
+        @Override
+        void onEvent(ModellingItemEvent event) {
+            if (event.modellingItem == getBatch()) {
+                switch (event.eventType) {
+                    case CacheItemEvent.EventType.ADDED:
+                        break
+                    case CacheItemEvent.EventType.REMOVED:
+                        lock()
+                        break
+                    case CacheItemEvent.EventType.UPDATED:
+                        batch.load()
+                        setBatch(batch)
+                        break
+                }
+            }
+        }
     }
 }

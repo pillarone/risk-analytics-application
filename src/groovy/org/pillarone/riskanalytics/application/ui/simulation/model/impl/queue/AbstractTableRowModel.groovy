@@ -7,7 +7,7 @@ import groovy.beans.Bindable
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
-abstract class AbstractTableColumnModel<T> {
+abstract class AbstractTableRowModel<T> {
 
     private final AbstractTableModel tableModel
     private final Map<Integer, StringProperty> properties
@@ -15,7 +15,7 @@ abstract class AbstractTableColumnModel<T> {
 
     int row
 
-    AbstractTableColumnModel(int row, AbstractTableModel tableModel, T object, int columnCount) {
+    AbstractTableRowModel(int row, AbstractTableModel tableModel, T object, int columnCount) {
         this.tableModel = tableModel
         this.row = row
         properties = (0..(columnCount - 1)).collectEntries {

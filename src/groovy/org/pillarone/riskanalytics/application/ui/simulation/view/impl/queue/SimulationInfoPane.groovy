@@ -173,6 +173,7 @@ class SimulationInfoPane {
             uiStates[simulationState].call()
             currentUISimulationState = simulationState
             if (currentUISimulationState == ERROR) {
+                //TODO only show errors if manual simulation and you are the owner?
                 showAlert()
             }
         }

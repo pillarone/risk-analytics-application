@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.AbstractTableColumnModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.AbstractTableRowModel
 
-class BatchRowInfoColumnModel extends AbstractTableColumnModel<BatchRowInfo> {
+class BatchRowInfoRowModel extends AbstractTableRowModel<BatchRowInfo> {
 
-    final static int SIZE = 6
+    final static int SIZE = COLUMN_NAMES.size()
 
     static final Map<Integer, String> COLUMN_NAMES = [
             0: 'Name',
@@ -26,7 +26,7 @@ class BatchRowInfoColumnModel extends AbstractTableColumnModel<BatchRowInfo> {
             5: { BatchRowInfo batchRowInfo -> batchRowInfo.simulationStateAsString }
     ] as Map<Integer, Closure>
 
-    BatchRowInfoColumnModel(int row, AbstractTableModel tableModel, BatchRowInfo object, int columnCount) {
+    BatchRowInfoRowModel(int row, AbstractTableModel tableModel, BatchRowInfo object, int columnCount) {
         super(row, tableModel, object, columnCount)
     }
 

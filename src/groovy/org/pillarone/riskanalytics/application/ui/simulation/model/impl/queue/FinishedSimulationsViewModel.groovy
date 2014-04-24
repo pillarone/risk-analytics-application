@@ -48,9 +48,7 @@ class FinishedSimulationsViewModel {
             SimulationRuntimeInfo info = finishedSimulationsTableModel.getInfoAt(index)
             if (info.simulationState == SimulationState.FINISHED) {
                 Simulation simulation = info.simulation
-                if (!simulation.loaded) {
-                    simulation.load()
-                }
+                simulation.load()
                 riskAnalyticsMainModel.notifyOpenDetailView((Model) simulation.modelClass.newInstance(), simulation)
             }
         }

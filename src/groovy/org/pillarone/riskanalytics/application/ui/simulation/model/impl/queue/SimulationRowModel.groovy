@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 import com.ulcjava.base.application.table.AbstractTableModel
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 
-class SimulationColumnModel extends AbstractTableColumnModel<SimulationRuntimeInfo> {
+class SimulationRowModel extends AbstractTableRowModel<SimulationRuntimeInfo> {
     static final Map<Integer, String> COLUMN_NAME_KEYS = [
             0: 'simulation',
             1: 'batch',
@@ -30,7 +30,7 @@ class SimulationColumnModel extends AbstractTableColumnModel<SimulationRuntimeIn
 
     static final int COLUMN_COUNT = 9
 
-    SimulationColumnModel(int row, AbstractTableModel tableModel, SimulationRuntimeInfo info) {
+    SimulationRowModel(int row, AbstractTableModel tableModel, SimulationRuntimeInfo info) {
         super(row, tableModel, info, COLUMN_COUNT)
     }
 

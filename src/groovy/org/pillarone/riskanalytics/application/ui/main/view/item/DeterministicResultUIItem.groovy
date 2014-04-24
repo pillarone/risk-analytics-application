@@ -53,5 +53,4 @@ class DeterministicResultUIItem extends SimulationResultUIItem {
         return UIUtils.getIcon("results-active.png")
     }
 
-
 }

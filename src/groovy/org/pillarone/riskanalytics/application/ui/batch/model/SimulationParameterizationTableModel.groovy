@@ -11,6 +11,7 @@ import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.item.Batch
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
@@ -21,7 +22,7 @@ import javax.annotation.Resource
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-class SimulationParameterizationTableModel extends SortableTableModel<BatchRowInfoColumnModel> {
+class SimulationParameterizationTableModel extends SortableTableModel<BatchRowInfoRowModel> {
 
     private final static Log LOG = LogFactory.getLog(SimulationParameterizationTableModel)
 
@@ -60,12 +61,12 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
 
     @Override
     String getColumnName(int column) {
-        BatchRowInfoColumnModel.COLUMN_NAMES[column]
+        BatchRowInfoRowModel.COLUMN_NAMES[column]
     }
 
     @Override
     int getColumnCount() {
-        BatchRowInfoColumnModel.SIZE
+        BatchRowInfoRowModel.SIZE
     }
 
     @Override
@@ -74,18 +75,25 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
     }
 
     void setInfos(List<BatchRowInfo> infos) {
-        List<BatchRowInfoColumnModel> newModels = []
+        List<BatchRowInfoRowModel> newModels = []
         infos.eachWithIndex { BatchRowInfo info, int row ->
-            newModels << new BatchRowInfoColumnModel(row, this, info, columnCount)
+            newModels << new BatchRowInfoRowModel(row, this, info, columnCount)
         }
         backedList = newModels
         fireTableDataChanged()
     }
 
     private List<BatchRowInfo> createBatchRowInfos(Batch batch) {
+        if (!batch) {
+            return []
+        }
         Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
         batch.parameterizations.collect {
-            new BatchRowInfo(parameterization: it, simulationProfile: byModelClass[it.modelClass])
+            BatchRowInfo info = new BatchRowInfo(it)
+            Simulation simulation = batchRunService.findSimulation(batch, it)
+            info.simulation = simulation
+            info.simulationProfile = byModelClass[it.modelClass]
+            info
         }
     }
 
@@ -98,9 +106,11 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
     }
 
     private void assignRowsToColumnModels() {
-        backedList.eachWithIndex { BatchRowInfoColumnModel columnModel, int row ->
+        backedList.eachWithIndex { BatchRowInfoRowModel columnModel, int row ->
             columnModel.row = row
         }
+        batch.parameterizations = backedList.object.parameterization
+        batch.changed = true
     }
 
     List<BatchRowInfo> getBatchRowInfos() {
@@ -124,7 +134,6 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
         @Override
         void finished(SimulationRuntimeInfo info) {
             update(getColumnModel(info), info)
-
         }
 
         @Override
@@ -142,7 +151,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
             update(getColumnModel(info), info)
         }
 
-        private update(BatchRowInfoColumnModel columnModel, SimulationRuntimeInfo info) {
+        private update(BatchRowInfoRowModel columnModel, SimulationRuntimeInfo info) {
             LOG.debug("trying to update info $info")
             if (columnModel) {
                 LOG.debug("updating")
@@ -151,12 +160,12 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
             }
         }
 
-        private BatchRowInfoColumnModel getColumnModel(SimulationRuntimeInfo info) {
+        private BatchRowInfoRowModel getColumnModel(SimulationRuntimeInfo info) {
             if (!isRelevant(info)) {
                 return null
             }
-            BatchRowInfoColumnModel columnModel = getBackedList().find { BatchRowInfoColumnModel columnModel ->
-                columnModel.object.parameterization == info.parameterization
+            BatchRowInfoRowModel columnModel = getBackedList().find { BatchRowInfoRowModel columnModel ->
+                columnModel.object.parameterization.id == info.parameterization.id
             }
             if (!columnModel) {
                 throw new IllegalStateException("info $info belongs to our batch. But there is no column model for it!")

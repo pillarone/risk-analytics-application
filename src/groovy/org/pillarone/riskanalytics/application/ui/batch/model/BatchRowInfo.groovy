@@ -1,17 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
+import com.google.common.base.Preconditions
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 
 class BatchRowInfo {
-    Parameterization parameterization
-    SimulationProfile simulationProfile
-    SimulationRuntimeInfo simulationRuntimeInfo
+    private final Parameterization parameterization
+    private SimulationProfile simulationProfile
+    private Simulation simulation
+
+    BatchRowInfo(Parameterization parameterization) {
+        this.parameterization = Preconditions.checkNotNull(parameterization)
+    }
 
     String getName() {
-        if (simulationRuntimeInfo) {
-            return simulationRuntimeInfo.simulation.nameAndVersion
+        if (simulation) {
+            return simulation.nameAndVersion
         }
         parameterization.name
     }
@@ -29,18 +35,44 @@ class BatchRowInfo {
     }
 
     String getPeriodIterationAsString() {
-        "${parameterization.periodCount}/${simulationProfile?.numberOfIterations}" ?: ''
+        if (simulation) {
+            return "${simulation.periodCount}/${simulation.numberOfIterations}"
+        }
+        if (simulationProfile) {
+            return "${parameterization.periodCount}/${simulationProfile?.numberOfIterations}"
+        }
+        return ''
     }
 
     String getRandomSeed() {
+        if (simulation) {
+            return simulation.randomSeed
+        }
         simulationProfile?.randomSeed ?: ''
     }
 
     String getSimulationStateAsString() {
-        simulationRuntimeInfo ? simulationRuntimeInfo.simulationState : ''
+        simulation ? simulation.simulationState : ''
+    }
+
+    Parameterization getParameterization() {
+        return parameterization
+    }
+
+    void setSimulationProfile(SimulationProfile simulationProfile) {
+        this.simulationProfile = simulationProfile
+    }
+
+    void setSimulationRuntimeInfo(SimulationRuntimeInfo simulationRuntimeInfo) {
+        simulation = simulationRuntimeInfo.simulation
+    }
+
+    void setSimulation(Simulation simulation) {
+        this.simulation = simulation
     }
 
     boolean isValid() {
-        simulationProfile || simulationRuntimeInfo
+        simulationProfile || simulation
     }
+
 }

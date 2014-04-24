@@ -25,6 +25,12 @@ class SortableTable extends ULCTable implements IOrderChangedListener {
         (SortableTableModel) super.model
     }
 
+    @Override
+    void setEnabled(boolean enabled) {
+        super.setEnabled(enabled)
+        dragEnabled = false
+    }
+
     private initialize() {
         dragEnabled = true
         transferHandler = new MyTransferHandler()

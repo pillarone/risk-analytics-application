@@ -1,13 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import models.application.ApplicationModel
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import org.pillarone.riskanalytics.core.model.Model
-
-import static junit.framework.Assert.*
 
 class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
 
