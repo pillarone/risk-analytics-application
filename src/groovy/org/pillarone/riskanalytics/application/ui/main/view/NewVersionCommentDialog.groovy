@@ -70,12 +70,12 @@ class NewVersionCommentDialog {
     }
 
     private void attachListeners() {
-        IActionListener action = [actionPerformed: {e ->
+        IActionListener action = [actionPerformed: { e ->
             okAction.call(commentTextArea.getText()); hide();
         }] as IActionListener
         okButton.addActionListener(action)
         commentTextArea.registerKeyboardAction(action, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK, false), ULCComponent.WHEN_FOCUSED)
-        cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: { e -> hide() }] as IActionListener)
     }
 
 

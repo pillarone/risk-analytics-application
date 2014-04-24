@@ -156,7 +156,8 @@ class ExcelExportHandler extends AbstractExcelHandler {
         return handleComponent(component.createDefaultSubComponent(), headerRow, technicalHeaderRow, ++columnIndex)
     }
 
-    private int addParameterCells(def parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
+    private int addParameterCells(
+            def parmObject, Row headerRow, Row technicalHeaderRow, int columnIndex, Cell cell, XSSFCellStyle columnStyle) {
         columnIndex
     }
 

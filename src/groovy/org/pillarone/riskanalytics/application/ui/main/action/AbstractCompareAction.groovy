@@ -17,7 +17,7 @@ abstract class AbstractCompareAction extends SelectionTreeAction {
         if (!elements || elements.size() < 2) throw new IllegalArgumentException("select at lease two items for compare")
         Class modelClass = getSelectedModel().class
         Class itemClass = elements[0].item.class
-        if (!elements.every {it.item.modelClass == modelClass && itemClass == it.item.class}) {
+        if (!elements.every { it.item.modelClass == modelClass && itemClass == it.item.class }) {
             throw new IllegalArgumentException("not comparable selected items ")
         }
     }

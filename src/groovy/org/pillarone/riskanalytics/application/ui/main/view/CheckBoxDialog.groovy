@@ -66,7 +66,7 @@ class CheckBoxDialog extends SelectionTreeHeaderDialog {
         List<String> activeValues = columnDescriptor.getFilter(model.currentFilter).values
         for (String value in values) {
             ULCCheckBox box = new ULCCheckBox(String.valueOf(value))
-            if(activeValues.contains(value)) {
+            if (activeValues.contains(value)) {
                 box.selected = true
                 filterValues << value
             }

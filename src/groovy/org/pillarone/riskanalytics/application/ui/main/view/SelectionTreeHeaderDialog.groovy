@@ -136,7 +136,6 @@ abstract class SelectionTreeHeaderDialog {
     }
 
 
-
     public String getColumnName(int column) {
         return tableTree.model.getColumnFilterName(column)
     }

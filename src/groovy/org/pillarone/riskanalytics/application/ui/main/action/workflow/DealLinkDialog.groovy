@@ -89,13 +89,13 @@ class DealLinkDialog {
     }
 
     private void attachListeners() {
-        IActionListener action = [actionPerformed: {e ->
+        IActionListener action = [actionPerformed: { e ->
             okAction.call()
             hide()
         }] as IActionListener
 
         okButton.addActionListener(action)
-        cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: { e -> hide() }] as IActionListener)
     }
 
     public void show() {

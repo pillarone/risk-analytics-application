@@ -47,7 +47,7 @@ class ModellingItemIndexer {
 
     public void indexItems() throws IOException {
         int i = 0
-        for (String itemName: itemNames) {
+        for (String itemName : itemNames) {
             addItemToDoc(itemName, i++)
         }
         closeIndexWriter()

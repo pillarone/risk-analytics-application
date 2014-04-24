@@ -105,8 +105,8 @@ abstract class ExportAction extends SelectionTreeAction {
                     exporter.exportResults rawData
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
                     exporter.writeWorkBook stream
-                }, onSuccess: { path, name ->
-                }, onFailure: { reason, description ->
+                }, onSuccess                        : { path, name ->
+                }, onFailure                        : { reason, description ->
                     if (reason == IFileStoreHandler.FAILED) {
                         LOG.error description
                         showAlert("exportError")
@@ -131,9 +131,9 @@ abstract class ExportAction extends SelectionTreeAction {
             ClientContext.storeFile([prepareFile: { OutputStream stream ->
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(stream))
                 writer.write(getConfigObject(item), bw)
-            }, onSuccess: { path, name ->
+            }, onSuccess                        : { path, name ->
                 LOG.info " $selectedFile exported"
-            }, onFailure: { reason, description ->
+            }, onFailure                        : { reason, description ->
                 if (reason == IFileStoreHandler.FAILED) {
                     LOG.error description
                     showAlert("exportError")

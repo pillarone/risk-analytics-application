@@ -26,7 +26,7 @@ class ExportAllAction extends ExportAction {
 
     public void doActionPerformed(ActionEvent event) {
         List items = []
-        ModelStructure.findAllModelClasses().each {Class modelClass ->
+        ModelStructure.findAllModelClasses().each { Class modelClass ->
             items.addAll((onlyNewestVersion) ? ModellingItemFactory.getNewestParameterizationsForModel(modelClass) : ModellingItemFactory.getParameterizationsForModel(modelClass))
         }
         exportItems(items)

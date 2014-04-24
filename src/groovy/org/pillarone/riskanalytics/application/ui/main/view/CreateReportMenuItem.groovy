@@ -33,7 +33,7 @@ import com.ulcjava.base.application.ULCPopupMenu
 /**
  * bzetterstrom
  */
-class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener  {
+class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener {
 
     ULCPopupMenu parent
 
@@ -59,12 +59,12 @@ class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener  {
     void popupMenuCanceled(PopupMenuEvent popupMenuEvent) {
     }
 
-    void checkVisibility(){
-    @Override
+    void checkVisibility() {
+        @Override
         CreateReportAction action = (CreateReportAction) getAction()
         IReportData reportData = action.getReportData()
         IReportModel model = action.getReportModel()
-        boolean visible = model.isValidFormatAndData(action.reportFormat,reportData)
+        boolean visible = model.isValidFormatAndData(action.reportFormat, reportData)
         setVisible(visible)
     }
 }

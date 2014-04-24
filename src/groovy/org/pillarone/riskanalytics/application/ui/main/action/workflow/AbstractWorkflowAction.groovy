@@ -31,7 +31,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         Status toStatus = toStatus()
 
         if (toStatus == Status.DATA_ENTRY) {
-            Closure changeStatusAction = {String commentText ->
+            Closure changeStatusAction = { String commentText ->
                 ExceptionSafe.protect {
                     AbstractUIItem uiItem = getSelectedUIItem()
                     if (!uiItem.isLoaded()) {
@@ -74,7 +74,8 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
     StatusChangeService getService() {
         try {
             return StatusChangeService.getService()
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        }
         return null
     }
 

@@ -42,7 +42,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                 try {
                     int periodCount = hasOneParameterColumnOnly ? 1 : (Integer) dialog.periodCount.value
                     Parameterization param
-                    ParameterizationDAO.withTransaction {status ->
+                    ParameterizationDAO.withTransaction { status ->
                         param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
                         param.name = dialog.nameInput.text
                         param.save()
@@ -69,7 +69,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
     boolean validate(String name) {
         if (!name) return false
         def seps = ["/", "//", File.separator]
-        if (seps.any {name.indexOf(it) != -1}) return false
+        if (seps.any { name.indexOf(it) != -1 }) return false
         return true
     }
 

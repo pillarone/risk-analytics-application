@@ -11,49 +11,25 @@ import org.springframework.stereotype.Component
 @Component
 class SimulationQueueTableModel extends AbstractTableModel {
 
-    private static final Map<Integer, String> COLUMN_NAME_KEYS = [
-            0: 'simulation',
-            1: 'batch',
-            2: 'p14n',
-            3: 'template',
-            4: 'iterations',
-            5: 'priority',
-            6: 'configuredAt',
-            7: 'configuredBy',
-            8: 'simulationState'
-    ] as Map<Integer, String>
-
-    private static final Map<Integer, Closure<String>> COLUMN_VALUE_FACTORIES = [
-            0: { SimulationRuntimeInfo info -> info.simulation.nameAndVersion },
-            1: { SimulationRuntimeInfo info -> info.simulation.batch?.name },
-            2: { SimulationRuntimeInfo info -> info.parameterization.nameAndVersion },
-            3: { SimulationRuntimeInfo info -> info.resultConfiguration.nameAndVersion },
-            4: { SimulationRuntimeInfo info -> info.iterations?.toString() },
-            5: { SimulationRuntimeInfo info -> info.priority?.toString() },
-            6: { SimulationRuntimeInfo info -> info.configuredAt.toString() },
-            7: { SimulationRuntimeInfo info -> info.offeredBy?.username },
-            8: { SimulationRuntimeInfo info -> info.simulationState.toString() }
-    ]
-
-    protected final List<SimulationRuntimeInfo> infos = []
+    protected final List<SimulationColumnModel> columnModels = []
 
     @Override
     int getRowCount() {
-        infos.size()
+        columnModels.size()
     }
 
     @Override
     int getColumnCount() {
-        COLUMN_NAME_KEYS.size()
+        SimulationColumnModel.COLUMN_COUNT
     }
 
     SimulationRuntimeInfo getInfoAt(int index) {
-        infos[index]
+        columnModels[index].object
     }
 
     @Override
     String getColumnName(int column) {
-        getText(COLUMN_NAME_KEYS[column])
+        getText(SimulationColumnModel.COLUMN_NAME_KEYS[column])
     }
 
     private String getText(String key) {
@@ -62,34 +38,49 @@ class SimulationQueueTableModel extends AbstractTableModel {
 
     @Override
     String getValueAt(int row, int column) {
-        COLUMN_VALUE_FACTORIES[column].call(infos[row])
+        columnModels[row].getValueAt(column)
     }
 
-    void setQueueItems(List<SimulationRuntimeInfo> queueItems) {
-        this.infos.clear()
-        this.infos.addAll(queueItems)
+    void setInfos(List<SimulationRuntimeInfo> infos) {
+        this.columnModels.clear()
+        infos.eachWithIndex { SimulationRuntimeInfo info, int row ->
+            this.columnModels << new SimulationColumnModel(row, this, info)
+        }
         fireTableDataChanged()
     }
 
     void itemAdded(SimulationRuntimeInfo item) {
-        infos.add(item)
-        infos.sort()
+        columnModels.add(new SimulationColumnModel(columnModels.size(), this, item))
+        sortColumnModels()
         fireTableDataChanged()
     }
 
+    protected void sortColumnModels() {
+        columnModels.sort { it.object }
+        assignRowsToColumnModels()
+    }
+
     void itemRemoved(SimulationRuntimeInfo info) {
-        def index = infos.indexOf(info)
-        if (index != -1) {
-            infos.remove(index)
+        SimulationColumnModel columnModel = columnModels.find { SimulationColumnModel model -> model.object == info }
+        if (columnModel) {
+            int index = columnModels.indexOf(columnModel)
+            columnModels.remove(columnModel)
+            assignRowsToColumnModels()
             fireTableRowsDeleted(index, index)
         }
     }
 
+    private void assignRowsToColumnModels() {
+        columnModels.eachWithIndex { SimulationColumnModel columnModel, int row ->
+            columnModel.row = row
+        }
+    }
+
     void itemChanged(SimulationRuntimeInfo info) {
-        def index = infos.indexOf(info)
-        if (index != -1) {
-            //only update cell which can change:
-            fireTableCellUpdated(index, 7)
+        SimulationColumnModel columnModel = columnModels.find { SimulationColumnModel model -> model.object == info }
+        if (columnModel) {
+            columnModel.setObject(info)
         }
     }
 }
+

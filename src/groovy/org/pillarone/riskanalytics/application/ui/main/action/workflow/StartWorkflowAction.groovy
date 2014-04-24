@@ -55,7 +55,7 @@ class StartWorkflowAction extends AbstractWorkflowAction {
     Status toStatus() {
         return Status.DATA_ENTRY
     }
-    
+
     @Override
     protected List allowedRoles() {
         return [UserManagement.USER_ROLE]

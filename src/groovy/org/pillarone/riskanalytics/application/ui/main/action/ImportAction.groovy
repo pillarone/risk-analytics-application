@@ -50,7 +50,7 @@ class ImportAction extends SelectionTreeAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
-        if (tree?.selectedPath?.lastPathComponent){
+        if (tree?.selectedPath?.lastPathComponent) {
             doAction(tree.selectedPath.lastPathComponent)
         }
     }
@@ -75,14 +75,14 @@ class ImportAction extends SelectionTreeAction {
         config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.IMPORT_DIR_KEY))
 
         ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
-                    filePaths?.each {def selectedFile ->
+                onSuccess: { filePaths, fileNames ->
+                    filePaths?.each { def selectedFile ->
                         ItemLoadHandler handler = new ItemLoadHandler(this, node)
                         handler.forceImport = this.forceImport
                         ClientContext.loadFile(handler, selectedFile)
                     }
                 },
-                onFailure: {reason, description ->
+                onFailure: { reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {
                         LOG.error description
                         ULCAlert alert = new I18NAlert(ancestor, "importError")
@@ -110,7 +110,7 @@ class ImportAction extends SelectionTreeAction {
         return "Import"
     }
 
-    String getExtension(){
+    String getExtension() {
         'groovy'
     }
 

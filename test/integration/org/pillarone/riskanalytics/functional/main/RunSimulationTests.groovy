@@ -39,7 +39,7 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
         getButtonOperator("${SimulationActionsPane.simpleName}.run").clickMouse()
 
         assert listener.offered.any {
-            it.simulationConfiguration.simulation.numberOfIterations == 11
+            it.simulationTask.simulation.numberOfIterations == 11
         }
     }
 }

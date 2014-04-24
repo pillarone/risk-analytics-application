@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class ExportItemAction extends ExportAction {
 
     public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        this(tree, model, "Export",'xlsx')
+        this(tree, model, "Export", 'xlsx')
     }
 
     public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName, String fileExtension) {
@@ -23,7 +23,7 @@ class ExportItemAction extends ExportAction {
 
 
     public void doActionPerformed(ActionEvent event) {
-        List selectedItems = getAllSelectedObjects()?.collect {ItemNode itemNode ->
+        List selectedItems = getAllSelectedObjects()?.collect { ItemNode itemNode ->
             itemNode.itemNodeUIItem.item
         }
         doAction(selectedItems)
@@ -39,7 +39,7 @@ class ExportItemAction extends ExportAction {
     }
 
     private boolean atLeastOneItemChanged(List<ModellingItem> items) {
-        for (Object item: items) {
+        for (Object item : items) {
             if (item.changed)
                 return true
         }

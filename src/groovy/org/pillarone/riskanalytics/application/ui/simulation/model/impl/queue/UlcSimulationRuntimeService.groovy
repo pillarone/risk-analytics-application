@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
-
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.PollingSupport
@@ -8,7 +7,6 @@ import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoEventSupport
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -20,7 +18,7 @@ import javax.annotation.Resource
 @Component
 class UlcSimulationRuntimeService {
 
-    @Autowired
+    @Resource
     SimulationRuntimeService simulationRuntimeService
     @Resource(name = 'pollingSupport2000')
     PollingSupport pollingSupport
@@ -32,7 +30,7 @@ class UlcSimulationRuntimeService {
     private final SimulationRuntimeInfoEventSupport eventSupport = new SimulationRuntimeInfoEventSupport()
 
     @PostConstruct
-    private void register() {
+    void register() {
         pollingListener = new MyActionListener()
         runtimeEventListener = new MySimulationRuntimeEventListener()
         simulationRuntimeService.addSimulationRuntimeInfoListener(runtimeEventListener)

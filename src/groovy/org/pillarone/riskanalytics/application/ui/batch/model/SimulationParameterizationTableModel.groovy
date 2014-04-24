@@ -1,72 +1,174 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
-import grails.util.Holders
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.IOrderChangedListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SortableTableModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SortedEvent
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
 import org.pillarone.riskanalytics.core.batch.BatchRunService
+import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
+import org.springframework.beans.factory.config.ConfigurableBeanFactory
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 
-class SimulationParameterizationTableModel extends SortableTableModel<BatchRowInfo> {
+import javax.annotation.PostConstruct
+import javax.annotation.Resource
 
-    private static final Map<Integer, String> COLUMN_NAMES = [
-            0: 'Name',
-            1: 'Model',
-            2: 'Template',
-            3: 'Period/Iterations',
-            4: 'Random Seed',
-            5: 'Simulation State'
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Component
+class SimulationParameterizationTableModel extends SortableTableModel<BatchRowInfoColumnModel> {
 
-    ] as Map<Integer, String>
+    private final static Log LOG = LogFactory.getLog(SimulationParameterizationTableModel)
 
-    private static final Map<Integer, Closure> COLUMN_VALUE_FACTORIES = [
-            0: { BatchRowInfo batchRowInfo -> batchRowInfo.name },
-            1: { BatchRowInfo batchRowInfo -> batchRowInfo.modelName },
-            2: { BatchRowInfo batchRowInfo -> batchRowInfo.templateName },
-            3: { BatchRowInfo batchRowInfo -> batchRowInfo.periodIterationAsString },
-            4: { BatchRowInfo batchRowInfo -> batchRowInfo.randomSeed },
-            5: { BatchRowInfo batchRowInfo -> batchRowInfo.simulationStateAsString }
-    ] as Map<Integer, Closure>
+    private Batch batch
+    private ISimulationRuntimeInfoListener simulationRuntimeInfoListener
 
-    private final Batch batch
+    @Resource
+    UlcSimulationRuntimeService ulcSimulationRuntimeService
 
-    SimulationParameterizationTableModel(Batch batch, String simulationProfileName) {
+    @Resource
+    BatchRunService batchRunService
+
+    private final IOrderChangedListener listener
+
+    SimulationParameterizationTableModel() {
         super([])
-        backedList = createBatchRowInfos(batch, simulationProfileName)
+        listener = new MyOrderListener()
+        addOrderChangedListener(listener)
+    }
+
+    void setBatch(Batch batch) {
+        infos = createBatchRowInfos(batch)
         this.batch = batch
+    }
+
+    @PostConstruct
+    void initialize() {
+        simulationRuntimeInfoListener = new MyRuntimeListener()
+        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(simulationRuntimeInfoListener)
+    }
+
+    void destroy() {
+        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(simulationRuntimeInfoListener)
+        simulationRuntimeInfoListener = null
     }
 
     @Override
     String getColumnName(int column) {
-        COLUMN_NAMES[column]
+        BatchRowInfoColumnModel.COLUMN_NAMES[column]
     }
 
     @Override
     int getColumnCount() {
-        COLUMN_NAMES.size()
+        BatchRowInfoColumnModel.SIZE
     }
 
     @Override
     Object getValueAt(int row, int column) {
-        COLUMN_VALUE_FACTORIES[column].call(backedList[row])
+        backedList[row].getValueAt(column)
     }
 
-    private List<BatchRowInfo> createBatchRowInfos(Batch batch, String simulationProfileName) {
-        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(simulationProfileName)
+    void setInfos(List<BatchRowInfo> infos) {
+        List<BatchRowInfoColumnModel> newModels = []
+        infos.eachWithIndex { BatchRowInfo info, int row ->
+            newModels << new BatchRowInfoColumnModel(row, this, info, columnCount)
+        }
+        backedList = newModels
+        fireTableDataChanged()
+    }
+
+    private List<BatchRowInfo> createBatchRowInfos(Batch batch) {
+        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
         batch.parameterizations.collect {
             new BatchRowInfo(parameterization: it, simulationProfile: byModelClass[it.modelClass])
         }
     }
 
-    BatchRunService getBatchRunService() {
-        Holders.grailsApplication.mainContext.getBean('batchRunService', BatchRunService)
+    void simulationProfileNameChanged() {
+        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
+        backedList.each {
+            it.object.simulationProfile = byModelClass[it.object.modelClass]
+            it.update()
+        }
     }
 
-    void simulationProfileNameChanged(String name) {
-        backedList = createBatchRowInfos(batch, name)
-        fireTableDataChanged()
+    private void assignRowsToColumnModels() {
+        backedList.eachWithIndex { BatchRowInfoColumnModel columnModel, int row ->
+            columnModel.row = row
+        }
     }
 
     List<BatchRowInfo> getBatchRowInfos() {
-        backedList
+        backedList.object
+    }
+
+
+    private class MyOrderListener implements IOrderChangedListener {
+        @Override
+        void orderChanged(SortedEvent event) {
+            assignRowsToColumnModels()
+        }
+    }
+
+    private class MyRuntimeListener extends SimulationRuntimeInfoAdapter {
+        @Override
+        void starting(SimulationRuntimeInfo info) {
+            update(getColumnModel(info), info)
+        }
+
+        @Override
+        void finished(SimulationRuntimeInfo info) {
+            update(getColumnModel(info), info)
+
+        }
+
+        @Override
+        void removed(SimulationRuntimeInfo info) {
+            update(getColumnModel(info), null)
+        }
+
+        @Override
+        void offered(SimulationRuntimeInfo info) {
+            update(getColumnModel(info), info)
+        }
+
+        @Override
+        void changed(SimulationRuntimeInfo info) {
+            update(getColumnModel(info), info)
+        }
+
+        private update(BatchRowInfoColumnModel columnModel, SimulationRuntimeInfo info) {
+            LOG.debug("trying to update info $info")
+            if (columnModel) {
+                LOG.debug("updating")
+                columnModel.object.simulationRuntimeInfo = info
+                columnModel.update()
+            }
+        }
+
+        private BatchRowInfoColumnModel getColumnModel(SimulationRuntimeInfo info) {
+            if (!isRelevant(info)) {
+                return null
+            }
+            BatchRowInfoColumnModel columnModel = getBackedList().find { BatchRowInfoColumnModel columnModel ->
+                columnModel.object.parameterization == info.parameterization
+            }
+            if (!columnModel) {
+                throw new IllegalStateException("info $info belongs to our batch. But there is no column model for it!")
+            }
+            return columnModel
+        }
+
+        private boolean isRelevant(SimulationRuntimeInfo info) {
+            if (!batch) {
+                return false
+            }
+            info.simulation?.batch == batch
+        }
     }
 }

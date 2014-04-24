@@ -37,10 +37,9 @@ ULC view
     }
 
     def doWithSpring = {
-        ulcSessionScope(UlcSessionScope)
         customScopeConfigurer(CustomScopeConfigurer) {
             Map<String, Object> scopeMap = new HashMap<String, Object>()
-            scopeMap[ULC_SESSION_SCOPE] = ref('ulcSessionScope')
+            scopeMap[ULC_SESSION_SCOPE] = ref(ULC_SESSION_SCOPE)
             scopes = scopeMap
         }
         Closure ulcScopeWired = { BeanConfiguration conf ->

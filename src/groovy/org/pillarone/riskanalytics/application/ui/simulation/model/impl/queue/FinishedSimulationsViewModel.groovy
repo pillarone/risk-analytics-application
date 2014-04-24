@@ -35,7 +35,7 @@ class FinishedSimulationsViewModel {
     @PostConstruct
     void initialize() {
         ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
-        finishedSimulationsTableModel.queueItems = simulationRuntimeService.finished
+        finishedSimulationsTableModel.infos = simulationRuntimeService.finished
     }
 
     @PreDestroy

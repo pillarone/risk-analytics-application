@@ -42,17 +42,17 @@ class ImportAllAction extends ImportAction {
         config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.IMPORT_DIR_KEY))
 
         ClientContext.chooseFile([
-                onSuccess: {filePaths, fileNames ->
+                onSuccess: { filePaths, fileNames ->
                     String selectedPath = filePaths[0]
                     File dir = new File(selectedPath)
                     loadFile(dir)
-                    dir.eachDir {File modelName ->
+                    dir.eachDir { File modelName ->
                         String modelDir = selectedPath + "/" + modelName.name
                         File modelFile = new File(modelDir)
                         loadFile(modelFile)
                     }
                 },
-                onFailure: {reason, description ->
+                onFailure: { reason, description ->
                     if (IFileLoadHandler.CANCELLED != reason) {
                         new ULCAlert(ancestor, "Import failed", description, "Ok").show()
                     }
@@ -61,7 +61,7 @@ class ImportAllAction extends ImportAction {
     }
 
     protected void loadFile(File modelFile) {
-        modelFile.eachFile {File selectedFile ->
+        modelFile.eachFile { File selectedFile ->
             if (selectedFile.name.endsWith(".groovy")) {
                 LOG.info "importing a parameterization   $selectedFile.name ..."
                 synchronized (this.getClass()) {

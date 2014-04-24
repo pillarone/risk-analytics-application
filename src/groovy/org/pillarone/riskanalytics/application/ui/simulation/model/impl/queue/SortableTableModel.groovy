@@ -6,7 +6,7 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
 
     private List<T> backedList
 
-    private List<IOrderChangedListener> listeners;
+    private List<IOrderChangedListener> listeners
 
     @Override
     int getRowCount() {
@@ -60,8 +60,8 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
     List<T> getBackedList() {
         return backedList
     }
+}
 
-    interface IOrderChangedListener {
-        void orderChanged(SortedEvent event)
-    }
+interface IOrderChangedListener {
+    void orderChanged(SortedEvent event)
 }

@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui
-
 import com.ulcjava.applicationframework.application.Application
 import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.IApplication
@@ -8,7 +7,9 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.config.Scope
+import org.springframework.stereotype.Component
 
+@Component(UlcSessionScope.ULC_SESSION_SCOPE)
 class UlcSessionScope implements Scope {
 
     private static final Log LOG = LogFactory.getLog(UlcSessionScope)

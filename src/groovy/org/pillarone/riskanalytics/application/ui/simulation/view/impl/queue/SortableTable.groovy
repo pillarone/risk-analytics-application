@@ -5,13 +5,14 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.dnd.DnDTableData
 import com.ulcjava.base.application.dnd.TransferHandler
 import com.ulcjava.base.application.dnd.Transferable
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.IOrderChangedListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SortableTableModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SortedEvent
 
 import static com.ulcjava.base.application.dnd.DataFlavor.DRAG_FLAVOR
 import static com.ulcjava.base.application.dnd.DataFlavor.DROP_FLAVOR
 
-class SortableTable extends ULCTable implements SortableTableModel.IOrderChangedListener {
+class SortableTable extends ULCTable implements IOrderChangedListener {
 
     SortableTable(SortableTableModel model) {
         super(model)

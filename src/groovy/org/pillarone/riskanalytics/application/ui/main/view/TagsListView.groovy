@@ -46,14 +46,14 @@ class TagsListView extends AbstractView {
         itemTags = getAllModellingItemTages()
 
         tagsCheckBoxes = new ArrayList<ULCCheckBox>()
-        allTags.each {Tag tag ->
+        allTags.each { Tag tag ->
             ULCCheckBox checkBox = new ULCCheckBox(tag.name)
             checkBox.name = tag.name
             setLookAndFeel(checkBox, tag)
             checkBox.setSelected(itemTags.contains(tag))
-            checkBox.addValueChangedListener([valueChanged: {ValueChangedEvent valueChangedEvent ->
+            checkBox.addValueChangedListener([valueChanged: { ValueChangedEvent valueChangedEvent ->
                 ULCCheckBox box = (ULCCheckBox) valueChangedEvent.source
-                Tag newTag = allTags.find {it.name == box.getText() }
+                Tag newTag = allTags.find { it.name == box.getText() }
                 if (box.isSelected() && newTag) {
                     addTagToItem(newTag)
                 } else {
@@ -81,8 +81,8 @@ class TagsListView extends AbstractView {
 
     private List<Tag> getAllModellingItemTages() {
         Set<Tag> all = new HashSet<Tag>()
-        for (ModellingItem item: modellingItems) {
-            for (Tag tag: item.getTags()) {
+        for (ModellingItem item : modellingItems) {
+            for (Tag tag : item.getTags()) {
                 all.add(tag)
             }
         }
@@ -90,14 +90,14 @@ class TagsListView extends AbstractView {
     }
 
     private Color getColor(Tag tag) {
-        if (modellingItems.every {it.getTags().contains(tag)}) return Color.black
-        if (modellingItems.any {it.getTags().contains(tag)}) return Color.gray
+        if (modellingItems.every { it.getTags().contains(tag) }) return Color.black
+        if (modellingItems.any { it.getTags().contains(tag) }) return Color.gray
         return Color.black
     }
 
     private void addTagToItem(Tag tag) {
         if (!itemTags.contains(tag)) itemTags << tag
-        for (ModellingItem modellingItem: modellingItems) {
+        for (ModellingItem modellingItem : modellingItems) {
             if (!modellingItem.getTags().contains(tag)) {
                 modellingItem.getTags().add(tag)
                 modellingItem.setChanged(true)
@@ -107,7 +107,7 @@ class TagsListView extends AbstractView {
 
     private void removeTag(Tag tag) {
         itemTags.remove(tag)
-        for (ModellingItem modellingItem: modellingItems) {
+        for (ModellingItem modellingItem : modellingItems) {
             if (modellingItem.getTags().contains(tag)) {
                 modellingItem.getTags().remove(tag)
                 modellingItem.setChanged(true)

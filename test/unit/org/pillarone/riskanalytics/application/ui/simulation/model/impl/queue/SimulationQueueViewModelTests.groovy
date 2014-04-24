@@ -1,8 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
-
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
-import org.pillarone.riskanalytics.core.simulation.engine.QueueEntry
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
 
@@ -15,9 +13,9 @@ class SimulationQueueViewModelTests {
     void testUpdate() {
         def tableModelControl = mockFor(SimulationQueueTableModel)
 
-        SimulationRuntimeInfo addInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
-        SimulationRuntimeInfo deleteInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
-        SimulationRuntimeInfo changeInfo = new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
+        SimulationRuntimeInfo addInfo = new SimulationRuntimeInfo(randomUUID())
+        SimulationRuntimeInfo deleteInfo = new SimulationRuntimeInfo(randomUUID())
+        SimulationRuntimeInfo changeInfo = new SimulationRuntimeInfo(randomUUID())
 
         tableModelControl.demand.itemChanged(2..2) { SimulationRuntimeInfo info ->
             assert changeInfo.is(info)
@@ -48,8 +46,8 @@ class SimulationQueueViewModelTests {
         def tableModelControl = mockFor(SimulationQueueTableModel)
         UlcSimulationRuntimeService ulcSimulationRuntimeService = new UlcSimulationRuntimeService()
         List<SimulationRuntimeInfo> simulationRuntimeInfos = [
-                new SimulationRuntimeInfo(new QueueEntry(randomUUID())),
-                new SimulationRuntimeInfo(new QueueEntry(randomUUID()))
+                new SimulationRuntimeInfo(randomUUID()),
+                new SimulationRuntimeInfo(randomUUID())
         ]
         runtimeServiceControl.demand.getQueued { ->
             simulationRuntimeInfos

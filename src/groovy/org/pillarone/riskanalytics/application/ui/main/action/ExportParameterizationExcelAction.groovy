@@ -29,8 +29,8 @@ class ExportParameterizationExcelAction extends ExportAction {
                 onSuccess: { String[] filePaths, fileNames ->
                     ClientContext.storeFile([prepareFile: { OutputStream stream ->
                         stream.write(handler.exportModel())
-                    }, onSuccess: { path, name ->
-                    }, onFailure: { reason, description ->
+                    }, onSuccess                        : { path, name ->
+                    }, onFailure                        : { reason, description ->
                         if (reason == IFileStoreHandler.FAILED) {
                             LOG.error description
                             showAlert("exportError")

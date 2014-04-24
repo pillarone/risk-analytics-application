@@ -25,7 +25,7 @@ public class TabbedPaneManagerHelper {
     public static String getToolTip(List items) {
         List<String> names = items*.name
         StringBuilder builder = new StringBuilder("<html>")
-        names.eachWithIndex {it, int index ->
+        names.eachWithIndex { it, int index ->
             if (index > 0)
                 builder.append("<br>")
             builder.append(it)

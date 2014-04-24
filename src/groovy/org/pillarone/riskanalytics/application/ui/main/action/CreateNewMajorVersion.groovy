@@ -32,11 +32,10 @@ class CreateNewMajorVersion extends SelectionTreeAction {
     }
 
 
-
     public void doActionPerformed(ActionEvent event) {
         ModellingUIItem uiItem = getUIItem()
         if (uiItem instanceof ParameterizationUIItem) {
-            Closure okAction = {String commentText ->
+            Closure okAction = { String commentText ->
                 if (!uiItem.isLoaded()) {
                     uiItem.load()
                 }

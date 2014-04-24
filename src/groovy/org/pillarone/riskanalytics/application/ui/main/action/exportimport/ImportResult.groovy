@@ -49,8 +49,6 @@ class ImportResult {
     }
 
 
-
-
     enum Type {
         SUCCESS, ERROR, WARNING
     }

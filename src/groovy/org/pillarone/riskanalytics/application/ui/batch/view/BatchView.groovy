@@ -22,10 +22,10 @@ import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAroun
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-class BatchesView {
+class BatchView {
 
     private SortableTable batches
-    private final Batch batch
+    private Batch batch
     private ULCButton runBatch
     private ULCButton saveButton
     private ULCBoxPane content
@@ -34,20 +34,16 @@ class BatchesView {
     @Resource
     GrailsApplication grailsApplication
 
-    private BatchViewModel batchViewModel
+    @Resource
+    BatchViewModel batchViewModel
 
-    BatchesView(Batch batch) {
+    void setBatch(Batch batch) {
         this.batch = batch
-    }
-
-    BatchesView() {
-        this(null)
-        throw new IllegalStateException("empty constructor for spring only")
+        batchViewModel.batch = batch
     }
 
     @PostConstruct
     void initialize() {
-        batchViewModel = grailsApplication.mainContext.getBean('batchViewModel', batch) as BatchViewModel
         batches = new SortableTable(batchViewModel.simulationParameterizationTableModel)
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer()
         batches.columnModel.columns.each { ULCTableColumn column ->
@@ -58,11 +54,15 @@ class BatchesView {
         content = new ULCBoxPane(1, 3, 5, 5)
         content.add(ULCBoxPane.BOX_LEFT_TOP, configurationPane)
         ULCScrollPane batchesPane = new ULCScrollPane(batches)
-        batchesPane.preferredSize = new Dimension(600,300)
+        batchesPane.preferredSize = new Dimension(600, 300)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, batchesPane)
         content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         attachListener()
+    }
+
+    void destroy() {
+        batchViewModel.destroy()
     }
 
     private void attachListener() {
@@ -76,7 +76,7 @@ class BatchesView {
         }] as IActionListener)
         simulationProfilesComboBox.addActionListener([actionPerformed: { ActionEvent event ->
             String newSimulationProfileName = simulationProfilesComboBox.selectedItem as String
-            if (batch.simulationProfileName != newSimulationProfileName) {
+            if (batch && batch.simulationProfileName != newSimulationProfileName) {
                 batchViewModel.profileNameChanged(newSimulationProfileName)
                 runBatch.enabled = batchViewModel.valid
                 batch.changed = true

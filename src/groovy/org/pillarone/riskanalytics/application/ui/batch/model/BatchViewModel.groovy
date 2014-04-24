@@ -1,8 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
+import com.google.common.base.Preconditions
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
-import org.pillarone.riskanalytics.core.SimulationProfileDAO
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
@@ -18,48 +19,48 @@ class BatchViewModel {
 
     @Resource
     BatchRunService batchRunService
+    @Resource
+    GrailsApplication grailsApplication
 
-    private boolean valid
+    private boolean valid = true
 
+    @Resource
     SimulationParameterizationTableModel simulationParameterizationTableModel
-    IComboBoxModel simulationProfileNamesComboBoxModel
-    private final Batch batch
 
-    BatchViewModel(Batch batch) {
-        this.batch = batch
-    }
+    IComboBoxModel simulationProfileNamesComboBoxModel
+    private Batch batch
 
     @PostConstruct
     void initialize() {
-        simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(simulationProfileNames)
-        simulationProfileNamesComboBoxModel.selectedItem = batch.simulationProfileName
-        simulationParameterizationTableModel = new SimulationParameterizationTableModel(batch, batch.simulationProfileName)
-        validate()
+        simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(batchRunService.simulationProfileNames)
     }
 
-    BatchViewModel() {
-        this(null)
-        throw new IllegalStateException("empty constructor is only for spring")
+    void destroy() {
+        simulationParameterizationTableModel.destroy()
+    }
+
+    void setBatch(Batch batch) {
+        this.batch = Preconditions.checkNotNull(batch)
+        simulationParameterizationTableModel.batch = batch
+        simulationProfileNamesComboBoxModel.selectedItem = batch.simulationProfileName
+        validate()
     }
 
     void save() {
-        batch.simulationProfileName = simulationProfileNamesComboBoxModel.selectedItem
-        batch.parameterizations = simulationParameterizationTableModel.batchRowInfos.parameterization
-        batch.save()
-        validate()
-    }
-
-    List<String> getSimulationProfileNames() {
-        SimulationProfileDAO.createCriteria().list {
-            projections {
-                property('name')
-            }
-        }.unique()
+        if (batch) {
+            batch.simulationProfileName = simulationProfileNamesComboBoxModel.selectedItem
+            batch.parameterizations = simulationParameterizationTableModel.batchRowInfos.parameterization
+            batch.save()
+            validate()
+        }
     }
 
     void profileNameChanged(String profileName) {
-        simulationParameterizationTableModel.simulationProfileNameChanged(profileName)
-        validate()
+        if (batch) {
+            batch.simulationProfileName = profileName
+            simulationParameterizationTableModel.simulationProfileNameChanged()
+            validate()
+        }
     }
 
     private boolean validate() {
@@ -71,7 +72,12 @@ class BatchViewModel {
     }
 
     void run() {
-        batchRunService.runBatch(batch)
+        if (batch) {
+            batchRunService.runBatch(batch)
+        }
+
         //TODO lock ui, because batch is now executed
     }
+
+
 }

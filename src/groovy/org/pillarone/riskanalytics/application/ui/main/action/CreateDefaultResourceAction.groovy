@@ -43,7 +43,7 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
             } else {
                 try {
                     Resource resource
-                    ParameterizationDAO.withTransaction {status ->
+                    ParameterizationDAO.withTransaction { status ->
                         resource = ParameterizationHelper.createDefaultResource(dialog.nameInput.text, node.resourceClass.newInstance())
                         resource.save()
                         resource = ModellingItemFactory.getItem(resource.dao)
@@ -69,7 +69,7 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
     boolean validate(String name) {
         if (!name) return false
         def seps = ["/", "//", File.separator]
-        if (seps.any {name.indexOf(it) != -1}) return false
+        if (seps.any { name.indexOf(it) != -1 }) return false
         return true
     }
 }

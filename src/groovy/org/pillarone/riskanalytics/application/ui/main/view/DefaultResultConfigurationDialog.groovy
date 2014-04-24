@@ -66,10 +66,10 @@ class DefaultResultConfigurationDialog {
     }
 
     private void attachListeners() {
-        IActionListener action = [actionPerformed: {e -> okAction.call()}] as IActionListener
+        IActionListener action = [actionPerformed: { e -> okAction.call() }] as IActionListener
         nameInput.addActionListener(action)
         okButton.addActionListener(action)
-        cancelButton.addActionListener([actionPerformed: {e -> hide()}] as IActionListener)
+        cancelButton.addActionListener([actionPerformed: { e -> hide() }] as IActionListener)
     }
 
 

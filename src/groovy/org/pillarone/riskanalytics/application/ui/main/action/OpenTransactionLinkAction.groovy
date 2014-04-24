@@ -26,10 +26,10 @@ class OpenTransactionLinkAction extends SelectionTreeAction {
             return false
         }
         Object selectedItem = getSelectedItem()
-        if(selectedItem instanceof Parameterization){
+        if (selectedItem instanceof Parameterization) {
             Long dealId = selectedItem.getDealId()
             return dealId && dealId > 0
-        }else{
+        } else {
             return false
         }
     }
@@ -67,7 +67,7 @@ class OpenTransactionLinkAction extends SelectionTreeAction {
             if (transactionInfos == null) {
                 transactionInfos = RemotingUtils.allTransactions
             }
-            TransactionInfo transactionInfo = transactionInfos.find {it.dealId == dealId}
+            TransactionInfo transactionInfo = transactionInfos.find { it.dealId == dealId }
             if (transactionInfo) {
                 return transactionInfo.getTransactionUrl()
             }

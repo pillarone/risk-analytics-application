@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
@@ -9,9 +10,10 @@ import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
-* @author fouad.jaada@intuitive-collaboration.com
-*/
+ * @author fouad.jaada@intuitive-collaboration.com
+ */
 class CompareSimulationsAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CompareSimulationsAction)
@@ -50,14 +52,14 @@ class CompareSimulationsAction extends SelectionTreeAction {
         // This check moved from isEnabled()
         Model selectedModel = getSelectedModel(elements[0])
         //at moment compare of deterministic models not supported
-        if(selectedModel instanceof DeterministicModel){
+        if (selectedModel instanceof DeterministicModel) {
             throw new IllegalArgumentException("Comparing deterministic models not supported")
         }
     }
 
     public boolean isEnabled() {
 
-        if(getSelectedObjects(Simulation.class).size()<2){
+        if (getSelectedObjects(Simulation.class).size() < 2) {
             return false;
         }
 

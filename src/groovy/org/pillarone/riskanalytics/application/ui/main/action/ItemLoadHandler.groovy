@@ -47,7 +47,7 @@ class ItemLoadHandler implements IFileLoadHandler {
         importAction.userPreferences.setUserDirectory(paths, names)
         ExceptionSafe.protect {
 
-            names.findAll {it.indexOf(".groovy") != -1}.eachWithIndex {String fileName, int index ->
+            names.findAll { it.indexOf(".groovy") != -1 }.eachWithIndex { String fileName, int index ->
                 String itemName = names[index] - ".groovy"
                 List lines = inputStreams[index].readLines()
                 String fileContent = getFileContent(lines)
@@ -75,8 +75,7 @@ class ItemLoadHandler implements IFileLoadHandler {
                                     alert.show()
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             LOG.error "error by importing a parameterization $itemName : config object is not valid"
                         }
                     }
@@ -103,7 +102,7 @@ class ItemLoadHandler implements IFileLoadHandler {
     private void spreadRanges(ConfigObject config) {
         def rangeKeys = [:]
         List ranges = []
-        config.each {key, value ->
+        config.each { key, value ->
             if (value instanceof ConfigObject) {
                 spreadRanges(value)
             }
@@ -123,7 +122,7 @@ class ItemLoadHandler implements IFileLoadHandler {
     private String getFileContent(List lines) {
         String fileContent = lines.join("\n")
         Properties properties = getProperties(lines)
-        properties.propertyNames().each {String old ->
+        properties.propertyNames().each { String old ->
             fileContent = fileContent.replaceAll(old, properties.get(old))
         }
         return fileContent
@@ -135,14 +134,13 @@ class ItemLoadHandler implements IFileLoadHandler {
     }
 
     private String getVersion(List lines) {
-        for (String str: lines) {
+        for (String str : lines) {
             if (StringUtils.isNotEmpty(str) && str.indexOf("applicationVersion") != -1) {
                 return str.substring(str.indexOf("=") + 1).trim().replaceAll("'", "")
             }
         }
         return null
     }
-
 
 
     private Properties getProperties(List lines) {

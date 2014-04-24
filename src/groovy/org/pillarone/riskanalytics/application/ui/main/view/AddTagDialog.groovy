@@ -32,7 +32,7 @@ class AddTagDialog {
     Dimension buttonDimension = new Dimension(120, 20)
 
 
-    Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
+    Closure closeAction = { event -> dialog.visible = false; dialog.dispose() }
 
     public AddTagDialog(ULCTableTree tree, List<ModellingUIItem> modellingUIItems) {
         this.tree = tree
@@ -42,7 +42,7 @@ class AddTagDialog {
     }
 
     private void load() {
-        for (ModellingUIItem modellingUIItem: modellingUIItems) {
+        for (ModellingUIItem modellingUIItem : modellingUIItems) {
             if (!modellingUIItem.isLoaded())
                 modellingUIItem.load(true)
         }
@@ -95,8 +95,8 @@ class AddTagDialog {
     }
 
     private void attachListeners() {
-        cancelButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            for (ModellingUIItem modellingUIItem: modellingUIItems) {
+        cancelButton.addActionListener([actionPerformed: { ActionEvent evt ->
+            for (ModellingUIItem modellingUIItem : modellingUIItems) {
                 if (modellingUIItem.changed) {
                     modellingUIItem.load(true)
                     modellingUIItem.item.setChanged(false)
@@ -104,14 +104,14 @@ class AddTagDialog {
             }
             closeAction.call()
         }] as IActionListener)
-        addNewButton.addActionListener([actionPerformed: {ActionEvent evt ->
+        addNewButton.addActionListener([actionPerformed: { ActionEvent evt ->
             String tagName = newTag.getText()
             tagesListView.addTag(tagName)
 
         }] as IActionListener)
-        applyButton.addActionListener([actionPerformed: {ActionEvent evt ->
-            for (ModellingUIItem modellingUIItem: modellingUIItems) {
-                if (modellingUIItem.changed){
+        applyButton.addActionListener([actionPerformed: { ActionEvent evt ->
+            for (ModellingUIItem modellingUIItem : modellingUIItems) {
+                if (modellingUIItem.changed) {
                     modellingUIItem.save()
                 }
             }

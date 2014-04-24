@@ -1,15 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
-import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 
 class BatchRowInfo {
     Parameterization parameterization
     SimulationProfile simulationProfile
-    SimulationState simulationState
+    SimulationRuntimeInfo simulationRuntimeInfo
 
     String getName() {
+        if (simulationRuntimeInfo) {
+            return simulationRuntimeInfo.simulation.nameAndVersion
+        }
         parameterization.name
     }
 
@@ -17,12 +20,16 @@ class BatchRowInfo {
         parameterization.modelClass.simpleName
     }
 
+    Class getModelClass() {
+        parameterization.modelClass
+    }
+
     String getTemplateName() {
         simulationProfile?.template?.nameAndVersion ?: ''
     }
 
     String getPeriodIterationAsString() {
-        simulationProfile?.numberOfIterations ?: ''
+        "${parameterization.periodCount}/${simulationProfile?.numberOfIterations}" ?: ''
     }
 
     String getRandomSeed() {
@@ -30,10 +37,10 @@ class BatchRowInfo {
     }
 
     String getSimulationStateAsString() {
-        simulationState ?: ''
+        simulationRuntimeInfo ? simulationRuntimeInfo.simulationState : ''
     }
 
     boolean isValid() {
-        simulationProfile || simulationState
+        simulationProfile || simulationRuntimeInfo
     }
 }

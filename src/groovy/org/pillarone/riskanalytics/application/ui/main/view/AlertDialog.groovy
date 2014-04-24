@@ -20,7 +20,7 @@ class AlertDialog {
     private ULCButton cancelButton
     String title
     String message
-    Closure closeAction = {event -> dialog.visible = false; dialog.dispose()}
+    Closure closeAction = { event -> dialog.visible = false; dialog.dispose() }
     Closure okAction
     List<AbstractUIItem> selectedItems
     def nextItemToSelect
@@ -72,8 +72,8 @@ class AlertDialog {
     }
 
     private void attachListeners() {
-        cancelButton.addActionListener([actionPerformed: {ActionEvent evt -> closeAction.call()}] as IActionListener)
-        okButton.addActionListener([actionPerformed: {ActionEvent evt ->
+        cancelButton.addActionListener([actionPerformed: { ActionEvent evt -> closeAction.call() }] as IActionListener)
+        okButton.addActionListener([actionPerformed: { ActionEvent evt ->
             (selectedItems) ? okAction.call([selectedItems] as Object[]) : okAction.call()
             closeAction.call()
         }] as IActionListener)

@@ -33,7 +33,7 @@ class SimulationQueueViewModel {
     @PostConstruct
     void initialize() {
         ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
-        simulationQueueTableModel.queueItems = simulationRuntimeService.queued
+        simulationQueueTableModel.infos = simulationRuntimeService.queued
     }
 
     @PreDestroy

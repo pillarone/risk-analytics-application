@@ -181,7 +181,8 @@ class ExcelImportHandler extends AbstractExcelHandler {
         return enumObject
     }
 
-    private def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
+    private
+    def toType(ComboBoxTableMultiDimensionalParameter objectClass, Cell cell, Sheet sheet, int rowIndex, int columnIndex) {
         String value = stringValue(cell)
         if (value) {
             objectClass.setValueAt(toSubComponentName(value), 1, 0)
@@ -233,7 +234,9 @@ class ExcelImportHandler extends AbstractExcelHandler {
                 return objectClass
             }
         } else {
-            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [propertyName, classifiers.collect { "'${it.displayName}'" }.join(',')]), ImportResult.Type.ERROR)
+            importResults << new ImportResult(sheet.sheetName, rowIndex, columnIndex, getMessage(UNKNOWN_VALUE, [propertyName, classifiers.collect {
+                "'${it.displayName}'"
+            }.join(',')]), ImportResult.Type.ERROR)
             return objectClass
         }
     }
@@ -460,7 +463,7 @@ class ExcelImportHandler extends AbstractExcelHandler {
                 return evaluator.evaluate(cell)
             } catch (NotImplementedException e) {
                 LOG.error(e.message, e)
-                importResults << new ImportResult(cell,"Formula not implemented: '${e.cause?.message}'", ImportResult.Type.ERROR)
+                importResults << new ImportResult(cell, "Formula not implemented: '${e.cause?.message}'", ImportResult.Type.ERROR)
                 return null
             } catch (Exception e) {
                 LOG.error(e.message, e)

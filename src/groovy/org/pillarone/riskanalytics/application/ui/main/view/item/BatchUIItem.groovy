@@ -7,7 +7,7 @@ import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.batch.view.BatchesView
+import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
@@ -33,13 +33,11 @@ class BatchUIItem extends ModellingUIItem {
         super(Preconditions.checkNotNull(batch))
     }
 
-    String createTitle() {
-        return item.name
-    }
-
     ULCContainer createDetailView() {
-        BatchesView batchesView = Holders.grailsApplication.mainContext.getBean('batchesView', item) as BatchesView
-        batchesView.content
+        BatchView batchView = Holders.grailsApplication.mainContext.getBean('batchView', BatchView)
+        //TODO this batchView has to be destroyed after usage!!
+        batchView.batch = item
+        batchView.content
     }
 
     AbstractModellingModel getViewModel() {
@@ -47,10 +45,7 @@ class BatchUIItem extends ModellingUIItem {
     }
 
     boolean remove() {
-        if (batchRunService.deleteBatch(item)) {
-            return true
-        }
-        return false
+        batchRunService.deleteBatch(item)
     }
 
     @Override

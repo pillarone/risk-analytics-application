@@ -33,11 +33,11 @@ import java.awt.event.MouseAdapter
 class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
 
     RiskAnalyticsMainModel raMainModel
-     ULCTableTree ulcTableTree
-     List<IReportModel> reportModels
+    ULCTableTree ulcTableTree
+    List<IReportModel> reportModels
     ULCPopupMenu parent
 
-    CreateReportsMenu(String s, List<IReportModel> reportModel,ULCTableTree tree, RiskAnalyticsMainModel model, ULCPopupMenu simulationNodePopUpMenu) {
+    CreateReportsMenu(String s, List<IReportModel> reportModel, ULCTableTree tree, RiskAnalyticsMainModel model, ULCPopupMenu simulationNodePopUpMenu) {
         super(s)
         this.raMainModel = model
         this.ulcTableTree = tree
@@ -63,11 +63,11 @@ class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
      * or not to show the reports expensive context information. Don't retrieve it until the user has explicitly asked for it.
      */
     // I'm glad I don't drink - fr
-    private addIndividualReportMenus(){
-        for (IReportModel aModel in reportModels ) {
+    private addIndividualReportMenus() {
+        for (IReportModel aModel in reportModels) {
             for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
                 CreateReportAction action = new CreateReportAction(aModel, aReportFormat, ulcTableTree, raMainModel)
-                CreateReportMenuItem createReportMenuItem = new CreateReportMenuItem(action , this)
+                CreateReportMenuItem createReportMenuItem = new CreateReportMenuItem(action, this)
                 createReportMenuItem.checkVisibility()
                 add(createReportMenuItem)
             }
