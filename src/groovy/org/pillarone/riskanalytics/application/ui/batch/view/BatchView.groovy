@@ -36,6 +36,7 @@ class BatchView {
     private ULCButton saveButton
     private ULCBoxPane content
     private ULCComboBox simulationProfilesComboBox
+    private ULCLabel parameterizationCount
 
     @Resource
     GrailsApplication grailsApplication
@@ -52,6 +53,7 @@ class BatchView {
         this.batch = batch
         batch.addModellingItemChangeListener(new ValidationListener())
         batchViewModel.batch = batch
+        parameterizationCount.text = batch.parameterizations.size()
         updateEnablingState()
         if (!batch || batch.executed) {
             lock()
@@ -82,7 +84,7 @@ class BatchView {
         ULCScrollPane batchesPane = new ULCScrollPane(batches)
         batchesPane.preferredSize = new Dimension(600, 300)
         content.add(ULCBoxPane.BOX_EXPAND_TOP, batchesPane)
-        content.add(ULCBoxPane.BOX_LEFT_TOP, buttonsPane)
+        content.add(ULCBoxPane.BOX_EXPAND_TOP, buttonsPane)
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
         attachListener()
     }
@@ -120,10 +122,12 @@ class BatchView {
         saveButton.enabled = false
         runBatch = new ULCButton(UIUtils.getText(this.class, "RunBatch"))
         runBatch.preferredSize = dimension
-        ULCBoxPane buttonPane = new ULCBoxPane(columns: 2, rows: 1)
+        parameterizationCount = new ULCLabel()
+        ULCBoxPane buttonPane = new ULCBoxPane(columns: 4, rows: 1)
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(runBatch, 0, 8, 0, 8))
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(saveButton, 0, 8, 0, 8))
-        buttonPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        buttonPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
+        buttonPane.add(ULCBoxPane.BOX_RIGHT_TOP, spaceAround(parameterizationCount, 0, 8, 0, 8))
         return buttonPane
     }
 
