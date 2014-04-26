@@ -30,9 +30,6 @@ class RenameAction extends SelectionTreeAction {
         */
         boolean usedInSimulation = false
         ModellingUIItem selectedItem = selectedUIItem
-        if (!(selectedItem instanceof ModellingUIItem)) {
-            return
-        }
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
             selectedItem.item.setModelClass(selectedModel.class) //TODO: still necessary?
             usedInSimulation = selectedItem.usedInSimulation
@@ -50,6 +47,14 @@ class RenameAction extends SelectionTreeAction {
             dialog.okAction = { selectedItem.rename(dialog.nameInput.text) }
             dialog.show()
         }
+    }
+
+    // I think this is the 'right' way to disable the menu when multiple items are selected.
+    boolean isEnabled() {
+        if (getAllSelectedObjectsSimpler()().size() > 1) {
+            return false
+        }
+        return super.isEnabled()//generic checks like user roles
     }
 
     protected boolean nameUsedInSimulation(ResultConfiguration item) {
