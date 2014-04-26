@@ -51,7 +51,7 @@ class RenameAction extends SelectionTreeAction {
 
     // I think this is the 'right' way to disable the menu when multiple items are selected.
     boolean isEnabled() {
-        if (getAllSelectedObjectsSimpler()().size() > 1) {
+        if (getAllSelectedObjectsSimpler().size() > 1) {
             return false
         }
         return super.isEnabled()//generic checks like user roles
