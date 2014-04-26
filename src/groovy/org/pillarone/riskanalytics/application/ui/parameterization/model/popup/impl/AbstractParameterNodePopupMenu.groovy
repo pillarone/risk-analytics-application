@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCTableTree
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
+import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -21,7 +22,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         super();
         name = "parameterNodePopUpMenu";
         add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)));
-        add(new ULCMenuItem(new SimulationAction(tree, riskAnalyticsMainModel)));
+        add(new EnabledCheckingMenuItem(new SimulationAction(tree, riskAnalyticsMainModel))); //PMO-2764
 
         //External link
         OpenExternalMenuItem openTx = new OpenExternalMenuItem(new OpenTransactionLinkAction(tree, riskAnalyticsMainModel))
@@ -41,7 +42,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
             add(new ULCMenuItem(new SetFilterToSelection(tree, riskAnalyticsMainModel)));
         }
         addSeparator();
-        if (hasRenameAction()) add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)));
+        if (hasRenameAction()) add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))); //PMO-2764
         add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)));
         if (hasCreateNewMajorVersionAction()) add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)));
         add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)));
