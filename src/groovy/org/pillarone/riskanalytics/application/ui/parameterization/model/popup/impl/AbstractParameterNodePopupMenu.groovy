@@ -5,9 +5,9 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
+//import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
-import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
+//import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 
@@ -25,15 +25,9 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         add(new EnabledCheckingMenuItem(new SimulationAction(tree, riskAnalyticsMainModel))); //PMO-2764
 
         //External link
-        OpenExternalMenuItem openTx = new OpenExternalMenuItem(new OpenTransactionLinkAction(tree, riskAnalyticsMainModel))
-        tree.addTreeSelectionListener(openTx)
-        add(openTx)
-
+        add(new EnabledCheckingMenuItem(new OpenTransactionLinkAction(tree, riskAnalyticsMainModel)));
         addSeparator();
-
-        CompareParameterizationMenuItem compPns = new CompareParameterizationMenuItem(new CompareParameterizationsAction(tree, riskAnalyticsMainModel));
-        tree.addTreeSelectionListener(compPns);
-        add(compPns);
+        add(new EnabledCheckingMenuItem(new CompareParameterizationsAction(tree, riskAnalyticsMainModel)));
 
         add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)));
 
@@ -42,9 +36,13 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
             add(new ULCMenuItem(new SetFilterToSelection(tree, riskAnalyticsMainModel)));
         }
         addSeparator();
-        if (hasRenameAction()) add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))); //PMO-2764
+        if (hasRenameAction()){
+            add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))); //PMO-2764
+        }
         add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)));
-        if (hasCreateNewMajorVersionAction()) add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)));
+        if (hasCreateNewMajorVersionAction()){
+            add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel))); //PMO-2764
+        }
         add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)));
         add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, riskAnalyticsMainModel, 'ImportFromExcelAdditional')));
         addSeparator();

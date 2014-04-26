@@ -96,6 +96,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedObjects
     }
 
+    //TODO remove this in future as it loops unnecessarily, prefer the Simpler version below
+    @Deprecated
     List getAllSelectedObjects() {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {

@@ -71,4 +71,13 @@ class CreateNewMajorVersion extends SelectionTreeAction {
         return (ModellingUIItem) getSelectedUIItem()
     }
 
+    // Create new version is not something you want to accidentally do on a large selection ! PMO-2764
+    //
+    boolean isEnabled() {
+        if (getAllSelectedObjectsSimpler().size() > 1) {
+            return false
+        }
+        return super.isEnabled()//generic checks like user roles
+    }
+
 }

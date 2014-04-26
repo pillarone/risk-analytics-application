@@ -8,6 +8,9 @@ import com.ulcjava.base.application.event.TreeSelectionEvent
 /**
  * Wrap the action and implement ITreeSelection listener to enable/disable depending on selection
  */
+
+// TODO - DELETE THIS CLASS ONCE WE KNOW THE EnableCheckingMenuItem does the job.
+@Deprecated
 class OpenExternalMenuItem extends ULCMenuItem implements ITreeSelectionListener {
     private OpenTransactionLinkAction openExternalAction
 
