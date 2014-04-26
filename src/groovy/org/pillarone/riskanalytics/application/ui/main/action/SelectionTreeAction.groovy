@@ -113,6 +113,18 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedObjects
     }
 
+    // TODO TEST THIS I think this is enough, simpler and clearer than above:
+    //
+    List<ItemNode> getAllSelectedObjectsSimpler() {
+        List selectedObjects = []
+        for (TreePath selectedPath in tree.selectedPaths) {
+            Object lastNode = selectedPath?.lastPathComponent
+            if (lastNode != null && lastNode instanceof ItemNode) {
+                selectedObjects.add(lastNode)
+            }
+        }
+        return selectedObjects
+    }
 
     Model getSelectedModel() {
         DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
