@@ -97,16 +97,18 @@ class TableTreeBuilderUtils {
         return groupNode
     }
 
-    public static ITableTreeNode findNodeForItem(ITableTreeNode node, Object item) {
-        ITableTreeNode nodeForItem = null
-        if (isEqual(item, node)) {
-            nodeForItem = node
-        } else {
-            for (int i = 0; i < node.childCount && nodeForItem == null; i++) {
-                def childNode = node.getChildAt(i)
-                nodeForItem = findNodeForItem(childNode, item)
-            }
+    public static ITableTreeNode findNodeForItem(ITableTreeNode searchStartNode, Object item) {
+        if (isEqual(item, searchStartNode)) {
+            return searchStartNode
         }
+
+        ITableTreeNode nodeForItem = null
+
+        for (int i = 0; i < searchStartNode.childCount && nodeForItem == null; i++) {
+            ITableTreeNode childNode = searchStartNode.getChildAt(i)
+            nodeForItem = findNodeForItem(childNode, item)
+        }
+
         return nodeForItem
     }
 
