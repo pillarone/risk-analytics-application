@@ -65,8 +65,6 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
 
     FilterDefinition currentFilter = new FilterDefinition()
 
-//    private static String logTreeStructureUpdatesKey = "NavigationTableTreeModel.logTreeStructureUpdates";
-
     NavigationTableTreeModel() {
         enumModellingTableTreeColumn = new ModellingTableTreeColumn()
     }
