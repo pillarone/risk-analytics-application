@@ -152,7 +152,7 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
 
         assertNotNull popupMenuOperator
 
-        ULCMenuItemOperator newVersion = new ULCMenuItemOperator(popupMenuOperator, "Create new workflow version")
+        ULCMenuItemOperator newVersion = new ULCMenuItemOperator(popupMenuOperator, "Create new version")
         assertNotNull newVersion
     }
 
