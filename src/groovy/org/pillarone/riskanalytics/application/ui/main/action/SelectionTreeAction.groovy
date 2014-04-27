@@ -174,9 +174,9 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     // If there is an item owner s/he can forbid someone else (F. Paul Wilson readers: KYFHO).
     // (Each action can decide what to do with this information.)
     //
-    protected boolean itemOwnerCanVetoCurrentUser( Person itemOwner ){
+    protected boolean ownerCanVetoUser( Person owner){
 
-        if( itemOwner == null ){
+        if( owner == null ){
             return false
         }
 
@@ -185,12 +185,12 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         Person currentUser = UserManagement.getCurrentUser()
 
         if( currentUser == null ){
-            LOG.info("Current user null, owner (${itemOwner.username} can veto actions")
+            LOG.info("Current user null, owner (${owner.username} can veto actions")
             return true
         }
 
-        if( ! itemOwner.username.equals(currentUser.username) ){
-            LOG.info("Current user ${currentUser.username}, owner (${itemOwner.username} can veto actions")
+        if( ! owner.username.equals(currentUser.username) ){
+            LOG.info(owner.username + "(owner) can veto action by ${currentUser.username} (current user) ")
             return true
         }
 

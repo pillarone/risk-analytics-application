@@ -89,7 +89,7 @@ class CreateNewMajorVersion extends SelectionTreeAction {
         //
         if( !promiscuous  ){  //allow via -DCreateNewMajorVersion.promiscuous=true
 
-            if( itemOwnerCanVetoCurrentUser(getUIItem()?.getItem()?.creator) ){
+            if( ownerCanVetoUser(getUIItem()?.getItem()?.creator) ){
                 LOG.info("Hint: Use Save As to create your own item.")
                 return false
             }

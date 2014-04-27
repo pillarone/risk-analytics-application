@@ -79,8 +79,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         if( !CreateNewMajorVersion.promiscuous  ){  //forbid meddling via -DCreateNewMajorVersion.promiscuous=false
 
             Parameterization p = getSelectedItem()
-            if( itemOwnerCanVetoCurrentUser(p?.creator) ){
-//                LOG.info("Hint: Use Save As to create your own item.")
+            if( ownerCanVetoUser(p?.creator) ){
                 return false
             }
         }
@@ -91,6 +90,7 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         try {
             return StatusChangeService.getService()
         } catch (Exception ex) {
+            LOG.info("StatusChangeService.getService() threw: ", ex)
         }
         return null
     }

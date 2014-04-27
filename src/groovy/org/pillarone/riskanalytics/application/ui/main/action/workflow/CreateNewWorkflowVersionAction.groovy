@@ -11,7 +11,7 @@ import org.pillarone.riskanalytics.core.workflow.WorkflowException
 class CreateNewWorkflowVersionAction extends AbstractWorkflowAction {
 
     CreateNewWorkflowVersionAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("NewMajorVersion", tree, model)
+        super("NewWorkflowVersion", tree, model)
     }
 
     @Override
@@ -19,7 +19,9 @@ class CreateNewWorkflowVersionAction extends AbstractWorkflowAction {
         Parameterization parameterization = getSelectedItem()
         SortedSet allVersions = new TreeSet(VersionNumber.getExistingVersions(parameterization))
         if (parameterization.versionNumber != allVersions.last()) {
-            throw new WorkflowException(parameterization.name, toStatus(), "Cannot create a new version. A newer version already exists: ${allVersions.last()}")
+            throw new WorkflowException( parameterization.getNameAndVersion(),
+                                         toStatus(),
+                                         "Cannot create a new version. A newer version already exists: ${allVersions.last()}"   )
         }
         super.doActionPerformed(event)
     }

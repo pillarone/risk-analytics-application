@@ -19,6 +19,8 @@ class StartWorkflowAction extends AbstractWorkflowAction {
         super("StartWorkflow", tree, model);
     }
 
+    // This is crazy-complicated. Does anyone understand the range of behaviours implied by this code ?
+    //
     void doActionPerformed(ActionEvent event) {
         DealLinkDialog dialog = new DealLinkDialog(UlcUtilities.getWindowAncestor(tree))
         Parameterization parameterization = getSelectedItem()
