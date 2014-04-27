@@ -2,6 +2,8 @@ package org.pillarone.riskanalytics.application.ui.main.action.workflow
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
@@ -19,6 +21,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
+    private static Log LOG = LogFactory.getLog(AbstractWorkflowAction)
 
     private StatusChangeService service = getService()
 
