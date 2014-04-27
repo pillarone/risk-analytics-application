@@ -15,7 +15,7 @@ abstract class DateFormatUtils {
     private static DateTimeFormatter simpleFormatter
     private static List<String> inputDateFormats = ["yyyy-MM-dd", "dd.MM.yyyy", "yyyy/MM/dd", "dd/MM/yyyy"]
     //PMO-2746 was "dd.MM.yyyy, HH:mm z" which broke ordering of date columns
-    private static final String DETAILED_FORMATTER_STRING = System.getProperty("DateFormatUtils.DETAILED_FORMATTER_STRING","yyyy.MM.dd, HH:mm:ss z")
+    private static final String DETAILED_FORMATTER_STRING = System.getProperty("DateFormatUtils.DETAILED_FORMATTER_STRING","yyyyMMdd HH:mm:ss z")
     private static final String SIMPLE_FORMATTER_STRING   = System.getProperty("DateFormatUtils.SIMPLE_FORMATTER_STRING","dd.MM.yyyy")
 
     public static DateTimeFormatter getDetailedDateFormat() {
