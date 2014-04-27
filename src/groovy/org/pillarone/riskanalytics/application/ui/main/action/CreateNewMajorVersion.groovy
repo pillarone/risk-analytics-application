@@ -12,6 +12,9 @@ import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,6 +22,7 @@ import org.apache.commons.logging.LogFactory
 class CreateNewMajorVersion extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateNewMajorVersion)
+    private static boolean promiscuous = System.getProperty("CreateNewMajorVersion.promiscuous","false").equalsIgnoreCase("true")
 
     ModellingUIItem modellingUIItem
 
@@ -71,11 +75,34 @@ class CreateNewMajorVersion extends SelectionTreeAction {
         return (ModellingUIItem) getSelectedUIItem()
     }
 
-    // Create new version is not something you want to accidentally do on a large selection ! PMO-2764
-    //
     boolean isEnabled() {
+        // If you accidentally do Create new version on a large selection, it leaves you very worried
+        //
         if (getAllSelectedObjectsSimpler().size() > 1) {
             return false
+        }
+
+        // PMO-2765 Juan described (20140425 chat) other users been creating new versions of his models w/o asking.
+        //
+        if( !promiscuous  ){  //allow via -DCreateNewMajorVersion.promiscuous=true
+
+            Person itemOwner = getUIItem()?.getItem()?.creator
+            if( itemOwner != null ){
+
+                //We have an owner, ensure current user is owner
+                //
+                Person currentUser = UserManagement.getCurrentUser()
+
+                if( currentUser == null ){
+                    LOG.warn("Current user null, may not create new version for item: ${getUIItem()} (owner: ${itemOwner.username})")
+                    return false
+                }
+
+                if( ! itemOwner.username.equals(currentUser.username) ){
+                    LOG.warn("Current user ${currentUser.username}, may not create new version for ${itemOwner.username}'s item: ${getUIItem()} (Hint: save as different model instead)")
+                    return false
+                }
+            }
         }
         return super.isEnabled()//generic checks like user roles
     }
