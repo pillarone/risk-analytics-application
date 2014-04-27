@@ -198,7 +198,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
             LOG.debug("Action ${actionName} denied to ${user.username} as lacks these roles (hint: table person_authority): " + actionAllowedRoles)
 
         } catch (Exception ex) {
-            LogFactory.getLog(this.class).error("Error in roles lookup", ex)
+            LOG.error("Error in roles lookup", ex)
         }
         return false
     }
