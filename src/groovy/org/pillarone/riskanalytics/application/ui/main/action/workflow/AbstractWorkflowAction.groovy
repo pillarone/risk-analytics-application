@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -12,6 +13,8 @@ import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
@@ -23,6 +26,8 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
         super(name, tree, model)
     }
 
+    // This method is shared by subclasses
+    //
     void doActionPerformed(ActionEvent event) {
         Parameterization item = getSelectedItem()
         if (!item.isLoaded()) {
@@ -62,13 +67,24 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
 
     abstract Status toStatus()
 
-    final boolean isEnabled() {
-        return super.isEnabled() && isActionEnabled()
-    }
+    boolean isEnabled() {
+        // If you accidentally do Create new version on a large selection, it leaves you very worried
+        //
+        if (getAllSelectedObjectsSimpler().size() > 1) {
+            return false
+        }
 
+        // PMO-2765 Juan described (20140425 chat) other users been creating new versions of his models w/o asking.
+        //
+        if( !CreateNewMajorVersion.promiscuous  ){  //forbid meddling via -DCreateNewMajorVersion.promiscuous=false
 
-    protected boolean isActionEnabled() {
-        return true
+            Parameterization p = getSelectedItem()
+            if( itemOwnerCanVetoCurrentUser(p?.creator) ){
+//                LOG.info("Hint: Use Save As to create your own item.")
+                return false
+            }
+        }
+        return super.isEnabled()//generic checks like user roles
     }
 
     StatusChangeService getService() {

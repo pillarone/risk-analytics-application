@@ -22,7 +22,9 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 class CreateNewMajorVersion extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateNewMajorVersion)
-    private static boolean promiscuous = System.getProperty("CreateNewMajorVersion.promiscuous","false").equalsIgnoreCase("true")
+
+    // forbid meddling via -DCreateNewMajorVersion.promiscuous=false
+    public static boolean promiscuous = System.getProperty("CreateNewMajorVersion.promiscuous","true").equalsIgnoreCase("true") //breaks tests when false!
 
     ModellingUIItem modellingUIItem
 
@@ -48,8 +50,9 @@ class CreateNewMajorVersion extends SelectionTreeAction {
             }
             NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
             versionCommentDialog.show()
-        } else
+        } else {
             createNewVersion(getUIItem())
+        }
     }
 
     private void createNewVersion(ParameterizationUIItem item, String commentText) {
@@ -86,22 +89,9 @@ class CreateNewMajorVersion extends SelectionTreeAction {
         //
         if( !promiscuous  ){  //allow via -DCreateNewMajorVersion.promiscuous=true
 
-            Person itemOwner = getUIItem()?.getItem()?.creator
-            if( itemOwner != null ){
-
-                //We have an owner, ensure current user is owner
-                //
-                Person currentUser = UserManagement.getCurrentUser()
-
-                if( currentUser == null ){
-                    LOG.warn("Current user null, may not create new version for item: ${getUIItem()} (owner: ${itemOwner.username})")
-                    return false
-                }
-
-                if( ! itemOwner.username.equals(currentUser.username) ){
-                    LOG.warn("Current user ${currentUser.username}, may not create new version for ${itemOwner.username}'s item: ${getUIItem()} (Hint: save as different model instead)")
-                    return false
-                }
+            if( itemOwnerCanVetoCurrentUser(getUIItem()?.getItem()?.creator) ){
+                LOG.info("Hint: Use Save As to create your own item.")
+                return false
             }
         }
         return super.isEnabled()//generic checks like user roles
