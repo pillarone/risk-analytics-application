@@ -4,6 +4,8 @@ import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -12,6 +14,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.WorkflowException
 
 class CreateNewWorkflowVersionAction extends AbstractWorkflowAction {
+    protected static Log LOG = LogFactory.getLog(CreateNewWorkflowVersionAction)
 
     // forbid meddling via -DCreateNewWorkflowVersion.promiscuous=false
     private static boolean promiscuous = System.getProperty("CreateNewWorkflowVersion.promiscuous","true").equalsIgnoreCase("true") //breaks tests when false!

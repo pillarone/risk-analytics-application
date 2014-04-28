@@ -21,7 +21,7 @@ import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
 abstract class AbstractWorkflowAction extends SelectionTreeAction {
-    private static Log LOG = LogFactory.getLog(AbstractWorkflowAction)
+    protected static Log LOG = LogFactory.getLog(AbstractWorkflowAction)
 
     private StatusChangeService service = getService()
 
