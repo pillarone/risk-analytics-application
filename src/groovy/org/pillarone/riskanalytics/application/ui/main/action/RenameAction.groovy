@@ -16,7 +16,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class RenameAction extends SelectionTreeAction {
+class RenameAction extends SingleItemAction {
 
     // Oh my! An instance is Ctor'd for each GUI node!
     //
@@ -49,24 +49,6 @@ class RenameAction extends SelectionTreeAction {
             dialog.okAction = { selectedItem.rename(dialog.nameInput.text) }
             dialog.show()
         }
-    }
-
-    // I think this is the 'right' way to disable the menu when multiple items are selected.
-    // This code is called when a new ULCMenuItem is ctor'd with a new RenamAction instance
-    // Instead I was expecting this is called whenever user right-clicks a node to bring up the context menu.
-    // (*That* seems to happen for the Compare menu on P14ns, for instance.)
-    // Reason seems to be: ULCMenuItem does not check for enabling/disabling.
-    // The reason it works for CompareParameterizationsAction is, that is wrapped in a CompareParameterizationMenuItem
-    // which adds dynamic checking to ULCMenuItem.
-    //
-    // I'm adding a generic alternitive to CompareParameterizationMenuItem that can offer the same ability to
-    // any SelectionTreeAction (like RenameAction or RunSimulationAction).
-    //
-    boolean isEnabled() {
-        if (getAllSelectedObjectsSimpler().size() > 1) {
-            return false
-        }
-        return super.isEnabled()//generic checks like user roles
     }
 
     protected boolean nameUsedInSimulation(ResultConfiguration item) {

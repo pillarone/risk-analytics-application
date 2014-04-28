@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+import org.pillarone.riskanalytics.application.ui.main.action.SingleItemAction
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
@@ -20,7 +21,7 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
-abstract class AbstractWorkflowAction extends SelectionTreeAction {
+abstract class AbstractWorkflowAction extends SingleItemAction {
     protected static Log LOG = LogFactory.getLog(AbstractWorkflowAction)
 
     private StatusChangeService service = getService()
@@ -69,16 +70,6 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
     }
 
     abstract Status toStatus()
-
-    boolean isEnabled() {
-        // If you accidentally do Create new version on a large selection, it leaves you very worried
-        //
-        if (getAllSelectedObjectsSimpler().size() != 1) {
-            return false
-        }
-
-        return super.isEnabled()//generic checks like user roles
-    }
 
     StatusChangeService getService() {
         try {
