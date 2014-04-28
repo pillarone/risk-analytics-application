@@ -20,7 +20,7 @@ class InReviewPopupMenu extends ParameterizationPopupMenu {
     @Override
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
         add(new EnabledCheckingMenuItem(new SendToProductionAction(tree, riskAnalyticsMainModel)));
-        add(new ULCMenuItem(new RejectWorkflowAction(tree, riskAnalyticsMainModel)));
+        add(new EnabledCheckingMenuItem(new RejectWorkflowAction(tree, riskAnalyticsMainModel)));
         return true;
     }
 

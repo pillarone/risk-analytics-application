@@ -8,6 +8,8 @@ import org.pillarone.riskanalytics.application.ui.main.action.workflow.AbstractW
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
+//TODO delete this class if the EnabledCheckingMenuItem serves ok
+@Deprecated
 class SendToProductionMenuItem extends ULCMenuItem implements ITreeSelectionListener {
     AbstractWorkflowAction workflowAction
 

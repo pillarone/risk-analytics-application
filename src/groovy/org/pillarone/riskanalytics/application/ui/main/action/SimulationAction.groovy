@@ -17,7 +17,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  * Note: This action executes off the "Run simulation..." menu on a p14n.  It opens up the simulation pane.
  * (The RunSimulationAction presumably executes off the Run button on the simulation pane.)
  */
-class SimulationAction extends SelectionTreeAction {
+class SimulationAction extends SingleItemAction {
 
     private final static Log LOG = LogFactory.getLog(SimulationAction)
 
@@ -40,14 +40,4 @@ class SimulationAction extends SelectionTreeAction {
             LOG.debug("No selected model found. Action cancelled.")
         }
     }
-
-    // I think this is the 'right' way to disable the menu when multiple Pns are selected.
-    boolean isEnabled() {
-        if (getSelectedObjects(Parameterization.class).size() > 1) {
-            return false
-        }
-        return super.isEnabled()//generic checks like user roles
-    }
-
-
 }

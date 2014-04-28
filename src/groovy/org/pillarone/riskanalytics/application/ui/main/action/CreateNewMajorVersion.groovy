@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CreateNewMajorVersion extends SelectionTreeAction {
+class CreateNewMajorVersion extends SingleItemAction {
 
     private static Log LOG = LogFactory.getLog(CreateNewMajorVersion)
 
@@ -71,15 +71,4 @@ class CreateNewMajorVersion extends SelectionTreeAction {
         if (modellingUIItem) return modellingUIItem
         return (ModellingUIItem) getSelectedUIItem()
     }
-
-    boolean isEnabled() {
-        // If you accidentally do Create new version on a large selection, it leaves you very worried
-        //
-        if (getAllSelectedObjectsSimpler().size() != 1) {
-            return false
-        }
-
-        return super.isEnabled()//generic checks like user roles
-    }
-
 }
