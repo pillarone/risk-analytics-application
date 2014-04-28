@@ -33,7 +33,6 @@ class BatchView implements IDetailView {
     private SortableTable batches
     private Batch batch
     private ULCButton runBatch
-    private ULCButton saveButton
     private ULCBoxPane content
     private ULCComboBox simulationProfilesComboBox
     private ULCLabel parameterizationCount
@@ -45,10 +44,14 @@ class BatchView implements IDetailView {
     ModellingItemCache modellingItemCache
 
     private MyBatchListener myBatchListener
+    private final ValidationListener validationListener = new ValidationListener()
 
     void setBatch(Batch batch) {
+        if (this.batch) {
+            this.batch.removeModellingItemChangeListener(validationListener)
+        }
         this.batch = batch
-        batch.addModellingItemChangeListener(new ValidationListener())
+        batch.addModellingItemChangeListener(validationListener)
         batchViewModel.batch = batch
         parameterizationCount.text = batch.parameterizations.size()
         updateEnablingState()
@@ -61,7 +64,6 @@ class BatchView implements IDetailView {
         //TODO lock sortable list
         batches.enabled = false
         runBatch.enabled = false
-        saveButton.enabled = false
         simulationProfilesComboBox.enabled = false
     }
 
@@ -88,6 +90,9 @@ class BatchView implements IDetailView {
 
     @Override
     void close() {
+        if (this.batch) {
+            this.batch.removeModellingItemChangeListener(validationListener)
+        }
         modellingItemCache.removeItemEventListener(myBatchListener)
         myBatchListener = null
         batchViewModel.destroy()
@@ -98,9 +103,6 @@ class BatchView implements IDetailView {
     }
 
     private void attachListener() {
-        saveButton.addActionListener([actionPerformed: { ActionEvent event ->
-            batchViewModel.save()
-        }] as IActionListener)
         runBatch.addActionListener([actionPerformed: { ActionEvent event ->
             batchViewModel.save()
             batchViewModel.run()
@@ -115,15 +117,11 @@ class BatchView implements IDetailView {
 
     private ULCBoxPane getButtonsPane() {
         final Dimension dimension = new Dimension(140, 20)
-        saveButton = new ULCButton(UIUtils.getText(this.class, "Save"))
-        saveButton.preferredSize = dimension
-        saveButton.enabled = false
         runBatch = new ULCButton(UIUtils.getText(this.class, "RunBatch"))
         runBatch.preferredSize = dimension
         parameterizationCount = new ULCLabel()
         ULCBoxPane buttonPane = new ULCBoxPane(columns: 4, rows: 1)
         buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(runBatch, 0, 8, 0, 8))
-        buttonPane.add(ULCBoxPane.BOX_LEFT_TOP, spaceAround(saveButton, 0, 8, 0, 8))
         buttonPane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         buttonPane.add(ULCBoxPane.BOX_RIGHT_TOP, spaceAround(parameterizationCount, 0, 8, 0, 8))
         return buttonPane
@@ -159,13 +157,11 @@ class BatchView implements IDetailView {
     private class ValidationListener implements IModellingItemChangeListener {
         @Override
         void itemChanged(ModellingItem item) {
-            saveButton.enabled = true
             updateEnablingState()
         }
 
         @Override
         void itemSaved(ModellingItem item) {
-            saveButton.enabled = false
             updateEnablingState()
         }
     }

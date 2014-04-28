@@ -61,7 +61,7 @@ class BatchUIItem extends ModellingUIItem {
 
     @Override
     String getWindowTitle() {
-        return "Batches " + super.windowTitle
+        return "Batch " + super.windowTitle
     }
 
     @Override
