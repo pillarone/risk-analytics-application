@@ -68,16 +68,18 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         layoutComponents()
         attachListeners()
     }
+    private static int TOPRIGHT_PANE_HEIGHT = 600;
+    private static int TOPRIGHT_PANE_WIDTH  = 600;
 
     void layoutComponents() {
         ULCCardPane modelPane = cardPaneManager.cardPane
-        modelPane.preferredSize = new Dimension(600, 600)
+        modelPane.preferredSize = new Dimension(TOPRIGHT_PANE_HEIGHT, TOPRIGHT_PANE_WIDTH)
         ULCBoxPane treePane = new ULCBoxPane(1, 1)
         treePane.add(BOX_EXPAND_EXPAND, selectionTreeView.content)
         ULCSplitPane splitPane = new ULCSplitPane(HORIZONTAL_SPLIT)
         splitPane.oneTouchExpandable = true
         splitPane.resizeWeight = 1
-        splitPane.dividerLocation = 200
+        splitPane.dividerLocation = 400
         splitPane.dividerSize = 10
         splitPane.leftComponent = treePane
         ULCSplitPane splitBetweenModelPaneAndIndependentPane = new ULCSplitPane(VERTICAL_SPLIT)
@@ -85,7 +87,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         splitBetweenModelPaneAndIndependentPane.bottomComponent = modelIndependentDetailView.content
         splitBetweenModelPaneAndIndependentPane.oneTouchExpandable = true
         splitBetweenModelPaneAndIndependentPane.dividerSize = 10
-        splitBetweenModelPaneAndIndependentPane.dividerLocation = 500
+        splitBetweenModelPaneAndIndependentPane.dividerLocation = 400
         splitPane.rightComponent = splitBetweenModelPaneAndIndependentPane
 
         ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)

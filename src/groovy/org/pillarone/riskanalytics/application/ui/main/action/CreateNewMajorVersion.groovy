@@ -44,8 +44,9 @@ class CreateNewMajorVersion extends SelectionTreeAction {
             }
             NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
             versionCommentDialog.show()
-        } else
+        } else {
             createNewVersion(getUIItem())
+        }
     }
 
     private void createNewVersion(ParameterizationUIItem item, String commentText) {
@@ -69,6 +70,16 @@ class CreateNewMajorVersion extends SelectionTreeAction {
     ModellingUIItem getUIItem() {
         if (modellingUIItem) return modellingUIItem
         return (ModellingUIItem) getSelectedUIItem()
+    }
+
+    boolean isEnabled() {
+        // If you accidentally do Create new version on a large selection, it leaves you very worried
+        //
+        if (getAllSelectedObjectsSimpler().size() != 1) {
+            return false
+        }
+
+        return super.isEnabled()//generic checks like user roles
     }
 
 }

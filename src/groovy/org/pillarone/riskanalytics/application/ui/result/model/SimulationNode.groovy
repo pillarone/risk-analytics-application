@@ -8,6 +8,7 @@ import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.view.CompareSimulationMenuItem
+import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -34,10 +35,8 @@ class SimulationNode extends ItemNode implements IReportableNode {
         simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)))
         simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree, riskAnalyticsMainModel)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
-        ULCMenuItem compareSimulationMenuItem = new CompareSimulationMenuItem(new CompareSimulationsAction(tree, riskAnalyticsMainModel))
-        tree.addTreeSelectionListener(compareSimulationMenuItem)
-        simulationNodePopUpMenu.add(compareSimulationMenuItem)
+        simulationNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))) //PMO-2764
+        simulationNodePopUpMenu.add(new EnabledCheckingMenuItem(new CompareSimulationsAction(tree, riskAnalyticsMainModel)))
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)))
         addReportMenus(simulationNodePopUpMenu, tree, true)

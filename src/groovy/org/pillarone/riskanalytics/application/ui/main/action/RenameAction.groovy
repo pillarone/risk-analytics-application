@@ -18,6 +18,8 @@ import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
  */
 class RenameAction extends SelectionTreeAction {
 
+    // Oh my! An instance is Ctor'd for each GUI node!
+    //
     public RenameAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Rename", tree, model)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
@@ -30,9 +32,6 @@ class RenameAction extends SelectionTreeAction {
         */
         boolean usedInSimulation = false
         ModellingUIItem selectedItem = selectedUIItem
-        if (!(selectedItem instanceof ModellingUIItem)) {
-            return
-        }
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
             selectedItem.item.setModelClass(selectedModel.class) //TODO: still necessary?
             usedInSimulation = selectedItem.usedInSimulation
@@ -50,6 +49,24 @@ class RenameAction extends SelectionTreeAction {
             dialog.okAction = { selectedItem.rename(dialog.nameInput.text) }
             dialog.show()
         }
+    }
+
+    // I think this is the 'right' way to disable the menu when multiple items are selected.
+    // This code is called when a new ULCMenuItem is ctor'd with a new RenamAction instance
+    // Instead I was expecting this is called whenever user right-clicks a node to bring up the context menu.
+    // (*That* seems to happen for the Compare menu on P14ns, for instance.)
+    // Reason seems to be: ULCMenuItem does not check for enabling/disabling.
+    // The reason it works for CompareParameterizationsAction is, that is wrapped in a CompareParameterizationMenuItem
+    // which adds dynamic checking to ULCMenuItem.
+    //
+    // I'm adding a generic alternitive to CompareParameterizationMenuItem that can offer the same ability to
+    // any SelectionTreeAction (like RenameAction or RunSimulationAction).
+    //
+    boolean isEnabled() {
+        if (getAllSelectedObjectsSimpler().size() > 1) {
+            return false
+        }
+        return super.isEnabled()//generic checks like user roles
     }
 
     protected boolean nameUsedInSimulation(ResultConfiguration item) {

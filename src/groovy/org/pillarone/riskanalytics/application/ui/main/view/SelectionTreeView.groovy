@@ -37,20 +37,22 @@ import javax.annotation.Resource
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class SelectionTreeView {
-    ULCFixedColumnTableTree tree
-    ULCBoxPane content
+
+    final static int                    TREE_FIRST_COLUMN_WIDTH = 350
+
+    ULCFixedColumnTableTree             tree
+    ULCBoxPane                          content
     @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
-    ModellingItemSelectionListener modellingItemSelectionListener
+    RiskAnalyticsMainModel              riskAnalyticsMainModel
+    ModellingItemSelectionListener      modellingItemSelectionListener
     @Resource
-    NavigationTableTreeModel navigationTableTreeModel
+    NavigationTableTreeModel            navigationTableTreeModel
     @Resource
-    ModellingItemCache modellingItemCache
+    ModellingItemCache                  modellingItemCache
 
     private IModellingItemEventListener updateListener
 
-    final static int TREE_FIRST_COLUMN_WIDTH = 240
-    boolean ascOrder = true
+    boolean                             ascOrder = true
 
     @PostConstruct
     void initialize() {

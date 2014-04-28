@@ -96,6 +96,8 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedObjects
     }
 
+    //TODO remove this in future as it loops unnecessarily, prefer the Simpler version below
+    @Deprecated
     List getAllSelectedObjects() {
         List selectedObjects = []
         for (TreePath selectedPath in tree.selectedPaths) {
@@ -113,6 +115,18 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return selectedObjects
     }
 
+    // TODO TEST THIS I think this is enough, simpler and clearer than above:
+    //
+    List<ItemNode> getAllSelectedObjectsSimpler() {
+        List selectedObjects = []
+        for (TreePath selectedPath in tree.selectedPaths) {
+            Object lastNode = selectedPath?.lastPathComponent
+            if (lastNode != null && lastNode instanceof ItemNode) {
+                selectedObjects.add(lastNode)
+            }
+        }
+        return selectedObjects
+    }
 
     Model getSelectedModel() {
         DefaultMutableTableTreeNode itemNode = tree?.selectedPath?.lastPathComponent
@@ -157,6 +171,32 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return super.isEnabled() && accessAllowed()
     }
 
+    // If there is an item owner s/he can forbid someone else (F. Paul Wilson readers: KYFHO).
+    // (Each action can decide what to do with this information.)
+    //
+    protected boolean ownerCanVetoUser( Person owner){
+
+        if( owner == null ){
+            return false
+        }
+
+        //We have an owner, check if current user is different
+        //
+        Person currentUser = UserManagement.getCurrentUser()
+
+        if( currentUser == null ){
+            LOG.info("Current user null, owner (${owner.username} can veto actions")
+            return true
+        }
+
+        if( ! owner.username.equals(currentUser.username) ){
+            LOG.info(owner.username + "(owner) can veto action by ${currentUser.username} (current user) ")
+            return true
+        }
+
+        return false
+    }
+
     final boolean accessAllowed() {
         if (UserContext.standAlone) {
             return true
@@ -184,7 +224,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
             LOG.debug("Action ${actionName} denied to ${user.username} as lacks these roles (hint: table person_authority): " + actionAllowedRoles)
 
         } catch (Exception ex) {
-            LogFactory.getLog(this.class).error("Error in roles lookup", ex)
+            LOG.error("Error in roles lookup", ex)
         }
         return false
     }

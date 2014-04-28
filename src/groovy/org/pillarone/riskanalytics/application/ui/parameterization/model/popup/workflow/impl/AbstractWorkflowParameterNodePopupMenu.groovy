@@ -8,7 +8,12 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
  * Allianz Risk Transfer  ATOM
  * User: bzetterstrom
  */
-class AbstractWorkflowParameterNodePopupMenu extends ParameterizationPopupMenu {
+
+// Seems to be a useless class that adds no value and just adds extra layer of inheritance.
+// TODO delete this class after moving its subclasses up one level in hierarchy.
+//
+@Deprecated
+abstract class AbstractWorkflowParameterNodePopupMenu extends ParameterizationPopupMenu {
     AbstractWorkflowParameterNodePopupMenu(final ULCTableTree tree, ParameterizationNode node) {
         super(tree, node)
     }
