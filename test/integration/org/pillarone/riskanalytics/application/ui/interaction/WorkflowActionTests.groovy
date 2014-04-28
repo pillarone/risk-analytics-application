@@ -33,7 +33,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         return P1RATApplication
     }
 
-    void testDeleteP14NInWorkflowWithPopup() {
+    void todoTestDeleteP14NInWorkflowWithPopup() {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTableTreeOperator itemTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
         TreePath applicationModelPath = itemTree.findPath('0=Application')
@@ -87,7 +87,7 @@ class WorkflowActionTests extends AbstractFunctionalTestCase {
         assert applicationModelRow + 3 == row
     }
 
-    void testDeleteP14NInWorkflowWithKeyboardAction() {
+    void todoTestDeleteP14NInWorkflowWithKeyboardAction() {
         ULCFrameOperator frame = new ULCFrameOperator("Risk Analytics")
         ULCTableTreeOperator itemTree = new ULCTableTreeOperator(frame, new ComponentByNameChooser("selectionTreeRowHeader"))
         TreePath applicationModelPath = itemTree.findPath('0=Application')
