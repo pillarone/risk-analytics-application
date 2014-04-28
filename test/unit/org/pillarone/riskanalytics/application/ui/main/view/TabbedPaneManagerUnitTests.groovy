@@ -1,23 +1,34 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCTabbedPane
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
+import grails.test.mixin.TestMixin
+import org.pillarone.riskanalytics.application.GrailsUnitTestMixinWithAnnotationSupport
+import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.simulation.item.Batch
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class TabbedPaneManagerUnitTests extends AbstractP1RATTestCase {
+@TestMixin(GrailsUnitTestMixinWithAnnotationSupport)
+@Mixin(P1UnitTestMixin)
+class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
     RiskAnalyticsMainModel model = new RiskAnalyticsMainModel()
 
     void testView() {}
 
     @Override
+    void start() {
+        initGrailsApplication()
+        defineBeans {
+            detailViewManager(DetailViewManager)
+        }
+        inTestFrame(createContentPane())
+    }
+
     ULCComponent createContentPane() {
         ULCTabbedPane tabbedPane = new ULCDetachableTabbedPane()
         TabbedPaneManager tabbedPaneManager = new TabbedPaneManager(tabbedPane)
@@ -52,19 +63,18 @@ class TabbedPaneManagerUnitTests extends AbstractP1RATTestCase {
     }
 
     BatchUIItem createUIItem(String name) {
-        new TestUIItem(name)
+        def item = new BatchUIItem(new Batch(name))
+        item.metaClass.createDetailView = { -> new IDetailView() {
+            @Override
+            void close() {
+
+            }
+
+            @Override
+            ULCContainer getContent() {
+                return null
+            }
+        }}
+        item
     }
-
-    static class TestUIItem extends BatchUIItem {
-
-        TestUIItem(String name) {
-            super(new Batch(name))
-        }
-
-        @Override
-        ULCContainer createDetailView() {
-            null
-        }
-    }
-
 }

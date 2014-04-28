@@ -43,7 +43,7 @@ abstract class ExportAction extends SelectionTreeAction {
         userPreferences = UserPreferencesFactory.getUserPreferences()
     }
 
-    protected void exportAll(List items) {
+    protected void exportAll(List<ModellingItem> items) {
         if (!items || items.isEmpty()) return
         switch (items[0].class) {
             case Simulation.class: exportSimulations(items); break;
@@ -51,7 +51,7 @@ abstract class ExportAction extends SelectionTreeAction {
         }
     }
 
-    protected void exportSimulations(List items) {
+    protected void exportSimulations(List<ModellingItem> items) {
         int itemCount = items.size()
         ULCWindow ancestor = getAncestor()
         if (!validate(items)) {
@@ -71,7 +71,7 @@ abstract class ExportAction extends SelectionTreeAction {
             ClientContext.chooseFile([
                     onSuccess: { filePaths, fileNames ->
                         userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
-                        items.each { def item ->
+                        items.each { ModellingItem item ->
                             item.load()
                             exportItem(item, itemCount, filePaths, ancestor)
                         }
@@ -175,7 +175,7 @@ abstract class ExportAction extends SelectionTreeAction {
         }
     }
 
-    protected def exportItems(List items) {
+    protected def exportItems(List<ModellingItem> items) {
         int itemCount = items.size()
         FileChooserConfig config = new FileChooserConfig()
         config.dialogTitle = "Export"
@@ -250,14 +250,15 @@ abstract class ExportAction extends SelectionTreeAction {
         return result
     }
 
-    protected boolean validate(List items) {
+    protected boolean validate(List<ModellingItem> items) {
         boolean status = true
-        items.each { def item ->
+        items.each { ModellingItem item ->
             if (item instanceof Simulation) {
+                Simulation simulation = item
                 SingleValueResult.withTransaction { trx ->
-                    item.load()
-                    def simulationRun = item.simulationRun
-                    def count = SingleValueResult.countBySimulationRun(simulationRun)
+                    simulation.load()
+                    SimulationRun simulationRun = simulation.simulationRun
+                    int count = SingleValueResult.countBySimulationRun(simulationRun)
                     if (count > 50000) {
                         status = false
                     }

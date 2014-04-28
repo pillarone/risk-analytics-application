@@ -39,7 +39,7 @@ class ExportItemAction extends ExportAction {
     }
 
     private boolean atLeastOneItemChanged(List<ModellingItem> items) {
-        for (Object item : items) {
+        for (ModellingItem item : items) {
             if (item.changed)
                 return true
         }

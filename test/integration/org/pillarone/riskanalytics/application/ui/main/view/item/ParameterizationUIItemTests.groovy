@@ -49,7 +49,7 @@ class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         structure.load()
         RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(model, parameterization)
-        frame.setContentPane(parameterizationUIItem.createDetailView())
+        frame.setContentPane(parameterizationUIItem.createDetailView().content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)
         frame.visible = true

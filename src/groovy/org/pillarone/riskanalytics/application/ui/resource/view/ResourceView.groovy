@@ -19,6 +19,4 @@ class ResourceView extends AbstractParameterizationTreeView {
     protected String getViewPortTableTreeName() {
         return "resourceTreeContent"
     }
-
-
 }

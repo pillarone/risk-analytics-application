@@ -13,15 +13,13 @@ import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.*
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
-import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchNode
+import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceNode
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.application.ui.resulttemplate.model.ResultConfigurationNode
-import org.pillarone.riskanalytics.application.ui.simulation.model.IBatchListener
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.components.IResource
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.registry.IModelRegistryListener
@@ -36,7 +34,7 @@ import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBui
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
-class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListener {
+class NavigationTableTreeBuilder implements IModelRegistryListener {
     static final int PARAMETERIZATION_NODE_INDEX = 0
     static final int RESULT_CONFIGURATION_NODE_INDEX = 1
     static final int SIMULATION_NODE_INDEX = 2
@@ -49,11 +47,6 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
 
     public NavigationTableTreeBuilder() {
         root = new DefaultMutableTableTreeNode("root")
-    }
-
-    @PostConstruct
-    void initialize() {
-        riskAnalyticsMainModel.addBatchListener(this)
     }
 
     void registerTableTreeModel(ITableTreeModelWithValues tableTreeModel) {
@@ -335,15 +328,6 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
         tableTreeModelWithValues.nodeStructureChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(simulationGroupNode) as Object[]))
     }
 
-
-    @Override
-    void newBatchAdded(BatchRun batchRun) {
-        //TODO
-        Batch batch = new Batch(batchRun.name)
-        batch.load()
-        addNodeForItem(new BatchUIItem(batch), true)
-    }
-
     @Override
     void modelAdded(Class modelClass) {
         addNodeForItem(modelClass.newInstance() as Model)
@@ -549,7 +533,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     public void removeNodeForItem(ResourceUIItem modellingUIItem) {
         ITableTreeNode itemGroupNode = findResourceItemGroupNode(findResourceGroupNode(root), modellingUIItem.item.modelClass)
         ITableTreeNode itemNode = findNodeForItem(itemGroupNode, modellingUIItem.item)
-        if(itemNode){
+        if (itemNode) {
             removeItemNode(itemNode, true)
         }
     }
@@ -593,7 +577,7 @@ class NavigationTableTreeBuilder implements IBatchListener, IModelRegistryListen
     public void removeNodeForItem(BatchUIItem batchUIItem) {
         ITableTreeNode groupNode = findBatchRootNode(root)
         ITableTreeNode itemNode = findNodeForItem(groupNode, batchUIItem)
-        if(itemNode){
+        if (itemNode) {
             removeNodeFromParent(itemNode, true)
         }
     }

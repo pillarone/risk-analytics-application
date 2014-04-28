@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCComboBoxOperator
@@ -7,19 +6,16 @@ import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-import org.pillarone.riskanalytics.core.components.ComponentUtils
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ResultConfigurationUIItemTests extends AbstractSimpleFunctionalTest {
-
 
     ResultConfiguration configuration
     ModelStructure structure
@@ -42,9 +38,8 @@ class ResultConfigurationUIItemTests extends AbstractSimpleFunctionalTest {
         Model model = new ApplicationModel()
         model.init()
 
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         ResultConfigurationUIItem uiItem = new ResultConfigurationUIItem(model, configuration)
-        frame.contentPane = uiItem.createDetailView()
+        frame.contentPane = uiItem.createDetailView().content
         frame.visible = true
     }
 

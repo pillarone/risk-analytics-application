@@ -24,6 +24,10 @@ class TabbedPaneManager {
         this.dependentFramesManager = new DependentFramesManager(this.tabbedPane)
     }
 
+    private DetailViewManager getDetailViewManager() {
+        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager)
+    }
+
     /**
      * Creates a new tab for the given item
      * The content of a card is currently a TabbedPane.
@@ -31,7 +35,8 @@ class TabbedPaneManager {
      * @param model
      */
     void addTab(AbstractUIItem item) {
-        ULCContainer view = item.createDetailView()
+        IDetailView detailView = detailViewManager.createDetailViewForItem(item)
+        ULCContainer view = detailView.content
         def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
         tabbedPane.addTab(item.createTitle(), item.icon, wrapped)
         int tabIndex = tabbedPane.tabCount - 1
@@ -71,6 +76,7 @@ class TabbedPaneManager {
 
                 }
                 if (closeTab) {
+                    detailViewManager.close(abstractUIItem)
                     removeTab(abstractUIItem)
                     abstractUIItem.close()
                 } else {
@@ -80,6 +86,7 @@ class TabbedPaneManager {
             alert.show()
         } else {
             removeTab(abstractUIItem)
+            detailViewManager.close(abstractUIItem)
             abstractUIItem.close()
         }
     }
@@ -136,6 +143,5 @@ class TabbedPaneManager {
                 dependentFramesManager.updateTabbedPaneTitle(abstractUIItem)
             }
         }
-
     }
 }

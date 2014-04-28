@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
-
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
@@ -16,14 +15,12 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.search.UlcCacheItemEventHandler
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.example.model.EmptyModel
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
@@ -33,7 +30,6 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.ParameterizationTag
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
-import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
@@ -80,7 +76,6 @@ class NavigationTableTreeModelTests {
         cacheItemSearchService.refresh()
         mainModel = new RiskAnalyticsMainModel()
         NavigationTableTreeBuilder builder = new NavigationTableTreeBuilder(riskAnalyticsMainModel: mainModel)
-        builder.initialize()
         model = new NavigationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeBuilder: builder)
         model.initialize()
         modelListener = new TestModelListener()
@@ -203,18 +198,6 @@ class NavigationTableTreeModelTests {
         assertEquals('Application', model.getValueAt(applicationNode, 0))
         assertEquals('Parameterization', model.getValueAt(paramsNode, 0))
         assertEquals('ApplicationParameters v1', model.getValueAt(paramsNode.getChildAt(0), 0))
-    }
-
-    @Test
-    void testBatch() {
-        BatchRun run = new BatchRun()
-        run.name = 'testBatch'
-        model.navigationTableTreeBuilder.newBatchAdded(run)
-        IMutableTableTreeNode batchNode = model.root.getChildAt(2) as IMutableTableTreeNode
-        assertEquals(1, batchNode.childCount)
-        assertEquals('testBatch', model.getValueAt(batchNode.getChildAt(0), 0))
-        model.removeNodeForItem(new BatchUIItem(new Batch(run.name)))
-        assertEquals(0, batchNode.childCount)
     }
 
     @Test

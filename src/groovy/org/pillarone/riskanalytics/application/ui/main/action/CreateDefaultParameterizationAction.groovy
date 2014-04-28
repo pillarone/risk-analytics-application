@@ -41,7 +41,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
             } else {
                 try {
                     int periodCount = hasOneParameterColumnOnly ? 1 : (Integer) dialog.periodCount.value
-                    Parameterization param
+                    Parameterization param = null
                     ParameterizationDAO.withTransaction { status ->
                         param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
                         param.name = dialog.nameInput.text
@@ -51,7 +51,6 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     dialog.hide()
 
                     ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, param)
-                    model.fireModelChanged()
                     parameterizationUIItem.load(true)
                     model.notifyOpenDetailView(simulationModel, parameterizationUIItem)
                 } catch (Exception ex) {

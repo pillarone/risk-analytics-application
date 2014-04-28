@@ -42,7 +42,7 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
                 alert.show()
             } else {
                 try {
-                    Resource resource
+                    Resource resource = null
                     ParameterizationDAO.withTransaction { status ->
                         resource = ParameterizationHelper.createDefaultResource(dialog.nameInput.text, node.resourceClass.newInstance())
                         resource.save()
@@ -51,7 +51,6 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
                     dialog.hide()
 
                     ResourceUIItem resourceUIItem = new ResourceUIItem(resource)
-                    model.fireModelChanged()
                     resourceUIItem.load(true)
                     model.notifyOpenDetailView(null, resourceUIItem)
                 } catch (Exception ex) {

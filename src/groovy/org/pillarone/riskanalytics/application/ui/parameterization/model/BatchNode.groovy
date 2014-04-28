@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
+
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
@@ -44,6 +45,7 @@ class BatchNode extends ItemNode implements IReportableNode {
      */
     @Override
     List<Class> modelsToReportOn() {
+        //TODO
         Batch batch = itemNodeUIItem.item
         return batch.executed ? batch.simulations.collect { Simulation simulation -> simulation.modelClass } : []
     }
@@ -55,6 +57,7 @@ class BatchNode extends ItemNode implements IReportableNode {
      */
     @Override
     List<Simulation> modellingItemsForReport() {
+        //TODO
         Batch batch = itemNodeUIItem.item
         batch.simulations
     }

@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
-import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -20,7 +20,6 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 import static org.pillarone.riskanalytics.core.workflow.Status.DATA_ENTRY
 import static org.pillarone.riskanalytics.core.workflow.Status.NONE
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -48,9 +47,8 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         super.close()
     }
 
-    ULCContainer createDetailView() {
-        ParameterView view = new ParameterView(viewModel, riskAnalyticsMainModel)
-        return view.content
+    IDetailView createDetailView() {
+        return new ParameterView(viewModel, riskAnalyticsMainModel)
     }
 
     ParameterViewModel getViewModel() {
@@ -63,18 +61,6 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         riskAnalyticsMainModel.registerModel(this, model)
         parameterization.addListener(model)
         return model
-    }
-
-    @Override
-    void save() {
-        ModellingUIItem modellingUIItem = riskAnalyticsMainModel.getAbstractUIItem(item)
-        if (modellingUIItem) {
-            ParameterViewModel viewModel = riskAnalyticsMainModel.getViewModel(modellingUIItem) as ParameterViewModel
-            if (viewModel != null) {
-                viewModel.removeInvisibleComments()
-            }
-        }
-        super.save()
     }
 
     @Override

@@ -165,7 +165,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
                 return null
             }
             BatchRowInfoRowModel columnModel = getBackedList().find { BatchRowInfoRowModel columnModel ->
-                columnModel.object.parameterization.id == info.parameterization.id
+                columnModel.object.parameterization == info.parameterization
             }
             if (!columnModel) {
                 throw new IllegalStateException("info $info belongs to our batch. But there is no column model for it!")

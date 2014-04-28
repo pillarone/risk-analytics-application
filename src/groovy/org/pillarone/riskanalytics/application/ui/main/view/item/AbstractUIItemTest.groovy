@@ -17,7 +17,7 @@ abstract class AbstractUIItemTest extends AbstractSimpleFunctionalTest {
         frame.name = "test"
 
         AbstractUIItem item = createUIItem()
-        frame.contentPane = item.createDetailView()
+        frame.contentPane = item.createDetailView().content
         ULCClipboard.install()
         UIUtils.rootPane = frame
         frame.visible = true

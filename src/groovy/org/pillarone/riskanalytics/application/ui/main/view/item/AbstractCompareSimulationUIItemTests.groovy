@@ -1,21 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
+import com.ulcjava.testframework.operator.ComponentByNameChooser
+import com.ulcjava.testframework.operator.ULCCheckBoxOperator
+import com.ulcjava.testframework.operator.ULCComboBoxOperator
+import com.ulcjava.testframework.operator.ULCFrameOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.fileimport.ResultStructureImportService
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulationsCriteriaView
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-import com.ulcjava.testframework.operator.ComponentByNameChooser
-import com.ulcjava.testframework.operator.ULCFrameOperator
-import com.ulcjava.testframework.operator.ULCCheckBoxOperator
-import com.ulcjava.testframework.operator.ULCComboBoxOperator
-import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulationsCriteriaView
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -42,7 +39,6 @@ abstract class AbstractCompareSimulationUIItemTests extends AbstractSimulationSe
         simulation2.load()
         Model model = new ApplicationModel()
 
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         CompareSimulationUIItem uiItem = new CompareSimulationUIItem(model, [simulation1, simulation2])
         return uiItem
     }

@@ -1,7 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.result.view
-
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
+import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
+import com.ulcjava.base.application.ULCBoxPane
+import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCTabbedPane
+import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTreeView
@@ -13,13 +17,6 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Compare
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.SelectionTracker
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
-import com.ulcjava.base.application.ULCContainer
-import com.ulcjava.base.application.ULCBoxPane
-import com.ulcjava.base.application.tabletree.ITableTreeNode
-import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterizationTableTreeModel
-import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
-
 /**
  * @author fouad jaada
  */
@@ -39,8 +36,6 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
         super.initComponents()
     }
-
-
 
     protected ULCContainer layoutContent(ULCContainer content) {
         ULCBoxPane contentPane = new ULCBoxPane(1, 1)
@@ -62,7 +57,7 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
         tree.viewPortTableTree.name = "parameterTreeContent"
         def clonedColumns = []
         //remove columns for cloned parameterization
-        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
+        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex { ULCTableTreeColumn it, int index ->
             if (index % model.items.size() == 0) {
                 clonedColumns.add(it)
             }
@@ -72,7 +67,7 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
         }
 
 
-        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
+        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex { ULCTableTreeColumn it, int index ->
 
             it.setCellRenderer(cRenderer)
             it.setHeaderRenderer(new CenteredHeaderRenderer(index))
@@ -80,7 +75,7 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
         CompareComponentNodeTableTreeNodeRenderer renderer = new CompareComponentNodeTableTreeNodeRenderer(tree, model)
 
 
-        tree.rowHeaderTableTree.columnModel.getColumns().each {ULCTableTreeColumn it ->
+        tree.rowHeaderTableTree.columnModel.getColumns().each { ULCTableTreeColumn it ->
             it.setCellRenderer(renderer)
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
@@ -95,7 +90,7 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
         List<ITableTreeNode> nodesWithDifference = findDifferentNodes(model.treeModel.root)
-        for(ITableTreeNode node in nodesWithDifference) {
+        for (ITableTreeNode node in nodesWithDifference) {
             tree.getRowHeaderTableTree().makeVisible(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
             tree.getViewPortTableTree().makeVisible(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]))
         }

@@ -1,11 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
-import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -36,7 +35,7 @@ abstract class AbstractUIItem {
         return []
     }
 
-    abstract ULCContainer createDetailView()
+    abstract IDetailView createDetailView()
 
     abstract Object getViewModel()
 

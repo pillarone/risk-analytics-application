@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
-import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerNumberModel
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
@@ -8,26 +7,22 @@ import grails.util.Holders
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.base.model.IModelChangedListener
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.result.view.ItemsComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.RunSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
  * and provides information about the current simulation state.
  */
-class SimulationActionsPaneModel implements IModelChangedListener {
+class SimulationActionsPaneModel {
 
     protected final static Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
 
@@ -37,18 +32,15 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     RunSimulationAction runSimulationAction
 
-    ItemsComboBoxModel<BatchRun> batchRunComboBoxModel
-
     ISimulationProvider simulationProvider
     RiskAnalyticsMainModel mainModel
 
     @Bindable
     String batchMessage
 
-    SimulationActionsPaneModel(ISimulationProvider provider, RiskAnalyticsMainModel mainModel) {
+    SimulationActionsPaneModel(ISimulationProvider provider) {
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)
-        batchRunComboBoxModel = new ItemsComboBoxModel<BatchRun>(BatchRun.list())
         priorityModel = new ULCSpinnerNumberModel(5, 0, 10, 1)
     }
 
@@ -105,27 +97,5 @@ class SimulationActionsPaneModel implements IModelChangedListener {
 
     void notifySimulationToBatchAdded(String message) {
         setBatchMessage(message)
-    }
-
-    void newBatchAdded(BatchRun batchRun) {
-        batchRunComboBoxModel.addItem(batchRun)
-    }
-
-    //TODO in future BatchRuns will be ModellingItems and we can be informed about changes
-    void modelChanged() {
-        doWithRestoredSelection(batchRunComboBoxModel) {
-            batchRunComboBoxModel.removeAllElements()
-            for (BatchRun run in BatchRun.list()) {
-                batchRunComboBoxModel.addItem(run)
-            }
-        }
-    }
-
-    private doWithRestoredSelection(DefaultComboBoxModel comboBoxModel, Closure c) {
-        def current = comboBoxModel.selectedItem
-        c.call()
-        if (current) {
-            comboBoxModel.selectedItem = current
-        }
     }
 }

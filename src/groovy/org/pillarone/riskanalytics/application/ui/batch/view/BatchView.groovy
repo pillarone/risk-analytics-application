@@ -5,8 +5,8 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
-import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
@@ -28,7 +28,7 @@ import static org.pillarone.riskanalytics.application.ui.util.UIUtils.spaceAroun
 
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
-class BatchView {
+class BatchView implements IDetailView {
 
     private SortableTable batches
     private Batch batch
@@ -37,9 +37,6 @@ class BatchView {
     private ULCBoxPane content
     private ULCComboBox simulationProfilesComboBox
     private ULCLabel parameterizationCount
-
-    @Resource
-    GrailsApplication grailsApplication
 
     @Resource
     BatchViewModel batchViewModel
@@ -89,7 +86,8 @@ class BatchView {
         attachListener()
     }
 
-    void destroy() {
+    @Override
+    void close() {
         modellingItemCache.removeItemEventListener(myBatchListener)
         myBatchListener = null
         batchViewModel.destroy()

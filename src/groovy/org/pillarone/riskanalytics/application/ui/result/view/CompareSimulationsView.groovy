@@ -1,16 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.result.view
-
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.datatype.IDataType
 import com.ulcjava.base.application.tabletree.DefaultTableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.ULCTreeSelectionModel
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
@@ -18,6 +19,7 @@ import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFun
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
+import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.QuantileFunctionType
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
@@ -26,9 +28,6 @@ import org.pillarone.riskanalytics.application.ui.util.SeriesColor
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.application.util.SimulationUtilities
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.dataaccess.function.*
-import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
 
 class CompareSimulationsView extends AbstractModellingFunctionView implements ICompareFunctionListener {
 
@@ -39,10 +38,15 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
 
     public static int space = 3
 
-    public CompareSimulationsView(CompareSimulationsViewModel model, RiskAnalyticsMainModel mainModel) {
+    CompareSimulationsView(CompareSimulationsViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model, mainModel)
         model.addFunctionListener(this)
 
+    }
+
+    @Override
+    void close() {
+        (model as CompareSimulationsViewModel).removeListener(this)
     }
 
     protected void initTree() {
@@ -54,7 +58,7 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = UIUtils.getText(this.class, "NameColumnHeader")
         tree.setCellSelectionEnabled true
         tree.name = "CompareSimulationViewTree"
-        tree.rowHeaderTableTree.columnModel.getColumns().eachWithIndex {it, i ->
+        tree.rowHeaderTableTree.columnModel.getColumns().eachWithIndex { it, i ->
             if (i == 0) {
                 it.setCellRenderer(new CompareResultsTreeNodeCellRenderer(tree))
                 it.setHeaderRenderer(new CenteredHeaderRenderer())
@@ -142,11 +146,10 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
     protected void initComponents() {
         super.initComponents();
         tabbedPane = new ULCDetachableTabbedPane()
-        tabbedPane.addTabListener([tabClosing: {TabEvent event -> event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())}] as ITabListener)
+        tabbedPane.addTabListener([tabClosing: { TabEvent event -> event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex()) }] as ITabListener)
 
         criteriaView = new CompareSimulationsCriteriaView(this, model, tree)
     }
-
 
 
     protected void addToolBarElements(ULCToolBar toolbar) {
@@ -245,8 +248,6 @@ class CompareRenderer extends NumberFormatRenderer {
         component.setToolTipText String.valueOf(value)
         return component
     }
-
-
 
 
     private def setBackground(ULCTableTree tableTree, value) {

@@ -24,7 +24,7 @@ abstract class ChartViewModel {
 
     String title
     SimulationRun simulationRun
-    List listeners
+    List<IModelChangedListener> listeners
     List<SimpleTableTreeNode> nodes
     boolean dataExportMode
     boolean fireEvents = true

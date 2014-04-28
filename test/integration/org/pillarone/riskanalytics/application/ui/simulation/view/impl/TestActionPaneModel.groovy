@@ -5,7 +5,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.Simulati
 class TestActionPaneModel extends SimulationActionsPaneModel {
 
     TestActionPaneModel(ISimulationProvider provider) {
-        super(provider, null);
+        super(provider);
     }
 
     void runSimulation() {

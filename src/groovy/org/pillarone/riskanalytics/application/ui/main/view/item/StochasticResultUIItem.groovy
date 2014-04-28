@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
@@ -11,9 +10,7 @@ import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultView
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -49,19 +46,6 @@ class StochasticResultUIItem extends SimulationResultUIItem {
         riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
-
-    @Override
-    public boolean remove() {
-        boolean removed = super.remove()
-        if (removed) {
-            Parameterization parameterization = ((Simulation) item).parameterization
-            //after deleting a simulation, delete a lock tag if the p14n is not used
-            parameterization.addRemoveLockTag()
-        }
-
-        return removed
-    }
-
 
     @Override
     String createTitle() {

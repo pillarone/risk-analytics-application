@@ -1,14 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.resultconfiguration.view
-
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tabletree.ITableTreeCellEditor
 import com.ulcjava.base.application.tabletree.ITableTreeCellRenderer
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
 import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.ui.base.view.*
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ComboBoxCellComponent
@@ -16,8 +17,6 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resulttemplate.view.ResultConfigurationTableTreeNodeRenderer
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.base.view.*
 
 class ResultConfigurationView extends AbstractModellingTreeView implements IModelItemChangeListener {
 
@@ -25,8 +24,14 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
     ULCDetachableTabbedPane tabbedPane
     PropertiesView propertiesView
 
-    public ResultConfigurationView(ResultConfigurationViewModel model, RiskAnalyticsMainModel mainModel) {
+    ResultConfigurationView(ResultConfigurationViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model, mainModel)
+        mainModel.addModelItemChangedListener(this)
+    }
+
+    @Override
+    void close() {
+        mainModel.removeModelItemChangedListener(this)
     }
 
     protected void initTree() {
@@ -37,13 +42,13 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
 
         tree = new ULCFixedColumnTableTree(model.treeModel, fixColumnCount, ([treeWidth] + [300] * model.periodCount) as int[])
         tree.viewPortTableTree.name = "resultConfigurationTreeContent"
-        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, int index ->
+        tree.viewPortTableTree.columnModel.getColumns().eachWithIndex { ULCTableTreeColumn it, int index ->
             it.headerValue = UIUtils.getText(ResultConfigurationView.class, "CollectionMode")
             it.setCellRenderer(new DelegatingCellRenderer(createRendererConfiguration(index + fixColumnCount, tree.viewPortTableTree)))
             it.setCellEditor(new DelegatingCellEditor(createEditorConfiguration()))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
-        tree.rowHeaderTableTree.columnModel.getColumns().eachWithIndex {ULCTableTreeColumn it, index ->
+        tree.rowHeaderTableTree.columnModel.getColumns().eachWithIndex { ULCTableTreeColumn it, index ->
             it.setCellRenderer(new ResultConfigurationTableTreeNodeRenderer(tree))
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
@@ -79,14 +84,13 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
     protected void initComponents() {
         tabbedPane = new ULCDetachableTabbedPane()
         tabbedPane.tabPlacement = ULCTabbedPane.TOP
-        tabbedPane.addTabListener([tabClosing: {TabEvent event ->
+        tabbedPane.addTabListener([tabClosing: { TabEvent event ->
             event.getClosableTabbedPane().closeCloseableTab(event.getTabClosingIndex())
             event.getClosableTabbedPane().selectedIndex = 0
         }] as ITabListener)
 
         super.initComponents();
     }
-
 
 
     protected ULCContainer layoutContent(ULCContainer content) {

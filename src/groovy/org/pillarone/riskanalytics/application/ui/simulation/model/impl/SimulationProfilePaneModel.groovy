@@ -14,7 +14,7 @@ class SimulationProfilePaneModel {
     protected initSubModels(Class modelClass, RiskAnalyticsMainModel riskAnalyticsMainModel) {
         settingsPaneModel = new SimulationSettingsPaneModel(modelClass)
         simulationProfilePaneActionsModel = new SimulationProfileActionsPaneModel(settingsPaneModel, modelClass)
-        simulationActionsPaneModel = new SimulationActionsPaneModel(settingsPaneModel, riskAnalyticsMainModel)
+        simulationActionsPaneModel = new SimulationActionsPaneModel(settingsPaneModel)
     }
 }
 

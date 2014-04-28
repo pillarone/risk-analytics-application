@@ -45,7 +45,7 @@ class CompareParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
-        frame.setContentPane(uiItem.createDetailView())
+        frame.setContentPane(uiItem.createDetailView().content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)
         frame.visible = true

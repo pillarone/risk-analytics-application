@@ -23,12 +23,11 @@ class UIItemUtils {
 
     private static final Log LOG = LogFactory.getLog(UIItemUtils)
 
-    public
     static boolean deleteDependingResults(Model model, ModellingUIItem modellingUIItem) {
         return deleteDependingResults(model, modellingUIItem.item)
     }
 
-    public static boolean deleteDependingResults(Model model, ModellingItem item) {
+    static boolean deleteDependingResults(Model model, ModellingItem item) {
         if (isUsedInRunningSimulation(item)) {
             return false
         }
@@ -75,7 +74,7 @@ class UIItemUtils {
         return usedInRunningSimulation
     }
 
-    public static void deleteCommentTag(Parameterization parameterization, Tag tag) {
+    static void deleteCommentTag(Parameterization parameterization, Tag tag) {
         parameterization.comments.each { Comment comment ->
             if (comment.tags.contains(tag)) {
                 comment.removeTag(tag)
@@ -85,11 +84,11 @@ class UIItemUtils {
         if (parameterization.changed) parameterization.save()
     }
 
-    public static void deleteCommentTag(ModellingItem modellingItem, Tag tag) {
+    static void deleteCommentTag(ModellingItem modellingItem, Tag tag) {
 
     }
 
-    public static List<ModellingItem> getSelectedModellingItemsForReporting(List<ItemNode> selectedUIItems) {
+    static List<ModellingItem> getSelectedModellingItemsForReporting(List<ItemNode> selectedUIItems) {
         Collection<IReportableNode> reportingItems = (Collection<IReportableNode>) selectedUIItems.findAll { ItemNode uiItem -> uiItem instanceof IReportableNode }
         List<ModellingItem> modellingItems = reportingItems*.modellingItemsForReport().flatten()
         return modellingItems

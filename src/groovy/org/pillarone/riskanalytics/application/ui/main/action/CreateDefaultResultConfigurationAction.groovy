@@ -42,7 +42,6 @@ class CreateDefaultResultConfigurationAction extends SelectionTreeAction {
 
                     dialog.hide()
 
-                    model.fireModelChanged()
                     resultConfiguration.load()
                     model.notifyOpenDetailView(getSelectedModel(), resultConfiguration)
                 } catch (Exception ex) {

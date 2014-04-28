@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
-import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
@@ -30,13 +30,11 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
     }
 
     String createTitle() {
-        if (((Simulation) item).start != null) return item.name
         return UIUtils.getText(SimulationSettingsUIItem.class, "simulation")
     }
 
-    ULCContainer createDetailView() {
-        SimulationConfigurationView view = new SimulationConfigurationView(viewModel)
-        return view.content
+    IDetailView createDetailView() {
+        return new SimulationConfigurationView(viewModel)
     }
 
     SimulationConfigurationModel getViewModel() {
@@ -57,13 +55,13 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
         if (!(obj instanceof SimulationSettingsUIItem)) {
             return false
         }
-        return createTitle().equals((obj as SimulationSettingsUIItem).createTitle())
+        return model.name.equals((obj as SimulationSettingsUIItem).model.name)
     }
 
     @Override
     int hashCode() {
         HashCodeBuilder hcb = new HashCodeBuilder()
-        hcb.append(createTitle())
+        hcb.append(model.name)
         return hcb.toHashCode()
     }
 

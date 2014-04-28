@@ -1,8 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-import com.ulcjava.base.application.ULCContainer
+
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceViewModel
 import org.pillarone.riskanalytics.application.ui.resource.view.ResourceView
@@ -34,8 +35,8 @@ class ResourceUIItem extends ModellingUIItem {
     }
 
     @Override
-    ULCContainer createDetailView() {
-        return new ResourceView(viewModel as ResourceViewModel, riskAnalyticsMainModel).content
+    IDetailView createDetailView() {
+        return new ResourceView(viewModel as ResourceViewModel, riskAnalyticsMainModel)
     }
 
     @Override

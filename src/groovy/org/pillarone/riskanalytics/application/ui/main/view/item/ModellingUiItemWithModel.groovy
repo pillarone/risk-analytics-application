@@ -1,6 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
-import com.ulcjava.base.application.ULCContainer
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -24,11 +22,6 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
 
     @Override
     RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        return null
-    }
-
-    @Override
-    ULCContainer createDetailView() {
         return null
     }
 
@@ -63,7 +56,6 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
             }
             modellingItem = ModellingItemFactory.incrementVersion(item)
         }
-        riskAnalyticsMainModel.fireModelChanged()
         AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, model)
         if (openNewVersion) {
             riskAnalyticsMainModel.openItem(model, modellingUIItem)

@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
-import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.action.TreeNodeRename
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractParameterizationTreeView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
@@ -12,25 +10,33 @@ import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubCo
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-@CompileStatic
 class ParameterView extends AbstractParameterizationTreeView implements NavigationListener {
+
+    private final IModellingItemChangeListener removeInvisibleCommentsListener = new RemoveInvisibleCommentsListener()
 
     ParameterView(ParameterViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model, mainModel)
         model.addNavigationListener(this)
+        model.item.addModellingItemChangeListener(removeInvisibleCommentsListener)
     }
 
     @Override
     ParameterViewModel getModel() {
-        return super.model as ParameterViewModel
+        return super.getModel() as ParameterViewModel
+    }
+
+    @Override
+    void close() {
+        model.item.removeModellingItemChangeListener(removeInvisibleCommentsListener)
     }
 
     @Override
     protected void initComponents() {
         super.initComponents()
-        def parameterization = model.item
+        Parameterization parameterization = model.item
         updateErrorVisualization(parameterization)
     }
 
@@ -63,6 +69,16 @@ class ParameterView extends AbstractParameterizationTreeView implements Navigati
 
     protected void updateErrorVisualization(Parameterization item) {
         commentAndErrorView.updateErrorVisualization item
+    }
+
+    private class RemoveInvisibleCommentsListener implements IModellingItemChangeListener {
+        @Override
+        void itemChanged(ModellingItem item) {}
+
+        @Override
+        void itemSaved(ModellingItem item) {
+            getModel().removeInvisibleComments()
+        }
     }
 }
 

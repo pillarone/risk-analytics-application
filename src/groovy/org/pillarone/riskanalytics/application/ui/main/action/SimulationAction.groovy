@@ -34,6 +34,7 @@ class SimulationAction extends SelectionTreeAction {
             Simulation simulation = new Simulation("Simulation")
             simulation.parameterization = selectedItem instanceof Parameterization ? selectedItem : null
             simulation.template = selectedItem instanceof ResultConfiguration ? selectedItem : null
+            simulation.modelClass = selectedModel.modelClass
             model.openItem(selectedModel, getUIItemByModel(selectedModel, simulation))
             model.fireNewSimulation(simulation)
         } else {
@@ -45,7 +46,7 @@ class SimulationAction extends SelectionTreeAction {
         if (selectedModel instanceof StochasticModel) {
             return new SimulationSettingsUIItem(selectedModel, simulation)
         } else {
-            return new CalculationSettingsUIItem(model, selectedModel, simulation)
+            return new CalculationSettingsUIItem(selectedModel, simulation)
         }
     }
 

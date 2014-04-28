@@ -13,6 +13,7 @@ import com.ulcjava.base.application.util.HTMLUtilities
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -21,7 +22,7 @@ import org.pillarone.riskanalytics.application.util.LocaleResources
 import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.ui.base.action.*
 
-abstract class AbstractModellingTreeView {
+abstract class AbstractModellingTreeView implements IDetailView {
 
     AbstractModellingModel model
     RiskAnalyticsMainModel mainModel
@@ -39,11 +40,16 @@ abstract class AbstractModellingTreeView {
     IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 
-    public AbstractModellingTreeView(def model, RiskAnalyticsMainModel mainModel) {
+    AbstractModellingTreeView(def model, RiskAnalyticsMainModel mainModel) {
         this.model = model
         this.mainModel = mainModel
         content = new ULCBoxPane(1, 0)
         initView(model)
+    }
+
+    @Override
+    void close() {
+        //TODO maybe we should free resources here
     }
 
     private def initView(def model) {

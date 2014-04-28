@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
-import com.ulcjava.base.application.ULCContainer
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -10,7 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class CalculationSettingsUIItem extends SimulationSettingsUIItem {
 
-    CalculationSettingsUIItem(RiskAnalyticsMainModel mainModel, Model simulationModel, Simulation simulation) {
+    CalculationSettingsUIItem(Model simulationModel, Simulation simulation) {
         super(simulationModel, simulation)
     }
 
@@ -18,9 +17,8 @@ class CalculationSettingsUIItem extends SimulationSettingsUIItem {
         return UIUtils.getText(SimulationSettingsUIItem.class, "calculation")
     }
 
-    ULCContainer createDetailView() {
-        CalculationConfigurationView view = new CalculationConfigurationView(viewModel)
-        return view.content
+    IDetailView createDetailView() {
+        return new CalculationConfigurationView(viewModel)
     }
 
     CalculationConfigurationModel getViewModel() {

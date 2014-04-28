@@ -2,10 +2,15 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.AbstractAction
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
+import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
+import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -21,9 +26,18 @@ class CommentsSwitchAction extends AbstractAction {
 
     void actionPerformed(ActionEvent event) {
         if (enabled) {
-            AbstractCommentableItemModel abstractModellingModel = model.getViewModel(model.currentItem) as AbstractCommentableItemModel
-            abstractModellingModel.navigationSelected()
+            IDetailView detailView = getDetailView(model.currentItem)
+            if (detailView instanceof ResultView) {
+                detailView.getModel().navigationSelected()
+            }
+            if (detailView instanceof ParameterView) {
+                detailView.getModel().navigationSelected()
+            }
         }
+    }
+
+    IDetailView getDetailView(AbstractUIItem uiItem) {
+        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager).getDetailViewForItem(uiItem)
     }
 
     @Override
