@@ -26,7 +26,6 @@ abstract class AbstractUIItem {
         return false
     }
 
-
     void load(boolean completeLoad = true) {}
 
     void unload() {}
@@ -36,8 +35,6 @@ abstract class AbstractUIItem {
     }
 
     abstract IDetailView createDetailView()
-
-    abstract Object getViewModel()
 
     abstract String createTitle()
 

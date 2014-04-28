@@ -1,8 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
@@ -12,7 +10,6 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -39,13 +36,11 @@ class CompareSimulationUIItem extends AbstractUIItem {
     }
 
     IDetailView createDetailView() {
-        return new CompareSimulationsView(viewModel as CompareSimulationsViewModel, riskAnalyticsMainModel)
+        return new CompareSimulationsView(viewModel, riskAnalyticsMainModel)
     }
 
-    AbstractModellingModel getViewModel() {
-        CompareSimulationsViewModel model
-        model = new CompareSimulationsViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), simulations)
-        return model
+    private CompareSimulationsViewModel getViewModel() {
+        new CompareSimulationsViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), simulations)
     }
 
     @Override

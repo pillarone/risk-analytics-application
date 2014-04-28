@@ -23,7 +23,9 @@ class SimulationConfigurationView implements IDetailView {
     }
 
     @Override
-    void close() {}
+    void close() {
+        model.close()
+    }
 
     protected void initComponents() {
         simulationProfilePane = new SimulationProfilePane(model.simulationProfilePaneModel)

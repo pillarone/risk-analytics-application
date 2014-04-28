@@ -36,11 +36,11 @@ class ResourceUIItem extends ModellingUIItem {
 
     @Override
     IDetailView createDetailView() {
-        return new ResourceView(viewModel as ResourceViewModel, riskAnalyticsMainModel)
+        return new ResourceView(viewModel, riskAnalyticsMainModel)
     }
 
     @Override
-    ResourceViewModel getViewModel() {
+    private ResourceViewModel getViewModel() {
         Resource resource = item as Resource
         ResourceViewModel model = new ResourceViewModel(resource)
         model.mainModel = riskAnalyticsMainModel

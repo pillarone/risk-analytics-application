@@ -1,13 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import com.ulcjava.base.application.util.ULCIcon
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
-import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -20,13 +17,7 @@ abstract class SimulationResultUIItem extends ModellingUiItemWithModel {
         super(model, simulation)
     }
 
-    IDetailView createDetailView() {
-        AbstractResultViewModel resultViewModel = getViewModel() as AbstractResultViewModel
-        ResultView view = createView(resultViewModel)
-        return view
-    }
 
-    abstract protected ResultView createView(AbstractResultViewModel model)
 
     @Override
     void rename(String newName) {

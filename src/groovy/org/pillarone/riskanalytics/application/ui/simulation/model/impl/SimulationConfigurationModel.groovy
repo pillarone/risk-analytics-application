@@ -7,14 +7,26 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class SimulationConfigurationModel implements INewSimulationListener {
 
     SimulationProfilePaneModel simulationProfilePaneModel
+    final RiskAnalyticsMainModel mainModel
 
-    public SimulationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        initSubModels(modelClass, mainModel)
+    SimulationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
+        this.mainModel = mainModel
+        initSubModels(modelClass)
+        attachListener()
     }
 
-    protected initSubModels(Class modelClass, RiskAnalyticsMainModel mainModel) {
+    protected void attachListener() {
+        mainModel.addModellingItemEventListener(simulationProfilePaneModel.settingsPaneModel)
+        mainModel.addNewSimulationListener(this)
+    }
+
+    void close() {
+        mainModel.removeModellingItemEventListener(simulationProfilePaneModel.settingsPaneModel)
+        mainModel.removeNewSimulationListener(this)
+    }
+
+    protected initSubModels(Class modelClass) {
         simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass, mainModel)
-        //Use the setting pane model as ISimulationProvider for the actions pane model
     }
 
     void newSimulation(Simulation simulation) {

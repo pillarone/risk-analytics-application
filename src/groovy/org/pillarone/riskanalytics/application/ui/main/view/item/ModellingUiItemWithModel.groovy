@@ -26,11 +26,6 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
     }
 
     @Override
-    Object getViewModel() {
-        return null
-    }
-
-    @Override
     boolean deleteDependingResults() {
         return UIItemUtils.deleteDependingResults(model, this)
     }

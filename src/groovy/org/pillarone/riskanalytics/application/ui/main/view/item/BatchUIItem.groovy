@@ -3,7 +3,6 @@ import com.google.common.base.Preconditions
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
@@ -37,10 +36,6 @@ class BatchUIItem extends ModellingUIItem {
         //TODO this batchView has to be destroyed after usage!!
         batchView.batch = item
         batchView
-    }
-
-    AbstractModellingModel getViewModel() {
-        null
     }
 
     boolean remove() {

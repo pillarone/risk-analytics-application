@@ -37,7 +37,7 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
         return new SimulationConfigurationView(viewModel)
     }
 
-    SimulationConfigurationModel getViewModel() {
+    private SimulationConfigurationModel getViewModel() {
         SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template

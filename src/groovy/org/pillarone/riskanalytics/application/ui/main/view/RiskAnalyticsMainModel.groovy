@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -13,7 +14,6 @@ import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventList
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -134,22 +134,10 @@ class RiskAnalyticsMainModel {
 
     void registerModel(AbstractUIItem item, def model) {
         viewModelsInUse[item] = model
-        if (model instanceof SimulationConfigurationModel) {
-            //TODO the viewModel itself should implement the interfaces. Then this could be generic
-            addModellingItemEventListener(model.settingsPaneModel)
-            addNewSimulationListener(model)
-        }
     }
 
     private def unregisterModel(AbstractUIItem item) {
-        def viewModel = viewModelsInUse.remove(item)
-        if (viewModel != null) {
-            if (viewModel instanceof SimulationConfigurationModel) {
-                //TODO the viewModel itself should implement the interfaces. Then this could be generic
-                removeModellingItemEventListener(viewModel.settingsPaneModel)
-                removeNewSimulationListener(viewModel)
-            }
-        }
+        viewModelsInUse.remove(item)
     }
 
     void addModelListener(IRiskAnalyticsModelListener listener) {

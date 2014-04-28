@@ -21,7 +21,7 @@ class CalculationSettingsUIItem extends SimulationSettingsUIItem {
         return new CalculationConfigurationView(viewModel)
     }
 
-    CalculationConfigurationModel getViewModel() {
+    private CalculationConfigurationModel getViewModel() {
         CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template

@@ -20,6 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 import static org.pillarone.riskanalytics.core.workflow.Status.DATA_ENTRY
 import static org.pillarone.riskanalytics.core.workflow.Status.NONE
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -51,7 +52,7 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         return new ParameterView(viewModel, riskAnalyticsMainModel)
     }
 
-    ParameterViewModel getViewModel() {
+    private ParameterViewModel getViewModel() {
         Parameterization parameterization = (Parameterization) item
         Model simulationModel = this.model.class.newInstance() as Model//PMO-2471
         simulationModel.init()
