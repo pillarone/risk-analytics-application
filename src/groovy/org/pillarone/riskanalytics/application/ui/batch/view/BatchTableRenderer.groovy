@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
 
+import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTable
@@ -8,6 +9,8 @@ import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import com.ulcjava.base.application.table.DefaultTableHeaderCellRenderer
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfoRowModel
+import org.pillarone.riskanalytics.application.ui.batch.view.action.BatchOpenParameterizationAction
+import org.pillarone.riskanalytics.application.ui.batch.view.action.BatchOpenresultAction
 import org.pillarone.riskanalytics.application.ui.batch.view.action.CreateBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.view.action.CreateSimulationProfileAction
 import org.pillarone.riskanalytics.application.ui.batch.view.action.FindInTreeAction
@@ -42,17 +45,19 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
     private ULCPopupMenu getNodePopUp() {
         if (!nodePopup) {
             nodePopup = new ULCPopupMenu()
-            EnabledCheckingMenuItem createSimulationProfileItem = new EnabledCheckingMenuItem(new CreateSimulationProfileAction(batchView))
-            EnabledCheckingMenuItem findInTreeItem = new EnabledCheckingMenuItem(new FindInTreeAction(batchView))
-            EnabledCheckingMenuItem createBatchItem = new EnabledCheckingMenuItem(new CreateBatchAction(batchView))
-            menuItems << createSimulationProfileItem
-            menuItems << findInTreeItem
-            menuItems << createBatchItem
-            nodePopup.add(createSimulationProfileItem)
-            nodePopup.add(findInTreeItem)
-            nodePopup.add(createBatchItem)
+            addItem(new CreateSimulationProfileAction(batchView))
+            addItem(new FindInTreeAction(batchView))
+            addItem(new CreateBatchAction(batchView))
+            addItem(new BatchOpenParameterizationAction(batchView))
+            addItem(new BatchOpenresultAction(batchView))
         }
         return nodePopup
+    }
+
+    private void addItem(IAction action) {
+        EnabledCheckingMenuItem menuItem = new EnabledCheckingMenuItem(action)
+        menuItems << menuItem
+        nodePopup.add(menuItem)
     }
 }
 

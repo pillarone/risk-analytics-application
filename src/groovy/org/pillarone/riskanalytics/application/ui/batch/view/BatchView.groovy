@@ -119,7 +119,7 @@ class BatchView implements IDetailView {
         }] as IActionListener)
         simulationProfilesComboBox.addActionListener([actionPerformed: { ActionEvent event ->
             String newSimulationProfileName = simulationProfilesComboBox.selectedItem as String
-            if (batch && batch.simulationProfileName != newSimulationProfileName) {
+            if (batch) {
                 batchViewModel.profileNameChanged(newSimulationProfileName)
             }
         }] as IActionListener)

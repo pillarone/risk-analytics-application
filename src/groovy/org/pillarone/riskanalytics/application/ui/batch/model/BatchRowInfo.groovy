@@ -3,8 +3,11 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 import com.google.common.base.Preconditions
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
+
+import static org.pillarone.riskanalytics.core.simulation.SimulationState.FINISHED
 
 class BatchRowInfo {
     private final Parameterization parameterization
@@ -59,6 +62,10 @@ class BatchRowInfo {
         return parameterization
     }
 
+    boolean isFinished() {
+        simulation?.simulationState == FINISHED
+    }
+
     void setSimulationProfile(SimulationProfile simulationProfile) {
         this.simulationProfile = simulationProfile
     }
@@ -75,4 +82,17 @@ class BatchRowInfo {
         simulationProfile || simulation
     }
 
+    Simulation getSimulation() {
+        return simulation
+    }
+
+    ResultConfiguration getTemplate() {
+        if (simulation) {
+            return simulation.template
+        }
+        if (simulationProfile) {
+            return simulationProfile.template
+        }
+        return null
+    }
 }
