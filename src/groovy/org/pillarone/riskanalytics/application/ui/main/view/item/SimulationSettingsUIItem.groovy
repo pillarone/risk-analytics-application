@@ -7,10 +7,13 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.model.StochasticModel
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class SimulationSettingsUIItem extends ModellingUiItemWithModel {
@@ -30,14 +33,26 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
     }
 
     String createTitle() {
-        return UIUtils.getText(SimulationSettingsUIItem.class, "simulation")
+        return UIUtils.getText(SimulationSettingsUIItem.class, stochasticModel ? "simulation" : "calculation")
     }
 
     IDetailView createDetailView() {
-        return new SimulationConfigurationView(viewModel)
+        return stochasticModel ? new SimulationConfigurationView(simulationConfigurationModel) : new CalculationConfigurationView(calculationConfigurationModel)
     }
 
-    private SimulationConfigurationModel getViewModel() {
+    private boolean isStochasticModel() {
+        model instanceof StochasticModel
+    }
+
+    private CalculationConfigurationModel getCalculationConfigurationModel() {
+        CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, riskAnalyticsMainModel)
+        model.settingsPaneModel.selectedParameterization = item.parameterization
+        model.settingsPaneModel.selectedResultConfiguration = item.template
+        riskAnalyticsMainModel.registerModel(this, model)
+        return model
+    }
+
+    private SimulationConfigurationModel getSimulationConfigurationModel() {
         SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template

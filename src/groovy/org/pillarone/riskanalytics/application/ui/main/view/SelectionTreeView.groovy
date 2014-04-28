@@ -38,21 +38,21 @@ import javax.annotation.Resource
 @Component
 class SelectionTreeView {
 
-    final static int                    TREE_FIRST_COLUMN_WIDTH = 350
+    final static int TREE_FIRST_COLUMN_WIDTH = 350
 
-    ULCFixedColumnTableTree             tree
-    ULCBoxPane                          content
+    ULCFixedColumnTableTree tree
+    ULCBoxPane content
     @Resource
-    RiskAnalyticsMainModel              riskAnalyticsMainModel
-    ModellingItemSelectionListener      modellingItemSelectionListener
+    RiskAnalyticsMainModel riskAnalyticsMainModel
+    ModellingItemSelectionListener modellingItemSelectionListener
     @Resource
-    NavigationTableTreeModel            navigationTableTreeModel
+    NavigationTableTreeModel navigationTableTreeModel
     @Resource
-    ModellingItemCache                  modellingItemCache
+    ModellingItemCache modellingItemCache
 
     private IModellingItemEventListener updateListener
 
-    boolean                             ascOrder = true
+    boolean ascOrder = true
 
     @PostConstruct
     void initialize() {

@@ -5,6 +5,7 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
+import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
@@ -60,8 +61,11 @@ class BatchView implements IDetailView {
         }
     }
 
+    SortableTable getBatches() {
+        return batches
+    }
+
     private void lock() {
-        //TODO lock sortable list
         batches.enabled = false
         runBatch.enabled = false
         simulationProfilesComboBox.enabled = false
@@ -72,7 +76,7 @@ class BatchView implements IDetailView {
         myBatchListener = new MyBatchListener()
         modellingItemCache.addItemEventListener(myBatchListener)
         batches = new SortableTable(batchViewModel.simulationParameterizationTableModel)
-        BatchTableRenderer batchTableRenderer = new BatchTableRenderer(batchViewModel.simulationParameterizationTableModel)
+        BatchTableRenderer batchTableRenderer = new BatchTableRenderer(this)
         batches.columnModel.columns.each { ULCTableColumn column ->
             column.headerRenderer = new BatchTableHeaderRenderer()
             column.cellRenderer = batchTableRenderer
@@ -100,6 +104,12 @@ class BatchView implements IDetailView {
 
     Batch getBatch() {
         return batch
+    }
+
+    List<BatchRowInfo> getSelectedBatchRowInfos() {
+        batches.selectedRows.collect {
+            batchViewModel.simulationParameterizationTableModel.batchRowInfos[it]
+        }
     }
 
     private void attachListener() {

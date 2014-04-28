@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import models.core.CoreModel
@@ -11,10 +12,11 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CalculationUIItemTests extends AbstractUIItemTest {
+class DeterministicSimulationUIItemTests extends AbstractUIItemTest {
 
     public void testView() {
         ULCFrameOperator frameOperator = new ULCFrameOperator(new ComponentByNameChooser("test"))
@@ -38,7 +40,7 @@ class CalculationUIItemTests extends AbstractUIItemTest {
         simulation.parameterization = new Parameterization("DeterministicApplicationParameters")
         simulation.template = new ResultConfiguration("DeterministicApplicationResultConfiguration", CoreModel)
 
-        CalculationSettingsUIItem uiItem = new CalculationSettingsUIItem(model, simulation)
+        SimulationSettingsUIItem uiItem = new SimulationSettingsUIItem(model, simulation)
         return uiItem
     }
 
