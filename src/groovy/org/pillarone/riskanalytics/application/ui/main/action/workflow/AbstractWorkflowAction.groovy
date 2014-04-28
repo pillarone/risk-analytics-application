@@ -73,19 +73,10 @@ abstract class AbstractWorkflowAction extends SelectionTreeAction {
     boolean isEnabled() {
         // If you accidentally do Create new version on a large selection, it leaves you very worried
         //
-        if (getAllSelectedObjectsSimpler().size() > 1) {
+        if (getAllSelectedObjectsSimpler().size() != 1) {
             return false
         }
 
-        // PMO-2765 Juan described (20140425 chat) other users been creating new versions of his models w/o asking.
-        //
-        if( !CreateNewMajorVersion.promiscuous  ){  //forbid meddling via -DCreateNewMajorVersion.promiscuous=false
-
-            Parameterization p = getSelectedItem()
-            if( ownerCanVetoUser(p?.creator) ){
-                return false
-            }
-        }
         return super.isEnabled()//generic checks like user roles
     }
 

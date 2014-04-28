@@ -12,9 +12,6 @@ import com.ulcjava.base.application.UlcUtilities
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.user.UserManagement
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -22,9 +19,6 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 class CreateNewMajorVersion extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CreateNewMajorVersion)
-
-    // forbid meddling via -DCreateNewMajorVersion.promiscuous=false
-    public static boolean promiscuous = System.getProperty("CreateNewMajorVersion.promiscuous","true").equalsIgnoreCase("true") //breaks tests when false!
 
     ModellingUIItem modellingUIItem
 
@@ -81,19 +75,10 @@ class CreateNewMajorVersion extends SelectionTreeAction {
     boolean isEnabled() {
         // If you accidentally do Create new version on a large selection, it leaves you very worried
         //
-        if (getAllSelectedObjectsSimpler().size() > 1) {
+        if (getAllSelectedObjectsSimpler().size() != 1) {
             return false
         }
 
-        // PMO-2765 Juan described (20140425 chat) other users been creating new versions of his models w/o asking.
-        //
-        if( !promiscuous  ){  //allow via -DCreateNewMajorVersion.promiscuous=true
-
-            if( ownerCanVetoUser(getUIItem()?.getItem()?.creator) ){
-                LOG.info("Hint: Use Save As to create your own item.")
-                return false
-            }
-        }
         return super.isEnabled()//generic checks like user roles
     }
 

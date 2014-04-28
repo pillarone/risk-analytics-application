@@ -7,11 +7,11 @@ import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.ParameterizationPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.DataEntryPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.InProductionPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.InReviewPopupMenu
 import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.RejectedPopupMenu
+import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.StatusNonePopupMenu
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.workflow.Status
 
@@ -42,7 +42,7 @@ class ParameterizationNode extends ItemNode implements IReportableNode {
     private ULCPopupMenu createPopupForStatus(Status status, ULCTableTree tree) {
         switch (status) {
             case NONE:
-                return new ParameterizationPopupMenu(tree, this)
+                return new StatusNonePopupMenu(tree, this)
             case DATA_ENTRY:
                 return new DataEntryPopupMenu(tree, this)
             case IN_REVIEW:

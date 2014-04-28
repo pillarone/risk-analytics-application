@@ -2,8 +2,7 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model.popup.
 
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
-import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow.impl.AbstractWorkflowParameterNodePopupMenu
-import com.ulcjava.base.application.ULCMenuItem
+import org.pillarone.riskanalytics.application.ui.parameterization.model.popup.ParameterizationPopupMenu
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.CreateNewWorkflowVersionAction
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 
@@ -11,7 +10,7 @@ import org.pillarone.riskanalytics.application.ui.parameterization.model.Paramet
  * Allianz Risk Transfer  ATOM
  * User: bzetterstrom
  */
-class InProductionPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
+class InProductionPopupMenu extends ParameterizationPopupMenu {
 
     InProductionPopupMenu(final ULCTableTree tree, ParameterizationNode node) {
         super(tree, node)
@@ -25,6 +24,4 @@ class InProductionPopupMenu extends AbstractWorkflowParameterNodePopupMenu {
         return true;
     }
 
-    @Override
-    protected boolean hasDeleteAction() { return false; }
 }
