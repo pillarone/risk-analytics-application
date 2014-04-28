@@ -74,7 +74,8 @@ class DeleteAction extends SelectionTreeAction {
 
     protected void removeItem(List<AbstractUIItem> selectedItems) {
         selectedItems.each { selectedItem ->
-            if (selectedItem instanceof ParameterizationUIItem && selectedItem.item?.status == Status.DATA_ENTRY) {
+            if( selectedItem instanceof ParameterizationUIItem && (selectedItem.item?.status == Status.DATA_ENTRY ||
+                                                                   selectedItem.item?.status == Status.REJECTED     )) {
                 StatusChangeService.service.clearAudit(selectedItem.item as Parameterization)
             }
             removeItem(selectedItem)
