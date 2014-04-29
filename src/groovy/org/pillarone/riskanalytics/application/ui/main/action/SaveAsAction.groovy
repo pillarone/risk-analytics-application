@@ -18,9 +18,10 @@ class SaveAsAction extends SingleItemAction {
 
     public void doActionPerformed(ActionEvent event) {
 
-        if( quitWithAlertIfCalledWhenDisabled() ){
-            return
-        }
+// No keyboard shortcut backdoor here.
+//        if( quitWithAlertIfCalledWhenDisabled() ){
+//            return
+//        }
 
         ModellingUIItem selectedUIItem = (ModellingUIItem) getSelectedUIItem()
         NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedUIItem)

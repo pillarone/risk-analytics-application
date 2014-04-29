@@ -39,7 +39,7 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         if (hasRenameAction()){
             add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))); //PMO-2764
         }
-        add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)));
+        add(new EnabledCheckingMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)));
         if (hasCreateNewMajorVersionAction()){
             add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel))); //PMO-2764
         }
