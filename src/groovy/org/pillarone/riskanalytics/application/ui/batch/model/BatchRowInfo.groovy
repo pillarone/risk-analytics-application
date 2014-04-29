@@ -75,7 +75,7 @@ class BatchRowInfo {
     }
 
     void setSimulationRuntimeInfo(SimulationRuntimeInfo simulationRuntimeInfo) {
-        simulation = simulationRuntimeInfo.simulation
+        simulation = simulationRuntimeInfo?.simulation
     }
 
     void setSimulation(Simulation simulation) {
