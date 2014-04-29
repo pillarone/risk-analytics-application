@@ -3,6 +3,8 @@ package org.pillarone.riskanalytics.application.ui.batch.view
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
+import com.ulcjava.base.application.event.IListSelectionListener
+import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
@@ -46,6 +48,7 @@ class BatchView implements IDetailView {
 
     private MyBatchListener myBatchListener
     private final ValidationListener validationListener = new ValidationListener()
+    private final IListSelectionListener updateSelectionCountListener = new UpdateSelectionCountListener()
 
     void setBatch(Batch batch) {
         if (this.batch) {
@@ -54,11 +57,16 @@ class BatchView implements IDetailView {
         this.batch = batch
         batch.addModellingItemChangeListener(validationListener)
         batchViewModel.batch = batch
-        parameterizationCount.text = batch.parameterizations.size()
+        updateParameterizationCount()
         updateEnablingState()
         if (!batch || batch.executed) {
             lock()
         }
+    }
+
+    private void updateParameterizationCount() {
+        String count = "Selected: ${selectedBatchRowInfos.size()}/${batchViewModel.simulationParameterizationTableModel.backedList.size()}"
+        parameterizationCount.text = count
     }
 
     SortableTable getBatches() {
@@ -76,6 +84,7 @@ class BatchView implements IDetailView {
         myBatchListener = new MyBatchListener()
         modellingItemCache.addItemEventListener(myBatchListener)
         batches = new SortableTable(batchViewModel.simulationParameterizationTableModel)
+        batches.selectionModel.addListSelectionListener(updateSelectionCountListener)
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(this)
         batches.columnModel.columns.each { ULCTableColumn column ->
             column.headerRenderer = new BatchTableHeaderRenderer()
@@ -97,6 +106,7 @@ class BatchView implements IDetailView {
         if (this.batch) {
             this.batch.removeModellingItemChangeListener(validationListener)
         }
+        batches.selectionModel.removeListSelectionListener(updateSelectionCountListener)
         modellingItemCache.removeItemEventListener(myBatchListener)
         myBatchListener = null
         batchViewModel.destroy()
@@ -173,6 +183,13 @@ class BatchView implements IDetailView {
         @Override
         void itemSaved(ModellingItem item) {
             updateEnablingState()
+        }
+    }
+
+    private class UpdateSelectionCountListener implements IListSelectionListener {
+        @Override
+        void valueChanged(ListSelectionEvent event) {
+            updateParameterizationCount()
         }
     }
 
