@@ -5,6 +5,7 @@ import com.ulcjava.base.application.IComboBoxModel
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -68,6 +69,24 @@ class BatchViewModel {
     void run() {
         if (batch) {
             batchRunService.runBatch(batch)
+        }
+    }
+
+    void addParameterizations(List<Parameterization> parameterizations) {
+        List<Parameterization> copy = new ArrayList<>(parameterizations)
+        copy.removeAll(batch.parameterizations)
+        if (copy) {
+            batch.parameterizations += copy
+            simulationParameterizationTableModel.batch = batch
+            batch.changed = true
+        }
+    }
+
+    void removeParameterizations(List<Parameterization> parameterizations) {
+        if (parameterizations) {
+            batch.parameterizations.removeAll(parameterizations)
+            simulationParameterizationTableModel.batch = batch
+            batch.changed = true
         }
     }
 }

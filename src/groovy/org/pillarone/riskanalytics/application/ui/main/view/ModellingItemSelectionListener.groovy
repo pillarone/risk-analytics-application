@@ -60,7 +60,7 @@ class ModellingItemSelectionListener extends ULCTableTreeModelAdapter {
         if (isSelectionInvalid(selectedPath)) {
             if (event.treePath.lastPathComponent.childCount == 0) {
                 tree.rowHeaderTableTree.pathSelection = event.treePath
-            } else if (tree.rowHeaderTableTree.getPathForRow(selectedRow).lastPathComponent instanceof ItemNode) {
+            } else if (tree.rowHeaderTableTree.getPathForRow(selectedRow)?.lastPathComponent instanceof ItemNode) {
                 tree.rowHeaderTableTree.rowSelection = selectedRow
             } else {
                 tree.rowHeaderTableTree.pathSelection = event.treePath
