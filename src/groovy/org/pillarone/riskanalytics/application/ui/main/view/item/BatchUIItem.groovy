@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.google.common.base.Preconditions
 import grails.util.Holders
 import groovy.transform.CompileStatic
@@ -33,7 +34,6 @@ class BatchUIItem extends ModellingUIItem {
 
     IDetailView createDetailView() {
         BatchView batchView = Holders.grailsApplication.mainContext.getBean('batchView', BatchView)
-        //TODO this batchView has to be destroyed after usage!!
         batchView.batch = item
         batchView
     }

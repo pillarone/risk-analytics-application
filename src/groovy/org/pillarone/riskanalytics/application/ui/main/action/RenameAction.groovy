@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
@@ -13,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -46,7 +48,7 @@ class RenameAction extends SingleItemAction {
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)
             dialog.title = dialog.getText("renameTitle") + " " + selectedItem.name
 
-            dialog.okAction = { selectedItem.rename(dialog.nameInput.text) }
+            dialog.okAction = { String name -> selectedItem.rename(name) }
             dialog.show()
         }
     }

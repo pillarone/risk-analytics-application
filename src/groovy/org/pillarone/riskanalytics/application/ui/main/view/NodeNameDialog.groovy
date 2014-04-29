@@ -11,13 +11,14 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.ResourceDAO
+import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 
 class NodeNameDialog {
 
     private ModellingUIItem modellingUIItem
     private ULCWindow parent
     private ULCDialog dialog
-    ULCTextField nameInput
+    private ULCTextField nameInput
     private ULCButton okButton
     private ULCButton cancelButton
 
@@ -44,20 +45,20 @@ class NodeNameDialog {
     }
 
     private void layoutComponents() {
-        nameInput.setPreferredSize(new Dimension(200, 20))
+        nameInput.preferredSize = new Dimension(200, 20)
         ULCBoxPane content = new ULCBoxPane(rows: 2, columns: 4)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(getText("name") + ":"))
         content.add(3, ULCBoxPane.BOX_EXPAND_CENTER, nameInput)
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
         content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
-        okButton.setPreferredSize(new Dimension(120, 20))
+        okButton.preferredSize = new Dimension(120, 20)
         content.add(ULCBoxPane.BOX_RIGHT_BOTTOM, okButton)
-        cancelButton.setPreferredSize(new Dimension(120, 20))
+        cancelButton.preferredSize = new Dimension(120, 20)
         content.add(ULCBoxPane.BOX_RIGHT_BOTTOM, cancelButton)
 
         dialog.add(content)
-        dialog.setLocationRelativeTo(parent)
+        dialog.locationRelativeTo = parent
         dialog.pack()
         dialog.resizable = false
 
@@ -65,12 +66,11 @@ class NodeNameDialog {
 
     private void attachListeners() {
         IActionListener action = [actionPerformed: { e ->
-            if (!modellingUIItem.isLoaded()) {
+            if (!modellingUIItem.loaded) {
                 modellingUIItem.load()
             }
-
             if (isUnique(modellingUIItem)) {
-                okAction.call(); hide()
+                okAction.call(nameInput.text); hide()
             } else {
                 I18NAlert alert = new I18NAlert(parent, "UniquesNamesRequired")
                 alert.show()
@@ -83,7 +83,7 @@ class NodeNameDialog {
     }
 
     protected boolean isUnique(SimulationResultUIItem simulationUIItem) {
-        simulationUIItem.item.template.daoClass.findByNameAndModelClassName(nameInput.text, simulationUIItem.item.modelClass.name) == null
+        ResultConfigurationDAO.findByNameAndModelClassName(nameInput.text, simulationUIItem.item.modelClass.name) == null
     }
 
     protected boolean isUnique(ModellingUIItem modellingUIItem) {
@@ -98,12 +98,12 @@ class NodeNameDialog {
         BatchRun.findByName(nameInput.text) == null
     }
 
-    public void show() {
+    void show() {
         dialog.title = title
         dialog.visible = true
     }
 
-    public hide() {
+    void hide() {
         dialog.visible = false
     }
 
@@ -113,7 +113,7 @@ class NodeNameDialog {
      * @param key
      * @return the localized value corresponding to the key
      */
-    public String getText(String key) {
+    String getText(String key) {
         return LocaleResources.getString("NodeNameDialog." + key);
     }
 }

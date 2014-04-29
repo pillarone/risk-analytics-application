@@ -66,7 +66,7 @@ class BatchView implements IDetailView {
     }
 
     private void lock() {
-        batches.enabled = false
+        batches.dragEnabled = false
         runBatch.enabled = false
         simulationProfilesComboBox.enabled = false
     }

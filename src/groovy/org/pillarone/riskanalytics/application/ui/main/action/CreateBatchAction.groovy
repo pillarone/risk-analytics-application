@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
@@ -22,7 +24,14 @@ class CreateBatchAction extends SelectionTreeAction {
             it instanceof ParameterizationNode
         } as List<ParameterizationNode>
         Batch batch = batchRunService.createBatch(parameterizationNodes.itemNodeUIItem.item)
-        model.openItem(null, new BatchUIItem(batch))
+        BatchUIItem batchUIItem = new BatchUIItem(batch)
+        NodeNameDialog nameDialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), batchUIItem)
+        nameDialog.okAction = { String name ->
+            batch.name = name
+            model.openItem(null, batchUIItem)
+            batch.changed = true
+        }
+        nameDialog.show()
     }
 
     private BatchRunService getBatchRunService() {

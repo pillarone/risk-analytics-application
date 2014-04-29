@@ -20,8 +20,8 @@ class SaveAsAction extends SelectionTreeAction {
         ModellingUIItem selectedUIItem = (ModellingUIItem) getSelectedUIItem()
         NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedUIItem)
         dialog.title = dialog.getText("title")
-        dialog.okAction = {
-            selectedUIItem.addItem(selectedUIItem, dialog.nameInput.text)
+        dialog.okAction = { String name ->
+            selectedUIItem.addItem(selectedUIItem, name)
         }
         dialog.show()
     }

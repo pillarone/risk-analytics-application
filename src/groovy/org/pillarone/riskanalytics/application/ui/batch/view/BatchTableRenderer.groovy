@@ -9,11 +9,7 @@ import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import com.ulcjava.base.application.table.DefaultTableHeaderCellRenderer
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfoRowModel
-import org.pillarone.riskanalytics.application.ui.batch.view.action.BatchOpenParameterizationAction
-import org.pillarone.riskanalytics.application.ui.batch.view.action.BatchOpenresultAction
-import org.pillarone.riskanalytics.application.ui.batch.view.action.CreateBatchAction
-import org.pillarone.riskanalytics.application.ui.batch.view.action.CreateSimulationProfileAction
-import org.pillarone.riskanalytics.application.ui.batch.view.action.FindInTreeAction
+import org.pillarone.riskanalytics.application.ui.batch.view.action.*
 
 class BatchTableRenderer extends DefaultTableCellRenderer {
     private ULCPopupMenu nodePopup
@@ -50,6 +46,7 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
             addItem(new CreateBatchAction(batchView))
             addItem(new BatchOpenParameterizationAction(batchView))
             addItem(new BatchOpenresultAction(batchView))
+            addItem(new OpenResultsAction(batchView))
         }
         return nodePopup
     }

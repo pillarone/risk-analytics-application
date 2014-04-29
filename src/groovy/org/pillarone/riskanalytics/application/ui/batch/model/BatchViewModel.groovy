@@ -39,7 +39,7 @@ class BatchViewModel {
     void setBatch(Batch batch) {
         this.batch = batch
         simulationParameterizationTableModel.batch = batch
-        simulationProfileNamesComboBoxModel.selectedItem = batch?.simulationProfileName
+        simulationProfileNamesComboBoxModel.selectedItem = batch.simulationProfileName
     }
 
     void save() {
@@ -50,9 +50,11 @@ class BatchViewModel {
 
     void profileNameChanged(String profileName) {
         if (batch) {
-            batch.simulationProfileName = profileName
+            if (batch.simulationProfileName != profileName) {
+                batch.simulationProfileName = profileName
+                batch.changed = true
+            }
             simulationParameterizationTableModel.simulationProfileNameChanged()
-            batch.changed = true
         }
     }
 

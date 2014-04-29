@@ -62,7 +62,6 @@ class OpenItemAction extends SelectionTreeAction {
     }
 
     private void openItem(BatchUIItem item) {
-        item.load()
         this.model.openItem(null, item)
     }
 
