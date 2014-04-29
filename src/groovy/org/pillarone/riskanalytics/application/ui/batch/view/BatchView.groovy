@@ -19,6 +19,7 @@ import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -172,6 +173,24 @@ class BatchView implements IDetailView {
 
     BatchViewModel getBatchViewModel() {
         return batchViewModel
+    }
+
+    void addParameterizations(List<Parameterization> parameterizations) {
+        batchViewModel.addParameterizations(parameterizations)
+        parameterizations.each { Parameterization parameterization ->
+            BatchRowInfo batchRowInfo = batchViewModel.simulationParameterizationTableModel.batchRowInfos.find {
+                it.parameterization == parameterization
+            }
+            int indexOf = batchViewModel.simulationParameterizationTableModel.batchRowInfos.indexOf(batchRowInfo)
+            batches.selectionModel.addSelectionInterval(
+                    indexOf, indexOf
+            )
+        }
+
+    }
+
+    void removeSelectedParameterizations() {
+        batchViewModel.removeParameterizations(selectedBatchRowInfos.parameterization)
     }
 
     private class ValidationListener implements IModellingItemChangeListener {

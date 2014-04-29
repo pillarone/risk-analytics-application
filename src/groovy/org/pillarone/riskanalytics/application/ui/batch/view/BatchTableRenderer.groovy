@@ -47,6 +47,7 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
             addItem(new BatchOpenParameterizationAction(batchView))
             addItem(new BatchOpenresultAction(batchView))
             addItem(new OpenResultsAction(batchView))
+            addItem(new DeleteParameterizationsAction(batchView))
         }
         return nodePopup
     }

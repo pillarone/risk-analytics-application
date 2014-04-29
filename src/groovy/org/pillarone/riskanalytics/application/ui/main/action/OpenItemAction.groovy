@@ -15,7 +15,7 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
  */
 class OpenItemAction extends SelectionTreeAction {
 
-    private static Log LOG = LogFactory.getLog(OpenItemAction)
+    private static final Log LOG = LogFactory.getLog(OpenItemAction)
 
     def OpenItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("Open", tree, model)
