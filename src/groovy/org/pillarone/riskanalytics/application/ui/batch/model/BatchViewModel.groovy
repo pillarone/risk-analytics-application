@@ -50,9 +50,12 @@ class BatchViewModel {
 
     void profileNameChanged(String profileName) {
         if (batch) {
-            simulationParameterizationTableModel.simulationProfileNameChanged()
-            if (batch.simulationProfileName != profileName) {
+            boolean changed = batch.simulationProfileName != profileName
+            if (changed) {
                 batch.simulationProfileName = profileName
+            }
+            simulationParameterizationTableModel.simulationProfileNameChanged()
+            if (changed) {
                 batch.changed = true
             }
         }
