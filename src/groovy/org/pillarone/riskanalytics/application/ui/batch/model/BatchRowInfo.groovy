@@ -62,6 +62,10 @@ class BatchRowInfo {
         return parameterization
     }
 
+    String getParameterizationVersion() {
+        parameterization.versionNumber.toString()
+    }
+
     boolean isFinished() {
         simulation?.simulationState == FINISHED
     }
