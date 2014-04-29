@@ -41,8 +41,8 @@ class ResourceNode extends ItemNode {
         parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)))
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
-        parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
+        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
+        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
         if (UserContext.hasCurrentUser()) {
             def transactionsEnabled = Holders.grailsApplication.config.getProperty("transactionsEnabled")
             if (transactionsEnabled != null && transactionsEnabled) {
