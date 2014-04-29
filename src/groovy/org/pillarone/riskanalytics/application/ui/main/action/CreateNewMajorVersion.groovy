@@ -33,6 +33,11 @@ class CreateNewMajorVersion extends SingleItemAction {
 
 
     public void doActionPerformed(ActionEvent event) {
+
+        if( quitWithAlertIfCalledWhenDisabled() ){
+            return
+        }
+
         ModellingUIItem uiItem = getUIItem()
         if (uiItem instanceof ParameterizationUIItem) {
             Closure okAction = { String commentText ->

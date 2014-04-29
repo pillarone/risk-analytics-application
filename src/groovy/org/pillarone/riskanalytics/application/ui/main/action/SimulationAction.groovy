@@ -27,6 +27,11 @@ class SimulationAction extends SingleItemAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
+
+        if( quitWithAlertIfCalledWhenDisabled() ){
+            return
+        }
+
         Model selectedModel = selectedModel
         if (selectedModel) {
             Object selectedItem = selectedItem

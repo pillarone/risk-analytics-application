@@ -33,6 +33,11 @@ abstract class AbstractWorkflowAction extends SingleItemAction {
     // This method is shared by subclasses
     //
     void doActionPerformed(ActionEvent event) {
+
+        if( quitWithAlertIfCalledWhenDisabled() ){
+            return
+        }
+
         Parameterization item = getSelectedItem()
         if (!item.isLoaded()) {
             item.load()

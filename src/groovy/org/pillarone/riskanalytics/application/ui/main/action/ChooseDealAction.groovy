@@ -18,6 +18,11 @@ class ChooseDealAction extends SingleItemAction {
     }
 
     void doActionPerformed(ActionEvent event) {
+
+        if( quitWithAlertIfCalledWhenDisabled() ){
+            return
+        }
+
         DealLinkDialog dialog = new DealLinkDialog(UlcUtilities.getWindowAncestor(tree))
         Parameterization parameterization = getSelectedItem()
         if (!parameterization.isLoaded()) {

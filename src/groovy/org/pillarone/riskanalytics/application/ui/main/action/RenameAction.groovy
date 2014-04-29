@@ -28,6 +28,11 @@ class RenameAction extends SingleItemAction {
     }
 
     public void doActionPerformed(ActionEvent event) {
+
+        if( quitWithAlertIfCalledWhenDisabled() ){
+            return
+        }
+
         /* For opening the cellEditor implement a extension and call startEditingPath on clientSide (remember to convert the TreePath)
         ULCTreeModelAdapter adapter = ULCSession.currentSession().getModelAdapterProvider().getModelAdapter(ITreeModel.class, tree.model)
         tree.invokeUI("startEditingAtPath", [adapter.getDescriptionForPath(tree.getSelectionPath())] as Object[])
