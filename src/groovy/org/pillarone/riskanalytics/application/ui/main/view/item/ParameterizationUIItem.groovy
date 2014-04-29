@@ -20,6 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 import static org.pillarone.riskanalytics.core.workflow.Status.DATA_ENTRY
 import static org.pillarone.riskanalytics.core.workflow.Status.NONE
+import static org.pillarone.riskanalytics.core.workflow.Status.REJECTED
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -119,7 +120,10 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
     @Override
     boolean isDeletable() {
         Parameterization parameterization = item as Parameterization
-        return parameterization.status == NONE || parameterization.status == DATA_ENTRY
+        return parameterization.status == NONE ||
+               parameterization.status == DATA_ENTRY ||
+               parameterization.status == REJECTED
+
     }
 
     @Override

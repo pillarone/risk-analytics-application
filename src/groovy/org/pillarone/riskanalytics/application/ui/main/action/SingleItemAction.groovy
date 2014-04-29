@@ -17,7 +17,10 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
  */
 abstract class SingleItemAction extends SelectionTreeAction {
 
-    public SingleItemAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
+    // Ugly constructor because TreeDoubleClickAction somehow calls OpenItemAction which somehow calls
+    // e.g. CreateNewMajorVersion (our subclass) with a single string ctor.
+    //
+    public SingleItemAction(String name, ULCTableTree tree = null, RiskAnalyticsMainModel model = null) {
         super(name, tree, model)
     }
 
