@@ -28,9 +28,10 @@ class SimulationAction extends SingleItemAction {
 
     public void doActionPerformed(ActionEvent event) {
 
-        if( quitWithAlertIfCalledWhenDisabled() ){
-            return
-        }
+// Only do this for dangerous actions; running a sim just opens the sim window.
+//        if( quitWithAlertIfCalledWhenDisabled() ){
+//            return
+//        }
 
         Model selectedModel = selectedModel
         if (selectedModel) {

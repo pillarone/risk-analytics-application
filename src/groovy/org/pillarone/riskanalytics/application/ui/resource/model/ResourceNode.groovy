@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.StartWorkflowAction
+import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.pillarone.riskanalytics.core.workflow.Status
 
@@ -39,7 +40,7 @@ class ResourceNode extends ItemNode {
         parameterNodePopUpMenu.addSeparator()
         parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)))
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
+        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
         parameterNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
         if (UserContext.hasCurrentUser()) {

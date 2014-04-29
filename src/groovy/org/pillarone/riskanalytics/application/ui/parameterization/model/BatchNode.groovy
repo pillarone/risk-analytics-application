@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.ui.batch.action.OpenBatchAction
 import org.pillarone.riskanalytics.application.ui.batch.action.RunBatchAction
 import org.pillarone.riskanalytics.application.ui.main.action.DeleteAction
 import org.pillarone.riskanalytics.application.ui.main.action.RenameAction
+import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -31,9 +32,9 @@ class BatchNode extends ItemNode implements IReportableNode {
         ULCPopupMenu batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = BATCHES_NODE_POP_UP_MENU
         batchesNodePopUpMenu.add(new ULCMenuItem(new OpenBatchAction(tree, riskAnalyticsMainModel)))
-        batchesNodePopUpMenu.add(new ULCMenuItem(new RunBatchAction(tree, riskAnalyticsMainModel)))
+        batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RunBatchAction(tree, riskAnalyticsMainModel)))
         batchesNodePopUpMenu.addSeparator()
-        batchesNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
+        batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
         addReportMenus(batchesNodePopUpMenu, tree, true)
         return batchesNodePopUpMenu

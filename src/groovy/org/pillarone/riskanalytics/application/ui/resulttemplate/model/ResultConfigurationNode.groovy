@@ -6,6 +6,7 @@ import com.ulcjava.base.application.ULCTableTree
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 
 @CompileStatic
@@ -24,7 +25,7 @@ class ResultConfigurationNode extends ItemNode {
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
         resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)))

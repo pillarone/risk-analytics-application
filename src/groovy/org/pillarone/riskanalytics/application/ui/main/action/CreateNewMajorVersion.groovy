@@ -34,9 +34,11 @@ class CreateNewMajorVersion extends SingleItemAction {
 
     public void doActionPerformed(ActionEvent event) {
 
-        if( quitWithAlertIfCalledWhenDisabled() ){
-            return
-        }
+// Probably this one is better without it, as there is no keyboard shortcut to reach it and
+//
+//        if( quitWithAlertIfCalledWhenDisabled() ){
+//            return
+//        }
 
         ModellingUIItem uiItem = getUIItem()
         if (uiItem instanceof ParameterizationUIItem) {

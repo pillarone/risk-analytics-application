@@ -10,13 +10,18 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class SaveAsAction extends SelectionTreeAction {
+class SaveAsAction extends SingleItemAction {
 
     public SaveAsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
         super("SaveAs", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
+
+        if( quitWithAlertIfCalledWhenDisabled() ){
+            return
+        }
+
         ModellingUIItem selectedUIItem = (ModellingUIItem) getSelectedUIItem()
         NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedUIItem)
         dialog.title = dialog.getText("title")
