@@ -10,15 +10,12 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
+import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
@@ -38,9 +35,15 @@ class SaveAction extends ResourceBasedAction {
 
     public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model, ModellingItem currentItem) {
         this(parent, model)
-        this.currentItem = UIItemFactory.createItem(currentItem, currentItem.modelClass?.newInstance() as Model)
+        this.currentItem = UIItemFactory.createItem(currentItem, getModelFromItem(currentItem))
     }
 
+    Model getModelFromItem(ModellingItem item) {
+        if (item instanceof Resource) {
+            return null
+        }
+        item.modelClass?.newInstance() as Model
+    }
 
     public void doActionPerformed(ActionEvent event) {
         save(currentItem ?: model.currentItem)

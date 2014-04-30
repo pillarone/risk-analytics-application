@@ -10,11 +10,11 @@ import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUti
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.SelectionTreeView
 
-class FindInTreeAction extends ResourceBasedAction {
+class FindParameterizationsInTreeAction extends ResourceBasedAction {
     private final BatchView batchView
 
-    FindInTreeAction(BatchView batchView) {
-        super("FindInTree")
+    FindParameterizationsInTreeAction(BatchView batchView) {
+        super('FindParameterizationsInTree')
         this.batchView = batchView
     }
 

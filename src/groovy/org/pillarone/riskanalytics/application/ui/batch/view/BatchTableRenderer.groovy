@@ -42,7 +42,8 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
         if (!nodePopup) {
             nodePopup = new ULCPopupMenu()
             addItem(new CreateSimulationProfileAction(batchView))
-            addItem(new FindInTreeAction(batchView))
+            addItem(new FindParameterizationsInTreeAction(batchView))
+            addItem(new FindResultsInTreeAction(batchView))
             addItem(new CreateBatchAction(batchView))
             addItem(new BatchOpenParameterizationAction(batchView))
             addItem(new BatchOpenresultAction(batchView))
