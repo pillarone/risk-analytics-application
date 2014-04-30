@@ -28,8 +28,6 @@ import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
-import javax.annotation.PostConstruct
-
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
@@ -472,7 +470,6 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
             def itemNode = findNodeForItem(groupNode, modellingUIItem.item)
             if (itemNode) {
                 removeItemNode(itemNode, true)
-                modellingUIItem.closeItem()
             }
         } else {
             LOG.warn("ModelNode not found for ModellingUIItem: $modellingUIItem")

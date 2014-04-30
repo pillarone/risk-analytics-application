@@ -5,10 +5,8 @@ import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.DeterministicResultView
-import org.pillarone.riskanalytics.application.ui.result.view.ResultView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
@@ -39,9 +37,7 @@ class DeterministicResultUIItem extends SimulationResultUIItem {
 
 
     private DeterministicResultViewModel getViewModel() {
-        DeterministicResultViewModel model = new DeterministicResultViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), (Simulation) item)
-        riskAnalyticsMainModel.registerModel(this, model)
-        return model
+        return new DeterministicResultViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), (Simulation) item)
     }
 
     @Override

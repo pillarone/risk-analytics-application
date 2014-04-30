@@ -39,7 +39,6 @@ class ResultConfigurationUIItem extends ModellingUiItemWithModel {
     private ResultConfigurationViewModel getViewModel() {
         ResultConfigurationViewModel model = new ResultConfigurationViewModel(this.model, (ResultConfiguration) item, ModelStructure.getStructureForModel(this.model.class))
         model.mainModel = riskAnalyticsMainModel
-        riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
 

@@ -14,9 +14,7 @@ import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
@@ -62,6 +60,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
 
     private ToggleSplitPaneAction navigationSplitPaneAction
     private CommentsSwitchAction validationSplitPaneAction
+    private ULCVerticalToggleButton validationSwitchButton
 
     @PostConstruct
     void initialize() {
@@ -69,7 +68,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         attachListeners()
     }
     private static int TOPRIGHT_PANE_HEIGHT = 600;
-    private static int TOPRIGHT_PANE_WIDTH  = 600;
+    private static int TOPRIGHT_PANE_WIDTH = 600;
 
     void layoutComponents() {
         ULCCardPane modelPane = cardPaneManager.cardPane
@@ -97,10 +96,9 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         selectionSwitchPane.add(BOX_LEFT_TOP, navigationSwitchButton);
 
         validationSplitPaneAction = new CommentsSwitchAction(riskAnalyticsMainModel, UIUtils.getText(this.class, "ValidationsAndComments"))
-        ULCVerticalToggleButton validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
+        validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
         validationSwitchButton.selected = false
         validationSwitchButton.enabled = false
-        riskAnalyticsMainModel.switchActions << validationSwitchButton
         selectionSwitchPane.add(BOX_LEFT_TOP, validationSwitchButton);
 
         ULCBoxPane mainCard = new ULCBoxPane(2, 0)
@@ -191,7 +189,15 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
 
     void propertyChange(PropertyChangeEvent evt) {
         if (evt.source == riskAnalyticsMainModel && evt.propertyName == CURRENT_ITEM_PROPERTY) {
+            updateValidationSwitchButton()
             headerView.syncMenuBar()
         }
+    }
+
+    private void updateValidationSwitchButton() {
+        AbstractUIItem currentItem = riskAnalyticsMainModel.currentItem
+        boolean shouldToggle = (currentItem instanceof ParameterizationUIItem) || (currentItem instanceof SimulationResultUIItem)
+        validationSwitchButton.enabled = shouldToggle
+        validationSwitchButton.selected = shouldToggle
     }
 }

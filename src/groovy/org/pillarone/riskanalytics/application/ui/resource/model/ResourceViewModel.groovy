@@ -6,10 +6,14 @@ import org.pillarone.riskanalytics.core.simulation.item.Resource
 
 class ResourceViewModel extends AbstractParametrizedViewModel {
 
-
     ResourceViewModel(Resource resource) {
         super(null, resource, null)
+        resource.addListener(this)
         periodCount = 1
+    }
+
+    void close() {
+        item.removeListener(this)
     }
 
     @Override
@@ -22,5 +26,8 @@ class ResourceViewModel extends AbstractParametrizedViewModel {
         return new ResourceTreeBuilder(item)
     }
 
-
+    @Override
+    Resource getItem() {
+        return super.getItem() as Resource
+    }
 }

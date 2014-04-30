@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
+
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.testframework.operator.*
@@ -6,9 +7,11 @@ import grails.util.Holders
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -48,16 +51,23 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
         parameterizationId = parameterization.dao.id
 
         mainModel = new RiskAnalyticsMainModel()
-        ModellingUIItem uiItem = UIItemFactory.createItem(parameterization, model)
+
+
 
         ModelStructure structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationWithoutHierarchyStructure'))
         structure.load()
         ParameterViewModel viewModel = new ParameterViewModel(model, parameterization,
                 structure)
         viewModel.mainModel = mainModel
-        mainModel.registerModel(uiItem, viewModel)
         ParameterView view = new ParameterView(viewModel, mainModel)
 
+        ModellingUIItem uiItem = new ParameterizationUIItem(model, parameterization) {
+            @Override
+            IDetailView createDetailView() {
+                return view
+            }
+        }
+        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager).createDetailViewForItem(uiItem)
         parameterization.addListener(viewModel)
         frame.setContentPane(view.content)
 
@@ -120,6 +130,4 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
         tree.getFocus()
         tree.pressKey(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK)
     }
-
-
 }

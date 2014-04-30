@@ -45,14 +45,6 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
-    @Override
-    void close() {
-        ParameterViewModel viewModel = riskAnalyticsMainModel.viewModelsInUse[this] as ParameterViewModel
-        Parameterization parameterization = item
-        parameterization.removeListener(viewModel)
-        super.close()
-    }
-
     IDetailView createDetailView() {
         return new ParameterView(viewModel, riskAnalyticsMainModel)
     }
@@ -64,8 +56,6 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         simulationModel.injectComponentNames()
         ParameterViewModel model = new ParameterViewModel(simulationModel, parameterization, ModelStructure.getStructureForModel(this.model.class))
         model.mainModel = riskAnalyticsMainModel
-        riskAnalyticsMainModel.registerModel(this, model)
-        parameterization.addListener(model)
         return model
     }
 
@@ -128,16 +118,16 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         // We only allow deleting REJECTED items that are the latest version in their tree
         // So we don't leave a hole in the version sequence
         //
-        if( p14n.status == REJECTED ){
-            SortedSet allVersions = new TreeSet(VersionNumber.getExistingVersions( p14n ))
-            if( p14n.versionNumber != allVersions.last() ) {
-                LOG.info( "NOT DELETING ${p14n.getNameAndVersion()} as later version exists: ${allVersions.last()}"   )
+        if (p14n.status == REJECTED) {
+            SortedSet allVersions = new TreeSet(VersionNumber.getExistingVersions(p14n))
+            if (p14n.versionNumber != allVersions.last()) {
+                LOG.info("NOT DELETING ${p14n.getNameAndVersion()} as later version exists: ${allVersions.last()}")
                 return false
             }
         }
         return p14n.status == NONE ||
-               p14n.status == DATA_ENTRY ||
-               p14n.status == REJECTED
+                p14n.status == DATA_ENTRY ||
+                p14n.status == REJECTED
     }
 
     @Override

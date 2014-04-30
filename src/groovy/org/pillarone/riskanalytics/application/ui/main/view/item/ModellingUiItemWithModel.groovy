@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
@@ -37,11 +38,6 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         }
         return model
     }
-
-    void close() {
-        riskAnalyticsMainModel.closeItem(model, this)
-    }
-
 
     ModellingUIItem createNewVersion(Model model, boolean openNewVersion = true) {
         ModellingItem modellingItem = null

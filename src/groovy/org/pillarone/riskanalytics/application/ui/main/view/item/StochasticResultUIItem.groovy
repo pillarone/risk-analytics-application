@@ -40,9 +40,7 @@ class StochasticResultUIItem extends SimulationResultUIItem {
     }
 
     private ResultViewModel getViewModel() {
-        ResultViewModel model = new ResultViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), (Simulation) item)
-        riskAnalyticsMainModel.registerModel(this, model)
-        return model
+        return new ResultViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), (Simulation) item)
     }
 
     @Override

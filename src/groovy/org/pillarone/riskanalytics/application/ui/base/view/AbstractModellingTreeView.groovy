@@ -40,7 +40,7 @@ abstract class AbstractModellingTreeView implements IDetailView {
     IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 
-    AbstractModellingTreeView(def model, RiskAnalyticsMainModel mainModel) {
+    AbstractModellingTreeView(AbstractModellingModel model, RiskAnalyticsMainModel mainModel) {
         this.model = model
         this.mainModel = mainModel
         content = new ULCBoxPane(1, 0)

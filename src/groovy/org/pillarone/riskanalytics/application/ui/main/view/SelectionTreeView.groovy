@@ -65,12 +65,12 @@ class SelectionTreeView {
                 onItemEvent(event)
             }
         }
-        modellingItemCache.addItemEventListener(updateListener)
+        riskAnalyticsMainModel.addModellingItemEventListener(updateListener)
     }
 
     @PreDestroy
     void unregister() {
-        modellingItemCache.removeItemEventListener(updateListener)
+        riskAnalyticsMainModel.removeModellingItemEventListener(updateListener)
     }
 
     protected void initComponents() {

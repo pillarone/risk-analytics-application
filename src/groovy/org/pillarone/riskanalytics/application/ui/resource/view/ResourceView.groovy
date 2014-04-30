@@ -11,6 +11,17 @@ class ResourceView extends AbstractParameterizationTreeView {
     }
 
     @Override
+    void close() {
+        super.close()
+        model.close()
+    }
+
+    @Override
+    ResourceViewModel getModel() {
+        return super.getModel() as ResourceViewModel
+    }
+
+    @Override
     protected String getRowHeaderTableTreeName() {
         return "resourceTreeRowHeader"
     }

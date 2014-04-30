@@ -27,24 +27,14 @@ class ResourceUIItem extends ModellingUIItem {
     }
 
     @Override
-    void close() {
-        ResourceViewModel viewModel = riskAnalyticsMainModel.viewModelsInUse[this] as ResourceViewModel
-        Resource resource = item as Resource
-        resource.removeListener(viewModel)
-        super.close()
-    }
-
-    @Override
     IDetailView createDetailView() {
         return new ResourceView(viewModel, riskAnalyticsMainModel)
     }
 
-    @Override
     private ResourceViewModel getViewModel() {
         Resource resource = item as Resource
         ResourceViewModel model = new ResourceViewModel(resource)
         model.mainModel = riskAnalyticsMainModel
-        resource.addListener(model)
         return model
     }
 

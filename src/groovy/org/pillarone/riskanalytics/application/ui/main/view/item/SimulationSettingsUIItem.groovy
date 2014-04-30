@@ -48,7 +48,6 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
         CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
-        riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
 
@@ -56,7 +55,6 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
         SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, riskAnalyticsMainModel)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
-        riskAnalyticsMainModel.registerModel(this, model)
         return model
     }
 

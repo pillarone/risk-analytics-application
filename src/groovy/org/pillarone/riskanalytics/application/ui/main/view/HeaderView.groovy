@@ -123,7 +123,7 @@ class HeaderView extends AbstractView {
         saveItem.icon = null
         saveItem.mnemonic = 'S' as char
         saveItem.accelerator = KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false)
-        saveAllItem = new ULCMenuItem(new SaveAllAction(riskAnalyticsMainModel))
+        saveAllItem = new ULCMenuItem(new SaveAllAction())
         refreshItem = new ULCMenuItem(refreshAction)
         runItem = new SimulationRunMenuItem(runAction)
         exportAllItemsNewstVersion = new ULCMenuItem(exportAllNewestVersionAction)

@@ -97,7 +97,7 @@ class AddTagDialog {
     private void attachListeners() {
         cancelButton.addActionListener([actionPerformed: { ActionEvent evt ->
             for (ModellingUIItem modellingUIItem : modellingUIItems) {
-                if (modellingUIItem.changed) {
+                if (modellingUIItem.item.changed) {
                     modellingUIItem.load(true)
                     modellingUIItem.item.setChanged(false)
                 }
@@ -111,7 +111,7 @@ class AddTagDialog {
         }] as IActionListener)
         applyButton.addActionListener([actionPerformed: { ActionEvent evt ->
             for (ModellingUIItem modellingUIItem : modellingUIItems) {
-                if (modellingUIItem.changed) {
+                if (modellingUIItem.item.changed) {
                     modellingUIItem.save()
                 }
             }

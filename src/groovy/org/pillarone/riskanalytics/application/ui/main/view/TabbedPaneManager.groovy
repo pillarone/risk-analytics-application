@@ -60,34 +60,30 @@ class TabbedPaneManager {
     }
 
     private void closeTabForItem(AbstractUIItem abstractUIItem) {
-        if (abstractUIItem.changed) {
+        if (abstractUIItem instanceof ModellingUIItem && abstractUIItem.item.changed) {
+            ModellingUIItem modellingUIItem = abstractUIItem
             boolean closeTab = true
-            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tabManager[abstractUIItem]), "itemChanged")
+            ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tabManager[modellingUIItem]), "itemChanged")
             alert.addWindowListener([windowClosing: { WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
-                    SaveAction saveAction = new SaveAction(tabbedPane, riskAnalyticsMainModel, abstractUIItem)
+                    SaveAction saveAction = new SaveAction(tabbedPane, riskAnalyticsMainModel, modellingUIItem.item)
                     saveAction.doActionPerformed(new ActionEvent(this, "save"))
                 } else if (value.equals(alert.thirdButtonLabel)) {
                     closeTab = false
 
                 } else {
-                    abstractUIItem.unload()
-
+                    modellingUIItem.unload()
                 }
                 if (closeTab) {
-                    detailViewManager.close(abstractUIItem)
-                    removeTab(abstractUIItem)
-                    abstractUIItem.close()
+                    removeTab(modellingUIItem)
                 } else {
-                    selectTab(abstractUIItem)
+                    selectTab(modellingUIItem)
                 }
             }] as IWindowListener)
             alert.show()
         } else {
             removeTab(abstractUIItem)
-            detailViewManager.close(abstractUIItem)
-            abstractUIItem.close()
         }
     }
 
@@ -118,6 +114,7 @@ class TabbedPaneManager {
             }
             tabManager.remove(item)
         }
+        detailViewManager.close(item)
     }
 
     boolean tabExists(AbstractUIItem abstractUIItem) {

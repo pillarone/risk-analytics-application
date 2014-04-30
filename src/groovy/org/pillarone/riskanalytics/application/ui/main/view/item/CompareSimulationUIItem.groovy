@@ -23,10 +23,6 @@ class CompareSimulationUIItem extends AbstractUIItem {
         this.simulations = simulations
     }
 
-    void close() {
-        riskAnalyticsMainModel.closeItem(model, this)
-    }
-
     RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
         Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }

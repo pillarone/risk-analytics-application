@@ -5,27 +5,29 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
 class SaveAction extends ResourceBasedAction {
 
-    private static Log LOG = LogFactory.getLog(SaveAction)
+    private static final Log LOG = LogFactory.getLog(SaveAction)
 
     RiskAnalyticsMainModel model
-    AbstractUIItem currentItem
+    ModellingUIItem currentItem
     ULCComponent parent
 
     public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model) {
@@ -34,9 +36,9 @@ class SaveAction extends ResourceBasedAction {
         this.parent = parent
     }
 
-    public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model, AbstractUIItem currentItem) {
+    public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model, ModellingItem currentItem) {
         this(parent, model)
-        this.currentItem = currentItem
+        this.currentItem = UIItemFactory.createItem(currentItem, currentItem.modelClass?.newInstance() as Model)
     }
 
 
@@ -92,7 +94,7 @@ class SaveAction extends ResourceBasedAction {
 
     private void handleNewVersion(Model model, ModellingUIItem item) {
         item.createNewVersion(model, false)
-        this.model.closeItem(model, item)
+        this.model.notifyCloseDetailView(model, item)
     }
 
     private void handleNewVersion(Model model, ParameterizationUIItem item) {
@@ -101,7 +103,7 @@ class SaveAction extends ResourceBasedAction {
                 item.load()
             }
             createNewVersion(item, model, commentText)
-            this.model.closeItem(model, item)
+            this.model.notifyCloseDetailView(model, item)
         }
 
         NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
@@ -132,8 +134,8 @@ class SaveAction extends ResourceBasedAction {
      * @param item
      * @return
      */
-    private boolean isChangedAndNotUsed(ModellingUIItem item) {
-        return !item.changed || (item.changed && !item.usedInSimulation)
+    private boolean isChangedAndNotUsed(ModellingUIItem modellingUIItem) {
+        return !modellingUIItem.item.changed || (modellingUIItem.item.changed && !modellingUIItem.usedInSimulation)
     }
 
     @Override
@@ -145,11 +147,11 @@ class SaveAction extends ResourceBasedAction {
     }
 
     boolean itemChanged(ModellingUIItem item) {
-        return item.changed
+        return item.item.changed
     }
 
     boolean itemChanged(ParameterizationUIItem parameterizationUIItem) {
-        return parameterizationUIItem.changed || parameterizationUIItem.item.commentHasChanged()
+        return parameterizationUIItem.item.changed || parameterizationUIItem.item.commentHasChanged()
     }
 
     boolean itemChanged(Object item) {

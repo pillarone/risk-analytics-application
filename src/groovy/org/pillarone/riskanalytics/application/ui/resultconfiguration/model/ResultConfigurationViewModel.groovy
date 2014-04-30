@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.resultconfiguration.model
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.ITableTreeModel
@@ -29,7 +28,7 @@ class ResultConfigurationViewModel extends AbstractModellingModel {
         def localTreeRoot = builder.root
         periodCount = 1
         tableTreeModel = new ResultConfigurationTableTreeModel(localTreeRoot, 1 + periodCount)
-        tableTreeModel.addValueChangedListener([valueChanged: {Object node, int column -> item.changed = true}] as TableTreeValueChangedListener)
+        tableTreeModel.addValueChangedListener([valueChanged: { Object node, int column -> item.changed = true }] as TableTreeValueChangedListener)
         tableTreeModel.readOnly = !item.isEditable()
 
         return tableTreeModel
@@ -38,12 +37,15 @@ class ResultConfigurationViewModel extends AbstractModellingModel {
 
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
-        return new SaveAction(parent, mainModel, mainModel?.getAbstractUIItem(item))
+        return new SaveAction(parent, mainModel, item)
     }
 
     void setReadOnly(boolean value) {
         tableTreeModel.readOnly = value
     }
 
-
+    @Override
+    ResultConfiguration getItem() {
+        return super.getItem() as ResultConfiguration
+    }
 }

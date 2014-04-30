@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.output.CustomTableDAO
@@ -25,7 +23,6 @@ import org.springframework.transaction.TransactionStatus
 
 class ModellingItemFactory {
 
-    private final static Log LOG = LogFactory.getLog(ModellingItemFactory)
 
     protected static Map getItemInstances() {
         Map map = UserContext.getAttribute("itemInstances") as Map
@@ -237,15 +234,7 @@ class ModellingItemFactory {
         }
     }
 
-    static boolean delete(ModellingItem item) {
-        try {
-            item.delete()
-            return true
-        } catch (Exception ex) {
-            LOG.error("Error deleting ${item?.class?.simpleName}: ", ex)
-            return false
-        }
-    }
+
 
 
     static ModellingItem copyItem(ModellingItem oldItem, String newName) {

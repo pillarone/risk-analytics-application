@@ -1,8 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.google.common.base.Preconditions
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -39,5 +39,25 @@ class DetailViewManager {
 
     void close(AbstractUIItem uiItem) {
         detailViewMap.remove(uiItem)?.close()
+        //TODO each detailView should add and remove listeners itself
+        if (uiItem instanceof ModellingUIItem) {
+            uiItem.removeAllModellingItemChangeListener()
+        }
+    }
+
+    void saveAllOpenItems() {
+        modellingUiItems.each { it.save() }
+    }
+
+    private Set<ModellingUIItem> getModellingUiItems() {
+        uiItems.findAll { it instanceof ModellingUIItem }
+    }
+
+    private Set<AbstractUIItem> getUiItems() {
+        detailViewMap.keySet()
+    }
+
+    boolean isItemOpen(AbstractUIItem item) {
+        uiItems.contains(item)
     }
 }

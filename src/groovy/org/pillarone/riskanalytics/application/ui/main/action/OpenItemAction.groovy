@@ -2,8 +2,10 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
 import org.pillarone.riskanalytics.application.ui.main.view.OpenItemDialog
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
@@ -83,9 +85,13 @@ class OpenItemAction extends SelectionTreeAction {
 
     // Do not load item in case it is already open. Otherwise the persistent state of this item gets loaded again. PMO-2383
     private void loadIfNotInUse(AbstractUIItem item) {
-        if (!model.isItemOpen(item)) {
+        if (!detailViewManager.isItemOpen(item)) {
             item.load()
         }
+    }
+
+    DetailViewManager getDetailViewManager() {
+        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager)
     }
 
     private void showOpenItemDialog(Model selectedModel, ModellingUIItem item) {

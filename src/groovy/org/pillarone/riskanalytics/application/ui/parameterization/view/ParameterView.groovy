@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
+
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
@@ -10,27 +11,25 @@ import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubCo
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class ParameterView extends AbstractParameterizationTreeView implements NavigationListener {
 
-    private final IModellingItemChangeListener removeInvisibleCommentsListener = new RemoveInvisibleCommentsListener()
 
     ParameterView(ParameterViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model, mainModel)
         model.addNavigationListener(this)
-        model.item.addModellingItemChangeListener(removeInvisibleCommentsListener)
+    }
+
+    @Override
+    void close() {
+        model.removeNavigationListener(this)
+        model.close()
     }
 
     @Override
     ParameterViewModel getModel() {
         return super.getModel() as ParameterViewModel
-    }
-
-    @Override
-    void close() {
-        model.item.removeModellingItemChangeListener(removeInvisibleCommentsListener)
     }
 
     @Override
@@ -71,15 +70,7 @@ class ParameterView extends AbstractParameterizationTreeView implements Navigati
         commentAndErrorView.updateErrorVisualization item
     }
 
-    private class RemoveInvisibleCommentsListener implements IModellingItemChangeListener {
-        @Override
-        void itemChanged(ModellingItem item) {}
 
-        @Override
-        void itemSaved(ModellingItem item) {
-            getModel().removeInvisibleComments()
-        }
-    }
 }
 
 

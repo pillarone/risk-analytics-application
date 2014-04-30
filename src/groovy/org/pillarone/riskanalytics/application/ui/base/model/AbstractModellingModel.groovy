@@ -94,5 +94,4 @@ abstract class AbstractModellingModel {
     IActionListener getSaveAction(ULCComponent parent) {
         return null
     }
-
 }

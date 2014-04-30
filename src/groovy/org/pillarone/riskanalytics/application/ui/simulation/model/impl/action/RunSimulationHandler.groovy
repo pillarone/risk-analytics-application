@@ -3,9 +3,12 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.WindowEvent
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemUtils
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationActionsPaneModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -143,14 +146,14 @@ class RunSimulationHandler {
             for (ModellingItem item : items) {
                 if (item.changed) {
                     item.load()
-                    ModellingUIItem modellingUIItem = model.mainModel.getAbstractUIItem(item)
+                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(item, itemModel)
                     if (modellingUIItem instanceof ParameterizationUIItem) {
                         //TODO: find a way to show new version comment dialog
                         newItems << modellingUIItem.createNewVersion(itemModel, "", false).item
                     } else {
                         newItems << modellingUIItem.createNewVersion(itemModel, false).item
                     }
-                    model.mainModel.closeItem(itemModel, modellingUIItem)
+                    model.mainModel.notifyCloseDetailView(itemModel, modellingUIItem)
                 } else
                     newItems << item
             }

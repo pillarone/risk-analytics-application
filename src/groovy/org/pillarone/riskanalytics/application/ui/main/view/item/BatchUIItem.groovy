@@ -38,10 +38,6 @@ class BatchUIItem extends ModellingUIItem {
         batchView
     }
 
-    boolean remove() {
-        batchRunService.deleteBatch(item)
-    }
-
     @Override
     boolean equals(Object obj) {
         if (!(obj instanceof BatchUIItem)) {

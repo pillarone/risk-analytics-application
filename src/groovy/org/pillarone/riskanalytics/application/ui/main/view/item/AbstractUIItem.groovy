@@ -5,14 +5,11 @@ import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class AbstractUIItem {
-
-    boolean remove() {
-        return false
-    }
 
     ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
         return null
@@ -38,8 +35,6 @@ abstract class AbstractUIItem {
 
     abstract String createTitle()
 
-    abstract void close()
-
     abstract String getWindowTitle()
 
     String getToolTip() {
@@ -59,10 +54,6 @@ abstract class AbstractUIItem {
     }
 
     boolean isVersionable() {
-        return false
-    }
-
-    boolean isChanged() {
         return false
     }
 

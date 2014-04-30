@@ -10,8 +10,8 @@ import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SortableTable
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -45,7 +45,7 @@ class BatchView implements IDetailView {
     BatchViewModel batchViewModel
 
     @Resource
-    ModellingItemCache modellingItemCache
+    RiskAnalyticsMainModel riskAnalyticsMainModel
 
     private MyBatchListener myBatchListener
     private final ValidationListener validationListener = new ValidationListener()
@@ -83,7 +83,7 @@ class BatchView implements IDetailView {
     @PostConstruct
     void initialize() {
         myBatchListener = new MyBatchListener()
-        modellingItemCache.addItemEventListener(myBatchListener)
+        riskAnalyticsMainModel.addModellingItemEventListener(myBatchListener)
         batches = new SortableTable(batchViewModel.simulationParameterizationTableModel)
         batches.selectionModel.addListSelectionListener(updateSelectionCountListener)
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(this)
@@ -108,7 +108,7 @@ class BatchView implements IDetailView {
             this.batch.removeModellingItemChangeListener(validationListener)
         }
         batches.selectionModel.removeListSelectionListener(updateSelectionCountListener)
-        modellingItemCache.removeItemEventListener(myBatchListener)
+        riskAnalyticsMainModel.removeModellingItemEventListener(myBatchListener)
         myBatchListener = null
         batchViewModel.destroy()
     }

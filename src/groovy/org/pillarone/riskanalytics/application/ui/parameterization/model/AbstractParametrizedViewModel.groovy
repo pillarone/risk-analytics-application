@@ -1,26 +1,24 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
-
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
-import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.ULCComponent
-import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
-import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
-import com.ulcjava.base.application.tree.TreePath
+import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
+import com.ulcjava.base.application.tabletree.ITableTreeModel
+import com.ulcjava.base.application.tree.TreePath
+import org.pillarone.riskanalytics.application.ui.base.model.AbstractCommentableItemModel
+import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
+import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
+import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
-import com.ulcjava.base.application.tabletree.ITableTreeModel
-import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
-import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.components.Component
-import org.pillarone.riskanalytics.application.ui.base.model.FilteringTableTreeModel
-
+import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
+import org.pillarone.riskanalytics.core.simulation.item.IParametrizedItemListener
+import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
+import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 
 abstract class AbstractParametrizedViewModel extends AbstractCommentableItemModel implements IParametrizedItemListener {
 
@@ -41,7 +39,7 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
         paramterTableTreeModel = createTableTreeModel(builder)
         treeModel = paramterTableTreeModel //TODO
         paramterTableTreeModel.addValueChangedListener(
-                [valueChanged: {Object node, int column -> item.changed = true}] as TableTreeValueChangedListener)
+                [valueChanged: { Object node, int column -> item.changed = true }] as TableTreeValueChangedListener)
         paramterTableTreeModel.readOnly = !item.isEditable()
         return paramterTableTreeModel
     }
@@ -52,7 +50,7 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
 
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
-        return new SaveAction(parent, mainModel, mainModel?.getAbstractUIItem(item))
+        return new SaveAction(parent, mainModel, item as ModellingItem)
     }
 
     ParametrizedItem getParametrizedItem() {
@@ -75,7 +73,7 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
             paramterTableTreeModel.nodeChanged(new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[]), 0)
         }
         for (ParameterValidation previousError in this.validationErrors) {
-            ParameterValidation currentError = validationErrors.find { it.path == previousError.path}
+            ParameterValidation currentError = validationErrors.find { it.path == previousError.path }
             //Error is resolved now
             if (currentError == null) {
                 ParameterizationTableTreeNode node = findNodeForPath(previousError.getPath())
@@ -98,7 +96,7 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
     }
 
     void tabbedPaneChanged(CommentFilter filter) {
-        tabbedPaneChangeListeners.each {TabbedPaneChangeListener listener ->
+        tabbedPaneChangeListeners.each { TabbedPaneChangeListener listener ->
             listener.tabbedPaneChanged(filter)
         }
     }

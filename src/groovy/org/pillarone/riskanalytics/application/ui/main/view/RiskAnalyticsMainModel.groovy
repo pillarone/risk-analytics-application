@@ -1,15 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import groovy.beans.Bindable
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
@@ -25,18 +21,16 @@ import javax.annotation.PreDestroy
 import javax.annotation.Resource
 import java.beans.PropertyChangeListener
 
+import static org.pillarone.riskanalytics.core.search.CacheItemEvent.EventType
+
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class RiskAnalyticsMainModel {
 
-    private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
-
-    Map<AbstractUIItem, Object> viewModelsInUse
-    def switchActions = []
-    private List<IRiskAnalyticsModelListener> modelListeners = []
-    private List<IModelItemChangeListener> modelItemListeners = []
-    private List<INewSimulationListener> newSimulationListeners = []
-    private List<IModellingItemEventListener> modellingItemEventListeners = []
+    private final List<IRiskAnalyticsModelListener> modelListeners = []
+    private final List<IModelItemChangeListener> modelItemListeners = []
+    private final List<INewSimulationListener> newSimulationListeners = []
+    private final List<IModellingItemEventListener> modellingItemEventListeners = []
 
     @Bindable
     AbstractUIItem currentItem
@@ -45,14 +39,8 @@ class RiskAnalyticsMainModel {
     ModellingItemCache modellingItemCache
     private final MyModelItemEventListener listener = new MyModelItemEventListener()
 
-    public RiskAnalyticsMainModel() {
-        viewModelsInUse = [:]
+    RiskAnalyticsMainModel() {
         addPropertyChangeListener('currentItem', { def event ->
-            switchActions.each {
-                boolean b = (this.currentItem instanceof ParameterizationUIItem) || (this.currentItem instanceof SimulationResultUIItem)
-                it.setEnabled(b)
-                it.selected = b
-            }
             notifyChangedWindowTitle(currentItem)
         } as PropertyChangeListener)
     }
@@ -67,45 +55,11 @@ class RiskAnalyticsMainModel {
         modellingItemCache.removeItemEventListener(listener)
     }
 
-    void saveAllOpenItems() {
-        viewModelsInUse.keySet().each { AbstractUIItem item ->
-            if (item instanceof ModellingUIItem) {
-                item.save()
-            }
-        }
-    }
-
-    void removeItems(Model selectedModel, List<AbstractUIItem> modellingItems) {
-        closeItems(selectedModel, modellingItems)
-        try {
-            for (AbstractUIItem item : modellingItems) {
-                item.remove()
-            }
-        } catch (Exception ex) {
-            LOG.error "Deleting Item Failed: ${ex}"
-        }
-    }
-
     void openItem(Model model, AbstractUIItem item) {
         if (!item.loaded) {
             item.load()
         }
         notifyOpenDetailView(model, item)
-    }
-
-    void closeItem(Model model, AbstractUIItem abstractUIItem) {
-        notifyCloseDetailView(model, abstractUIItem)
-        unregisterModel(abstractUIItem)
-        if (abstractUIItem instanceof ModellingUIItem) {
-            abstractUIItem.removeAllModellingItemChangeListener()
-        }
-    }
-
-
-    private void closeItems(Model selectedModel, List<AbstractUIItem> items) {
-        for (AbstractUIItem item : items) {
-            closeItem(selectedModel, item)
-        }
     }
 
     void addModelItemChangedListener(IModelItemChangeListener listener) {
@@ -130,14 +84,6 @@ class RiskAnalyticsMainModel {
 
     void fireModelItemEvent(ModellingItemEvent modellingItemEvent) {
         modellingItemEventListeners.each { it.onEvent(modellingItemEvent) }
-    }
-
-    void registerModel(AbstractUIItem item, def model) {
-        viewModelsInUse[item] = model
-    }
-
-    private def unregisterModel(AbstractUIItem item) {
-        viewModelsInUse.remove(item)
     }
 
     void addModelListener(IRiskAnalyticsModelListener listener) {
@@ -191,24 +137,25 @@ class RiskAnalyticsMainModel {
         }
     }
 
-    ModellingUIItem getAbstractUIItem(ModellingItem modellingItem) {
-        ModellingUIItem item = null
-        viewModelsInUse.keySet().findAll { it instanceof ModellingUIItem }.each { ModellingUIItem openedUIItem ->
-            if (modellingItem.class == openedUIItem.item.class && modellingItem.id == openedUIItem.item.id) {
-                item = openedUIItem
-            }
-        }
-        return item
-    }
-
-    boolean isItemOpen(AbstractUIItem item) {
-        viewModelsInUse.containsKey(item)
-    }
-
     private class MyModelItemEventListener implements IModellingItemEventListener {
         @Override
         void onEvent(ModellingItemEvent event) {
             fireModelItemEvent(event)
+            if (event.eventType == EventType.REMOVED) {
+                closeDetailView(event.modellingItem)
+            }
+        }
+
+        private void closeDetailView(ModellingItem modellingItem) {
+            Model model = createModel(modellingItem)
+            notifyCloseDetailView(model, UIItemFactory.createItem(modellingItem, model))
+        }
+
+        private Model createModel(ModellingItem modellingItem) {
+            if (modellingItem instanceof org.pillarone.riskanalytics.core.simulation.item.Resource) {
+                return null
+            }
+            modellingItem.modelClass ? (modellingItem.modelClass.newInstance() as Model) : null
         }
     }
 }

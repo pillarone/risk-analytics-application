@@ -57,7 +57,7 @@ class DeleteAction extends SelectionTreeAction {
             alert.addWindowListener([windowClosing: { WindowEvent e -> handleEvent(alert.value, alert.firstButtonLabel, selectedItem) }] as IWindowListener)
             alert.show()
         } else {
-            if (!selectedItem.remove()) {
+            if (!selectedItem.item.delete()) {
                 ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Error", "Error removing selected item. See log files for details.", "Ok")
                 alert.messageType = ULCAlert.ERROR_MESSAGE
                 alert.show()
@@ -66,11 +66,7 @@ class DeleteAction extends SelectionTreeAction {
     }
 
 
-    protected void removeItem(def selectedItem) {}
-
-    protected void removeItem(AbstractUIItem selectedItem) {
-        selectedItem.remove()
-    }
+    protected void removeItem(AbstractUIItem selectedItem) {}
 
     protected void removeItem(List<AbstractUIItem> selectedItems) {
         selectedItems.each { selectedItem ->
