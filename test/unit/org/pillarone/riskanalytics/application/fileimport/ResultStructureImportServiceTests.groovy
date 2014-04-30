@@ -22,8 +22,8 @@ class ResultStructureImportServiceTests {
 
         service.importDefaults()
 
-        List allDaos = ResultStructureDAO.list()
-        assertEquals allDaos.collect { it.modelClassName + " " + it.name }.toString(), 6, allDaos.size()
+        List<ResultStructureDAO> allDaos = ResultStructureDAO.list()
+        assertEquals allDaos.collect { it.modelClassName + " " + it.name }.toString(), 7, allDaos.size()
         assertTrue StructureMapping.count() > initialMappings
 
         ResultStructure resultStructure = new ResultStructure(ResultStructureImportService.DEFAULT_NAME, ApplicationModel)
