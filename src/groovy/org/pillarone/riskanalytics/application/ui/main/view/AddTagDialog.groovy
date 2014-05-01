@@ -34,6 +34,8 @@ class AddTagDialog {
 
     Closure closeAction = { event -> dialog.visible = false; dialog.dispose() }
 
+    // TagsAction creates, inits it then makes this visible
+    //
     public AddTagDialog(ULCTableTree tree, List<ModellingUIItem> modellingUIItems) {
         this.tree = tree
         this.model = tree.model
@@ -58,18 +60,19 @@ class AddTagDialog {
         if (tree)
             this.parent = UlcUtilities.getWindowAncestor(tree)
         dialog = new ULCDialog(parent, "Edit tags dialog", true)
-        dialog.name = 'AddTagDialog'
+        dialog.name = 'AddTagDialog'                                // Beware - names may be used in tests
         tagesListView = new TagsListView(modellingUIItems*.item)
         tagesListView.init()
         newTag = new ULCTextField()
         newTag.name = 'newTag'
-        addNewButton = new ULCButton("add new")
+        addNewButton = new ULCButton("Create new tag")
         addNewButton.name = "addNew"
         addNewButton.setPreferredSize(buttonDimension)
-        applyButton = new ULCButton("apply")
+//        addNewButton.setEnabled( !newTag.getText()?.trim()?.empty ) // Ought to enable button only when user types new tag name
+        applyButton = new ULCButton("Apply")
         applyButton.name = "apply"
         applyButton.setPreferredSize(buttonDimension)
-        cancelButton = new ULCButton("cancel")
+        cancelButton = new ULCButton("Cancel")
         cancelButton.setPreferredSize(buttonDimension)
     }
 
@@ -79,8 +82,8 @@ class AddTagDialog {
         ULCBoxPane content = new ULCBoxPane(rows: 3, columns: 2)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
         ULCScrollPane scrollList = new ULCScrollPane(tagesListView.content)
-        scrollList.verticalScrollBar.blockIncrement = 180  // more reasonable scrollbar page-up/down size
-        scrollList.setPreferredSize(new Dimension(160, 200))
+        scrollList.verticalScrollBar.blockIncrement = 180               // more reasonable scrollbar page-up/down size
+        scrollList.setPreferredSize(new Dimension(160, 400))            // width, height
         content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollList)
         content.add(ULCBoxPane.BOX_LEFT_TOP, applyButton)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, newTag)

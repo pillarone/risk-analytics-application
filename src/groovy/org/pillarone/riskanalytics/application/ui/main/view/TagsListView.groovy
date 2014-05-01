@@ -7,6 +7,8 @@ import com.ulcjava.base.application.ULCFiller
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
@@ -15,6 +17,10 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTa
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class TagsListView extends AbstractView {
+
+    private static Log LOG = LogFactory.getLog(TagsListView )
+    private static boolean vetoDupQtrTagsInWorkflow = System.getProperty("vetoDupQtrTagsInWorkflows","true").equalsIgnoreCase("true");
+
 
     public ULCBoxPane content
     public List<Tag> itemTags
@@ -27,6 +33,8 @@ class TagsListView extends AbstractView {
         content = new ULCBoxPane(2, 0)
     }
 
+    // TODO rename to createNewTag and fix any breaking tests
+    //
     public void addTag(String tagName) {
         if (tagName && !Tag.findByName(tagName)) {
             Tag newTag = new Tag(name: tagName, tagType: EnumTagType.PARAMETERIZATION)
@@ -89,20 +97,29 @@ class TagsListView extends AbstractView {
         return all as List
     }
 
-    private Color getColor(Tag tag) {
-        if (modellingItems.every { it.getTags().contains(tag) }) return Color.black
-        if (modellingItems.any { it.getTags().contains(tag) }) return Color.gray
-        return Color.black
-    }
-
     private void addTagToItem(Tag tag) {
-        if (!itemTags.contains(tag)) itemTags << tag
+        if (!itemTags.contains(tag)) itemTags << tag            // Some itemTags were only on subset of selected items
         for (ModellingItem modellingItem : modellingItems) {
             if (!modellingItem.getTags().contains(tag)) {
-                modellingItem.getTags().add(tag)
-                modellingItem.setChanged(true)
+                if(!vetoDupQtrTagsInWorkflow){
+                    modellingItem.getTags().add(tag)
+                    modellingItem.setChanged(true)
+                }else{
+                    //TODO add check for workflow p14n and quarter tags at ART
+                    if( !workflowAlreadyContainsQuarterTag( modellingItem, tag ) ){
+                        modellingItem.getTags().add(tag)
+                        modellingItem.setChanged(true)
+                    }
+                }
             }
         }
+    }
+
+    // TODO Implement for PMO-2741
+    //
+    private boolean workflowAlreadyContainsQuarterTag( ModellingItem modellingItem, Tag tag ){
+        // Add logging like: LOG.warn("-DvetoDupQtrTagsInWorkflow set: not adding ${tag.name} to ${modellingItem} as tag already exists on ${clashingItem}")
+        return false;
     }
 
     private void removeTag(Tag tag) {
@@ -119,6 +136,12 @@ class TagsListView extends AbstractView {
         Color color = getColor(tag)
         checkBox.setForeground(color)
         checkBox.setBorder(BorderFactory.createLineBorder(color))
+    }
+
+    private Color getColor(Tag tag) {
+        if (modellingItems.every { it.getTags().contains(tag) }) return Color.black
+        if (modellingItems.any { it.getTags().contains(tag) }) return Color.gray
+        return Color.black
     }
 
 }
