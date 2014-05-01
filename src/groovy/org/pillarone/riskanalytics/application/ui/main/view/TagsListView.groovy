@@ -37,7 +37,7 @@ class TagsListView extends AbstractView {
     List<Tag> allTags
 
     public TagsListView(List<ModellingItem> modellingItems) {
-        this.modellingItems = modellingItemss
+        this.modellingItems = modellingItems
         content = new ULCBoxPane(2, 0)
     }
 
