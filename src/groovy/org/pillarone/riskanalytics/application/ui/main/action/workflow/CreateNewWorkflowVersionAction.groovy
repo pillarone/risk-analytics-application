@@ -34,6 +34,7 @@ class CreateNewWorkflowVersionAction extends AbstractWorkflowAction {
             if( ownerCanVetoUser(parameterization?.creator) ){
                 String msg = "${parameterization?.creator.username} owns ${parameterization?.getNameAndVersion()}. \n(Hint: Save your own copy to work on.)"
                 LOG.info(msg)
+                LOG.info("Hint: -DCreateNewWorkflowVersion.promiscuous=true will allow non-owner meddling ")
                 ULCAlert alert = new ULCAlert(
                         UlcUtilities.getWindowAncestor(tree),
                         "Cannot Create New Workflow Version",

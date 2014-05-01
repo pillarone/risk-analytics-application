@@ -190,7 +190,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         }
 
         if( ! owner.username.equals(currentUser.username) ){
-            LOG.info(owner.username + "(owner) can veto action by ${currentUser.username} (current user) ")
+            LOG.debug(owner.username + "(owner) can veto action by ${currentUser.username} (current user) ")
             return true
         }
 
