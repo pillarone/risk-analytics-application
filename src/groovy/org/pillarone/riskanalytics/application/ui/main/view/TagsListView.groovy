@@ -1,17 +1,23 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.BorderFactory
+import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCFiller
+import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
+import org.pillarone.riskanalytics.core.workflow.Status
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -19,8 +25,10 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTa
 class TagsListView extends AbstractView {
 
     private static Log LOG = LogFactory.getLog(TagsListView )
-    private static boolean vetoDupQtrTagsInWorkflow = System.getProperty("vetoDupQtrTagsInWorkflows","true").equalsIgnoreCase("true");
 
+    // Set -DvetoDupQtrTagsInWorkflow=true to activate extra Quarter Tag validation on Workflow p14ns
+    //
+    private static boolean vetoDupQtrTagsInWorkflow = System.getProperty("vetoDupQtrTagsInWorkflows","false").equalsIgnoreCase("true");
 
     public ULCBoxPane content
     public List<Tag> itemTags
@@ -29,7 +37,7 @@ class TagsListView extends AbstractView {
     List<Tag> allTags
 
     public TagsListView(List<ModellingItem> modellingItems) {
-        this.modellingItems = modellingItems
+        this.modellingItems = modellingItemss
         content = new ULCBoxPane(2, 0)
     }
 
@@ -115,11 +123,66 @@ class TagsListView extends AbstractView {
         }
     }
 
-    // TODO Implement for PMO-2741
+    // PMO-2741
     //
     private boolean workflowAlreadyContainsQuarterTag( ModellingItem modellingItem, Tag tag ){
-        // Add logging like: LOG.warn("-DvetoDupQtrTagsInWorkflow set: not adding ${tag.name} to ${modellingItem} as tag already exists on ${clashingItem}")
-        return false;
+
+        if( ! tag.isQuarterTag() ){
+            return false;                                               // Dont care about non quarter tags here
+        }
+        if( ! modellingItem instanceof Parameterization ){
+            return false                                                // Dont care about non p14ns here
+        }
+        Parameterization parameterization = modellingItem as Parameterization
+        if(parameterization.status == Status.NONE){
+            return false                                                // Dont care about non workflow p14ns here
+        }
+
+        // User is adding quarter tag to a workflow - Does any p14n in workflow already have it ?
+        // @matthias: What is best way to get hold of all p14ns matching name and class ?
+
+        SortedSet allVersions = new TreeSet(VersionNumber.getExistingVersions(parameterization))
+
+        for( VersionNumber versionNumber : allVersions ){
+            if(parameterization.versionNumber.toString().equals(versionNumber.toString())){
+                continue
+            }
+            ParameterizationDAO dao = ParameterizationDAO.find(parameterization.name,parameterization.modelClass.name, versionNumber.toString())
+            List<Tag> tagList = dao.tags*.tag
+            // For some reason, pDao's tags cannot be seen when running ra-apps vanilla - maybe the table is not
+            // setup in the in-memory or mysql db that is used here ?  I will leave this code deactivated by default.
+            // Then I will override to true at runtime to test at ART
+            //
+            for( Tag t in tagList ){
+                if( tag.equals(t) ){
+                    String msg = "'${tag.name}' already exists on version v${pDao.itemVersion}"
+                    LOG.warn("NOT TAGGING ${parameterization.nameAndVersion}; " + msg)
+                    LOG.info("To allow duplicate qtr tags in workflows, override -DvetoDupQtrTagsInWorkflow=false ")
+                    ULCAlert alert = new ULCAlert(
+                            UlcUtilities.getWindowAncestor(this),
+                            "Cannot duplicate quarter tag in Workflow",
+                            msg,
+                            "Ok")
+                    alert.messageType = ULCAlert.INFORMATION_MESSAGE
+                    alert.show()
+                    return true
+                }
+            }
+        }
+
+//        List<ParameterizationDAO> allInWorkflow =
+//            parameterization.daoClass.findAllByNameAndModelClassName(parameterization.name, parameterization.modelClass.name)
+//
+//        for( ParameterizationDAO pDao : allInWorkflow ){
+//            if(parameterization.versionNumber.toString().equals(pDao.itemVersion)){
+//                continue
+//            }
+//
+//            // Will this load the dao including the tags ?
+//            //
+//            ParameterizationDAO.find(parameterization.name, parameterization.modelClass?.name, pDao.itemVersion)
+//
+//        }
     }
 
     private void removeTag(Tag tag) {
