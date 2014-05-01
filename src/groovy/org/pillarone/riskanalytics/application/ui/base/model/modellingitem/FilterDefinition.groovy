@@ -12,10 +12,18 @@ class FilterDefinition {
 
     List<ISearchFilter> toQuery() {
         List<ISearchFilter> filters = []
+
         filters << allFieldsFilter
-        filters << tagFilter
-        filters << statusFilter
-        filters << ownerFilter
+
+        if(!tagFilter.getValues().empty){
+            filters << tagFilter
+        }
+        if(!statusFilter.getValues().empty){
+            filters << statusFilter
+        }
+        if(ownerFilter.active ){
+            filters << ownerFilter
+        }
         return filters
     }
 
