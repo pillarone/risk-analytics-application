@@ -61,7 +61,7 @@ class AddTagDialog {
             this.parent = UlcUtilities.getWindowAncestor(tree)
         dialog = new ULCDialog(parent, "Edit tags dialog", true)
         dialog.name = 'AddTagDialog'                                // Beware - names may be used in tests
-        tagesListView = new TagsListView(modellingUIItems*.item)
+        tagesListView = new TagsListView(modellingUIItems*.item, parent)
         tagesListView.init()
         newTag = new ULCTextField()
         newTag.name = 'newTag'

@@ -47,7 +47,7 @@ class TagsListViewTests extends AbstractSimpleStandaloneTestCase {
     void start() {
         p1.tags = [tag1, tag2] as Set
         p2.tags = [tag1] as Set
-        TagsListView tagsListView = new TagsListView([p1, p2])
+        TagsListView tagsListView = new TagsListView([p1, p2], null) //TODO supply parent ULCWindow instead if one available here ?
         tagsListView.metaClass.getAllTags = { -> [tag1, tag2, tag3] }
         tagsListView.metaClass.getAllModellingItemTages = { -> [tag1, tag2] }
         tagsListView.init()

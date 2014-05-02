@@ -5,13 +5,12 @@ import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCFiller
-import com.ulcjava.base.application.UlcUtilities
+import com.ulcjava.base.application.ULCWindow
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -28,17 +27,19 @@ class TagsListView extends AbstractView {
 
     // Set -DvetoDupQtrTagsInWorkflow=true to activate extra Quarter Tag validation on Workflow p14ns
     //
-    private static boolean vetoDupQtrTagsInWorkflow = System.getProperty("vetoDupQtrTagsInWorkflows","false").equalsIgnoreCase("true");
+    private static boolean vetoDupQtrTagsInWorkflow = System.getProperty("vetoDupQtrTagsInWorkflows","true").equalsIgnoreCase("true");
 
+    private ULCWindow parent
     public ULCBoxPane content
     public List<Tag> itemTags
     private List<ULCCheckBox> tagsCheckBoxes
     private List<ModellingItem> modellingItems
     List<Tag> allTags
 
-    public TagsListView(List<ModellingItem> modellingItems) {
+    public TagsListView(List<ModellingItem> modellingItems, ULCWindow parent) {
         this.modellingItems = modellingItems
         content = new ULCBoxPane(2, 0)
+        this.parent = parent
     }
 
     // TODO rename to createNewTag and fix any breaking tests
@@ -127,42 +128,43 @@ class TagsListView extends AbstractView {
     //
     private boolean workflowAlreadyContainsQuarterTag( ModellingItem modellingItem, Tag tag ){
 
-        if( ! tag.isQuarterTag() ){
-            return false;                                               // Dont care about non quarter tags here
+        // Only checking quarter tags in workflows (p14ns with workflow status)
+        //
+        if( ! tag.isQuarterTag() || ! modellingItem instanceof Parameterization ){
+            return false;
         }
-        if( ! modellingItem instanceof Parameterization ){
-            return false                                                // Dont care about non p14ns here
-        }
+
         Parameterization parameterization = modellingItem as Parameterization
-        if(parameterization.status == Status.NONE){
+        if( parameterization.status == Status.NONE ){
             return false                                                // Dont care about non workflow p14ns here
         }
 
-        // User is adding quarter tag to a workflow - Does any p14n in workflow already have it ?
-        // @matthias: What is best way to get hold of all p14ns matching name and class ?
+        // Okay, user is adding quarter tag to a workflow :-
+        // Does any p14n in workflow already have it ?
+        // @matthias: What is lightest way to get hold of all tags in p14ns matching name and class ?
+        //
 
-        SortedSet allVersions = new TreeSet(VersionNumber.getExistingVersions(parameterization))
+        for( VersionNumber versionNumber : VersionNumber.getExistingVersions(parameterization)){
 
-        for( VersionNumber versionNumber : allVersions ){
             if(parameterization.versionNumber.toString().equals(versionNumber.toString())){
-                continue
+                continue // No need to check p14n being tagged - it doesn't have it yet
             }
-            ParameterizationDAO dao = ParameterizationDAO.find(parameterization.name,parameterization.modelClass.name, versionNumber.toString())
-            List<Tag> tagList = dao.tags*.tag
-            // For some reason, pDao's tags cannot be seen when running ra-apps vanilla - maybe the table is not
-            // setup in the in-memory or mysql db that is used here ?  I will leave this code deactivated by default.
-            // Then I will override to true at runtime to test at ART
+
+            // TODO use a method like existing getAllTags() instead to get the tags for each p14n
+            // Or ask Matthias for a better way
             //
-            for( Tag t in tagList ){
+            Parameterization otherWorkflowP14n = new Parameterization(parameterization.name,parameterization.modelClass)
+            otherWorkflowP14n.versionNumber = versionNumber
+            otherWorkflowP14n.load();
+
+            // Is there a better way ? All i need is its tags..
+            for( Tag t in otherWorkflowP14n.tags ){
                 if( tag.equals(t) ){
-                    String msg = "'${tag.name}' already exists on version v${pDao.itemVersion}"
-                    LOG.warn("NOT TAGGING ${parameterization.nameAndVersion}; " + msg)
+                    String firstLine = "Cannot add tag ${tag.name} to ${parameterization.nameAndVersion}"
+                    String secondLine= "Pls untag version: $parameterization.name v${otherWorkflowP14n.versionNumber.toString()} first."
+                    LOG.warn(firstLine + " " + secondLine)
                     LOG.info("To allow duplicate qtr tags in workflows, override -DvetoDupQtrTagsInWorkflow=false ")
-                    ULCAlert alert = new ULCAlert(
-                            UlcUtilities.getWindowAncestor(this),
-                            "Cannot duplicate quarter tag in Workflow",
-                            msg,
-                            "Ok")
+                    ULCAlert alert = new ULCAlert( parent, "Error duplicating quarter tag in workflow", firstLine + "\n" + secondLine, "Ok")
                     alert.messageType = ULCAlert.INFORMATION_MESSAGE
                     alert.show()
                     return true
@@ -170,19 +172,8 @@ class TagsListView extends AbstractView {
             }
         }
 
-//        List<ParameterizationDAO> allInWorkflow =
-//            parameterization.daoClass.findAllByNameAndModelClassName(parameterization.name, parameterization.modelClass.name)
-//
-//        for( ParameterizationDAO pDao : allInWorkflow ){
-//            if(parameterization.versionNumber.toString().equals(pDao.itemVersion)){
-//                continue
-//            }
-//
-//            // Will this load the dao including the tags ?
-//            //
-//            ParameterizationDAO.find(parameterization.name, parameterization.modelClass?.name, pDao.itemVersion)
-//
-//        }
+        return false
+
     }
 
     private void removeTag(Tag tag) {
