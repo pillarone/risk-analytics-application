@@ -36,6 +36,8 @@ class ParameterizationNodeFactory {
                 return createBooleanNode(path, item)
             case ResourceParameterHolder:
                 return createResourceNode(path, item)
+            case DataSourceParameterHolder:
+                return createDataSourceNode(path, item)
             default:
                 throw new RuntimeException("Unknown paramter type: ${param?.class}")
         }
@@ -68,6 +70,10 @@ class ParameterizationNodeFactory {
 
     private static ParameterizationTableTreeNode createDateNode(String path, ParametrizedItem item) {
         return new DateParameterizationTableTreeNode(path, item)
+    }
+
+    private static ParameterizationTableTreeNode createDataSourceNode(String path, ParametrizedItem item) {
+        return new ResultDataParameterizationTableTreeNode(path, item)
     }
 
     private static ParameterizationTableTreeNode createEnumNode(String path, ParametrizedItem item) {

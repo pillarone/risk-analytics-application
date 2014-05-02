@@ -9,14 +9,13 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
-import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
+import org.pillarone.riskanalytics.application.ui.parameterization.action.TabStarter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterCompareViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.MultiDimensionalParameterizationTableTreeNode
 import org.pillarone.riskanalytics.application.ui.parameterization.view.MultiDimensionalParameterCompareView
 import org.pillarone.riskanalytics.application.ui.parameterization.view.TabIdentifier
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.parameter.MultiDimensionalParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
@@ -67,7 +66,7 @@ class MultiDimensionalCompareTabStarter extends ExceptionSafeAction {
                         }
                     }
                     MultiDimensionalParameterCompareViewModel model = new MultiDimensionalParameterCompareViewModel(reference, toCompare, parametrizedItems.subList(1, parametrizedItems.size()), periodIndex)
-                    tabbedPane.addTab(lastComponent.parameterizationTableTreeNode.displayName, UIUtils.getIcon(UIUtils.getText(MultiDimensionalTabStarter, "MDP.icon")), new MultiDimensionalParameterCompareView(model).content)
+                    tabbedPane.addTab(lastComponent.parameterizationTableTreeNode.displayName, UIUtils.getIcon(UIUtils.getText(TabStarter, "MDP.icon")), new MultiDimensionalParameterCompareView(model).content)
                     int currentTab = tabbedPane.tabCount - 1
                     tabbedPane.selectedIndex = currentTab
                     openTabs.put(new TabIdentifier(path: tree.getSelectedPath(), columnIndex: tree.selectedColumn), currentTab)

@@ -4,7 +4,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.shared.IUlcEventConstants
-import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
+import org.pillarone.riskanalytics.application.ui.parameterization.action.TabStarter
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -22,7 +22,7 @@ class OpenMDPAction extends ResourceBasedAction {
         ActionEvent d = new ActionEvent(tableTree, String.valueOf(IUlcEventConstants.ACTION_PERFORMED))
         d.source = tableTree
         tableTree.getActionListeners().each {IActionListener actionListener ->
-            if (actionListener instanceof MultiDimensionalTabStarter)
+            if (actionListener instanceof TabStarter)
                 actionListener.actionPerformed(d)
         }
 

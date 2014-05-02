@@ -18,7 +18,7 @@ import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAct
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.parameterization.action.MultiDimensionalTabStarter
+import org.pillarone.riskanalytics.application.ui.parameterization.action.TabStarter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.*
 import org.pillarone.riskanalytics.application.ui.util.DataTypeFactory
@@ -112,7 +112,7 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = "Name"
         tree.cellSelectionEnabled = true
 
-        tree.viewPortTableTree.addActionListener(new MultiDimensionalTabStarter(this))
+        tree.viewPortTableTree.addActionListener(new TabStarter(this))
 
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([model.treeModel.root] as Object[])] as TreePath[], false);
@@ -147,7 +147,7 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
             tabbedPane.closeCloseableTab(i)
         }
         tree.viewPortTableTree.getActionListeners().each {
-            if (it instanceof MultiDimensionalTabStarter) {
+            if (it instanceof TabStarter) {
                 it.openTabs = [:]
             }
         }
