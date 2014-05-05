@@ -14,7 +14,7 @@ import org.pillarone.riskanalytics.application.ui.batch.view.action.*
 class BatchTableRenderer extends DefaultTableCellRenderer {
     private ULCPopupMenu nodePopup
     private final BatchView batchView
-    List<EnabledCheckingMenuItem> menuItems = []
+    private List<EnabledCheckingMenuItem> menuItems = []
 
     BatchTableRenderer(BatchView batchView) {
         this.batchView = batchView
@@ -42,11 +42,11 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
         if (!nodePopup) {
             nodePopup = new ULCPopupMenu()
             addItem(new CreateSimulationProfileAction(batchView))
-            addItem(new FindParameterizationsInTreeAction(batchView))
+            addItem(new BatchViewFindParameterizationsInTreeAction(batchView))
             addItem(new FindResultsInTreeAction(batchView))
             addItem(new CreateBatchAction(batchView))
-            addItem(new BatchOpenParameterizationAction(batchView))
-            addItem(new BatchOpenresultAction(batchView))
+            addItem(new BatchViewOpenParameterizationAction(batchView))
+            addItem(new BatchViewOpenResultAction(batchView))
             addItem(new OpenResultsAction(batchView))
             addItem(new DeleteParameterizationsAction(batchView))
         }

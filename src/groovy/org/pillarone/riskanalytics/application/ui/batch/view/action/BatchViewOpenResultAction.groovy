@@ -9,10 +9,10 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
-class BatchOpenresultAction extends ResourceBasedAction {
+class BatchViewOpenResultAction extends ResourceBasedAction {
     private final BatchView batchView
 
-    BatchOpenresultAction(BatchView batchView) {
+    BatchViewOpenResultAction(BatchView batchView) {
         super('BatchOpenresultAction')
         this.batchView = batchView
     }
@@ -21,7 +21,6 @@ class BatchOpenresultAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         ResultConfiguration template = batchView.selectedBatchRowInfos.first().template
         if (template) {
-            template.load()
             riskAnalyticsMainModel.notifyOpenDetailView((Model) template.modelClass.newInstance(), template)
         }
     }

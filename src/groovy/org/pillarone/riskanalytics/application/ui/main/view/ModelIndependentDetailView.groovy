@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.view
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCComponent
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.FinishedSimulationView
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished.FinishedSimulationView
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.RealTimeLoggingView
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
 import org.springframework.context.annotation.Scope

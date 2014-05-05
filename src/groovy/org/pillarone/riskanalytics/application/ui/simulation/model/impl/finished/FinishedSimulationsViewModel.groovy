@@ -1,14 +1,12 @@
-package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
+package org.pillarone.riskanalytics.application.ui.simulation.model.impl.finished
 
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.user.UserManagement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
@@ -43,19 +41,18 @@ class FinishedSimulationsViewModel {
         ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
     }
 
-    void openResultAt(int index) {
-        if (index != -1) {
-            SimulationRuntimeInfo info = finishedSimulationsTableModel.getInfoAt(index)
-            if (info.simulationState == SimulationState.FINISHED) {
-                Simulation simulation = info.simulation
-                simulation.load()
-                riskAnalyticsMainModel.notifyOpenDetailView((Model) simulation.modelClass.newInstance(), simulation)
-            }
+    List<SimulationRuntimeInfo> getInfoAt(int[] selected) {
+        selected.collect {
+            finishedSimulationsTableModel.getInfoAt(it)
         }
     }
 
-    SimulationRuntimeInfo getSimulationRuntimeInfoAt(int index) {
-        index != -1 ? finishedSimulationsTableModel.getInfoAt(index) : null
+    void clearAll() {
+        finishedSimulationsTableModel.infos = []
+    }
+
+    void removeAt(int[] selected) {
+        finishedSimulationsTableModel.removeAt(selected)
     }
 
     private class MyInfoListener extends SimulationRuntimeInfoAdapter {

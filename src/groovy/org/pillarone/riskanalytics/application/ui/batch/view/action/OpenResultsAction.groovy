@@ -14,7 +14,6 @@ import static org.pillarone.riskanalytics.core.simulation.SimulationState.FINISH
 
 class OpenResultsAction extends ResourceBasedAction {
 
-
     private final BatchView batchView
 
     OpenResultsAction(BatchView batchView) {
@@ -26,13 +25,12 @@ class OpenResultsAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
             Simulation simulation = batchView.selectedBatchRowInfos.first().simulation
-            simulation.load()
             Model model = (Model) simulation.modelClass.newInstance()
-            riskAnalyticsMainModel.openItem(model, UIItemFactory.createItem(simulation, model))
+            riskAnalyticsMainModel.notifyOpenDetailView(model, UIItemFactory.createItem(simulation, model))
         }
     }
 
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+    private RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
         Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 

@@ -7,20 +7,21 @@ import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
-import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.SelectionTreeView
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class FindParameterizationsInTreeAction extends ResourceBasedAction {
-    private final BatchView batchView
+abstract class AbstractFindResultsInTreeAction extends ResourceBasedAction {
 
-    FindParameterizationsInTreeAction(BatchView batchView) {
-        super('FindParameterizationsInTree')
-        this.batchView = batchView
+    AbstractFindResultsInTreeAction() {
+        super('FindResultsInTree')
     }
 
     @Override
-    void doActionPerformed(ActionEvent event) {
-        List<ItemNode> nodes = (batchView.selectedBatchRowInfos.parameterization.collect {
+    final void doActionPerformed(ActionEvent event) {
+        if (!enabled) {
+            return
+        }
+        List<ItemNode> nodes = (simulations.collect {
             TableTreeBuilderUtils.findNodeForItem(selectionTreeView.root, it)
         } - [null]) as List<ItemNode>
         if (nodes) {
@@ -36,12 +37,9 @@ class FindParameterizationsInTreeAction extends ResourceBasedAction {
         }
     }
 
+    abstract protected List<Simulation> getSimulations()
+
     SelectionTreeView getSelectionTreeView() {
         Holders.grailsApplication.mainContext.getBean('selectionTreeView', SelectionTreeView)
-    }
-
-    @Override
-    boolean isEnabled() {
-        batchView.selectedBatchRowInfos.size() > 0
     }
 }

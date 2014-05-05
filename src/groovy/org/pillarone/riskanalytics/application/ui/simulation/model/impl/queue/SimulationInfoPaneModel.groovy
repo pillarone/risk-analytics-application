@@ -116,11 +116,13 @@ class SimulationInfoPaneModel {
 
         @Override
         void finished(SimulationRuntimeInfo info) {
+            running = info
             notifySimulationStateChanged(info.simulationState)
         }
 
         @Override
         void changed(SimulationRuntimeInfo info) {
+            running = info
             notifySimulationStateChanged(info.simulationState)
         }
     }

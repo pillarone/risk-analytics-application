@@ -1,13 +1,13 @@
-package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
+package org.pillarone.riskanalytics.application.ui.batch.view
 
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.dnd.DnDTableData
 import com.ulcjava.base.application.dnd.TransferHandler
 import com.ulcjava.base.application.dnd.Transferable
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.IOrderChangedListener
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SortableTableModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SortedEvent
+import org.pillarone.riskanalytics.application.ui.batch.model.IOrderChangedListener
+import org.pillarone.riskanalytics.application.ui.batch.model.SortableTableModel
+import org.pillarone.riskanalytics.application.ui.batch.model.SortedEvent
 
 import static com.ulcjava.base.application.dnd.DataFlavor.DRAG_FLAVOR
 import static com.ulcjava.base.application.dnd.DataFlavor.DROP_FLAVOR

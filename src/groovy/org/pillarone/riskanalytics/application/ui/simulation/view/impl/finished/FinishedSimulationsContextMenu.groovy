@@ -1,11 +1,10 @@
-package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
+package org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished
 
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCPopupMenu
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.batch.view.EnabledCheckingMenuItem
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.action.CancelSimulationAction
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.action.SimulationQueueViewFindParameterizationsInTreeAction
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished.action.*
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -14,19 +13,28 @@ import javax.annotation.Resource
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
-class QueueContextMenu extends ULCPopupMenu {
+class FinishedSimulationsContextMenu extends ULCPopupMenu {
 
     @Resource
-    CancelSimulationAction cancelSimulationAction
-
+    OpenResultsAction openResultsAction
     @Resource
-    SimulationQueueViewFindParameterizationsInTreeAction simulationQueueViewFindParameterizationsInTreeAction
+    ClearSelectedAction clearSelectedAction
+    @Resource
+    ClearAllAction clearAllAction
+    @Resource
+    FinishedSimulationsFindParameterizationsInTreeAction finishedSimulationsFindParameterizationsInTreeAction
+    @Resource
+    FindResultsInTreeAction findResultsInTreeAction
+
     private List<EnabledCheckingMenuItem> menuItems = []
 
     @PostConstruct
     void initialize() {
-        addItem(cancelSimulationAction)
-        addItem(simulationQueueViewFindParameterizationsInTreeAction)
+        addItem(openResultsAction)
+        addItem(clearSelectedAction)
+        addItem(clearAllAction)
+        addItem(finishedSimulationsFindParameterizationsInTreeAction)
+        addItem(findResultsInTreeAction)
     }
 
     private void addItem(IAction action) {

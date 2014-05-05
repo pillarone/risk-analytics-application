@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
+package org.pillarone.riskanalytics.application.ui.batch.model
 
 
 class SortedEvent<T> {

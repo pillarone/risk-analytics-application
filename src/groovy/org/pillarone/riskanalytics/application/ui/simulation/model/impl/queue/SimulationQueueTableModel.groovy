@@ -70,7 +70,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
         }
     }
 
-    private void assignRowsToColumnModels() {
+    protected void assignRowsToColumnModels() {
         columnModels.eachWithIndex { SimulationRowModel columnModel, int row ->
             columnModel.row = row
         }

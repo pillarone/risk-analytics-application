@@ -41,10 +41,9 @@ class SimulationQueueViewModel {
         ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
     }
 
-    void cancelAt(int index) {
-        if (index != -1) {
-            SimulationRuntimeInfo info = simulationQueueTableModel.getInfoAt(index)
-            simulationQueueService.cancel(info.id)
+    List<SimulationRuntimeInfo> getInfoAt(int[] selected) {
+        selected.collect {
+            simulationQueueTableModel.getInfoAt(it)
         }
     }
 
