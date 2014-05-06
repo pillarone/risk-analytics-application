@@ -356,7 +356,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged = true) {
-        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null)
+        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem)
         addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
@@ -477,7 +477,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     public void removeNodeForItem(ModellingItem modellingItem) {
-        removeNodeForItem(UIItemFactory.createItem(modellingItem, null))
+        removeNodeForItem(UIItemFactory.createItem(modellingItem))
     }
 
     public void addNodesForItems(List<ModellingItem> items) {
@@ -667,7 +667,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     private DefaultMutableTableTreeNode createNode(Parameterization item) {
-        return createNode(new ParameterizationUIItem(item.modelClass?.newInstance() as Model, item))
+        return createNode(new ParameterizationUIItem(item))
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
@@ -677,7 +677,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfiguration item) {
-        return createNode(new ResultConfigurationUIItem(item.modelClass?.newInstance() as Model, item))
+        return createNode(new ResultConfigurationUIItem(item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
@@ -708,7 +708,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
         Model selectedModelInstance = item.modelClass?.newInstance() as Model
-        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance))
+        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item))
         DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
         paramsNode.leaf = true
         DefaultMutableTableTreeNode templateNode = createNode(item.template)

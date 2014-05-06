@@ -31,8 +31,8 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
 
     protected static final Log LOG = LogFactory.getLog(ParameterizationUIItem.class)
 
-    ParameterizationUIItem(Model model, Parameterization parameterization) {
-        super(model, parameterization)
+    ParameterizationUIItem(Parameterization parameterization) {
+        super(parameterization)
     }
 
     @Override
@@ -60,12 +60,12 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
     }
 
     @Override
-    ModellingUIItem createNewVersion(Model model, boolean openNewVersion) {
+    ModellingUIItem createNewVersion(boolean openNewVersion = true) {
         Closure okAction = { String commentText ->
             if (!this.loaded) {
                 this.load()
             }
-            createNewVersion(this.model, commentText, false)
+            createNewVersion(commentText, false)
         }
 
         NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
@@ -74,21 +74,21 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
     }
 
 
-    ParameterizationUIItem createNewVersion(Model selectedModel, String commentText, boolean openNewVersion = true) {
-        ParameterizationUIItem newItem = super.createNewVersion(selectedModel, false) as ParameterizationUIItem
+    ParameterizationUIItem createNewVersion(String commentText, boolean openNewVersion = true) {
+        ParameterizationUIItem newItem = super.createNewVersion(false) as ParameterizationUIItem
         VersionNumber newVersion = newItem.item.versionNumber
-        addComment(selectedModel, newItem, "v${newVersion}: ${commentText}", openNewVersion)
+        addComment(newItem, "v${newVersion}: ${commentText}", openNewVersion)
         return newItem
     }
 
-    private void addComment(Model selectedModel, ParameterizationUIItem uiItem, String commentText, boolean openNewVersion) {
+    private void addComment(ParameterizationUIItem uiItem, String commentText, boolean openNewVersion) {
         if (commentText) {
             Tag versionTag = Tag.findByName(NewCommentView.VERSION_COMMENT)
             uiItem.item.addTaggedComment(commentText, versionTag)
             uiItem.item.save()
         }
         if (openNewVersion) {
-            riskAnalyticsMainModel.openItem(selectedModel, uiItem)
+            riskAnalyticsMainModel.notifyOpenDetailView(uiItem)
         }
     }
 

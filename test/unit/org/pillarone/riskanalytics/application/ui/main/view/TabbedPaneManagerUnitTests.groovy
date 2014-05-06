@@ -78,6 +78,7 @@ class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
                 }
             }
         }
+        item.metaClass.load = {}
         item
     }
 }

@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
@@ -15,7 +14,6 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
@@ -35,14 +33,7 @@ class SaveAction extends ResourceBasedAction {
 
     public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model, ModellingItem currentItem) {
         this(parent, model)
-        this.currentItem = UIItemFactory.createItem(currentItem, getModelFromItem(currentItem))
-    }
-
-    Model getModelFromItem(ModellingItem item) {
-        if (item instanceof Resource) {
-            return null
-        }
-        item.modelClass?.newInstance() as Model
+        this.currentItem = UIItemFactory.createItem(currentItem)
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -96,8 +87,8 @@ class SaveAction extends ResourceBasedAction {
     }
 
     private void handleNewVersion(Model model, ModellingUIItem item) {
-        item.createNewVersion(model, false)
-        this.model.notifyCloseDetailView(model, item)
+        item.createNewVersion(false)
+        this.model.notifyCloseDetailView(item)
     }
 
     private void handleNewVersion(Model model, ParameterizationUIItem item) {
@@ -106,7 +97,7 @@ class SaveAction extends ResourceBasedAction {
                 item.load()
             }
             createNewVersion(item, model, commentText)
-            this.model.notifyCloseDetailView(model, item)
+            this.model.notifyCloseDetailView(item)
         }
 
         NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
@@ -119,7 +110,7 @@ class SaveAction extends ResourceBasedAction {
             Parameterization parameterization = StatusChangeService.service.changeStatus(originalParameterization, Status.DATA_ENTRY)
             parameterization.save()
         } else {
-            item.createNewVersion(model, commentText, false)
+            item.createNewVersion(commentText, false)
         }
     }
 

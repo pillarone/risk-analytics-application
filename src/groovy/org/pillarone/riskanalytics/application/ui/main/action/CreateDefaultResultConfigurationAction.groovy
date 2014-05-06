@@ -3,6 +3,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.view.DefaultResultConfigurationDialog
 import com.ulcjava.base.application.UlcUtilities
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -43,7 +44,7 @@ class CreateDefaultResultConfigurationAction extends SelectionTreeAction {
                     dialog.hide()
 
                     resultConfiguration.load()
-                    model.notifyOpenDetailView(getSelectedModel(), resultConfiguration)
+                    model.notifyOpenDetailView(UIItemFactory.createItem(resultConfiguration))
                 } catch (Exception ex) {
                     LOG.error "Error creating default parameterization", ex
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "CreationError")

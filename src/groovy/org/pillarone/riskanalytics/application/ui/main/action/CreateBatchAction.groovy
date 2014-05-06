@@ -28,7 +28,7 @@ class CreateBatchAction extends SelectionTreeAction {
         NodeNameDialog nameDialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), batchUIItem)
         nameDialog.okAction = { String name ->
             batch.name = name
-            model.openItem(null, batchUIItem)
+            model.notifyOpenDetailView(batchUIItem)
             batch.changed = true
         }
         nameDialog.show()

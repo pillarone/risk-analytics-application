@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
 import groovy.transform.CompileStatic
@@ -12,14 +11,13 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.Simulati
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.model.StochasticModel
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class SimulationSettingsUIItem extends ModellingUiItemWithModel {
 
-    SimulationSettingsUIItem(Model model, Simulation simulation) {
-        super(model, simulation)
+    SimulationSettingsUIItem(Simulation simulation) {
+        super(simulation)
     }
 
     @Override

@@ -25,8 +25,7 @@ class OpenResultsAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
             Simulation simulation = batchView.selectedBatchRowInfos.first().simulation
-            Model model = (Model) simulation.modelClass.newInstance()
-            riskAnalyticsMainModel.notifyOpenDetailView(model, UIItemFactory.createItem(simulation, model))
+            riskAnalyticsMainModel.notifyOpenDetailView(UIItemFactory.createItem(simulation))
         }
     }
 

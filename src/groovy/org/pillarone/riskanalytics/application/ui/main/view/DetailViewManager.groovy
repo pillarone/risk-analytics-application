@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.google.common.base.Preconditions
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
@@ -23,6 +24,10 @@ class DetailViewManager {
     }
 
     IDetailView createDetailViewForItem(AbstractUIItem uiItem) {
+        //TODO we have to make a copy of the item. Otherwise it will conflict with the automated update of the navigation refactoring
+        if (!uiItem.loaded) {
+            uiItem.load()
+        }
         Preconditions.checkNotNull(uiItem)
         if (detailViewMap[uiItem]) {
             throw new IllegalStateException("there is already a detailview for item $uiItem. You must first close it.")

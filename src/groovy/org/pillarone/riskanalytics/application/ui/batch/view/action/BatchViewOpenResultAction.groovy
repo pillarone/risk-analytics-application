@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
 class BatchViewOpenResultAction extends ResourceBasedAction {
@@ -21,7 +21,7 @@ class BatchViewOpenResultAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         ResultConfiguration template = batchView.selectedBatchRowInfos.first().template
         if (template) {
-            riskAnalyticsMainModel.notifyOpenDetailView((Model) template.modelClass.newInstance(), template)
+            riskAnalyticsMainModel.notifyOpenDetailView(UIItemFactory.createItem(template))
         }
     }
 

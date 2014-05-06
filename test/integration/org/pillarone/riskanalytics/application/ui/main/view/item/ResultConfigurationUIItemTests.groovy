@@ -38,7 +38,7 @@ class ResultConfigurationUIItemTests extends AbstractSimpleFunctionalTest {
         Model model = new ApplicationModel()
         model.init()
 
-        ResultConfigurationUIItem uiItem = new ResultConfigurationUIItem(model, configuration)
+        ResultConfigurationUIItem uiItem = new ResultConfigurationUIItem(configuration)
         frame.contentPane = uiItem.createDetailView().content
         frame.visible = true
     }

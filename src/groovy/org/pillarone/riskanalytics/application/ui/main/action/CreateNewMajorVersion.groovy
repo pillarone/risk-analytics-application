@@ -57,15 +57,15 @@ class CreateNewMajorVersion extends SingleItemAction {
     }
 
     private void createNewVersion(ParameterizationUIItem item, String commentText) {
-        item.createNewVersion(item.getModel(), commentText)
+        item.createNewVersion(commentText)
     }
 
     private void createNewVersion(ResultConfigurationUIItem template) {
-        template.createNewVersion(template.getModel())
+        template.createNewVersion()
     }
 
     private void createNewVersion(ResourceUIItem resource) {
-        resource.createNewVersion(resource.getModel())
+        resource.createNewVersion()
     }
 
     private void createNewVersion(def node) {

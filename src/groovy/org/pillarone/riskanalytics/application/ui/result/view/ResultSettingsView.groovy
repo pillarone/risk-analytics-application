@@ -9,12 +9,12 @@ import com.ulcjava.base.shared.FileChooserConfig
 import org.joda.time.format.DateTimeFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
 import com.ulcjava.base.application.*
@@ -100,13 +100,7 @@ class ResultSettingsView {
     }
 
     private void openItem(ModellingItem item) {
-        if (item instanceof ConfigObjectBasedModellingItem && item.data == null) {
-            item.load()
-        }
-        Model model = simulation.modelClass.newInstance()
-        model.init()
-        item.load()
-        mainModel.notifyOpenDetailView(model, item)
+        mainModel.notifyOpenDetailView(UIItemFactory.createItem(item))
     }
 
     private void addLabels(ULCBoxPane container, String key, ULCTextArea value) {
@@ -191,8 +185,8 @@ class ExportModelItemAction extends ResourceBasedAction {
                         } finally {
                             bw.close()
                         }
-                    }, onSuccess: { path, name ->
-                    }, onFailure: { reason, description ->
+                    }, onSuccess                        : { path, name ->
+                    }, onFailure                        : { reason, description ->
                         new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 
@@ -243,8 +237,8 @@ class ExportStructureAction extends ResourceBasedAction {
                         } finally {
                             stream.close()
                         }
-                    }, onSuccess: { path, name ->
-                    }, onFailure: { reason, description ->
+                    }, onSuccess                        : { path, name ->
+                    }, onFailure                        : { reason, description ->
                         new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 

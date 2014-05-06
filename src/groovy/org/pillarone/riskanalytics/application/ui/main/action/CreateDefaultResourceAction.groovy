@@ -47,12 +47,10 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
                         resource = ParameterizationHelper.createDefaultResource(dialog.nameInput.text, node.resourceClass.newInstance())
                         resource.save()
                         resource = ModellingItemFactory.getItem(resource.dao)
+                        resource.load()
                     }
                     dialog.hide()
-
-                    ResourceUIItem resourceUIItem = new ResourceUIItem(resource)
-                    resourceUIItem.load(true)
-                    model.notifyOpenDetailView(null, resourceUIItem)
+                    model.notifyOpenDetailView(new ResourceUIItem(resource))
                 } catch (Exception ex) {
                     LOG.error("Error creating new resource", ex)
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "CreationError")

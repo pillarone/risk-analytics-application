@@ -11,7 +11,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 abstract class AbstractUIItem {
 
-    ModellingUIItem createNewVersion(Model selectedModel, boolean openNewVersion = true) {
+    ModellingUIItem createNewVersion(boolean openNewVersion = true) {
         return null
     }
 
@@ -60,4 +60,6 @@ abstract class AbstractUIItem {
     boolean isDeletable() {
         return true
     }
+
+    abstract Model getModel()
 }

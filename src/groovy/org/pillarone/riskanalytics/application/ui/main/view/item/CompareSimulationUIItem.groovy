@@ -16,7 +16,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 class CompareSimulationUIItem extends AbstractUIItem {
 
     List<Simulation> simulations
-    private final Model model
+    final Model model
 
     CompareSimulationUIItem(Model model, List<Simulation> simulations) {
         this.model = model

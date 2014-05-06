@@ -29,7 +29,7 @@ class CreateBatchAction extends ResourceBasedAction {
         NodeNameDialog nameDialog = new NodeNameDialog(getWindowAncestor(batchView.content), batchUIItem)
         nameDialog.okAction = { String name ->
             batch.name = name
-            riskAnalyticsMainModel.openItem(null, batchUIItem)
+            riskAnalyticsMainModel.notifyOpenDetailView(batchUIItem)
             batch.changed = true
         }
         nameDialog.show()
