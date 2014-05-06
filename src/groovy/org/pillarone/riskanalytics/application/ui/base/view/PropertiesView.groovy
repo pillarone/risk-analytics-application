@@ -1,15 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.base.view
 
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.base.model.PropertiesViewModel
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import com.ulcjava.base.application.*
 
-class PropertiesView implements IGuiUpdate {
+class PropertiesView {
 
     ULCBoxPane content
     PropertiesViewModel model
@@ -22,7 +21,7 @@ class PropertiesView implements IGuiUpdate {
     }
 
     private initComponents() {
-        ULCBoxPane props = boxLayout(getText('settings')) {ULCBoxPane box ->
+        ULCBoxPane props = boxLayout(getText('settings')) { ULCBoxPane box ->
 
             ULCBoxPane content = new ULCBoxPane(2, 0)
             def textArea = new ULCTextArea(4, 50)
@@ -30,7 +29,7 @@ class PropertiesView implements IGuiUpdate {
             textArea.text = model.comment
             textArea.lineWrap = true
             textArea.wrapStyleWord = true
-            textArea.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
+            textArea.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
                 String text = textArea.text
                 if (text && text.length() > MAX_CHARS) {
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(content), "CommentTooLong")
@@ -72,17 +71,6 @@ class PropertiesView implements IGuiUpdate {
         return getTextByKeys("modificator", date, changer)
     }
 
-
-    public void updateGui() {
-        if (hasOwner(model.item)) {
-            lastModifierInfo.text = getModificatorInfo()
-        }
-    }
-
-    private boolean hasOwner(ModellingItem mi) {
-        false
-    }
-
     private ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right) {
         ULCBoxPane deco = new ULCBoxPane()
         deco.border = BorderFactory.createEmptyBorder(top, left, bottom, right)
@@ -117,12 +105,4 @@ class PropertiesView implements IGuiUpdate {
         return LocaleResources.getString("PropertiesView." + key);
     }
 
-}
-
-public interface IModelItemChangeListener {
-    public void modelItemChanged()
-}
-
-interface IGuiUpdate {
-    public void updateGui()
 }

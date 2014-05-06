@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.resultconfiguration.view
+
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
@@ -18,7 +19,7 @@ import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.Resu
 import org.pillarone.riskanalytics.application.ui.resulttemplate.view.ResultConfigurationTableTreeNodeRenderer
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
-class ResultConfigurationView extends AbstractModellingTreeView implements IModelItemChangeListener {
+class ResultConfigurationView extends AbstractModellingTreeView {
 
     private ULCLabel treeTitle
     ULCDetachableTabbedPane tabbedPane
@@ -26,12 +27,10 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
 
     ResultConfigurationView(ResultConfigurationViewModel model, RiskAnalyticsMainModel mainModel) {
         super(model, mainModel)
-        mainModel.addModelItemChangedListener(this)
     }
 
     @Override
     void close() {
-        mainModel.removeModelItemChangedListener(this)
     }
 
     protected void initTree() {
@@ -106,10 +105,6 @@ class ResultConfigurationView extends AbstractModellingTreeView implements IMode
         simulationPane.add(ULCBoxPane.BOX_EXPAND_EXPAND, tabbedPane)
 
         return simulationPane
-    }
-
-    public void modelItemChanged() {
-        propertiesView.updateGui()
     }
 
     public void removeTabs() {

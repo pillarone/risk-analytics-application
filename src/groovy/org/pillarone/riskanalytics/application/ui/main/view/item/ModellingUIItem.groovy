@@ -86,7 +86,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
         ExceptionSafe.protect {
             item.save()
         }
-        riskAnalyticsMainModel.fireModelItemChanged()
     }
 
 

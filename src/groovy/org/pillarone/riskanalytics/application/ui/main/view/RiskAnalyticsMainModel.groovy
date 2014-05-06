@@ -1,89 +1,81 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.google.common.eventbus.DeadEvent
+import com.google.common.eventbus.EventBus
+import com.google.common.eventbus.Subscribe
 import groovy.beans.Bindable
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.base.view.IModelItemChangeListener
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
-import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
-import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
-import javax.annotation.Resource
-import java.beans.PropertyChangeListener
-
-import static org.pillarone.riskanalytics.core.search.CacheItemEvent.EventType
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class RiskAnalyticsMainModel {
 
-    private final List<IRiskAnalyticsModelListener> modelListeners = []
-    private final List<IModelItemChangeListener> modelItemListeners = []
-    private final List<INewSimulationListener> newSimulationListeners = []
-    private final List<IModellingItemEventListener> modellingItemEventListeners = []
+    private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainModel)
 
-    @Bindable
-    AbstractUIItem currentItem
-
-    @Resource
-    ModellingItemCache modellingItemCache
-    private final MyModelItemEventListener listener = new MyModelItemEventListener()
-
-    RiskAnalyticsMainModel() {
-        addPropertyChangeListener('currentItem', { def event ->
-            notifyChangedWindowTitle(currentItem)
-        } as PropertyChangeListener)
-    }
+    @Delegate
+    private final EventBus eventBus = new EventBus()
 
     @PostConstruct
     void initialize() {
-        modellingItemCache.addItemEventListener(listener)
+        eventBus.register(this)
     }
 
     @PreDestroy
     void unregister() {
-        modellingItemCache.removeItemEventListener(listener)
+        eventBus.unregister(this)
     }
+
+    @Subscribe
+    void handleDeadEvents(DeadEvent deadEvent) {
+        LOG.warn("no subscriber for event ${deadEvent.event} posted by ${deadEvent.source}")
+    }
+
+    //TODO move all detailView stuff to DetailViewManager (alls stuff below this line...)
+    @Subscribe
+    void closeDetailViewIfItemRemoved(ModellingItemEvent event) {
+        if (event.eventType == CacheItemEvent.EventType.REMOVED) {
+            closeDetailView(event.modellingItem)
+        }
+    }
+
+    private void closeDetailView(ModellingItem modellingItem) {
+        Model model = createModel(modellingItem)
+        notifyCloseDetailView(model, UIItemFactory.createItem(modellingItem, model))
+    }
+
+    private Model createModel(ModellingItem modellingItem) {
+        if (modellingItem instanceof Resource) {
+            return null
+        }
+        modellingItem.modelClass ? (modellingItem.modelClass.newInstance() as Model) : null
+    }
+
+    private final List<IRiskAnalyticsModelListener> modelListeners = []
+
+    @Bindable
+    AbstractUIItem currentItem
+
 
     void openItem(Model model, AbstractUIItem item) {
         if (!item.loaded) {
             item.load()
         }
         notifyOpenDetailView(model, item)
-    }
-
-    void addModelItemChangedListener(IModelItemChangeListener listener) {
-        modelItemListeners << listener
-    }
-
-    void removeModelItemChangedListener(IModelItemChangeListener listener) {
-        modelItemListeners.remove(listener)
-    }
-
-    void fireModelItemChanged() {
-        modelItemListeners.each { IModelItemChangeListener listener -> listener.modelItemChanged() }
-    }
-
-    void addModellingItemEventListener(IModellingItemEventListener listener) {
-        modellingItemEventListeners << listener
-    }
-
-    void removeModellingItemEventListener(IModellingItemEventListener listener) {
-        modellingItemEventListeners.remove(listener)
-    }
-
-    void fireModelItemEvent(ModellingItemEvent modellingItemEvent) {
-        modellingItemEventListeners.each { it.onEvent(modellingItemEvent) }
     }
 
     void addModelListener(IRiskAnalyticsModelListener listener) {
@@ -120,42 +112,6 @@ class RiskAnalyticsMainModel {
     void notifyChangedWindowTitle(AbstractUIItem abstractUIItem) {
         modelListeners.each { IRiskAnalyticsModelListener listener ->
             listener.windowTitle = abstractUIItem
-        }
-    }
-
-    void addNewSimulationListener(INewSimulationListener newSimulationListener) {
-        newSimulationListeners << newSimulationListener
-    }
-
-    void removeNewSimulationListener(INewSimulationListener newSimulationListener) {
-        newSimulationListeners.remove(newSimulationListener)
-    }
-
-    void fireNewSimulation(Simulation simulation) {
-        newSimulationListeners.each { INewSimulationListener newSimulationListener ->
-            newSimulationListener.newSimulation(simulation)
-        }
-    }
-
-    private class MyModelItemEventListener implements IModellingItemEventListener {
-        @Override
-        void onEvent(ModellingItemEvent event) {
-            fireModelItemEvent(event)
-            if (event.eventType == EventType.REMOVED) {
-                closeDetailView(event.modellingItem)
-            }
-        }
-
-        private void closeDetailView(ModellingItem modellingItem) {
-            Model model = createModel(modellingItem)
-            notifyCloseDetailView(model, UIItemFactory.createItem(modellingItem, model))
-        }
-
-        private Model createModel(ModellingItem modellingItem) {
-            if (modellingItem instanceof org.pillarone.riskanalytics.core.simulation.item.Resource) {
-                return null
-            }
-            modellingItem.modelClass ? (modellingItem.modelClass.newInstance() as Model) : null
         }
     }
 }

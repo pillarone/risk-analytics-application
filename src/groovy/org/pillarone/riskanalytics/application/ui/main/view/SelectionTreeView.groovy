@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
+import com.google.common.eventbus.Subscribe
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCTableTree
@@ -20,7 +21,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.Filte
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.springframework.context.annotation.Scope
@@ -49,8 +49,6 @@ class SelectionTreeView {
     @Resource
     ModellingItemCache modellingItemCache
 
-    private IModellingItemEventListener updateListener
-
     boolean ascOrder = true
 
     @PostConstruct
@@ -59,18 +57,12 @@ class SelectionTreeView {
         initComponents()
         layoutComponents()
         attachListeners()
-        updateListener = new IModellingItemEventListener() {
-            @Override
-            void onEvent(ModellingItemEvent event) {
-                onItemEvent(event)
-            }
-        }
-        riskAnalyticsMainModel.addModellingItemEventListener(updateListener)
+        riskAnalyticsMainModel.register(this)
     }
 
     @PreDestroy
     void unregister() {
-        riskAnalyticsMainModel.removeModellingItemEventListener(updateListener)
+        riskAnalyticsMainModel.unregister(this)
     }
 
     protected void initComponents() {
@@ -78,7 +70,8 @@ class SelectionTreeView {
         content.name = "treeViewContent"
     }
 
-    private void onItemEvent(ModellingItemEvent event) {
+    @Subscribe
+    void onItemEvent(ModellingItemEvent event) {
         modellingItemSelectionListener.rememberSelectionState()
         navigationTableTreeModel.updateTreeStructure(event)
         modellingItemSelectionListener.flushSelectionState()

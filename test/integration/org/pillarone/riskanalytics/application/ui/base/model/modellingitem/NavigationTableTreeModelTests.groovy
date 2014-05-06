@@ -1,4 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.model.modellingitem
+
+import com.google.common.eventbus.Subscribe
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.ITableTreeModelListener
 import com.ulcjava.base.application.event.TableTreeModelEvent
@@ -16,7 +18,6 @@ import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.search.UlcCacheItemEventHandler
@@ -84,13 +85,16 @@ class NavigationTableTreeModelTests {
         testPollingSupport = new TestPollingSupport()
         UlcCacheItemEventHandler queue = new UlcCacheItemEventHandler(cacheItemSearchService: cacheItemSearchService, pollingSupport: testPollingSupport)
         queue.init()
-        ModellingItemCache modellingItemCache = new ModellingItemCache(ulcCacheItemEventHandler: queue)
+        ModellingItemCache modellingItemCache = new ModellingItemCache(ulcCacheItemEventHandler: queue, riskAnalyticsMainModel: mainModel)
         modellingItemCache.initialize()
-        modellingItemCache.addItemEventListener([onEvent: { ModellingItemEvent event ->
-            model.updateTreeStructure(event)
-        }] as IModellingItemEventListener)
+
+        mainModel.register(this)
     }
 
+    @Subscribe
+    void updateModel(ModellingItemEvent event) {
+        model.updateTreeStructure(event)
+    }
 
     private void newParameterization(String name, String version) {
         ParameterizationDAO.withNewSession {
@@ -105,6 +109,7 @@ class NavigationTableTreeModelTests {
         LocaleResources.testMode = false
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
+        mainModel.unregister(this)
         new ULCSession.DefaultCurrentSessionRegistry().currentSession = null
     }
 
@@ -314,6 +319,16 @@ class NavigationTableTreeModelTests {
         Parameterization cachedItem = ModellingItemFactory.getParameterization(parameterizationDAO)
         assertTrue(cachedItem.is(paramsNode.itemNodeUIItem.item))
     }
+}
+
+
+class TestSubscriber {
+
+    @Subscribe
+    void onEvent(ModellingItemEvent event) {
+
+    }
+
 }
 
 class TestModelListener implements ITableTreeModelListener {

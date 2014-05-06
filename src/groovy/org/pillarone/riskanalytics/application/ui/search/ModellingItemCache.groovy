@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.search
 
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.ICacheItemEventListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -11,17 +12,18 @@ import org.springframework.stereotype.Component
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.annotation.Resource
-import java.util.concurrent.CopyOnWriteArraySet
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class ModellingItemCache {
 
-    private final Set<IModellingItemEventListener> listeners = new CopyOnWriteArraySet<IModellingItemEventListener>()
     private ICacheItemEventListener listener
 
     @Resource
     UlcCacheItemEventHandler ulcCacheItemEventHandler
+
+    @Resource
+    RiskAnalyticsMainModel riskAnalyticsMainModel
 
     @PostConstruct
     void initialize() {
@@ -35,17 +37,6 @@ class ModellingItemCache {
         listener = null
     }
 
-    void addItemEventListener(IModellingItemEventListener listener) {
-        listeners.add(listener)
-    }
-
-    void removeItemEventListener(IModellingItemEventListener listener) {
-        listeners.remove(listener)
-    }
-
-    private void fireItemEvent(ModellingItemEvent event) {
-        listeners.each { it.onEvent(event) }
-    }
 
     private ModellingItemEvent convert(CacheItemEvent event) {
         ModellingItem modellingItem = null
@@ -79,7 +70,7 @@ class ModellingItemCache {
     private class MyCacheItemEventListener implements ICacheItemEventListener {
         @Override
         void onEvent(CacheItemEvent event) {
-            fireItemEvent(convert(event))
+            riskAnalyticsMainModel.post(convert(event))
         }
     }
 }

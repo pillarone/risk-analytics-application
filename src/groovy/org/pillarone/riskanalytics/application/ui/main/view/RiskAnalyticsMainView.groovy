@@ -128,9 +128,6 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     }
 
     void openDetailView(Model model, AbstractUIItem item) {
-        if (item instanceof ModellingUIItem) {
-            item.addModellingItemChangeListener(this)
-        }
         cardPaneManager.openItem(model, item)
         //todo notify Enabler instead of syncMenuBar
         headerView.syncMenuBar()
@@ -191,6 +188,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         if (evt.source == riskAnalyticsMainModel && evt.propertyName == CURRENT_ITEM_PROPERTY) {
             updateValidationSwitchButton()
             headerView.syncMenuBar()
+            windowTitle = riskAnalyticsMainModel.currentItem
         }
     }
 

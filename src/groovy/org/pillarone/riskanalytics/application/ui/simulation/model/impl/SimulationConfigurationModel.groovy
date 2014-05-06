@@ -1,10 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
+import com.google.common.eventbus.Subscribe
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.simulation.model.INewSimulationListener
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 
-class SimulationConfigurationModel implements INewSimulationListener {
+class SimulationConfigurationModel {
 
     SimulationProfilePaneModel simulationProfilePaneModel
     final RiskAnalyticsMainModel mainModel
@@ -16,28 +16,36 @@ class SimulationConfigurationModel implements INewSimulationListener {
     }
 
     protected void attachListener() {
-        mainModel.addModellingItemEventListener(simulationProfilePaneModel.settingsPaneModel)
-        mainModel.addNewSimulationListener(this)
+        mainModel.register(this)
     }
 
     void close() {
-        mainModel.removeModellingItemEventListener(simulationProfilePaneModel.settingsPaneModel)
-        mainModel.removeNewSimulationListener(this)
+        mainModel.unregister(this)
     }
 
     protected initSubModels(Class modelClass) {
         simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass, mainModel)
     }
 
-    void newSimulation(Simulation simulation) {
-        if (simulation.modelClass == simulationProfilePaneModel.settingsPaneModel.modelClass) {
-            if (simulation.parameterization) {
-                settingsPaneModel.selectedParameterization = simulation.parameterization
+    @Subscribe
+    void onSimulationSettingsChangedEvent(SimulationSettingsChangedEvent event) {
+        if (checkModelClass(event.modelClass)) {
+            if (event.parameterization) {
+                settingsPaneModel.selectedParameterization = event.parameterization
             }
-            if (simulation.template) {
-                settingsPaneModel.selectedResultConfiguration = simulation.template
+            if (event.template) {
+                settingsPaneModel.selectedResultConfiguration = event.template
             }
         }
+    }
+
+    @Subscribe
+    void onModellingItemEvent(ModellingItemEvent event) {
+        simulationProfilePaneModel.settingsPaneModel.onEvent(event)
+    }
+
+    private boolean checkModelClass(Class modelClass) {
+        modelClass == simulationProfilePaneModel.settingsPaneModel.modelClass
     }
 
     SimulationSettingsPaneModel getSettingsPaneModel() {

@@ -25,6 +25,7 @@ class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
         initGrailsApplication()
         defineBeans {
             detailViewManager(DetailViewManager)
+            riskAnalyticsMainView(NullFactoryBean,RiskAnalyticsMainView)
         }
         inTestFrame(createContentPane())
     }
@@ -64,17 +65,19 @@ class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
 
     BatchUIItem createUIItem(String name) {
         def item = new BatchUIItem(new Batch(name))
-        item.metaClass.createDetailView = { -> new IDetailView() {
-            @Override
-            void close() {
+        item.metaClass.createDetailView = { ->
+            new IDetailView() {
+                @Override
+                void close() {
 
-            }
+                }
 
-            @Override
-            ULCContainer getContent() {
-                return null
+                @Override
+                ULCContainer getContent() {
+                    return null
+                }
             }
-        }}
+        }
         item
     }
 }

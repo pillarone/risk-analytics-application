@@ -28,6 +28,10 @@ class TabbedPaneManager {
         Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager)
     }
 
+    private RiskAnalyticsMainView getRiskAnalyticsMainView() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainView', RiskAnalyticsMainView)
+    }
+
     /**
      * Creates a new tab for the given item
      * The content of a card is currently a TabbedPane.
@@ -36,6 +40,9 @@ class TabbedPaneManager {
      */
     void addTab(AbstractUIItem item) {
         IDetailView detailView = detailViewManager.createDetailViewForItem(item)
+        if (item instanceof ModellingUIItem) {
+            item.addModellingItemChangeListener(riskAnalyticsMainView)
+        }
         ULCContainer view = detailView.content
         def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
         tabbedPane.addTab(item.createTitle(), item.icon, wrapped)

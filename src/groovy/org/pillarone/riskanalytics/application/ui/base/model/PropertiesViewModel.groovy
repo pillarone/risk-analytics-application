@@ -6,7 +6,7 @@ class PropertiesViewModel {
 
     private ModellingItem item
 
-    public PropertiesViewModel(ModellingItem item) {
+    PropertiesViewModel(ModellingItem item) {
         this.@item = item
     }
 

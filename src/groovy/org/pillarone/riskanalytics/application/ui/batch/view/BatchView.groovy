@@ -1,5 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
-
+import com.google.common.eventbus.Subscribe
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -11,7 +11,6 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
@@ -46,7 +45,6 @@ class BatchView implements IDetailView {
     @Resource
     RiskAnalyticsMainModel riskAnalyticsMainModel
 
-    private MyBatchListener myBatchListener
     private final ValidationListener validationListener = new ValidationListener()
     private final IListSelectionListener updateSelectionCountListener = new UpdateSelectionCountListener()
 
@@ -81,8 +79,6 @@ class BatchView implements IDetailView {
 
     @PostConstruct
     void initialize() {
-        myBatchListener = new MyBatchListener()
-        riskAnalyticsMainModel.addModellingItemEventListener(myBatchListener)
         batches = new SortableTable(batchViewModel.simulationParameterizationTableModel)
         batches.selectionModel.addListSelectionListener(updateSelectionCountListener)
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(this)
@@ -103,13 +99,29 @@ class BatchView implements IDetailView {
 
     @Override
     void close() {
+        riskAnalyticsMainModel.unregister(this)
         if (this.batch) {
             this.batch.removeModellingItemChangeListener(validationListener)
         }
         batches.selectionModel.removeListSelectionListener(updateSelectionCountListener)
-        riskAnalyticsMainModel.removeModellingItemEventListener(myBatchListener)
-        myBatchListener = null
         batchViewModel.destroy()
+    }
+
+    @Subscribe
+    void onEvent(ModellingItemEvent event) {
+        if (event.modellingItem == getBatch()) {
+            switch (event.eventType) {
+                case CacheItemEvent.EventType.ADDED:
+                    break
+                case CacheItemEvent.EventType.REMOVED:
+                    lock()
+                    break
+                case CacheItemEvent.EventType.UPDATED:
+                    batch.load()
+                    setBatch(batch)
+                    break
+            }
+        }
     }
 
     Batch getBatch() {
@@ -123,6 +135,7 @@ class BatchView implements IDetailView {
     }
 
     private void attachListener() {
+        riskAnalyticsMainModel.register(this)
         runBatch.addActionListener([actionPerformed: { ActionEvent event ->
             batchViewModel.save()
             batchViewModel.run()
@@ -208,25 +221,6 @@ class BatchView implements IDetailView {
         @Override
         void valueChanged(ListSelectionEvent event) {
             updateParameterizationCount()
-        }
-    }
-
-    private class MyBatchListener implements IModellingItemEventListener {
-        @Override
-        void onEvent(ModellingItemEvent event) {
-            if (event.modellingItem == getBatch()) {
-                switch (event.eventType) {
-                    case CacheItemEvent.EventType.ADDED:
-                        break
-                    case CacheItemEvent.EventType.REMOVED:
-                        lock()
-                        break
-                    case CacheItemEvent.EventType.UPDATED:
-                        batch.load()
-                        setBatch(batch)
-                        break
-                }
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
+
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.ULCSpinnerDateModel
 import grails.util.Holders
@@ -7,7 +8,6 @@ import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
-import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.OutputStrategyComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationNameListModel
@@ -22,6 +22,7 @@ import org.pillarone.riskanalytics.core.output.FileOutput
 import org.pillarone.riskanalytics.core.output.ICollectorOutputStrategy
 import org.pillarone.riskanalytics.core.simulation.item.*
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
+
 /**
  * The view model of the SimulationSettingsPane.
  * It is possible to retrieve a Simulation and ICollectorOutputStrategy object from the model (created from the current values).
@@ -29,7 +30,7 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolde
  * It is also possible to register a ISimulationValidationListener, which will be notified when the simulation configuration changes from
  * an invalid (incomplete) to a valid state.
  */
-class SimulationSettingsPaneModel implements ISimulationProvider, ISimulationProfileApplicable, IModellingItemEventListener {
+class SimulationSettingsPaneModel implements ISimulationProvider, ISimulationProfileApplicable {
 
     String simulationName
     String comment
@@ -278,7 +279,6 @@ class SimulationSettingsPaneModel implements ISimulationProvider, ISimulationPro
         }
     }
 
-    @Override
     void onEvent(ModellingItemEvent event) {
         def eventClass = event.modellingItem.modelClass
         if (eventClass == modelClass) {

@@ -7,7 +7,9 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationSettingsUIItem
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsChangedEvent
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class CreateSimulationProfileAction extends ResourceBasedAction {
@@ -25,12 +27,12 @@ class CreateSimulationProfileAction extends ResourceBasedAction {
 
     void doActionPerformed(ActionEvent event) {
         BatchRowInfo info = batchView.selectedBatchRowInfos.first()
-        Simulation simulation = new Simulation("Simulation")
-        simulation.parameterization = info.parameterization
+        Simulation simulation = new Simulation('Simulation')
+        Parameterization parameterization = info.parameterization
         simulation.modelClass = info.modelClass
         Model model = info.modelClass.newInstance() as Model
         riskAnalyticsMainModel.openItem(model, new SimulationSettingsUIItem(model, simulation))
-        riskAnalyticsMainModel.fireNewSimulation(simulation)
+        riskAnalyticsMainModel.post(new SimulationSettingsChangedEvent(null, parameterization, simulation.modelClass))
     }
 
     boolean isEnabled() {
