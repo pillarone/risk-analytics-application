@@ -5,15 +5,14 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class SimulationResultUIItem extends ModellingUiItemWithModel {
 
-    SimulationResultUIItem(Model model, Simulation simulation) {
-        super(model, simulation)
+    SimulationResultUIItem(Simulation simulation) {
+        super(simulation)
     }
 
     @Override

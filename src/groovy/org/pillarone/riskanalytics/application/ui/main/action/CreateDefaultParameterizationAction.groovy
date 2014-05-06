@@ -47,12 +47,10 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                         param.name = dialog.nameInput.text
                         param.save()
                         param = ModellingItemFactory.getItem(param.dao, param.modelClass)
+                        param.load()
                     }
                     dialog.hide()
-
-                    ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(null, param)
-                    parameterizationUIItem.load(true)
-                    model.notifyOpenDetailView(simulationModel, parameterizationUIItem)
+                    model.notifyOpenDetailView(new ParameterizationUIItem(param))
                 } catch (Exception ex) {
                     LOG.error "Error creating default parameterization", ex
                     I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "CreationError")

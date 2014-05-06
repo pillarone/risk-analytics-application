@@ -100,17 +100,15 @@ class OpenItemDialog {
 
         readOnlyButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
-            if (!modellingUIItem.loaded)
-                modellingUIItem.load()
             LOG.info("Opening ${modellingUIItem.nameAndVersion} read-only.")
-            mainModel.notifyOpenDetailView(model, modellingUIItem)
+            mainModel.notifyOpenDetailView(modellingUIItem)
         }] as IActionListener)
 
         deleteDependingResultsButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
             LOG.info("Deleting depending results of ${modellingUIItem.nameAndVersion}")
             if (modellingUIItem.deleteDependingResults()) {
-                mainModel.openItem(model, modellingUIItem)
+                mainModel.notifyOpenDetailView(modellingUIItem)
             } else {
                 new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
             }

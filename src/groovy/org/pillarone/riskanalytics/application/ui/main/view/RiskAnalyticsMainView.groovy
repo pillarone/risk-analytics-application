@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
+import com.google.common.eventbus.Subscribe
 import com.ulcjava.applicationframework.application.ApplicationContext
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.util.Dimension
@@ -7,16 +8,21 @@ import com.ulcjava.base.application.util.KeyStroke
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.FilterDefinition
 import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
 import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
 import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
-import org.pillarone.riskanalytics.application.ui.main.view.item.*
+import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
+import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.ulc.server.ULCVerticalToggleButton
@@ -24,9 +30,8 @@ import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 import javax.annotation.Resource
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
 
 import static com.ulcjava.base.application.ULCComponent.WHEN_IN_FOCUSED_WINDOW
 import static com.ulcjava.base.application.ULCSplitPane.HORIZONTAL_SPLIT
@@ -36,7 +41,7 @@ import static com.ulcjava.base.shared.IDefaults.*
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
-class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener, PropertyChangeListener {
+class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener {
 
     private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
@@ -88,6 +93,12 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         layoutComponents()
         attachListeners()
     }
+
+    @PreDestroy
+    void close() {
+        riskAnalyticsMainModel.unregister(this)
+    }
+
 
 
     void layoutComponents() {
@@ -141,53 +152,48 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         content.registerKeyboardAction(navigationSplitPaneAction, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         riskAnalyticsMainModel.addModelListener(this)
-        riskAnalyticsMainModel.addPropertyChangeListener(CURRENT_ITEM_PROPERTY, this)
+        riskAnalyticsMainModel.register(this)
         headerView.navigationBarTopPane.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
             selectionTreeView.filterTree(filter)
         }] as IFilterChangedListener)
     }
 
-    void openDetailView(Model model, AbstractUIItem item) {
-        cardPaneManager.openItem(model, item)
+    void openDetailView(AbstractUIItem item) {
+        cardPaneManager.openItem(item)
         //todo notify Enabler instead of syncMenuBar
         headerView.syncMenuBar()
         //update window menu
-        modelAdded(model)
-        windowTitle = item
+        modelAdded(item.model)
+        currentItem = item
     }
 
-    void openDetailView(Model model, ModellingItem item) {
-        AbstractUIItem abstractUIItem = TableTreeBuilderUtils.findUIItemForItem(selectionTreeView.root, item)
-        if (!abstractUIItem) {
-            LOG.error " AbstractUIItem (${item.name}) table tree node not found "
-            abstractUIItem = UIItemFactory.createItem(item, model)
+    @Subscribe
+    void closeDetailViewIfItemRemoved(ModellingItemEvent event) {
+        if (event.eventType == CacheItemEvent.EventType.REMOVED) {
+            closeDetailView(UIItemFactory.createItem(event.modellingItem))
         }
-        if (!abstractUIItem.loaded) {
-            abstractUIItem.load(true)
-        }
-        openDetailView(model, abstractUIItem)
     }
 
-    void closeDetailView(Model model, AbstractUIItem abstractUIItem) {
-        TabbedPaneManager tabbedPaneManager = cardPaneManager.getTabbedPaneManager(model)
+    void closeDetailView(AbstractUIItem abstractUIItem) {
+        TabbedPaneManager tabbedPaneManager = cardPaneManager.getTabbedPaneManager(abstractUIItem.model)
         if (tabbedPaneManager) {
             tabbedPaneManager.removeTab(abstractUIItem)
             headerView.syncMenuBar()
         }
-        windowTitle = null
     }
 
-    void changedDetailView(Model model, AbstractUIItem item) {
+    void changedDetailView(AbstractUIItem item) {
         headerView.syncMenuBar()
+        currentItem = item
     }
 
     void modelAdded(Model model) {
         headerView.modelAdded(model, cardPaneManager)
     }
 
-    void setWindowTitle(AbstractUIItem abstractUIItem) {
+    void setWindowTitle(String windowTitle) {
         ULCFrame window = UlcUtilities.getWindowAncestor(this.content) as ULCFrame
-        window.title = "Risk Analytics - ${abstractUIItem ? abstractUIItem.windowTitle : ''}"
+        window.title = "Risk Analytics - ${(windowTitle ?: '')}"
     }
 
     ULCMenuBar getMenuBar() {
@@ -195,7 +201,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     }
 
     void itemChanged(ModellingItem item) {
-        AbstractUIItem currentItem = riskAnalyticsMainModel?.currentItem
+        AbstractUIItem currentItem = riskAnalyticsMainModel.currentItem
         if (currentItem && (currentItem instanceof ModellingUIItem) && currentItem.item == item) {
             headerView.syncMenuBar()
         }
@@ -204,11 +210,12 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     void itemSaved(ModellingItem item) {
     }
 
-    void propertyChange(PropertyChangeEvent evt) {
-        if (evt.source == riskAnalyticsMainModel && evt.propertyName == CURRENT_ITEM_PROPERTY) {
+    private setCurrentItem(AbstractUIItem newIem) {
+        if (riskAnalyticsMainModel.currentItem != newIem) {
+            riskAnalyticsMainModel.currentItem = newIem
             updateValidationSwitchButton()
             headerView.syncMenuBar()
-            windowTitle = riskAnalyticsMainModel.currentItem
+            windowTitle = riskAnalyticsMainModel.currentItem?.windowTitle
         }
     }
 

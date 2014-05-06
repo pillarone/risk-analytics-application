@@ -31,7 +31,7 @@ class CompareSimulationsAction extends SelectionTreeAction {
             if (selectedModel != null) {
                 List<Simulation> items = elements*.itemNodeUIItem.item as List<Simulation>
                 CompareSimulationUIItem uiItem = new CompareSimulationUIItem(selectedModel, items)
-                model.openItem(selectedModel, uiItem)
+                model.notifyOpenDetailView(uiItem)
             }
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException(ex) // logged and shown in alert by ExceptionSafe

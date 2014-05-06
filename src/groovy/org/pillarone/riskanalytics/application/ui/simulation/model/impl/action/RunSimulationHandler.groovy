@@ -1,11 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
-
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.WindowEvent
-import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
@@ -19,7 +16,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.transaction.TransactionStatus
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -146,14 +142,14 @@ class RunSimulationHandler {
             for (ModellingItem item : items) {
                 if (item.changed) {
                     item.load()
-                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(item, itemModel)
+                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(item)
                     if (modellingUIItem instanceof ParameterizationUIItem) {
                         //TODO: find a way to show new version comment dialog
-                        newItems << modellingUIItem.createNewVersion(itemModel, "", false).item
+                        newItems << modellingUIItem.createNewVersion("", false).item
                     } else {
-                        newItems << modellingUIItem.createNewVersion(itemModel, false).item
+                        newItems << modellingUIItem.createNewVersion(false).item
                     }
-                    model.mainModel.notifyCloseDetailView(itemModel, modellingUIItem)
+                    model.mainModel.notifyCloseDetailView(modellingUIItem)
                 } else
                     newItems << item
             }

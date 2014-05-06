@@ -37,7 +37,7 @@ class SimulationAction extends SingleItemAction {
             simulation.modelClass = selectedModel.modelClass
             Parameterization parameterization = selectedItem instanceof Parameterization ? selectedItem : null
             ResultConfiguration template = selectedItem instanceof ResultConfiguration ? selectedItem : null
-            model.openItem(selectedModel, new SimulationSettingsUIItem(selectedModel, simulation))
+            model.notifyOpenDetailView(new SimulationSettingsUIItem(simulation))
             model.post(new SimulationSettingsChangedEvent(template, parameterization, simulation.modelClass))
         } else {
             LOG.debug("No selected model found. Action cancelled.")

@@ -73,7 +73,8 @@ class CardPaneManager {
      *  switching cards may be required, then delegate to TabbedPaneManager
      * @param item
      */
-    void openItem(Model selectedModel, AbstractUIItem item) {
+    void openItem(AbstractUIItem item) {
+        Model selectedModel = item.model
         if (!selectCard(selectedModel)) {
             addCard(selectedModel)
         }
@@ -83,7 +84,6 @@ class CardPaneManager {
         } else {
             tabbedPaneManager.addTab(item)
         }
-        riskAnalyticsMainModel.currentItem = item
     }
 
     public boolean contains(Model selectedModel) {
@@ -121,7 +121,7 @@ class CardPaneManager {
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(selectedModel)]
         if (tabbedPaneManager) {
             AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.selectedComponent)
-            riskAnalyticsMainModel.notifyChangedDetailView(selectedModel, item)
+            riskAnalyticsMainModel.notifyChangedDetailView(item)
         }
     }
 

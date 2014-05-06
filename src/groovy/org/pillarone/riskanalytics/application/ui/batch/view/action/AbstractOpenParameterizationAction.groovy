@@ -18,8 +18,7 @@ abstract class AbstractOpenParameterizationAction extends ResourceBasedAction {
     final void doActionPerformed(ActionEvent event) {
         if (enabled) {
             Parameterization parameterization = parameterization
-            Model model = parameterization.modelClass.newInstance() as Model
-            riskAnalyticsMainModel.openItem(model, UIItemFactory.createItem(parameterization, model))
+            riskAnalyticsMainModel.notifyOpenDetailView(UIItemFactory.createItem(parameterization))
         }
     }
 

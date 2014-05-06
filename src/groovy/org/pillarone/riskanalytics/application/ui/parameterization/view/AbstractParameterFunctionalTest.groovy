@@ -61,7 +61,7 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
         viewModel.mainModel = mainModel
         ParameterView view = new ParameterView(viewModel, mainModel)
 
-        ModellingUIItem uiItem = new ParameterizationUIItem(model, parameterization) {
+        ModellingUIItem uiItem = new ParameterizationUIItem(parameterization) {
             @Override
             IDetailView createDetailView() {
                 return view

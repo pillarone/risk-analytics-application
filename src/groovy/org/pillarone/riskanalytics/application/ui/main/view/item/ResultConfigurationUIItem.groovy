@@ -9,17 +9,17 @@ import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainMod
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ResultConfigurationUIItem extends ModellingUiItemWithModel {
 
-    ResultConfigurationUIItem(Model model, ResultConfiguration resultConfiguration) {
-        super(model, resultConfiguration)
+    ResultConfigurationUIItem(ResultConfiguration resultConfiguration) {
+        super(resultConfiguration)
     }
 
     @Override

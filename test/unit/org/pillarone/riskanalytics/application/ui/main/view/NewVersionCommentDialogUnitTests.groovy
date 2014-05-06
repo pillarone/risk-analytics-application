@@ -1,12 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 import com.ulcjava.base.application.ULCComponent
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
-import models.core.CoreModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-
+import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -18,11 +12,9 @@ class NewVersionCommentDialogUnitTests extends AbstractP1RATTestCase {
 
     @Override
     ULCComponent createContentPane() {
-        Parameterization parameterization = new Parameterization("param")
-        ParameterizationUIItem uiItem = UIItemFactory.createItem(parameterization, new CoreModel())
         Closure ok = {e ->}
         NewVersionCommentDialog dialog = new NewVersionCommentDialog(ok)
-        return dialog.dialog.getContentPane()
+        return dialog.dialog.contentPane
     }
 
 

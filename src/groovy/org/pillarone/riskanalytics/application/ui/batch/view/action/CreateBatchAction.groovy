@@ -34,7 +34,7 @@ class CreateBatchAction extends ResourceBasedAction {
         nameDialog.okAction = { String name ->
             LOG.info("Creating batch: " + name)
             batch.name = name
-            riskAnalyticsMainModel.openItem(null, batchUIItem)
+            riskAnalyticsMainModel.notifyOpenDetailView(batchUIItem)
             batch.changed = true
         }
         nameDialog.show()
