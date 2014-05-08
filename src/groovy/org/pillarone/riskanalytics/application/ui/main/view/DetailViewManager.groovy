@@ -7,13 +7,20 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
+import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class DetailViewManager {
 
+    AbstractUIItem currentUIItem
+
     private final Map<AbstractUIItem, IDetailView> detailViewMap = [:]
+
+    @PostConstruct
+    void initialize() {
+    }
 
     @PreDestroy
     void closeAll() {
@@ -41,6 +48,14 @@ class DetailViewManager {
         Preconditions.checkNotNull(uiItem)
         return detailViewMap[uiItem]
     }
+
+    IDetailView getOpenDetailView() {
+        if (currentUIItem) {
+            return detailViewMap[currentUIItem]
+        }
+        return null
+    }
+
 
     void close(AbstractUIItem uiItem) {
         detailViewMap.remove(uiItem)?.close()

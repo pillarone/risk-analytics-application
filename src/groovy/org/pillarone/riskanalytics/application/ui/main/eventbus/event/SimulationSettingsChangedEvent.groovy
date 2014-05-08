@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.simulation.model.impl
+package org.pillarone.riskanalytics.application.ui.main.eventbus.event
 
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration

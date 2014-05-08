@@ -7,7 +7,6 @@ import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -49,7 +48,7 @@ class AddNewCommentTests extends AbstractSimpleFunctionalTest {
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
         parameterViewModel.setReadOnly(readOnly)
-        ParameterView parameterView = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
+        ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

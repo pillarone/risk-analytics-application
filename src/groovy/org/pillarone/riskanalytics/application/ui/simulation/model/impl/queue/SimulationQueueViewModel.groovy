@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
-
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
@@ -25,8 +23,6 @@ class SimulationQueueViewModel {
     SimulationQueueTableModel simulationQueueTableModel
     @Autowired
     SimulationQueueService simulationQueueService
-    @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
 
     private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
 

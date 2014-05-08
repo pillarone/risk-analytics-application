@@ -1,28 +1,27 @@
 package org.pillarone.riskanalytics.application.ui.result.view
-
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCSplitPane
 import com.ulcjava.base.application.ULCToolBar
 import com.ulcjava.base.application.tabletree.ULCTableTreeColumn
+import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeColumn
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.result.model.AbstractResultViewModel
-import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 class DeterministicResultView extends ResultView {
 
-    public DeterministicResultView(AbstractResultViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model, mainModel)
+    DeterministicResultView(AbstractResultViewModel model) {
+        super(model)
     }
 
     @Override
     protected void initTree() {
         super.initTree()
-        model.periodCount.times {int index ->
+        model.periodCount.times { int index ->
             ULCTableTreeColumn column = new ResultTableTreeColumn(index + 1, this, new MeanFunction())
             column.setMinWidth(110)
             column.setHeaderRenderer(new CenteredHeaderRenderer())
@@ -42,7 +41,7 @@ class DeterministicResultView extends ResultView {
 
         tabbedPane.removeAll()
         tabbedPane.addTab(getText("TreeView"), UIUtils.getIcon(getText("TreeView.icon")), content)
-        tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), new ResultSettingsView(model.item, mainModel).content)
+        tabbedPane.addTab(getText("Settings"), UIUtils.getIcon(getText("Settings.icon")), new ResultSettingsView(model.item as Simulation).content)
         tabbedPane.setCloseableTab(0, false)
         tabbedPane.setCloseableTab(1, false)
 

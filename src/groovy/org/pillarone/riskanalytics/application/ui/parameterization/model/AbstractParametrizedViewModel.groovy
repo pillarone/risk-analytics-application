@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model
+
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -11,7 +12,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.SimpleTableTreeNode
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.TabbedPaneChangeListener
 import org.pillarone.riskanalytics.application.ui.main.action.SaveAction
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.validation.ParameterValidation
@@ -26,7 +26,6 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
     PropertiesViewModel propertiesViewModel
 
     List<ParameterValidation> validationErrors = []
-    RiskAnalyticsMainModel mainModel
 
     AbstractParametrizedViewModel(Model model, ParametrizedItem item, ModelStructure modelStructure) {
         super(model, item, modelStructure)
@@ -50,7 +49,7 @@ abstract class AbstractParametrizedViewModel extends AbstractCommentableItemMode
 
     @Override
     IActionListener getSaveAction(ULCComponent parent) {
-        return new SaveAction(parent, mainModel, item as ModellingItem)
+        return new SaveAction(parent, item as ModellingItem)
     }
 
     ParametrizedItem getParametrizedItem() {

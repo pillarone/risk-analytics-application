@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.search
+package org.pillarone.riskanalytics.application.ui.main.eventbus.event
 
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.search.CacheItemEvent

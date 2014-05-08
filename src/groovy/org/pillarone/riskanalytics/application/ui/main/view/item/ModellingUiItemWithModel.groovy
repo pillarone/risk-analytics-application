@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
@@ -17,9 +19,8 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         return null
     }
 
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        return null
+    RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     @Override
@@ -43,7 +44,7 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         }
         AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem)
         if (openNewVersion) {
-            riskAnalyticsMainModel.notifyOpenDetailView(modellingUIItem)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(modellingUIItem))
         }
         return modellingUIItem
     }

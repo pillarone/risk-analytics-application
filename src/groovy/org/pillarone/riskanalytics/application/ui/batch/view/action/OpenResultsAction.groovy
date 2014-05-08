@@ -1,13 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.batch.view.action
 
 import com.ulcjava.base.application.event.ActionEvent
-import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
 import static org.pillarone.riskanalytics.core.simulation.SimulationState.FINISHED
@@ -25,12 +23,8 @@ class OpenResultsAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
             Simulation simulation = batchView.selectedBatchRowInfos.first().simulation
-            riskAnalyticsMainModel.notifyOpenDetailView(UIItemFactory.createItem(simulation))
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(simulation)))
         }
-    }
-
-    private RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     @Override

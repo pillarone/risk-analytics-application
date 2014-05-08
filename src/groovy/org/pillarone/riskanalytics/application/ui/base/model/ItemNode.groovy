@@ -5,11 +5,9 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
-import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.main.view.CreateReportsMenu
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
 import org.pillarone.riskanalytics.core.report.IReportModel
@@ -76,15 +74,11 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
         List<IReportModel> reports = new ArrayList<IReportModel>()
         reports.addAll(ReportRegistry.getReportModel(modelsToDisplay)) //TODO rename method to getReportModels and test.
         if (!reports.empty) { //Fails here consequently
-            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, riskAnalyticsMainModel, simulationNodePopUpMenu)
+            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, simulationNodePopUpMenu)
             reportsMenu.visible = true
             if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
             simulationNodePopUpMenu.add(reportsMenu)
         }
-    }
-
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     String getUserObject() {

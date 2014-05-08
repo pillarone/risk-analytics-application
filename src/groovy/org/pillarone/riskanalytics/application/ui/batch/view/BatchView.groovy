@@ -10,8 +10,8 @@ import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.Batch
@@ -43,7 +43,7 @@ class BatchView implements IDetailView {
     BatchViewModel batchViewModel
 
     @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
+    RiskAnalyticsEventBus riskAnalyticsEventBus
 
     private final ValidationListener validationListener = new ValidationListener()
     private final IListSelectionListener updateSelectionCountListener = new UpdateSelectionCountListener()
@@ -99,7 +99,7 @@ class BatchView implements IDetailView {
 
     @Override
     void close() {
-        riskAnalyticsMainModel.unregister(this)
+        riskAnalyticsEventBus.unregister(this)
         if (this.batch) {
             this.batch.removeModellingItemChangeListener(validationListener)
         }
@@ -135,7 +135,7 @@ class BatchView implements IDetailView {
     }
 
     private void attachListener() {
-        riskAnalyticsMainModel.register(this)
+        riskAnalyticsEventBus.register(this)
         runBatch.addActionListener([actionPerformed: { ActionEvent event ->
             batchViewModel.save()
             batchViewModel.run()

@@ -22,7 +22,6 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     // TODO frahman these maps look likely suspects for our joy with menus esp report menus
     ULCTableTree tree
-    RiskAnalyticsMainModel mainModel
     Map<Class, ULCPopupMenu> popupMenus = [:]
     Map<Class, ULCPopupMenu> paramNodePopupMenus = [:]
     Map<Class, ULCPopupMenu> simulationPopupMenus = new HashMap<Class, ULCPopupMenu>()
@@ -30,20 +29,15 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> resourceWorkflowMenus = new HashMap<Status, ULCPopupMenu>()
 
-    public MainSelectionTableTreeCellRenderer(ULCTableTree tree, RiskAnalyticsMainModel mainModel) {
+    public MainSelectionTableTreeCellRenderer(ULCTableTree tree) {
         this.tree = tree
-        this.mainModel = mainModel
     }
 
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setFont(node)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tree, value, selected, expanded, leaf, hasFocus, node)
-        try {
-            renderComponent((ULCComponent) component, node)
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to render: " + e.getMessage(), e)
-        }
+        renderComponent((ULCComponent) component, node)
         return component
 
     }

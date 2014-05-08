@@ -5,7 +5,6 @@ import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.view.ResultConfigurationView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -27,19 +26,12 @@ class ResultConfigurationUIItem extends ModellingUiItemWithModel {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
     }
 
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
-    }
-
     IDetailView createDetailView() {
-        return new ResultConfigurationView(viewModel, riskAnalyticsMainModel)
+        return new ResultConfigurationView(viewModel)
     }
 
     private ResultConfigurationViewModel getViewModel() {
-        ResultConfigurationViewModel model = new ResultConfigurationViewModel(this.model, (ResultConfiguration) item, ModelStructure.getStructureForModel(this.model.class))
-        model.mainModel = riskAnalyticsMainModel
-        return model
+        return new ResultConfigurationViewModel(model, item as ResultConfiguration, ModelStructure.getStructureForModel(this.model.class))
     }
 
     @Override

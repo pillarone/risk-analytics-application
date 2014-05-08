@@ -1,30 +1,34 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
 import com.google.common.eventbus.Subscribe
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.SimulationSettingsChangedEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 
 class SimulationConfigurationModel {
 
     SimulationProfilePaneModel simulationProfilePaneModel
-    final RiskAnalyticsMainModel mainModel
 
-    SimulationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        this.mainModel = mainModel
+    SimulationConfigurationModel(Class modelClass) {
         initSubModels(modelClass)
         attachListener()
     }
 
+    private RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
+    }
+
     protected void attachListener() {
-        mainModel.register(this)
+        getRiskAnalyticsEventBus().register(this)
     }
 
     void close() {
-        mainModel.unregister(this)
+        getRiskAnalyticsEventBus().unregister(this)
     }
 
     protected initSubModels(Class modelClass) {
-        simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass, mainModel)
+        simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass)
     }
 
     @Subscribe

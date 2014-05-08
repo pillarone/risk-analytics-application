@@ -5,16 +5,13 @@ import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class AddToOpenBatchAction extends SelectionTreeAction {
 
-    AddToOpenBatchAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("AddToOpenBatch", tree, model)
+    AddToOpenBatchAction(ULCTableTree tree) {
+        super("AddToOpenBatch", tree)
     }
 
     @Override
@@ -26,7 +23,7 @@ class AddToOpenBatchAction extends SelectionTreeAction {
             it instanceof ParameterizationNode
         } as List<ParameterizationNode>
         if (parameterizationNodes) {
-            BatchView batchView = detailViewManager.getDetailViewForItem(model.currentItem as BatchUIItem) as BatchView
+            BatchView batchView = detailViewManager.openDetailView as BatchView
             batchView.addParameterizations(parameterizationNodes.itemNodeUIItem.item)
         }
     }
@@ -37,10 +34,6 @@ class AddToOpenBatchAction extends SelectionTreeAction {
 
     @Override
     boolean isEnabled() {
-        AbstractUIItem item = model.currentItem
-        if (item instanceof BatchUIItem) {
-            return !item.item.executed && detailViewManager.getDetailViewForItem(item)
-        }
-        false
+        detailViewManager.openDetailView instanceof BatchView
     }
 }

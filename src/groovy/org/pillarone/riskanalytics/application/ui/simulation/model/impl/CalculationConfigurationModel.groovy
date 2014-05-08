@@ -1,16 +1,14 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
 
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-
 class CalculationConfigurationModel extends SimulationConfigurationModel {
 
-    CalculationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        super(modelClass, mainModel)
+    CalculationConfigurationModel(Class modelClass) {
+        super(modelClass)
     }
 
     @Override
     protected initSubModels(Class modelClass) {
-        simulationProfilePaneModel = new CalculationProfilePaneModel(modelClass, mainModel)
+        simulationProfilePaneModel = new CalculationProfilePaneModel(modelClass)
     }
 
     @Override

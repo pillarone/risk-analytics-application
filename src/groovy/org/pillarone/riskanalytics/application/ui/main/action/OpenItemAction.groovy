@@ -3,8 +3,8 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.OpenItemDialog
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -15,8 +15,8 @@ class OpenItemAction extends SelectionTreeAction {
 
     private static final Log LOG = LogFactory.getLog(OpenItemAction)
 
-    def OpenItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("Open", tree, model)
+    OpenItemAction(ULCTableTree tree) {
+        super("Open", tree)
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -38,7 +38,7 @@ class OpenItemAction extends SelectionTreeAction {
                     boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
                     if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
                         LOG.info("Opening parameterization ${parameterizationUIItem.nameAndVersion}")
-                        this.model.notifyOpenDetailView(parameterizationUIItem)
+                        riskAnalyticsEventBus.post(new OpenDetailViewEvent(parameterizationUIItem))
                     } else {
                         LOG.info("Parameterization ${parameterizationUIItem.nameAndVersion} cannot be edited.")
                         showOpenItemDialog(selectedModel, parameterizationUIItem)
@@ -53,12 +53,12 @@ class OpenItemAction extends SelectionTreeAction {
         if (usedInSimulation) {
             showOpenItemDialog(null, item)
         } else {
-            this.model.notifyOpenDetailView(item)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
         }
     }
 
     private void openItem(BatchUIItem item) {
-        this.model.notifyOpenDetailView(item)
+        riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
     }
 
     private void openItem(AbstractUIItem item) {
@@ -71,13 +71,13 @@ class OpenItemAction extends SelectionTreeAction {
             if (usedInSimulation) {
                 showOpenItemDialog(selectedModel, item)
             } else {
-                this.model.notifyOpenDetailView(item)
+                riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
             }
         }
     }
 
     private void showOpenItemDialog(Model selectedModel, ModellingUIItem item) {
-        OpenItemDialog openItemDialog = new OpenItemDialog(tree, selectedModel, model, item)
+        OpenItemDialog openItemDialog = new OpenItemDialog(tree, selectedModel, riskAnalyticsEventBus, item)
         openItemDialog.init()
         openItemDialog.visible = true
     }

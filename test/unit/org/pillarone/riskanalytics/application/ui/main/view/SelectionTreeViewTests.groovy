@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
@@ -45,7 +46,7 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
         tableTreeModel.initialize()
         def control = mockFor(ModellingItemCache)
         control.demand.addItemEventListener { IModellingItemEventListener listener -> }
-        def view = new SelectionTreeView(riskAnalyticsMainModel: new RiskAnalyticsMainModel(), navigationTableTreeModel: tableTreeModel, modellingItemCache: control.createMock())
+        def view = new SelectionTreeView(riskAnalyticsEventBus: new RiskAnalyticsEventBus(), navigationTableTreeModel: tableTreeModel, modellingItemCache: control.createMock())
         view.initialize()
         view.content;
     }
@@ -54,7 +55,8 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
     protected void setUp() throws Exception {
         initGrailsApplication()
         defineBeans {
-            riskAnalyticsMainModel(RiskAnalyticsMainModel)
+            riskAnalyticsEventBus(RiskAnalyticsEventBus)
+            detailViewManager(DetailViewManager)
         }
         super.setUp()
     }
