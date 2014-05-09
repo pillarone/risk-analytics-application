@@ -17,6 +17,7 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 class RandomSeedAction implements IValueChangedListener {
 
     private static Log LOG = LogFactory.getLog(RandomSeedAction)
+    private final static Integer ONE = 1;  // TODO is this a bad idea in context of a VM ? Will it hinder GC ?
 
     private SimulationSettingsPaneModel model;
     private Integer oldRandomSeed
@@ -49,23 +50,36 @@ class RandomSeedAction implements IValueChangedListener {
     }
 
     private handleEvent(ULCTextField textField) {
-        Integer randomSeed = textField.value as Integer
-        if (randomSeed != null && randomSeed > 0) {
-            model.randomSeed = randomSeed
-            userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + randomSeed)
-        } else {
-            randomSeed = 1
-            new I18NAlert("NoInteger").show()
-            textField.value = randomSeed
-            model.randomSeed = randomSeed
+        try {
+            Integer randomSeed = Integer.valueOf(textField?.text)
+            if (randomSeed > 0) {
+                model.randomSeed = randomSeed
+                userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + randomSeed)
+                LOG.info("User defined random seed changed to ${randomSeed}.")
+                // Mission accomplished
+                //
+                return
+            }
+        } catch( NumberFormatException e ){
         }
-        LOG.info("User defined random seed changed to ${randomSeed}.")
+        // Number parse failure or number <= 0 brings us here..
+        //
+        new I18NAlert("NoInteger").show()
+        textField.value = ONE
+        model.randomSeed = ONE
+        LOG.info("User defined random seed changed to 1.")
     }
 
     private Integer getRandomSeed() {
         if (!oldRandomSeed) {
             String value = userPreferences.getPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE)
-            if (value) return Integer.valueOf(value)
+            if (value){
+                try {
+                    return Integer.valueOf(value)
+                }catch(NumberFormatException e){
+                    // Foo bar yuk yuk bad number stored
+                }
+            }
             return null
         }
         return oldRandomSeed
