@@ -130,8 +130,12 @@ class TagsListView extends AbstractView {
 
         // Only checking quarter tags in workflows (p14ns with workflow status)
         //
-        if( ! tag.isQuarterTag() || ! modellingItem instanceof Parameterization ){
-            return false;
+        if( ! tag.isQuarterTag() ){
+            return false
+        }
+        boolean isP14n = (modellingItem instanceof Parameterization)
+        if( ! isP14n ){
+            return false
         }
 
         Parameterization parameterization = modellingItem as Parameterization
