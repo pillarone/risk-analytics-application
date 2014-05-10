@@ -43,7 +43,7 @@ grails.project.dependency.resolution = {
         test ":codenarc:0.20"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.9-SNAPSHOT"
+            runtime "org.pillarone:risk-analytics-core:1.9.x-SNAPSHOT"
         }
 
     }
