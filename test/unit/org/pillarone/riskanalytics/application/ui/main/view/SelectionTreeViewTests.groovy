@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
@@ -18,8 +17,6 @@ import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.Navig
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
-import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.simulation.item.*
@@ -44,9 +41,7 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
         builder.metaClass.getAllBatchRuns = { -> [new BatchRun(name: "test")] }
         def tableTreeModel = new TestNavigationTableTreeModel(navigationTableTreeBuilder: builder)
         tableTreeModel.initialize()
-        def control = mockFor(ModellingItemCache)
-        control.demand.addItemEventListener { IModellingItemEventListener listener -> }
-        def view = new SelectionTreeView(riskAnalyticsEventBus: new RiskAnalyticsEventBus(), navigationTableTreeModel: tableTreeModel, modellingItemCache: control.createMock())
+        def view = new SelectionTreeView(riskAnalyticsEventBus: new RiskAnalyticsEventBus(), navigationTableTreeModel: tableTreeModel)
         view.initialize()
         view.content;
     }

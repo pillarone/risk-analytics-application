@@ -21,9 +21,8 @@ import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.Filte
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
-import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -39,16 +38,13 @@ import javax.annotation.Resource
 class SelectionTreeView {
 
     final static int TREE_FIRST_COLUMN_WIDTH = 350
-
+    private ModellingItemSelectionListener modellingItemSelectionListener
     ULCFixedColumnTableTree tree
     ULCBoxPane content
     @Resource
     RiskAnalyticsEventBus riskAnalyticsEventBus
-    ModellingItemSelectionListener modellingItemSelectionListener
     @Resource
     NavigationTableTreeModel navigationTableTreeModel
-    @Resource
-    ModellingItemCache modellingItemCache
 
     boolean ascOrder = true
 

@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
+import groovy.transform.CompileStatic
 
+@CompileStatic
 abstract class SortableTableModel<T> extends AbstractTableModel {
 
     private List<T> backedList
@@ -27,20 +29,18 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
     }
 
     boolean moveFromTo(int[] sources, int target) {
-        List<T> fromItems = sources.collect { backedList[it] }
+        List<T> fromItems = sources.collect { int source -> backedList[source] }
 
         //replace fromItems with null as placeholder
-        sources.each { backedList[it] = null }
+        sources.each { int source -> backedList[source] = null }
 
         //add from items to the to index
-        fromItems.reverseEach {
-            backedList.add((target != -1) ? target : backedList.size(), it)
+        fromItems.reverseEach { T t ->
+            backedList.add((target != -1) ? target : backedList.size(), t)
         }
 
         //removed placeholder items
         backedList.removeAll([null])
-        //TODO fire some kind of sort event
-        //TODO fire more specific
         fireTableDataChanged()
         int[] newIndices = fromItems.collect { backedList.indexOf(it) }.toArray(new int[fromItems.size()]) as int[]
         def event = new SortedEvent<T>(sources, newIndices, fromItems.toArray() as T[])
@@ -49,7 +49,7 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
     }
 
     private List<IOrderChangedListener> fireSortedEvent(SortedEvent<T> event) {
-        listeners.each { it.orderChanged(event) }
+        listeners.each { IOrderChangedListener listener -> listener.orderChanged(event) }
     }
 
     void setBackedList(List<T> backedList) {
