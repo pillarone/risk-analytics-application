@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
 import com.ulcjava.base.application.table.AbstractTableModel
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.AbstractTableRowModel
 
+@CompileStatic
 class BatchRowInfoRowModel extends AbstractTableRowModel<BatchRowInfo> {
 
     final static int SIZE = 7

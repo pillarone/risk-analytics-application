@@ -1,4 +1,5 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
+package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
@@ -18,7 +19,7 @@ class RunBatchAction extends SingleItemAction {
         }
     }
 
-    BatchRunService getBatchRunService() {
+    private BatchRunService getBatchRunService() {
         Holders.grailsApplication.mainContext.getBean('batchRunService', BatchRunService)
     }
 

@@ -1,7 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
 
 import com.google.common.base.Preconditions
-import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -9,6 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 
 import static org.pillarone.riskanalytics.core.simulation.SimulationState.FINISHED
 
+@CompileStatic
 class BatchRowInfo {
     private final Parameterization parameterization
     private SimulationProfile simulationProfile
@@ -19,10 +20,7 @@ class BatchRowInfo {
     }
 
     String getName() {
-        if (simulation) {
-            return simulation.nameAndVersion
-        }
-        parameterization.name
+        simulation ? simulation.nameAndVersion : parameterization.name
     }
 
     String getModelName() {
@@ -42,16 +40,13 @@ class BatchRowInfo {
             return "${simulation.periodCount}/${simulation.numberOfIterations}"
         }
         if (simulationProfile) {
-            return "${parameterization.periodCount}/${simulationProfile?.numberOfIterations}"
+            return "${parameterization.periodCount}/${simulationProfile.numberOfIterations}"
         }
         return ''
     }
 
     String getRandomSeed() {
-        if (simulation) {
-            return simulation.randomSeed
-        }
-        simulationProfile?.randomSeed ?: ''
+        simulation ? simulation.randomSeed : simulationProfile?.randomSeed ?: ''
     }
 
     String getSimulationStateAsString() {
@@ -70,18 +65,6 @@ class BatchRowInfo {
         simulation?.simulationState == FINISHED
     }
 
-    void setSimulationProfile(SimulationProfile simulationProfile) {
-        this.simulationProfile = simulationProfile
-    }
-
-    void setSimulationRuntimeInfo(SimulationRuntimeInfo simulationRuntimeInfo) {
-        simulation = simulationRuntimeInfo?.simulation
-    }
-
-    void setSimulation(Simulation simulation) {
-        this.simulation = simulation
-    }
-
     boolean isValid() {
         simulationProfile || simulation
     }
@@ -98,5 +81,13 @@ class BatchRowInfo {
             return simulationProfile.template
         }
         return null
+    }
+
+    void setSimulationProfile(SimulationProfile simulationProfile) {
+        this.simulationProfile = simulationProfile
+    }
+
+    void setSimulation(Simulation simulation) {
+        this.simulation = simulation
     }
 }

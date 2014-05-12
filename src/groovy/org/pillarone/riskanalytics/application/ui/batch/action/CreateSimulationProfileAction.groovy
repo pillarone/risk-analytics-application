@@ -1,12 +1,11 @@
-package org.pillarone.riskanalytics.application.ui.batch.view.action
-
+package org.pillarone.riskanalytics.application.ui.batch.action
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationSettingsUIItem
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.SimulationSettingsChangedEvent
+import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationSettingsUIItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 

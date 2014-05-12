@@ -19,6 +19,7 @@ import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
@@ -35,6 +36,7 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     TraceLogManager traceLogManager
     RiskAnalyticsMainView riskAnalyticsMainView
     SpringSecurityService springSecurityService
+    ModellingItemCache modellingItemCache
 
     public ULCRootPane create(ApplicationContext applicationContext) {
         initializeInjection()

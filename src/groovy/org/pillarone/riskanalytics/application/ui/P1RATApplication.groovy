@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
@@ -28,6 +29,7 @@ class P1RATApplication extends Application {
     RiskAnalyticsMainView riskAnalyticsMainView
     NavigationTableTreeModel navigationTableTreeModel
     TraceLogManager traceLogManager
+    ModellingItemCache modellingItemCache
 
     protected void startup() {
         initializeInjection()

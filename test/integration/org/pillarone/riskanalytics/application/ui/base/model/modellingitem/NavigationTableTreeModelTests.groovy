@@ -87,7 +87,6 @@ class NavigationTableTreeModelTests {
         queue.init()
         ModellingItemCache modellingItemCache = new ModellingItemCache(ulcCacheItemEventHandler: queue, riskAnalyticsEventBus: riskAnalyticsEventBus)
         modellingItemCache.initialize()
-
         riskAnalyticsEventBus.register(this)
     }
 
