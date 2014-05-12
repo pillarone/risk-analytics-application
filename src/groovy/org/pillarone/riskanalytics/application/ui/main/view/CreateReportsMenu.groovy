@@ -1,13 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.ULCMenu
+import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.event.IPopupMenuListener
+import com.ulcjava.base.application.event.PopupMenuEvent
+import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.action.CreateReportAction
 import org.pillarone.riskanalytics.core.report.IReportModel
 import org.pillarone.riskanalytics.core.report.ReportFactory
-import com.ulcjava.base.application.ULCPopupMenu
-import com.ulcjava.base.application.event.IPopupMenuListener
-import com.ulcjava.base.application.event.PopupMenuEvent
+import org.pillarone.riskanalytics.core.report.ReportRegistry
 
 /**
  * sparten
@@ -21,15 +23,18 @@ import com.ulcjava.base.application.event.PopupMenuEvent
 class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
 
     ULCTableTree ulcTableTree
-    List<IReportModel> reportModels
     ULCPopupMenu parent
+    private final IReportableNode reportableNode
+    private final boolean reloadOnBecomingVisible
 
-    CreateReportsMenu(String s, List<IReportModel> reportModel, ULCTableTree tree, ULCPopupMenu simulationNodePopUpMenu) {
-        super(s)
+    CreateReportsMenu(String name, IReportableNode reportableNode, ULCTableTree tree, ULCPopupMenu simulationNodePopUpMenu, boolean reloadOnBecomingVisible) {
+        super(name)
+        this.reloadOnBecomingVisible = reloadOnBecomingVisible
+        this.reportableNode = reportableNode
         this.ulcTableTree = tree
-        this.reportModels = reportModel
         this.parent = simulationNodePopUpMenu
         simulationNodePopUpMenu.addPopupMenuListener(this)
+        visible = !reportModels.empty
     }
 
     void popupMenuHasBecomeVisible(PopupMenuEvent popupMenuEvent) {
@@ -37,26 +42,46 @@ class CreateReportsMenu extends ULCMenu implements IPopupMenuListener {
     }
 
     void popupMenuHasBecomeInvisible(PopupMenuEvent popupMenuEvent) {
-        parent.removePopupMenuListener(this)
+        if (reloadOnBecomingVisible) {
+            removeAll()
+        } else {
+            parent.removePopupMenuListener(this)
+        }
+
     }
 
     void popupMenuCanceled(PopupMenuEvent popupMenuEvent) {
-        parent.removePopupMenuListener(this)
+        if (reloadOnBecomingVisible) {
+            removeAll()
+        } else {
+            parent.removePopupMenuListener(this)
+        }
     }
 
     /**
      * This this method we add all the potnetial reports, but don't show them. We can do this quickly. Deciding whether
      * or not to show the reports expensive context information. Don't retrieve it until the user has explicitly asked for it.
      */
-    // I'm glad I don't drink - fr
     private addIndividualReportMenus() {
-        for (IReportModel aModel in reportModels) {
-            for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat) {
-                CreateReportAction action = new CreateReportAction(aModel, aReportFormat, ulcTableTree)
-                CreateReportMenuItem createReportMenuItem = new CreateReportMenuItem(action, this)
-                createReportMenuItem.checkVisibility()
-                add(createReportMenuItem)
+        ArrayList<IReportModel> reports = getReportModels()
+        if (reports.empty) {
+            visible = false
+        } else {
+            visible = true
+            for (IReportModel aModel in reports) {
+                for (ReportFactory.ReportFormat aReportFormat in ReportFactory.ReportFormat.values()) {
+                    CreateReportAction action = new CreateReportAction(aModel, aReportFormat, ulcTableTree)
+                    CreateReportMenuItem createReportMenuItem = new CreateReportMenuItem(action, this)
+                    createReportMenuItem.checkVisibility()
+                    add(createReportMenuItem)
+                }
             }
         }
+    }
+
+    private ArrayList<IReportModel> getReportModels() {
+        List<Class> modelsToDisplay = reportableNode.modelsToReportOn()
+        List<IReportModel> reports = new ArrayList<IReportModel>(ReportRegistry.getReportModel(modelsToDisplay))
+        reports
     }
 }
