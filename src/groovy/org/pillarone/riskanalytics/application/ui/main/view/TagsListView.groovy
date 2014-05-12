@@ -133,6 +133,8 @@ class TagsListView extends AbstractView {
         if( ! tag.isQuarterTag() ){
             return false
         }
+        // Separated this test from previous one - groovy is sometimes very uncool
+        // Problem was ! binds tigher than instanceof, and !modellingItem decays to a null-ness check.
         boolean isP14n = (modellingItem instanceof Parameterization)
         if( ! isP14n ){
             return false
