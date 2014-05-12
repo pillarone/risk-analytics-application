@@ -4,13 +4,11 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
 import com.ulcjava.base.application.tree.TreePath
 import grails.util.Holders
-import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.main.view.SelectionTreeView
 
-@CompileStatic
 abstract class AbstractSelectItemsInTreeAction<T> extends ResourceBasedAction {
 
     AbstractSelectItemsInTreeAction(String actionName) {
@@ -22,7 +20,8 @@ abstract class AbstractSelectItemsInTreeAction<T> extends ResourceBasedAction {
         if (!enabled) {
             return
         }
-        List<ItemNode> nodes = (items.collect { T item ->
+        SelectionTreeView selectionTreeView = getSelectionTreeView()
+        List<ItemNode> nodes = (items.collect { Object item ->
             TableTreeBuilderUtils.findNodeForItem(selectionTreeView.root, item)
         } - [null]) as List<ItemNode>
         if (nodes) {
