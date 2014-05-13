@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -30,7 +31,11 @@ class CancelSimulationAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
             simulationQueueView.selectedSimulations.each {
-                LOG.info("Canceling queued sim: $it")
+                String simulationName = it?.getSimulation()?.getName();
+                if(!simulationName){
+                    simulationName="<unknown>"
+                }
+                LOG.info("Canceling queued sim: $simulationName")
                 simulationQueueService.cancel(it.id)
             }
         }
