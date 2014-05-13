@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.SimulationQueueView
@@ -13,6 +15,7 @@ import javax.annotation.Resource
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class CancelSimulationAction extends ResourceBasedAction {
+    private static Log LOG = LogFactory.getLog(CancelSimulationAction)
 
     @Resource
     SimulationQueueService simulationQueueService
@@ -27,6 +30,7 @@ class CancelSimulationAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
             simulationQueueView.selectedSimulations.each {
+                LOG.info("Canceling queued sim: $it")
                 simulationQueueService.cancel(it.id)
             }
         }
