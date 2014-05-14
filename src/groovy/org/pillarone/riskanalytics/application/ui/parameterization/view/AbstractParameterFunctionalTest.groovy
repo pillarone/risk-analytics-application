@@ -8,7 +8,6 @@ import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -57,7 +56,7 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
 
         ModellingUIItem uiItem = new ParameterizationUIItem(parameterization) {
             @Override
-            IDetailView createDetailView() {
+            ParameterView createDetailView() {
                 return view
             }
         }

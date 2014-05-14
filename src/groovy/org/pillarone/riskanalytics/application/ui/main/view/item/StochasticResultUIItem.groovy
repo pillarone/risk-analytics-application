@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultView
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
@@ -10,7 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class StochasticResultUIItem extends SimulationResultUIItem {
+class StochasticResultUIItem extends SimulationResultUIItem<StochasticResultView> {
 
 
     StochasticResultUIItem(Simulation simulation) {
@@ -22,7 +21,7 @@ class StochasticResultUIItem extends SimulationResultUIItem {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
     }
 
-    IDetailView createDetailView() {
+    StochasticResultView createDetailView() {
         ResultViewModel model = viewModel
         StochasticResultView view = new StochasticResultView(model)
         model.addFunctionListener(view)

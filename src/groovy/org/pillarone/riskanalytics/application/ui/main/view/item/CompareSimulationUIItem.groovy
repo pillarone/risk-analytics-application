@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulationsView
@@ -13,7 +12,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CompareSimulationUIItem extends AbstractUIItem {
+class CompareSimulationUIItem extends AbstractUIItem<CompareSimulationsView> {
 
     List<Simulation> simulations
     final Model model
@@ -27,7 +26,7 @@ class CompareSimulationUIItem extends AbstractUIItem {
         return TabbedPaneManagerHelper.getTabTitle(Simulation)
     }
 
-    IDetailView createDetailView() {
+    CompareSimulationsView createDetailView() {
         return new CompareSimulationsView(viewModel)
     }
 

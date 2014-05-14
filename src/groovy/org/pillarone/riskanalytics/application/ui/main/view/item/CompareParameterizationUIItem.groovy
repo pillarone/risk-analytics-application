@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 import com.ulcjava.base.application.util.ULCIcon
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.CompareParameterizationsView
@@ -11,7 +10,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CompareParameterizationUIItem extends AbstractUIItem {
+class CompareParameterizationUIItem extends AbstractUIItem<CompareParameterizationsView> {
 
     private List<Parameterization> parameterizations
     final Model model
@@ -25,7 +24,7 @@ class CompareParameterizationUIItem extends AbstractUIItem {
         return TabbedPaneManagerHelper.getTabTitle(Parameterization)
     }
 
-    IDetailView createDetailView() {
+    CompareParameterizationsView createDetailView() {
         return new CompareParameterizationsView(viewModel as CompareParameterViewModel)
     }
 

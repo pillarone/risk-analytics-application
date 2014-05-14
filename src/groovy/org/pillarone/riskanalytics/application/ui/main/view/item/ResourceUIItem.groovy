@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.resource.model.ResourceViewModel
 import org.pillarone.riskanalytics.application.ui.resource.view.ResourceView
 import org.pillarone.riskanalytics.core.components.IResource
@@ -12,7 +10,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Resource
 
 @CompileStatic
-class ResourceUIItem extends ModellingUiItemWithModel {
+class ResourceUIItem extends ModellingUiItemWithModel<ResourceView> {
 
     ResourceUIItem(Resource item) {
         super(item)
@@ -31,7 +29,7 @@ class ResourceUIItem extends ModellingUiItemWithModel {
     }
 
     @Override
-    IDetailView createDetailView() {
+    ResourceView createDetailView() {
         return new ResourceView(viewModel)
     }
 

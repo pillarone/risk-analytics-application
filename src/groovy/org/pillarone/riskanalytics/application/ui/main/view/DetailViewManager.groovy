@@ -24,28 +24,19 @@ class DetailViewManager {
 
     @PreDestroy
     void closeAll() {
-        detailViewMap.values().each {
-            it.close()
-        }
-        detailViewMap.clear()
+        detailViewMap.keySet().each { close(it) }
     }
 
     IDetailView createDetailViewForItem(AbstractUIItem uiItem) {
+        Preconditions.checkNotNull(uiItem)
         //TODO we have to make a copy of the item. Otherwise it will conflict with the automated update of the navigation refactoring
         if (!uiItem.loaded) {
             uiItem.load()
         }
-        Preconditions.checkNotNull(uiItem)
         if (detailViewMap[uiItem]) {
             throw new IllegalStateException("there is already a detailview for item $uiItem. You must first close it.")
         }
         detailViewMap[uiItem] = uiItem.createDetailView()
-        return detailViewMap[uiItem]
-    }
-
-
-    IDetailView getDetailViewForItem(AbstractUIItem uiItem) {
-        Preconditions.checkNotNull(uiItem)
         return detailViewMap[uiItem]
     }
 
@@ -55,7 +46,6 @@ class DetailViewManager {
         }
         return null
     }
-
 
     void close(AbstractUIItem uiItem) {
         detailViewMap.remove(uiItem)?.close()

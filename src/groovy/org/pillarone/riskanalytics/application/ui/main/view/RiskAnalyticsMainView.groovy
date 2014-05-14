@@ -16,9 +16,9 @@ import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAct
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ChangeDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.CloseDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
@@ -213,14 +213,13 @@ class RiskAnalyticsMainView implements IModellingItemChangeListener {
     private setCurrentItem(AbstractUIItem newIem) {
         if (detailViewManager.currentUIItem != newIem) {
             detailViewManager.currentUIItem = newIem
-            updateValidationSwitchButton()
+            updateValidationSwitchButton(newIem)
             headerView.syncMenuBar()
-            windowTitle = detailViewManager.currentUIItem?.windowTitle
+            windowTitle = newIem?.windowTitle
         }
     }
 
-    private void updateValidationSwitchButton() {
-        AbstractUIItem currentItem = detailViewManager.currentUIItem
+    private void updateValidationSwitchButton(AbstractUIItem currentItem) {
         boolean shouldToggle = (currentItem instanceof ParameterizationUIItem) || (currentItem instanceof SimulationResultUIItem)
         validationSwitchButton.enabled = shouldToggle
         validationSwitchButton.selected = shouldToggle
