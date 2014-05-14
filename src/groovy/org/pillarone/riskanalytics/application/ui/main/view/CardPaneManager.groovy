@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -110,16 +111,19 @@ class CardPaneManager {
             ULCCloseableTabbedPane modelCardContent = event.closableTabbedPane
             closeCard(selectedModel, modelCardContent, closingIndex)
         }] as ITabListener)
-        Closure syncCurrentItem = { e -> selectCurrentItemFromTab(selectedModel, e.source) }
+        Closure syncCurrentItem = { e ->
+            selectCurrentItemFromTab(selectedModel)
+        }
         tabbedPane.selectionChanged = syncCurrentItem
         tabbedPane.focusGained = syncCurrentItem
         return tabbedPane
     }
 
-    public void selectCurrentItemFromTab(Model selectedModel, ULCCloseableTabbedPane modelCardContent) {
+    public void selectCurrentItemFromTab(Model selectedModel) {
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(selectedModel)]
         if (tabbedPaneManager) {
-            AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.selectedComponent)
+            ULCCloseableTabbedPane selectedPane = selectedCard as ULCCloseableTabbedPane
+            AbstractUIItem item = tabbedPaneManager.getAbstractItem(selectedPane.selectedComponent)
             riskAnalyticsEventBus.post(new ChangeDetailViewEvent(item))
         }
     }
@@ -128,9 +132,7 @@ class CardPaneManager {
         Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
-
     TabbedPaneManager getTabbedPaneManager(Model selectedModel) {
         return tabbedPaneManagers[getModelName(selectedModel)]
     }
-
 }

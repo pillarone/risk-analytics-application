@@ -9,7 +9,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class AbstractUIItem {
+abstract class AbstractUIItem<T extends IDetailView> {
 
     ModellingUIItem createNewVersion(boolean openNewVersion = true) {
         return null
@@ -31,7 +31,7 @@ abstract class AbstractUIItem {
         return []
     }
 
-    abstract IDetailView createDetailView()
+    abstract T createDetailView()
 
     abstract String createTitle()
 

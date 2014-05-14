@@ -4,12 +4,13 @@ import com.ulcjava.base.application.util.ULCIcon
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class SimulationResultUIItem extends ModellingUiItemWithModel {
+abstract class SimulationResultUIItem<T extends IDetailView> extends ModellingUiItemWithModel<T> {
 
     SimulationResultUIItem(Simulation simulation) {
         super(simulation)
@@ -17,7 +18,7 @@ abstract class SimulationResultUIItem extends ModellingUiItemWithModel {
 
     @Override
     void rename(String newName) {
-        ItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, this.item)
+        ItemNode itemNode = TableTreeBuilderUtils.findNodeForItem(navigationTableTreeModel.root as IMutableTableTreeNode, item)
         itemNode.userObject = newName
     }
 

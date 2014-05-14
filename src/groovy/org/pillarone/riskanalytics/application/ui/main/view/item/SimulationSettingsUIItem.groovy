@@ -5,7 +5,6 @@ import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
@@ -14,7 +13,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.StochasticModel
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class SimulationSettingsUIItem extends ModellingUiItemWithModel {
+class SimulationSettingsUIItem extends ModellingUiItemWithModel<SimulationConfigurationView> {
 
     SimulationSettingsUIItem(Simulation simulation) {
         super(simulation)
@@ -29,7 +28,7 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
         return UIUtils.getText(SimulationSettingsUIItem.class, stochasticModel ? "simulation" : "calculation")
     }
 
-    IDetailView createDetailView() {
+    SimulationConfigurationView createDetailView() {
         return stochasticModel ? new SimulationConfigurationView(simulationConfigurationModel) : new CalculationConfigurationView(calculationConfigurationModel)
     }
 

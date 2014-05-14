@@ -5,10 +5,11 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
-abstract class ModellingUiItemWithModel extends ModellingUIItem {
+abstract class ModellingUiItemWithModel<T extends IDetailView> extends ModellingUIItem<T> {
 
     ModellingUiItemWithModel(ModellingItem item) {
         super(item)

@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
@@ -6,6 +7,7 @@ import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFact
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.model.Model
@@ -13,10 +15,11 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class ModellingUIItem extends AbstractUIItem {
+abstract class ModellingUIItem<T extends IDetailView> extends AbstractUIItem<T> {
     private final ModellingItem item
     protected Model model
 

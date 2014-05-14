@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
@@ -23,7 +22,7 @@ import static org.pillarone.riskanalytics.core.workflow.Status.*
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class ParameterizationUIItem extends ModellingUiItemWithModel {
+class ParameterizationUIItem extends ModellingUiItemWithModel<ParameterView> {
 
     protected static final Log LOG = LogFactory.getLog(ParameterizationUIItem.class)
 
@@ -36,7 +35,7 @@ class ParameterizationUIItem extends ModellingUiItemWithModel {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
     }
 
-    IDetailView createDetailView() {
+    ParameterView createDetailView() {
         return new ParameterView(viewModel)
     }
 
