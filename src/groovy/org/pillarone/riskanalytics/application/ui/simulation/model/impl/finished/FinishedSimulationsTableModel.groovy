@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.finishe
 
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationQueueTableModel
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationRowModel
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -13,7 +14,10 @@ class FinishedSimulationsTableModel extends SimulationQueueTableModel {
     protected void sortColumnModels() {}
 
     void removeAt(int[] selected) {
-        selected.each { columnModels.remove(it) }
+        List<SimulationRowModel> toRemove = selected.collect {
+            columnModels[it]
+        }
+        columnModels.removeAll(toRemove)
         assignRowsToColumnModels()
         List<Integer> selectedAsList = selected.toList()
         fireTableRowsDeleted(selectedAsList.min(), selectedAsList.max())
