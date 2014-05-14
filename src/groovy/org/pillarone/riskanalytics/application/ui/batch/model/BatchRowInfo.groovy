@@ -2,6 +2,9 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 
 import com.google.common.base.Preconditions
 import groovy.transform.CompileStatic
+import org.joda.time.DateTime
+import org.joda.time.Period
+import org.joda.time.PeriodType
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -88,7 +91,17 @@ class BatchRowInfo {
         this.simulationProfile = simulationProfile
     }
 
+    private void updateDurationFromSimulation() {
+        DateTime start = simulation?.start
+        DateTime end = simulation?.end
+        if (start && end) {
+            Period period = new Period(start, end, PeriodType.minutes());
+            durationAsString = "${period.minutes} min"
+        }
+    }
+
     void setSimulation(Simulation simulation) {
         this.simulation = simulation
+        updateDurationFromSimulation()
     }
 }
