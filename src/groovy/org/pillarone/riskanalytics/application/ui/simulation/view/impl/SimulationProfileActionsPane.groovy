@@ -1,6 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
-import com.ulcjava.base.application.*
+import com.ulcjava.base.application.ULCBoxPane
+import com.ulcjava.base.application.ULCButton
+import com.ulcjava.base.application.ULCComboBox
+import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationProfileActionsPaneModel
@@ -8,8 +11,6 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.Ap
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.DeleteSimulationProfileAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.SaveSimulationProfileAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
-
-import static org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationProfileActionsPaneModel.ProfileItem
 
 class SimulationProfileActionsPane {
 
@@ -23,6 +24,7 @@ class SimulationProfileActionsPane {
     private ULCComboBox profiles
     private ULCButton applyButton
     private ULCButton saveButton
+    private ApplySimulationProfileAction applySimulationProfileAction
 
     SimulationProfileActionsPane(SimulationProfileActionsPaneModel model) {
         this.model = model
@@ -35,7 +37,8 @@ class SimulationProfileActionsPane {
     protected void createComponents() {
         profiles = new ULCComboBox(model.simulationProfiles)
         profiles.name = PROFILES_COMBO_BOX
-        applyButton = new ULCButton(new ApplySimulationProfileAction(this))
+        applySimulationProfileAction = new ApplySimulationProfileAction(this)
+        applyButton = new ULCButton(applySimulationProfileAction)
         applyButton.name = APPLY_BUTTON
         deleteButton = new ULCButton(new DeleteSimulationProfileAction(this))
         deleteButton.name = DELETE_BUTTON
@@ -57,6 +60,7 @@ class SimulationProfileActionsPane {
         profiles.addActionListener({ ActionEvent event ->
             updateDeleteButtonEnablingState()
         } as IActionListener)
+        profiles.addActionListener(applySimulationProfileAction)
     }
 
     protected void updateDeleteButtonEnablingState() {
