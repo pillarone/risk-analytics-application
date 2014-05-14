@@ -14,13 +14,14 @@ class BatchRowInfo {
     private final Parameterization parameterization
     private SimulationProfile simulationProfile
     private Simulation simulation
+    String durationAsString
 
     BatchRowInfo(Parameterization parameterization) {
         this.parameterization = Preconditions.checkNotNull(parameterization)
     }
 
     String getName() {
-        simulation ? simulation.nameAndVersion : parameterization.name
+        simulation ? simulation.nameAndVersion : parameterization.nameAndVersion
     }
 
     String getModelName() {

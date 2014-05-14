@@ -13,7 +13,8 @@ class SimulationRowModel extends AbstractTableRowModel<SimulationRuntimeInfo> {
             5: 'priority',
             6: 'configuredAt',
             7: 'configuredBy',
-            8: 'simulationState'
+            8: 'simulationState',
+            9: 'time'
     ] as Map<Integer, String>
 
     private static final Map<Integer, Closure<String>> COLUMN_VALUE_FACTORIES = [
@@ -25,10 +26,11 @@ class SimulationRowModel extends AbstractTableRowModel<SimulationRuntimeInfo> {
             5: { SimulationRuntimeInfo info -> info.priority?.toString() },
             6: { SimulationRuntimeInfo info -> info.configuredAt?.toString() },
             7: { SimulationRuntimeInfo info -> info.offeredBy?.username },
-            8: { SimulationRuntimeInfo info -> info.simulationState?.toString() }
+            8: { SimulationRuntimeInfo info -> info.simulationState?.toString() } ,
+            9: { SimulationRuntimeInfo info -> info.estimatedTime}
     ]
 
-    static final int COLUMN_COUNT = 9
+    static final int COLUMN_COUNT = 10
 
     SimulationRowModel(int row, AbstractTableModel tableModel, SimulationRuntimeInfo info) {
         super(row, tableModel, info, COLUMN_COUNT)
