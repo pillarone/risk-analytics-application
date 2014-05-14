@@ -86,7 +86,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         splitBetweenModelPaneAndIndependentPane.bottomComponent = modelIndependentDetailView.content
         splitBetweenModelPaneAndIndependentPane.oneTouchExpandable = true
         splitBetweenModelPaneAndIndependentPane.dividerSize = 10
-        splitBetweenModelPaneAndIndependentPane.dividerLocation = 400
+        splitBetweenModelPaneAndIndependentPane.dividerLocation = 300 // Height of the Simulation Queue area ?
         splitPane.rightComponent = splitBetweenModelPaneAndIndependentPane
 
         ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)

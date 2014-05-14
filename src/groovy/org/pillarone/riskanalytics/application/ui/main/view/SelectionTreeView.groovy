@@ -37,7 +37,7 @@ import javax.annotation.Resource
 @Component
 class SelectionTreeView {
 
-    final static int TREE_FIRST_COLUMN_WIDTH = 350
+    final static int TREE_FIRST_COLUMN_WIDTH = 390
 
     ULCFixedColumnTableTree tree
     ULCBoxPane content
