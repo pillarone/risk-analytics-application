@@ -114,7 +114,7 @@ class TagsListView extends AbstractView {
                     modellingItem.getTags().add(tag)
                     modellingItem.setChanged(true)
                 }else{
-                    //TODO add check for workflow p14n and quarter tags at ART
+
                     if( !workflowAlreadyContainsQuarterTag( modellingItem, tag ) ){
                         modellingItem.getTags().add(tag)
                         modellingItem.setChanged(true)
