@@ -121,7 +121,7 @@ public class SimulationProfileNameDialog {
     }
 
     private void callOkAction() {
-        if (okAction.call(nameInput.text)) {
+        if (okAction.call(nameInput.text?.trim())) {
             hide()
         } else {
             new I18NAlert(FAILED_TO_SAVE_SIMULATION_PROFILE).show()
@@ -129,16 +129,16 @@ public class SimulationProfileNameDialog {
     }
 
     private boolean isExistent() {
-        SimulationProfile.exists(nameInput.text, modelClass)
+        SimulationProfile.exists(nameInput.text?.trim(), modelClass)
     }
 
     private boolean isAllowed() {
-        def creator = SimulationProfile.getCreator(nameInput.text, modelClass)
+        def creator = SimulationProfile.getCreator(nameInput.text?.trim(), modelClass)
         creator ? currentUsername == creator.username : true
     }
 
     private boolean isEmpty() {
-        !nameInput.text
+        !nameInput.text?.trim()
     }
 
     private void hide() {
