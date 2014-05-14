@@ -2,6 +2,8 @@ package org.pillarone.riskanalytics.application.ui.batch.view.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
@@ -14,6 +16,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import static com.ulcjava.base.application.UlcUtilities.getWindowAncestor
 
 class CreateBatchAction extends ResourceBasedAction {
+
+    private static Log LOG = LogFactory.getLog(CreateBatchAction)
 
     private final BatchView batchView
 
@@ -28,6 +32,7 @@ class CreateBatchAction extends ResourceBasedAction {
         BatchUIItem batchUIItem = new BatchUIItem(batch)
         NodeNameDialog nameDialog = new NodeNameDialog(getWindowAncestor(batchView.content), batchUIItem)
         nameDialog.okAction = { String name ->
+            LOG.info("Creating batch: " + name)
             batch.name = name
             riskAnalyticsMainModel.openItem(null, batchUIItem)
             batch.changed = true
