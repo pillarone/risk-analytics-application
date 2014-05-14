@@ -37,7 +37,17 @@ import javax.annotation.Resource
 @Component
 class SelectionTreeView {
 
-    final static int TREE_FIRST_COLUMN_WIDTH = 390
+    static int TREE_FIRST_COLUMN_WIDTH = 390
+    // Avoid building whole app just to tweak these settings
+    //
+    static {
+        try{
+            TREE_FIRST_COLUMN_WIDTH = Integer.parseInt( System.getProperty("GUI_TREE_FIRST_COLUMN_WIDTH", "390") )
+        } catch( NumberFormatException e){
+            TREE_FIRST_COLUMN_WIDTH = 390
+        }
+
+    }
 
     ULCFixedColumnTableTree tree
     ULCBoxPane content

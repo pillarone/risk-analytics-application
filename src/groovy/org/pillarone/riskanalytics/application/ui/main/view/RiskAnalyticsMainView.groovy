@@ -42,6 +42,27 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
 
     static final String DEFAULT_CARD_NAME = 'Main'
     static final String CURRENT_ITEM_PROPERTY = 'currentItem'
+
+    private static int SIM_QUEUE_HEIGHT     = 300;  //Sorry, actually the height of the pane above the sim queue
+    private static int TOPRIGHT_PANE_HEIGHT = 600;
+    private static int TOPRIGHT_PANE_WIDTH = 600;
+
+    // Avoid building whole app just to tweak these settings
+    //
+    static {
+        TOPRIGHT_PANE_HEIGHT = setIntFromSystemProperty("GUI_TOPRIGHT_PANE_HEIGHT", 600)
+        TOPRIGHT_PANE_WIDTH  = setIntFromSystemProperty("GUI_TOPRIGHT_PANE_WIDTH",  600)
+        SIM_QUEUE_HEIGHT     = setIntFromSystemProperty("GUI_SIM_QUEUE_HEIGHT",     300)
+    }
+    static int setIntFromSystemProperty( String key, int defaultValue ){
+        try{
+            return Integer.parseInt( System.getProperty(key, ""+defaultValue) )
+        } catch( NumberFormatException e){ // Typo in configs
+            LOG.warn("System property '$key' NOT an int, defaulting to $defaultValue")
+            return defaultValue
+        }
+    }
+
     final ULCCardPane content = new ULCCardPane()
 
     //all views and main model are autowired
@@ -67,8 +88,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         layoutComponents()
         attachListeners()
     }
-    private static int TOPRIGHT_PANE_HEIGHT = 600;
-    private static int TOPRIGHT_PANE_WIDTH = 600;
+
 
     void layoutComponents() {
         ULCCardPane modelPane = cardPaneManager.cardPane
@@ -86,7 +106,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         splitBetweenModelPaneAndIndependentPane.bottomComponent = modelIndependentDetailView.content
         splitBetweenModelPaneAndIndependentPane.oneTouchExpandable = true
         splitBetweenModelPaneAndIndependentPane.dividerSize = 10
-        splitBetweenModelPaneAndIndependentPane.dividerLocation = 300 // Height of the Simulation Queue area ?
+        splitBetweenModelPaneAndIndependentPane.dividerLocation = SIM_QUEUE_HEIGHT
         splitPane.rightComponent = splitBetweenModelPaneAndIndependentPane
 
         ULCBoxPane selectionSwitchPane = new ULCBoxPane(1, 3)
