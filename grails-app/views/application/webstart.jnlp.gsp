@@ -33,7 +33,7 @@
     </resources>
 
     <application-desc main-class="org.pillarone.riskanalytics.application.environment.jnlp.P1RATJNLPLauncher">
-        <argument>url-string="${ulcEndpoint}"</argument>
+        <argument>url-string=${ulcEndpoint}</argument>
         <argument>keep-alive-interval=60</argument>
         <argument>log-level=WARNING</argument>
         <argument>ViewFactory=org.pillarone.riskanalytics.application.environment.jnlp.P1RATFrameViewFactory</argument>
