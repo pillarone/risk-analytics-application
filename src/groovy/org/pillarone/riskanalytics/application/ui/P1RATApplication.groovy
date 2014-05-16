@@ -77,11 +77,9 @@ class P1RATApplication extends Application {
         mainFrame.visible = true
         mainFrame.toFront()
         mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; windowClosing() }] as IWindowListener)
-        ModelRegistry.instance.addListener(navigationTableTreeModel.navigationTableTreeBuilder)
     }
 
     private void windowClosing() {
-        ModelRegistry.instance.removeListener(navigationTableTreeModel.navigationTableTreeBuilder)
         traceLogManager.deactivateLogging()
         ApplicationContext.terminate()
     }

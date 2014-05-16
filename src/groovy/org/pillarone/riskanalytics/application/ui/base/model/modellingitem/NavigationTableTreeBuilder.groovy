@@ -27,6 +27,9 @@ import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
+
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
@@ -42,6 +45,16 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
 
     public NavigationTableTreeBuilder() {
         root = new DefaultMutableTableTreeNode("root")
+    }
+
+    @PostConstruct
+    void initialize() {
+        ModelRegistry.instance.addListener(this)
+    }
+
+    @PreDestroy
+    void close() {
+        ModelRegistry.instance.removeListener(this)
     }
 
     void registerTableTreeModel(ITableTreeModelWithValues tableTreeModel) {
