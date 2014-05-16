@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.batch.view.action
+package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
