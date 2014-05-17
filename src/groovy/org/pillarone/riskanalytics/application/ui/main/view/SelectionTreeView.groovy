@@ -134,7 +134,7 @@ class SelectionTreeView {
         tree.rowHeaderTableTree.setRootVisible(false);
         tree.rowHeaderTableTree.showsRootHandles = true
         tree.rowHeaderTableTree.columnModel.getColumn(0).headerValue = "Name"
-        tree.rowSelectionAllowed = true
+        tree.cellSelectionEnabled = true  //temporarily revert ART-1195 (change to rowSelectionAllowed when that's fixed)
         tree.rowHeaderTableTree.getSelectionModel().setSelectionMode(ULCTreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 
         tree.getRowHeaderTableTree().expandPaths([new TreePath([navigationTableTreeModel.root] as Object[])] as TreePath[], false);
