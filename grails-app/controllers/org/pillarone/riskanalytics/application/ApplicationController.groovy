@@ -4,6 +4,8 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.plugins.GrailsPluginManager
 
 class ApplicationController {
+    private static final String RISK_ANALYTICS_APPLICATION = "riskAnalyticsApplication"
+    private static final String WEBSTART_JSP = "webstart.jsp"
     private static final String ULC_SERVER_ENDPOINT = '/ulcServerEndpoint/gate'
     private static final String DEFAULT_SESSION_PREFIX = ";jsessionid="
     private static final String SERVER_SESSION_PREFIX_KEY = "serverSessionPrefix"
@@ -12,44 +14,37 @@ class ApplicationController {
     GrailsApplication grailsApplication
 
     def webstart() {
-        List<String> clientFiles = applicationPluginPaths.collect {getClientFilesForPluginPath(it)}.flatten()
-        render(view: 'webstart.jnlp', model: [codebase: codeBase, ulcEndpoint: ulcServerEnpointUrl, clientFiles: clientFiles], contentType: "application/x-java-jnlp-file")
+        redirect(url: getWebstartUrl())
     }
 
     def applet() {
-        return [urlString: ulcServerEnpointUrl, applicationContextPaths: applicationPluginPaths]
+        return [urlString: getUlcServerEnpointUrl(), applicationContextPath: getApplicationPluginPath()]
     }
 
-    private List<String> getApplicationPluginPaths() {
-        List<String> plugins = grailsApplication.config.clientLibPlugins
-        plugins.collect {
-            pluginManager.getPluginPath(it)
-        }
+    private String getWebstartUrl() {
+        resource(dir: getApplicationPluginPath(), file: WEBSTART_JSP, absolute: true)
     }
 
-    private List getClientFilesForPluginPath(String pluginDir) {
-        List<String> archive = []
-        File appLibDir = new File(servletContext.getRealPath("${pluginDir}/lib"))
-        for (fileName in appLibDir.list()) {
-            archive << "${codeBase}${pluginDir}/lib/${fileName}"
-        }
-        archive
-    }
-
-    private String getCodeBase() {
-        grailsApplication.config.grails.serverURL
+    private String getApplicationPluginPath() {
+        pluginManager.getPluginPath(RISK_ANALYTICS_APPLICATION)
     }
 
     private String getUlcServerEnpointUrl() {
-        StringBuilder alternative = new StringBuilder(codeBase)
-        alternative.append(ULC_SERVER_ENDPOINT)
-        alternative.append(getSessionIdPostFix())
-        alternative.toString()
+        StringBuilder builder = new StringBuilder()
+        builder.append(request.getScheme())
+        builder.append('://')
+        builder.append(request.getServerName())
+        builder.append(':')
+        builder.append(request.getServerPort())
+        builder.append(request.getContextPath())
+        builder.append(ULC_SERVER_ENDPOINT)
+        builder.append(getSessionIdPostFix())
+        builder.toString()
     }
 
     private String getSessionIdPostFix() {
         Map grailsConfig = grailsApplication.config.flatten()
-        String sessionPrefix = grailsConfig.containsKey(SERVER_SESSION_PREFIX_KEY) ? (String) grailsConfig[SERVER_SESSION_PREFIX_KEY] : DEFAULT_SESSION_PREFIX;
-        sessionPrefix + session.id
+        String sessionPrefix = grailsConfig.containsKey(SERVER_SESSION_PREFIX_KEY) ? (String) grailsConfig.get(SERVER_SESSION_PREFIX_KEY) : DEFAULT_SESSION_PREFIX;
+        sessionPrefix + session.getId()
     }
 }
