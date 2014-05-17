@@ -32,11 +32,11 @@ class BatchNode extends ItemNode implements IReportableNode {
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu batchesNodePopUpMenu = new ULCPopupMenu()
         batchesNodePopUpMenu.name = BATCHES_NODE_POP_UP_MENU
-        batchesNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
-        batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RunBatchAction(tree, riskAnalyticsMainModel)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree)))
+        batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RunBatchAction(tree)))
         batchesNodePopUpMenu.addSeparator()
-        batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
-        batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
+        batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree)))
+        batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
         addReportMenus(batchesNodePopUpMenu, tree, true)
         return batchesNodePopUpMenu
     }

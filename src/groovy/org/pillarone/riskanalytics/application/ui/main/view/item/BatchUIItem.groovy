@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
@@ -17,11 +16,6 @@ class BatchUIItem extends ModellingUIItem {
     @Override
     NavigationTableTreeModel getNavigationTableTreeModel() {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
-    }
-
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     BatchRunService getBatchRunService() {

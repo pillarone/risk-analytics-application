@@ -16,7 +16,6 @@ import org.pillarone.riskanalytics.application.ui.base.action.TreeCollapser
 import org.pillarone.riskanalytics.application.ui.base.action.TreeExpander
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.*
@@ -38,8 +37,8 @@ class CompareSimulationsView extends AbstractModellingFunctionView implements IC
 
     public static int space = 3
 
-    CompareSimulationsView(CompareSimulationsViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model, mainModel)
+    CompareSimulationsView(CompareSimulationsViewModel model) {
+        super(model)
         model.addFunctionListener(this)
 
     }

@@ -6,6 +6,8 @@ import com.ulcjava.base.application.util.Dimension
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -26,7 +28,6 @@ class OpenItemDialog {
     private ULCWindow parent
     ULCTableTree tree
     Model model
-    RiskAnalyticsMainModel mainModel
     ULCDialog dialog
     ModellingUIItem modellingUIItem
 
@@ -37,13 +38,13 @@ class OpenItemDialog {
     private Dimension buttonDimension = new Dimension(160, 20)
 
     Closure closeAction = { event -> dialog.visible = false; dialog.dispose() }
+    private final RiskAnalyticsEventBus riskAnalyticsEventBus
 
-
-    public OpenItemDialog(ULCTableTree tree, Model model, RiskAnalyticsMainModel mainModel, ModellingUIItem modellingUIItem) {
+    public OpenItemDialog(ULCTableTree tree, Model model, RiskAnalyticsEventBus riskAnalyticsEventBus, ModellingUIItem modellingUIItem) {
+        this.riskAnalyticsEventBus = riskAnalyticsEventBus
         this.tree = tree
         this.model = model
         this.modellingUIItem = modellingUIItem
-        this.mainModel = mainModel
     }
 
     public void init() {
@@ -101,14 +102,14 @@ class OpenItemDialog {
         readOnlyButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
             LOG.info("Opening ${modellingUIItem.nameAndVersion} read-only.")
-            mainModel.notifyOpenDetailView(modellingUIItem)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(modellingUIItem))
         }] as IActionListener)
 
         deleteDependingResultsButton.addActionListener([actionPerformed: { ActionEvent event ->
             closeAction.call()
             LOG.info("Deleting depending results of ${modellingUIItem.nameAndVersion}")
             if (modellingUIItem.deleteDependingResults()) {
-                mainModel.notifyOpenDetailView(modellingUIItem)
+                riskAnalyticsEventBus.post(new OpenDetailViewEvent(modellingUIItem))
             } else {
                 new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
             }

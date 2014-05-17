@@ -1,8 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.util.ULCIcon
-import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.CompareSimulationsView
@@ -10,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -23,20 +23,16 @@ class CompareSimulationUIItem extends AbstractUIItem {
         this.simulations = simulations
     }
 
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
-    }
-
     String createTitle() {
         return TabbedPaneManagerHelper.getTabTitle(Simulation)
     }
 
     IDetailView createDetailView() {
-        return new CompareSimulationsView(viewModel, riskAnalyticsMainModel)
+        return new CompareSimulationsView(viewModel)
     }
 
     private CompareSimulationsViewModel getViewModel() {
-        new CompareSimulationsViewModel(this.model, ModelStructure.getStructureForModel(this.model.class), simulations)
+        new CompareSimulationsViewModel(model, ModelStructure.getStructureForModel(model.class), simulations)
     }
 
     @Override

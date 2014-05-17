@@ -6,8 +6,8 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
@@ -34,7 +34,7 @@ class CreateBatchAction extends ResourceBasedAction {
         nameDialog.okAction = { String name ->
             LOG.info("Creating batch: " + name)
             batch.name = name
-            riskAnalyticsMainModel.notifyOpenDetailView(batchUIItem)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(batchUIItem))
             batch.changed = true
         }
         nameDialog.show()
@@ -42,10 +42,6 @@ class CreateBatchAction extends ResourceBasedAction {
 
     private BatchRunService getBatchRunService() {
         Holders.grailsApplication.mainContext.getBean('batchRunService', BatchRunService)
-    }
-
-    private RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     private List<Parameterization> getParameterizations() {

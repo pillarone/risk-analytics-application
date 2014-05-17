@@ -8,7 +8,7 @@ import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.ui.base.model.ModelListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNameListModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationVersionsListModel
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.OutputStrategyComboBoxModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationNameListModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.ResultConfigurationVersionsListModel

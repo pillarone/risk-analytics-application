@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.comment
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.event.KeyEvent
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 import java.awt.event.InputEvent
 import models.core.CoreModel
@@ -11,7 +10,6 @@ import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
-import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -55,7 +53,7 @@ class SearchCommentViewTests extends AbstractSimpleFunctionalTest {
         parameterization.addComment(comment)
         parameterization.save()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        ParameterView parameterView = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
+        ParameterView parameterView = new ParameterView(parameterViewModel)
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

@@ -1,11 +1,11 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.CalculationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.CalculationConfigurationView
@@ -25,11 +25,6 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
     }
 
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
-    }
-
     String createTitle() {
         return UIUtils.getText(SimulationSettingsUIItem.class, stochasticModel ? "simulation" : "calculation")
     }
@@ -43,14 +38,14 @@ class SimulationSettingsUIItem extends ModellingUiItemWithModel {
     }
 
     private CalculationConfigurationModel getCalculationConfigurationModel() {
-        CalculationConfigurationModel model = new CalculationConfigurationModel(model.class, riskAnalyticsMainModel)
+        CalculationConfigurationModel model = new CalculationConfigurationModel(model.class)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
         return model
     }
 
     private SimulationConfigurationModel getSimulationConfigurationModel() {
-        SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class, riskAnalyticsMainModel)
+        SimulationConfigurationModel model = new SimulationConfigurationModel(this.model.class)
         model.settingsPaneModel.selectedParameterization = item.parameterization
         model.settingsPaneModel.selectedResultConfiguration = item.template
         return model

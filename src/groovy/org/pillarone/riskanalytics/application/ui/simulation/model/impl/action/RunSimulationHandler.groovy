@@ -1,8 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.action
+
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.WindowEvent
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.CloseDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
@@ -16,6 +20,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.transaction.TransactionStatus
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -62,7 +67,7 @@ class RunSimulationHandler {
 
         } else if (value.equals(alert.secondButtonLabel)) {
             //create a new version
-            List<ModellingItem> newItems = createNewVersion(itemModel, items)
+            List<ModellingItem> newItems = createNewVersion(items)
             if (newItems && newItems.size() == 2) {
                 model.simulation.parameterization = newItems[0]
                 model.simulation.template = newItems[1]
@@ -136,7 +141,7 @@ class RunSimulationHandler {
      * @param items list of modellingItem, the first item is p14n and the second configuration
      * @return
      */
-    protected List<ModellingItem> createNewVersion(Model itemModel, List<ModellingItem> items) {
+    protected List<ModellingItem> createNewVersion(List<ModellingItem> items) {
         List<ModellingItem> newItems = []
         SimulationRun.withTransaction { TransactionStatus transactionStatus ->
             for (ModellingItem item : items) {
@@ -149,12 +154,16 @@ class RunSimulationHandler {
                     } else {
                         newItems << modellingUIItem.createNewVersion(false).item
                     }
-                    model.mainModel.notifyCloseDetailView(modellingUIItem)
+                    riskAnalyticsEventBus.post(new CloseDetailViewEvent(modellingUIItem))
                 } else
                     newItems << item
             }
         }
         return newItems
+    }
+
+    private RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     private Model getItemModel(ModellingItem item) {

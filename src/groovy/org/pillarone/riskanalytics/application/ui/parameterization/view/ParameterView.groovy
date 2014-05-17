@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
-
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
@@ -8,7 +7,6 @@ import org.pillarone.riskanalytics.application.ui.base.view.AbstractParameteriza
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
 import org.pillarone.riskanalytics.application.ui.main.action.AddDynamicSubComponent
 import org.pillarone.riskanalytics.application.ui.main.action.RemoveDynamicSubComponentAction
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -16,8 +14,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 class ParameterView extends AbstractParameterizationTreeView implements NavigationListener {
 
 
-    ParameterView(ParameterViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model, mainModel)
+    ParameterView(ParameterViewModel model) {
+        super(model)
         model.addNavigationListener(this)
     }
 

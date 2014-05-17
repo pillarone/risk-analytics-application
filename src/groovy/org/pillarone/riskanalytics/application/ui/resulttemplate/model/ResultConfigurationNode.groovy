@@ -22,15 +22,15 @@ class ResultConfigurationNode extends ItemNode {
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu resultConfigurationNodePopUpMenu = new ULCPopupMenu()
         resultConfigurationNodePopUpMenu.name = RESULT_CONFIGURATION_NODE_POP_UP_MENU
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
-        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
-        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree)))
+        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new SaveAsAction(tree)))
+        resultConfigurationNodePopUpMenu.add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree)))
         resultConfigurationNodePopUpMenu.addSeparator()
-        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
+        resultConfigurationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
         return resultConfigurationNodePopUpMenu
     }
 }

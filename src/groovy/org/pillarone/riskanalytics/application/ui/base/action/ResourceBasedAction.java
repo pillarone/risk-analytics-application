@@ -2,8 +2,10 @@ package org.pillarone.riskanalytics.application.ui.base.action;
 
 import com.ulcjava.base.application.ApplicationContext;
 import com.ulcjava.base.application.util.ULCIcon;
-import org.pillarone.riskanalytics.application.util.LocaleResources;
+import grails.util.Holders;
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus;
 import org.pillarone.riskanalytics.application.ui.util.UIUtils;
+import org.pillarone.riskanalytics.application.util.LocaleResources;
 
 import java.util.ResourceBundle;
 
@@ -78,6 +80,10 @@ public abstract class ResourceBasedAction extends ExceptionSafeAction {
 
     protected static void putAction(Class key, ResourceBasedAction instance) {
         ApplicationContext.setAttribute(key.getName(), instance);
+    }
+
+    protected final RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        return Holders.getGrailsApplication().getMainContext().getBean("riskAnalyticsEventBus", RiskAnalyticsEventBus.class);
     }
 
     @Override

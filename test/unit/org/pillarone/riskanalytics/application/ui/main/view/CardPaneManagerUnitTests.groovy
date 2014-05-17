@@ -1,19 +1,34 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
+import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
 import models.application.ApplicationModel
 import models.core.CoreModel
-import org.pillarone.riskanalytics.application.ui.AbstractP1RATTestCase
+import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.core.model.Model
 
-class CardPaneManagerUnitTests extends AbstractP1RATTestCase {
+@TestMixin(GrailsUnitTestMixin)
+@Mixin(P1UnitTestMixin)
+class CardPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
+
 
     CardPaneManager cardPaneManager
 
     @Override
+    void start() {
+        initGrailsApplication()
+        defineBeans {
+            riskAnalyticsEventBus(RiskAnalyticsEventBus)
+        }
+        inTestFrame(createContentPane())
+    }
+
     ULCComponent createContentPane() {
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        cardPaneManager = new CardPaneManager(riskAnalyticsMainModel: mainModel)
+        cardPaneManager = new CardPaneManager()
         def content = new ULCBoxPane()
         content.add(cardPaneManager.cardPane)
         Model core = new CoreModel()

@@ -13,13 +13,12 @@ import org.pillarone.riskanalytics.application.ui.extension.ComponentCreator
 import org.pillarone.riskanalytics.application.ui.extension.WindowRegistry
 import org.pillarone.riskanalytics.application.ui.main.action.CommentsSwitchAction
 import org.pillarone.riskanalytics.application.ui.main.action.ToggleSplitPaneAction
-import org.pillarone.riskanalytics.application.ui.main.model.IRiskAnalyticsModelListener
-import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ChangeDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.CloseDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.view.item.*
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
@@ -41,12 +40,11 @@ import static com.ulcjava.base.shared.IDefaults.*
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
-class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingItemChangeListener {
+class RiskAnalyticsMainView implements IModellingItemChangeListener {
 
     private static final Log LOG = LogFactory.getLog(RiskAnalyticsMainView)
 
     static final String DEFAULT_CARD_NAME = 'Main'
-    static final String CURRENT_ITEM_PROPERTY = 'currentItem'
 
     private static int SIM_QUEUE_HEIGHT     = 300;  //Sorry, actually the height of the pane above the sim queue
     private static int TOPRIGHT_PANE_HEIGHT = 600;
@@ -80,7 +78,9 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     @Resource
     ModelIndependentDetailView modelIndependentDetailView
     @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
+    DetailViewManager detailViewManager
+    @Resource
+    RiskAnalyticsEventBus riskAnalyticsEventBus
     @Resource(name = 'ulcApplicationContext')
     ApplicationContext applicationContext
 
@@ -92,14 +92,45 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     void initialize() {
         layoutComponents()
         attachListeners()
+        riskAnalyticsEventBus.register(this)
     }
 
     @PreDestroy
     void close() {
-        riskAnalyticsMainModel.unregister(this)
+        riskAnalyticsEventBus.unregister(this)
     }
 
+    @Subscribe
+    void closeDetailViewIfItemRemoved(ModellingItemEvent event) {
+        if (event.eventType == CacheItemEvent.EventType.REMOVED) {
+            riskAnalyticsEventBus.post(new CloseDetailViewEvent(UIItemFactory.createItem(event.modellingItem)))
+        }
+    }
 
+    @Subscribe
+    void closeDetailView(CloseDetailViewEvent event) {
+        TabbedPaneManager tabbedPaneManager = cardPaneManager.getTabbedPaneManager(event.uiItem.model)
+        if (tabbedPaneManager) {
+            tabbedPaneManager.removeTab(event.uiItem)
+            headerView.syncMenuBar()
+        }
+    }
+
+    @Subscribe
+    void changedDetailView(ChangeDetailViewEvent event) {
+        headerView.syncMenuBar()
+        currentItem = event.uiItem
+    }
+
+    @Subscribe
+    void openDetailView(OpenDetailViewEvent event) {
+        cardPaneManager.openItem(event.uiItem)
+        //todo notify Enabler instead of syncMenuBar
+        headerView.syncMenuBar()
+        //update window menu
+        modelAdded(event.uiItem.model)
+        currentItem = event.uiItem
+    }
 
     void layoutComponents() {
         ULCCardPane modelPane = cardPaneManager.cardPane
@@ -126,7 +157,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
         navigationSwitchButton.selected = true
         selectionSwitchPane.add(BOX_LEFT_TOP, navigationSwitchButton);
 
-        validationSplitPaneAction = new CommentsSwitchAction(riskAnalyticsMainModel, UIUtils.getText(this.class, "ValidationsAndComments"))
+        validationSplitPaneAction = new CommentsSwitchAction(UIUtils.getText(this.class, "ValidationsAndComments"))
         validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
         validationSwitchButton.selected = false
         validationSwitchButton.enabled = false
@@ -151,40 +182,9 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     void attachListeners() {
         content.registerKeyboardAction(navigationSplitPaneAction, KeyStroke.getKeyStroke(VK_N, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
         content.registerKeyboardAction(validationSplitPaneAction, KeyStroke.getKeyStroke(VK_V, CTRL_DOWN_MASK + SHIFT_DOWN_MASK), WHEN_IN_FOCUSED_WINDOW)
-        riskAnalyticsMainModel.addModelListener(this)
-        riskAnalyticsMainModel.register(this)
         headerView.navigationBarTopPane.addFilterChangedListener([filterChanged: { FilterDefinition filter ->
             selectionTreeView.filterTree(filter)
         }] as IFilterChangedListener)
-    }
-
-    void openDetailView(AbstractUIItem item) {
-        cardPaneManager.openItem(item)
-        //todo notify Enabler instead of syncMenuBar
-        headerView.syncMenuBar()
-        //update window menu
-        modelAdded(item.model)
-        currentItem = item
-    }
-
-    @Subscribe
-    void closeDetailViewIfItemRemoved(ModellingItemEvent event) {
-        if (event.eventType == CacheItemEvent.EventType.REMOVED) {
-            closeDetailView(UIItemFactory.createItem(event.modellingItem))
-        }
-    }
-
-    void closeDetailView(AbstractUIItem abstractUIItem) {
-        TabbedPaneManager tabbedPaneManager = cardPaneManager.getTabbedPaneManager(abstractUIItem.model)
-        if (tabbedPaneManager) {
-            tabbedPaneManager.removeTab(abstractUIItem)
-            headerView.syncMenuBar()
-        }
-    }
-
-    void changedDetailView(AbstractUIItem item) {
-        headerView.syncMenuBar()
-        currentItem = item
     }
 
     void modelAdded(Model model) {
@@ -201,7 +201,7 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     }
 
     void itemChanged(ModellingItem item) {
-        AbstractUIItem currentItem = riskAnalyticsMainModel.currentItem
+        AbstractUIItem currentItem = detailViewManager.currentUIItem
         if (currentItem && (currentItem instanceof ModellingUIItem) && currentItem.item == item) {
             headerView.syncMenuBar()
         }
@@ -211,16 +211,16 @@ class RiskAnalyticsMainView implements IRiskAnalyticsModelListener, IModellingIt
     }
 
     private setCurrentItem(AbstractUIItem newIem) {
-        if (riskAnalyticsMainModel.currentItem != newIem) {
-            riskAnalyticsMainModel.currentItem = newIem
+        if (detailViewManager.currentUIItem != newIem) {
+            detailViewManager.currentUIItem = newIem
             updateValidationSwitchButton()
             headerView.syncMenuBar()
-            windowTitle = riskAnalyticsMainModel.currentItem?.windowTitle
+            windowTitle = detailViewManager.currentUIItem?.windowTitle
         }
     }
 
     private void updateValidationSwitchButton() {
-        AbstractUIItem currentItem = riskAnalyticsMainModel.currentItem
+        AbstractUIItem currentItem = detailViewManager.currentUIItem
         boolean shouldToggle = (currentItem instanceof ParameterizationUIItem) || (currentItem instanceof SimulationResultUIItem)
         validationSwitchButton.enabled = shouldToggle
         validationSwitchButton.selected = shouldToggle

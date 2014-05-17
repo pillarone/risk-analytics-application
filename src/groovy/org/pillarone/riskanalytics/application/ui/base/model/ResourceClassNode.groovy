@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.base.model
-
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
@@ -8,7 +7,6 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.main.action.CreateDefaultResourceAction
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 @CompileStatic
 class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
@@ -20,13 +18,11 @@ class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigati
 
     String name
     Class resourceClass
-    RiskAnalyticsMainModel mainModel
 
-    ResourceClassNode(String name, Class resourceClass, RiskAnalyticsMainModel mainModel) {
+    ResourceClassNode(String name, Class resourceClass) {
         super([name] as Object[])
         this.name = name
         this.resourceClass = resourceClass
-        this.mainModel = mainModel
     }
 
     Font getFont(String fontName, int fontSize) {
@@ -39,7 +35,7 @@ class ResourceClassNode extends DefaultMutableTableTreeNode implements INavigati
 
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu menu = new ULCPopupMenu()
-        menu.add(new ULCMenuItem(new CreateDefaultResourceAction(tree, mainModel)))
+        menu.add(new ULCMenuItem(new CreateDefaultResourceAction(tree)))
         return menu
     }
 

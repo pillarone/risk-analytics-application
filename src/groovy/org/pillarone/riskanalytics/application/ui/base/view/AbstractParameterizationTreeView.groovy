@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.view
+
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
@@ -17,7 +18,6 @@ import org.pillarone.riskanalytics.application.ui.comment.action.InsertCommentAc
 import org.pillarone.riskanalytics.application.ui.comment.action.ShowCommentsAction
 import org.pillarone.riskanalytics.application.ui.comment.model.CommentFilter
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.action.TabStarter
 import org.pillarone.riskanalytics.application.ui.parameterization.model.*
 import org.pillarone.riskanalytics.application.ui.parameterization.view.*
@@ -32,8 +32,8 @@ abstract class AbstractParameterizationTreeView extends AbstractModellingTreeVie
     Map commentFilters
 
 
-    AbstractParameterizationTreeView(AbstractParametrizedViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model, mainModel)
+    AbstractParameterizationTreeView(AbstractParametrizedViewModel model) {
+        super(model)
         commentFilters = [:]
     }
 

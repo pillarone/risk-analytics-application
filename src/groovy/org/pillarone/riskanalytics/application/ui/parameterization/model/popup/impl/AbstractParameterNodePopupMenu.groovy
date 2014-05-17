@@ -5,10 +5,10 @@ import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.main.action.*
-//import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
+
+//import org.pillarone.riskanalytics.application.ui.main.view.CompareParameterizationMenuItem
 //import org.pillarone.riskanalytics.application.ui.main.view.OpenExternalMenuItem
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 
 /**
@@ -21,33 +21,33 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
     public AbstractParameterNodePopupMenu(ULCTableTree tree, ParameterizationNode node) {
         super();
         name = "parameterNodePopUpMenu";
-        add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)));
-        add(new EnabledCheckingMenuItem(new SimulationAction(tree, riskAnalyticsMainModel))); //PMO-2764
+        add(new ULCMenuItem(new OpenItemAction(tree)));
+        add(new EnabledCheckingMenuItem(new SimulationAction(tree))); //PMO-2764
 
         //External link
-        add(new EnabledCheckingMenuItem(new OpenTransactionLinkAction(tree, riskAnalyticsMainModel)));
+        add(new EnabledCheckingMenuItem(new OpenTransactionLinkAction(tree)));
         addSeparator();
-        add(new EnabledCheckingMenuItem(new CompareParameterizationsAction(tree, riskAnalyticsMainModel)));
+        add(new EnabledCheckingMenuItem(new CompareParameterizationsAction(tree)));
 
-        add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)));
+        add(new ULCMenuItem(new TagsAction(tree)));
 
         Boolean b = ((Boolean) Holders.grailsApplication?.config?.getProperty("useSetFilterToSelectionPopupMenu")) ?: Boolean.FALSE;
         if (b) {
-            add(new ULCMenuItem(new SetFilterToSelection(tree, riskAnalyticsMainModel)));
+            add(new ULCMenuItem(new SetFilterToSelection(tree)));
         }
         addSeparator();
         if (hasRenameAction()){
-            add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))); //PMO-2764
+            add(new EnabledCheckingMenuItem(new RenameAction(tree))); //PMO-2764
         }
-        add(new EnabledCheckingMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)));
+        add(new EnabledCheckingMenuItem(new SaveAsAction(tree)));
         if (hasCreateNewMajorVersionAction()){
-            add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel))); //PMO-2764
+            add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree))); //PMO-2764
         }
-        add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)));
-        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, riskAnalyticsMainModel, 'ImportFromExcelAdditional')));
+        add(new ULCMenuItem(new ExportItemAction(tree)));
+        add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, 'ImportFromExcelAdditional')));
         addSeparator();
-        add(new ULCMenuItem(new CreateBatchAction(tree, riskAnalyticsMainModel)))
-        add(new EnabledCheckingMenuItem(new AddToOpenBatchAction(tree, riskAnalyticsMainModel)))
+        add(new ULCMenuItem(new CreateBatchAction(tree)))
+        add(new EnabledCheckingMenuItem(new AddToOpenBatchAction(tree)))
         //Concrete subclasses add menus appropriate to current state.
         //Eg the InReviewPopupMenu adds menu items for send to production and reject workflow.
         //(Like a 'statemachine' encoded in class diagram, fixed at compile time)
@@ -57,12 +57,8 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
         //reach here on first opening of Parameterizations subtree in gui, hits 4 times for different pns.
         if (hasDeleteAction()) {
             addSeparator();
-            add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)));
+            add(new ULCMenuItem(new DeleteAction(tree)));
         }
-    }
-
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     protected abstract boolean hasRenameAction();

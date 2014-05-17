@@ -10,7 +10,6 @@ import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -42,7 +41,7 @@ class MultiDimensionalParamViewTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationStructure'))
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        ParameterView view = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
+        ParameterView view = new ParameterView(parameterViewModel)
         view.model.treeModel.root.childCount.times {
             view.tree.expandPath new TreePath([view.model.treeModel.root, view.model.treeModel.root.getChildAt(it)] as Object[])
         }

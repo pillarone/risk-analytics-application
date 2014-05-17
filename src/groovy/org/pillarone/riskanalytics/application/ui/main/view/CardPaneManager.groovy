@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.canoo.ulc.detachabletabbedpane.server.ITabListener
 import com.canoo.ulc.detachabletabbedpane.server.TabEvent
 import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
@@ -10,15 +9,16 @@ import com.ulcjava.base.application.ULCTabbedPane
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ChangeDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-
-import javax.annotation.Resource
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
@@ -27,9 +27,8 @@ class CardPaneManager {
 
     ULCCardPane cardPane = new ULCCardPane()
     private Map<String, TabbedPaneManager> tabbedPaneManagers = [:]
-    @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
-    public static final String NO_MODEL = "NO_MODEL"
+
+    static final String NO_MODEL = "NO_MODEL"
 
     /**
      * Creates a new card for the given model.
@@ -121,9 +120,14 @@ class CardPaneManager {
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(selectedModel)]
         if (tabbedPaneManager) {
             AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.selectedComponent)
-            riskAnalyticsMainModel.notifyChangedDetailView(item)
+            riskAnalyticsEventBus.post(new ChangeDetailViewEvent(item))
         }
     }
+
+    RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
+    }
+
 
     TabbedPaneManager getTabbedPaneManager(Model selectedModel) {
         return tabbedPaneManagers[getModelName(selectedModel)]

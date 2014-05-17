@@ -12,7 +12,6 @@ import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingTre
 import org.pillarone.riskanalytics.application.ui.base.view.CompareComponentNodeTableTreeNodeRenderer
 import org.pillarone.riskanalytics.application.ui.base.view.CompareParameterizationRenderer
 import org.pillarone.riskanalytics.application.ui.base.view.PropertiesView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.SelectionTracker
@@ -26,8 +25,8 @@ public class CompareParameterizationsView extends AbstractModellingTreeView {
     ULCCloseableTabbedPane tabbedPane
     PropertiesView propertiesView
 
-    public CompareParameterizationsView(CompareParameterViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model, mainModel);
+    CompareParameterizationsView(CompareParameterViewModel model) {
+        super(model);
     }
 
     @Override

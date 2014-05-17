@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow
 
-import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.UserContext
@@ -33,8 +32,8 @@ class StatusNonePopupMenu extends ParameterizationPopupMenu {
         if (UserContext.hasCurrentUser()) {
             Boolean transactionsEnabled = (Boolean) Holders.grailsApplication.config.getProperty("transactionsEnabled");
             if (transactionsEnabled) {
-                add(new EnabledCheckingMenuItem(new ChooseDealAction(tree, riskAnalyticsMainModel)))
-                add(new EnabledCheckingMenuItem(new StartWorkflowAction(tree, riskAnalyticsMainModel)))
+                add(new EnabledCheckingMenuItem(new ChooseDealAction(tree)))
+                add(new EnabledCheckingMenuItem(new StartWorkflowAction(tree)))
                 return true
             }
         }
