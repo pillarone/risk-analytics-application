@@ -60,6 +60,7 @@ class CreateReportMenuItem extends ULCMenuItem implements IPopupMenuListener {
     }
 
     void checkVisibility() {
+        @Override
         CreateReportAction action = (CreateReportAction) getAction()
         IReportData reportData = action.getReportData()
         IReportModel model = action.getReportModel()
