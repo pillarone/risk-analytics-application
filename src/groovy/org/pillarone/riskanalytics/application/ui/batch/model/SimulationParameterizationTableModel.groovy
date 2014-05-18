@@ -8,7 +8,6 @@ import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.item.Batch
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
@@ -52,7 +51,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
         ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(simulationRuntimeInfoListener)
     }
 
-    void close() {
+    void destroy() {
         ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(simulationRuntimeInfoListener)
         simulationRuntimeInfoListener = null
     }
@@ -86,20 +85,20 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
             return []
         }
         Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
-        batch.parameterizations.collect { Parameterization parameterization ->
-            BatchRowInfo info = new BatchRowInfo(parameterization)
-            Simulation simulation = batchRunService.findSimulation(batch, parameterization)
+        batch.parameterizations.collect {
+            BatchRowInfo info = new BatchRowInfo(it)
+            Simulation simulation = batchRunService.findSimulation(batch, it)
             info.simulation = simulation
-            info.simulationProfile = byModelClass[parameterization.modelClass]
+            info.simulationProfile = byModelClass[it.modelClass]
             info
         }
     }
 
     void simulationProfileNameChanged() {
         Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
-        backedList.each { BatchRowInfoRowModel infoRowModel ->
-            infoRowModel.object.simulationProfile = byModelClass[infoRowModel.object.modelClass]
-            infoRowModel.update()
+        backedList.each {
+            it.object.simulationProfile = byModelClass[it.object.modelClass]
+            it.update()
         }
     }
 
@@ -153,8 +152,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
             LOG.debug("trying to update info $info")
             if (columnModel) {
                 LOG.debug("updating")
-                columnModel.object.simulation = info.simulation
-                columnModel.object.durationAsString = info.estimatedTime
+                columnModel.object.simulationRuntimeInfo = info
                 columnModel.update()
             }
         }

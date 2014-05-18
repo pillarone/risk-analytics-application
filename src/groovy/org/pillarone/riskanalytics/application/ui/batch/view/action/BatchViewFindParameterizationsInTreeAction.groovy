@@ -1,19 +1,17 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
+package org.pillarone.riskanalytics.application.ui.batch.view.action
 
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-class SelectParameterizationsInTreeAction extends AbstractSelectItemsInTreeAction<Parameterization> {
-    static final String ACTION_NAME = 'FindParameterizationsInTree'
+class BatchViewFindParameterizationsInTreeAction extends AbstractFindParameterizationsInTreeAction {
     private final BatchView batchView
 
-    SelectParameterizationsInTreeAction(BatchView batchView) {
-        super(ACTION_NAME)
+    BatchViewFindParameterizationsInTreeAction(BatchView batchView) {
         this.batchView = batchView
     }
 
     @Override
-    protected List<Parameterization> getItems() {
+    protected List<Parameterization> getParameterizations() {
         batchView.selectedBatchRowInfos.parameterization
     }
 

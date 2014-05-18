@@ -1,20 +1,17 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
+package org.pillarone.riskanalytics.application.ui.batch.view.action
 
-import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
-@CompileStatic
-class BatchViewOpenItemAction extends AbstractOpenItemAction<Parameterization> {
+class BatchViewOpenParameterizationAction extends AbstractOpenParameterizationAction {
     private final BatchView batchView
 
-    BatchViewOpenItemAction(BatchView batchView) {
-        super('BatchOpenParameterizationAction')
+    BatchViewOpenParameterizationAction(BatchView batchView) {
         this.batchView = batchView
     }
 
     @Override
-    protected Parameterization getModellingItem() {
+    protected Parameterization getParameterization() {
         batchView.selectedBatchRowInfos.first().parameterization
     }
 

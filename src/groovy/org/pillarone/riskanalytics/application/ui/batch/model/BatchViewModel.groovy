@@ -35,8 +35,8 @@ class BatchViewModel {
         simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(batchRunService.simulationProfileNames)
     }
 
-    void close() {
-        simulationParameterizationTableModel.close()
+    void destroy() {
+        simulationParameterizationTableModel.destroy()
     }
 
     void setBatch(Batch batch) {

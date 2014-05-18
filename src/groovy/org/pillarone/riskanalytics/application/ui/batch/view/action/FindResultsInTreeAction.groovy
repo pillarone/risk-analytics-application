@@ -1,20 +1,16 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
+package org.pillarone.riskanalytics.application.ui.batch.view.action
 
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-class SelectSimulationsInTreeAction extends AbstractSelectItemsInTreeAction<Simulation> {
-
-    static final String ACTION_NAME = 'FindResultsInTree'
-
+class FindResultsInTreeAction extends AbstractFindResultsInTreeAction {
     private final BatchView batchView
 
-    SelectSimulationsInTreeAction(BatchView batchView) {
-        super(ACTION_NAME)
+    FindResultsInTreeAction(BatchView batchView) {
         this.batchView = batchView
     }
 
-    protected List<Simulation> getItems() {
+    protected List<Simulation> getSimulations() {
         batchView.selectedBatchRowInfos.simulation - [null]
     }
 

@@ -7,8 +7,9 @@ import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
-import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.application.ui.batch.action.*
+import com.ulcjava.base.application.table.DefaultTableHeaderCellRenderer
+import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfoRowModel
+import org.pillarone.riskanalytics.application.ui.batch.view.action.*
 
 class BatchTableRenderer extends DefaultTableCellRenderer {
     private ULCPopupMenu nodePopup
@@ -33,14 +34,18 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
         return component
     }
 
+    private BatchRowInfoRowModel getModelAt(int row) {
+        batchView.batchViewModel.simulationParameterizationTableModel.backedList[row]
+    }
+
     private ULCPopupMenu getNodePopUp() {
         if (!nodePopup) {
             nodePopup = new ULCPopupMenu()
             addItem(new CreateSimulationProfileAction(batchView))
-            addItem(new SelectParameterizationsInTreeAction(batchView))
-            addItem(new SelectSimulationsInTreeAction(batchView))
+            addItem(new BatchViewFindParameterizationsInTreeAction(batchView))
+            addItem(new FindResultsInTreeAction(batchView))
             addItem(new CreateBatchAction(batchView))
-            addItem(new BatchViewOpenItemAction(batchView))
+            addItem(new BatchViewOpenParameterizationAction(batchView))
             addItem(new BatchViewOpenResultAction(batchView))
             addItem(new OpenResultsAction(batchView))
             addItem(new DeleteParameterizationsAction(batchView))
@@ -55,4 +60,10 @@ class BatchTableRenderer extends DefaultTableCellRenderer {
     }
 }
 
+class BatchTableHeaderRenderer extends DefaultTableHeaderCellRenderer {
 
+    IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int column) {
+        horizontalAlignment = CENTER
+        super.getTableCellRendererComponent(table, value, selected, hasFocus, column)
+    }
+}
