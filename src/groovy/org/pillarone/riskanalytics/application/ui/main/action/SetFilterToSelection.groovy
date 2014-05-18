@@ -1,10 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import org.pillarone.riskanalytics.core.search.AllFieldsFilter
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+
 /**
  * User: bzetterstrom
  * Date: 1/5/12
@@ -22,8 +25,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
  * This menu currently only appears on Pns and not on Sims because it's only used in AbstractParameterNodePopupMenu.
  */
 class SetFilterToSelection extends SelectionTreeAction {
-    SetFilterToSelection(ULCTableTree tree) {
-        super("SetFilterToSelection", tree)
+    SetFilterToSelection(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super("SetFilterToSelection", tree, model)
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.search.ICacheItemEventListener

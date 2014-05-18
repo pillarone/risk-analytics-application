@@ -10,6 +10,7 @@ import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
 
@@ -22,7 +23,7 @@ class SimulationConfigurationViewTests extends AbstractSimpleFunctionalTest {
         frame.defaultCloseOperation = ULCFrame.TERMINATE_ON_CLOSE
         frame.name = "test"
 
-        frame.contentPane = new SimulationConfigurationView(new SimulationConfigurationModel(CoreModel)).content
+        frame.contentPane = new SimulationConfigurationView(new SimulationConfigurationModel(CoreModel, new RiskAnalyticsMainModel())).content
         frame.visible = true
     }
 

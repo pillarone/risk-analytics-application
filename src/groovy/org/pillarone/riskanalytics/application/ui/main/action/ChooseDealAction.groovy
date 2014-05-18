@@ -4,6 +4,7 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.DealLinkDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
@@ -12,8 +13,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
  */
 class ChooseDealAction extends SingleItemAction {
 
-    public ChooseDealAction(ULCTableTree tree) {
-        super("ChooseDeal", tree)
+    public ChooseDealAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super("ChooseDeal", tree, model)
     }
 
     void doActionPerformed(ActionEvent event) {

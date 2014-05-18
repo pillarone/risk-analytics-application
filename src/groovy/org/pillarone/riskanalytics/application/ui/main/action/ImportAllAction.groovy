@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.util.Cursor
 import com.ulcjava.base.application.util.IFileChooseHandler
@@ -9,20 +11,23 @@ import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.core.model.Model
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ImportAllAction extends ImportAction {
     Log LOG = LogFactory.getLog(ImportAllAction)
 
-    public ImportAllAction(ULCTableTree tree, String actionName) {
-        super(tree, actionName)
+    public ImportAllAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
+        super(tree, model, actionName)
     }
 
-    public ImportAllAction(String actionName) {
+    public ImportAllAction(RiskAnalyticsMainModel model, String actionName) {
         super(actionName)
+        this.model = model
         ancestor = getAncestor()
     }
 

@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
@@ -6,11 +7,13 @@ import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Cursor
+import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileLoadHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ExcelImportHandler
 import org.pillarone.riskanalytics.application.ui.main.action.exportimport.ImportResult
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -20,8 +23,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 class ImportParameterizationExcelAction extends ImportAction {
     private static final int ALERT_ROW_SIZE = 20
 
-    ImportParameterizationExcelAction(ULCTableTree tree, String name) {
-        super(tree, name)
+    ImportParameterizationExcelAction(ULCTableTree tree, RiskAnalyticsMainModel model, String name) {
+        super(tree, model, name)
     }
 
     @Override

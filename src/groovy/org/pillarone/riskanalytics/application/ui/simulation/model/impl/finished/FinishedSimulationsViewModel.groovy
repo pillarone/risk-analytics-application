@@ -1,5 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.finished
+
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
@@ -23,6 +25,8 @@ class FinishedSimulationsViewModel {
     SimulationRuntimeService simulationRuntimeService
     @Resource
     FinishedSimulationsTableModel finishedSimulationsTableModel
+    @Resource
+    RiskAnalyticsMainModel riskAnalyticsMainModel
 
     private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
 

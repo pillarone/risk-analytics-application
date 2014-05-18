@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
@@ -11,6 +12,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -23,14 +25,16 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     private static Log LOG = LogFactory.getLog(SelectionTreeAction)
 
     ULCTableTree tree
+    RiskAnalyticsMainModel model
 
-    SelectionTreeAction(String name, ULCTableTree tree) {
+    def SelectionTreeAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
         super(name);
         this.tree = tree;
+        this.model = model
         checkForIcon()
     }
 
-    SelectionTreeAction(String title) {
+    public SelectionTreeAction(String title) {
         super(title);
         checkForIcon()
     }
@@ -170,9 +174,9 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     // If there is an item owner s/he can forbid someone else (F. Paul Wilson readers: KYFHO).
     // (Each action can decide what to do with this information.)
     //
-    protected boolean ownerCanVetoUser(Person owner) {
+    protected boolean ownerCanVetoUser( Person owner){
 
-        if (owner == null) {
+        if( owner == null ){
             return false
         }
 
@@ -180,12 +184,12 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         //
         Person currentUser = UserManagement.getCurrentUser()
 
-        if (currentUser == null) {
+        if( currentUser == null ){
             LOG.info("Current user null, owner (${owner.username} can veto actions")
             return true
         }
 
-        if (!owner.username.equals(currentUser.username)) {
+        if( ! owner.username.equals(currentUser.username) ){
             LOG.debug(owner.username + "(owner) can veto action by ${currentUser.username} (current user) ")
             return true
         }

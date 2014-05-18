@@ -12,6 +12,7 @@ import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.base.view.AbstractModellingFunctionView
 import org.pillarone.riskanalytics.application.ui.comment.view.CommentAndErrorView
 import org.pillarone.riskanalytics.application.ui.comment.view.NavigationListener
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.result.action.ApplySelectionAction
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.PrecisionAction
@@ -31,8 +32,8 @@ class ResultView extends AbstractModellingFunctionView implements NavigationList
     CommentAndErrorView commentAndErrorView
     ULCSplitPane splitPane
 
-    public ResultView(AbstractResultViewModel model) {
-        super(model)
+    public ResultView(AbstractResultViewModel model, RiskAnalyticsMainModel mainModel) {
+        super(model, mainModel)
     }
 
     @Override

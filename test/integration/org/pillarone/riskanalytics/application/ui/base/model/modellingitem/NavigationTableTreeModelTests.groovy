@@ -16,10 +16,10 @@ import org.junit.Test
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.search.UlcCacheItemEventHandler
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
@@ -40,7 +40,7 @@ import static org.junit.Assert.*
 class NavigationTableTreeModelTests {
 
     private NavigationTableTreeModel model
-    private RiskAnalyticsEventBus riskAnalyticsEventBus
+    private RiskAnalyticsMainModel mainModel
     private TestModelListener modelListener
     private TestPollingSupport testPollingSupport
 
@@ -75,9 +75,9 @@ class NavigationTableTreeModelTests {
         newParameterization('Parametrization X', '10')
         newParameterization('Parametrization X', '11')
         cacheItemSearchService.refresh()
-        riskAnalyticsEventBus = new RiskAnalyticsEventBus()
-        NavigationTableTreeBuilder builder = new NavigationTableTreeBuilder()
-        model = new NavigationTableTreeModel(cacheItemSearchService: cacheItemSearchService, navigationTableTreeBuilder: builder)
+        mainModel = new RiskAnalyticsMainModel()
+        NavigationTableTreeBuilder builder = new NavigationTableTreeBuilder(riskAnalyticsMainModel: mainModel)
+        model = new NavigationTableTreeModel(riskAnalyticsMainModel: mainModel, cacheItemSearchService: cacheItemSearchService, navigationTableTreeBuilder: builder)
         model.initialize()
         modelListener = new TestModelListener()
         model.addTableTreeModelListener(modelListener)
@@ -85,9 +85,10 @@ class NavigationTableTreeModelTests {
         testPollingSupport = new TestPollingSupport()
         UlcCacheItemEventHandler queue = new UlcCacheItemEventHandler(cacheItemSearchService: cacheItemSearchService, pollingSupport: testPollingSupport)
         queue.init()
-        ModellingItemCache modellingItemCache = new ModellingItemCache(ulcCacheItemEventHandler: queue, riskAnalyticsEventBus: riskAnalyticsEventBus)
+        ModellingItemCache modellingItemCache = new ModellingItemCache(ulcCacheItemEventHandler: queue, riskAnalyticsMainModel: mainModel)
         modellingItemCache.initialize()
-        riskAnalyticsEventBus.register(this)
+
+        mainModel.register(this)
     }
 
     @Subscribe
@@ -108,7 +109,7 @@ class NavigationTableTreeModelTests {
         LocaleResources.testMode = false
         ModelRegistry.instance.clear()
         ModellingItemFactory.clear()
-        riskAnalyticsEventBus.unregister(this)
+        mainModel.unregister(this)
         new ULCSession.DefaultCurrentSessionRegistry().currentSession = null
     }
 

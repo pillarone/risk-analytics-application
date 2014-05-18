@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.user.UserManagement
@@ -9,12 +11,12 @@ import org.pillarone.riskanalytics.core.workflow.Status
 
 class StartWorkflowAction extends AbstractWorkflowAction {
 
-    public StartWorkflowAction(String name, ULCTableTree tree) {
-        super(name, tree);
+    public StartWorkflowAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super(name, tree, model);
     }
 
-    public StartWorkflowAction(ULCTableTree tree) {
-        super("StartWorkflow", tree);
+    public StartWorkflowAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super("StartWorkflow", tree, model);
     }
 
     // This is crazy-complicated. Does anyone understand the range of behaviours implied by this code ?

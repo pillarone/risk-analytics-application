@@ -1,19 +1,22 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.ULCWindow
 import com.ulcjava.base.application.util.IFileStoreHandler
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class CsvExportAction extends ExportItemAction {
 
-    public CsvExportAction(ULCTableTree tree) {
-        super(tree, "CsvExportAction", 'csv')
+    public CsvExportAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super(tree, model, "CsvExportAction", 'csv')
     }
 
     protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {

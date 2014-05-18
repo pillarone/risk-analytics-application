@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.model.popup.workflow
 
+import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
 import org.pillarone.riskanalytics.application.ui.main.action.workflow.SendToReviewAction
 import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
@@ -20,7 +21,7 @@ class DataEntryPopupMenu extends ParameterizationPopupMenu {
 
     @Override
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
-        add(new EnabledCheckingMenuItem(new SendToReviewAction(tree)));
+        add(new EnabledCheckingMenuItem(new SendToReviewAction(tree, riskAnalyticsMainModel)));
         return true;
     }
 

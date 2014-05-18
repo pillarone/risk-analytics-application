@@ -2,8 +2,7 @@ package org.pillarone.riskanalytics.application.ui.search
 
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
-import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.search.ICacheItemEventListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -24,7 +23,7 @@ class ModellingItemCache {
     UlcCacheItemEventHandler ulcCacheItemEventHandler
 
     @Resource
-    RiskAnalyticsEventBus riskAnalyticsEventBus
+    RiskAnalyticsMainModel riskAnalyticsMainModel
 
     @PostConstruct
     void initialize() {
@@ -71,7 +70,7 @@ class ModellingItemCache {
     private class MyCacheItemEventListener implements ICacheItemEventListener {
         @Override
         void onEvent(CacheItemEvent event) {
-            riskAnalyticsEventBus.post(convert(event))
+            riskAnalyticsMainModel.post(convert(event))
         }
     }
 }

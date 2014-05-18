@@ -22,6 +22,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
 
     // TODO frahman these maps look likely suspects for our joy with menus esp report menus
     ULCTableTree tree
+    RiskAnalyticsMainModel mainModel
     Map<Class, ULCPopupMenu> popupMenus = [:]
     Map<Class, ULCPopupMenu> paramNodePopupMenus = [:]
     Map<Class, ULCPopupMenu> simulationPopupMenus = new HashMap<Class, ULCPopupMenu>()
@@ -29,15 +30,20 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     Map<Status, ULCPopupMenu> workflowMenus = new HashMap<Status, ULCPopupMenu>()
     Map<Status, ULCPopupMenu> resourceWorkflowMenus = new HashMap<Status, ULCPopupMenu>()
 
-    public MainSelectionTableTreeCellRenderer(ULCTableTree tree) {
+    public MainSelectionTableTreeCellRenderer(ULCTableTree tree, RiskAnalyticsMainModel mainModel) {
         this.tree = tree
+        this.mainModel = mainModel
     }
 
 
     public IRendererComponent getTableTreeCellRendererComponent(ULCTableTree tableTree, Object value, boolean selected, boolean hasFocus, boolean expanded, boolean leaf, Object node) {
         setFont(node)
         IRendererComponent component = super.getTableTreeCellRendererComponent(tree, value, selected, expanded, leaf, hasFocus, node)
-        renderComponent((ULCComponent) component, node)
+        try {
+            renderComponent((ULCComponent) component, node)
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to render: " + e.getMessage(), e)
+        }
         return component
 
     }
@@ -77,7 +83,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     }
 
     private ULCPopupMenu getPopupMenu(BatchNode node) {
-        getOrCreatePopuMenu(batchRunPopupMenus, node, node.itemClass)
+        getOrCreatePopuMenu(batchRunPopupMenus, node, node.class)
     }
 
     private ULCPopupMenu getPopupMenu(ParameterizationNode node) {
@@ -92,10 +98,8 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
     // All batch nodes will get the first batchnode menu ever created because it will be stored in that map.
     // So once it gets created bad, it stays bad..
     //
-    private ULCPopupMenu getOrCreatePopuMenu(Map popupMenuMap, INavigationTreeNode node, Object key, boolean cached = true) {
-        if (cached && popupMenuMap.containsKey(key)) {
-            return popupMenuMap.get(key)
-        }
+    private ULCPopupMenu getOrCreatePopuMenu(Map popupMenuMap, INavigationTreeNode node, Object key) {
+        if (popupMenuMap.containsKey(key)) return popupMenuMap.get(key)
         ULCPopupMenu menu = node.getPopupMenu(tree)
         addUserSpecificMenuItems(menu, node)
         //TEMPORARILY don't cache batchrun menus, see if this fixes the batch report menu - BINGO!
@@ -104,9 +108,7 @@ class MainSelectionTableTreeCellRenderer extends DefaultTableTreeCellRenderer {
         //       if(popupMenuMap != batchRunPopupMenus) This completely slows down the tree drawing to unacceptable levels. Must find a better way to ensure batchnodes don't get stuck with an empty report menu.
         // (Discovered this was the cause by pausing in dbg many times and catching it in the proces of throwing some stupid exception durng the infamous 'intersect' call.)
         //https://issuetracking.intuitive-collaboration.com/jira/browse/PMO-2677 more details
-        if (cached) {
-            popupMenuMap.put(key, menu)
-        }
+        popupMenuMap.put(key, menu)
         return menu
     }
 

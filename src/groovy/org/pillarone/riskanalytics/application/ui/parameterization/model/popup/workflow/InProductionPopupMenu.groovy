@@ -19,7 +19,7 @@ class InProductionPopupMenu extends ParameterizationPopupMenu {
     @Override
     protected boolean addMenuItemsForWorkflowState(ULCTableTree tree, ParameterizationNode node) {
 
-        add(new EnabledCheckingMenuItem(new CreateNewWorkflowVersionAction(tree))); //PMO-2765
+        add(new EnabledCheckingMenuItem(new CreateNewWorkflowVersionAction(tree, riskAnalyticsMainModel))); //PMO-2765
 
         return true;
     }

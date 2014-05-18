@@ -2,6 +2,7 @@ package org.pillarone.riskanalytics.application.ui.comment
 
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 
 import java.awt.event.InputEvent
 import models.core.CoreModel
@@ -9,6 +10,7 @@ import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -44,7 +46,7 @@ class CancelAddNewCommentTests extends AbstractSimpleFunctionalTest {
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        ParameterView parameterView = new ParameterView(parameterViewModel)
+        ParameterView parameterView = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

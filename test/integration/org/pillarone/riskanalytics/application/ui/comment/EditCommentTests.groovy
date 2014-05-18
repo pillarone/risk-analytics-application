@@ -5,8 +5,10 @@ import com.ulcjava.base.application.ULCFrame
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
+import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -46,7 +48,7 @@ class EditCommentTests extends AbstractSimpleFunctionalTest {
         comment.text = "test"
         parameterization.addComment(comment)
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
-        ParameterView parameterView = new ParameterView(parameterViewModel)
+        ParameterView parameterView = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel())
         frame.setContentPane(parameterView.content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

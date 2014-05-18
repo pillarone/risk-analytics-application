@@ -36,23 +36,23 @@ class ResourceNode extends ItemNode {
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu parameterNodePopUpMenu = new ULCPopupMenu()
         parameterNodePopUpMenu.name = RESOURCE_NODE_POP_UP_MENU
-        parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)))
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree)))
-        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new SaveAsAction(tree)))
-        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree)))
+        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel)))
+        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new SaveAsAction(tree, riskAnalyticsMainModel)))
+        parameterNodePopUpMenu.add(new EnabledCheckingMenuItem(new CreateNewMajorVersion(tree, riskAnalyticsMainModel)))
         if (UserContext.hasCurrentUser()) {
             def transactionsEnabled = Holders.grailsApplication.config.getProperty("transactionsEnabled")
             if (transactionsEnabled != null && transactionsEnabled) {
                 parameterNodePopUpMenu.addSeparator()
-                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree)))
-                parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree)))
+                parameterNodePopUpMenu.add(new ULCMenuItem(new ChooseDealAction(tree, riskAnalyticsMainModel)))
+                parameterNodePopUpMenu.add(new ULCMenuItem(new StartWorkflowAction(tree, riskAnalyticsMainModel)))
             }
         }
         parameterNodePopUpMenu.addSeparator()
-        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
+        parameterNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
         return parameterNodePopUpMenu
     }
 }

@@ -7,6 +7,7 @@ import com.ulcjava.testframework.operator.ULCFrameOperator
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
@@ -37,6 +38,7 @@ class CompareParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         parameterization2 = ModellingItemFactory.getParameterization(ParameterizationDAO.findByName('CoreAlternativeParameters'))
         parameterization2.load()
 
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
         CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(model, [parameterization1, parameterization2])
 
         ULCFrame frame = new ULCFrame("test")

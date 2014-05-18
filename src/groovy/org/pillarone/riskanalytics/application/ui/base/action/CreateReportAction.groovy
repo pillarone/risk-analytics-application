@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.action
 
 import com.ulcjava.base.application.IAction
-import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.shared.FileChooserConfig
@@ -12,6 +11,7 @@ import org.pillarone.riskanalytics.application.document.ShowDocumentStrategyFact
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.report.IReportData
 import org.pillarone.riskanalytics.core.report.IReportModel
@@ -28,8 +28,8 @@ public class CreateReportAction extends SelectionTreeAction {
     IReportModel reportModel
     ReportFactory.ReportFormat reportFormat
 
-    CreateReportAction(IReportModel reportModel, ReportFactory.ReportFormat reportFormat, ULCTableTree tree) {
-        super("GenerateReport", tree)
+    public CreateReportAction(IReportModel reportModel, ReportFactory.ReportFormat reportFormat, tree, RiskAnalyticsMainModel model) {
+        super("GenerateReport", tree, model)
         this.reportModel = reportModel
         this.reportFormat = reportFormat
         putValue(IAction.NAME, reportModel.getName() + " " + reportFormat.getRenderedFormatSuchAsPDF())
@@ -42,10 +42,10 @@ public class CreateReportAction extends SelectionTreeAction {
             byte[] report = ReportFactory.createReport(reportModel, reportData, reportFormat)
             saveReport(report, reportData)
         } catch (UnsupportedReportParameterException e) {
-            LOG.error "Unsupported input to report: ${e}", e
-            new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "UnsupportedReportInput", e.getMessage()).show()
-        }
-    }
+             LOG.error "Unsupported input to report: ${e}", e
+             new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "UnsupportedReportInput", e.getMessage()).show()
+         }
+     }
 
     /**
      *
@@ -57,19 +57,19 @@ public class CreateReportAction extends SelectionTreeAction {
         List<ItemNode> selectedItems = getReportingModellingNodes()
         Collection<ModellingItem> modellingItems = selectedItems.collect {
             itemNode ->
-                if (itemNode instanceof IReportableNode) {
-                    itemNode.modellingItemsForReport()
-                }
+                    if(itemNode instanceof IReportableNode) {
+                        itemNode.modellingItemsForReport()
+                    }
         }.flatten()
         Collection<IReportData> reportData = new ArrayList<IReportData>()
         for (ModellingItem aModellingItem in modellingItems) {
             reportData << new ModellingItemReportData(aModellingItem)
         }
 //        If there is only one entry this is a special case. Return an individual modelling item report data.
-        if (reportData.size() == 1) {
+        if(reportData.size() == 1) {
             return reportData.get(0)
         }
-        return new ReportDataCollection(reportData)
+        return new ReportDataCollection( reportData )
     }
 
     private void saveReport(byte[] output, IReportData reportData) {

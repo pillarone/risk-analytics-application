@@ -30,7 +30,7 @@ class CompareSimulationViewTests extends AbstractP1RATTestCase {
 
     ULCComponent createContentPane() {
         viewModel = new MockCompareSimulationViewModel()
-        view = new CompareSimulationsView(viewModel)
+        view = new CompareSimulationsView(viewModel, null)
         return view.content;
     }
 }

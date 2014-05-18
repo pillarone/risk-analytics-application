@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view
+
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCTableTree
@@ -15,8 +16,9 @@ import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
+import org.pillarone.riskanalytics.application.ui.search.IModellingItemEventListener
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.BatchRun
 import org.pillarone.riskanalytics.core.simulation.item.*
@@ -41,7 +43,9 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
         builder.metaClass.getAllBatchRuns = { -> [new BatchRun(name: "test")] }
         def tableTreeModel = new TestNavigationTableTreeModel(navigationTableTreeBuilder: builder)
         tableTreeModel.initialize()
-        def view = new SelectionTreeView(riskAnalyticsEventBus: new RiskAnalyticsEventBus(), navigationTableTreeModel: tableTreeModel)
+        def control = mockFor(ModellingItemCache)
+        control.demand.addItemEventListener { IModellingItemEventListener listener -> }
+        def view = new SelectionTreeView(riskAnalyticsMainModel: new RiskAnalyticsMainModel(), navigationTableTreeModel: tableTreeModel, modellingItemCache: control.createMock())
         view.initialize()
         view.content;
     }
@@ -50,8 +54,7 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
     protected void setUp() throws Exception {
         initGrailsApplication()
         defineBeans {
-            riskAnalyticsEventBus(RiskAnalyticsEventBus)
-            detailViewManager(DetailViewManager)
+            riskAnalyticsMainModel(RiskAnalyticsMainModel)
         }
         super.setUp()
     }

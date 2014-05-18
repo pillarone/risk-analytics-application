@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
 import org.pillarone.riskanalytics.application.ui.base.model.ResourceClassNode
 import org.pillarone.riskanalytics.application.ui.base.model.ResourceGroupNode
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 
@@ -15,9 +16,9 @@ class TreeDoubleClickAction extends SelectionTreeAction {
 
     private final OpenItemAction openItemAction
 
-    TreeDoubleClickAction(ULCTableTree tree) {
-        super('Open', tree)
-        this.openItemAction = new OpenItemAction(tree);
+    TreeDoubleClickAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super('Open', tree, model)
+        this.openItemAction = new OpenItemAction(tree, model);
     }
 
     void doActionPerformed(ActionEvent event) {

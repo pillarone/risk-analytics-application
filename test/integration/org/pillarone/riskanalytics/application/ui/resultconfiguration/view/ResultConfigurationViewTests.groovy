@@ -7,6 +7,7 @@ import com.ulcjava.testframework.operator.ULCFrameOperator
 import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.resultconfiguration.model.ResultConfigurationViewModel
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ResultConfigurationImportService
@@ -38,7 +39,7 @@ class ResultConfigurationViewTests extends AbstractSimpleFunctionalTest {
         Model model = new ApplicationModel()
         model.init()
 
-        ResultConfigurationView view = new ResultConfigurationView(new ResultConfigurationViewModel(model, configuration, structure))
+        ResultConfigurationView view = new ResultConfigurationView(new ResultConfigurationViewModel(model, configuration, structure), new RiskAnalyticsMainModel())
 
         frame.contentPane = view.content
         frame.visible = true

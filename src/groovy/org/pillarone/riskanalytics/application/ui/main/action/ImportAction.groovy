@@ -1,5 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-import com.ulcjava.base.application.*
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.util.Cursor
@@ -9,10 +9,13 @@ import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import com.ulcjava.base.application.*
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -22,20 +25,20 @@ class ImportAction extends SelectionTreeAction {
     boolean forceImport = false
     Log LOG = LogFactory.getLog(ImportAction)
 
-    public ImportAction(ULCTableTree tree) {
-        this(tree, "Import")
+    public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        this(tree, model, "Import")
     }
 
-    public ImportAction(ULCTableTree tree, boolean forceImport) {
-        super(forceImport ? "forceImport" : "Import", tree)
+    public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model, boolean forceImport) {
+        super(forceImport ? "forceImport" : "Import", tree, model)
         this.forceImport = forceImport
         userPreferences = UserPreferencesFactory.getUserPreferences()
         ancestor = getAncestor()
     }
 
 
-    public ImportAction(ULCTableTree tree, String actionName) {
-        super(actionName, tree)
+    public ImportAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName) {
+        super(actionName, tree, model)
         userPreferences = UserPreferencesFactory.getUserPreferences()
         ancestor = getAncestor()
     }

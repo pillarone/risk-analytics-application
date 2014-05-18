@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.base.model
+
 import com.ulcjava.base.application.ULCMenuItem
 import com.ulcjava.base.application.ULCPopupMenu
 import com.ulcjava.base.application.ULCTableTree
@@ -8,6 +9,7 @@ import com.ulcjava.base.application.util.ULCIcon
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.main.action.*
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
@@ -16,6 +18,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 @CompileStatic
 class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
     Class itemClass
+    RiskAnalyticsMainModel mainModel
 
     final String toolTip = ''
     final String name = ''
@@ -23,6 +26,11 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
     ItemGroupNode(String name, Class itemClass) {
         super([name] as Object[])
         this.itemClass = itemClass
+    }
+
+    ItemGroupNode(String name, Class itemClass, RiskAnalyticsMainModel mainModel) {
+        this(name, itemClass)
+        this.mainModel = mainModel
     }
 
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
@@ -36,19 +44,19 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
     private ULCPopupMenu getGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu groupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.standAlone) {
-            groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, 'ExportAll', true)))
+            groupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', true)))
         }
-        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, false)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, true)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree)))
-        groupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultResultConfigurationAction(tree)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, false)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, true)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
+        groupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultResultConfigurationAction(tree, mainModel)))
         return groupNodePopUpMenu
     }
 
     private ULCPopupMenu getSimulationGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu simulationGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.standAlone) {
-            simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, 'ExportAll', false)))
+            simulationGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
         }
         return simulationGroupNodePopUpMenu
     }
@@ -56,19 +64,19 @@ class ItemGroupNode extends DefaultMutableTableTreeNode implements INavigationTr
     private ULCPopupMenu getParameterGroupNodePopUpMenu(ULCTableTree tree) {
         ULCPopupMenu parameterGroupNodePopUpMenu = new ULCPopupMenu()
         if (UserContext.standAlone) {
-            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, 'ExportAll', false)))
-            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, 'ExportAll', true)))
+            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', false)))
+            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportItemGroupAction(tree, mainModel, 'ExportAll', true)))
         }
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, false)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, true)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, false)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAction(tree, mainModel, true)))
         if (UserContext.standAlone) {
-            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, "importAllFromDir")))
+            parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportAllAction(tree, mainModel, "importAllFromDir")))
         }
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree)))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new SimulationAction(tree, mainModel)))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new CreateDefaultParameterizationAction(tree, mainModel)))
         parameterGroupNodePopUpMenu.addSeparator()
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, 'ImportFromExcel')))
-        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportParameterizationExcelAction(tree, 'ExportToExcel')))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ImportParameterizationExcelAction(tree, mainModel, 'ImportFromExcel')))
+        parameterGroupNodePopUpMenu.add(new ULCMenuItem(new ExportParameterizationExcelAction(tree, mainModel, 'ExportToExcel')))
         return parameterGroupNodePopUpMenu
     }
 
