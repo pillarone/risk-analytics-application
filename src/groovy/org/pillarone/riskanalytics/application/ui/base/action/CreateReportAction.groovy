@@ -55,7 +55,8 @@ public class CreateReportAction extends SelectionTreeAction {
      */
     public IReportData getReportData() {
         List<ItemNode> selectedItems = getReportingModellingNodes()
-        Collection<ModellingItem> modellingItems = selectedItems.collect { itemNode ->
+        Collection<ModellingItem> modellingItems = selectedItems.collect {
+            itemNode ->
                 if (itemNode instanceof IReportableNode) {
                     itemNode.modellingItemsForReport()
                 }
