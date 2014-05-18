@@ -1,19 +1,24 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.base.application.util.ULCIcon
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.model.DeterministicResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.DeterministicResultView
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class DeterministicResultUIItem extends SimulationResultUIItem<DeterministicResultView> {
+class DeterministicResultUIItem extends SimulationResultUIItem {
 
-    DeterministicResultUIItem(Simulation simulation) {
-        super(simulation)
+    DeterministicResultUIItem(DeterministicModel simulationModel, Simulation simulation) {
+        super(simulationModel, simulation)
     }
 
     @Override
@@ -21,8 +26,13 @@ class DeterministicResultUIItem extends SimulationResultUIItem<DeterministicResu
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
     }
 
-    DeterministicResultView createDetailView() {
-        new DeterministicResultView(viewModel)
+    @Override
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+    }
+
+    IDetailView createDetailView() {
+        new DeterministicResultView(viewModel, riskAnalyticsMainModel)
     }
 
 

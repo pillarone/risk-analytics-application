@@ -3,9 +3,9 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished.FinishedSimulationView
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.context.annotation.Scope
@@ -22,6 +22,9 @@ class OpenResultsAction extends ResourceBasedAction {
     @Resource
     FinishedSimulationView finishedSimulationView
 
+    @Resource
+    RiskAnalyticsMainModel riskAnalyticsMainModel
+
     OpenResultsAction() {
         super("OpenResults");
     }
@@ -29,7 +32,7 @@ class OpenResultsAction extends ResourceBasedAction {
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
             Simulation simulation = finishedSimulationView.selectedSimulations.first().simulation
-            riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(simulation)))
+            riskAnalyticsMainModel.notifyOpenDetailView(simulation.modelClass.newInstance() as Model, simulation)
         }
     }
 

@@ -5,8 +5,7 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.WindowEvent
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.CloseDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
@@ -67,7 +66,7 @@ class RunSimulationHandler {
 
         } else if (value.equals(alert.secondButtonLabel)) {
             //create a new version
-            List<ModellingItem> newItems = createNewVersion(items)
+            List<ModellingItem> newItems = createNewVersion(itemModel, items)
             if (newItems && newItems.size() == 2) {
                 model.simulation.parameterization = newItems[0]
                 model.simulation.template = newItems[1]
@@ -141,29 +140,25 @@ class RunSimulationHandler {
      * @param items list of modellingItem, the first item is p14n and the second configuration
      * @return
      */
-    protected List<ModellingItem> createNewVersion(List<ModellingItem> items) {
+    protected List<ModellingItem> createNewVersion(Model itemModel, List<ModellingItem> items) {
         List<ModellingItem> newItems = []
         SimulationRun.withTransaction { TransactionStatus transactionStatus ->
             for (ModellingItem item : items) {
                 if (item.changed) {
                     item.load()
-                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(item)
+                    ModellingUIItem modellingUIItem = UIItemFactory.createItem(item, itemModel)
                     if (modellingUIItem instanceof ParameterizationUIItem) {
                         //TODO: find a way to show new version comment dialog
-                        newItems << modellingUIItem.createNewVersion("", false).item
+                        newItems << modellingUIItem.createNewVersion(itemModel, "", false).item
                     } else {
-                        newItems << modellingUIItem.createNewVersion(false).item
+                        newItems << modellingUIItem.createNewVersion(itemModel, false).item
                     }
-                    riskAnalyticsEventBus.post(new CloseDetailViewEvent(modellingUIItem))
+                    model.mainModel.notifyCloseDetailView(itemModel, modellingUIItem)
                 } else
                     newItems << item
             }
         }
         return newItems
-    }
-
-    private RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     private Model getItemModel(ModellingItem item) {

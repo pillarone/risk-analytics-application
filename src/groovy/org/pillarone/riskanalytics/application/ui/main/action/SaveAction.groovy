@@ -5,17 +5,17 @@ import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IWindowListener
 import com.ulcjava.base.application.event.WindowEvent
-import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.CloseDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Resource
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
@@ -23,25 +23,30 @@ class SaveAction extends ResourceBasedAction {
 
     private static final Log LOG = LogFactory.getLog(SaveAction)
 
+    RiskAnalyticsMainModel model
     ModellingUIItem currentItem
     ULCComponent parent
 
-    public SaveAction(ULCComponent parent) {
+    public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model) {
         super("Save")
+        this.model = model
         this.parent = parent
     }
 
-    public SaveAction(ULCComponent parent, ModellingItem currentItem) {
-        this(parent)
-        this.currentItem = UIItemFactory.createItem(currentItem)
+    public SaveAction(ULCComponent parent, RiskAnalyticsMainModel model, ModellingItem currentItem) {
+        this(parent, model)
+        this.currentItem = UIItemFactory.createItem(currentItem, getModelFromItem(currentItem))
+    }
+
+    Model getModelFromItem(ModellingItem item) {
+        if (item instanceof Resource) {
+            return null
+        }
+        item.modelClass?.newInstance() as Model
     }
 
     public void doActionPerformed(ActionEvent event) {
-        save(currentItem ?: detailViewManager.currentUIItem)
-    }
-
-    private DetailViewManager getDetailViewManager() {
-        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager)
+        save(currentItem ?: model.currentItem)
     }
 
     void save(AbstractUIItem abstractUIItem) {
@@ -74,7 +79,7 @@ class SaveAction extends ResourceBasedAction {
         synchronized (modellingUIItem) {
             if (alert.value.equals(alert.firstButtonLabel)) {
                 LOG.info("Saving changes of ${modellingUIItem.nameAndVersion} into a new version.")
-                handleNewVersion(modellingUIItem) //PMO-2054
+                handleNewVersion(getItemModel(modellingUIItem), modellingUIItem) //PMO-2054
             } else if (alert.value.equals(alert.secondButtonLabel)) {
                 boolean deleted = modellingUIItem.deleteDependingResults()
                 if (deleted) {
@@ -90,32 +95,39 @@ class SaveAction extends ResourceBasedAction {
         }
     }
 
-    private void handleNewVersion(ModellingUIItem item) {
-        item.createNewVersion(false)
-        riskAnalyticsEventBus.post(new CloseDetailViewEvent(item))
+    private void handleNewVersion(Model model, ModellingUIItem item) {
+        item.createNewVersion(model, false)
+        this.model.notifyCloseDetailView(model, item)
     }
 
-    private void handleNewVersion(ParameterizationUIItem item) {
+    private void handleNewVersion(Model model, ParameterizationUIItem item) {
         Closure okAction = { String commentText ->
             if (!item.isLoaded()) {
                 item.load()
             }
-            createNewVersion(item, commentText)
-            riskAnalyticsEventBus.post(new CloseDetailViewEvent(item))
+            createNewVersion(item, model, commentText)
+            this.model.notifyCloseDetailView(model, item)
         }
 
         NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
         versionCommentDialog.show()
     }
 
-    private void createNewVersion(ParameterizationUIItem item, String commentText) {
+    private void createNewVersion(ParameterizationUIItem item, Model model, String commentText) {
         Parameterization originalParameterization = item.item as Parameterization
         if (originalParameterization.status != Status.NONE) {
             Parameterization parameterization = StatusChangeService.service.changeStatus(originalParameterization, Status.DATA_ENTRY)
             parameterization.save()
         } else {
-            item.createNewVersion(commentText, false)
+            item.createNewVersion(model, commentText, false)
         }
+    }
+
+
+    private Model getItemModel(AbstractUIItem modellingUIItem) {
+        Model itemModel = modellingUIItem.item.modelClass.newInstance()
+        itemModel.init()
+        return itemModel
     }
 
     /**
@@ -131,8 +143,8 @@ class SaveAction extends ResourceBasedAction {
 
     @Override
     boolean isEnabled() {
-        if (detailViewManager.currentUIItem) {
-            return itemChanged(detailViewManager.currentUIItem)
+        if (model.currentItem) {
+            return itemChanged(model.currentItem)
         }
         return false
     }

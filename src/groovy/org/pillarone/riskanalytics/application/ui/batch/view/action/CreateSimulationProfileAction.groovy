@@ -1,14 +1,14 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
+package org.pillarone.riskanalytics.application.ui.batch.view.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationSettingsUIItem
-import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationConfigurationView
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationSettingsChangedEvent
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
@@ -21,19 +21,18 @@ class CreateSimulationProfileAction extends ResourceBasedAction {
         this.batchView = batchView
     }
 
+    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+    }
+
     void doActionPerformed(ActionEvent event) {
         BatchRowInfo info = batchView.selectedBatchRowInfos.first()
         Simulation simulation = new Simulation('Simulation')
         Parameterization parameterization = info.parameterization
         simulation.modelClass = info.modelClass
-        riskAnalyticsEventBus.post(new OpenDetailViewEvent(new SimulationSettingsUIItem(simulation)))
-        SimulationConfigurationView view = detailViewManager.openDetailView as SimulationConfigurationView
-        view.model.parameterization = parameterization
-    }
-
-
-    DetailViewManager getDetailViewManager() {
-        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager)
+        Model model = info.modelClass.newInstance() as Model
+        riskAnalyticsMainModel.openItem(model, new SimulationSettingsUIItem(model, simulation))
+        riskAnalyticsMainModel.post(new SimulationSettingsChangedEvent(null, parameterization, simulation.modelClass))
     }
 
     boolean isEnabled() {

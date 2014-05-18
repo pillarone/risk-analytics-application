@@ -37,11 +37,10 @@ class DeterministicSimulationUIItemTests extends AbstractUIItemTest {
         model.init()
 
         Simulation simulation = new Simulation("Simulation")
-        simulation.modelClass = CoreModel
         simulation.parameterization = new Parameterization("DeterministicApplicationParameters")
         simulation.template = new ResultConfiguration("DeterministicApplicationResultConfiguration", CoreModel)
 
-        SimulationSettingsUIItem uiItem = new SimulationSettingsUIItem(simulation)
+        SimulationSettingsUIItem uiItem = new SimulationSettingsUIItem(model, simulation)
         return uiItem
     }
 

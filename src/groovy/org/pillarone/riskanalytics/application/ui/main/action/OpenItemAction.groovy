@@ -1,13 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
 import org.pillarone.riskanalytics.application.ui.main.view.OpenItemDialog
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -15,8 +19,8 @@ class OpenItemAction extends SelectionTreeAction {
 
     private static final Log LOG = LogFactory.getLog(OpenItemAction)
 
-    OpenItemAction(ULCTableTree tree) {
-        super("Open", tree)
+    def OpenItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super("Open", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -29,6 +33,7 @@ class OpenItemAction extends SelectionTreeAction {
     private void openItem(ParameterizationUIItem parameterizationUIItem) {
         Model selectedModel = getSelectedModel()
         if (selectedModel != null) {
+            parameterizationUIItem.load()
             selectedModel = selectedModel.class.newInstance()
             selectedModel.init()
             ModellingItem item = parameterizationUIItem.item
@@ -38,7 +43,7 @@ class OpenItemAction extends SelectionTreeAction {
                     boolean usedInSimulation = parameterizationUIItem.isUsedInSimulation()
                     if (!usedInSimulation || !parameterizationUIItem.newVersionAllowed()) {
                         LOG.info("Opening parameterization ${parameterizationUIItem.nameAndVersion}")
-                        riskAnalyticsEventBus.post(new OpenDetailViewEvent(parameterizationUIItem))
+                        this.model.openItem(selectedModel, parameterizationUIItem)
                     } else {
                         LOG.info("Parameterization ${parameterizationUIItem.nameAndVersion} cannot be edited.")
                         showOpenItemDialog(selectedModel, parameterizationUIItem)
@@ -53,17 +58,19 @@ class OpenItemAction extends SelectionTreeAction {
         if (usedInSimulation) {
             showOpenItemDialog(null, item)
         } else {
-            riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
+            item.load()
+            this.model.openItem(null, item)
         }
     }
 
     private void openItem(BatchUIItem item) {
-        riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
+        this.model.openItem(null, item)
     }
 
     private void openItem(AbstractUIItem item) {
         Model selectedModel = getSelectedModel()
         if (selectedModel != null) {
+            loadIfNotInUse(item)
             boolean usedInSimulation = false
             if (item instanceof ModellingUIItem) {
                 usedInSimulation = item.isUsedInSimulation()
@@ -71,13 +78,24 @@ class OpenItemAction extends SelectionTreeAction {
             if (usedInSimulation) {
                 showOpenItemDialog(selectedModel, item)
             } else {
-                riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
+                this.model.openItem(selectedModel, item)
             }
         }
     }
 
+    // Do not load item in case it is already open. Otherwise the persistent state of this item gets loaded again. PMO-2383
+    private void loadIfNotInUse(AbstractUIItem item) {
+        if (!detailViewManager.isItemOpen(item)) {
+            item.load()
+        }
+    }
+
+    DetailViewManager getDetailViewManager() {
+        Holders.grailsApplication.mainContext.getBean('detailViewManager', DetailViewManager)
+    }
+
     private void showOpenItemDialog(Model selectedModel, ModellingUIItem item) {
-        OpenItemDialog openItemDialog = new OpenItemDialog(tree, selectedModel, riskAnalyticsEventBus, item)
+        OpenItemDialog openItemDialog = new OpenItemDialog(tree, selectedModel, model, item)
         openItemDialog.init()
         openItemDialog.visible = true
     }

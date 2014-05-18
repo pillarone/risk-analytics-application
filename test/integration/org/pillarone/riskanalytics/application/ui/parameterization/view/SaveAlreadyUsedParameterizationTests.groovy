@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.parameterization.view
-
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCFrame
@@ -12,7 +11,9 @@ import com.ulcjava.testframework.operator.ULCTableTreeOperator
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
@@ -21,7 +22,6 @@ import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -52,8 +52,10 @@ class SaveAlreadyUsedParameterizationTests extends AbstractSimpleFunctionalTest 
         parameterization.metaClass.isUsedInSimulation = {-> return true}
 
         ParameterViewModel parameterViewModel = new ParameterViewModel(model, parameterization, structure)
+        parameterViewModel.mainModel = new RiskAnalyticsMainModel()
+        parameterViewModel.mainModel.currentItem = new ParameterizationUIItem(new CoreModel(), parameterization)
 
-        ULCBoxPane content = new ParameterView(parameterViewModel).content
+        ULCBoxPane content = new ParameterView(parameterViewModel, new RiskAnalyticsMainModel()).content
         IActionListener saveAction = content.getActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK, false))
         saveAction.metaClass.save = {AbstractUIItem modellingItem ->
             parameterization.changed = false

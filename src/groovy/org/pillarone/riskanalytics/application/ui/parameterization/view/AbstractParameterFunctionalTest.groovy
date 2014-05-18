@@ -8,6 +8,8 @@ import models.application.ApplicationModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.main.view.DetailViewManager
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterViewModel
@@ -23,6 +25,7 @@ import java.awt.event.InputEvent
 
 abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalTest {
     ApplicationModel model
+    RiskAnalyticsMainModel mainModel
     Parameterization parameterization
     String parameterizationName
     int parameterizationVersion
@@ -47,16 +50,20 @@ abstract class AbstractParameterFunctionalTest extends AbstractSimpleFunctionalT
         parameterizationVersion = parameterization.dao.version
         parameterizationId = parameterization.dao.id
 
+        mainModel = new RiskAnalyticsMainModel()
+
+
 
         ModelStructure structure = ModellingItemFactory.getModelStructure(ModelStructureDAO.findByName('ApplicationWithoutHierarchyStructure'))
         structure.load()
         ParameterViewModel viewModel = new ParameterViewModel(model, parameterization,
                 structure)
-        ParameterView view = new ParameterView(viewModel)
+        viewModel.mainModel = mainModel
+        ParameterView view = new ParameterView(viewModel, mainModel)
 
-        ModellingUIItem uiItem = new ParameterizationUIItem(parameterization) {
+        ModellingUIItem uiItem = new ParameterizationUIItem(model, parameterization) {
             @Override
-            ParameterView createDetailView() {
+            IDetailView createDetailView() {
                 return view
             }
         }

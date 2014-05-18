@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.canoo.ulc.detachabletabbedpane.server.ULCDetachableTabbedPane
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCComponent
@@ -9,16 +8,15 @@ import com.ulcjava.testframework.standalone.AbstractSimpleStandaloneTestCase
 import grails.test.mixin.TestMixin
 import org.pillarone.riskanalytics.application.GrailsUnitTestMixinWithAnnotationSupport
 import org.pillarone.riskanalytics.application.ui.P1UnitTestMixin
-import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.core.simulation.item.Batch
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 @TestMixin(GrailsUnitTestMixinWithAnnotationSupport)
 @Mixin(P1UnitTestMixin)
 class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
+    RiskAnalyticsMainModel model = new RiskAnalyticsMainModel()
 
     void testView() {}
 
@@ -27,7 +25,6 @@ class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
         initGrailsApplication()
         defineBeans {
             detailViewManager(DetailViewManager)
-            riskAnalyticsEventBus(RiskAnalyticsEventBus)
             riskAnalyticsMainView(NullFactoryBean,RiskAnalyticsMainView)
         }
         inTestFrame(createContentPane())
@@ -81,7 +78,6 @@ class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
                 }
             }
         }
-        item.metaClass.load = {}
         item
     }
 }

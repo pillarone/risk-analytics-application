@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.*
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.*
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchNode
 import org.pillarone.riskanalytics.application.ui.parameterization.model.BatchRootNode
@@ -27,9 +28,6 @@ import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
-
 import static org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils.*
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
@@ -39,22 +37,14 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     static final int RESULT_CONFIGURATION_NODE_INDEX = 1
     static final int SIMULATION_NODE_INDEX = 2
     static Log LOG = LogFactory.getLog(NavigationTableTreeBuilder)
+    @javax.annotation.Resource
+    RiskAnalyticsMainModel riskAnalyticsMainModel
     final DefaultMutableTableTreeNode root
     private ITableTreeModelWithValues tableTreeModelWithValues
     private boolean resourceNodeVisible
 
     public NavigationTableTreeBuilder() {
         root = new DefaultMutableTableTreeNode("root")
-    }
-
-    @PostConstruct
-    void initialize() {
-        ModelRegistry.instance.addListener(this)
-    }
-
-    @PreDestroy
-    void close() {
-        ModelRegistry.instance.removeListener(this)
     }
 
     void registerTableTreeModel(ITableTreeModelWithValues tableTreeModel) {
@@ -148,7 +138,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
             ResourceGroupNode resourceGroupNode = new ResourceGroupNode("Resources")
             resourceClasses.each { Class resourceClass ->
 
-                ResourceClassNode resourceNode = new ResourceClassNode(UIUtils.getText(NavigationTableTreeModel.class, resourceClass.simpleName), resourceClass)
+                ResourceClassNode resourceNode = new ResourceClassNode(UIUtils.getText(NavigationTableTreeModel.class, resourceClass.simpleName), resourceClass, riskAnalyticsMainModel)
                 List<ModellingItem> resourceItems = items.findAll { ModellingItem item -> item instanceof Resource && item.modelClass == resourceClass }
                 getItemMap(resourceItems, false).values().each {
                     resourceNode.add(createItemNodes(it))
@@ -230,9 +220,9 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
 
         if (modelNode == null) {
             modelNode = new ModelNode(model)
-            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Parameterization"), Parameterization)
-            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "ResultTemplates"), ResultConfiguration)
-            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Results"), Simulation)
+            DefaultMutableTableTreeNode parameterizationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Parameterization"), Parameterization, riskAnalyticsMainModel)
+            DefaultMutableTableTreeNode resultConfigurationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "ResultTemplates"), ResultConfiguration, riskAnalyticsMainModel)
+            DefaultMutableTableTreeNode simulationsNode = new ItemGroupNode(UIUtils.getText(NavigationTableTreeModel.class, "Results"), Simulation, riskAnalyticsMainModel)
             modelNode.add(parameterizationsNode)
             modelNode.add(resultConfigurationsNode)
             modelNode.add(simulationsNode)
@@ -366,7 +356,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     public DefaultMutableTableTreeNode addNodeForItem(ModellingItem modellingItem, boolean notifyStructureChanged = true) {
-        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem)
+        ModellingUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, null)
         addNodeForUIItem(modellingUIItem, notifyStructureChanged)
     }
 
@@ -487,7 +477,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     public void removeNodeForItem(ModellingItem modellingItem) {
-        removeNodeForItem(UIItemFactory.createItem(modellingItem))
+        removeNodeForItem(UIItemFactory.createItem(modellingItem, null))
     }
 
     public void addNodesForItems(List<ModellingItem> items) {
@@ -677,7 +667,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     private DefaultMutableTableTreeNode createNode(Parameterization item) {
-        return createNode(new ParameterizationUIItem(item))
+        return createNode(new ParameterizationUIItem(item.modelClass?.newInstance() as Model, item))
     }
 
     private DefaultMutableTableTreeNode createNode(ParameterizationUIItem parameterizationUIItem) {
@@ -687,7 +677,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfiguration item) {
-        return createNode(new ResultConfigurationUIItem(item))
+        return createNode(new ResultConfigurationUIItem(item.modelClass?.newInstance() as Model, item))
     }
 
     private DefaultMutableTableTreeNode createNode(ResultConfigurationUIItem resultConfigurationUIItem) {
@@ -718,7 +708,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
 
     private DefaultMutableTableTreeNode createNode(Simulation item) {
         Model selectedModelInstance = item.modelClass?.newInstance() as Model
-        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item))
+        SimulationNode node = new SimulationNode(UIItemFactory.createItem(item, selectedModelInstance))
         DefaultMutableTableTreeNode paramsNode = createNode(item.parameterization)
         paramsNode.leaf = true
         DefaultMutableTableTreeNode templateNode = createNode(item.template)
@@ -730,7 +720,7 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
     }
 
     private DefaultMutableTableTreeNode createBatchNode(List<ModellingItem> items) {
-        BatchRootNode batchesNode = new BatchRootNode("Batches")
+        BatchRootNode batchesNode = new BatchRootNode("Batches", riskAnalyticsMainModel)
         List<Batch> batches = items.findAll { it instanceof Batch } as List<Batch>
         batches.each { Batch batch ->
             batchesNode.add(createNode(batch))

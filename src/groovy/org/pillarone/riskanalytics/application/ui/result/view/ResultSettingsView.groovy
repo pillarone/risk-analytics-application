@@ -1,43 +1,37 @@
 package org.pillarone.riskanalytics.application.ui.result.view
-import com.ulcjava.base.application.*
+
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.IFileChooseHandler
 import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
-import grails.util.Holders
-import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
-import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
-import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ModelDAO
 import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.model.DeterministicModel
-import org.pillarone.riskanalytics.core.simulation.item.ModelItem
-import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.util.IConfigObjectWriter
+import com.ulcjava.base.application.*
+import org.pillarone.riskanalytics.core.simulation.item.*
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.joda.time.DateTime
 
 class ResultSettingsView {
 
     Simulation simulation
     ULCBoxPane content
+    RiskAnalyticsMainModel mainModel
 
-    public ResultSettingsView(Simulation simulation) {
+    public ResultSettingsView(Simulation simulation, RiskAnalyticsMainModel mainModel) {
         this.simulation = simulation;
+        this.mainModel = mainModel
         initComponents()
-    }
-
-    private RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     private void initComponents() {
@@ -106,7 +100,13 @@ class ResultSettingsView {
     }
 
     private void openItem(ModellingItem item) {
-        riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(item)))
+        if (item instanceof ConfigObjectBasedModellingItem && item.data == null) {
+            item.load()
+        }
+        Model model = simulation.modelClass.newInstance()
+        model.init()
+        item.load()
+        mainModel.notifyOpenDetailView(model, item)
     }
 
     private void addLabels(ULCBoxPane container, String key, ULCTextArea value) {
@@ -191,8 +191,8 @@ class ExportModelItemAction extends ResourceBasedAction {
                         } finally {
                             bw.close()
                         }
-                    }, onSuccess                        : { path, name ->
-                    }, onFailure                        : { reason, description ->
+                    }, onSuccess: { path, name ->
+                    }, onFailure: { reason, description ->
                         new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 
@@ -243,8 +243,8 @@ class ExportStructureAction extends ResourceBasedAction {
                         } finally {
                             stream.close()
                         }
-                    }, onSuccess                        : { path, name ->
-                    }, onFailure                        : { reason, description ->
+                    }, onSuccess: { path, name ->
+                    }, onFailure: { reason, description ->
                         new ULCAlert(ancestor, "Export failed", description, "Ok").show()
                     }] as IFileStoreHandler, selectedFile)
 

@@ -2,7 +2,7 @@ package org.pillarone.riskanalytics.application.ui.main.action
 
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.CompareParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.model.Model
@@ -14,8 +14,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 // TODO frahman 2014-01-02 Figure out how to enable compare menu only when more than one param selected (and all from same model ? hopeful..)
 class CompareParameterizationsAction extends SelectionTreeAction {
 
-    CompareParameterizationsAction(ULCTableTree tree) {
-        super("CompareParameterizations", tree)
+    public CompareParameterizationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super("CompareParameterizations", tree, model)
     }
 
 // TODO begging to be simplified (probably needs to be fixed)
@@ -27,7 +27,7 @@ class CompareParameterizationsAction extends SelectionTreeAction {
         if (simulationModel != null && elements[0] != null) {
             List<Parameterization> items = elements*.itemNodeUIItem.item as List<Parameterization>
             CompareParameterizationUIItem uiItem = new CompareParameterizationUIItem(simulationModel, items)
-            riskAnalyticsEventBus.post(new OpenDetailViewEvent(uiItem))
+            model.openItem(simulationModel, uiItem)
         }
     }
 

@@ -1,8 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
+
 import com.ulcjava.testframework.operator.ComponentByNameChooser
 import com.ulcjava.testframework.operator.ULCFrameOperator
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.fileimport.FileImportService
@@ -12,6 +14,7 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -42,7 +45,8 @@ class SimulationUIItemTests extends AbstractUIItemTest {
         simulation.parameterization = new Parameterization("CoreParameters")
         simulation.template = new ResultConfiguration("CoreResultConfiguration", CoreModel)
 
-        SimulationSettingsUIItem uiItem = new SimulationSettingsUIItem(simulation)
+        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
+        SimulationSettingsUIItem uiItem = new SimulationSettingsUIItem(model, simulation)
         return uiItem
     }
 

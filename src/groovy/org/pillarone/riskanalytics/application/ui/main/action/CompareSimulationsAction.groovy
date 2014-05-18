@@ -1,14 +1,16 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.CompareSimulationUIItem
 import org.pillarone.riskanalytics.application.ui.result.model.SimulationNode
 import org.pillarone.riskanalytics.core.model.DeterministicModel
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -16,8 +18,8 @@ class CompareSimulationsAction extends SelectionTreeAction {
 
     private static Log LOG = LogFactory.getLog(CompareSimulationsAction)
 
-    CompareSimulationsAction(ULCTableTree tree) {
-        super("CompareSimulations", tree)
+    public CompareSimulationsAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
+        super("CompareSimulations", tree, model)
     }
 
     public void doActionPerformed(ActionEvent event) {
@@ -29,7 +31,7 @@ class CompareSimulationsAction extends SelectionTreeAction {
             if (selectedModel != null) {
                 List<Simulation> items = elements*.itemNodeUIItem.item as List<Simulation>
                 CompareSimulationUIItem uiItem = new CompareSimulationUIItem(selectedModel, items)
-                riskAnalyticsEventBus.post(new OpenDetailViewEvent(uiItem))
+                model.openItem(selectedModel, uiItem)
             }
         } catch (IllegalArgumentException ex) {
             throw new IllegalStateException(ex) // logged and shown in alert by ExceptionSafe
