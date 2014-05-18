@@ -18,7 +18,7 @@ class ModelIndependentDetailView {
 
     private static final String SIMULATION_QUEUE_TAB_NAME = "Simulation Queue"
     private static final String SIMULATION_LOGGING_TAB_NAME = 'Simulation Logging'
-    public static final String FINISHED_SIMULATION_TAB_NAME = "Finished Simulations"
+    public static final String FINSIHED_SIMULATION_TAB_NAME = "Finished Simulations"
     private ULCDetachableTabbedPane tabbedPane
     @Resource
     SimulationQueueView simulationQueueView
@@ -35,8 +35,8 @@ class ModelIndependentDetailView {
         tabbedPane.addTab(SIMULATION_QUEUE_TAB_NAME, simulationQueueView.content)
         tabbedPane.setCloseableTab(tabbedPane.indexOfTab(SIMULATION_QUEUE_TAB_NAME), false)
 
-        tabbedPane.addTab(FINISHED_SIMULATION_TAB_NAME, finishedSimulationView.content)
-        tabbedPane.setCloseableTab(tabbedPane.indexOfTab(FINISHED_SIMULATION_TAB_NAME), false)
+        tabbedPane.addTab(FINSIHED_SIMULATION_TAB_NAME, finishedSimulationView.content)
+        tabbedPane.setCloseableTab(tabbedPane.indexOfTab(FINSIHED_SIMULATION_TAB_NAME), false)
 
         tabbedPane.addTab(SIMULATION_LOGGING_TAB_NAME, realTimeLoggingView.content)
         tabbedPane.setCloseableTab(tabbedPane.indexOfTab(SIMULATION_LOGGING_TAB_NAME), false)
