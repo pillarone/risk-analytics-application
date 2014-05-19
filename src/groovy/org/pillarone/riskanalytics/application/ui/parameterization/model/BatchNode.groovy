@@ -34,7 +34,7 @@ class BatchNode extends ItemNode implements IReportableNode {
         batchesNodePopUpMenu.addSeparator()
         batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
-        addReportMenus(batchesNodePopUpMenu, tree, true, true)
+        addReportMenus(batchesNodePopUpMenu, tree, true)
         return batchesNodePopUpMenu
     }
 
