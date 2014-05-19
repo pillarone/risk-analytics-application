@@ -79,8 +79,6 @@ class AboutDialog {
         title.font = title.font.deriveFont(Font.BOLD, 14)
         pane.add(ULCBoxPane.BOX_LEFT_TOP, title); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCFiller(1, 10)); pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
-        pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Ansorge Matthias, Canoo Engineering AG"));
-        pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Bardola Jon, FS Consulta AG"));
         pane.add(ULCBoxPane.BOX_EXPAND_TOP, new ULCFiller())
         pane.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel("Brendle Detlef, Canoo Engineering AG"));
