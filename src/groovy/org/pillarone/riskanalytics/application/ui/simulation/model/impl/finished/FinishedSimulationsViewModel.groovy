@@ -5,7 +5,6 @@ import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
-import org.pillarone.riskanalytics.core.user.UserManagement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -29,7 +28,6 @@ class FinishedSimulationsViewModel {
     @PostConstruct
     void initialize() {
         ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
-        finishedSimulationsTableModel.infos = simulationRuntimeService.finished
     }
 
     @PreDestroy
@@ -52,16 +50,9 @@ class FinishedSimulationsViewModel {
     }
 
     private class MyInfoListener extends SimulationRuntimeInfoAdapter {
-
         @Override
         void finished(SimulationRuntimeInfo info) {
-            if (isMine(info)) {
-                finishedSimulationsTableModel.itemAdded(info)
-            }
-        }
-
-        private boolean isMine(SimulationRuntimeInfo info) {
-            UserManagement.currentUser?.username == info.offeredBy?.username
+            finishedSimulationsTableModel.itemAdded(info)
         }
     }
 }
