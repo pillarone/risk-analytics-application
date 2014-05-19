@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
+
 import com.ulcjava.base.application.*
 import groovy.util.logging.Log
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
@@ -6,6 +7,8 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.Si
 import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.SimulationState
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -172,10 +175,19 @@ class SimulationInfoPane {
             }
             uiStates[simulationState].call()
             currentUISimulationState = simulationState
-            if (currentUISimulationState == ERROR) {
-                //TODO only show errors if manual simulation and you are the owner?
+            if (currentUISimulationState == ERROR && shouldShowAlert()) {
                 showAlert()
             }
+        }
+
+        private boolean shouldShowAlert() {
+            boolean isOwner = (currentUser == simulationInfoPaneModel.simulationOwner)
+            boolean isBatchSimulation = simulationInfoPaneModel.batchSimulation
+            return isOwner && (!isBatchSimulation)
+        }
+
+        private Person getCurrentUser() {
+            UserManagement.currentUser
         }
     }
 }
