@@ -181,7 +181,7 @@ class SimulationInfoPane {
         }
 
         private boolean shouldShowAlert() {
-            boolean isOwner = (currentUser == simulationInfoPaneModel.simulationOwner)
+            boolean isOwner = (currentUser?.equals( simulationInfoPaneModel.simulationOwner ))
             boolean isBatchSimulation = simulationInfoPaneModel.batchSimulation
             return isOwner && (!isBatchSimulation)
         }
