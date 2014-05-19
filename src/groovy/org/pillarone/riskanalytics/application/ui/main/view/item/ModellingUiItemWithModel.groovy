@@ -1,19 +1,18 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Resource
 
-abstract class ModellingUiItemWithModel extends ModellingUIItem {
+abstract class ModellingUiItemWithModel<T extends IDetailView> extends ModellingUIItem<T> {
 
-    private Model model
-
-    ModellingUiItemWithModel(Model model, ModellingItem item) {
+    ModellingUiItemWithModel(ModellingItem item) {
         super(item)
-        this.model = model
     }
 
     @Override
@@ -21,9 +20,8 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         return null
     }
 
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        return null
+    RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     @Override
@@ -31,15 +29,13 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
         return UIItemUtils.deleteDependingResults(model, this)
     }
 
-    Model getModel() {
-        if (!model) {
-            model = item.modelClass.newInstance() as Model
-            model.init()
-        }
-        return model
+    protected Model createModel() {
+        Model model = item.modelClass.newInstance() as Model
+        model.init()
+        model
     }
 
-    ModellingUIItem createNewVersion(Model model, boolean openNewVersion = true) {
+    ModellingUIItem createNewVersion(boolean openNewVersion = true) {
         ModellingItem modellingItem = null
         item.daoClass.withTransaction { status ->
             if (!item.loaded) {
@@ -47,21 +43,10 @@ abstract class ModellingUiItemWithModel extends ModellingUIItem {
             }
             modellingItem = ModellingItemFactory.incrementVersion(item)
         }
-        AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem, model)
+        AbstractUIItem modellingUIItem = UIItemFactory.createItem(modellingItem)
         if (openNewVersion) {
-            riskAnalyticsMainModel.openItem(model, modellingUIItem)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(modellingUIItem))
         }
         return modellingUIItem
-    }
-
-    @Override
-    ModellingItem addItem(ModellingUIItem modellingUIItem, String name) {
-        ModellingUiItemWithModel uiItemWithModel = modellingUIItem as ModellingUiItemWithModel
-        ModellingItem newItem = super.addItem(modellingUIItem, name)
-        uiItemWithModel.model
-        if (!(newItem instanceof Resource)) { //re-create model (PMO-1961) - do nothing if it's a resource
-            Model modelInstance = newItem?.modelClass?.newInstance() as Model
-            modelInstance?.init()
-        }
     }
 }

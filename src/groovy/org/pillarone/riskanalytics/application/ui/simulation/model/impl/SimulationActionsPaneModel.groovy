@@ -7,7 +7,6 @@ import grails.util.Holders
 import groovy.beans.Bindable
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.action.RunSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.ISimulationProvider
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -17,6 +16,7 @@ import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+
 /**
  * The view model for the SimulationActionsPane.
  * It controls the simulation provided by the ISimulationProvider (run, stop, cancel)
@@ -33,7 +33,6 @@ class SimulationActionsPaneModel {
     RunSimulationAction runSimulationAction
 
     ISimulationProvider simulationProvider
-    RiskAnalyticsMainModel mainModel
 
     @Bindable
     String batchMessage

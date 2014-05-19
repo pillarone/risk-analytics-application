@@ -1,24 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.function.MeanFunction
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.StochasticResultView
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class StochasticResultUIItem extends SimulationResultUIItem {
+class StochasticResultUIItem extends SimulationResultUIItem<StochasticResultView> {
 
 
-    StochasticResultUIItem(Model simulationModel, Simulation simulation) {
-        super(simulationModel, simulation)
+    StochasticResultUIItem(Simulation simulation) {
+        super(simulation)
     }
 
     @Override
@@ -26,14 +21,9 @@ class StochasticResultUIItem extends SimulationResultUIItem {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
     }
 
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
-    }
-
-    IDetailView createDetailView() {
+    StochasticResultView createDetailView() {
         ResultViewModel model = viewModel
-        StochasticResultView view = new StochasticResultView(model, riskAnalyticsMainModel)
+        StochasticResultView view = new StochasticResultView(model)
         model.addFunctionListener(view)
         model.addFunction(new MeanFunction())
         return view

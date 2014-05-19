@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.batch.view.action
+package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.tabletree.DefaultTableTreeModel
@@ -8,12 +8,11 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.main.view.SelectionTreeView
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
 
-abstract class AbstractFindResultsInTreeAction extends ResourceBasedAction {
+abstract class AbstractSelectItemsInTreeAction<T> extends ResourceBasedAction {
 
-    AbstractFindResultsInTreeAction() {
-        super('FindResultsInTree')
+    AbstractSelectItemsInTreeAction(String actionName) {
+        super(actionName)
     }
 
     @Override
@@ -21,15 +20,16 @@ abstract class AbstractFindResultsInTreeAction extends ResourceBasedAction {
         if (!enabled) {
             return
         }
-        List<ItemNode> nodes = (simulations.collect {
-            TableTreeBuilderUtils.findNodeForItem(selectionTreeView.root, it)
+        SelectionTreeView selectionTreeView = getSelectionTreeView()
+        List<ItemNode> nodes = (items.collect { Object item ->
+            TableTreeBuilderUtils.findNodeForItem(selectionTreeView.root, item)
         } - [null]) as List<ItemNode>
         if (nodes) {
-            TreePath[] paths = nodes.collect {
-                new TreePath(DefaultTableTreeModel.getPathToRoot(it) as Object[])
+            TreePath[] paths = nodes.collect { ItemNode node ->
+                new TreePath(DefaultTableTreeModel.getPathToRoot(node) as Object[])
             }
-            TreePath[] parents = nodes.collect {
-                new TreePath(DefaultTableTreeModel.getPathToRoot(it.parent) as Object[])
+            TreePath[] parents = nodes.collect { ItemNode node ->
+                new TreePath(DefaultTableTreeModel.getPathToRoot(node.parent) as Object[])
             }
             selectionTreeView.selectionTree.collapseAll()
             selectionTreeView.selectionTree.expandPaths(parents, false)
@@ -37,9 +37,9 @@ abstract class AbstractFindResultsInTreeAction extends ResourceBasedAction {
         }
     }
 
-    abstract protected List<Simulation> getSimulations()
+    abstract protected List<T> getItems()
 
-    SelectionTreeView getSelectionTreeView() {
+    private SelectionTreeView getSelectionTreeView() {
         Holders.grailsApplication.mainContext.getBean('selectionTreeView', SelectionTreeView)
     }
 }

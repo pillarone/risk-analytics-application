@@ -4,10 +4,13 @@ import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTr
 import com.ulcjava.base.application.util.Color
 import com.ulcjava.base.application.util.Dimension
 import com.ulcjava.base.application.util.KeyStroke
+import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.function.DeviationAbsoluteFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.DeviationPercentageFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.FractionAbsoluteFunction
 import org.pillarone.riskanalytics.application.dataaccess.function.FractionPercentageFunction
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.DefaultToggleValueProvider
 import org.pillarone.riskanalytics.application.ui.result.action.keyfigure.ToggleKeyFigureAction
 import org.pillarone.riskanalytics.application.ui.result.model.CompareSimulationsViewModel
@@ -154,7 +157,7 @@ class CompareSimulationsCriteriaView {
         compareParameterizations.addActionListener([actionPerformed: { event ->
             ArrayList parameters = ParameterizationUtilities.getParameters(model.treeModel.simulations)
             CompareParameterizationUIItem compareParameterizationUIItem = new CompareParameterizationUIItem(model.model, parameters)
-            compareSimulationTreeView.mainModel.notifyOpenDetailView(model.model, compareParameterizationUIItem)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(compareParameterizationUIItem))
         }] as IActionListener)
 
         //ColumnOrderAction
@@ -172,6 +175,10 @@ class CompareSimulationsCriteriaView {
             }
 
         }] as IValueChangedListener)
+    }
+
+    private RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     private void setInterval() {

@@ -3,7 +3,6 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 import com.ulcjava.base.application.DefaultComboBoxModel
 import com.ulcjava.base.application.IComboBoxModel
 import groovy.transform.CompileStatic
-import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -21,8 +20,6 @@ class BatchViewModel {
 
     @Resource
     BatchRunService batchRunService
-    @Resource
-    GrailsApplication grailsApplication
 
     @Resource
     SimulationParameterizationTableModel simulationParameterizationTableModel
@@ -35,8 +32,8 @@ class BatchViewModel {
         simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(batchRunService.simulationProfileNames)
     }
 
-    void destroy() {
-        simulationParameterizationTableModel.destroy()
+    void close() {
+        simulationParameterizationTableModel.close()
     }
 
     void setBatch(Batch batch) {

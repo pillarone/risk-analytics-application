@@ -1,18 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
-import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
-import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import com.ulcjava.base.application.ULCAlert
+import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
-import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
+import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
+import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
+import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -22,8 +19,8 @@ class CreateNewMajorVersion extends SingleItemAction {
 
     ModellingUIItem modellingUIItem
 
-    public CreateNewMajorVersion(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("NewMajorVersion", tree, model)
+    public CreateNewMajorVersion(ULCTableTree tree) {
+        super("NewMajorVersion", tree)
     }
 
     public CreateNewMajorVersion(ModellingUIItem modellingUIItem) {
@@ -57,15 +54,15 @@ class CreateNewMajorVersion extends SingleItemAction {
     }
 
     private void createNewVersion(ParameterizationUIItem item, String commentText) {
-        item.createNewVersion(item.getModel(), commentText)
+        item.createNewVersion(commentText)
     }
 
     private void createNewVersion(ResultConfigurationUIItem template) {
-        template.createNewVersion(template.getModel())
+        template.createNewVersion()
     }
 
     private void createNewVersion(ResourceUIItem resource) {
-        resource.createNewVersion(resource.getModel())
+        resource.createNewVersion()
     }
 
     private void createNewVersion(def node) {

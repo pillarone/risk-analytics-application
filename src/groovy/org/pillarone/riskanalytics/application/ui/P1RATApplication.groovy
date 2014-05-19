@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui
-
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.applicationframework.application.Application
 import com.ulcjava.base.application.ApplicationContext
@@ -12,26 +11,24 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
+import org.pillarone.riskanalytics.application.ui.search.ModellingItemCache
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.log.TraceLogManager
-import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.ulc.server.ULCMinimalSizeFrame
 
 import static com.ulcjava.base.shared.IWindowConstants.DO_NOTHING_ON_CLOSE
 import static org.springframework.beans.factory.config.AutowireCapableBeanFactory.AUTOWIRE_BY_NAME
-
 //used for standalone
 class P1RATApplication extends Application {
 
     private static final Log LOG = LogFactory.getLog(P1RATApplication)
 
     ULCMinimalSizeFrame mainFrame = new ULCMinimalSizeFrame("Risk Analytics")
-    RiskAnalyticsMainModel riskAnalyticsMainModel
     RiskAnalyticsMainView riskAnalyticsMainView
     NavigationTableTreeModel navigationTableTreeModel
     TraceLogManager traceLogManager
+    ModellingItemCache modellingItemCache
 
     protected void startup() {
         initializeInjection()
@@ -65,7 +62,6 @@ class P1RATApplication extends Application {
     }
 
     private void initMainView() {
-        //init RiskAnalyticsMainModel after login
         mainFrame.defaultCloseOperation = DO_NOTHING_ON_CLOSE
         mainFrame.size = new Dimension(1000, 750)
         mainFrame.minimumSize = new Dimension(800, 600)
@@ -80,11 +76,9 @@ class P1RATApplication extends Application {
         mainFrame.visible = true
         mainFrame.toFront()
         mainFrame.addWindowListener([windowClosing: { WindowEvent e -> mainFrame.visible = false; windowClosing() }] as IWindowListener)
-        ModelRegistry.instance.addListener(navigationTableTreeModel.navigationTableTreeBuilder)
     }
 
     private void windowClosing() {
-        ModelRegistry.instance.removeListener(navigationTableTreeModel.navigationTableTreeBuilder)
         traceLogManager.deactivateLogging()
         ApplicationContext.terminate()
     }

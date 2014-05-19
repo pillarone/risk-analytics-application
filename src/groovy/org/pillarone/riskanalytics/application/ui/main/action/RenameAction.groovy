@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
@@ -8,13 +7,11 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -22,8 +19,8 @@ class RenameAction extends SingleItemAction {
 
     // Oh my! An instance is Ctor'd for each GUI node!
     //
-    public RenameAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("Rename", tree, model)
+    public RenameAction(ULCTableTree tree) {
+        super("Rename", tree)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0, true));
     }
 

@@ -10,15 +10,16 @@ import com.ulcjava.base.application.ULCTabbedPane
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.util.KeyStroke
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ChangeDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.core.model.Model
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-
-import javax.annotation.Resource
 
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
@@ -27,9 +28,8 @@ class CardPaneManager {
 
     ULCCardPane cardPane = new ULCCardPane()
     private Map<String, TabbedPaneManager> tabbedPaneManagers = [:]
-    @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
-    public static final String NO_MODEL = "NO_MODEL"
+
+    static final String NO_MODEL = "NO_MODEL"
 
     /**
      * Creates a new card for the given model.
@@ -73,7 +73,8 @@ class CardPaneManager {
      *  switching cards may be required, then delegate to TabbedPaneManager
      * @param item
      */
-    void openItem(Model selectedModel, AbstractUIItem item) {
+    void openItem(AbstractUIItem item) {
+        Model selectedModel = item.model
         if (!selectCard(selectedModel)) {
             addCard(selectedModel)
         }
@@ -83,7 +84,6 @@ class CardPaneManager {
         } else {
             tabbedPaneManager.addTab(item)
         }
-        riskAnalyticsMainModel.currentItem = item
     }
 
     public boolean contains(Model selectedModel) {
@@ -111,22 +111,28 @@ class CardPaneManager {
             ULCCloseableTabbedPane modelCardContent = event.closableTabbedPane
             closeCard(selectedModel, modelCardContent, closingIndex)
         }] as ITabListener)
-        Closure syncCurrentItem = { e -> selectCurrentItemFromTab(selectedModel, e.source) }
+        Closure syncCurrentItem = { e ->
+            selectCurrentItemFromTab(selectedModel)
+        }
         tabbedPane.selectionChanged = syncCurrentItem
         tabbedPane.focusGained = syncCurrentItem
         return tabbedPane
     }
 
-    public void selectCurrentItemFromTab(Model selectedModel, ULCCloseableTabbedPane modelCardContent) {
+    public void selectCurrentItemFromTab(Model selectedModel) {
         TabbedPaneManager tabbedPaneManager = tabbedPaneManagers[getModelName(selectedModel)]
         if (tabbedPaneManager) {
-            AbstractUIItem item = tabbedPaneManager.getAbstractItem(modelCardContent.selectedComponent)
-            riskAnalyticsMainModel.notifyChangedDetailView(selectedModel, item)
+            ULCCloseableTabbedPane selectedPane = selectedCard as ULCCloseableTabbedPane
+            AbstractUIItem item = tabbedPaneManager.getAbstractItem(selectedPane.selectedComponent)
+            riskAnalyticsEventBus.post(new ChangeDetailViewEvent(item))
         }
+    }
+
+    RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
     }
 
     TabbedPaneManager getTabbedPaneManager(Model selectedModel) {
         return tabbedPaneManagers[getModelName(selectedModel)]
     }
-
 }

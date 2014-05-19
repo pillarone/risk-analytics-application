@@ -42,21 +42,15 @@ class TabbedPaneManager {
         IDetailView detailView = detailViewManager.createDetailViewForItem(item)
         if (item instanceof ModellingUIItem) {
             item.addModellingItemChangeListener(riskAnalyticsMainView)
+            item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, item)
         }
         ULCContainer view = detailView.content
         def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
+        tabManager[item] = wrapped
         tabbedPane.addTab(item.createTitle(), item.icon, wrapped)
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
-        tabManager[item] = wrapped
-        if (item instanceof ModellingUIItem) {
-            item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, item)
-        }
         tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
-    }
-
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     void closeTab(ULCComponent component) {
@@ -74,7 +68,7 @@ class TabbedPaneManager {
             alert.addWindowListener([windowClosing: { WindowEvent windowEvent ->
                 def value = windowEvent.source.value
                 if (value.equals(alert.firstButtonLabel)) {
-                    SaveAction saveAction = new SaveAction(tabbedPane, riskAnalyticsMainModel, modellingUIItem.item)
+                    SaveAction saveAction = new SaveAction(tabbedPane, modellingUIItem.item)
                     saveAction.doActionPerformed(new ActionEvent(this, "save"))
                 } else if (value.equals(alert.thirdButtonLabel)) {
                     closeTab = false

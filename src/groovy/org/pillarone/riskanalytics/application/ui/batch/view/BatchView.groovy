@@ -9,9 +9,9 @@ import com.ulcjava.base.application.table.ULCTableColumn
 import com.ulcjava.base.application.util.Dimension
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.Batch
@@ -43,7 +43,7 @@ class BatchView implements IDetailView {
     BatchViewModel batchViewModel
 
     @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
+    RiskAnalyticsEventBus riskAnalyticsEventBus
 
     private final ValidationListener validationListener = new ValidationListener()
     private final IListSelectionListener updateSelectionCountListener = new UpdateSelectionCountListener()
@@ -83,7 +83,6 @@ class BatchView implements IDetailView {
         batches.selectionModel.addListSelectionListener(updateSelectionCountListener)
         BatchTableRenderer batchTableRenderer = new BatchTableRenderer(this)
         batches.columnModel.columns.each { ULCTableColumn column ->
-            column.headerRenderer = new BatchTableHeaderRenderer()
             column.cellRenderer = batchTableRenderer
         }
         batches.showHorizontalLines = true
@@ -99,12 +98,12 @@ class BatchView implements IDetailView {
 
     @Override
     void close() {
-        riskAnalyticsMainModel.unregister(this)
+        riskAnalyticsEventBus.unregister(this)
         if (this.batch) {
             this.batch.removeModellingItemChangeListener(validationListener)
         }
         batches.selectionModel.removeListSelectionListener(updateSelectionCountListener)
-        batchViewModel.destroy()
+        batchViewModel.close()
     }
 
     @Subscribe
@@ -129,13 +128,13 @@ class BatchView implements IDetailView {
     }
 
     List<BatchRowInfo> getSelectedBatchRowInfos() {
-        batches.selectedRows.collect {
-            batchViewModel.simulationParameterizationTableModel.batchRowInfos[it]
+        batches.selectedRows.collect { int index ->
+            batchViewModel.simulationParameterizationTableModel.batchRowInfos[index]
         }
     }
 
     private void attachListener() {
-        riskAnalyticsMainModel.register(this)
+        riskAnalyticsEventBus.register(this)
         runBatch.addActionListener([actionPerformed: { ActionEvent event ->
             batchViewModel.save()
             batchViewModel.run()
@@ -164,12 +163,8 @@ class BatchView implements IDetailView {
         simulationProfilesComboBox = new ULCComboBox(batchViewModel.simulationProfileNamesComboBoxModel)
         ULCBoxPane parameterSection = boxLayout(UIUtils.getText(this.class, "BatchConfig") + ":") { ULCBoxPane box ->
             ULCBoxPane content = new ULCBoxPane(3, 3)
-
             content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel('Simulation Profile'))
             content.add(2, ULCBoxPane.BOX_LEFT_TOP, spaceAround(simulationProfilesComboBox, 2, 10, 0, 0))
-//            content.add(ULCBoxPane.BOX_LEFT_TOP, new ULCLabel(UIUtils.getText(NewBatchView.class, "Comment") + ":"))
-//            content.add(2, ULCBoxPane.BOX_LEFT_TOP, spaceAround(comment, 2, 10, 0, 0))
-
             box.add ULCBoxPane.BOX_LEFT_TOP, content
         }
         return parameterSection
@@ -190,8 +185,8 @@ class BatchView implements IDetailView {
     void addParameterizations(List<Parameterization> parameterizations) {
         batchViewModel.addParameterizations(parameterizations)
         parameterizations.each { Parameterization parameterization ->
-            BatchRowInfo batchRowInfo = batchViewModel.simulationParameterizationTableModel.batchRowInfos.find {
-                it.parameterization == parameterization
+            BatchRowInfo batchRowInfo = batchViewModel.simulationParameterizationTableModel.batchRowInfos.find { BatchRowInfo info ->
+                info.parameterization == parameterization
             }
             int indexOf = batchViewModel.simulationParameterizationTableModel.batchRowInfos.indexOf(batchRowInfo)
             batches.selectionModel.addSelectionInterval(

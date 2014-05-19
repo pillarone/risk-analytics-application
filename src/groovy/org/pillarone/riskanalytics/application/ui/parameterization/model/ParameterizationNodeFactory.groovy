@@ -184,7 +184,6 @@ class ParameterizationNodeFactory {
             if (obj instanceof StringClassKey) {
                 return new EqualsBuilder().append(name, obj.name).append(clazz, obj.clazz).equals
             }
-
             return false
         }
 

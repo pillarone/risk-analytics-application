@@ -1,41 +1,45 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl
-
 import com.google.common.eventbus.Subscribe
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.application.ui.search.ModellingItemEvent
+import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 
 class SimulationConfigurationModel {
 
     SimulationProfilePaneModel simulationProfilePaneModel
-    final RiskAnalyticsMainModel mainModel
 
-    SimulationConfigurationModel(Class modelClass, RiskAnalyticsMainModel mainModel) {
-        this.mainModel = mainModel
+    SimulationConfigurationModel(Class modelClass) {
         initSubModels(modelClass)
         attachListener()
     }
 
+    private RiskAnalyticsEventBus getRiskAnalyticsEventBus() {
+        Holders.grailsApplication.mainContext.getBean('riskAnalyticsEventBus', RiskAnalyticsEventBus)
+    }
+
     protected void attachListener() {
-        mainModel.register(this)
+        getRiskAnalyticsEventBus().register(this)
     }
 
     void close() {
-        mainModel.unregister(this)
+        getRiskAnalyticsEventBus().unregister(this)
     }
 
     protected initSubModels(Class modelClass) {
-        simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass, mainModel)
+        simulationProfilePaneModel = new SimulationProfilePaneModel(modelClass)
     }
 
-    @Subscribe
-    void onSimulationSettingsChangedEvent(SimulationSettingsChangedEvent event) {
-        if (checkModelClass(event.modelClass)) {
-            if (event.parameterization) {
-                settingsPaneModel.selectedParameterization = event.parameterization
-            }
-            if (event.template) {
-                settingsPaneModel.selectedResultConfiguration = event.template
-            }
+    void setParameterization(Parameterization parameterization) {
+        if (parameterization) {
+            settingsPaneModel.selectedParameterization = parameterization
+        }
+    }
+
+    void setTemplate(ResultConfiguration template) {
+        if (template) {
+            settingsPaneModel.selectedResultConfiguration = template
         }
     }
 

@@ -1,9 +1,11 @@
-package org.pillarone.riskanalytics.application.ui.batch.view.action
+package org.pillarone.riskanalytics.application.ui.batch.action
 
 import com.ulcjava.base.application.event.ActionEvent
+import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 
+@CompileStatic
 class DeleteParameterizationsAction extends ResourceBasedAction {
     private final BatchView batchView
 

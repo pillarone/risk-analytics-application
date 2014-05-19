@@ -1,23 +1,17 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVersion
-import org.pillarone.riskanalytics.application.ui.main.action.SelectionTreeAction
 import org.pillarone.riskanalytics.application.ui.main.action.SingleItemAction
 import org.pillarone.riskanalytics.application.ui.main.view.NewVersionCommentDialog
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.user.Person
-import org.pillarone.riskanalytics.core.user.UserManagement
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
 
@@ -26,8 +20,8 @@ abstract class AbstractWorkflowAction extends SingleItemAction {
 
     private StatusChangeService service = getService()
 
-    public AbstractWorkflowAction(String name, ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super(name, tree, model)
+    public AbstractWorkflowAction(String name, ULCTableTree tree) {
+        super(name, tree)
     }
 
     // This method is shared by subclasses

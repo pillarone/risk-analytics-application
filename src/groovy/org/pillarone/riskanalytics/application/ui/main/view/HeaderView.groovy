@@ -85,7 +85,7 @@ class HeaderView extends AbstractView {
     ULCTableTree navigationTableTree
 
     @Resource
-    RiskAnalyticsMainModel riskAnalyticsMainModel
+    DetailViewManager detailViewManager
     @Resource
     NavigationTableTreeModel navigationTableTreeModel
     Map windowMenus = [:]
@@ -109,11 +109,11 @@ class HeaderView extends AbstractView {
         rightToolBar.floatable = false
         //init actions
         refreshAction = new RefreshAction(navigationTableTreeModel)
-        exportAllNewestVersionAction = new ExportAllAction(riskAnalyticsMainModel, true)
-        exportAllAction = new ExportAllAction(riskAnalyticsMainModel, false)
-        importAllAction = new ImportAllAction(riskAnalyticsMainModel, "ImportAllParameterizations")
-        saveAction = new SaveAction(content, riskAnalyticsMainModel)
-        runAction = new SimulationAction(selectionTreeView.selectionTree, riskAnalyticsMainModel)
+        exportAllNewestVersionAction = new ExportAllAction(true)
+        exportAllAction = new ExportAllAction(false)
+        importAllAction = new ImportAllAction("ImportAllParameterizations")
+        saveAction = new SaveAction(content)
+        runAction = new SimulationAction(selectionTreeView.selectionTree)
 
         //init menu
         menuBar = new ULCMenuBar()
@@ -248,10 +248,10 @@ class HeaderView extends AbstractView {
     //todo fja refactoring to IEnabler
     public boolean syncMenuBar() {
         saveAction.enabled = saveAction.enabled
-        if (riskAnalyticsMainModel.currentItem) {
-            runAction.enabled = !((riskAnalyticsMainModel.currentItem instanceof SimulationSettingsUIItem) || (riskAnalyticsMainModel.currentItem instanceof BatchUIItem))
-            if (riskAnalyticsMainModel.currentItem instanceof ParameterizationUIItem || riskAnalyticsMainModel.currentItem instanceof ResultConfigurationUIItem) {
-                if (riskAnalyticsMainModel.currentItem.editable) {
+        if (detailViewManager.currentUIItem) {
+            runAction.enabled = !((detailViewManager.currentUIItem instanceof SimulationSettingsUIItem) || (detailViewManager.currentUIItem instanceof BatchUIItem))
+            if (detailViewManager.currentUIItem instanceof ParameterizationUIItem || detailViewManager.currentUIItem instanceof ResultConfigurationUIItem) {
+                if (detailViewManager.currentUIItem.editable) {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")
                 } else {
                     lockedLabel.icon = UIUtils.getIcon("locked-active.png")

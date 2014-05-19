@@ -1,13 +1,10 @@
-package org.pillarone.riskanalytics.application.ui.batch.view.action
-
+package org.pillarone.riskanalytics.application.ui.batch.action
 import com.ulcjava.base.application.event.ActionEvent
-import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
 import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import org.pillarone.riskanalytics.core.model.Model
-import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
+import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
 
 class BatchViewOpenResultAction extends ResourceBasedAction {
     private final BatchView batchView
@@ -19,14 +16,9 @@ class BatchViewOpenResultAction extends ResourceBasedAction {
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        ResultConfiguration template = batchView.selectedBatchRowInfos.first().template
-        if (template) {
-            riskAnalyticsMainModel.notifyOpenDetailView((Model) template.modelClass.newInstance(), template)
+        if (enabled) {
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(batchView.selectedBatchRowInfos.first().template)))
         }
-    }
-
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     @Override

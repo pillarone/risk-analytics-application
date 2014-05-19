@@ -1,10 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.ulcjava.base.application.util.ULCIcon
-import grails.util.Holders
-import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.TabbedPaneManagerHelper
 import org.pillarone.riskanalytics.application.ui.parameterization.model.CompareParameterViewModel
 import org.pillarone.riskanalytics.application.ui.result.view.CompareParameterizationsView
@@ -12,30 +7,25 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-class CompareParameterizationUIItem extends AbstractUIItem {
+class CompareParameterizationUIItem extends AbstractUIItem<CompareParameterizationsView> {
 
     private List<Parameterization> parameterizations
-    private final Model model
+    final Model model
 
     CompareParameterizationUIItem(Model model, List<Parameterization> parameterizations) {
         this.model = model
         this.parameterizations = parameterizations
     }
 
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
-    }
-
     String createTitle() {
         return TabbedPaneManagerHelper.getTabTitle(Parameterization)
     }
 
-    IDetailView createDetailView() {
-        return new CompareParameterizationsView(viewModel as CompareParameterViewModel, riskAnalyticsMainModel)
+    CompareParameterizationsView createDetailView() {
+        return new CompareParameterizationsView(viewModel as CompareParameterViewModel)
     }
 
     private CompareParameterViewModel getViewModel() {

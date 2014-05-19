@@ -3,15 +3,14 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 import com.ulcjava.base.application.tabletree.IMutableTableTreeNode
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.TableTreeBuilderUtils
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
+import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.main.view.MarkItemAsUnsavedListener
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.ExceptionSafe
+import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -20,10 +19,9 @@ import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
-abstract class ModellingUIItem extends AbstractUIItem {
-    private final static Log LOG = LogFactory.getLog(ModellingUIItem)
-
+abstract class ModellingUIItem<T extends IDetailView> extends AbstractUIItem<T> {
     private final ModellingItem item
+    protected Model model
 
     ModellingUIItem(ModellingItem item) {
         this.item = item
@@ -42,8 +40,6 @@ abstract class ModellingUIItem extends AbstractUIItem {
     void unload() {
         item.unload()
     }
-
-    abstract RiskAnalyticsMainModel getRiskAnalyticsMainModel()
 
     boolean isUsedInSimulation() {
         return item.usedInSimulation
@@ -153,5 +149,16 @@ abstract class ModellingUIItem extends AbstractUIItem {
 
     String getWindowTitle() {
         createTitle()
+    }
+
+    final Model getModel() {
+        if (!model) {
+            model = createModel()
+        }
+        return model
+    }
+
+    protected Model createModel() {
+        null
     }
 }

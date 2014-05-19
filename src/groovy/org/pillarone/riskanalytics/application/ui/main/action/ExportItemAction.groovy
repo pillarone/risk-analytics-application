@@ -1,24 +1,21 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
 import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
 class ExportItemAction extends ExportAction {
 
-    public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        this(tree, model, "Export", 'xlsx')
+    public ExportItemAction(ULCTableTree tree) {
+        this(tree, "Export", 'xlsx')
     }
 
-    public ExportItemAction(ULCTableTree tree, RiskAnalyticsMainModel model, String actionName, String fileExtension) {
-        super(tree, model, actionName, fileExtension)
+    public ExportItemAction(ULCTableTree tree, String actionName, String fileExtension) {
+        super(tree, actionName, fileExtension)
     }
 
 

@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
@@ -10,7 +9,6 @@ import com.ulcjava.base.application.event.KeyEvent
 import com.ulcjava.base.application.event.WindowEvent
 import com.ulcjava.base.application.util.KeyStroke
 import org.pillarone.riskanalytics.application.ui.main.view.AlertDialog
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
@@ -19,7 +17,6 @@ import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.workflow.Status
 import org.pillarone.riskanalytics.core.workflow.StatusChangeService
-
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -29,8 +26,8 @@ class DeleteAction extends SelectionTreeAction {
         removeItem(selectedItems)
     }
 
-    public DeleteAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("Delete", tree, model)
+    public DeleteAction(ULCTableTree tree) {
+        super("Delete", tree)
         putValue(IAction.ACCELERATOR_KEY, KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0, true));
     }
 

@@ -12,6 +12,6 @@
         userParameter_ViewFactory="org.pillarone.riskanalytics.application.environment.applet.P1RATAppletViewFactory"
         userParameter_java_code="org.pillarone.riskanalytics.application.environment.applet.P1RATAppletLauncher"
         userParameter_url-string="$urlString"
-        applicationContextPath="$applicationContextPath"/>
+        applicationContextPaths="${applicationContextPaths}"/>
 </BODY>
 </HTML>

@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.base.view
-
 import com.canoo.ulc.community.fixedcolumntabletree.server.ULCFixedColumnTableTree
+import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.KeyEvent
@@ -12,20 +12,17 @@ import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.HTMLUtilities
 import com.ulcjava.base.application.util.Insets
 import com.ulcjava.base.application.util.KeyStroke
+import org.pillarone.riskanalytics.application.ui.base.action.*
 import org.pillarone.riskanalytics.application.ui.base.model.AbstractModellingModel
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.application.util.LocaleResources
-import com.ulcjava.base.application.*
-import org.pillarone.riskanalytics.application.ui.base.action.*
 
 abstract class AbstractModellingTreeView implements IDetailView {
 
     AbstractModellingModel model
-    RiskAnalyticsMainModel mainModel
 
     ULCBoxPane content
     ULCFixedColumnTableTree tree
@@ -37,12 +34,11 @@ abstract class AbstractModellingTreeView implements IDetailView {
     protected static final double DIVIDER = 0.65
     protected static final double NO_DIVIDER = 1.0
 
-    IActionListener ctrlaction = [actionPerformed: {ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
+    IActionListener ctrlaction = [actionPerformed: { ActionEvent event -> new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "CtrlA").show() }] as IActionListener
 
 
-    AbstractModellingTreeView(AbstractModellingModel model, RiskAnalyticsMainModel mainModel) {
+    AbstractModellingTreeView(AbstractModellingModel model) {
         this.model = model
-        this.mainModel = mainModel
         content = new ULCBoxPane(1, 0)
         initView(model)
     }
@@ -171,7 +167,7 @@ abstract class AbstractModellingTreeView implements IDetailView {
         }
 
 
-        viewPortTree.tableTreeHeader.addActionListener([actionPerformed: {ActionEvent e ->
+        viewPortTree.tableTreeHeader.addActionListener([actionPerformed: { ActionEvent e ->
             //PMO-779
             //workaround: the tree will be scrolled to the root position
             tree.getVerticalScrollBar().setPosition(1)
@@ -184,7 +180,7 @@ abstract class AbstractModellingTreeView implements IDetailView {
         }] as IActionListener)
 
 
-        filterSelection.addActionListener([actionPerformed: {e ->
+        filterSelection.addActionListener([actionPerformed: { e ->
             String filter = null
             if (filterSelection.getSelectedIndex()) {
                 filter = filterSelection.getSelectedItem()
@@ -194,7 +190,6 @@ abstract class AbstractModellingTreeView implements IDetailView {
         }] as IActionListener)
 
     }
-
 
 
     protected void addColumns() {

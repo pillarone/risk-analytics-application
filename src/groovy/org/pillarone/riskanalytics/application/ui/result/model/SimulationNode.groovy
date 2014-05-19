@@ -7,7 +7,6 @@ import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.main.view.CompareSimulationMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.main.view.MainSelectionTableTreeCellRenderer
 import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationResultUIItem
@@ -32,16 +31,16 @@ class SimulationNode extends ItemNode implements IReportableNode {
 
     ULCPopupMenu getPopupMenu(ULCTableTree tree) {
         ULCPopupMenu simulationNodePopUpMenu = new ULCPopupMenu()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree, riskAnalyticsMainModel)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree, riskAnalyticsMainModel)))
-        simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree, riskAnalyticsMainModel)))
-        simulationNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree, riskAnalyticsMainModel))) //PMO-2764
-        simulationNodePopUpMenu.add(new EnabledCheckingMenuItem(new CompareSimulationsAction(tree, riskAnalyticsMainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new OpenItemAction(tree)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new ExportItemAction(tree)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new CsvExportAction(tree)))
+        simulationNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree))) //PMO-2764
+        simulationNodePopUpMenu.add(new EnabledCheckingMenuItem(new CompareSimulationsAction(tree)))
         simulationNodePopUpMenu.addSeparator()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree, riskAnalyticsMainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new TagsAction(tree)))
         addReportMenus(simulationNodePopUpMenu, tree, true)
         simulationNodePopUpMenu.addSeparator()
-        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree, riskAnalyticsMainModel)))
+        simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
         return simulationNodePopUpMenu
     }
 

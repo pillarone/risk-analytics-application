@@ -1,17 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-
-import com.ulcjava.base.application.ULCTableTree
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
-import com.ulcjava.base.application.event.ActionEvent
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import org.pillarone.riskanalytics.core.remoting.TransactionInfo
-import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import com.ulcjava.base.application.ClientContext
 import com.ulcjava.base.application.ULCAlert
-import org.pillarone.riskanalytics.core.simulation.item.Simulation
-
+import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.event.ActionEvent
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.core.remoting.TransactionInfo
+import org.pillarone.riskanalytics.core.remoting.impl.RemotingUtils
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class OpenTransactionLinkAction extends SelectionTreeAction {
     private TransactionInfo[] transactionInfos;
@@ -57,8 +53,8 @@ class OpenTransactionLinkAction extends SelectionTreeAction {
         alert.show()
     }
 
-    public OpenTransactionLinkAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("OpenExternal", tree, model)
+    public OpenTransactionLinkAction(ULCTableTree tree) {
+        super("OpenExternal", tree)
     }
 
     //Get the transactionURL for a specific dealId from the TransactionService

@@ -9,7 +9,6 @@ import grails.util.Holders
 import org.pillarone.riskanalytics.application.dataaccess.function.*
 import org.pillarone.riskanalytics.application.ui.base.model.EnumI18NComboBoxModel
 import org.pillarone.riskanalytics.application.ui.customtable.view.TableView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.parameterization.view.CenteredHeaderRenderer
 import org.pillarone.riskanalytics.application.ui.parameterization.view.ParameterView
 import org.pillarone.riskanalytics.application.ui.result.action.RemoveFunctionAction
@@ -34,12 +33,14 @@ class StochasticResultView extends ResultView {
     private UserPreferences userPreferences
     private int nextModelIndex = 1
     final static String FUNCTION_VALUE = "functionValue_"
-    private @Lazy TableView tableView = { new TableView(model.model, model.item) }()
+    private @Lazy
+    TableView tableView = { new TableView(model.model, model.item) }()
 
-    @Lazy MeanFunction meanFunction
+    @Lazy
+    MeanFunction meanFunction
 
-    public StochasticResultView(ResultViewModel model, RiskAnalyticsMainModel mainModel) {
-        super(model, mainModel)
+    public StochasticResultView(ResultViewModel model) {
+        super(model)
     }
 
     @Override
@@ -94,7 +95,7 @@ class StochasticResultView extends ResultView {
     }
 
     protected ULCBoxPane getResultSettingView() {
-        return new ResultSettingsView(model.item, mainModel).content
+        return new ResultSettingsView(model.item as Simulation).content
     }
 
     protected void addToolBarElements(ULCToolBar toolbar) {
@@ -137,7 +138,7 @@ class StochasticResultView extends ResultView {
         ULCButton button = new ULCButton(new SingleIterationKeyFigureAction(new TextFieldValueProvider<Integer>(integerFunctionValue), model, tree.viewPortTableTree))
         button.name = "iterationButton"
         button.setEnabled(iterationValueValidate(integerFunctionValue))
-        integerFunctionValue.addKeyListener([keyTyped: {KeyEvent keyEvent ->
+        integerFunctionValue.addKeyListener([keyTyped: { KeyEvent keyEvent ->
             button.setEnabled(iterationValueValidate(integerFunctionValue))
         }] as IKeyListener)
         toolbar.add UIUtils.spaceAround(button, 0, 5, 0, 5)
@@ -156,7 +157,7 @@ class StochasticResultView extends ResultView {
         functionValue.dataType = dataType
         functionValue.value = Double.valueOf(userPreferences.getDefaultValue(FUNCTION_VALUE + model.model.name, "" + 99.5d))
         functionValue.columns = 6
-        functionValue.addValueChangedListener([valueChanged: {ValueChangedEvent event ->
+        functionValue.addValueChangedListener([valueChanged: { ValueChangedEvent event ->
             userPreferences.putPropertyValue(FUNCTION_VALUE + model.model.name, "" + functionValue.getValue())
         }] as IValueChangedListener)
         profitFunctionModel = new EnumI18NComboBoxModel(QuantileFunctionType.values() as Object[])
@@ -203,13 +204,13 @@ class StochasticResultView extends ResultView {
 
 
     public void functionRemoved(IFunction function) {
-        def columns = tree.viewPortTableTree.columnModel.columns.findAll {ResultTableTreeColumn col ->
+        def columns = tree.viewPortTableTree.columnModel.columns.findAll { ResultTableTreeColumn col ->
             col.function == function
         }
-        columns.each {ResultTableTreeColumn col ->
+        columns.each { ResultTableTreeColumn col ->
             tree.viewPortTableTree.removeColumn(col)
         }
-        ULCMenuItem item = menu.components.find {ULCMenuItem it ->
+        ULCMenuItem item = menu.components.find { ULCMenuItem it ->
             it.text == UIUtils.getText(RemoveFunctionAction.class, "Remove", [function.displayName])
         }
         menu.remove(item)

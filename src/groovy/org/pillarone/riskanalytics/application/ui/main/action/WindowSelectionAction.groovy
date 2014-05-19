@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
 
-import com.canoo.ulc.detachabletabbedpane.server.ULCCloseableTabbedPane
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ExceptionSafeAction
 import org.pillarone.riskanalytics.application.ui.main.view.CardPaneManager
@@ -19,9 +18,8 @@ class WindowSelectionAction extends ExceptionSafeAction {
 
     public void doActionPerformed(ActionEvent event) {
         cardPaneManager.selectCard(model)
-        ULCCloseableTabbedPane selectedPane = cardPaneManager.selectedCard as ULCCloseableTabbedPane
-        cardPaneManager.selectCurrentItemFromTab(model, selectedPane)
-        trace("Select model ${model?.name} and pane: $selectedPane")
+        cardPaneManager.selectCurrentItemFromTab(model)
+        trace("Select model ${model?.name}")
     }
 
     static String getMenuName(Model model) {

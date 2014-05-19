@@ -1,5 +1,5 @@
 //Use a custom plugins dir, because different branches use different plugin versions
-grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-master"
+grails.project.plugins.dir = "../local-plugins/RiskAnalyticsApplication-1.9.x"
 grails.project.target.level = 1.6
 grails.project.source.level = 1.6
 
@@ -25,7 +25,7 @@ grails.project.dependency.resolution = {
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
 
-    String ulcVersion = "7.2.0.5"
+    String ulcVersion = "7.2.0.6"
 
     plugins {
         runtime ":background-thread:1.3"
@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:2.0-RC2"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime("org.pillarone:pillar-one-ulc-extensions:1.3") { transitive = false }
+        runtime("org.pillarone:pillar-one-ulc-extensions:1.6") { transitive = false }
 
         test ":code-coverage:1.2.7"
         test ":codenarc:0.20"

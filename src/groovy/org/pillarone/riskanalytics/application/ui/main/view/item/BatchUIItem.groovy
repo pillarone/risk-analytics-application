@@ -1,27 +1,19 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
-
 import com.google.common.base.Preconditions
 import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.apache.commons.lang.builder.HashCodeBuilder
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
-import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
-class BatchUIItem extends ModellingUIItem {
+class BatchUIItem extends ModellingUIItem<BatchView> {
 
     @Override
     NavigationTableTreeModel getNavigationTableTreeModel() {
         Holders.grailsApplication.mainContext.getBean('navigationTableTreeModel', NavigationTableTreeModel)
-    }
-
-    @Override
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
     }
 
     BatchRunService getBatchRunService() {
@@ -32,7 +24,7 @@ class BatchUIItem extends ModellingUIItem {
         super(Preconditions.checkNotNull(batch))
     }
 
-    IDetailView createDetailView() {
+    BatchView createDetailView() {
         BatchView batchView = Holders.grailsApplication.mainContext.getBean('batchView', BatchView)
         batchView.batch = item
         batchView

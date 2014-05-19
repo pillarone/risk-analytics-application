@@ -3,24 +3,24 @@ package org.pillarone.riskanalytics.application.ui.main.view.item
 import com.canoo.ulc.community.ulcclipboard.server.ULCClipboard
 import com.ulcjava.base.application.ULCFrame
 import com.ulcjava.base.application.event.KeyEvent
-import java.awt.Toolkit
-import java.awt.datatransfer.Clipboard
-import java.awt.datatransfer.StringSelection
-import java.awt.event.InputEvent
-import java.text.DecimalFormat
+import com.ulcjava.testframework.operator.*
 import models.core.CoreModel
 import org.pillarone.riskanalytics.application.AbstractSimpleFunctionalTest
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.ModelStructureDAO
 import org.pillarone.riskanalytics.core.ParameterizationDAO
+import org.pillarone.riskanalytics.core.components.ComponentUtils
 import org.pillarone.riskanalytics.core.fileimport.ModelStructureImportService
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.simulation.item.ModelStructure
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
-import com.ulcjava.testframework.operator.*
-import org.pillarone.riskanalytics.core.components.ComponentUtils
+
+import java.awt.*
+import java.awt.datatransfer.Clipboard
+import java.awt.datatransfer.StringSelection
+import java.awt.event.InputEvent
+import java.text.DecimalFormat
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -47,8 +47,7 @@ class ParameterizationUIItemTests extends AbstractSimpleFunctionalTest {
         dao = ModelStructureDAO.findByModelClassName(model.class.name)
         ModelStructure structure = ModellingItemFactory.getModelStructure(dao)
         structure.load()
-        RiskAnalyticsMainModel mainModel = new RiskAnalyticsMainModel()
-        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(model, parameterization)
+        ParameterizationUIItem parameterizationUIItem = new ParameterizationUIItem(parameterization)
         frame.setContentPane(parameterizationUIItem.createDetailView().content)
         ULCClipboard.install()
         UIUtils.setRootPane(frame)

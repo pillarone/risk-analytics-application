@@ -4,8 +4,8 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import grails.util.Holders
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.NodeNameDialog
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ParameterizationNode
 import org.pillarone.riskanalytics.core.batch.BatchRunService
@@ -14,8 +14,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 
 class CreateBatchAction extends SelectionTreeAction {
 
-    CreateBatchAction(ULCTableTree tree, RiskAnalyticsMainModel model) {
-        super("CreateBatch", tree, model)
+    CreateBatchAction(ULCTableTree tree) {
+        super("CreateBatch", tree)
     }
 
     @Override
@@ -28,7 +28,7 @@ class CreateBatchAction extends SelectionTreeAction {
         NodeNameDialog nameDialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), batchUIItem)
         nameDialog.okAction = { String name ->
             batch.name = name
-            model.openItem(null, batchUIItem)
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(batchUIItem))
             batch.changed = true
         }
         nameDialog.show()

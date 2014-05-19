@@ -5,15 +5,11 @@ import com.ulcjava.base.application.ULCTableTree
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.util.Font
 import com.ulcjava.base.application.util.ULCIcon
-import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.main.view.CreateReportsMenu
-import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainModel
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.core.RiskAnalyticsInconsistencyException
-import org.pillarone.riskanalytics.core.report.IReportModel
-import org.pillarone.riskanalytics.core.report.ReportRegistry
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 
 @CompileStatic
@@ -65,26 +61,16 @@ class ItemNode extends DefaultMutableTableTreeNode implements INavigationTreeNod
     // Definitely called on first click to open Batches subtree in the left pane of GUI..
     // and for some bad reason, the reporting menu is never regenerated on a per-batch-node basis afterwards.
     // (ah, that reason is, the menus are cached in MainSelectionTableTreeCellRenderer)
-    void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded) {
+    void addReportMenus(ULCPopupMenu simulationNodePopUpMenu, ULCTableTree tree, boolean separatorNeeded, boolean reloadOnBecomingVisible = false) {
 
         if (!(this instanceof IReportableNode)) {
             throw new RiskAnalyticsInconsistencyException(this.toString() + """ asked for report menu; but NOT reportable item. Please report to development. """)
         }
-
-        List<Class> modelsToDisplay = ((IReportableNode) this).modelsToReportOn()
-        // Returns empty list as 'Bjorns First Batch' happened to be empty.
-        List<IReportModel> reports = new ArrayList<IReportModel>()
-        reports.addAll(ReportRegistry.getReportModel(modelsToDisplay)) //TODO rename method to getReportModels and test.
-        if (!reports.empty) { //Fails here consequently
-            CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", reports, tree, riskAnalyticsMainModel, simulationNodePopUpMenu)
-            reportsMenu.visible = true
-            if (separatorNeeded) simulationNodePopUpMenu.addSeparator();
-            simulationNodePopUpMenu.add(reportsMenu)
+        CreateReportsMenu reportsMenu = new CreateReportsMenu("Reports", this as IReportableNode, tree, simulationNodePopUpMenu, reloadOnBecomingVisible)
+        if (separatorNeeded) {
+            simulationNodePopUpMenu.addSeparator()
         }
-    }
-
-    RiskAnalyticsMainModel getRiskAnalyticsMainModel() {
-        Holders.grailsApplication.mainContext.getBean('riskAnalyticsMainModel', RiskAnalyticsMainModel)
+        simulationNodePopUpMenu.add(reportsMenu)
     }
 
     String getUserObject() {
