@@ -87,6 +87,7 @@ abstract class ResultViewUtils {
     /**
      * Loads all PostSimulationCalculations of a simulation and stores them in a map.
      * This is faster than creating a query for every cell when the result is needed.
+     * FR TODO - Replace multiple '=' with a single 'in' clause (safe against an empty list), AND TEST IF IT WORKS
      */
     public static ConfigObject initPostSimulationCalculations(List<SimulationRun> simulationRuns) {
         NumberFormat numberFormat = NumberFormat.getInstance()
