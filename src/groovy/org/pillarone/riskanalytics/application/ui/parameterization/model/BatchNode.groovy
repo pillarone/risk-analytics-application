@@ -34,7 +34,7 @@ class BatchNode extends ItemNode implements IReportableNode {
         batchesNodePopUpMenu.addSeparator()
         batchesNodePopUpMenu.add(new EnabledCheckingMenuItem(new RenameAction(tree)))
         batchesNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
-        addReportMenus(batchesNodePopUpMenu, tree, true, true)
+        addReportMenus(batchesNodePopUpMenu, tree, true)
         return batchesNodePopUpMenu
     }
 
@@ -45,12 +45,16 @@ class BatchNode extends ItemNode implements IReportableNode {
      */
     @Override
     List<Class> modelsToReportOn() {
-        itemNodeUIItem.item.parameterizations.modelClass
+        //TODO enable again, when we find a performing solution
+        //itemNodeUIItem.item.parameterizations.modelClass
+        []
     }
 
     @Override
     List<Simulation> modellingItemsForReport() {
-        itemNodeUIItem.item.simulations
+        //TODO enable again, when we find a performing solution
+        //itemNodeUIItem.item.simulations
+        []
     }
 
     @Override

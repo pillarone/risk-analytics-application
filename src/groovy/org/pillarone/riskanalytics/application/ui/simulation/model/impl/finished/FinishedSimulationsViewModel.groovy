@@ -1,11 +1,15 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.finished
+
+import com.google.common.eventbus.Subscribe
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
+import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
+import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
-import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
-import org.pillarone.riskanalytics.core.user.UserManagement
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -20,7 +24,7 @@ class FinishedSimulationsViewModel {
     @Resource
     UlcSimulationRuntimeService ulcSimulationRuntimeService
     @Autowired
-    SimulationRuntimeService simulationRuntimeService
+    RiskAnalyticsEventBus riskAnalyticsEventBus
     @Resource
     FinishedSimulationsTableModel finishedSimulationsTableModel
 
@@ -29,11 +33,12 @@ class FinishedSimulationsViewModel {
     @PostConstruct
     void initialize() {
         ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
-        finishedSimulationsTableModel.infos = simulationRuntimeService.finished
+        riskAnalyticsEventBus.register(this)
     }
 
     @PreDestroy
     void unregister() {
+        riskAnalyticsEventBus.unregister(this)
         ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
     }
 
@@ -52,16 +57,24 @@ class FinishedSimulationsViewModel {
     }
 
     private class MyInfoListener extends SimulationRuntimeInfoAdapter {
-
         @Override
         void finished(SimulationRuntimeInfo info) {
-            if (isMine(info)) {
-                finishedSimulationsTableModel.itemAdded(info)
-            }
+            finishedSimulationsTableModel.itemAdded(info)
         }
+    }
 
-        private boolean isMine(SimulationRuntimeInfo info) {
-            UserManagement.currentUser?.username == info.offeredBy?.username
+    @Subscribe
+    void onModellingItemEvent(ModellingItemEvent event) {
+        if (event.modellingItem instanceof Simulation) {
+            switch (event.eventType) {
+                case CacheItemEvent.EventType.ADDED:
+                    break
+                case CacheItemEvent.EventType.REMOVED:
+                    finishedSimulationsTableModel.remove(event.modellingItem)
+                    break
+                case CacheItemEvent.EventType.UPDATED:
+                    break
+            }
         }
     }
 }

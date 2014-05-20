@@ -50,7 +50,7 @@ class SimulationQueueTableModel extends AbstractTableModel {
     }
 
     void itemAdded(SimulationRuntimeInfo item) {
-        columnModels.add(new SimulationRowModel(columnModels.size(), this, item))
+        columnModels.add(0, new SimulationRowModel(columnModels.size(), this, item))
         sortColumnModels()
         fireTableDataChanged()
     }
