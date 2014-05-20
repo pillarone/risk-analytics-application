@@ -5,16 +5,16 @@
     <property file="application.properties" />
     <property file="${user.home}/cert.properties" />
     <!-- plugin.dir must match entry 'grails.project.plugins.dir' in BuildConfig.groovy -->
-    <property name="plugin.dir" value="${basedir}/../local-plugins/${app.name}-master" />
+    <property name="plugin.dir" value="${basedir}/../local-plugins/${app.name}-1.9.x" />
     <property name="resources.prod.dir" value="src/java" />
     <property name="webapp.lib.dir" value="web-app/lib" />
 
     <property name="GRAILS_JVM_OPTS" value="-Xmx2g -XX:MaxPermSize=512m -Duser.language='en'" />
 
-    <get src="https://raw.githubusercontent.com/pillarone/risk-analytics-core/master/scripts/build.xml" dest="_build.xml" skipexisting="true" ignoreerrors="true"/>
+    <get src="https://raw.githubusercontent.com/pillarone/risk-analytics-core/1.9.x/scripts/build.xml" dest="_build.xml" skipexisting="true" ignoreerrors="true"/>
 
     <copy tofile="_build.xml" overwrite="true" failonerror="false">
-        <fileset dir=".." includes="local-plugins/${app.name}-master/risk-analytics-core*/scripts/build.xml" />
+        <fileset dir=".." includes="local-plugins/${app.name}-1.9.x/risk-analytics-core*/scripts/build.xml" />
     </copy>
     <import file="_build.xml" />
 
