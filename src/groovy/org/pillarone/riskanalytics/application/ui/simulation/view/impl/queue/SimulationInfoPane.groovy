@@ -171,7 +171,14 @@ class SimulationInfoPane {
         @Override
         void simulationStateChanged(SimulationState simulationState) {
             if (simulationState != currentUISimulationState) {
-                log.info "Updating UI to ${simulationState.toString()}"
+                // Avoid spamming logfile from every session.
+                //
+                boolean isOwner = (currentUser?.username?.equals( simulationInfoPaneModel?.simulationOwner?.username ))
+                if( isOwner ){
+                    log.info "Updating owner UI to ${simulationState.toString()}"
+                } else {
+                    log.debug "Updating non-owner UI to ${simulationState.toString()}"
+                }
             }
             uiStates[simulationState].call()
             currentUISimulationState = simulationState
