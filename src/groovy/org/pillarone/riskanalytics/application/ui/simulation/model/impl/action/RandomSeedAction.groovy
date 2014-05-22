@@ -54,7 +54,7 @@ class RandomSeedAction implements IValueChangedListener {
     }
 
     private handleEvent(ULCTextField textField) {
-        Integer randomSeed = textField.value as Integer
+        Integer randomSeed = convert(textField.text)
         if (randomSeed != null && randomSeed > 0) {
             model.randomSeed = randomSeed
             userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + randomSeed)
@@ -64,15 +64,28 @@ class RandomSeedAction implements IValueChangedListener {
             textField.value = randomSeed
             model.randomSeed = randomSeed
         }
+        if (textField.value != model.randomSeed) {
+            textField.value = model.randomSeed
+        }
         LOG.info("User defined random seed changed to ${randomSeed}.")
     }
 
     private Integer getRandomSeed() {
         if (!oldRandomSeed) {
             String value = userPreferences.getPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE)
-            if (value) return Integer.valueOf(value)
-            return null
+            return convert(value)
         }
         return oldRandomSeed
+    }
+
+    private Integer convert(String value) {
+        if (!value) {
+            return null
+        }
+        try {
+            return Integer.valueOf(value)
+        } catch (Throwable ignored) {
+            return null
+        }
     }
 }
