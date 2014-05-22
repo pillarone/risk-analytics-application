@@ -10,6 +10,9 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 /**
+ * Configured by SimulationSettingsPane.initConfigProperties() where this object is
+ * added as value change listener to the ULCTextfield random seed.
+ *
  * A IValueChangedListener which is used for the random seed check box and text field.
  * If the event is fired from the TextField the new value is written to the model.
  * If it is fired from the checkbox, the model value is set to null (if disabled) or to the last entered value (if any) if enabled.
@@ -40,7 +43,7 @@ class RandomSeedAction implements IValueChangedListener {
 
     private handleEvent(ULCCheckBox checkBox) {
         if (checkBox.selected) {
-            model.randomSeed = getRandomSeed()
+            model.randomSeed = recentRandomSeed()
             randomSeed.value = model.randomSeed
         } else {
             LOG.info("User defined random seed disabled, setting to null.")
@@ -51,36 +54,39 @@ class RandomSeedAction implements IValueChangedListener {
 
     private handleEvent(ULCTextField textField) {
         try {
-            Integer randomSeed = Integer.valueOf(textField?.text)
-            if (randomSeed > 0) {
-                model.randomSeed = randomSeed
-                userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + randomSeed)
-                LOG.info("User defined random seed changed to ${randomSeed}.")
+            Integer enteredRandomSeed = Integer.valueOf(textField?.text)
+            if (enteredRandomSeed > 0) {
+                model.randomSeed = enteredRandomSeed
+                userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + enteredRandomSeed)
+                LOG.info("User defined random seed changed to ${enteredRandomSeed}.")
                 // Mission accomplished
                 //
                 return
             }
         } catch( NumberFormatException e ){
+            LOG.info("Caught '${e.toString()}'")
         }
-        // Number parse failure or number <= 0 brings us here..
-        //
+        LOG.info("Resetting seed to 1.")
         new I18NAlert("NoInteger").show()
-        textField.value = ONE
-        model.randomSeed = ONE
-        LOG.info("User defined random seed changed to 1.")
+        model.randomSeed = ONE                  //Sometimes model propagates new value to textField
+        if(! ONE.equals(textField.getValue())){
+            textField.setValue( ONE )           //But sometimes this is needed too
+        }
     }
 
-    private Integer getRandomSeed() {
+    private Integer recentRandomSeed() {
         if (!oldRandomSeed) {
             String value = userPreferences.getPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE)
             if (value){
                 try {
                     return Integer.valueOf(value)
                 }catch(NumberFormatException e){
-                    // Foo bar yuk yuk bad number stored
                 }
             }
-            return null
+            // Fix bad number stored
+            LOG.info("userPreferences for ${UserPreferences.RANDOM_SEED_USER_VALUE} was: '$value' - will return 1 to avoid any recursive shenanighans")
+            userPreferences.putPropertyValue(UserPreferences.RANDOM_SEED_USER_VALUE, "" + ONE)
+            return ONE
         }
         return oldRandomSeed
     }
