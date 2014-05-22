@@ -1,12 +1,12 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
+import com.sun.tools.javac.util.List
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
 import org.pillarone.riskanalytics.application.reports.IReportableNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
-import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -23,11 +23,7 @@ class UIItemUtils {
 
     private static final Log LOG = LogFactory.getLog(UIItemUtils)
 
-    static boolean deleteDependingResults(Model model, ModellingUIItem modellingUIItem) {
-        return deleteDependingResults(model, modellingUIItem.item)
-    }
-
-    static boolean deleteDependingResults(Model model, ModellingItem item) {
+    static boolean deleteDependingResults(ModellingItem item) {
         if (isUsedInRunningSimulation(item)) {
             return false
         }
@@ -60,17 +56,7 @@ class UIItemUtils {
     }
 
     static boolean isUsedInRunningSimulation(ModellingItem item) {
-        boolean usedInRunningSimulation = false
-        List<Simulation> simulations = item.simulations.collect {
-            ModellingItemFactory.getOrCreate(it)
-        }
-        for (Simulation simulation : simulations) {
-            if (!(simulation.end || simulation.batch)) {
-                usedInRunningSimulation = true
-                break
-            }
-        }
-        return usedInRunningSimulation
+        return item.simulations.collect { ModellingItemFactory.getOrCreate(it) }.any { !it.end }
     }
 
     static void deleteCommentTag(Parameterization parameterization, Tag tag) {

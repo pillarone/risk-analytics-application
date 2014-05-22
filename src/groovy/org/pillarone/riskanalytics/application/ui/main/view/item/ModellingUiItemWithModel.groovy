@@ -26,7 +26,7 @@ abstract class ModellingUiItemWithModel<T extends IDetailView> extends Modelling
 
     @Override
     boolean deleteDependingResults() {
-        return UIItemUtils.deleteDependingResults(model, this)
+        return UIItemUtils.deleteDependingResults(item)
     }
 
     protected Model createModel() {
