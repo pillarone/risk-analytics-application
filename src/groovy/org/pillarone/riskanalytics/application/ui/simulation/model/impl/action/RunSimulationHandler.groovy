@@ -122,7 +122,7 @@ class RunSimulationHandler {
         SimulationRun.withTransaction { TransactionStatus transactionStatus ->
             for (ModellingItem item : items) {
                 if (item.changed && status) {
-                    status = UIItemUtils.deleteDependingResults(itemModel, item)
+                    status = UIItemUtils.deleteDependingResults(item)
                 }
             }
             if (status) {
