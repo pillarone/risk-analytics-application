@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
-import com.sun.tools.javac.util.List
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
