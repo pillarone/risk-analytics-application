@@ -160,7 +160,7 @@ class SimulationInfoPane {
     }
 
     void showAlert() {
-        new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error occured during simulation", I18NUtilities.getExceptionText(simulationInfoPaneModel.errorMessage), "Ok").show()
+        new ULCAlert(UlcUtilities.getWindowAncestor(content), "Error during simulation", I18NUtilities.getExceptionText(simulationInfoPaneModel.errorMessage), "Ok").show()
     }
 
     ULCBoxPane getContent() {
@@ -175,7 +175,7 @@ class SimulationInfoPane {
                 //
                 boolean isOwner = (currentUser?.username?.equals( simulationInfoPaneModel?.simulationOwner?.username ))
                 if( isOwner ){
-                    log.info "Updating owner UI to ${simulationState.toString()}"
+                    log.info "Updating owner UI to ${simulationState.toString()}" // TODO Want to see simulation name here too
                 } else {
                     log.debug "Updating non-owner UI to ${simulationState.toString()}"
                 }
