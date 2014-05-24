@@ -116,10 +116,12 @@ public class RealTimeLoggingModel {
         }
     }
 
+    // Reduce technical noise in logs - demote to debug
+    //
     private class AddAppenderListener extends SimulationRuntimeInfoAdapter {
         @Override
         void starting(SimulationRuntimeInfo info) {
-            log.info('added appender')
+            log.debug('added appender')
             LoggingAppender.instance.loggingManager.addAppender(appender)
         }
 
@@ -127,7 +129,7 @@ public class RealTimeLoggingModel {
         @Override
         void finished(SimulationRuntimeInfo info) {
             LoggingAppender.instance.loggingManager.removeAppender(appender)
-            log.info('removed appender')
+            log.debug('removed appender')
         }
     }
 }
