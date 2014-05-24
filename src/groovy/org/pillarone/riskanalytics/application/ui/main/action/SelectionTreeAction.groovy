@@ -51,8 +51,12 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         return itemNode instanceof ItemNode ? itemNode.itemNodeUIItem : null
     }
 
+    // NB Only ModellingUIItem objects are in the returned list
+    // TODO Should return list<ModellingUIItem> correspondingly to single item accessor method above
+    // Don't be surprised if fixing this breaks other things!
+    //
     List<AbstractUIItem> getSelectedUIItems() {
-        List selectedObjects = []
+        List<AbstractUIItem> selectedObjects = []  //Similarly, this should be list of ModellingUIItem!
         for (TreePath selectedPath in tree.selectedPaths) {
             DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
             AbstractUIItem abstractUIItem = itemNode instanceof ItemNode ? itemNode.itemNodeUIItem : null
