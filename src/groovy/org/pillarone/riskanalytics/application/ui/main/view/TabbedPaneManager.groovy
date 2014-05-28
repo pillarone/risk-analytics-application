@@ -45,9 +45,8 @@ class TabbedPaneManager {
             item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, item)
         }
         ULCContainer view = detailView.content
-        def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER)
-        tabManager[item] = wrapped
-        tabbedPane.addTab(item.createTitle(), item.icon, wrapped)
+        tabManager[item] = view
+        tabbedPane.addTab(item.createTitle(), item.icon, view)
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
         tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
