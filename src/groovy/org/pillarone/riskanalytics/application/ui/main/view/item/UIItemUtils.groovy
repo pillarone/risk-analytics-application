@@ -1,5 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view.item
 
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
@@ -8,6 +9,7 @@ import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.comment.view.NewCommentView
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -21,6 +23,10 @@ import org.springframework.transaction.TransactionStatus
 class UIItemUtils {
 
     private static final Log LOG = LogFactory.getLog(UIItemUtils)
+
+    public static SimulationQueueService getSimulationQueueService() {
+        Holders.grailsApplication.mainContext.getBean('simulationQueueService', SimulationQueueService)
+    }
 
     static boolean deleteDependingResults(ModellingItem item) {
         if (isUsedInRunningSimulation(item)) {
@@ -55,7 +61,26 @@ class UIItemUtils {
     }
 
     static boolean isUsedInRunningSimulation(ModellingItem item) {
-        return item.simulations.collect { ModellingItemFactory.getOrCreate(it) }.any { !it.end }
+        //PMO-2797 if null endtime sims found, verify they are sitting in sim queue
+        //
+        List<Simulation> itemSims = item.simulations
+        if( itemSims.isEmpty() ){
+            return false
+        }
+        List<Simulation> simsWithoutEndTime = itemSims.findAll { !it.end }
+        if( simsWithoutEndTime.isEmpty() ){
+            return false
+        }
+        if( !simsWithoutEndTime.isEmpty() ){
+            List<Simulation> queuedSims = getSimulationQueueService().getQueueEntries()*.simulationTask*.simulation
+            for( Simulation queuedSim : queuedSims ){
+                if( simsWithoutEndTime.any { it.equals( queuedSim )} ){
+                    LOG.info( "Item $queuedSim is currently queued for simulation" );
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     static void deleteCommentTag(Parameterization parameterization, Tag tag) {

@@ -111,7 +111,12 @@ class OpenItemDialog {
             if (modellingUIItem.deleteDependingResults()) {
                 riskAnalyticsEventBus.post(new OpenDetailViewEvent(modellingUIItem))
             } else {
-                new I18NAlert(UlcUtilities.getWindowAncestor(parent), "DeleteAllDependentRunsError").show()
+                ULCAlert alert = new ULCAlert(  parent, //PMO-2797
+                                                "Cannot delete dependent results",
+                                                "If item in Simulation Queue, pls wait till its finished or cancel it first.",
+                                                "Ok")
+                alert.messageType = ULCAlert.INFORMATION_MESSAGE
+                alert.show()
             }
         }] as IActionListener)
 
