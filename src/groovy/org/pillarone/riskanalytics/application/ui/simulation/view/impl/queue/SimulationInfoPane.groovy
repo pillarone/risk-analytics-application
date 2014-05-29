@@ -1,9 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
 
 import com.ulcjava.base.application.*
+import com.ulcjava.base.application.event.ActionEvent
+import com.ulcjava.base.application.event.IActionListener
 import groovy.util.logging.Log
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationInfoPaneModel
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished.action.OpenResultsAction
 import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.SimulationState
@@ -34,6 +38,9 @@ class SimulationInfoPane {
     private ULCLabel remainingTimeLabel
     private ULCLabel remainingTimeInfo
     private ULCBoxPane content
+
+    @Resource
+    GrailsApplication grailsApplication
 
     @Resource
     SimulationInfoPaneModel simulationInfoPaneModel
@@ -134,6 +141,27 @@ class SimulationInfoPane {
         progressBar.stringPainted = true
         progressBar.name = "progress"
 
+/* Broken somehow doesn't open result unless you already did it via the finished sims tab.
+   Also, it should really only open the last finished sim that current user did.
+   Need to prevent it opening a new sim that someone else created more recently !
+        //TODO FR Should listener be removed at some preDestroy point in lifecyle, and how ?
+        //
+        ULCPopupMenu menu = new ULCPopupMenu();
+        menu.add("Open simulation result").addActionListener(new IActionListener() {
+            @Override
+            void actionPerformed(ActionEvent actionEvent) {
+                log.info("Open sim result selected");
+                grailsApplication.mainContext.getBean('openResultsAction', OpenResultsAction).doActionPerformed(null)
+            }
+        } );
+        menu.addSeparator();
+        menu.add("Placeholder").addActionListener(new IActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                log.info("Placeholder selected");
+            }
+        });
+        progressBar.setComponentPopupMenu(menu);
+*/
         startTimeLabel = new ULCLabel(getText("StartTime") + ":")
         startTimeInfo = new ULCLabel()
         startTimeInfo.name = "startTime"
