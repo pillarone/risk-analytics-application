@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.batch.view
+
 import com.google.common.eventbus.Subscribe
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
@@ -175,7 +176,7 @@ class BatchView implements IDetailView {
     }
 
     ULCContainer getContent() {
-        content
+        new ULCScrollPane(content)
     }
 
     BatchViewModel getBatchViewModel() {

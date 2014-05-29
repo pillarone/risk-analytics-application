@@ -1,7 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl
 
 import com.ulcjava.base.application.ULCBoxPane
+import com.ulcjava.base.application.ULCContainer
 import com.ulcjava.base.application.ULCFiller
+import com.ulcjava.base.application.ULCScrollPane
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.SimulationConfigurationModel
 
@@ -20,6 +22,11 @@ class SimulationConfigurationView implements IDetailView {
         this.model = model
         initComponents()
         layoutComponents()
+    }
+
+    @Override
+    ULCContainer getContent() {
+        return new ULCScrollPane(content)
     }
 
     @Override

@@ -77,7 +77,7 @@ class TabbedPaneManagerUnitTests extends AbstractSimpleStandaloneTestCase {
 
                 @Override
                 ULCContainer getContent() {
-                    return null
+                    return new ULCBoxPane()
                 }
             }
         }

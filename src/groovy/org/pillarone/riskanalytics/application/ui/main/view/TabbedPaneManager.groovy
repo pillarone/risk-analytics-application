@@ -45,10 +45,8 @@ class TabbedPaneManager {
             item.addModellingItemChangeListener new MarkItemAsUnsavedListener(this, item)
         }
         ULCContainer view = detailView.content
-        // Will this force vertical scrollbar to be made available via horizontal scrolling ?
-        def wrapped = new ULCScrollPane(view, ULCScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, ULCScrollPane.HORIZONTAL_SCROLLBAR_NEVER) //PMO-2792 -> AS_NEEDED ?
-        tabManager[item] = wrapped
-        tabbedPane.addTab(item.createTitle(), item.icon, wrapped)
+        tabManager[item] = view
+        tabbedPane.addTab(item.createTitle(), item.icon, view)
         int tabIndex = tabbedPane.tabCount - 1
         tabbedPane.selectedIndex = tabIndex
         tabbedPane.setToolTipTextAt(tabIndex, item.toolTip)
