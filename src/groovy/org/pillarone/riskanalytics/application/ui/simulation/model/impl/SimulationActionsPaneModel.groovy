@@ -26,6 +26,8 @@ class SimulationActionsPaneModel {
 
     protected final static Log LOG = LogFactory.getLog(SimulationActionsPaneModel)
 
+    protected final static int DEFAULT_MANUAL_SIMULATION_PRIORITY = 4
+
     final ULCSpinnerNumberModel priorityModel
     Simulation simulation
     ICollectorOutputStrategy outputStrategy
@@ -40,7 +42,7 @@ class SimulationActionsPaneModel {
     SimulationActionsPaneModel(ISimulationProvider provider) {
         simulationProvider = provider
         runSimulationAction = new RunSimulationAction(this)
-        priorityModel = new ULCSpinnerNumberModel(5, 0, 10, 1)
+        priorityModel = new ULCSpinnerNumberModel(DEFAULT_MANUAL_SIMULATION_PRIORITY, 0, 10, 1)
     }
 
     String getText(String key) {
