@@ -72,7 +72,7 @@ class UIItemUtils {
             return false
         }
         if( !simsWithoutEndTime.isEmpty() ){
-            List<Simulation> queuedSims = getSimulationQueueService().getQueueEntries()*.simulationTask*.simulation
+            List<Simulation> queuedSims = getSimulationQueueService().getQueueEntriesIncludingCurrentTask()*.simulationTask*.simulation
             for( Simulation queuedSim : queuedSims ){
                 if( simsWithoutEndTime.any { it.equals( queuedSim )} ){
                     LOG.info( "Item $queuedSim is currently queued for simulation" );
