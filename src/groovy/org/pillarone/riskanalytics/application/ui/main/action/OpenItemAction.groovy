@@ -73,6 +73,8 @@ class OpenItemAction extends SelectionTreeAction {
             } else {
                 riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
             }
+        } else {
+            LOG.info("Found no Model for selected path ${tree?.selectedPath}")
         }
     }
 
