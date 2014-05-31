@@ -19,10 +19,29 @@ class OpenItemAction extends SelectionTreeAction {
         super("Open", tree)
     }
 
+    //PMO-2795 Allow opening up to N items in one go.  Probably 9 is too many.
+    //Handy for when you want to open a handful of batches for a qtr run, and you know it's going to take about 3 mins
+    //Enough time to go get a coffee and come back.
+    //TODO Could also throw up dialog to confirm user really wants to run possibly long running open multi process ?
     public void doActionPerformed(ActionEvent event) {
-        AbstractUIItem item = getSelectedUIItem()
-        if (item != null) {
-            openItem(item)
+        List<AbstractUIItem> items = getSelectedUIItems()
+        if(items.size() > maxItemsOpenableInOneClick ){
+            // TODO refactor ability to throw an alert into base class method and use that here and in other action classes
+            // e.g. in CreateNewWorkflowAction etc
+            //
+            ULCAlert alert = new ULCAlert(
+                    UlcUtilities.getWindowAncestor(tree),
+                    "Too many items selected (${items.size()}) to open",
+                    "Please select less than " + (maxItemsOpenableInOneClick+1) + " items to open in one go.\n Note: this can take a long time.",
+                    "Ok")
+            alert.messageType = ULCAlert.INFORMATION_MESSAGE
+            alert.show()
+        } else {
+            for( AbstractUIItem item : items ){
+                if (item != null) {
+                    openItem(item)
+                }
+            }
         }
     }
 

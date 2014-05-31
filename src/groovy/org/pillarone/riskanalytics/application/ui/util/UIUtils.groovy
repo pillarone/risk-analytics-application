@@ -256,4 +256,21 @@ class UIUtils {
         return sb.toString()
     }
 
+    static void showInfoAlert( ULCWindow ancestorWindow, String title, String msg ){
+        showAlert( ancestorWindow, title,msg,ULCAlert.INFORMATION_MESSAGE)
+    }
+
+    public static void showWarnAlert( ULCWindow ancestorWindow, String title, String msg ){
+        showAlert(ancestorWindow, title,msg,ULCAlert.WARNING_MESSAGE )
+    }
+
+    public static void showErrorAlert( ULCWindow ancestorWindow, String title, String msg ){
+        showAlert(ancestorWindow, title,msg,ULCAlert.ERROR_MESSAGE )
+    }
+
+    public static void showAlert( ULCWindow ancestorWindow, String title, String msg, int severity ){
+        ULCAlert alert = new ULCAlert( ancestorWindow, title, msg, "Ok")
+        alert.messageType = severity
+        alert.show()
+    }
 }

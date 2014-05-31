@@ -1,7 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.main.view
 
 import com.ulcjava.base.application.BorderFactory
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCBoxPane
 import com.ulcjava.base.application.ULCCheckBox
 import com.ulcjava.base.application.ULCFiller
@@ -11,6 +10,7 @@ import com.ulcjava.base.application.event.ValueChangedEvent
 import com.ulcjava.base.application.util.Color
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
@@ -168,9 +168,7 @@ class TagsListView extends AbstractView {
                     String secondLine= "(Tag already exists on v${otherWorkflowP14n.versionNumber.toString()} of same workflow.)"
                     LOG.warn(firstLine + " " + secondLine)
                     LOG.info("To allow duplicate qtr tags in workflows, override -DvetoDupQtrTagsInWorkflow=false ")
-                    ULCAlert alert = new ULCAlert( parent, "Duplicate quarter tag in workflow", firstLine + "\n" + secondLine, "Ok")
-                    alert.messageType = ULCAlert.WARNING_MESSAGE
-                    alert.show()
+                    UIUtils.showWarnAlert(parent, "Duplicate quarter tag in workflow", firstLine + "\n" + secondLine)
                     return true
                 }
             }

@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.main.action
+
+import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
+import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.tabletree.DefaultMutableTableTreeNode
 import com.ulcjava.base.application.tabletree.ITableTreeNode
 import com.ulcjava.base.application.tree.TreePath
@@ -21,6 +24,21 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 
 abstract class SelectionTreeAction extends ResourceBasedAction {
     private static Log LOG = LogFactory.getLog(SelectionTreeAction)
+    protected static int maxItemsOpenableInOneClick = 5;
+
+    //TODO FR Move this into some static method in some utility class; and use it from here and the GUI layout where similar happens
+    //Even better: 1) cater for bools as well as numerics, and 2) also allow overrides via external properties file
+    //
+    static{
+        String s = System.getProperty( "maxItemsOpenableInOneClick", "5")
+        try{
+            maxItemsOpenableInOneClick = Integer.parseInt( s );
+            LOG.info("System property recognised: -DmaxItemsOpenableInOneClick=$s")
+        } catch (NumberFormatException e) {
+            LOG.warn("Ignoring -DmaxItemsOpenableInOneClick value: '$s' in favour of default: 5")
+            maxItemsOpenableInOneClick = 5;
+        }
+    }
 
     ULCTableTree tree
 
@@ -243,22 +261,16 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         }
         return "Selected paths ($num): ${tree?.selectedPaths}"
     }
+
+    // Helper methods for Action subclasses
+    //
+    protected void showInfoAlert( String title, String msg ){
+        UIUtils.showAlert( UlcUtilities.getWindowAncestor(tree), title,msg,ULCAlert.INFORMATION_MESSAGE)
+    }
+    protected void showWarnAlert( String title, String msg ){
+        UIUtils.showAlert(UlcUtilities.getWindowAncestor(tree), title,msg,ULCAlert.WARNING_MESSAGE )
+    }
+    protected void showErrorAlert( String title, String msg ){
+        UIUtils.showAlert(UlcUtilities.getWindowAncestor(tree), title,msg,ULCAlert.ERROR_MESSAGE )
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

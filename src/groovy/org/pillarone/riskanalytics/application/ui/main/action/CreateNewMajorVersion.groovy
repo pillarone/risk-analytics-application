@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -66,9 +64,7 @@ class CreateNewMajorVersion extends SingleItemAction {
     }
 
     private void createNewVersion(def node) {
-        ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Not supported", "Creating a new version is currently not supported for this item type $node", "Ok")
-        alert.messageType = ULCAlert.INFORMATION_MESSAGE
-        alert.show()
+        showInfoAlert("Not supported", "Creating a new version is currently not supported for this item type $node")
     }
 
     ModellingUIItem getUIItem() {
