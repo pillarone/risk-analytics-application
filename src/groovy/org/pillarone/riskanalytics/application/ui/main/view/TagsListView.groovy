@@ -134,7 +134,7 @@ class TagsListView extends AbstractView {
             return false
         }
         // Separated this test from previous one - groovy is sometimes very uncool
-        // Problem was ! binds tigher than instanceof, and !modellingItem decays to a null-ness check.
+        // Problem was ! binds tighter than instanceof, and !modellingItem decays to a null-ness check.
         boolean isP14n = (modellingItem instanceof Parameterization)
         if( ! isP14n ){
             return false
@@ -147,9 +147,7 @@ class TagsListView extends AbstractView {
 
         // Okay, user is adding quarter tag to a workflow :-
         // Does any p14n in workflow already have it ?
-        // @matthias: What is lightest way to get hold of all tags in p14ns matching name and class ?
         //
-
         for( VersionNumber versionNumber : VersionNumber.getExistingVersions(parameterization)){
 
             if(parameterization.versionNumber.toString().equals(versionNumber.toString())){
@@ -166,12 +164,12 @@ class TagsListView extends AbstractView {
             // Is there a better way ? All i need is its tags..
             for( Tag t in otherWorkflowP14n.tags ){
                 if( tag.equals(t) ){
-                    String firstLine = "Cannot add tag ${tag.name} to ${parameterization.nameAndVersion}"
-                    String secondLine= "Pls untag version: $parameterization.name v${otherWorkflowP14n.versionNumber.toString()} first."
+                    String firstLine = "Cannot tag ${parameterization.nameAndVersion} with '${tag.name}'"
+                    String secondLine= "(Tag already exists on v${otherWorkflowP14n.versionNumber.toString()} of same workflow.)"
                     LOG.warn(firstLine + " " + secondLine)
                     LOG.info("To allow duplicate qtr tags in workflows, override -DvetoDupQtrTagsInWorkflow=false ")
-                    ULCAlert alert = new ULCAlert( parent, "Error duplicating quarter tag in workflow", firstLine + "\n" + secondLine, "Ok")
-                    alert.messageType = ULCAlert.INFORMATION_MESSAGE
+                    ULCAlert alert = new ULCAlert( parent, "Duplicate quarter tag in workflow", firstLine + "\n" + secondLine, "Ok")
+                    alert.messageType = ULCAlert.WARNING_MESSAGE
                     alert.show()
                     return true
                 }
