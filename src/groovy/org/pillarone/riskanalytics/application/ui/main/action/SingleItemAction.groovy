@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.UlcUtilities
 /**
  * @author fazl.rahman@art-allianz.com
  *
@@ -35,13 +33,10 @@ abstract class SingleItemAction extends SelectionTreeAction {
 
     protected boolean quitWithAlertIfCalledWhenDisabled(){
         if( !isEnabled() ){
-            ULCAlert alert = new ULCAlert(
-                    UlcUtilities.getWindowAncestor(tree),
-                    "Action $actionName not allowed here", //title
-                    "Please inform devops how you got this dialog!\\n(Screenshot=ALT+PRINT SCREEN", //msg
-                    "Ok")
-            alert.messageType = ULCAlert.INFORMATION_MESSAGE
-            alert.show()
+            showWarnAlert(
+                    "Single-item action $actionName invoked on selection",
+                    "To help improve this please tell developers how you got here.\nA screenshot helps - Use Ctrl+PrtScn on Windows\nThanks for your help."
+            )
             return true
         }
         return false

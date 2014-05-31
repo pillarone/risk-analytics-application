@@ -17,21 +17,6 @@ import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 class OpenItemAction extends SelectionTreeAction {
 
     private static final Log LOG = LogFactory.getLog(OpenItemAction)
-    private static int maxItemsOpenableInOneClick = 5;
-
-    //TODO FR Move this into some static method in some utility class; and use it from here and the GUI layout where similar happens
-    //Even better: 1) cater for bools as well as numerics, and 2) also allow overrides via external properties file
-    //
-    static{
-        String s = System.getProperty( "maxItemsOpenableInOneClick", "5")
-        try{
-            maxItemsOpenableInOneClick = Integer.parseInt( s );
-            LOG.info("System property recognised: -DmaxItemsOpenableInOneClick=$s")
-        } catch (NumberFormatException e) {
-            LOG.warn("Ignoring -DmaxItemsOpenableInOneClick value: '$s' in favour of default: 5")
-            maxItemsOpenableInOneClick = 5;
-        }
-    }
 
     OpenItemAction(ULCTableTree tree) {
         super("Open", tree)
@@ -40,20 +25,12 @@ class OpenItemAction extends SelectionTreeAction {
     //PMO-2795 Allow opening up to N items in one go.  Probably 9 is too many.
     //Handy for when you want to open a handful of batches for a qtr run, and you know it's going to take about 3 mins
     //Enough time to go get a coffee and come back.
-    //TODO Could also throw up dialog to confirm user really wants to run possibly long running open multi process ?
     public void doActionPerformed(ActionEvent event) {
         List<AbstractUIItem> items = getSelectedUIItems()
         if(items.size() > maxItemsOpenableInOneClick ){
-            // TODO refactor ability to throw an alert into base class method and use that here and in other action classes
-            // e.g. in CreateNewWorkflowAction etc
-            //
-            ULCAlert alert = new ULCAlert(
-                    UlcUtilities.getWindowAncestor(tree),
-                    "Too many items selected (${items.size()}) to open",
-                    "Please select less than " + (maxItemsOpenableInOneClick+1) + " items to open in one go.\n Note: this can take a long time.",
-                    "Ok")
-            alert.messageType = ULCAlert.INFORMATION_MESSAGE
-            alert.show()
+            LOG.info("User tried to open ${items.size()} items, but maxItemsOpenableInOneClick=$maxItemsOpenableInOneClick (nb is sysprop)")
+            showInfoAlert( "Too many items selected",
+                           "Please select $maxItemsOpenableInOneClick or fewer items to open.)" )
         } else {
             for( AbstractUIItem item : items ){
                 if (item != null) {

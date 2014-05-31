@@ -1,7 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.main.action.workflow
-import com.ulcjava.base.application.ULCAlert
 import com.ulcjava.base.application.ULCTableTree
-import com.ulcjava.base.application.UlcUtilities
 import com.ulcjava.base.application.event.ActionEvent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
@@ -32,13 +30,7 @@ class CreateNewWorkflowVersionAction extends AbstractWorkflowAction {
                 String msg = "${parameterization?.creator.username} owns ${parameterization?.getNameAndVersion()}. \n(Hint: Save your own copy to work on.)"
                 LOG.info(msg)
                 LOG.info("Hint: -DCreateNewWorkflowVersion.promiscuous=true will allow non-owner meddling ")
-                ULCAlert alert = new ULCAlert(
-                        UlcUtilities.getWindowAncestor(tree),
-                        "Cannot Create New Workflow Version",
-                        msg,
-                        "Ok")
-                alert.messageType = ULCAlert.INFORMATION_MESSAGE
-                alert.show()
+                showInfoAlert( "Cannot Create New Workflow Version", msg )
                 return
             }
         }

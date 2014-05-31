@@ -47,6 +47,8 @@ class DeleteAction extends SelectionTreeAction {
         dialog.show()
     }
 
+    // Fixme: Horribly convoluted code, hard to understand wiring of 'Delete Depending Results' alert dialog
+    //
     protected void removeItem(ModellingUIItem selectedItem) {
         boolean usedInSimulation = selectedItem.usedInSimulation
         if (usedInSimulation) {
@@ -55,9 +57,7 @@ class DeleteAction extends SelectionTreeAction {
             alert.show()
         } else {
             if (!selectedItem.item.delete()) {
-                ULCAlert alert = new ULCAlert(UlcUtilities.getWindowAncestor(tree), "Error", "Error removing selected item. See log files for details.", "Ok")
-                alert.messageType = ULCAlert.ERROR_MESSAGE
-                alert.show()
+                showErrorAlert("Error", "Error removing selected item. See log files for details.")
             }
         }
     }
@@ -75,6 +75,7 @@ class DeleteAction extends SelectionTreeAction {
         }
     }
 
+    // FR I think first button is always 'Delete Depending Results' here, no ?
     private void handleEvent(String value, String firstButtonValue, ModellingUIItem item) {
         synchronized (item) {
             if (value.equals(firstButtonValue)) {

@@ -9,7 +9,6 @@ import org.pillarone.riskanalytics.application.ui.main.action.CreateNewMajorVers
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
-import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
@@ -111,12 +110,11 @@ class OpenItemDialog {
             if (modellingUIItem.deleteDependingResults()) {
                 riskAnalyticsEventBus.post(new OpenDetailViewEvent(modellingUIItem))
             } else {
-                ULCAlert alert = new ULCAlert(  parent, //PMO-2797
-                                                "Cannot delete dependent results",
-                                                "If item in Simulation Queue, pls wait till its finished or cancel it first.",
-                                                "Ok")
-                alert.messageType = ULCAlert.INFORMATION_MESSAGE
-                alert.show()
+                UIUtils.showInfoAlert(
+                        parent, //PMO-2797
+                        "Cannot delete dependent results",
+                        "If item in Simulation Queue, pls wait till its finished or cancel it first."
+                )
             }
         }] as IActionListener)
 
