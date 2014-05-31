@@ -32,6 +32,7 @@ class UIItemUtils {
         if (isUsedInRunningSimulation(item)) {
             return false
         }
+        //(FR: confusing code; begs simplifying. TODO and do we still need the ModellingItemFactory.getOrCreate(it)?
         try {
             SimulationRun.withTransaction { TransactionStatus status ->
                 List<Simulation> simulations = item.simulations.collect {
