@@ -25,7 +25,7 @@ grails.project.dependency.resolution = {
         mavenRepo "https://ci.canoo.com/nexus/content/repositories/public-releases"
     }
 
-    String ulcVersion = "7.2.0.7"
+    String ulcVersion = "7.2.0.8"
 
     plugins {
         runtime ":background-thread:1.3"
