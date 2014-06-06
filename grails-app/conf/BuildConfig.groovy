@@ -37,6 +37,9 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:2.0-RC2"
 
         compile "com.canoo:ulc:${ulcVersion}"
+        // NB Doh! Must manually keep build.xml in sync with version number here!
+        // (Target: 'jar' for the ...extensions-client.jar in build.xml)
+        //
         runtime("org.pillarone:pillar-one-ulc-extensions:1.9") { transitive = false }
 
         test ":code-coverage:1.2.7"
