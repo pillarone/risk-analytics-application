@@ -74,7 +74,11 @@
         <jar jarfile="${webapp.lib.dir}/${app.name}-extensions-client.jar">
             <fileset dir="${plugin.classes.prod.dir}" includes="com/canoo/ulc/**/client/**" />
             <fileset dir="${plugin.classes.prod.dir}" includes="org/pillarone/ulc/client/**" />
-            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.8/src/java" includes="**/close-*.png" />
+            <!-- Currently the version here must be manually kept in sync with the version of the following line from BuildConfig.groovy :-
+                     runtime("org.pillarone:pillar-one-ulc-extensions:1.9") { transitive = false }
+                 Dunno why it can't pull the version here from BuildConfig ?!
+            -->
+            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.9/src/java" includes="**/close-*.png" />
         </jar>
 
         <jar jarfile="${webapp.lib.dir}/${app.name}-client.jar">
