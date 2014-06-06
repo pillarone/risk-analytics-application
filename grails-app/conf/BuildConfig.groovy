@@ -37,13 +37,13 @@ grails.project.dependency.resolution = {
         runtime ":spring-security-core:2.0-RC2"
 
         compile "com.canoo:ulc:${ulcVersion}"
-        runtime("org.pillarone:pillar-one-ulc-extensions:1.8") { transitive = false }
+        runtime("org.pillarone:pillar-one-ulc-extensions:1.9") { transitive = false }
 
         test ":code-coverage:1.2.7"
         test ":codenarc:0.20"
 
         if (appName == 'RiskAnalyticsApplication') {
-            runtime "org.pillarone:risk-analytics-core:1.9.x-SNAPSHOT"
+            runtime "org.pillarone:risk-analytics-core:1.9.0"
         }
 
     }
