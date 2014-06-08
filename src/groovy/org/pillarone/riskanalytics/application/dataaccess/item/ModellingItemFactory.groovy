@@ -1,5 +1,8 @@
 package org.pillarone.riskanalytics.application.dataaccess.item
 
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
+import org.hibernate.LazyInitializationException
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.output.CustomTableDAO
@@ -22,7 +25,7 @@ import org.pillarone.riskanalytics.core.user.UserManagement
 import org.springframework.transaction.TransactionStatus
 
 class ModellingItemFactory {
-
+    private static Log LOG = LogFactory.getLog(ModellingItemFactory)
 
     protected static Map getItemInstances() {
         Map map = UserContext.getAttribute("itemInstances") as Map
@@ -466,7 +469,13 @@ class ModellingItemFactory {
                 item.lastUpdater.username = dao.lastUpdater.username
             item.creationDate = dao.creationDate
             item.modificationDate = dao.modificationDate
-            item.tags = dao.tags*.tag
+            //PMO-2813 Temporarily re-instate burial of lazy init exception to protect export of result data..
+            //
+            try{
+                item.tags = dao.tags*.tag
+            }catch( LazyInitializationException e){
+                LOG.error("Burying LazyInitializationException accessing tags on p14n: ${item.nameAndVersion}", e)
+            }
         }
         item
     }
