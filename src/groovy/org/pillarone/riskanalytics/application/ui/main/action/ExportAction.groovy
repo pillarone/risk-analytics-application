@@ -58,6 +58,9 @@ abstract class ExportAction extends SelectionTreeAction {
         } else {
             FileChooserConfig config = new FileChooserConfig()
             config.dialogTitle = "Excel Export"
+            if( this.class.simpleName.equals("CsvExportAction") ){
+                config.dialogTitle =  "CSV Export"
+            }
             config.dialogType = FileChooserConfig.SAVE_DIALOG
             config.fileSelectionMode = itemCount > 1 ? FileChooserConfig.DIRECTORIES_ONLY : FileChooserConfig.FILES_ONLY
             config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.EXPORT_DIR_KEY))
@@ -89,7 +92,7 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
 
-    protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) {
+    protected void exportItem(Simulation item, int itemCount, filePaths, ULCWindow ancestor) { // Export (not CSV Export)
         ExcelExporter exporter = new ExcelExporter()
         SingleValueResult.withTransaction { trx ->
             String selectedFile = itemCount > 1 ? "${filePaths[0]}/${getFileName(item)}" : filePaths[0]
