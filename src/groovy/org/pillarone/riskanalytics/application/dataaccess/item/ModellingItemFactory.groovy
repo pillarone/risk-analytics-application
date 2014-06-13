@@ -218,6 +218,9 @@ class ModellingItemFactory {
     static Simulation getSimulation(SimulationRun run) {
         SimulationRun.withTransaction {
             run.attach()
+            if(run.parameterization){
+                run.parameterization.attach()  //PMO-2813 - attach also the sim's p14n so _its_ tags are also accessible
+            }
             getItem(run)
         }
     }
@@ -469,13 +472,14 @@ class ModellingItemFactory {
                 item.lastUpdater.username = dao.lastUpdater.username
             item.creationDate = dao.creationDate
             item.modificationDate = dao.modificationDate
-            //PMO-2813 Temporarily re-instate burial of lazy init exception to protect export of result data..
-            //
-            try{
-                item.tags = dao.tags*.tag
-            }catch( LazyInitializationException e){
-                LOG.error("Burying LazyInitializationException accessing tags on p14n: ${item.nameAndVersion}", e)
-            }
+            item.tags = dao.tags*.tag
+//            //PMO-2813 Temporarily re-instate burial of lazy init exception to protect export of result data..
+//            //
+//            try{
+//                item.tags = dao.tags*.tag
+//            }catch( LazyInitializationException e){
+//                LOG.error("Burying LazyInitializationException accessing tags on p14n: ${item.nameAndVersion}", e)
+//            }
         }
         item
     }
