@@ -269,6 +269,9 @@ abstract class ExportAction extends SelectionTreeAction {
         return status
     }
 
+    // TODO drop the defs and test it works with static typing
+    // Probably rewrite logic to be readable too...
+    //
     static String validateFileName(String filename) {
         String separator = getFileSeparator()
         def arr = filename.split(Pattern.quote(separator))
