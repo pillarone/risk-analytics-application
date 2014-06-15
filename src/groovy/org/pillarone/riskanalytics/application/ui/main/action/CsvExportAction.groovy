@@ -32,21 +32,29 @@ class CsvExportAction extends ExportItemAction {
                         def simulationRun = item.simulationRun
                         String fileName = ResultAccessor.exportCsv(simulationRun) //Was major bottleneck (writing CSV on serverside)
                         if (fileName) {
+                            long t = System.currentTimeMillis()
+                            stream.write( UIUtils.toCSV(getSimulationSettings(simulationRun)).getBytes() )
+                            stream.flush()
+                            LOG.info("Timed ${System.currentTimeMillis() - t} ms: Wrote settings to clientside CSV for Sim '${simulationRun.name}'");
+
                             FileInputStream fis = new FileInputStream(fileName)
-                            stream.write("ITERATION,PERIOD,PATH,FIELD,VALUE,COLLECTOR,DATE\n".bytes)
+                            stream.write("\nITERATION,PERIOD,PATH,FIELD,VALUE,COLLECTOR,DATE\n".bytes)
                             // PMO-2676 ? Probably heap exceed here.  If so, could loop and do transfer in chunks.
                             //
                             LOG.info("About to stream ${fileName} to clientside")
-                            long t = System.currentTimeMillis()
-                            byte[] fisBytes = fis.getBytes()
-                            stream.write fisBytes
-                            int fisBytesLen = fisBytes.length
-                            fisBytes=null // Help gc kick in asap
-                            LOG.info("Timed ${System.currentTimeMillis() - t} ms: streaming ${fisBytesLen}-bytes of iters for sim: '${simulationRun.name}'");
                             t = System.currentTimeMillis()
-                            byte[] csvBytes = UIUtils.toCSV(getSimulationSettings(simulationRun)).getBytes()
-                            stream.write(csvBytes)
-                            LOG.info("Timed ${System.currentTimeMillis() - t} ms: writing settings too");
+                            final SIZE = 1024 * 1024;
+                            byte[] chunk = new byte[SIZE];
+                            int nRead = -1;
+                            long nWrote = 0;
+                            while ( (nRead=fis.read( chunk, 0, SIZE )) != -1 ) {
+                                stream.write( chunk, 0, nRead );
+                                nWrote += nRead
+//                              LOG.info("Wrote chunk of $nRead bytes to clientside stream")
+                            }
+                            chunk = null // give gc chance asap
+                            stream.flush()
+                            LOG.info("Timed ${System.currentTimeMillis() - t} ms: streaming ${nWrote}-bytes of iters for sim: '${simulationRun.name}'");
                         } else {
                             showAlert("exportError")
                         }
