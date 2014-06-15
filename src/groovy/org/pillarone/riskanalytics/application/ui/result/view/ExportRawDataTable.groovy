@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.result.model.ResultIterationDa
 import com.ulcjava.base.application.ULCComponent
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
 /**
  * @author fouad.jaada@intuitive-collaboration.com
@@ -65,6 +66,9 @@ class ExportRawDataTable extends ResourceBasedAction {
                             stream.close()
                         }
                     }, onSuccess: {String path, String name ->
+                        UIUtils.showAlert(  UlcUtilities.getWindowAncestor(dialogRoot),
+                                            "Successfully exported Excel file","Filename: $name saved in folder:\n $path",
+                                            ULCAlert.INFORMATION_MESSAGE )
                     }, onFailure: { int reason, String description ->
                         LOG.error("Excel export failed: ${description}")
                         new ULCAlert(ancestor, "Export failed", "Failed to write to file, maybe it is already open?", "Ok").show()
