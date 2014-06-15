@@ -50,7 +50,6 @@ abstract class ExportAction extends SelectionTreeAction {
     }
 
     protected void exportSimulations(List<ModellingItem> items) {
-        int itemCount = items.size()
         ULCWindow ancestor = getAncestor()
         if (!validate(items)) {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "resultExcelExportError")
@@ -62,7 +61,7 @@ abstract class ExportAction extends SelectionTreeAction {
                 config.dialogTitle =  "CSV Export"
             }
             config.dialogType = FileChooserConfig.SAVE_DIALOG
-            config.fileSelectionMode = itemCount > 1 ? FileChooserConfig.DIRECTORIES_ONLY : FileChooserConfig.FILES_ONLY
+            config.fileSelectionMode = items.size() > 1 ? FileChooserConfig.DIRECTORIES_ONLY : FileChooserConfig.FILES_ONLY
             config.setCurrentDirectory(userPreferences.getUserDirectory(UserPreferences.EXPORT_DIR_KEY))
             if (items.size() == 1) {
                 config.selectedFile = getFileName(items[0])
@@ -74,7 +73,7 @@ abstract class ExportAction extends SelectionTreeAction {
                         userPreferences.setUserDirectory(UserPreferences.EXPORT_DIR_KEY, filePaths[0])
                         items.each { ModellingItem item ->
                             item.load()
-                            exportItem(item, itemCount, filePaths, ancestor)
+                            exportItem(item, items.size(), filePaths, ancestor)
                         }
                     },
                     onFailure: { reason, description ->
@@ -106,7 +105,7 @@ abstract class ExportAction extends SelectionTreeAction {
                     exporter.exportResults rawData
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
                     exporter.writeWorkBook stream
-                }, onSuccess                        : { path, name ->
+                }, onSuccess                        : { path, name -> showInfoAlert("Successfully exported Excel file", "Filename: $name saved in folder:\n $path")
                 }, onFailure                        : { reason, description ->
                     if (reason == IFileStoreHandler.FAILED) {
                         LOG.error description
@@ -152,7 +151,11 @@ abstract class ExportAction extends SelectionTreeAction {
         return ancestor
     }
 
-    protected List<List<String>> getSimulationSettings(SimulationRun simulationRun) {
+    protected List<List<String>> getSimulationSettings(SimulationRun simulationRun, String delimiter = null) {
+        String sep = ":"
+        if(delimiter != null){
+            sep += delimiter
+        }
         SimulationRun.withTransaction { status ->
             simulationRun = SimulationRun.get(simulationRun.id)
             Parameterization parameterization = ModellingItemFactory.getParameterization(simulationRun?.parameterization)
@@ -161,17 +164,17 @@ abstract class ExportAction extends SelectionTreeAction {
             simulation.load()
 
             List data = []
-            data << ["", "", "Version"]
-            data << [UIUtils.getText(ExportAction.class, "SimulationName") + ":", "$simulation.name"]
-            data << [UIUtils.getText(ExportAction.class, "Comment") + ":", simulation.comment]
-            data << [UIUtils.getText(ExportAction.class, "Model") + ":", "${simulation.modelClass.name}", "${simulation.modelVersionNumber}"]
-            data << [UIUtils.getText(ExportAction.class, "Parameterization") + ":", "$simulation.parameterization.name", "${simulation.parameterization.versionNumber.toString()}"]
-            data << [UIUtils.getText(ExportAction.class, "Template") + ":", "$simulation.template.name", "${simulation.template.versionNumber.toString()}"]
-            data << [UIUtils.getText(ExportAction.class, "Structure") + ":", "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
-            data << [UIUtils.getText(ExportAction.class, "NumberOfPeriods") + ":", simulation.periodCount]
-            data << [UIUtils.getText(ExportAction.class, "NumberOfIterations") + ":", simulation.numberOfIterations]
-            data << [UIUtils.getText(ExportAction.class, "RandomSeed") + ":", simulation.randomSeed]
-            data << [UIUtils.getText(ExportAction.class, "SimulationEndDate") + ":", DateFormatUtils.formatDetailed(simulation.end)]
+            data << ["Setting name", "Setting value", "Version"]
+            data << [UIUtils.getText(ExportAction.class, "SimulationName"     ) + sep, "$simulation.name"]
+            data << [UIUtils.getText(ExportAction.class, "Comment"            ) + sep, simulation.comment]
+            data << [UIUtils.getText(ExportAction.class, "Model"              ) + sep, "${simulation.modelClass.name}", "${simulation.modelVersionNumber}"]
+            data << [UIUtils.getText(ExportAction.class, "Parameterization"   ) + sep, "$simulation.parameterization.name", "${simulation.parameterization.versionNumber.toString()}"]
+            data << [UIUtils.getText(ExportAction.class, "Template"           ) + sep, "$simulation.template.name", "${simulation.template.versionNumber.toString()}"]
+            data << [UIUtils.getText(ExportAction.class, "Structure"          ) + sep, "$simulation.structure.name", "${simulation.structure.versionNumber.toString()}"]
+            data << [UIUtils.getText(ExportAction.class, "NumberOfPeriods"    ) + sep, simulation.periodCount]
+            data << [UIUtils.getText(ExportAction.class, "NumberOfIterations" ) + sep, simulation.numberOfIterations]
+            data << [UIUtils.getText(ExportAction.class, "RandomSeed"         ) + sep, simulation.randomSeed]
+            data << [UIUtils.getText(ExportAction.class, "SimulationEndDate"  ) + sep, DateFormatUtils.formatDetailed(simulation.end)]
             return data
         }
     }
