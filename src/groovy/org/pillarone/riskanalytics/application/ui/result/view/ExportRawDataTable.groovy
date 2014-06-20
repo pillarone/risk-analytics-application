@@ -66,6 +66,7 @@ class ExportRawDataTable extends ResourceBasedAction {
                             stream.close()
                         }
                     }, onSuccess: {String path, String name ->
+                        LOG.info("Filename: $name saved in folder: $path")
                         UIUtils.showAlert(  UlcUtilities.getWindowAncestor(dialogRoot),
                                             "Successfully exported Excel file","Filename: $name saved in folder:\n $path",
                                             ULCAlert.INFORMATION_MESSAGE )
