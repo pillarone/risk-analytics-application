@@ -15,8 +15,6 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  */
 class CsvExportAction extends ExportItemAction {
     static Log LOG = LogFactory.getLog(CsvExportAction)
-    static final int MB = 1024 * 1024; // one megabyte
-    static final long MAX_CSV_TRANSFER_SIZE = 200 * MB;
 
     public CsvExportAction(ULCTableTree tree) {
         super(tree, "CsvExportAction", 'csv')
@@ -29,7 +27,7 @@ class CsvExportAction extends ExportItemAction {
             String fileName = ResultAccessor.exportCsv(simulationRun) //Was major bottleneck (writing CSV on serverside)
             if (fileName) {
                 long fileSize = new File(fileName).size()
-                if( fileSize <= MAX_CSV_TRANSFER_SIZE ){
+                if( fileSize <= EXPORT_TRANSFER_MAX_BYTES ){
 
                     SingleValueResult.withTransaction { trx ->
                         String selectedFile = itemCount > 1 ? "${filePaths[0]}/${getFileName(item)}" : filePaths[0]
@@ -73,11 +71,11 @@ class CsvExportAction extends ExportItemAction {
                                 }
                         ] as IFileStoreHandler
 
-                        ClientContext.storeFile(fileStoreHandler, selectedFile, MAX_CSV_TRANSFER_SIZE, false)
+                        ClientContext.storeFile(fileStoreHandler, selectedFile, EXPORT_TRANSFER_MAX_BYTES, false)
                     }
                 }else{
                     showWarnAlert("File too large",
-                                  "Unfortunately, generated CSV file exceeds $MAX_CSV_TRANSFER_SIZE-byte limit ($fileSize bytes)\n\n"+
+                                  "Unfortunately, generated CSV file exceeds $EXPORT_TRANSFER_MAX_BYTES-byte limit ($fileSize bytes)\n\n"+
                                   "Hint: The normal (Excel) Export is often smaller" )
                 }
             } else {
