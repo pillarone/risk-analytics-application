@@ -5,7 +5,9 @@ import com.ulcjava.base.application.util.IFileStoreHandler
 import com.ulcjava.base.shared.FileChooserConfig
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.apache.poi.ss.usermodel.Sheet
 import org.pillarone.riskanalytics.application.dataaccess.item.ModellingItemFactory
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.application.ui.util.ExcelExporter
 import org.pillarone.riskanalytics.application.ui.util.I18NAlert
@@ -14,7 +16,9 @@ import org.pillarone.riskanalytics.application.util.prefs.UserPreferences
 import org.pillarone.riskanalytics.application.util.prefs.UserPreferencesFactory
 import org.pillarone.riskanalytics.core.ParameterizationDAO
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
+import org.pillarone.riskanalytics.core.dataaccess.ResultPathDescriptor
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
+import org.pillarone.riskanalytics.core.output.SingleValueResultPOJO
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.output.SingleValueResult
 import org.pillarone.riskanalytics.core.simulation.item.*
@@ -26,6 +30,15 @@ import java.util.regex.Pattern
  * @author fouad.jaada@intuitive-collaboration.com
  */
 abstract class ExportAction extends SelectionTreeAction {
+    protected static final int ONE_MEG = 1024 * 1024
+    protected static final long EXPORT_TRANSFER_MAX_BYTES = 200 * ONE_MEG
+    // Avoid needing to build whole app just to tweak settings
+    // PMO-2824 Should move out of RiskAnalyticsMainView to a utility class
+    //
+    static {
+        EXPORT_TRANSFER_MAX_BYTES = RiskAnalyticsMainView.setIntFromSystemProperty("EXPORT_TRANSFER_MAX_BYTES", 200 * ONE_MEG)
+    }
+
     UserPreferences userPreferences
     protected String fileExtension = 'xlsx'
     Log LOG = LogFactory.getLog(ExportAction)
@@ -98,20 +111,53 @@ abstract class ExportAction extends SelectionTreeAction {
             selectedFile = selectedFile.endsWith(".$fileExtension") ? selectedFile : "${selectedFile}.$fileExtension"
 
             item.load()
-            def simulationRun = item.simulationRun
-            List rawData = ResultAccessor.getAllResults(simulationRun)
+            SimulationRun simulationRun = item.simulationRun
+//            List rawData = ResultAccessor.getAllResults( simulationRun ) //Got OutOfMemoryError: GC overhead limit exceeded
             try {
+                // PMO-2822 Instead of acquiring the big list first then trying to stream to client..
+                // Pass output stream into the ResultAccessor and feed the exporter's exportResults()
+                // in loop, quitting early if file is too large ?
+                // :( Nope, because passing in the ExcelExporter would make core depend on app foo bar yuk yuk..
+                //
                 ClientContext.storeFile([prepareFile: { OutputStream stream ->
-                    exporter.exportResults rawData
+                    // Okay, pull the guts of the getAllResults here, and do the work in ra-app..
+                    //
+                    LOG.info("Building Excel from Result paths before streaming to client")
+                    Sheet sheet = exporter.createExcelSheet()
+
+                    List<ResultPathDescriptor> paths = ResultAccessor.getDistinctPaths(simulationRun)
+                    int sheetDataRowIndex = 0;
+                    for (ResultPathDescriptor descriptor in paths) {
+                        double[] values = ResultAccessor.getValues(simulationRun, descriptor.period, descriptor.path.pathName, descriptor.collector.collectorName, descriptor.field.fieldName)
+                        for (int i=0; i < values.length; i ++){ // Dumb to repeatedly call size() on a java array!
+                            if( sheetDataRowIndex < ONE_MEG - 1 ){ // nb header row
+                                SingleValueResultPOJO pojo = new org.pillarone.riskanalytics.core.output.SingleValueResultPOJO (
+                                        path: descriptor.path,
+                                        field: descriptor.field,
+                                        collector: descriptor.collector,
+                                        period: descriptor.period,
+                                        simulationRun: simulationRun,
+                                        value: values[i],
+                                        iteration:i
+                                )
+                                exporter.writeOneRowToSheet( sheet, pojo, sheetDataRowIndex++ )
+                            } else {
+                                String msg = "Sadly generated file exceeds number of rows Excel can open ($ONE_MEG)"
+                                showWarnAlert("File too big", msg, true)
+                                throw new IllegalArgumentException(msg)
+                            }
+                        }
+                    }
                     exporter.addTab("Simulation settings", getSimulationSettings(simulationRun))
+                    LOG.info("Built Excel object without crashing; now stream it to client")
                     exporter.writeWorkBook stream
-                }, onSuccess                        : { path, name -> showInfoAlert("Successfully exported Excel file", "Filename: $name saved in folder:\n $path")
+                }, onSuccess                        : { path, name -> showInfoAlert("Successfully exported Excel file", "Filename: $name saved in folder:\n $path", true)
                 }, onFailure                        : { reason, description ->
                     if (reason == IFileStoreHandler.FAILED) {
                         LOG.error description
                         showAlert("exportError")
                     }
-                }] as IFileStoreHandler, selectedFile, Long.MAX_VALUE, false)
+                }] as IFileStoreHandler, selectedFile, EXPORT_TRANSFER_MAX_BYTES, false)
             } catch (IllegalArgumentException iae) {
                 LOG.error("Export failed: " + iae.message, iae)
                 showAlert("tooManyRowsError")

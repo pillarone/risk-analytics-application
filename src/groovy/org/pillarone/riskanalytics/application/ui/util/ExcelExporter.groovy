@@ -1,6 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.util
 
-import org.apache.poi.ss.SpreadsheetVersion
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.ClientAnchor
 import org.apache.poi.ss.usermodel.Comment
@@ -10,8 +9,8 @@ import org.apache.poi.ss.usermodel.RichTextString
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
-import org.apache.poi.xssf.usermodel.XSSFComment
 import org.pillarone.riskanalytics.core.output.PathMapping
+import org.pillarone.riskanalytics.core.output.SingleValueResultPOJO
 
 class ExcelExporter {
 
@@ -19,9 +18,18 @@ class ExcelExporter {
     public List headers = 'period iteration path value'.tokenize()
     SXSSFWorkbook workbook = new SXSSFWorkbook()
 
+    // Breaking up exportResults() into separate calls to
+    // 1) Create sheet & write header
+    // 2) Write data rows
+    //
+    // For now, keep this api around to keep tests from breaking, till tests adapted
     def exportResults(List results, List<String> displayPaths = []) {
-        Sheet sheet = workbook.createSheet(tabName)
+        Sheet sheet = createExcelSheet(displayPaths)
+        writeResultsDataToSheet(sheet,results)
+    }
 
+    Sheet createExcelSheet( List<String> displayPaths = [] ) {
+        Sheet sheet = workbook.createSheet(tabName)
         Row header = sheet.createRow(0)
         headers.eachWithIndex { String text, int i ->
             Cell headerCell = addCell(header, i, text)
@@ -29,12 +37,21 @@ class ExcelExporter {
                 addComment(i, headerCell, displayPaths, sheet)
             }
         }
+        return sheet
+    }
 
-        results.eachWithIndex { def result, int i ->
-            Row row = sheet.createRow(i + 1)
-            headers.eachWithIndex { String propName, int colNum ->
-                def value = result[propName]
-                if (value != null) addCell(row, colNum, value, result)
+    void writeResultsDataToSheet(Sheet sheet, List/*<SingleValueResultPOJO> breaks dumb test*/ results) {
+        results.eachWithIndex { /*SingleValueResultPOJO*/ def result, int i ->
+            writeOneRowToSheet(sheet, result, i)
+        }
+    }
+
+    void writeOneRowToSheet(Sheet sheet, /*SingleValueResultPOJO breaks dumb test*/ def result, int i) {
+        Row row = sheet.createRow(i + 1)
+        headers.eachWithIndex { String propName, int colNum ->
+            def value = result[propName]
+            if ( value ){
+                addCell(row, colNum, value, result)
             }
         }
     }
