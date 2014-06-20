@@ -265,13 +265,22 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
 
     // Helper methods for Action subclasses
     //
-    protected void showInfoAlert( String title, String msg ){
+    protected void showInfoAlert( String title, String msg, boolean log = false ){
+        if( log ){
+            LOG.info(msg)
+        }
         UIUtils.showAlert( UlcUtilities.getWindowAncestor(tree), title,msg,ULCAlert.INFORMATION_MESSAGE)
     }
-    protected void showWarnAlert( String title, String msg ){
+    protected void showWarnAlert( String title, String msg, boolean log = false ){
+        if( log ){
+            LOG.warn(msg)
+        }
         UIUtils.showAlert(UlcUtilities.getWindowAncestor(tree), title,msg,ULCAlert.WARNING_MESSAGE )
     }
-    protected void showErrorAlert( String title, String msg ){
+    protected void showErrorAlert( String title, String msg, boolean log = false ){
+        if( log ){
+            LOG.error(msg)
+        }
         UIUtils.showAlert(UlcUtilities.getWindowAncestor(tree), title,msg,ULCAlert.ERROR_MESSAGE )
     }
 }
