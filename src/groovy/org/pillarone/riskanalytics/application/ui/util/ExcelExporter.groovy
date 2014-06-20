@@ -50,7 +50,7 @@ class ExcelExporter {
         Row row = sheet.createRow(i + 1)
         headers.eachWithIndex { String propName, int colNum ->
             def value = result[propName]
-            if ( value ){
+            if ( value != null ){ // the default groovy 'if(value)' fails for zero values !
                 addCell(row, colNum, value, result)
             }
         }
