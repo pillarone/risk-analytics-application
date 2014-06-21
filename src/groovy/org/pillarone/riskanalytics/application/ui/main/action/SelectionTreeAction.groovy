@@ -33,6 +33,18 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         maxItemsOpenableInOneClick = RiskAnalyticsMainView.setIntFromSystemProperty("maxItemsOpenableInOneClick",5)
     }
 
+    static List<ModellingUIItem> getSelectedUIItems(ULCTableTree tree) {
+        List<ModellingUIItem> selectedObjects = []  //Similarly, this should be list of ModellingUIItem!
+        for (TreePath selectedPath in tree.selectedPaths) {
+            DefaultMutableTableTreeNode itemNode = selectedPath.lastPathComponent
+            ModellingUIItem item = itemNode instanceof ItemNode ? itemNode.itemNodeUIItem : null
+            if (item != null) {
+                selectedObjects << item
+            }
+        }
+        return selectedObjects
+    }
+
     ULCTableTree tree
 
     SelectionTreeAction(String name, ULCTableTree tree) {
@@ -73,6 +85,7 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
         }
         return selectedObjects
     }
+
 
     List<ItemNode> getReportingModellingNodes() {
         List selectedObjects = []
