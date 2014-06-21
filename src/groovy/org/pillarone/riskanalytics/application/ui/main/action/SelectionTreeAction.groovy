@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedActio
 import org.pillarone.riskanalytics.application.ui.base.model.ItemGroupNode
 import org.pillarone.riskanalytics.application.ui.base.model.ItemNode
 import org.pillarone.riskanalytics.application.ui.base.model.ModelNode
+import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
 import org.pillarone.riskanalytics.application.ui.main.view.item.AbstractUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -26,18 +27,10 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     private static Log LOG = LogFactory.getLog(SelectionTreeAction)
     protected static int maxItemsOpenableInOneClick = 5;
 
-    //TODO FR Move this into some static method in some utility class; and use it from here and the GUI layout where similar happens
-    //Even better: 1) cater for bools as well as numerics, and 2) also allow overrides via external properties file
+    //TODO FR Even better: 1) cater for bools as well as numerics, and 2) also allow overrides via external properties file
     //
     static{
-        String s = System.getProperty( "maxItemsOpenableInOneClick", "5")
-        try{
-            maxItemsOpenableInOneClick = Integer.parseInt( s );
-            LOG.info("System property recognised: -DmaxItemsOpenableInOneClick=$s")
-        } catch (NumberFormatException e) {
-            LOG.warn("Ignoring -DmaxItemsOpenableInOneClick value: '$s' in favour of default: 5")
-            maxItemsOpenableInOneClick = 5;
-        }
+        maxItemsOpenableInOneClick = RiskAnalyticsMainView.setIntFromSystemProperty("maxItemsOpenableInOneClick",5)
     }
 
     ULCTableTree tree
