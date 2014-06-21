@@ -59,11 +59,13 @@ class RiskAnalyticsMainView implements IModellingItemChangeListener {
     }
     static int setIntFromSystemProperty( String key, int defaultValue ){
         try{
-            return Integer.parseInt( System.getProperty(key, ""+defaultValue) )
+            int i = Integer.parseInt( System.getProperty(key, ""+defaultValue) )
+            LOG.info("System property recognised: -D${key}=${i}")
+            return i
         } catch( NumberFormatException e){ // Typo in configs
-            LOG.warn("System property '$key' NOT an int, defaulting to $defaultValue")
-            return defaultValue
+            LOG.warn("NOT an int - supplied system property '$key', defaulting to $defaultValue")
         }
+        return defaultValue
     }
 
     final ULCCardPane content = new ULCCardPane()
