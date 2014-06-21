@@ -59,6 +59,8 @@ abstract class AbstractParameterNodePopupMenu extends ULCPopupMenu {
             addSeparator();
             add(new ULCMenuItem(new DeleteAction(tree)));
         }
+        addSeparator();
+        add(new ULCMenuItem(new ShowPropertiesAction(tree)));
     }
 
     protected abstract boolean hasRenameAction();
