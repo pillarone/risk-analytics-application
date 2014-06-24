@@ -27,7 +27,7 @@ class EnumParameterizationTableTreeNode extends AbstractMultiValueParameterizati
     }
 
     public List initValues() {
-        EnumParameterHolder enumParameterizationHolder = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
+        EnumParameterHolder enumParameterizationHolder = parametrizedItem.getArbitraryParameterHolder(parameterPath)
         def possibleValues = enumParameterizationHolder.getBusinessObject().values()
         List allValues = []
         possibleValues.each {

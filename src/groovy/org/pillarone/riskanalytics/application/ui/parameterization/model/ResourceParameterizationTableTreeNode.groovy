@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.ui.parameterization.model
 
 import org.pillarone.riskanalytics.core.ResourceDAO
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ResourceParameterHolder
 
 class ResourceParameterizationTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
@@ -15,7 +14,7 @@ class ResourceParameterizationTableTreeNode extends AbstractMultiValueParameteri
 
     @Override
     protected List initValues() {
-        ResourceParameterHolder parameter = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
+        ResourceParameterHolder parameter = parametrizedItem.getArbitraryParameterHolder(parameterPath)
         List<ResourceParameterHolder.NameVersionPair> allValues = ResourceDAO.findAllByResourceClassName(parameter.resourceClass.name).collect { new ResourceParameterHolder.NameVersionPair(it.name, it.itemVersion)}
 
         allValues.each { lookupMap.put(it.toString(), it)}

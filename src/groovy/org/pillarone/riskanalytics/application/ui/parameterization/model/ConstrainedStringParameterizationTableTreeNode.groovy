@@ -4,7 +4,6 @@ import org.pillarone.riskanalytics.core.components.Component
 import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ConstrainedStringParameterHolder
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 
 class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
 
@@ -16,7 +15,7 @@ class ConstrainedStringParameterizationTableTreeNode extends AbstractMultiValueP
     public ConstrainedStringParameterizationTableTreeNode(String path, ParametrizedItem item, Model model) {
         super(path, item);
         this.simulationModel = model
-        ConstrainedStringParameterHolder holder = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
+        ConstrainedStringParameterHolder holder = parametrizedItem.getArbitraryParameterHolder(parameterPath)
         markerClass = holder.businessObject.getMarkerClass()
     }
 

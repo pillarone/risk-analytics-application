@@ -5,7 +5,6 @@ import org.pillarone.riskanalytics.core.model.Model
 import org.pillarone.riskanalytics.core.parameterization.AbstractParameterObjectClassifier
 import org.pillarone.riskanalytics.core.parameterization.IParameterObjectClassifier
 import org.pillarone.riskanalytics.core.simulation.item.ParametrizedItem
-import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterHolder
 import org.pillarone.riskanalytics.core.simulation.item.parameter.ParameterObjectParameterHolder
 
 class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParameterizationTableTreeNode {
@@ -20,7 +19,7 @@ class ParameterizationClassifierTableTreeNode extends AbstractMultiValueParamete
 
     public List initValues() {
         List possibleValues = []
-        ParameterObjectParameterHolder parameterObjectHolder = parametrizedItem.getParameterHoldersForFirstPeriod(parameterPath)
+        ParameterObjectParameterHolder parameterObjectHolder = parametrizedItem.getArbitraryParameterHolder(parameterPath)
         IParameterObjectClassifier classifier = parameterObjectHolder.classifier
         List<IParameterObjectClassifier> classifiers = simulationModel.configureClassifier(parameterObjectHolder.path, classifier.classifiers)
         for(AbstractParameterObjectClassifier singleClassifier in classifiers){
