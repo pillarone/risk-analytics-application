@@ -2,8 +2,10 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
 
 import com.ulcjava.base.application.*
 import groovy.util.logging.Log
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.SimulationInfoPaneModel
+import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.action.OpenCurrentResultsAction
 import org.pillarone.riskanalytics.application.ui.util.I18NUtilities
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.simulation.SimulationState
@@ -36,6 +38,8 @@ class SimulationInfoPane {
     private ULCBoxPane content
 
     @Resource
+    GrailsApplication grailsApplication
+    @Resource
     SimulationInfoPaneModel simulationInfoPaneModel
     private final Map<SimulationState, Closure> uiStates = [:]
     private MySimulationStateChangedListener listener = new MySimulationStateChangedListener()
@@ -61,6 +65,7 @@ class SimulationInfoPane {
             progressBar.value = 0
             progressBar.indeterminate = false
             progressBar.string = getText("SimulationNotRunningMessage")
+            progressBar.componentPopupMenu = null
         }
 
         uiStates[INITIALIZING] = {
@@ -69,6 +74,7 @@ class SimulationInfoPane {
             estimatedEndTimeInfo.text = "-"
             progressBar.indeterminate = true
             progressBar.string = getText("StartSimulationMessage")
+            progressBar.componentPopupMenu = null
         }
 
         uiStates[RUNNING] = {
@@ -78,6 +84,7 @@ class SimulationInfoPane {
             progressBar.value = simulationInfoPaneModel.progress
             progressBar.indeterminate = false
             progressBar.string = UIUtils.getText(SimulationInfoPane, "SimulationComplete", ["${simulationInfoPaneModel.progress}"])
+            progressBar.componentPopupMenu = null
         }
 
         uiStates[POST_SIMULATION_CALCULATIONS] = {
@@ -87,6 +94,7 @@ class SimulationInfoPane {
             progressBar.value = simulationInfoPaneModel.progress
             progressBar.indeterminate = false
             progressBar.string = UIUtils.getText(SimulationInfoPane, "CalculatingStatistics", ["${simulationInfoPaneModel.progress}"])
+            progressBar.componentPopupMenu = null
         }
 
         uiStates[SAVING_RESULTS] = {
@@ -95,6 +103,7 @@ class SimulationInfoPane {
             estimatedEndTimeInfo.text = "-"
             progressBar.indeterminate = true
             progressBar.string = getText("SavingResultsMessage")
+            progressBar.componentPopupMenu = null
         }
 
         uiStates[FINISHED] = {
@@ -104,6 +113,7 @@ class SimulationInfoPane {
             progressBar.indeterminate = false
             progressBar.value = 100
             progressBar.string = getText("Done")
+            progressBar.componentPopupMenu = openCurrentResultsPopupMenu
         }
 
         uiStates[CANCELED] = {
@@ -113,6 +123,7 @@ class SimulationInfoPane {
             progressBar.indeterminate = false
             progressBar.value = simulationInfoPaneModel.progress
             progressBar.string = getText("Canceled")
+            progressBar.componentPopupMenu = null
         }
 
         uiStates[ERROR] = {
@@ -121,6 +132,7 @@ class SimulationInfoPane {
             estimatedEndTimeInfo.text = simulationInfoPaneModel.simulationEndTime
             progressBar.indeterminate = false
             progressBar.string = getText("Error")
+            progressBar.componentPopupMenu = null
         }
     }
 
@@ -145,6 +157,17 @@ class SimulationInfoPane {
         remainingTimeLabel = new ULCLabel(getText("RemainingTime") + ":")
         remainingTimeInfo = new ULCLabel()
         remainingTimeInfo.name = "remainingTime"
+    }
+
+    private ULCPopupMenu getOpenCurrentResultsPopupMenu() {
+        ULCPopupMenu menu = new ULCPopupMenu()
+        ULCMenuItem openResult = new ULCMenuItem(openCurrentResultsAction)
+        menu.add(openResult)
+        menu
+    }
+
+    OpenCurrentResultsAction getOpenCurrentResultsAction() {
+        grailsApplication.mainContext.getBean('openCurrentResultsAction', OpenCurrentResultsAction)
     }
 
     private void layout() {

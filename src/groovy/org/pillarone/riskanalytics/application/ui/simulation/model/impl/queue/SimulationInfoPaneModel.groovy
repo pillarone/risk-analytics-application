@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.user.Person
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -114,6 +115,10 @@ class SimulationInfoPaneModel {
 
     boolean isBatchSimulation() {
         running?.simulation?.batch
+    }
+
+    Simulation getCurrentSimulation() {
+        running?.simulation
     }
 
     private class MyListener extends SimulationRuntimeInfoAdapter {
