@@ -12,6 +12,8 @@ import org.pillarone.riskanalytics.application.ui.util.I18NAlert
 import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
+import org.pillarone.riskanalytics.core.workflow.Status
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -26,7 +28,7 @@ class RenameAction extends SingleItemAction {
 
     public void doActionPerformed(ActionEvent event) {
 
-        if( quitWithAlertIfCalledWhenDisabled() ){
+        if( quitWithAlertIfCalledWhenDisabled() ){ // SingleItemAction constraint
             return
         }
 
@@ -35,6 +37,7 @@ class RenameAction extends SingleItemAction {
         tree.invokeUI("startEditingAtPath", [adapter.getDescriptionForPath(tree.getSelectionPath())] as Object[])
         */
         boolean usedInSimulation = false
+        boolean isWorkflow = false
         ModellingUIItem selectedItem = selectedUIItem
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
             usedInSimulation = selectedItem.usedInSimulation
@@ -42,10 +45,18 @@ class RenameAction extends SingleItemAction {
                 usedInSimulation = nameUsedInSimulation(selectedItem.item)
             }
         }
+        if( selectedItem.item instanceof Parameterization ){
+            Status status = (selectedItem.item as Parameterization).status
+            isWorkflow =  (status != null) && !status.equals(Status.NONE)
+        }
         if (usedInSimulation) {
             ULCAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(event.source), "RenamingLocked")
             alert.show()
-        } else {
+        } else if( isWorkflow ){
+            showInfoAlert("Cannot rename Workflow models",
+                          "Sorry, ${selectedItem.nameAndVersion} is a Workflow model.", true)
+        }
+        else {
             NodeNameDialog dialog = new NodeNameDialog(UlcUtilities.getWindowAncestor(tree), selectedItem)
             dialog.title = dialog.getText("renameTitle") + " " + selectedItem.name
 
