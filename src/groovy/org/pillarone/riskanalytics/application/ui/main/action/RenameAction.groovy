@@ -37,7 +37,6 @@ class RenameAction extends SingleItemAction {
         boolean usedInSimulation = false
         ModellingUIItem selectedItem = selectedUIItem
         if (selectedItem.item instanceof Parameterization || selectedItem.item instanceof ResultConfiguration) {
-            selectedItem.item.setModelClass(selectedModel.class) //TODO: still necessary?
             usedInSimulation = selectedItem.usedInSimulation
             if (!usedInSimulation) {
                 usedInSimulation = nameUsedInSimulation(selectedItem.item)
