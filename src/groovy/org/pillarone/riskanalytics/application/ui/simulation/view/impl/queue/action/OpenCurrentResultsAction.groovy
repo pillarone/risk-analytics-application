@@ -25,13 +25,13 @@ class OpenCurrentResultsAction extends ResourceBasedAction {
 
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
-            Simulation simulation = simulationInfoPane.simulationInfoPaneModel.currentSimulation
+            Simulation simulation = simulationInfoPane.simulationInfoPaneModel.latestFinishedSimulation
             riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(simulation)))
         }
     }
 
     @Override
     boolean isEnabled() {
-        simulationInfoPane.simulationInfoPaneModel.currentSimulation
+        simulationInfoPane.simulationInfoPaneModel.latestFinishedSimulation
     }
 }
