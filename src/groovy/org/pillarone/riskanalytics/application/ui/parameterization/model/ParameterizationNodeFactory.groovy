@@ -14,7 +14,7 @@ class ParameterizationNodeFactory {
     static final Logger LOG = Logger.getLogger(ParameterizationNodeFactory)
 
     public static ParameterizationTableTreeNode getNode(String path, ParametrizedItem item, Model simulationModel) {
-        ParameterHolder param = item.getParameterHoldersForFirstPeriod(path)
+        ParameterHolder param = item.getArbitraryParameterHolder(path)
         switch (param.class) {
             case IntegerParameterHolder:
                 return createIntegerNode(path, item)

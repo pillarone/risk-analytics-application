@@ -5,8 +5,10 @@ import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.util.DateFormatUtils
+import org.pillarone.riskanalytics.core.simulation.SimulationState
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.user.Person
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -21,6 +23,8 @@ class SimulationInfoPaneModel {
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
 
     private SimulationRuntimeInfo running
+    private Simulation latestFinishedSimulation
+
     @Resource
     UlcSimulationRuntimeService ulcSimulationRuntimeService
 
@@ -116,6 +120,10 @@ class SimulationInfoPaneModel {
         running?.simulation?.batch
     }
 
+    Simulation getLatestFinishedSimulation() {
+        latestFinishedSimulation
+    }
+
     private class MyListener extends SimulationRuntimeInfoAdapter {
         @Override
         void starting(SimulationRuntimeInfo info) {
@@ -126,6 +134,11 @@ class SimulationInfoPaneModel {
         @Override
         void finished(SimulationRuntimeInfo info) {
             running = info
+            if (info.simulationState == SimulationState.FINISHED) {
+                latestFinishedSimulation = info.simulation
+            } else {
+                latestFinishedSimulation = null
+            }
             notifySimulationStateChanged(info.simulationState)
         }
 

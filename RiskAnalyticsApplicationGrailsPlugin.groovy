@@ -3,6 +3,7 @@ import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
 import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.UserDependentNavigationTreeModelFactory
+import org.pillarone.riskanalytics.application.ui.util.DefaultResourceBundleResolver
 import org.springframework.beans.factory.config.CustomScopeConfigurer
 
 import static UlcSessionScope.ULC_SESSION_SCOPE
@@ -57,6 +58,7 @@ ULC view
             delay = 1000
             ulcScopeWired(it)
         }
+        resourceBundleResolver(DefaultResourceBundleResolver)
     }
 
     def doWithDynamicMethods = { ctx -> }
