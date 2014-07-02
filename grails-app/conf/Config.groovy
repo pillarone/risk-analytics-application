@@ -223,6 +223,7 @@ grails {
             authority {
                 className = 'org.pillarone.riskanalytics.core.user.Authority'
             }
+            logout.postOnly=false
             securityConfigType = SecurityConfigType.InterceptUrlMap
             interceptUrlMap = [
                     '/login/**'            : ['IS_AUTHENTICATED_ANONYMOUSLY'],
