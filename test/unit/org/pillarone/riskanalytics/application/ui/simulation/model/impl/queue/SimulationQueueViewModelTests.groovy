@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 import grails.test.mixin.TestMixin
 import grails.test.mixin.support.GrailsUnitTestMixin
+import org.pillarone.riskanalytics.application.ui.util.IResourceBundleResolver
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
 
@@ -42,6 +43,9 @@ class SimulationQueueViewModelTests {
     }
 
     void testInitialize() {
+        defineBeans {
+            resourceBundleResolver(TestResolver)
+        }
         def runtimeServiceControl = mockFor(SimulationRuntimeService)
         def tableModelControl = mockFor(SimulationQueueTableModel)
         UlcSimulationRuntimeService ulcSimulationRuntimeService = new UlcSimulationRuntimeService()
@@ -67,4 +71,17 @@ class SimulationQueueViewModelTests {
         subject.unregister()
         assert ulcSimulationRuntimeService.eventSupport.infoListeners.isEmpty()
     }
+
+    static class TestResolver implements IResourceBundleResolver {
+        @Override
+        String getText(Class objClass, String key) {
+            return ''
+        }
+
+        @Override
+        String getText(Class objClass, String key, List argsValue) {
+            return ''
+        }
+    }
+
 }
