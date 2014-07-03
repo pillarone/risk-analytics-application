@@ -22,7 +22,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
  * Note: This action executes off the "Run simulation..." menu on a p14n.  It opens up the simulation pane.
  * (The RunSimulationAction presumably executes off the Run button on the simulation pane.)
  */
-class SimulationAction extends SingleItemAction {
+class SimulationAction extends SelectionTreeAction {
 
     private final static Log LOG = LogFactory.getLog(SimulationAction)
 
@@ -32,8 +32,8 @@ class SimulationAction extends SingleItemAction {
     }
 
     void doActionPerformed(ActionEvent event) {
-        Model selectedModel = selectedModel
-        if (selectedModel) {
+        if (enabled) {
+            Model selectedModel = selectedModel
             Object selectedItem = selectedItem
             Simulation simulation = new Simulation('Simulation')
             simulation.modelClass = selectedModel.modelClass
@@ -43,9 +43,12 @@ class SimulationAction extends SingleItemAction {
             SimulationConfigurationView view = detailViewManager.openDetailView as SimulationConfigurationView
             view.model.parameterization = parameterization
             view.model.template = template
-        } else {
-            LOG.debug("No selected model found. Action cancelled.")
         }
+    }
+
+    @Override
+    boolean isEnabled() {
+        selectedModel
     }
 
     DetailViewManager getDetailViewManager() {

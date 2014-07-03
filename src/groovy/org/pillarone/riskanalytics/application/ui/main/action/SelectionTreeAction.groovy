@@ -175,13 +175,16 @@ abstract class SelectionTreeAction extends ResourceBasedAction {
     }
 
     Class getSelectedItemGroupClass() {
-        return selectedItemGroupNode.itemClass
+        return selectedItemGroupNode?.itemClass
     }
 
     ItemGroupNode getSelectedItemGroupNode() {
         ITableTreeNode itemNode = tree.selectedPath.lastPathComponent
-        ITableTreeNode groupNode = null
+        ItemGroupNode groupNode = null
         while (groupNode == null) {
+            if (!itemNode) {
+                break
+            }
             if (itemNode instanceof ItemGroupNode) {
                 groupNode = itemNode
             } else {
