@@ -1,5 +1,4 @@
 package org.pillarone.riskanalytics.application.ui.main.view
-
 import com.ulcjava.base.application.*
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
@@ -17,10 +16,8 @@ import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.base.model.modellingitem.NavigationTableTreeModel
 import org.pillarone.riskanalytics.application.ui.main.action.*
-import org.pillarone.riskanalytics.application.ui.main.view.item.BatchUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
-import org.pillarone.riskanalytics.application.ui.main.view.item.SimulationSettingsUIItem
 import org.pillarone.riskanalytics.application.ui.settings.model.UserSettingsViewModel
 import org.pillarone.riskanalytics.application.ui.settings.view.UserSettingsViewDialog
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
@@ -31,7 +28,6 @@ import org.springframework.stereotype.Component
 
 import javax.annotation.PostConstruct
 import javax.annotation.Resource
-
 /**
  *  UI for the header of RiskAnalytics to show File menus and action buttons
  * for saving, refreshing and running a simulation
@@ -114,6 +110,7 @@ class HeaderView extends AbstractView {
         importAllAction = new ImportAllAction("ImportAllParameterizations")
         saveAction = new SaveAction(content)
         runAction = new SimulationAction(selectionTreeView.selectionTree)
+        runAction.enabled = false
 
         //init menu
         menuBar = new ULCMenuBar()
@@ -249,7 +246,6 @@ class HeaderView extends AbstractView {
     public boolean syncMenuBar() {
         saveAction.enabled = saveAction.enabled
         if (detailViewManager.currentUIItem) {
-            runAction.enabled = !((detailViewManager.currentUIItem instanceof SimulationSettingsUIItem) || (detailViewManager.currentUIItem instanceof BatchUIItem))
             if (detailViewManager.currentUIItem instanceof ParameterizationUIItem || detailViewManager.currentUIItem instanceof ResultConfigurationUIItem) {
                 if (detailViewManager.currentUIItem.editable) {
                     lockedLabel.icon = UIUtils.getIcon("locked-inactive.png")
@@ -260,7 +256,6 @@ class HeaderView extends AbstractView {
                 lockedLabel.icon = UIUtils.getIcon("clear.png")
             }
         } else {
-            runAction.enabled = false
             lockedLabel?.icon = UIUtils.getIcon("clear.png")
         }
     }
