@@ -78,7 +78,7 @@
                      runtime("org.pillarone:pillar-one-ulc-extensions:1.9") { transitive = false }
                  Dunno why it can't pull the version here from BuildConfig ?!
             -->
-            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.9/src/java" includes="**/close-*.png" />
+            <fileset dir="${plugin.dir}/pillar-one-ulc-extensions-1.10/src/java" includes="**/close-*.png" />
         </jar>
 
         <jar jarfile="${webapp.lib.dir}/${app.name}-client.jar">
