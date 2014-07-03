@@ -46,7 +46,7 @@ class RiskAnalyticsMainView implements IModellingItemChangeListener {
 
     static final String DEFAULT_CARD_NAME = 'Main'
 
-    private static int SIM_QUEUE_HEIGHT     = 300;  //Sorry, actually the height of the pane above the sim queue
+    private static int SIM_QUEUE_HEIGHT = 450;  //Sorry, actually the height of the pane above the sim queue
     private static int TOPRIGHT_PANE_HEIGHT = 600;
     private static int TOPRIGHT_PANE_WIDTH = 600;
 
@@ -54,15 +54,16 @@ class RiskAnalyticsMainView implements IModellingItemChangeListener {
     //
     static {
         TOPRIGHT_PANE_HEIGHT = setIntFromSystemProperty("GUI_TOPRIGHT_PANE_HEIGHT", 600)
-        TOPRIGHT_PANE_WIDTH  = setIntFromSystemProperty("GUI_TOPRIGHT_PANE_WIDTH",  600)
-        SIM_QUEUE_HEIGHT     = setIntFromSystemProperty("GUI_SIM_QUEUE_HEIGHT",     300)
+        TOPRIGHT_PANE_WIDTH = setIntFromSystemProperty("GUI_TOPRIGHT_PANE_WIDTH", 600)
+        SIM_QUEUE_HEIGHT = setIntFromSystemProperty("GUI_SIM_QUEUE_HEIGHT", 450)
     }
-    static int setIntFromSystemProperty( String key, int defaultValue ){
-        try{
-            int i = Integer.parseInt( System.getProperty(key, ""+defaultValue) )
+
+    static int setIntFromSystemProperty(String key, int defaultValue) {
+        try {
+            int i = Integer.parseInt(System.getProperty(key, "" + defaultValue))
             LOG.info("System property recognised: -D${key}=${i}")
             return i
-        } catch( NumberFormatException e){ // Typo in configs
+        } catch (NumberFormatException e) { // Typo in configs
             LOG.warn("NOT an int - supplied system property '$key', defaulting to $defaultValue")
         }
         return defaultValue
@@ -163,7 +164,11 @@ class RiskAnalyticsMainView implements IModellingItemChangeListener {
         validationSwitchButton = new ULCVerticalToggleButton(validationSplitPaneAction)
         validationSwitchButton.selected = false
         validationSwitchButton.enabled = false
-        selectionSwitchPane.add(BOX_LEFT_TOP, validationSwitchButton);
+        selectionSwitchPane.add(BOX_LEFT_TOP, validationSwitchButton)
+
+        ToggleSplitPaneAction independentPaneToggleAction = new ToggleSplitPaneAction(splitBetweenModelPaneAndIndependentPane, UIUtils.getText(this.class, 'ModelIndependent'), 1)
+        navigationSwitchButton.selected = true
+        selectionSwitchPane.add(BOX_LEFT_TOP, new ULCVerticalToggleButton(independentPaneToggleAction))
 
         ULCBoxPane mainCard = new ULCBoxPane(2, 0)
 

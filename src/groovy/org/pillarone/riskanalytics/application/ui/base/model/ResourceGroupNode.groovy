@@ -10,8 +10,11 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class ResourceGroupNode extends DefaultMutableTableTreeNode implements INavigationTreeNode {
 
+    private final String name
+
     ResourceGroupNode(String name) {
         super([name] as Object[])
+        this.name = name
     }
 
     @Override
@@ -21,7 +24,7 @@ class ResourceGroupNode extends DefaultMutableTableTreeNode implements INavigati
 
     @Override
     String getName() {
-        return name
+        name
     }
 
     @Override
