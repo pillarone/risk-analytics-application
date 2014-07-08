@@ -20,7 +20,6 @@ class SimulationActionsPane implements ISimulationValidationListener {
     private ULCLabel batchMessage
 
     private final SimulationActionsPaneModel model
-    boolean configurationValid
 
     SimulationActionsPane(SimulationActionsPaneModel model) {
         this.model = model
@@ -64,7 +63,6 @@ class SimulationActionsPane implements ISimulationValidationListener {
 
     @Override
     void simulationPropertyChanged(boolean isValid) {
-        configurationValid = isValid
         runButton.enabled = isValid
     }
 }
