@@ -29,6 +29,7 @@ class SimulationProfilePane {
 
     protected attachListeners() {
         model.settingsPaneModel.addSimulationValidationListener(newSimulationActionPane)
+        model.settingsPaneModel.addSimulationValidationListener(simulationProfileActionsPane)
     }
 
     protected void layout() {

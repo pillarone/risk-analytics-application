@@ -35,8 +35,8 @@ abstract class SortableTableModel<T> extends AbstractTableModel {
         sources.each { int source -> backedList[source] = null }
 
         //add from items to the to index
-        fromItems.reverseEach { T t ->
-            backedList.add((target != -1) ? target : backedList.size(), t)
+        fromItems.reverseEach { t ->
+            backedList.add((target != -1) ? target : backedList.size(), (T) t)
         }
 
         //removed placeholder items

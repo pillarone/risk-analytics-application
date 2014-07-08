@@ -40,6 +40,9 @@ class BatchView implements IDetailView {
     private ULCComboBox simulationProfilesComboBox
     private ULCLabel parameterizationCount
 
+    @Lazy
+    private ULCContainer container = new ULCScrollPane(content)
+
     @Resource
     BatchViewModel batchViewModel
 
@@ -176,7 +179,7 @@ class BatchView implements IDetailView {
     }
 
     ULCContainer getContent() {
-        new ULCScrollPane(content)
+        container
     }
 
     BatchViewModel getBatchViewModel() {

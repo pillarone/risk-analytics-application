@@ -12,7 +12,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.De
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.action.SaveSimulationProfileAction
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 
-class SimulationProfileActionsPane {
+class SimulationProfileActionsPane implements ISimulationValidationListener {
 
     static final String PROFILES_COMBO_BOX = 'profilesComboBox'
     static final String APPLY_BUTTON = 'applyButton'
@@ -44,6 +44,7 @@ class SimulationProfileActionsPane {
         deleteButton.name = DELETE_BUTTON
         saveButton = new ULCButton(new SaveSimulationProfileAction(this))
         saveButton.name = SAVE_BUTTON
+        saveButton.enabled = false
     }
 
     protected void layout() {
@@ -69,6 +70,11 @@ class SimulationProfileActionsPane {
 
     ULCComponent getContent() {
         content
+    }
+
+    @Override
+    void simulationPropertyChanged(boolean isValid) {
+        saveButton.enabled = isValid
     }
 }
 

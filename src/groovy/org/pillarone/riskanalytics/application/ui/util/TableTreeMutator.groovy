@@ -22,8 +22,8 @@ public class TableTreeMutator {
 
         try {
 
-            tableData.eachWithIndex {List lineData, int lineIndex ->
-                lineData.eachWithIndex {def value, int colIndex ->
+            tableData.eachWithIndex { List lineData, int lineIndex ->
+                lineData.eachWithIndex { def value, int colIndex ->
                     Object node = nodes[lineIndex]
                     int col = columnOffset + colIndex
                     Object oldValue = model.getValueAt(node, col)
@@ -31,15 +31,16 @@ public class TableTreeMutator {
                         throw new UnsupportedOperationException("Structure change not allowed")
                     }
                     if (!model.isCellEditable(node, col) && validValue(value)) {
+                        new I18NAlert('DoNotPasteInReadOnlyCell').show()
                         throw new IllegalArgumentException("Attempt to set read-only cell")
                     }
                 }
             }
 
-            tableData.eachWithIndex {List lineData, int lineIndex ->
+            tableData.eachWithIndex { List lineData, int lineIndex ->
                 backUp << []
                 lastProcessedLine = lineIndex
-                lineData.eachWithIndex {def value, int colIndex ->
+                lineData.eachWithIndex { def value, int colIndex ->
                     Object node = nodes[lineIndex]
                     int col = columnOffset + colIndex
                     backUp[lineIndex] << model.getValueAt(node, col)
@@ -56,7 +57,8 @@ public class TableTreeMutator {
         return true
     }
 
-    protected boolean checkValueChangeAllowed(ParameterizationClassifierTableTreeNode node, def oldValue, def newValue) {
+    protected boolean checkValueChangeAllowed(ParameterizationClassifierTableTreeNode node,
+                                              def oldValue, def newValue) {
         return oldValue == newValue
     }
 

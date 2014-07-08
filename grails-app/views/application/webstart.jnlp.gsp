@@ -24,7 +24,7 @@
         <j2se version="1.5+"/>
         <jar href=".<%=ulcPluginPath%>/lib/ulc-core-client.jar"/>
         <g:each in="${clientFiles}" var="clientFile">
-            <jar href="${clientFile}" main="true"/>
+            <jar href="${clientFile}"/>
         </g:each>
     </resources>
 
