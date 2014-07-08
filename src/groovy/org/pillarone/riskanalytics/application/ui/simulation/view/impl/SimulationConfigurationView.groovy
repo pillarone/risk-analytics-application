@@ -15,6 +15,9 @@ class SimulationConfigurationView implements IDetailView {
 
     ULCBoxPane content
 
+    @Lazy
+    private ULCContainer container = new ULCScrollPane(content)
+
     SimulationProfilePane simulationProfilePane
     SimulationConfigurationModel model
 
@@ -26,7 +29,7 @@ class SimulationConfigurationView implements IDetailView {
 
     @Override
     ULCContainer getContent() {
-        return new ULCScrollPane(content)
+        container
     }
 
     @Override
