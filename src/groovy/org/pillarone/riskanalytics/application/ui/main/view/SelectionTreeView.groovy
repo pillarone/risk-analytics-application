@@ -119,6 +119,10 @@ class SelectionTreeView {
             it.setHeaderRenderer(new CenteredHeaderRenderer())
         }
 
+        tree.viewPortTableTree.columnModel.getColumns().each { ULCTableTreeColumn it ->
+            it.setCellRenderer(renderer)
+        }
+
         tree.rowHeaderTableTree.name = "selectionTreeRowHeader"
         tree.rowHeaderTableTree.setRootVisible(false);
         tree.rowHeaderTableTree.showsRootHandles = true
