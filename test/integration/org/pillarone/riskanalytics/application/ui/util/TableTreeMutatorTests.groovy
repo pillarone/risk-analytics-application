@@ -84,7 +84,7 @@ class TableTreeMutatorTests extends GroovyTestCase {
         DefaultTableTreeModel model = new DefaultTableTreeModel(root, ["col1", "col2", "col3"] as String[])
 
         TableTreeMutator mutator = new TableTreeMutator(model)
-
+        mutator.metaClass.showReadOnlyAlert = {->}
         shouldFail(IllegalArgumentException, {mutator.applyChanges([root, child], [["A", "B", "C"], [1.1, 2.2, 3.3]])})
 
         assertEquals "a", root.getValueAt(0)

@@ -31,7 +31,7 @@ public class TableTreeMutator {
                         throw new UnsupportedOperationException("Structure change not allowed")
                     }
                     if (!model.isCellEditable(node, col) && validValue(value)) {
-                        new I18NAlert('DoNotPasteInReadOnlyCell').show()
+                        showReadOnlyAlert()
                         throw new IllegalArgumentException("Attempt to set read-only cell")
                     }
                 }
@@ -51,6 +51,10 @@ public class TableTreeMutator {
             LOG.error "Error setting value: ${error.message}"
             throw error
         }
+    }
+
+    protected void showReadOnlyAlert() {
+        new I18NAlert('DoNotPasteInReadOnlyCell').show()
     }
 
     protected boolean checkValueChangeAllowed(def node, def oldValue, def newValue) {
