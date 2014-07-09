@@ -13,9 +13,6 @@ import com.ulcjava.container.grails.UlcViewFactory
 import grails.plugin.springsecurity.SpringSecurityService
 import grails.util.Holders
 import groovy.transform.CompileStatic
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
-import org.apache.log4j.MDC
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.view.RiskAnalyticsMainView
@@ -31,8 +28,6 @@ import static org.springframework.beans.factory.config.AutowireCapableBeanFactor
 @CompileStatic
 abstract class P1RATViewFactory implements UlcViewFactory {
 
-    private static final Log LOG = LogFactory.getLog(P1RATViewFactory)
-
     TraceLogManager traceLogManager
     RiskAnalyticsMainView riskAnalyticsMainView
     SpringSecurityService springSecurityService
@@ -41,13 +36,9 @@ abstract class P1RATViewFactory implements UlcViewFactory {
     public ULCRootPane create(ApplicationContext applicationContext) {
         initializeInjection()
         addTerminationListener()
-        String username = UserContext.currentUser?.username;
-        LOG.info "Started session for user '${username}'"
-        try {
-            MDC.put("username", username)
-        } catch (Exception ignored) {
-            // put a user in MDC causes an exception in integration Test
-            LOG.warn("Exception trying to put username into Mapped Diagnostic Context (MDC): " + username)
+        if (!springSecurityService.loggedIn) {
+            terminate()
+            throw new IllegalStateException('no logged in user!')
         }
         traceLogManager.activateLogging()
 
@@ -69,11 +60,11 @@ abstract class P1RATViewFactory implements UlcViewFactory {
 
     private void addTerminationListener() {
         ApplicationContext.addRoundTripListener([roundTripDidStart: { def event -> },
-                roundTripWillEnd: { RoundTripEvent event ->
-                    if (!springSecurityService.loggedIn) {
-                        terminate()
-                    }
-                }
+                                                 roundTripWillEnd : { RoundTripEvent event ->
+                                                     if (!springSecurityService.loggedIn) {
+                                                         terminate()
+                                                     }
+                                                 }
         ] as IRoundTripListener)
     }
 
