@@ -4,7 +4,6 @@ import com.ulcjava.base.application.DefaultListModel
 import groovy.util.logging.Log
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
-import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
@@ -18,16 +17,13 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import javax.annotation.Resource
 
-import static LoggingManager.NO_USER
-import static LoggingManager.USER_PROPERTY
-
 @Log
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 public class RealTimeLoggingModel {
 
     final DefaultListModel listModel = new DefaultListModel()
-    private final List<LoggingEvent> pendingLoggingEvents = []
+    private final List<String> pendingMessages = []
     private final MyAppender appender = new MyAppender()
     private ISimulationRuntimeInfoListener addPendingEventListener = new AddPendingEventsListener()
     private ISimulationRuntimeInfoListener addAppenderListener = new AddAppenderListener()
@@ -65,23 +61,16 @@ public class RealTimeLoggingModel {
 
 
     private void addPendingLoggingEvents() {
-        synchronized (pendingLoggingEvents) {
-            LoggingManager manager = LoggingAppender.instance.loggingManager
-            List<String> messages = []
-            for (int i = 0; i < pendingLoggingEvents.size(); i++) {
-                String userName = pendingLoggingEvents[i].getProperty(USER_PROPERTY)
-                if (userName != null && (userName == NO_USER || userName.equals(UserContext.currentUser?.username))) {
-                    messages << manager.layout.format(pendingLoggingEvents[i])
-                }
-            }
-            pendingLoggingEvents.clear()
-            listModel.addAll(messages as String[])
+        synchronized (pendingMessages) {
+            listModel.addAll(pendingMessages as String[])
+            pendingMessages.clear()
         }
     }
 
     private void append(LoggingEvent loggingEvent) {
-        synchronized (pendingLoggingEvents) {
-            pendingLoggingEvents.add(loggingEvent)
+        synchronized (pendingMessages) {
+            LoggingManager manager = LoggingAppender.instance.loggingManager
+            pendingMessages << manager.layout.format(loggingEvent)
         }
     }
 
