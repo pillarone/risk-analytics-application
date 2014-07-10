@@ -208,7 +208,7 @@ class TagsListView extends AbstractView {
             for( Tag t : sim.tags ){
                 if( tag.id == t.id ){
                     String firstLine= "Deal ${dealId}: Cant add ${tag.name} to '${simulation.name}' :"
-                    String secondLine = "Tag already on '${sim.name}'. Pls remove that tag first (if you have owners permission)."
+                    String secondLine = "Tag already on '${sim.name}'."
                     LOG.warn(firstLine + " " + secondLine)
                     LOG.info("To disable qtr tag checks, override -DvetoDupQtrTagsInWorkflow=false ")
                     UIUtils.showWarnAlert(parent, "Duplicate quarter tag on deal $dealId", firstLine + "\n" + secondLine)
