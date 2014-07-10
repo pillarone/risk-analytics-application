@@ -11,9 +11,11 @@ import com.ulcjava.base.application.util.Color
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
+import org.pillarone.riskanalytics.core.output.SimulationRun
 import org.pillarone.riskanalytics.core.parameter.comment.Tag
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
 import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTagType
 import org.pillarone.riskanalytics.core.workflow.Status
@@ -111,11 +113,12 @@ class TagsListView extends AbstractView {
         for (ModellingItem modellingItem : modellingItems) {
             if (!modellingItem.getTags().contains(tag)) {
                 if(!vetoDupQtrTagsInWorkflow){
+                    // Generic logic
                     modellingItem.getTags().add(tag)
                     modellingItem.setChanged(true)
                 }else{
-
-                    if( !workflowAlreadyContainsQuarterTag( modellingItem, tag ) ){
+                    // ART-specific logic
+                    if( !isQuarterTagCollision( modellingItem, tag ) ){
                         modellingItem.getTags().add(tag)
                         modellingItem.setChanged(true)
                     }
@@ -126,57 +129,127 @@ class TagsListView extends AbstractView {
 
     // PMO-2741
     //
-    private boolean workflowAlreadyContainsQuarterTag( ModellingItem modellingItem, Tag tag ){
+    private boolean isQuarterTagCollision( ModellingItem modellingItem, Tag tag ){
 
-        // Only checking quarter tags in workflows (p14ns with workflow status)
+        // Only restricting quarter tags
         //
         if( ! tag.isQuarterTag() ){
             return false
         }
-        // Separated this test from previous one - groovy is sometimes very uncool
-        // Problem was ! binds tighter than instanceof, and !modellingItem decays to a null-ness check.
-        boolean isP14n = (modellingItem instanceof Parameterization)
-        if( ! isP14n ){
-            return false
-        }
 
-        Parameterization parameterization = modellingItem as Parameterization
-        if( parameterization.status == Status.NONE ){
-            return false                                                // Dont care about non workflow p14ns here
-        }
-
-        // Okay, user is adding quarter tag to a workflow :-
-        // Does any p14n in workflow already have it ?
-        //
-        for( VersionNumber versionNumber : VersionNumber.getExistingVersions(parameterization)){
-
-            if(parameterization.versionNumber.toString().equals(versionNumber.toString())){
-                continue // No need to check p14n being tagged - it doesn't have it yet
+        if( modellingItem instanceof Parameterization ){
+            // Only restricting qtr tags in workflow models
+            //
+            Parameterization parameterization = modellingItem as Parameterization
+            if( parameterization.status == Status.NONE ){
+                // TODO Protect against user accidentally quarter-tagging sandbox model too ?
+                return false
             }
 
-            // TODO use a method like existing getAllTags() instead to get the tags for each p14n
-            // Or ask Matthias for a better way
-            //
-            Parameterization otherWorkflowP14n = new Parameterization(parameterization.name,parameterization.modelClass)
-            otherWorkflowP14n.versionNumber = versionNumber
-            otherWorkflowP14n.load();
+            return isTagOnWorkflow(parameterization, tag)
 
-            // Is there a better way ? All i need is its tags..
-            for( Tag t in otherWorkflowP14n.tags ){
-                if( tag.equals(t) ){
-                    String firstLine = "Cannot tag ${parameterization.nameAndVersion} with '${tag.name}'"
-                    String secondLine= "(Tag already exists on v${otherWorkflowP14n.versionNumber.toString()} of same workflow.)"
+        } else if (modellingItem instanceof Simulation){
+
+            Simulation simulation = modellingItem as Simulation
+            return isTagOnDeal(simulation, tag)
+        } else {
+            return false
+        }
+    }
+
+    // PMO-2741
+    // Does proposed tag already exist for current deal ?
+    // Or, should tag not be allowed owing to no deal ?
+    //
+    private boolean isTagOnDeal( Simulation simulation, Tag tag ){
+
+        if( !simulation.loaded ){
+            simulation.load(false)
+        }
+        if( !simulation?.parameterization?.loaded){
+            simulation?.parameterization?.load(false)
+        }
+
+        // If no deal, is sim off sandbox model -> should not be adding quarter tag..
+        //
+        Long dealId = simulation?.parameterization?.dealId
+        if( ! dealId ){
+            String firstLine= "Cant add ${tag.name} to '${simulation.name}' (sandbox model sim):"
+            String secondLine = "Might want to first create workflow from model '${simulation?.parameterization?.nameAndVersion}'"
+            LOG.warn(firstLine + " " + secondLine)
+            LOG.info("To disable qtr tag checks, override -DvetoDupQtrTagsInWorkflow=false ")
+            UIUtils.showWarnAlert(parent, "Cant quarter-tag sandbox sim-results", firstLine + "\n" + secondLine)
+            return true
+        }
+
+        // Get names of only sims with tags (for this deal); can avoid masses of irrelevant untagged sims
+        // Yields: array of maps (entries: simName, tagCount)
+        // Figured this out via dumb luck + trial n error in debugger + http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/queryhql.html
+        String query = "select new map( sim.name as simName, count(tags) as tagCount ) from SimulationRun sim left outer join sim.tags tags " +
+                       "where sim.parameterization.dealId = :dealId " +
+                       "group by sim.name " +
+                       "having count(tags) > 0 " +
+                       "order by sim.name desc"
+        ArrayList results = SimulationRun.executeQuery(query, ["dealId": dealId], [readOnly: true])
+        LOG.info("Found ${results.size()} sims on deal $dealId having tags")
+
+        // This yields too much noise
+        // List<SimulationRun> runsOnDeal = SimulationRun.executeQuery(" from SimulationRun sim where sim.parameterization.dealId = :dealId", ["dealId": dealId], [readOnly: true])
+
+        // Check for quarter tag on the other sims (not self)
+        //
+        for( Map nameCountPair : results ){
+            String simName = nameCountPair["simName"]
+            if( simulation.name == simName ){
+                continue
+            }
+            Simulation sim = new Simulation(simName)
+            sim.load()
+            for( Tag t : sim.tags ){
+                if( tag.id == t.id ){
+                    String firstLine= "Deal ${dealId}: Cant add ${tag.name} to '${simulation.name}' :"
+                    String secondLine = "Tag already on '${sim.name}'. Pls remove that tag first (if you have owners permission)."
                     LOG.warn(firstLine + " " + secondLine)
-                    LOG.info("To allow duplicate qtr tags in workflows, override -DvetoDupQtrTagsInWorkflow=false ")
-                    UIUtils.showWarnAlert(parent, "Duplicate quarter tag in workflow", firstLine + "\n" + secondLine)
+                    LOG.info("To disable qtr tag checks, override -DvetoDupQtrTagsInWorkflow=false ")
+                    UIUtils.showWarnAlert(parent, "Duplicate quarter tag on deal $dealId", firstLine + "\n" + secondLine)
                     return true
                 }
             }
         }
 
+//      LOG.info("OK to add tag '${tag.name}' on sim: ${simulation.name} as no sim off deal $dealId has it yet.")
         return false
-
     }
+
+    // Does supplied tag already exist on any other version p14n in workflow ?
+    //
+    private boolean isTagOnWorkflow( Parameterization workflow, Tag tag ){
+
+        for( VersionNumber versionNumber : VersionNumber.getExistingVersions(workflow)){
+
+            if(workflow.versionNumber.toString().equals(versionNumber.toString())){
+                continue
+            }
+
+            Parameterization otherP14n = new Parameterization(workflow.name,workflow.modelClass)
+            otherP14n.versionNumber = versionNumber
+            otherP14n.load();
+
+            for( Tag t in otherP14n.tags ){
+                if( tag.id == t.id ){
+                    String firstLine = "Cannot tag ${workflow.nameAndVersion} with '${tag.name}'"
+                    String secondLine= "(Tag already exists on v${otherP14n.versionNumber.toString()} of same workflow.)"
+                    LOG.warn(firstLine + " " + secondLine)
+                    LOG.info("To disable qtr tag checks, override -DvetoDupQtrTagsInWorkflow=false ")
+                    UIUtils.showWarnAlert(parent, "Duplicate quarter tag in workflow", firstLine + "\n" + secondLine)
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+
 
     private void removeTag(Tag tag) {
         itemTags.remove(tag)
