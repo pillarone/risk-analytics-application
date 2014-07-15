@@ -43,7 +43,7 @@ class CreateDefaultResourceAction extends SelectionTreeAction {
                     ParameterizationDAO.withTransaction { status ->
                         resource = ParameterizationHelper.createDefaultResource(dialog.nameInput.text, node.resourceClass.newInstance())
                         resource.save()
-                        resource = ModellingItemFactory.getItem(resource.dao)
+                        resource = ModellingItemFactory.getResourceFromDAO(resource.dao)
                         resource.load()
                     }
                     dialog.hide()

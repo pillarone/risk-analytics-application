@@ -2,7 +2,6 @@ package org.pillarone.riskanalytics.application.dataaccess.item
 
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.hibernate.LazyInitializationException
 import org.joda.time.DateTime
 import org.pillarone.riskanalytics.application.UserContext
 import org.pillarone.riskanalytics.application.output.CustomTableDAO
@@ -43,8 +42,12 @@ class ModellingItemFactory {
     static Parameterization getParameterization(ParameterizationDAO dao) {
         ParameterizationDAO.withTransaction {
             dao.attach()
-            getItem(dao)
+            getItem(dao, Thread.currentThread().contextClassLoader.loadClass(dao.modelClassName))
         }
+    }
+
+    static Resource getResourceFromDAO(ResourceDAO resourceDAO) {
+        getItem(resourceDAO)
     }
 
     static ModelItem getModelItem(ModelDAO dao) {
@@ -58,6 +61,7 @@ class ModellingItemFactory {
             }
         }
     }
+
 
     static List<Resource> getResources(Class resourceClass) {
         ResourceDAO.withTransaction { status ->
@@ -218,7 +222,7 @@ class ModellingItemFactory {
     static Simulation getSimulation(SimulationRun run) {
         SimulationRun.withTransaction {
             run.attach()
-            if(run.parameterization){
+            if (run.parameterization) {
                 run.parameterization.attach()  //PMO-2813 - attach also the sim's p14n so _its_ tags are also accessible
             }
             getItem(run)
@@ -239,8 +243,6 @@ class ModellingItemFactory {
                     }
         }
     }
-
-
 
 
     static ModellingItem copyItem(ModellingItem oldItem, String newName) {
@@ -473,13 +475,6 @@ class ModellingItemFactory {
             item.creationDate = dao.creationDate
             item.modificationDate = dao.modificationDate
             item.tags = dao.tags*.tag
-//            //PMO-2813 Temporarily re-instate burial of lazy init exception to protect export of result data..
-//            //
-//            try{
-//                item.tags = dao.tags*.tag
-//            }catch( LazyInitializationException e){
-//                LOG.error("Burying LazyInitializationException accessing tags on p14n: ${item.nameAndVersion}", e)
-//            }
         }
         item
     }
@@ -604,4 +599,6 @@ class ModellingItemFactory {
         }
         return object
     }
+
+
 }

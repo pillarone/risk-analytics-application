@@ -44,7 +44,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                         param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
                         param.name = dialog.nameInput.text
                         param.save()
-                        param = ModellingItemFactory.getItem(param.dao, param.modelClass)
+                        param = ModellingItemFactory.getParameterization(param.dao)
                         param.load()
                     }
                     dialog.hide()

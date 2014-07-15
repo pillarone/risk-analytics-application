@@ -63,7 +63,7 @@ abstract class AbstractWorkflowAction extends SingleItemAction {
         Parameterization parameterization = service.changeStatus(item, toStatus)
         parameterization.save()
         ParameterizationDAO dao = parameterization.dao as ParameterizationDAO
-        parameterization = (Parameterization) ModellingItemFactory.getItem(dao)
+        parameterization = (Parameterization) ModellingItemFactory.getParameterization(dao)
         parameterization.load()
         return parameterization
     }
