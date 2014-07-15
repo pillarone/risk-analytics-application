@@ -30,7 +30,9 @@ class ChooseDealAction extends SingleItemAction {
         Closure okAction = {
             ExceptionSafe.protect {
                 parameterization.dealId = dialog.dealSelectionModel.dealId
-                parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate
+// Make Deal linking consistent with Start Workflow action (see comment in Start workflow action stating:
+// ART-392: valuation date functionality currently disabled
+//                parameterization.valuationDate = dialog.valuationDatePaneModel.valuationDate
                 parameterization.save()
             }
         }
