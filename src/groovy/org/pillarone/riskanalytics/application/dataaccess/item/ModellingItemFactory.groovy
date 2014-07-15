@@ -450,7 +450,7 @@ class ModellingItemFactory {
         item
     }
 
-    private static Parameterization getItem(ParameterizationDAO dao, Class modelClass = null) {
+     static Parameterization getItem(ParameterizationDAO dao, Class modelClass = null) {
         Parameterization item = itemInstances[key(Parameterization, dao.id)] as Parameterization
         if (!item) {
             item = new Parameterization(dao.name)
