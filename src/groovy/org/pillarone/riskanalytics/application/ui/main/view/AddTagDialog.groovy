@@ -19,7 +19,7 @@ class AddTagDialog {
     ULCTableTree tree
     AbstractTableTreeModel model
     ULCDialog dialog
-    TagsListView tagesListView
+    TagsListView tagsListView
     ULCTextField newTag
 
     private ULCButton applyButton
@@ -61,8 +61,8 @@ class AddTagDialog {
             this.parent = UlcUtilities.getWindowAncestor(tree)
         dialog = new ULCDialog(parent, "Edit tags dialog", true)
         dialog.name = 'AddTagDialog'                                // Beware - names may be used in tests
-        tagesListView = new TagsListView(modellingUIItems*.item, parent)
-        tagesListView.init()
+        tagsListView = new TagsListView(modellingUIItems*.item, parent)
+        tagsListView.init()
         newTag = new ULCTextField()
         newTag.name = 'newTag'
         addNewButton = new ULCButton("Create new tag")
@@ -81,16 +81,15 @@ class AddTagDialog {
         newTag.setPreferredSize(new Dimension(160, 20))
         ULCBoxPane content = new ULCBoxPane(rows: 3, columns: 2)
         content.border = BorderFactory.createEmptyBorder(15, 15, 15, 15)
-        ULCScrollPane scrollList = new ULCScrollPane(tagesListView.content)
+        ULCScrollPane scrollList = new ULCScrollPane(tagsListView.content)
         scrollList.verticalScrollBar.blockIncrement = 180               // more reasonable scrollbar page-up/down size
         scrollList.setPreferredSize(new Dimension(160, 400))            // width, height
-        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollList)
-        content.add(ULCBoxPane.BOX_LEFT_TOP, applyButton)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, newTag)
         content.add(ULCBoxPane.BOX_EXPAND_CENTER, addNewButton)
-        content.add(ULCBoxPane.BOX_EXPAND_BOTTOM, new ULCFiller())
-        content.add(ULCBoxPane.BOX_LEFT_BOTTOM, UIUtils.spaceAround(cancelButton, 10, 0, 0, 0))
-
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, scrollList)
+        content.add(ULCBoxPane.BOX_EXPAND_EXPAND, new ULCFiller())
+        content.add(ULCBoxPane.BOX_EXPAND_CENTER, cancelButton)
+        content.add(ULCBoxPane.BOX_EXPAND_CENTER, applyButton)
         dialog.add(content)
         dialog.setLocationRelativeTo(parent)
         dialog.pack()
@@ -109,7 +108,7 @@ class AddTagDialog {
         }] as IActionListener)
         addNewButton.addActionListener([actionPerformed: { ActionEvent evt ->
             String tagName = newTag.getText()
-            tagesListView.addTag(tagName)
+            tagsListView.addTag(tagName)
 
         }] as IActionListener)
         applyButton.addActionListener([actionPerformed: { ActionEvent evt ->
