@@ -8,6 +8,10 @@ import org.pillarone.riskanalytics.application.ui.main.view.item.ModellingUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ParameterizationUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResourceUIItem
 import org.pillarone.riskanalytics.application.ui.main.view.item.ResultConfigurationUIItem
+import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
+import org.pillarone.riskanalytics.core.workflow.WorkflowException
+
 /**
  * @author fouad.jaada@intuitive-collaboration.com
  */
@@ -37,15 +41,21 @@ class CreateNewMajorVersion extends SingleItemAction {
 
         ModellingUIItem uiItem = getUIItem()
         if (uiItem instanceof ParameterizationUIItem) {
-            Closure okAction = { String commentText ->
-                if (!uiItem.isLoaded()) {
-                    uiItem.load()
+            Parameterization parameterization = (uiItem as ParameterizationUIItem).item
+            SortedSet allVersions = new TreeSet(VersionNumber.getExistingVersions(parameterization))
+            if (parameterization.versionNumber != allVersions.last()) {
+                showInfoAlert("Cannot create new version", "A newer version already exists: ${parameterization.name} v${allVersions.last()}", true)
+            } else {
+                Closure okAction = { String commentText ->
+                    if (!uiItem.isLoaded()) {
+                        uiItem.load()
+                    }
+                    LOG.info("Creating new version of ${uiItem.nameAndVersion}")
+                    createNewVersion(uiItem, commentText)
                 }
-                LOG.info("Creating new version of ${uiItem.nameAndVersion}")
-                createNewVersion(uiItem, commentText)
+                NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
+                versionCommentDialog.show()
             }
-            NewVersionCommentDialog versionCommentDialog = new NewVersionCommentDialog(okAction)
-            versionCommentDialog.show()
         } else {
             createNewVersion(getUIItem())
         }
