@@ -68,7 +68,9 @@ class ResultDataParameterizationView {
         path.addKeyListener(new IKeyListener() {
             @Override
             void keyTyped(KeyEvent keyEvent) {
-                model.path = path.text
+                if (!keyEvent.isControlDown()) {
+                    model.path = path.text
+                }
             }
         })
 
@@ -76,7 +78,9 @@ class ResultDataParameterizationView {
         fields.addKeyListener(new IKeyListener() {
             @Override
             void keyTyped(KeyEvent keyEvent) {
-                model.fields = fields.text
+                if (!keyEvent.isControlDown()) {
+                    model.fields = fields.text
+                }
             }
         })
 
@@ -85,7 +89,9 @@ class ResultDataParameterizationView {
             @Override
             void keyTyped(KeyEvent keyEvent) {
                 try {
-                    model.periods = periods.text.trim().split(" ").collect { Integer.parseInt(it) }
+                    if (!keyEvent.isControlDown()) {
+                        model.periods = periods.text.trim().split(" ").collect { Integer.parseInt(it) }
+                    }
                 } catch (NumberFormatException e) {
                     new ULCAlert("Invalid number format!", "Invalid number format!", "Ok").show()
                 }
