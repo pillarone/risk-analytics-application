@@ -9,7 +9,9 @@ import com.ulcjava.base.application.ULCTextField
 import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import com.ulcjava.base.application.event.IKeyListener
+import com.ulcjava.base.application.event.IValueChangedListener
 import com.ulcjava.base.application.event.KeyEvent
+import com.ulcjava.base.application.event.ValueChangedEvent
 import org.pillarone.riskanalytics.application.ui.parameterization.model.ResultDataParameterizationModel
 import org.pillarone.riskanalytics.application.util.LocaleResources
 import org.pillarone.riskanalytics.core.output.CollectingModeFactory
@@ -65,33 +67,27 @@ class ResultDataParameterizationView {
         })
 
         path = new ULCTextField(model.path)
-        path.addKeyListener(new IKeyListener() {
+        path.addValueChangedListener(new IValueChangedListener() {
             @Override
-            void keyTyped(KeyEvent keyEvent) {
-                if (!keyEvent.isControlDown()) {
-                    model.path = path.text
-                }
+            void valueChanged(ValueChangedEvent valueChangedEvent) {
+                model.path = path.text
             }
         })
 
         fields = new ULCTextField(model.fields)
-        fields.addKeyListener(new IKeyListener() {
+        fields.addValueChangedListener(new IValueChangedListener() {
             @Override
-            void keyTyped(KeyEvent keyEvent) {
-                if (!keyEvent.isControlDown()) {
-                    model.fields = fields.text
-                }
+            void valueChanged(ValueChangedEvent valueChangedEvent) {
+                model.fields = fields.text
             }
         })
 
         periods = new ULCTextField(model.periods)
-        periods.addKeyListener(new IKeyListener() {
+        periods.addValueChangedListener(new IValueChangedListener() {
             @Override
-            void keyTyped(KeyEvent keyEvent) {
+            void valueChanged(ValueChangedEvent valueChangedEvent) {
                 try {
-                    if (!keyEvent.isControlDown()) {
-                        model.periods = periods.text.trim().split(" ").collect { Integer.parseInt(it) }
-                    }
+                    model.periods = periods.text.trim().split(" ").collect { Integer.parseInt(it) }
                 } catch (NumberFormatException e) {
                     new ULCAlert("Invalid number format!", "Invalid number format!", "Ok").show()
                 }
@@ -108,26 +104,26 @@ class ResultDataParameterizationView {
         })
 
         content.add(new ULCLabel("Model class"))
-        content.add(modelClass)
+        content.add(modelClass, "growx")
 
 
         content.add(new ULCLabel("Parameterization"))
-        content.add(parameterization)
+        content.add(parameterization, "growx")
 
 
         content.add(new ULCLabel("Path"))
-        content.add(path)
+        content.add(path, "growx")
 
 
         content.add(new ULCLabel("Fields"))
-        content.add(fields)
+        content.add(fields, "growx")
 
 
         content.add(new ULCLabel("Periods"))
-        content.add(periods)
+        content.add(periods, "growx")
 
 
         content.add(new ULCLabel("Collector"))
-        content.add(collector)
+        content.add(collector, "growx")
     }
 }
