@@ -56,7 +56,7 @@ class SimulationProfileActionsPaneTests extends AbstractSimpleStandaloneTestCase
         assert comboBox.getItemAt(2) == 'profile3'
 
         assert !applyButton.enabled
-        assert saveButton.enabled
+        assert !saveButton.enabled
         assert !deleteButton.enabled
     }
 
@@ -64,17 +64,17 @@ class SimulationProfileActionsPaneTests extends AbstractSimpleStandaloneTestCase
         def box = profilesComboBox
         box.selectItem('profile1')
         assert applyButton.enabled
-        assert saveButton.enabled
+        assert !saveButton.enabled
         assert deleteButton.enabled
 
         box.selectItem('profile2 (public)')
         assert applyButton.enabled
-        assert saveButton.enabled
+        assert !saveButton.enabled
         assert !deleteButton.enabled
 
         box.selectItem('profile3')
         assert applyButton.enabled
-        assert saveButton.enabled
+        assert !saveButton.enabled
         assert !deleteButton.enabled
     }
 
