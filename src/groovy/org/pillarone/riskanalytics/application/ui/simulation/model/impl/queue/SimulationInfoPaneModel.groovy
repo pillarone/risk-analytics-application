@@ -1,6 +1,8 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 
 import groovy.time.TimeCategory
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
@@ -20,6 +22,8 @@ import javax.annotation.Resource
 @Scope(UlcSessionScope.ULC_SESSION_SCOPE)
 @Component
 class SimulationInfoPaneModel {
+    private static final Log LOG = LogFactory.getLog(SimulationInfoPaneModel)
+
     private DateTimeFormatter dateFormat = DateFormatUtils.getDateFormat("HH:mm")
 
     private SimulationRuntimeInfo running
@@ -79,7 +83,9 @@ class SimulationInfoPaneModel {
     }
 
     int getProgress() {
-        running?.progress ?: 0
+        Integer pro = running?.progress ?: 0
+        LOG.debug("updating progress to $pro")
+        pro
     }
 
     String getErrorMessage() {
@@ -145,6 +151,7 @@ class SimulationInfoPaneModel {
         @Override
         void changed(SimulationRuntimeInfo info) {
             running = info
+            LOG.debug("info changed: progress is ${info.progress}")
             notifySimulationStateChanged(info.simulationState)
         }
 
