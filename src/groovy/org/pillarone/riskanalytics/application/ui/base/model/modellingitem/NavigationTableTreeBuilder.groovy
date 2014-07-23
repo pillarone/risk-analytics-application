@@ -117,6 +117,10 @@ class NavigationTableTreeBuilder implements IModelRegistryListener {
                 LOG.error("simulation ${it.dump()} must have a parameterization and a result template. Will not add it to the tree")
                 return
             }
+            if (!(it.start && it.end)) {
+                LOG.error("simulation ${it.dump()} must have start and end date. Will not add it to the tree")
+                return
+            }
             simulationsNode.add(createNode(it))
         }
     }
