@@ -1,13 +1,13 @@
 package org.pillarone.riskanalytics.application.dataaccess.function
 
-import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.application.ui.result.model.ResultTableTreeNode
 import org.pillarone.riskanalytics.core.dataaccess.ResultAccessor
 import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
-@CompileStatic
+//TODO: There is a problem with MockFor together with CompileStatic: find out and reenable CompileStatic
+//@CompileStatic
 class PercentileFunction extends AbstractQuantilePerspectiveBasedFunction<Double> {
 
     final String name = 'Percentile'
