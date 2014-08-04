@@ -3,6 +3,9 @@ package org.pillarone.riskanalytics.application.ui.batch.model
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
+import org.pillarone.riskanalytics.application.ui.sortable.model.IOrderChangedListener
+import org.pillarone.riskanalytics.application.ui.sortable.model.SortableTableModel
+import org.pillarone.riskanalytics.application.ui.sortable.model.SortedEvent
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo

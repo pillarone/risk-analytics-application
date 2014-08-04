@@ -1,12 +1,13 @@
-package org.pillarone.riskanalytics.application.ui.batch.view
+package org.pillarone.riskanalytics.application.ui.sortable.view
+
 import com.ulcjava.base.application.ULCComponent
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.dnd.DnDTableData
 import com.ulcjava.base.application.dnd.TransferHandler
 import com.ulcjava.base.application.dnd.Transferable
-import org.pillarone.riskanalytics.application.ui.batch.model.IOrderChangedListener
-import org.pillarone.riskanalytics.application.ui.batch.model.SortableTableModel
-import org.pillarone.riskanalytics.application.ui.batch.model.SortedEvent
+import org.pillarone.riskanalytics.application.ui.sortable.model.IOrderChangedListener
+import org.pillarone.riskanalytics.application.ui.sortable.model.SortableTableModel
+import org.pillarone.riskanalytics.application.ui.sortable.model.SortedEvent
 
 import static com.ulcjava.base.application.dnd.DataFlavor.DRAG_FLAVOR
 import static com.ulcjava.base.application.dnd.DataFlavor.DROP_FLAVOR
@@ -27,7 +28,7 @@ class SortableTable extends ULCTable {
     @Override
     void setEnabled(boolean enabled) {
         super.setEnabled(enabled)
-        dragEnabled = false
+        dragEnabled = enabled
     }
 
     private initialize() {

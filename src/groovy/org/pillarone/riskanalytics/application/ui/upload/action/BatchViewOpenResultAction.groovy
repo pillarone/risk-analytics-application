@@ -1,30 +1,30 @@
-package org.pillarone.riskanalytics.application.ui.batch.action
+package org.pillarone.riskanalytics.application.ui.upload.action
 
 import com.ulcjava.base.application.event.ActionEvent
 import org.pillarone.riskanalytics.application.ui.base.action.ResourceBasedAction
-import org.pillarone.riskanalytics.application.ui.batch.model.BatchRowInfo
-import org.pillarone.riskanalytics.application.ui.batch.view.BatchView
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.OpenDetailViewEvent
 import org.pillarone.riskanalytics.application.ui.main.view.item.UIItemFactory
+import org.pillarone.riskanalytics.application.ui.upload.model.SimulationRowInfo
+import org.pillarone.riskanalytics.application.ui.upload.view.UploadBatchView
 
 class BatchViewOpenResultAction extends ResourceBasedAction {
-    private final BatchView batchView
+    private final UploadBatchView uploadBatchView
 
-    BatchViewOpenResultAction(BatchView batchView) {
+    BatchViewOpenResultAction(UploadBatchView uploadBatchView) {
         super('OpenresultAction')
-        this.batchView = batchView
+        this.uploadBatchView = uploadBatchView
     }
 
     @Override
     void doActionPerformed(ActionEvent event) {
         if (enabled) {
-            riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(batchView.selectedBatchRowInfos.first().template)))
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(UIItemFactory.createItem(uploadBatchView.selectedSimulationRowInfos.first().template)))
         }
     }
 
     @Override
     boolean isEnabled() {
-        List<BatchRowInfo> infos = batchView.selectedBatchRowInfos
+        List<SimulationRowInfo> infos = uploadBatchView.selectedSimulationRowInfos
         if (infos.size() == 1) {
             return infos.first().template
         }

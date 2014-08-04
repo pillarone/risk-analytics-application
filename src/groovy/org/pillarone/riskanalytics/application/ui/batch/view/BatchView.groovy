@@ -13,6 +13,7 @@ import org.pillarone.riskanalytics.application.ui.batch.model.BatchViewModel
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.main.eventbus.event.ModellingItemEvent
 import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
+import org.pillarone.riskanalytics.application.ui.sortable.view.SortableTable
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.Batch

@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.output.PostSimulationCalculation
 import org.pillarone.riskanalytics.core.output.QuantilePerspective
 import org.pillarone.riskanalytics.core.output.SimulationRun
 
+@CompileStatic
 class PercentileFunction extends AbstractQuantilePerspectiveBasedFunction<Double> {
 
     final String name = 'Percentile'
