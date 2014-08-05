@@ -110,7 +110,7 @@ coverage {
 
 reportFolders = [new File("./src/java/reports")]
 
-//grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core"
+//grails.plugin.location.'risk-analytics-core' = "../risk-analytics-core-1.9.x"
 
 codenarc.maxPriority1Violations = 0
 codenarc.maxPriority2Violations = 0
