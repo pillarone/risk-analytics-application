@@ -8,7 +8,11 @@ import com.ulcjava.base.application.event.IListSelectionListener
 import com.ulcjava.base.application.event.ListSelectionEvent
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import org.pillarone.riskanalytics.application.ui.upload.action.*
+import org.pillarone.riskanalytics.application.ui.upload.model.SimulationRowInfo
 import org.pillarone.riskanalytics.application.ui.util.EnabledCheckingMenuItem
+
+import static com.ulcjava.base.application.util.Color.black
+import static com.ulcjava.base.application.util.Color.red
 
 class UploadBatchTableRenderer extends DefaultTableCellRenderer {
     private ULCPopupMenu nodePopup
@@ -27,9 +31,10 @@ class UploadBatchTableRenderer extends DefaultTableCellRenderer {
 
     IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int row) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, row)
-        toolTipText = String.valueOf(value)
+        SimulationRowInfo simulationRowInfo = uploadBatchView.uploadBatchViewModel.getSimulationRowInfo(row)
         componentPopupMenu = nodePopUp
         horizontalAlignment = LEFT
+        foreground = simulationRowInfo.valid ? black : red
         return component
     }
 
@@ -42,6 +47,7 @@ class UploadBatchTableRenderer extends DefaultTableCellRenderer {
             addItem(new BatchViewOpenResultAction(uploadBatchView))
             addItem(new OpenResultsAction(uploadBatchView))
             addItem(new DeleteSimulationsAction(uploadBatchView))
+            addItem(new ShowErrorsAction(uploadBatchView))
         }
         return nodePopup
     }

@@ -27,7 +27,12 @@ class UploadBatchViewModel {
     @Resource
     SimulationProfileService simulationProfileService
 
+    @Resource
+    IDestinationService destinationService
+
     IComboBoxModel simulationProfileNamesComboBoxModel
+    IComboBoxModel destinationNamesComboBoxModel
+    boolean allowOverwrite = false
 
     private List<Simulation> simulations = []
 
@@ -37,6 +42,7 @@ class UploadBatchViewModel {
     void initialize() {
         simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(batchRunService.simulationProfileNames)
         simulationProfileNamesComboBoxModel.selectedItem = simulationProfileService.activeProfileName
+        destinationNamesComboBoxModel = new DefaultComboBoxModel(destinationService.destinations.toList())
     }
 
     void close() {
@@ -57,7 +63,7 @@ class UploadBatchViewModel {
     void upload() {
         //TODO put sims into upload queue and remove it from this view
         removeSimulations(simulations)
-        println("send to queue $simulations")
+        println("send to queue $simulations, destination: ${destinationNamesComboBoxModel.selectedItem}, allow overwrite: ${allowOverwrite}")
     }
 
     void addSimulations(List<Simulation> simulations) {
@@ -74,5 +80,9 @@ class UploadBatchViewModel {
             this.simulations.removeAll(simulations)
             uploadSimulationTableModel.simulations = this.simulations
         }
+    }
+
+    SimulationRowInfo getSimulationRowInfo(int row) {
+        uploadSimulationTableModel.simulationRowInfos[row]
     }
 }
