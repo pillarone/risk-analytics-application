@@ -29,11 +29,12 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
         boolean hasOneParameterColumnOnly = simulationModel.maxNumberOfFullyDistinctPeriods() == 1
         DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree), hasOneParameterColumnOnly)
         dialog.title = dialog.getText("title")
+        String name = dialog.nameInput.text?.trim() // PMO-2011 Avoid copy/paste or fat finger errors adding whitespace
         dialog.okAction = {
-            if (!validate(dialog.nameInput.text)) {
+            if (!validate(name)) {
                 I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "NotValidName")
                 alert.show()
-            } else if (ParameterizationDAO.findByNameAndModelClassName(dialog.nameInput.text, simulationModel.class.name)) {
+            } else if (ParameterizationDAO.findByNameAndModelClassName(name, simulationModel.class.name)) {
                 I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "UniquesNamesRequired")
                 alert.show()
             } else {
@@ -42,7 +43,7 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
                     Parameterization param = null
                     ParameterizationDAO.withTransaction { status ->
                         param = ParameterizationHelper.createDefaultParameterization(simulationModel, periodCount)
-                        param.name = dialog.nameInput.text
+                        param.name = name
                         param.save()
                         param = ModellingItemFactory.getParameterization(param.dao)
                         param.load()
@@ -63,8 +64,10 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
 
     boolean validate(String name) {
         if (!name) return false
-        def seps = ["/", "//", File.separator]
-        if (seps.any { name.indexOf(it) != -1 }) return false
+        def seps = ["/", "//", File.separator, "=", ":", "!"] //Forbid path separators or search operators in names
+        if (seps.any { name.indexOf(it) != -1 }){
+            return false
+        }
         return true
     }
 
