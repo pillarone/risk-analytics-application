@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.batch.model
+package org.pillarone.riskanalytics.application.ui.sortable.model
 
 import groovy.transform.CompileStatic
 

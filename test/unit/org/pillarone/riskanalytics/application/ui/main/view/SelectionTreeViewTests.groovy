@@ -241,6 +241,7 @@ class SelectionTreeViewTests extends AbstractSimpleStandaloneTestCase {
             simulation.parameterization.modelClass = CoreModel
             simulation.template = new ResultConfiguration("result1", CoreModel)
             simulation.id = 1
+            simulation.start = new DateTime()
             simulation.end = new DateTime()
             simulation.modelClass = ApplicationModel
             simulation.metaClass.getSize = { Class SimulationClass -> 0 }

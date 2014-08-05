@@ -10,7 +10,6 @@ import org.pillarone.riskanalytics.core.simulation.item.parameter.comment.EnumTa
 
 class ApplicationBootStrap {
 
-    def quartzScheduler
     //TODO only injected to initialize the cache. Find a better place
     CacheItemSearchService cacheItemSearchService
     GrailsApplication grailsApplication
@@ -53,10 +52,6 @@ class ApplicationBootStrap {
             }
 
         }
-
-        // start a quartz job scheduler for a batch
-        quartzScheduler.start()
-
     }
 
     def destroy = {

@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCPopupMenu
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.batch.view.EnabledCheckingMenuItem
+import org.pillarone.riskanalytics.application.ui.util.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished.action.*
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component

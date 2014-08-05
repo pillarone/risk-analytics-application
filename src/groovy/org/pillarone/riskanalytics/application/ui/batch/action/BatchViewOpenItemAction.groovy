@@ -9,7 +9,7 @@ class BatchViewOpenItemAction extends AbstractOpenItemAction<Parameterization> {
     private final BatchView batchView
 
     BatchViewOpenItemAction(BatchView batchView) {
-        super('BatchOpenParameterizationAction')
+        super('OpenParameterizationAction')
         this.batchView = batchView
     }
 

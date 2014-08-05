@@ -1,4 +1,4 @@
-package org.pillarone.riskanalytics.application.ui.batch.view
+package org.pillarone.riskanalytics.application.ui.util
 
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCMenuItem

@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue
 import com.ulcjava.base.application.IAction
 import com.ulcjava.base.application.ULCPopupMenu
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.application.ui.batch.view.EnabledCheckingMenuItem
+import org.pillarone.riskanalytics.application.ui.util.EnabledCheckingMenuItem
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.action.CancelSimulationAction
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.queue.action.SimulationQueueViewFindParameterizationsInTreeAction
 import org.springframework.context.annotation.Scope

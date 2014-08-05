@@ -8,7 +8,7 @@ import org.pillarone.riskanalytics.core.output.SimulationRun
 @CompileStatic
 abstract class AbstractResultFunction extends AbstractFunction {
 
-    final def evaluate(SimulationRunHolder simulationRunHolder, int periodIndex, SimpleTableTreeNode node) {
+    def evaluate(SimulationRunHolder simulationRunHolder, int periodIndex, SimpleTableTreeNode node) {
         if (node instanceof ResultTableTreeNode) {
             return evaluateResult(simulationRunHolder.simulationRun, periodIndex, node)
         }

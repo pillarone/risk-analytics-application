@@ -7,6 +7,7 @@ import org.pillarone.riskanalytics.core.components.DataSourceDefinition
 import org.pillarone.riskanalytics.core.model.registry.ModelRegistry
 import org.pillarone.riskanalytics.core.output.AggregatedCollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.CollectingModeFactory
+import org.pillarone.riskanalytics.core.output.ICollectingModeStrategy
 import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.VersionNumber
@@ -81,11 +82,15 @@ class ResultDataParameterizationModel {
     }
 
     List<String> getCollectorStrategies() {
-        return [CollectingModeFactory.getStrategy(AggregatedCollectingModeStrategy.IDENTIFIER), CollectingModeFactory.getStrategy(SingleValueCollectingModeStrategy.IDENTIFIER)]*.getDisplayName(LocaleResources.locale)
+        return supportedStrategies()*.getDisplayName(LocaleResources.locale)
+    }
+
+    protected List<ICollectingModeStrategy> supportedStrategies() {
+        return [CollectingModeFactory.getStrategy(AggregatedCollectingModeStrategy.IDENTIFIER), CollectingModeFactory.getStrategy(SingleValueCollectingModeStrategy.IDENTIFIER)]
     }
 
     void setCollector(String displayName) {
-        definition.collectorName = CollectingModeFactory.getAvailableStrategies().find { it.getDisplayName(LocaleResources.locale) == displayName }.identifier
+        definition.collectorName = supportedStrategies().find { it.getDisplayName(LocaleResources.locale) == displayName }.identifier
         fireModelChanged()
     }
 }

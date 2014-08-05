@@ -43,6 +43,8 @@ class SimulationNode extends ItemNode implements IReportableNode {
         simulationNodePopUpMenu.add(new ULCMenuItem(new DeleteAction(tree)))
         simulationNodePopUpMenu.addSeparator()
         simulationNodePopUpMenu.add(new ULCMenuItem(new ShowPropertiesAction(tree)))
+        simulationNodePopUpMenu.addSeparator()
+        simulationNodePopUpMenu.add(new ULCMenuItem(new UploadSimulationAction(tree)))
         return simulationNodePopUpMenu
     }
 
