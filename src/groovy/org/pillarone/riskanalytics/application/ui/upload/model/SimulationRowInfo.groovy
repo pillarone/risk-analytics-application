@@ -1,6 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.upload.model
 
 import com.google.common.base.Preconditions
+import grails.util.Holders
 import groovy.transform.CompileStatic
 import org.joda.time.DateTime
 import org.joda.time.Period
@@ -9,17 +10,21 @@ import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.ResultConfiguration
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
+import org.pillarone.riskanalytics.core.upload.UploadValidationError
+import org.pillarone.riskanalytics.core.upload.UploadValidationService
 
 @CompileStatic
 class SimulationRowInfo {
     private SimulationProfile simulationProfile
     private final Simulation simulation
     private String durationAsString
+    private List<UploadValidationError> errors = []
 
     SimulationRowInfo(Simulation simulation) {
         Preconditions.checkNotNull(simulation)
         this.simulation = simulation
         calculateDurationFromSimulation()
+        setSimulationProfile(null)
     }
 
     String getDurationAsString() {
@@ -31,11 +36,11 @@ class SimulationRowInfo {
     }
 
     String getModelName() {
-        parameterization.modelClass.simpleName
+        modelClass?.simpleName
     }
 
     Class getModelClass() {
-        parameterization.modelClass
+        parameterization?.modelClass
     }
 
     String getTemplateName() {
@@ -50,20 +55,16 @@ class SimulationRowInfo {
         simulation.randomSeed
     }
 
-    String getSimulationStateAsString() {
-        simulation ? simulation.simulationState : ''
-    }
-
     Parameterization getParameterization() {
         return simulation.parameterization
     }
 
     String getParameterizationVersion() {
-        parameterization.versionNumber.toString()
+        parameterization?.versionNumber?.toString()
     }
 
     boolean isValid() {
-        simulationProfile || simulation
+        errors.empty
     }
 
     Simulation getSimulation() {
@@ -76,6 +77,7 @@ class SimulationRowInfo {
 
     void setSimulationProfile(SimulationProfile simulationProfile) {
         this.simulationProfile = simulationProfile
+        errors = uploadValidationService.validate(simulation, simulationProfile)
     }
 
     private void calculateDurationFromSimulation() {
@@ -85,5 +87,9 @@ class SimulationRowInfo {
         Preconditions.checkNotNull(end)
         Period period = new Period(start, end, PeriodType.minutes())
         durationAsString = "${period.minutes} min"
+    }
+
+    UploadValidationService getUploadValidationService() {
+        Holders.grailsApplication.mainContext.getBean('uploadValidationService', UploadValidationService)
     }
 }

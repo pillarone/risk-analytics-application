@@ -9,7 +9,7 @@ import java.beans.PropertyChangeListener
 
 abstract class AbstractTableRowModel<T> {
 
-    private final AbstractTableModel tableModel
+    final AbstractTableModel tableModel
     private final Map<Integer, StringProperty> properties
     private T object
 
@@ -22,14 +22,11 @@ abstract class AbstractTableRowModel<T> {
             [it, new StringProperty()]
         }
         setObject(object)
-        addChangeListener(tableModel)
+        addChangeListener()
     }
 
-    AbstractTableModel getTableModel() {
-        return tableModel
-    }
 
-    private Map<Integer, StringProperty> addChangeListener(AbstractTableModel tableModel) {
+    private Map<Integer, StringProperty> addChangeListener() {
         properties.each { int column, StringProperty property ->
             property.addPropertyChangeListener(new TableUpdateListener(column))
         }

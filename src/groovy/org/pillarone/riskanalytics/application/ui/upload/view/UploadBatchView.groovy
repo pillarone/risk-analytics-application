@@ -39,6 +39,8 @@ class UploadBatchView implements IDetailView {
     private ULCComboBox simulationProfilesComboBox
     private ULCLabel simulationCount
     private ULCLabel warningLabel
+    private ULCComboBox destinationComboBox
+    private ULCCheckBox overwriteCheckBox
 
     @Lazy
     private ULCContainer container = new ULCScrollPane(content)
@@ -105,8 +107,6 @@ class UploadBatchView implements IDetailView {
                 uploadBatchViewModel.removeSimulations([simulation])
                 break
             case CacheItemEvent.EventType.UPDATED:
-//                TODO check if we need to update something
-//                uploadBatchViewModel.updateSimulation(simulation)
                 break
         }
     }
@@ -149,14 +149,29 @@ class UploadBatchView implements IDetailView {
     private ULCBoxPane getConfigurationPane() {
         simulationProfilesComboBox = new ULCComboBox(uploadBatchViewModel.simulationProfileNamesComboBoxModel)
         warningLabel = new ULCLabel()
+        overwriteCheckBox = new ULCCheckBox()
+        overwriteCheckBox.selected = uploadBatchViewModel.allowOverwrite
+        overwriteCheckBox.addActionListener(new IActionListener() {
+            @Override
+            void actionPerformed(ActionEvent actionEvent) {
+                uploadBatchViewModel.allowOverwrite = overwriteCheckBox.selected
+            }
+        })
+        destinationComboBox = new ULCComboBox(uploadBatchViewModel.destinationNamesComboBoxModel)
         warningLabel.foreground = Color.red
         String configText = resourceBundleResolver.getText(this.class, "UploadBatchConfig")
         String profileText = resourceBundleResolver.getText(this.class, "SimulationProfile")
+        String overwritingText = resourceBundleResolver.getText(this.class, "Overwriting")
+        String destinationText = resourceBundleResolver.getText(this.class, "Destination")
         ULCBoxPane parameterSection = boxLayout("$configText:") { ULCBoxPane box ->
-            ULCBoxPane content = new ULCBoxPane(3, 3)
+            ULCBoxPane content = new ULCBoxPane(6, 3)
             content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(profileText))
-            content.add(2, ULCBoxPane.BOX_LEFT_TOP, spaceAround(simulationProfilesComboBox, 2, 10, 0, 0))
-            content.add(3, ULCBoxPane.BOX_LEFT_TOP, warningLabel)
+            content.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(simulationProfilesComboBox, 0, 2, 2, 10))
+            content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(overwritingText))
+            content.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(overwriteCheckBox, 0, 2, 2, 10))
+            content.add(ULCBoxPane.BOX_LEFT_CENTER, new ULCLabel(destinationText))
+            content.add(ULCBoxPane.BOX_LEFT_CENTER, spaceAround(destinationComboBox, 0, 2, 2, 10))
+            content.add(0, ULCBoxPane.BOX_LEFT_CENTER, warningLabel)
             box.add ULCBoxPane.BOX_LEFT_TOP, content
         }
         return parameterSection
@@ -182,9 +197,7 @@ class UploadBatchView implements IDetailView {
                 info.parameterization == simulation
             }
             int indexOf = uploadBatchViewModel.uploadSimulationTableModel.simulationRowInfos.indexOf(batchRowInfo)
-            this.simulations.selectionModel.addSelectionInterval(
-                    indexOf, indexOf
-            )
+            this.simulations.selectionModel.addSelectionInterval(indexOf, indexOf)
         }
     }
 
