@@ -1,4 +1,5 @@
 package org.pillarone.riskanalytics.application.ui.upload.model
+
 import com.ulcjava.base.application.DefaultComboBoxModel
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
@@ -55,10 +56,8 @@ class UploadBatchViewModel {
     }
 
     void profileNameChanged(String profileName) {
-        if (simulationProfileName != profileName) {
-            this.simulationProfileName = profileName
-            uploadSimulationTableModel.simulationProfileNameChanged(profileName)
-        }
+        this.simulationProfileName = profileName
+        uploadSimulationTableModel.simulationProfileNameChanged(profileName)
     }
 
     boolean getValid() {

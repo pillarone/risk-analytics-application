@@ -86,6 +86,8 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
             infoRowModel.object.simulationProfile = byModelClass[infoRowModel.object.modelClass]
             infoRowModel.update()
         }
+        //need to fire to revalidate
+        fireTableDataChanged()
     }
 
     private void assignRowsToColumnModels() {
