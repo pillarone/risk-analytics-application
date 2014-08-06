@@ -6,7 +6,7 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationQueueListener
+import org.pillarone.riskanalytics.core.simulation.engine.QueueListener
 import org.pillarone.riskanalytics.core.simulation.engine.QueueEntry
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
@@ -44,7 +44,7 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
     }
 }
 
-class SimulationQueueListener implements ISimulationQueueListener {
+class SimulationQueueListener implements QueueListener<QueueEntry> {
 
     List<QueueEntry> offered = []
 

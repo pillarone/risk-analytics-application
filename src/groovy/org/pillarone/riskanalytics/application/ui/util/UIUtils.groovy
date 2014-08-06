@@ -66,15 +66,18 @@ class UIUtils {
         return calculateColumnWidth(node, 25, 25, columnIndex)
     }
 
-    protected static int calculateColumnWidth(MultiDimensionalParameterizationTableTreeNode node, initialOffset, offset, int columnIndex) {
+    protected
+    static int calculateColumnWidth(MultiDimensionalParameterizationTableTreeNode node, initialOffset, offset, int columnIndex) {
         return 0 // this node should not rule for the columnWidth, therefor we return 0
     }
 
-    protected static int calculateColumnWidth(EnumParameterizationTableTreeNode node, initialOffset, offset, int columnIndex) {
+    protected
+    static int calculateColumnWidth(EnumParameterizationTableTreeNode node, initialOffset, offset, int columnIndex) {
         return determineColumnWidthForValues(node)
     }
 
-    protected static int calculateColumnWidth(ParameterizationClassifierTableTreeNode node, initialOffset, offset, int columnIndex) {
+    protected
+    static int calculateColumnWidth(ParameterizationClassifierTableTreeNode node, initialOffset, offset, int columnIndex) {
         return determineColumnWidthForValues(node)
     }
 
@@ -130,7 +133,8 @@ class UIUtils {
     }
 
 
-    public static ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right, String alignment = null) {
+    public
+    static ULCBoxPane spaceAround(ULCComponent comp, int top, int left, int bottom, int right, String alignment = null) {
         ULCBoxPane deco = new ULCBoxPane()
         deco.border = BorderFactory.createEmptyBorder(top, left, bottom, right)
         (alignment) ? deco.add(alignment, comp) : deco.add(comp)
@@ -166,7 +170,7 @@ class UIUtils {
         }
         if (argsValue) {
             argsValue.eachWithIndex { String value, int index ->
-                str = str.replace("[${index}]", value)
+                str = str.replace("[${index}]", value ?: '')
             }
         }
         return str
@@ -215,7 +219,9 @@ class UIUtils {
         Person currentUser = UserManagement.currentUser
         if (currentUser != null) {
             Collection<Authority> authorities = currentUser.authorities
-            return currentUser.username + " (" + authorities.collect { getText(PersonAuthority.class, it.authority) }.join(", ") + ")"
+            return currentUser.username + " (" + authorities.collect {
+                getText(PersonAuthority.class, it.authority)
+            }.join(", ") + ")"
         }
         return ""
     }
@@ -256,20 +262,20 @@ class UIUtils {
         return sb.toString()
     }
 
-    static void showInfoAlert( ULCWindow ancestorWindow, String title, String msg ){
-        showAlert( ancestorWindow, title,msg,ULCAlert.INFORMATION_MESSAGE)
+    static void showInfoAlert(ULCWindow ancestorWindow, String title, String msg) {
+        showAlert(ancestorWindow, title, msg, ULCAlert.INFORMATION_MESSAGE)
     }
 
-    public static void showWarnAlert( ULCWindow ancestorWindow, String title, String msg ){
-        showAlert(ancestorWindow, title,msg,ULCAlert.WARNING_MESSAGE )
+    public static void showWarnAlert(ULCWindow ancestorWindow, String title, String msg) {
+        showAlert(ancestorWindow, title, msg, ULCAlert.WARNING_MESSAGE)
     }
 
-    public static void showErrorAlert( ULCWindow ancestorWindow, String title, String msg ){
-        showAlert(ancestorWindow, title,msg,ULCAlert.ERROR_MESSAGE )
+    public static void showErrorAlert(ULCWindow ancestorWindow, String title, String msg) {
+        showAlert(ancestorWindow, title, msg, ULCAlert.ERROR_MESSAGE)
     }
 
-    public static void showAlert( ULCWindow ancestorWindow, String title, String msg, int severity ){
-        ULCAlert alert = new ULCAlert( ancestorWindow, title, msg, "Ok")
+    public static void showAlert(ULCWindow ancestorWindow, String title, String msg, int severity) {
+        ULCAlert alert = new ULCAlert(ancestorWindow, title, msg, "Ok")
         alert.messageType = severity
         alert.show()
     }
