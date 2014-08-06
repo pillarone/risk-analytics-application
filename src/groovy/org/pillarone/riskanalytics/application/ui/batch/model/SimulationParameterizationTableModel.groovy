@@ -14,6 +14,7 @@ import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
+import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -35,6 +36,10 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
 
     @Resource
     BatchRunService batchRunService
+
+    @Resource
+    SimulationProfileService simulationProfileService
+
 
     private final IOrderChangedListener listener
 
@@ -88,7 +93,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
         if (!batch) {
             return []
         }
-        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
+        Map<Class, SimulationProfile> byModelClass = simulationProfileService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
         batch.parameterizations.collect { Parameterization parameterization ->
             BatchRowInfo info = new BatchRowInfo(parameterization)
             Simulation simulation = batchRunService.findSimulation(batch, parameterization)
@@ -99,7 +104,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
     }
 
     void simulationProfileNameChanged() {
-        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
+        Map<Class, SimulationProfile> byModelClass = simulationProfileService.getSimulationProfilesGroupedByModelClass(batch.simulationProfileName)
         backedList.each { BatchRowInfoRowModel infoRowModel ->
             infoRowModel.object.simulationProfile = byModelClass[infoRowModel.object.modelClass]
             infoRowModel.update()

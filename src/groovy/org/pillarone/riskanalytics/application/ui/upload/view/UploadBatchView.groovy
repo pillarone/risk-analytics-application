@@ -18,6 +18,7 @@ import org.pillarone.riskanalytics.application.ui.upload.model.UploadBatchViewMo
 import org.pillarone.riskanalytics.application.ui.util.IResourceBundleResolver
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
 import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.context.annotation.Scope
@@ -96,6 +97,10 @@ class UploadBatchView implements IDetailView {
 
     @Subscribe
     void onEvent(ModellingItemEvent event) {
+        if (event.modellingItem instanceof SimulationProfile) {
+            uploadBatchViewModel.updateProfiles()
+            return
+        }
         if (!(event.modellingItem instanceof Simulation)) {
             return
         }

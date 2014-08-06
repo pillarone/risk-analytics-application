@@ -23,6 +23,7 @@ import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.search.CacheItemSearchService
 import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -165,6 +166,10 @@ class NavigationTableTreeModel extends AbstractTableTreeModel implements ITableT
     }
 
     void updateTreeStructure(ModellingItemEvent event) {
+        if (event.modellingItem instanceof SimulationProfile) {
+            //profiles are not shown in the tree
+            return
+        }
         //only add nodes for items which are accepted by the current filter.
         //remove all nodes which are not accepted
         switch (event.eventType) {

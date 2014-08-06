@@ -1,11 +1,10 @@
 package org.pillarone.riskanalytics.application.ui.batch.model
-
 import com.ulcjava.base.application.DefaultComboBoxModel
-import com.ulcjava.base.application.IComboBoxModel
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Batch
 import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -22,14 +21,26 @@ class BatchViewModel {
     BatchRunService batchRunService
 
     @Resource
+    SimulationProfileService simulationProfileService
+
+    @Resource
     SimulationParameterizationTableModel simulationParameterizationTableModel
 
-    IComboBoxModel simulationProfileNamesComboBoxModel
+    DefaultComboBoxModel simulationProfileNamesComboBoxModel
     private Batch batch
 
     @PostConstruct
     void initialize() {
-        simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(batchRunService.simulationProfileNames)
+        simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(simulationProfileService.simulationProfileNames)
+    }
+
+    void updateProfiles() {
+        String selected = simulationProfileNamesComboBoxModel.selectedItem
+        simulationProfileNamesComboBoxModel.removeAllElements()
+        simulationProfileService.simulationProfileNames.each {
+            simulationProfileNamesComboBoxModel.addElement(it)
+        }
+        simulationProfileNamesComboBoxModel.selectedItem = selected
     }
 
     void close() {

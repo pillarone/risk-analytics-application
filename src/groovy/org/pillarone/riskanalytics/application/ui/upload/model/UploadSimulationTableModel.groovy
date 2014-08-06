@@ -6,10 +6,10 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.Ul
 import org.pillarone.riskanalytics.application.ui.sortable.model.IOrderChangedListener
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortableTableModel
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortedEvent
-import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
+import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -29,7 +29,7 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
     UlcSimulationRuntimeService ulcSimulationRuntimeService
 
     @Resource
-    BatchRunService batchRunService
+    SimulationProfileService simulationProfileService
 
     private final IOrderChangedListener listener
 
@@ -39,8 +39,8 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
         addOrderChangedListener(listener)
     }
 
-    void setSimulations(List<Simulation> simulations) {
-        infos = createSimulationRowInfos(simulations, '')
+    void setSimulations(List<Simulation> simulations, String simulationProfileName) {
+        infos = createSimulationRowInfos(simulations, simulationProfileName)
     }
 
     @PostConstruct
@@ -76,20 +76,18 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
     }
 
     private List<SimulationRowInfo> createSimulationRowInfos(List<Simulation> simulations, String simulationProfileName) {
-        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(simulationProfileName)
-        simulations.collect { Simulation sim ->
-            SimulationRowInfo info = new SimulationRowInfo(sim)
-            info.simulationProfile = byModelClass[sim.modelClass]
-            info
-        }
+        Map<Class, SimulationProfile> byModelClass = simulationProfileService.getSimulationProfilesGroupedByModelClass(simulationProfileName)
+        simulations.collect { Simulation sim -> new SimulationRowInfo(sim, byModelClass[sim.modelClass]) }
     }
 
     void simulationProfileNameChanged(String simulationProfileName) {
-        Map<Class, SimulationProfile> byModelClass = batchRunService.getSimulationProfilesGroupedByModelClass(simulationProfileName)
+        Map<Class, SimulationProfile> byModelClass = simulationProfileService.getSimulationProfilesGroupedByModelClass(simulationProfileName)
         backedList.each { SimulationRowInfoRowModel infoRowModel ->
             infoRowModel.object.simulationProfile = byModelClass[infoRowModel.object.modelClass]
             infoRowModel.update()
         }
+        //need to fire to revalidate
+        fireTableDataChanged()
     }
 
     private void assignRowsToColumnModels() {

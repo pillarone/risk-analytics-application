@@ -1,9 +1,7 @@
 package org.pillarone.riskanalytics.application.ui.upload.model
 
 import com.ulcjava.base.application.DefaultComboBoxModel
-import com.ulcjava.base.application.IComboBoxModel
 import groovy.transform.CompileStatic
-import org.pillarone.riskanalytics.core.batch.BatchRunService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
@@ -19,9 +17,6 @@ import javax.annotation.Resource
 class UploadBatchViewModel {
 
     @Resource
-    BatchRunService batchRunService
-
-    @Resource
     UploadSimulationTableModel uploadSimulationTableModel
 
     @Resource
@@ -30,8 +25,8 @@ class UploadBatchViewModel {
     @Resource
     IDestinationService destinationService
 
-    IComboBoxModel simulationProfileNamesComboBoxModel
-    IComboBoxModel destinationNamesComboBoxModel
+    DefaultComboBoxModel simulationProfileNamesComboBoxModel
+    DefaultComboBoxModel destinationNamesComboBoxModel
     boolean allowOverwrite = false
 
     private List<Simulation> simulations = []
@@ -40,9 +35,20 @@ class UploadBatchViewModel {
 
     @PostConstruct
     void initialize() {
-        simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(batchRunService.simulationProfileNames)
-        simulationProfileNamesComboBoxModel.selectedItem = simulationProfileService.activeProfileName
+        simulationProfileNamesComboBoxModel = new DefaultComboBoxModel(simulationProfileService.simulationProfileNames)
+        String activeProfileName = simulationProfileService.activeProfileName
+        simulationProfileNamesComboBoxModel.selectedItem = activeProfileName
+        profileNameChanged(activeProfileName)
         destinationNamesComboBoxModel = new DefaultComboBoxModel(destinationService.destinations.toList())
+    }
+
+    void updateProfiles() {
+        String selected = simulationProfileNamesComboBoxModel.selectedItem
+        simulationProfileNamesComboBoxModel.removeAllElements()
+        simulationProfileService.simulationProfileNames.each {
+            simulationProfileNamesComboBoxModel.addElement(it)
+        }
+        simulationProfileNamesComboBoxModel.selectedItem = selected
     }
 
     void close() {
@@ -50,10 +56,8 @@ class UploadBatchViewModel {
     }
 
     void profileNameChanged(String profileName) {
-        if (simulationProfileName != profileName) {
-            this.simulationProfileName = profileName
-            uploadSimulationTableModel.simulationProfileNameChanged(profileName)
-        }
+        this.simulationProfileName = profileName
+        uploadSimulationTableModel.simulationProfileNameChanged(profileName)
     }
 
     boolean getValid() {
@@ -72,13 +76,13 @@ class UploadBatchViewModel {
         if (copy) {
             this.simulations += copy
         }
-        uploadSimulationTableModel.simulations = this.simulations
+        uploadSimulationTableModel.setSimulations(this.simulations, simulationProfileName)
     }
 
     void removeSimulations(List<Simulation> simulations) {
         if (simulations) {
             this.simulations.removeAll(simulations)
-            uploadSimulationTableModel.simulations = this.simulations
+            uploadSimulationTableModel.setSimulations(this.simulations, simulationProfileName)
         }
     }
 

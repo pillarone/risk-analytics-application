@@ -16,10 +16,7 @@ import org.pillarone.riskanalytics.application.ui.main.view.IDetailView
 import org.pillarone.riskanalytics.application.ui.sortable.view.SortableTable
 import org.pillarone.riskanalytics.application.ui.util.UIUtils
 import org.pillarone.riskanalytics.core.search.CacheItemEvent
-import org.pillarone.riskanalytics.core.simulation.item.Batch
-import org.pillarone.riskanalytics.core.simulation.item.IModellingItemChangeListener
-import org.pillarone.riskanalytics.core.simulation.item.ModellingItem
-import org.pillarone.riskanalytics.core.simulation.item.Parameterization
+import org.pillarone.riskanalytics.core.simulation.item.*
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -113,6 +110,10 @@ class BatchView implements IDetailView {
 
     @Subscribe
     void onEvent(ModellingItemEvent event) {
+        if (event.modellingItem instanceof SimulationProfile) {
+            batchViewModel.updateProfiles()
+            return
+        }
         if (event.modellingItem == getBatch()) {
             switch (event.eventType) {
                 case CacheItemEvent.EventType.ADDED:

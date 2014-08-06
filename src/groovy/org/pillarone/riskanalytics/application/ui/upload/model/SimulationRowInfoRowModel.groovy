@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.Ab
 @CompileStatic
 class SimulationRowInfoRowModel extends AbstractTableRowModel<SimulationRowInfo> {
 
-    final static int SIZE = 6
+    final static int SIZE = 5
 
     static final Map<Integer, String> COLUMN_NAMES = [
             0: 'Name',
@@ -15,7 +15,6 @@ class SimulationRowInfoRowModel extends AbstractTableRowModel<SimulationRowInfo>
             2: 'Template',
             3: 'Iterations',
             4: 'Random Seed',
-            5: 'Time'
 
     ] as Map<Integer, String>
 
@@ -25,7 +24,6 @@ class SimulationRowInfoRowModel extends AbstractTableRowModel<SimulationRowInfo>
             2: { SimulationRowInfo simulationRowInfo -> simulationRowInfo.templateName },
             3: { SimulationRowInfo simulationRowInfo -> simulationRowInfo.iterationAsString },
             4: { SimulationRowInfo simulationRowInfo -> simulationRowInfo.randomSeed },
-            5: { SimulationRowInfo simulationRowInfo -> simulationRowInfo.durationAsString }
     ] as Map<Integer, Closure>
 
     SimulationRowInfoRowModel(int row, AbstractTableModel tableModel, SimulationRowInfo object, int columnCount) {
