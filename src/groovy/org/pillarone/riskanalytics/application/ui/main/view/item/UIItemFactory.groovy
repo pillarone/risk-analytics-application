@@ -12,6 +12,7 @@ class UIItemFactory {
             case Resource.class: return new ResourceUIItem((Resource) modellingItem)
             case ResultConfiguration.class: return new ResultConfigurationUIItem((ResultConfiguration) modellingItem)
             case Batch.class: return new BatchUIItem((Batch) modellingItem)
+            case SimulationProfile.class: return null
             default: throw new IllegalArgumentException("${modellingItem.class.simpleName} not yet supported")
         }
     }

@@ -15,6 +15,7 @@ import org.pillarone.riskanalytics.core.ResourceDAO
 import org.pillarone.riskanalytics.core.modellingitem.CacheItem
 import org.pillarone.riskanalytics.core.modellingitem.ModellingItemUpdater
 import org.pillarone.riskanalytics.core.modellingitem.SimulationCacheItem
+import org.pillarone.riskanalytics.core.modellingitem.SimulationProfileCacheItem
 import org.pillarone.riskanalytics.core.output.PacketCollector
 import org.pillarone.riskanalytics.core.output.ResultConfigurationDAO
 import org.pillarone.riskanalytics.core.output.SimulationRun
@@ -563,6 +564,14 @@ class ModellingItemFactory {
         Simulation target = ModellingItemUpdater.createOrUpdateModellingItem(source, itemInstances[key])
         target.parameterization = source.parameterization ? updateOrCreateModellingItem(source.parameterization) : null
         target.template = source.resultConfiguration ? updateOrCreateModellingItem(source.resultConfiguration) : null
+        itemInstances[key] = target
+        return target
+    }
+
+    static SimulationProfile updateOrCreateModellingItem(SimulationProfileCacheItem source) {
+        def key = key(source.itemClass, source.id)
+        SimulationProfile target = ModellingItemUpdater.createOrUpdateModellingItem(source, itemInstances[key])
+        target.template = source.template ? updateOrCreateModellingItem(source.template) : null
         itemInstances[key] = target
         return target
     }

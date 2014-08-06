@@ -20,11 +20,11 @@ class SimulationRowInfo {
     private String durationAsString
     private List<UploadValidationError> errors = []
 
-    SimulationRowInfo(Simulation simulation) {
+    SimulationRowInfo(Simulation simulation, SimulationProfile simulationProfile = null) {
         Preconditions.checkNotNull(simulation)
         this.simulation = simulation
         calculateDurationFromSimulation()
-        setSimulationProfile(null)
+        setSimulationProfile(simulationProfile)
     }
 
     String getDurationAsString() {
