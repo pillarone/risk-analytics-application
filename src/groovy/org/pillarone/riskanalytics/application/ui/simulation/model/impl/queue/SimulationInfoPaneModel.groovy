@@ -38,12 +38,12 @@ class SimulationInfoPaneModel {
 
     @PostConstruct
     void register() {
-        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(listener)
+        ulcSimulationRuntimeService.addRuntimeInfoListener(listener)
     }
 
     @PreDestroy
     void unregister() {
-        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(listener)
+        ulcSimulationRuntimeService.removeRuntimeInfoListener(listener)
     }
 
     String getEstimatedEndTime() {

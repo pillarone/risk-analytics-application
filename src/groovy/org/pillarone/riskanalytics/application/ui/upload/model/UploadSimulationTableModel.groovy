@@ -6,7 +6,7 @@ import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.Ul
 import org.pillarone.riskanalytics.application.ui.sortable.model.IOrderChangedListener
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortableTableModel
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortedEvent
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
@@ -23,7 +23,7 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
 
     private final static Log LOG = LogFactory.getLog(UploadSimulationTableModel)
 
-    private ISimulationRuntimeInfoListener simulationRuntimeInfoListener
+    private IRuntimeInfoListener simulationRuntimeInfoListener
 
     @Resource
     UlcSimulationRuntimeService ulcSimulationRuntimeService

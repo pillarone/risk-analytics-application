@@ -3,7 +3,7 @@ package org.pillarone.riskanalytics.application.ui.simulation.model.impl.finishe
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
 import org.pillarone.riskanalytics.application.ui.main.eventbus.RiskAnalyticsEventBus
 import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,16 +24,16 @@ class FinishedSimulationsViewModel {
     @Resource
     FinishedSimulationsTableModel finishedSimulationsTableModel
 
-    private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
+    private final IRuntimeInfoListener infoListener = new MyInfoListener()
 
     @PostConstruct
     void initialize() {
-        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
+        ulcSimulationRuntimeService.addRuntimeInfoListener(infoListener)
     }
 
     @PreDestroy
     void unregister() {
-        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
+        ulcSimulationRuntimeService.removeRuntimeInfoListener(infoListener)
     }
 
     List<SimulationRuntimeInfo> getInfoAt(int[] selected) {

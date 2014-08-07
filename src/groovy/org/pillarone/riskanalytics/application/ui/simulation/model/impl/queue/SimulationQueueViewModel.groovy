@@ -1,6 +1,6 @@
 package org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
@@ -24,17 +24,17 @@ class SimulationQueueViewModel {
     @Autowired
     SimulationQueueService simulationQueueService
 
-    private final ISimulationRuntimeInfoListener infoListener = new MyInfoListener()
+    private final IRuntimeInfoListener infoListener = new MyInfoListener()
 
     @PostConstruct
     void initialize() {
-        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(infoListener)
+        ulcSimulationRuntimeService.addRuntimeInfoListener(infoListener)
         simulationQueueTableModel.infos = simulationRuntimeService.queued
     }
 
     @PreDestroy
     void unregister() {
-        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(infoListener)
+        ulcSimulationRuntimeService.removeRuntimeInfoListener(infoListener)
     }
 
     List<SimulationRuntimeInfo> getInfoAt(int[] selected) {
@@ -43,7 +43,7 @@ class SimulationQueueViewModel {
         }
     }
 
-    private class MyInfoListener implements ISimulationRuntimeInfoListener {
+    private class MyInfoListener implements IRuntimeInfoListener<SimulationRuntimeInfo> {
 
         @Override
         void starting(SimulationRuntimeInfo info) {
