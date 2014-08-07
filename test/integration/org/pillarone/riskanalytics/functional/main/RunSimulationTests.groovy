@@ -7,7 +7,7 @@ import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
 import org.pillarone.riskanalytics.core.queue.QueueListener
-import org.pillarone.riskanalytics.core.simulation.engine.QueueEntry
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueEntry
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
 
@@ -39,17 +39,17 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
         getButtonOperator("${SimulationActionsPane.simpleName}.run").clickMouse()
 
         assert listener.offered.any {
-            it.simulationTask.simulation.numberOfIterations == 11
+            it.context.simulationTask.simulation.numberOfIterations == 11
         }
     }
 }
 
-class SimulationQueueListener implements QueueListener<QueueEntry> {
+class SimulationQueueListener implements QueueListener<SimulationQueueEntry> {
 
-    List<QueueEntry> offered = []
+    List<SimulationQueueEntry> offered = []
 
     @Override
-    void starting(QueueEntry entry) {
+    void starting(SimulationQueueEntry entry) {
 
     }
 
@@ -64,7 +64,7 @@ class SimulationQueueListener implements QueueListener<QueueEntry> {
     }
 
     @Override
-    void offered(QueueEntry entry) {
+    void offered(SimulationQueueEntry entry) {
         offered.add(entry)
     }
 }
