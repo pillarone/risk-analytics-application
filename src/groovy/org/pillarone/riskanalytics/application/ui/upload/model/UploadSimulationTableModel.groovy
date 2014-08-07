@@ -83,10 +83,11 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
     void simulationProfileNameChanged(String simulationProfileName) {
         Map<Class, SimulationProfile> byModelClass = simulationProfileService.getSimulationProfilesGroupedByModelClass(simulationProfileName)
         backedList.each { SimulationRowInfoRowModel infoRowModel ->
+            //this triggers the validation on each simulationRowInfo
             infoRowModel.object.simulationProfile = byModelClass[infoRowModel.object.modelClass]
             infoRowModel.update()
         }
-        //need to fire to revalidate
+        //since the validation is executed, each line needs to be redrawn since the color could have changed.
         fireTableDataChanged()
     }
 

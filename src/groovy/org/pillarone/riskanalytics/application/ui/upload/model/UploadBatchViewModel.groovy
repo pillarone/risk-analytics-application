@@ -4,6 +4,8 @@ import com.ulcjava.base.application.DefaultComboBoxModel
 import groovy.transform.CompileStatic
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
+import org.pillarone.riskanalytics.core.upload.UploadConfiguration
+import org.pillarone.riskanalytics.core.upload.UploadQueueService
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -24,6 +26,9 @@ class UploadBatchViewModel {
 
     @Resource
     IDestinationService destinationService
+
+    @Resource
+    UploadQueueService uploadQueueService
 
     DefaultComboBoxModel simulationProfileNamesComboBoxModel
     DefaultComboBoxModel destinationNamesComboBoxModel
@@ -65,9 +70,11 @@ class UploadBatchViewModel {
     }
 
     void upload() {
-        //TODO put sims into upload queue and remove it from this view
+        //TODO username
+        simulations.each { Simulation simulation ->
+            uploadQueueService.upload(new UploadConfiguration(simulation, allowOverwrite, destinationNamesComboBoxModel.selectedItem as String, 'Hans-Otto'));
+        }
         removeSimulations(simulations)
-        println("send to queue $simulations, destination: ${destinationNamesComboBoxModel.selectedItem}, allow overwrite: ${allowOverwrite}")
     }
 
     void addSimulations(List<Simulation> simulations) {
