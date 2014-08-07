@@ -10,7 +10,7 @@ import static UlcSessionScope.ULC_SESSION_SCOPE
 
 class RiskAnalyticsApplicationGrailsPlugin {
     // the plugin version
-    def version = "1.9.13"
+    def version = "1.9.14"
     // the version or versions of Grails the plugin is designed for
     def grailsVersion = "2.3.2 > *"
     // the other plugins this plugin depends on
