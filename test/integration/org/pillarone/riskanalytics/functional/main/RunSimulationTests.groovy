@@ -6,7 +6,7 @@ import com.ulcjava.testframework.operator.ULCTextFieldOperator
 import grails.util.Holders
 import org.pillarone.riskanalytics.application.ui.simulation.view.impl.SimulationActionsPane
 import org.pillarone.riskanalytics.core.fileimport.ParameterizationImportService
-import org.pillarone.riskanalytics.core.simulation.engine.QueueListener
+import org.pillarone.riskanalytics.core.queue.QueueListener
 import org.pillarone.riskanalytics.core.simulation.engine.QueueEntry
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.functional.AbstractFunctionalTestCase
@@ -18,12 +18,12 @@ class RunSimulationTests extends AbstractFunctionalTestCase {
     void setUp() {
         new ParameterizationImportService().compareFilesAndWriteToDB(['Core'])
         super.setUp();
-        simulationQueueService.addSimulationQueueListener(listener)
+        simulationQueueService.addQueueListener(listener)
     }
 
     void tearDown() {
         super.tearDown()
-        simulationQueueService.removeSimulationQueueListener(listener)
+        simulationQueueService.removeQueueListener(listener)
         listener.offered.clear()
     }
 

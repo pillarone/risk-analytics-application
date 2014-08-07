@@ -3,9 +3,9 @@ import com.ulcjava.base.application.event.ActionEvent
 import com.ulcjava.base.application.event.IActionListener
 import org.pillarone.riskanalytics.application.ui.PollingSupport
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
-import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoEventSupport
+import org.pillarone.riskanalytics.core.queue.RuntimeInfoEventSupport
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -22,25 +22,25 @@ class UlcSimulationRuntimeService {
     SimulationRuntimeService simulationRuntimeService
     @Resource(name = 'pollingSupport2000')
     PollingSupport pollingSupport
-    private MySimulationRuntimeEventListener runtimeEventListener
+    private MyRuntimeEventListener runtimeEventListener
     private IActionListener pollingListener
     private List<SimulationRuntimeInfoEvent> events = []
     private final Object eventsLock = new Object()
     @Delegate
-    private final SimulationRuntimeInfoEventSupport eventSupport = new SimulationRuntimeInfoEventSupport()
+    private final RuntimeInfoEventSupport eventSupport = new RuntimeInfoEventSupport()
 
     @PostConstruct
     void register() {
         pollingListener = new MyActionListener()
-        runtimeEventListener = new MySimulationRuntimeEventListener()
-        simulationRuntimeService.addSimulationRuntimeInfoListener(runtimeEventListener)
+        runtimeEventListener = new MyRuntimeEventListener()
+        simulationRuntimeService.addRuntimeInfoListener(runtimeEventListener)
         pollingSupport.addActionListener(pollingListener)
     }
 
     @PreDestroy
     private void unregister() {
         pollingSupport.removeActionListener(pollingListener)
-        simulationRuntimeService.removeSimulationRuntimeInfoListener(runtimeEventListener)
+        simulationRuntimeService.removeRuntimeInfoListener(runtimeEventListener)
     }
 
 
@@ -72,7 +72,7 @@ class UlcSimulationRuntimeService {
         }
     }
 
-    private class MySimulationRuntimeEventListener implements ISimulationRuntimeInfoListener {
+    private class MyRuntimeEventListener implements IRuntimeInfoListener<SimulationRuntimeInfo> {
         @Override
         void starting(SimulationRuntimeInfo info) {
             synchronized (eventsLock) {

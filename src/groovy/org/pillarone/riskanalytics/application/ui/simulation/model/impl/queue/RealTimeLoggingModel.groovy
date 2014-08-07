@@ -5,7 +5,7 @@ import groovy.util.logging.Log
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeService
@@ -25,8 +25,8 @@ public class RealTimeLoggingModel {
     final DefaultListModel listModel = new DefaultListModel()
     private final List<String> pendingMessages = []
     private final MyAppender appender = new MyAppender()
-    private ISimulationRuntimeInfoListener addPendingEventListener = new AddPendingEventsListener()
-    private ISimulationRuntimeInfoListener addAppenderListener = new AddAppenderListener()
+    private IRuntimeInfoListener addPendingEventListener = new AddPendingEventsListener()
+    private IRuntimeInfoListener addAppenderListener = new AddAppenderListener()
 
     @Resource
     UlcSimulationRuntimeService ulcSimulationRuntimeService
@@ -37,14 +37,14 @@ public class RealTimeLoggingModel {
     @PostConstruct
     private void initialize() {
         //ulcSimulationRuntimeService posts events in ulc thread but the events are queued. The appender has to be added immediately, so we add it to the 'real' simulationRuntimeService
-        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(addPendingEventListener)
-        simulationRuntimeService.addSimulationRuntimeInfoListener(addAppenderListener)
+        ulcSimulationRuntimeService.addRuntimeInfoListener(addPendingEventListener)
+        simulationRuntimeService.addRuntimeInfoListener(addAppenderListener)
     }
 
     @PreDestroy
     private void unregister() {
-        simulationRuntimeService.removeSimulationRuntimeInfoListener(addAppenderListener)
-        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(addPendingEventListener)
+        simulationRuntimeService.removeRuntimeInfoListener(addAppenderListener)
+        ulcSimulationRuntimeService.removeRuntimeInfoListener(addPendingEventListener)
     }
 
     void clear() {

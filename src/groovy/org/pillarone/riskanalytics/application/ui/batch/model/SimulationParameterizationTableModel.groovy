@@ -7,7 +7,7 @@ import org.pillarone.riskanalytics.application.ui.sortable.model.IOrderChangedLi
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortableTableModel
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortedEvent
 import org.pillarone.riskanalytics.core.batch.BatchRunService
-import org.pillarone.riskanalytics.core.simulation.engine.ISimulationRuntimeInfoListener
+import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfoAdapter
 import org.pillarone.riskanalytics.core.simulation.item.Batch
@@ -29,7 +29,7 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
     private final static Log LOG = LogFactory.getLog(SimulationParameterizationTableModel)
 
     private Batch batch
-    private ISimulationRuntimeInfoListener simulationRuntimeInfoListener
+    private IRuntimeInfoListener simulationRuntimeInfoListener
 
     @Resource
     UlcSimulationRuntimeService ulcSimulationRuntimeService
@@ -57,11 +57,11 @@ class SimulationParameterizationTableModel extends SortableTableModel<BatchRowIn
     @PostConstruct
     void initialize() {
         simulationRuntimeInfoListener = new MyRuntimeListener()
-        ulcSimulationRuntimeService.addSimulationRuntimeInfoListener(simulationRuntimeInfoListener)
+        ulcSimulationRuntimeService.addRuntimeInfoListener(simulationRuntimeInfoListener)
     }
 
     void close() {
-        ulcSimulationRuntimeService.removeSimulationRuntimeInfoListener(simulationRuntimeInfoListener)
+        ulcSimulationRuntimeService.removeRuntimeInfoListener(simulationRuntimeInfoListener)
         simulationRuntimeInfoListener = null
     }
 

@@ -72,7 +72,7 @@ class UploadBatchViewModel {
     void upload() {
         //TODO username
         simulations.each { Simulation simulation ->
-            uploadQueueService.upload(new UploadConfiguration(simulation, allowOverwrite, destinationNamesComboBoxModel.selectedItem as String, 'Hans-Otto'));
+            uploadQueueService.offer(new UploadConfiguration(simulation, allowOverwrite, destinationNamesComboBoxModel.selectedItem as String, 'Hans-Otto'));
         }
         removeSimulations(simulations)
     }
