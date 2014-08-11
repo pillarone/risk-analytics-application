@@ -1,12 +1,9 @@
 package org.pillarone.riskanalytics.application.ui.upload.model
-
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.pillarone.riskanalytics.application.ui.simulation.model.impl.queue.UlcSimulationRuntimeService
 import org.pillarone.riskanalytics.application.ui.sortable.model.IOrderChangedListener
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortableTableModel
 import org.pillarone.riskanalytics.application.ui.sortable.model.SortedEvent
-import org.pillarone.riskanalytics.core.queue.IRuntimeInfoListener
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulation.item.SimulationProfile
 import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
@@ -22,11 +19,6 @@ import javax.annotation.Resource
 class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRowModel> {
 
     private final static Log LOG = LogFactory.getLog(UploadSimulationTableModel)
-
-    private IRuntimeInfoListener simulationRuntimeInfoListener
-
-    @Resource
-    UlcSimulationRuntimeService ulcSimulationRuntimeService
 
     @Resource
     SimulationProfileService simulationProfileService
@@ -48,7 +40,6 @@ class UploadSimulationTableModel extends SortableTableModel<SimulationRowInfoRow
     }
 
     void close() {
-        simulationRuntimeInfoListener = null
     }
 
     @Override
