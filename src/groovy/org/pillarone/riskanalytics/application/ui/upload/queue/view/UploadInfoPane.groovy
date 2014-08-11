@@ -159,7 +159,7 @@ class UploadInfoPane {
         }
 
         private boolean shouldShowAlert() {
-            return currentUser?.username == uploadInfoPaneModel?.uploadOwner?.username
+            return currentUser?.username == uploadInfoPaneModel?.username
         }
 
         private Person getCurrentUser() {

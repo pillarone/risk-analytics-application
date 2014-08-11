@@ -42,7 +42,7 @@ class UploadRowModel extends AbstractTableRowModel<UploadRuntimeInfo> {
             4: { UploadRuntimeInfo info -> info.iterations?.toString() },
             5: { UploadRuntimeInfo info -> info.priority?.toString() },
             6: { UploadRuntimeInfo info -> info.configuredAt ? DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime(info.configuredAt.time)) : '' },
-            7: { UploadRuntimeInfo info -> info.offeredBy?.username },
+            7: { UploadRuntimeInfo info -> info.username },
             8: { UploadRuntimeInfo info -> getDisplayText(info.uploadState) },
     ] : [
             0: { UploadRuntimeInfo info -> info.simulation?.nameAndVersion },

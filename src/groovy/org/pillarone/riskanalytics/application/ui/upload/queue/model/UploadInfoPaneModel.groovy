@@ -100,8 +100,8 @@ class UploadInfoPaneModel {
         text.toString()
     }
 
-    Person getUploadOwner() {
-        running?.offeredBy
+    String getUsername() {
+        running?.username
     }
 
     private class MyListener extends UploadRuntimeInfoAdapter {
