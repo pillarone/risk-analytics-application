@@ -54,9 +54,7 @@ class UploadQueueViewModel {
 
         @Override
         void finished(UploadRuntimeInfo info) {
-//            uploadQueueTableModel.itemRemoved(info)
-            //TODO enable
-            println("in future this info will be removed ...")
+            uploadQueueTableModel.itemRemoved(info)
         }
 
         @Override
