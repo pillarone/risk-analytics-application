@@ -43,7 +43,7 @@ class SimulationRowModel extends AbstractTableRowModel<SimulationRuntimeInfo> {
             4: { SimulationRuntimeInfo info -> info.iterations?.toString() },
             5: { SimulationRuntimeInfo info -> info.priority?.toString() },
             6: { SimulationRuntimeInfo info -> info.configuredAt ? DateFormatUtils.getDateFormat("yyyy.MM.dd HH:mm:ss").print(new DateTime(info.configuredAt.time)) : '' },
-            7: { SimulationRuntimeInfo info -> info.offeredBy?.username },
+            7: { SimulationRuntimeInfo info -> info.username},
             8: { SimulationRuntimeInfo info -> getDisplayText(info.simulationState) },
             9: { SimulationRuntimeInfo info -> info.estimatedTime }
     ] : [

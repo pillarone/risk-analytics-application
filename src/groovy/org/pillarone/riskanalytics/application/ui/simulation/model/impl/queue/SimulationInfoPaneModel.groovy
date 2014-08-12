@@ -47,7 +47,7 @@ class SimulationInfoPaneModel {
     }
 
     String getEstimatedEndTime() {
-        DateTime estimatedSimulationEnd = running?.estimatedSimulationEnd
+        DateTime estimatedSimulationEnd = running?.estimatedEnd
         if (estimatedSimulationEnd != null) {
             return dateFormat.print(estimatedSimulationEnd)
         }
@@ -71,7 +71,7 @@ class SimulationInfoPaneModel {
     }
 
     String getRemainingTime() {
-        DateTime end = running?.estimatedSimulationEnd
+        DateTime end = running?.estimatedEnd
         if (end != null) {
             use(TimeCategory) {
                 def duration = end.toDate() - new Date()

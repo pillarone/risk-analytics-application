@@ -6,6 +6,8 @@ import org.pillarone.riskanalytics.core.simulation.item.Simulation
 import org.pillarone.riskanalytics.core.simulationprofile.SimulationProfileService
 import org.pillarone.riskanalytics.core.upload.UploadConfiguration
 import org.pillarone.riskanalytics.core.upload.UploadQueueService
+import org.pillarone.riskanalytics.core.user.Person
+import org.pillarone.riskanalytics.core.user.UserManagement
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -70,9 +72,8 @@ class UploadBatchViewModel {
     }
 
     void upload() {
-        //TODO username
         simulations.each { Simulation simulation ->
-            uploadQueueService.offer(new UploadConfiguration(simulation, allowOverwrite, destinationNamesComboBoxModel.selectedItem as String, 'Hans-Otto'));
+            uploadQueueService.offer(new UploadConfiguration(simulation, allowOverwrite, destinationNamesComboBoxModel.selectedItem as String, currentUser?.username));
         }
         removeSimulations(simulations)
     }
@@ -95,5 +96,9 @@ class UploadBatchViewModel {
 
     SimulationRowInfo getSimulationRowInfo(int row) {
         uploadSimulationTableModel.simulationRowInfos[row]
+    }
+
+    Person getCurrentUser() {
+        UserManagement.currentUser
     }
 }
