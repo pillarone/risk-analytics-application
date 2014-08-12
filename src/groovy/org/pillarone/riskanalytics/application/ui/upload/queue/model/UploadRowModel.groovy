@@ -60,8 +60,7 @@ class UploadRowModel extends AbstractTableRowModel<UploadRuntimeInfo> {
     }
 
     private static String getDisplayText(UploadState uploadState) {
-//        resolver.getText(UploadRowModel, uploadState.toString())
-        'TODO'
+        resolver.getText(UploadRowModel, uploadState.toString())
     }
 
     static final int COLUMN_COUNT = hasCurrentUser() ? 9 : 8
