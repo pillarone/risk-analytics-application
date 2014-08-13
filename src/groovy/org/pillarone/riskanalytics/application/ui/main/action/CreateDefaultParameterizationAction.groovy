@@ -29,8 +29,8 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
         boolean hasOneParameterColumnOnly = simulationModel.maxNumberOfFullyDistinctPeriods() == 1
         DefaultParameterizationDialog dialog = new DefaultParameterizationDialog(UlcUtilities.getWindowAncestor(tree), hasOneParameterColumnOnly)
         dialog.title = dialog.getText("title")
-        String name = dialog.nameInput.text?.trim() // PMO-2011 Avoid copy/paste or fat finger errors adding whitespace
         dialog.okAction = {
+            final String name = dialog.nameInput.text?.trim() // PMO-2011 Avoid copy/paste or fat finger errors adding whitespace
             if (!validate(name)) {
                 I18NAlert alert = new I18NAlert(UlcUtilities.getWindowAncestor(tree), "NotValidName")
                 alert.show()
@@ -63,9 +63,13 @@ class CreateDefaultParameterizationAction extends SelectionTreeAction {
     }
 
     boolean validate(String name) {
-        if (!name) return false
+        if (!name || name.length() == 0){
+            LOG.warn("Null or empty name supplied to create new p14n")
+            return false
+        }
         def seps = ["/", "//", File.separator, "=", ":", "!"] //Forbid path separators or search operators in names
         if (seps.any { name.indexOf(it) != -1 }){
+            LOG.warn("Separator char in name supplied to create new p14n")
             return false
         }
         return true
