@@ -16,6 +16,7 @@ import org.pillarone.riskanalytics.core.output.SingleValueCollectingModeStrategy
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationConfiguration
 import org.pillarone.riskanalytics.core.simulation.engine.SimulationQueueService
 import org.pillarone.riskanalytics.core.simulation.item.Simulation
+import org.pillarone.riskanalytics.core.user.UserManagement
 
 /**
  * The view model for the SimulationActionsPane.
@@ -87,9 +88,13 @@ class SimulationActionsPaneModel {
     }
 
     private void startSimulation() {
-        SimulationConfiguration configuration = new SimulationConfiguration(simulation, outputStrategy)
+        SimulationConfiguration configuration = new SimulationConfiguration(simulation, outputStrategy, currentUsername)
         int priority = priorityModel.value as int
         simulationQueueService.offer(configuration, priority)
+    }
+
+    private String getCurrentUsername() {
+        UserManagement.currentUser?.username
     }
 
     private SimulationQueueService getSimulationQueueService() {
