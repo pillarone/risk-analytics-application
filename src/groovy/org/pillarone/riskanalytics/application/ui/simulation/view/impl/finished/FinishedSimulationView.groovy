@@ -96,9 +96,10 @@ class FinishedSimulationView {
             case CacheItemEvent.EventType.ADDED:
                 break
             case CacheItemEvent.EventType.REMOVED:
-                finishedSimulationsViewModel.simulationDeleted(simulation)
-                //Because selection does not change, we have to trigger the update manually
-                finishedSimulationsTableRenderer.updateMenuEnablingState()
+                if (finishedSimulationsViewModel.simulationDeleted(simulation)) {
+                    //Because selection does not change, we have to trigger the update manually
+                    finishedSimulationsTableRenderer.updateMenuEnablingState()
+                }
                 break
             case CacheItemEvent.EventType.UPDATED:
                 break
