@@ -44,6 +44,11 @@ class ModelIndependentDetailView {
     @Resource
     IResourceBundleResolver resourceBundleResolver
 
+    //TODO FR Could decide whether to add upload tabs depending on a role or fixed users.
+    //Even better would be also to not statically inject the resources for these tabs but to
+    //lazy inject them ie inject the grails application instead (see existing actions where
+    //that is done) and to use that before adding the tabs
+    //
     @PostConstruct
     void initialize() {
         tabbedPane = new ULCDetachableTabbedPane()
