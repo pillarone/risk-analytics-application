@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class SimulationQueueTableModel extends AbstractTableModel {
 
-    protected final List<SimulationRowModel> columnModels = []
+    final List<SimulationRowModel> columnModels = []
 
     @Override
     int getRowCount() {
