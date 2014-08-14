@@ -16,12 +16,18 @@ class UploadSimulationAction extends SelectionTreeAction {
     UploadSimulationAction(ULCTableTree tree) {
         super('UploadSimulationAction', tree)
     }
+    @Override
+    protected List allowedRoles() {
+        return ['ROLE_ADMIN']
+    }
 
     @Override
     void doActionPerformed(ActionEvent event) {
-        riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
-        UploadBatchView uploadBatchView = detailViewManager.openDetailView as UploadBatchView
-        uploadBatchView.addSimulations(simulations)
+        if(enabled){
+            riskAnalyticsEventBus.post(new OpenDetailViewEvent(item))
+            UploadBatchView uploadBatchView = detailViewManager.openDetailView as UploadBatchView
+            uploadBatchView.addSimulations(simulations)
+        }
     }
 
     private List<Simulation> getSimulations() {
