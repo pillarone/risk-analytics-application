@@ -1,10 +1,13 @@
 package org.pillarone.riskanalytics.application.ui.simulation.view.impl.finished
+
 import com.ulcjava.base.application.IRendererComponent
 import com.ulcjava.base.application.ULCTable
 import com.ulcjava.base.application.table.DefaultTableCellRenderer
 import groovy.transform.CompileStatic
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.pillarone.riskanalytics.application.ui.UlcSessionScope
+import org.pillarone.riskanalytics.application.ui.simulation.model.impl.finished.FinishedSimulationsViewModel
+import org.pillarone.riskanalytics.core.simulation.engine.SimulationRuntimeInfo
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 
@@ -18,6 +21,9 @@ class FinishedSimulationsTableRenderer extends DefaultTableCellRenderer {
     @Resource
     GrailsApplication grailsApplication
 
+    @Resource
+    FinishedSimulationsViewModel finishedSimulationsViewModel
+
     @Lazy
     private FinishedSimulationsContextMenu contextMenu = grailsApplication.mainContext.getBean('finishedSimulationsContextMenu', FinishedSimulationsContextMenu)
 
@@ -28,9 +34,10 @@ class FinishedSimulationsTableRenderer extends DefaultTableCellRenderer {
     @Override
     IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int row) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, row)
-        toolTipText = String.valueOf(value)
+        SimulationRuntimeInfo info = finishedSimulationsViewModel.getInfoAt([row] as int[])?.first()
         componentPopupMenu = contextMenu
         horizontalAlignment = LEFT
+        enabled = !info.deleted
         return component
     }
 

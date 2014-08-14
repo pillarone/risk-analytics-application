@@ -42,6 +42,11 @@ class OpenResultsAction extends ResourceBasedAction {
     @Override
     boolean isEnabled() {
         List<SimulationRuntimeInfo> simulations = finishedSimulationView.selectedSimulations
-        simulations.size() == 1 && simulations.first().simulationState == FINISHED
+        int size = simulations.size()
+        if (size != 1) {
+            return false
+        }
+        SimulationRuntimeInfo info = simulations.first()
+        (!info.deleted) && info.simulationState == FINISHED
     }
 }
