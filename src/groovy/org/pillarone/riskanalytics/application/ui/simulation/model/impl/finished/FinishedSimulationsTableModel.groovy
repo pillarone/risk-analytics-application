@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component
 class FinishedSimulationsTableModel extends SimulationQueueTableModel {
 
     @Override
-    protected void sortColumnModels() {}
+    protected void sortColumnModels() {
+        assignRowsToColumnModels()
+    }
 
     void removeAt(int[] selected) {
         List<SimulationRowModel> toRemove = selected.collect {
