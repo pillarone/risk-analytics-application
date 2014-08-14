@@ -48,7 +48,7 @@ class FinishedSimulationsViewModel {
         finishedSimulationsTableModel.removeAt(selected)
     }
 
-    void simulationDeleted(Simulation simulation) {
+    boolean simulationDeleted(Simulation simulation) {
         finishedSimulationsTableModel.simulationDeleted(simulation)
     }
 

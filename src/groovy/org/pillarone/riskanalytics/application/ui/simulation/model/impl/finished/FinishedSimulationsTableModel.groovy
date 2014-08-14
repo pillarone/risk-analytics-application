@@ -24,13 +24,15 @@ class FinishedSimulationsTableModel extends SimulationQueueTableModel {
         fireTableRowsDeleted(selectedAsList.min(), selectedAsList.max())
     }
 
-    void simulationDeleted(Simulation simulation) {
+    boolean simulationDeleted(Simulation simulation) {
         SimulationRowModel rowModel = columnModels.find { SimulationRowModel simulationRowModel ->
             simulationRowModel.object.simulation == simulation
         }
         if (rowModel) {
             rowModel.object.deleted = true
             fireTableRowsUpdated(rowModel.row, rowModel.row)
+            return true
         }
+        return false
     }
 }
