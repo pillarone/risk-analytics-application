@@ -29,7 +29,7 @@ class FinishedSimulationsTableModel extends SimulationQueueTableModel {
             simulationRowModel.object.simulation == simulation
         }
         if (rowModel) {
-            rowModel?.object?.deleted = true
+            rowModel.object.deleted = true
             fireTableRowsUpdated(rowModel.row, rowModel.row)
         }
     }

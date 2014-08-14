@@ -35,9 +35,9 @@ class FinishedSimulationsTableRenderer extends DefaultTableCellRenderer {
     IRendererComponent getTableCellRendererComponent(ULCTable table, Object value, boolean selected, boolean hasFocus, int row) {
         IRendererComponent component = super.getTableCellRendererComponent(table, value, selected, hasFocus, row)
         SimulationRuntimeInfo info = finishedSimulationsViewModel.getInfoAt([row] as int[])?.first()
-        enabled = !info.deleted
         componentPopupMenu = contextMenu
         horizontalAlignment = LEFT
+        enabled = !info.deleted
         return component
     }
 
