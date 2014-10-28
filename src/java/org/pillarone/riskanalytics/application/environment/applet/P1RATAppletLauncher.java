@@ -10,11 +10,11 @@ import org.pillarone.riskanalytics.application.ui.util.SplashScreenHandler;
 
 public class P1RATAppletLauncher extends DefaultAppletLauncher {
     public void init() {
+        super.init();
+
         SplashScreenHandler splashScreenHandler = new SplashScreenHandler(new SplashScreen());
         ClientEnvironmentAdapter.setMessageService(splashScreenHandler);
         splashScreenHandler.showSplashScreen();
-
-        super.init();
 
         UIManagerHelper.setLookAndFeel();
         ClientEnvironmentAdapter.setFileService(new AllPermissionsFileExtendedService());
