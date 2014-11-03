@@ -5,16 +5,17 @@ import com.ulcjava.base.trusted.AllPermissionsBrowserService;
 import com.ulcjava.environment.applet.client.DefaultAppletLauncher;
 import org.pillarone.riskanalytics.application.client.AllPermissionsFileExtendedService;
 import org.pillarone.riskanalytics.application.environment.shared.UIManagerHelper;
-import org.pillarone.riskanalytics.application.ui.util.SplashScreen;
-import org.pillarone.riskanalytics.application.ui.util.SplashScreenHandler;
+//import org.pillarone.riskanalytics.application.ui.util.SplashScreen;
+//import org.pillarone.riskanalytics.application.ui.util.SplashScreenHandler;
 
 public class P1RATAppletLauncher extends DefaultAppletLauncher {
     public void init() {
         super.init();
 
-        SplashScreenHandler splashScreenHandler = new SplashScreenHandler(new SplashScreen());
-        ClientEnvironmentAdapter.setMessageService(splashScreenHandler);
-        splashScreenHandler.showSplashScreen();
+// This fails to find the Splashscreen related classes ! wtf..
+//        SplashScreenHandler splashScreenHandler = new SplashScreenHandler(new SplashScreen());
+//        ClientEnvironmentAdapter.setMessageService(splashScreenHandler);
+//        splashScreenHandler.showSplashScreen();
 
         UIManagerHelper.setLookAndFeel();
         ClientEnvironmentAdapter.setFileService(new AllPermissionsFileExtendedService());
