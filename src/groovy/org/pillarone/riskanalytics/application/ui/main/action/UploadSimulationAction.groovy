@@ -18,7 +18,7 @@ class UploadSimulationAction extends SelectionTreeAction {
     }
     @Override
     protected List allowedRoles() {
-        return ['ROLE_ADMIN']
+        return ['ROLE_REVIEWER', 'ROLE_ADMIN']
     }
 
     @Override
